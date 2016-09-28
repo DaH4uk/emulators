@@ -1,0 +1,182 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<SCRIPT language=Javascript src="syslog.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>System Command</title>
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script>
+var isMeshDefined = 0 
+function saveClick(){
+	
+  	if ( document.formSysLog.rtLogEnabled.checked && checkIpAddr(document.formSysLog.logServer, 'Invalid Server address! ') == false )
+              return false;
+	return true;
+}
+function updateState(){
+	if(document.formSysLog.logEnabled.checked){
+		enableTextField(document.formSysLog.rtLogEnabled);
+		enableTextField(document.formSysLog.syslogEnabled);
+		enableTextField(document.formSysLog.wlanlogEnabled);
+		enableTextField(document.formSysLog.doslogEnabled);
+if( isMeshDefined ==1)
+		enableTextField(document.formSysLog.meshlogEnabled);
+		updateStateRemote();
+		updateStateSys();
+	}
+	else {
+		disableTextField(document.formSysLog.logServer);
+		disableTextField(document.formSysLog.rtLogEnabled);
+		disableTextField(document.formSysLog.syslogEnabled);
+		disableTextField(document.formSysLog.wlanlogEnabled);
+		disableTextField(document.formSysLog.doslogEnabled);
+if( isMeshDefined ==1)
+		disableTextField(document.formSysLog.meshlogEnabled);
+	}
+}
+
+function updateStateSys(){
+	if(document.formSysLog.syslogEnabled.checked){
+		disableTextField(document.formSysLog.wlanlogEnabled);
+if( isMeshDefined ==1)
+		disableTextField(document.formSysLog.meshlogEnabled);
+		disableTextField(document.formSysLog.doslogEnabled);
+	}
+	else {
+		enableTextField(document.formSysLog.wlanlogEnabled);
+if( isMeshDefined ==1)
+		enableTextField(document.formSysLog.meshlogEnabled);
+		enableTextField(document.formSysLog.doslogEnabled);
+	}
+}
+
+function updateStateRemote(){
+	if(document.formSysLog.rtLogEnabled.checked)
+		enableTextField(document.formSysLog.logServer);
+	else
+		disableTextField(document.formSysLog.logServer);
+
+}
+function scrollElementToEnd (element) {
+   if (typeof element.scrollTop != 'undefined' &&
+       typeof element.scrollHeight != 'undefined') {
+     element.scrollTop = element.scrollHeight;
+   }
+}
+
+function init()
+{
+	var cf = document.formSysLog;
+	var logEnabled = 3;
+	var rtLogEnabled = 0;
+	
+    	if(logEnabled & 1) 
+        	cf.logEnabled.checked = 1;
+        else
+        	cf.logEnabled.checked = 0;
+
+    	if((logEnabled>>1) & 1)
+        	cf.syslogEnabled.checked = 1;
+        else
+        	cf.syslogEnabled.checked = 0;
+        
+        if((logEnabled>>2) & 1)
+        	cf.wlanlogEnabled.checked = 1;
+        else
+        	cf.wlanlogEnabled.checked = 0;
+        	
+        if((logEnabled>>3) & 1)
+        	cf.doslogEnabled.checked = 1;
+        else
+        	cf.doslogEnabled.checked = 0;
+
+	/*
+	if (isMeshDefined == 1) {
+	        if((logEnabled>>4) & 1)
+	        	cf.meshlogEnabled.checked = 1;
+	        else
+	        	cf.meshlogEnabled.checked = 0;
+	}
+	else {
+		cf.meshlogEnabled.checked = 0;
+		
+	}
+	*/
+
+        if(rtLogEnabled)
+        	cf.rtLogEnabled.checked = 1;
+        else
+        	cf.rtLogEnabled.checked = 0;
+	updateState();
+}
+function clear_log_buffer()
+{
+       document.formSysLog.msg.value="";
+}
+</script>
+</head>
+<blockquote>
+<h2><script>dw(syslog_header);</script></h2>
+
+<body onload="init();">
+  <table border=0 width="550" cellspacing=0 cellpadding=0>
+  <tr><font size=2><script>dw(syslog_header_explain);</script>
+  </tr>
+  <tr><hr size=1 noshade align=top></tr>
+  <form action="http://upvel.ru/emulators/UR-447N4G/%22http:///%22http://192.168.10.1/boafrm/formSysLog%22%22" method=POST name="formSysLog">
+
+  <tr><td width="200" ><font size=2><b><input type="checkbox" name="logEnabled" value="ON" onClick="updateState()"><script>dw(syslog_enable);</script></b></font>
+  </td></tr><br>
+
+  <table border="0" width=600>
+  <tr><td width="25%">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="syslogEnabled" value="ON" onClick="updateStateSys()"> <font size=2><b><script>dw(syslog_sys_enable);</script></b></font><br></td>
+      <td width="25%"><input type="checkbox" name="wlanlogEnabled" value="ON" ><font size=2><b><script>dw(syslog_wireless_enable);</script></b></font><br></td> 
+      <td width="25%"><input type="checkbox" name="doslogEnabled"  value="ON" ><font size=2><b><script>dw(syslog_dos_enable);</script></b></font><br></td>
+      <!--
+      <td width="25%"><input type="checkbox" name="meshlogEnabled"  value="ON" ><font size=2><b><script>dw(syslog_11s_enable);</script></b></font><br></td>
+      -->
+  </tr>
+   </table>
+  <table border="0" width=600>
+  <tr><td width="40%">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="rtLogEnabled" value="ON" onClick="updateStateRemote()"> <font size=2><b><script>dw(syslog_rtlog_enable);</script></b></font><br></td>
+   	<td width="60%"><b><font size=2><script>dw(syslog_local_ipaddr);</script>:</b>&nbsp;&nbsp;
+	<input type="text" name="logServer" value="" size="13" maxlength="16"></td>
+  </tr>
+  </table>
+   <tr><td height=10> </td> </tr>
+   <tr><td colspan=2><p>
+   <script>
+   document.write('<input type="submit" value="'+apply+'" name="Apply" onClick="return saveClick()" >');
+   </script>
+   &nbsp;&nbsp; </td></tr>
+
+  <p>
+  <input type="hidden" value="/syslog.htm" name="submit-url">
+  <textarea rows="15" name="msg" cols="80" wrap="virtual">Jun 23 14:18:27 UR-447N4G daemon.info init: starting pid 1214, tty '': '/bin/getty -L ttyS0 38400 vt100'
+Jun 23 14:18:29 UR-447N4G user.debug kernel: br0: no IPv6 routers present
+Jun 23 14:18:31 UR-447N4G user.debug kernel: eth1: no IPv6 routers present
+</textarea>
+  <script>
+   scrollElementToEnd(this.formSysLog.msg);
+  </script>
+  <p>
+  <script>
+  document.write('<input type="button" value="'+refresh_refresh+'" name="refresh" onClick="javascript: window.location.reload()">');
+  </script>
+  &nbsp;&nbsp; 
+  <script>
+  document.write('<input type="submit" value="'+syslog_clear+'" name="clear" onClick="clear_log_buffer()">');
+  </script>
+  </form>
+</table>
+</body>
+</blockquote>
+</html>
+
+

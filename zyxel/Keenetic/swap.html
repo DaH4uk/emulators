@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="Swap file" />
+<meta name="ndm.abbr" lang="RU" content="Файл подкачки" xml:lang="RU" />
+
+<title>ZyXEL Keenetic - 
+				Файл подкачки</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+var settings;
+var p = new Packet;
+
+function loadValues() {
+	settings = new Form(document.swap);
+	p.Command("ls", null, new List(document.swap.fs, "entry", "label", "uuid"));
+	p.Config("system swap", null, settings);
+	p.proceed(document.getElementById("logger"));
+}
+function setEnabled(flag) {
+	var s = document.swap;
+	s.enable.checked = flag;
+	s.fs.disabled = s.path.disabled = s.size.disabled = !flag;
+}
+function onAreaChange(e) {
+	var i = e.value.indexOf(":");
+	new FieldValue(document.swap.fs).set(e.value.slice(0, i));
+	document.swap.path.value = e.value.slice(i + 1);
+	setEnabled(true);
+}
+function submitSwap() {
+	var s = document.swap;
+	if( s.enable.checked ) {
+		s.area.value = new FieldValue(s.fs).get() + ":" + s.path.value;
+		p.Command("system swap", {"area":"", "size":""}, settings);
+		p.onProgress = function(value) {
+			document.getElementById("busy").style.display = 
+			document.getElementById("popup").style.display = (value == 100) ? "none" : "block";
+			if( value != 0 ) document.getElementById("progress_bar").style.width = value + "%";
+		}
+	} else {
+		p.No("system swap");
+	}
+	p.proceed(document.getElementById("logger"));	
+	return false;
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb.png');" class="selected"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">USB<div id="subtitle"></div></div><div class="block">
+	<form action="" name="swap" onsubmit="return submitSwap()" id="swap">
+		<fieldset> 
+		<legend>Файл подкачки</legend>
+		<div class="rounded">
+		<p>Файл подкачки необходим для работы системы в случаях, когда всем запущенным приложениям не хватает объема оперативной памяти. Подключите к устройству внешний жесткий диск и выберите его из выпадающего списка. Не рекомендуется использовать для этого накопители USB-flash, поскольку они не приспособлены для быстрого случайного доступа к секторам диска. Для файла подкачки нужно использовать магнитный жесткий диск (HDD), подключенный через USB.</p>
+		<p>Если внешний USB-накопитель используется для хранения файлов и периодически отсоединяется от устройства во время работы, рекомендуется использовать для подкачки отдельный накопитель.</p>
+		<p>Оптимальный размер файла&nbsp;— 128&nbsp;Мбайт.</p>
+		</div>
+		<label for="enable">Использовать файл подкачки:</label>
+			<input type="checkbox" name="enable" onchange="setEnabled(this.checked)" /><br />
+		<label for="fs">Имя файла:</label>
+			<select name="fs" disabled="disabled">
+				<option value=""></option>
+			</select>
+			<input type="text" name="path" onchange="onAreaChange(this)" disabled="disabled" />
+			<input type="hidden" name="area" onchange="onAreaChange(this)" /><br />
+		<label for="size">Размер файла (Кбайт):</label><input type="text" name="size" disabled="disabled" /><br />
+		<label for="nothing"></label><button class="apply" type="submit" name="apply">Применить</button>
+		</fieldset>
+	</form>
+	<div class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+
+	</div></div></div>
+
+	<div id="busy" style="display:none;"></div>
+	<div id="popup" style="display:none;">Выполняется создание файла подкачки..<br />Пожалуйста, не выключайте устройство
+		<br />
+		<br />
+
+		<div id="progress" style="text-align:left;">
+		<div id="progress_bar" style="width:100%"> </div>
+		</div>
+	</div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

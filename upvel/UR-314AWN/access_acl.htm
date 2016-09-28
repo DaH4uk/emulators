@@ -1,0 +1,136 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+</head><script language="javascript" src="tc2func.js" tppabs="http://192.168.1.1/basic/tc2func.js"></script>
+<script language="JavaScript">
+function aclSwitch(on_off)
+{
+form = document.ACL_form;
+if(on_off == 0)
+for(i = 2; i < 9; i++)
+form.elements[i].disabled = true;
+else
+for(i = 2; i < 9; i++)
+form.elements[i].disabled = false;
+}
+function doValidateRange2(startIP,endIP){
+var staddress;
+var edaddress;
+var cnt;
+staddress=startIP.split(".");
+edaddress=endIP.split(".");
+for(cnt=0; cnt < 4; cnt++) {
+if((cnt<2)&&( Number(edaddress[cnt])!= Number(staddress[cnt]) ) ){
+alert("End IP address and Start IP address are not in the same subnet!");return false;
+}
+}
+if(Number(edaddress[2])!= Number(staddress[2])){
+if( Number(edaddress[2]) < Number(staddress[2]) ){
+alert("End IP address is less than Start IP address!");return false;
+}
+}else{
+if( Number(edaddress[3]) < Number(staddress[3]) ){
+alert("End IP address is less than Start IP address!");return false;
+}
+}
+return true;
+}
+function verifyForm(){
+form = document.ACL_form;
+var addr = form.ACL_secureIPaddr.value;
+var addrEnd = form.ACL_secureIPaddrEnd.value;
+var hidden = form.Apply_or_Delete_ACL.value;
+var ACL_active = form.elements[1];
+if(hidden == 0 && ACL_active.checked == false)
+{
+if( (addr == "0.0.0.0")&&(addrEnd=="0.0.0.0") )
+return true;
+else{
+if(!doValidateIP(addr,0,1,0) || !doValidateIP(addrEnd,0,1,0))
+return false;
+else
+return doValidateRange(addr, addrEnd);
+}
+}
+}
+function doLoad()
+{
+if(!document.ACL_form.elements[0].checked)
+aclSwitch(0);
+}
+</script>
+<body onload="doLoad()">
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/access_acl_1" name="ACL_form" onsubmit="location.reload();"><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Access Control Setup</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10" ></td><td width="440"></td></tr><tr>
+<td height="25" class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">ACL</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="ACL_active" VALUE="1" onclick="aclSwitch(1)"><font color="#000000">Activated</font><INPUT TYPE="RADIO" NAME="ACL_active" VALUE="0" CHECKED onclick="aclSwitch(0)"><font color="#000000">Deactivated</font></td></tr><tr>
+<td height="25" class="title-sub">
+<font color="#000000">Access Control Editing</font></td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td></tr><tr>
+<td width="150" height="25" class="light-orange">&nbsp;</td><td width="10" class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">ACL Rule Index</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="ACLRuleIndex" SIZE="1" onchange="location.reload();"><OPTION VALUE=1 SELECTED>1
+<OPTION VALUE=2>2
+<OPTION VALUE=3>3
+<OPTION VALUE=4>4
+<OPTION VALUE=5>5
+<OPTION VALUE=6>6
+<OPTION VALUE=7>7
+<OPTION VALUE=8>8
+<OPTION VALUE=9>9
+<OPTION VALUE=10>10
+<OPTION VALUE=11>11
+<OPTION VALUE=12>12
+<OPTION VALUE=13>13
+<OPTION VALUE=14>14
+<OPTION VALUE=15>15
+<OPTION VALUE=16>16
+</SELECT></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Active</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="ACLRuleIndex_active" VALUE="0"><font color="#000000">Yes</font><INPUT TYPE="RADIO" NAME="ACLRuleIndex_active" VALUE="1" CHECKED><font color="#000000">No</font></td><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Secure IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="ACL_secureIPaddr" SIZE="15" MAXLENGTH="15" VALUE="0.0.0.0">&nbsp;~&nbsp;
+<INPUT TYPE="TEXT" NAME="ACL_secureIPaddrEnd" SIZE="15" MAXLENGTH="15" VALUE="0.0.0.0"><font color="#000000">(0.0.0.0 ~ 0.0.0.0 means all IPs)</font></td></tr></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td></td><td></td><td></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Application</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="ACLApplicationSelect" SIZE="1"><OPTION SELECTED>Web
+<OPTION>FTP
+<OPTION>Telnet
+<OPTION>SNMP
+<OPTION>Ping
+<OPTION>ALL
+</SELECT></td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td ></td><td ></td><td ></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Interface</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="ACLInterfaceSelect" SIZE="1"><OPTION>WAN
+<OPTION>LAN
+<OPTION SELECTED>Both
+</SELECT></td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" class="title-sub">
+<font color="#000000">Access Control Listing</font></td><td width="10" class="light-orange"></td><td width="10" ><hr noshade class="light-orange-line"></td><td width="580"><hr noshade class="light-orange-line"></td><td width="10" ><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td ></td><td><table width="482" border="1" align=center cellpadding="0" cellspacing="0" bordercolor="#CCCCCC" bgcolor="#FFFFFF">
+<tr height="30">
+<td width="60"  align=center class="tabdata"><strong>
+<font color="#000000">Index</font></strong></td><td width="60"  align=center class="tabdata"><strong>
+<font color="#000000">Active</font></strong></td><td width="180" align=center class="tabdata"><strong>
+<font color="#000000">Secure IP Address</font></strong></td><td width="90"  align=center class="tabdata"><strong>
+<font color="#000000">Application</font></strong></td><td width="80"  align=center class="tabdata"><strong>
+<font color="#000000">Interface</font></strong></td></tr></table></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td class="tabdata">&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" class="black" height="42" >&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="button" NAME="acl_apply" VALUE="SAVE" onclick="location.reload();"><INPUT TYPE="button" NAME="acl_delete" VALUE="DELETE" onclick="document.ACL_form.Apply_or_Delete_ACL.value = 1;"><input type="reset"  name="acl_cancel" value="CANCEL"><INPUT TYPE="HIDDEN" NAME="Apply_or_Delete_ACL" VALUE="0"></td></tr></table></div></form>
+</body></html>

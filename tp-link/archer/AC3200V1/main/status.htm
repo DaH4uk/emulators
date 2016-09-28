@@ -1,0 +1,1157 @@
+<script type="text/javascript">
+var wanArray = [],
+    wanV6Array = [],
+    wanIndex = 0,
+    wanV6Index = 0,
+    lanArray = [],
+    lanV6Array = [],
+    lanIndex = 0,
+    lanV6Index = 0;
+var wlan5gArray = [],
+    wlan5gIndex = 0,
+    wlan5gGstArray = [],
+    wlan5gGstIndex = 0;
+var wlanPageFromIndex = 1;
+var wlanGuestPageFromIdx = 1;
+
+function initWan() {
+    var wan = {};
+    var wanStk;
+    var usbStk;
+    var connType;
+    var wanComInfList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    var l3Forward = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+    if (INCLUDE_IPV6)
+        var l3ForwardIpv6 = $.act(ACT_GET, L3_IP6_FORWARDING, null, null, ["__ifAliasName"]);
+
+    if (!$.exe()) {
+        $.each(wanComInfList, function() {
+            if (this.WANAccessType == "Ethernet") {
+                wanStk = this.__stack;
+            }
+            if (this.WANAccessType == "USB_3G") {
+            }
+            if (this.WANAccessType == "DSL") {
+                wanStk = this.__stack;
+            }
+        });
+    }
+
+    var wanIpConList = $.act(ACT_GS, WAN_IP_CONN, null, wanStk);
+    var wanPppConList = $.act(ACT_GS, WAN_PPP_CONN, null, wanStk);
+
+    var wanIpConListUSB = $.act(ACT_GS, WAN_IP_CONN, null, usbStk);
+    var wanPppConListUSB = $.act(ACT_GS, WAN_PPP_CONN, null, usbStk);
+
+    if (INCLUDE_L2TP) {
+        var wanL2tpConList = $.act(ACT_GS, WAN_L2TP_CONN, null, wanStk);
+    }
+    if (INCLUDE_PPTP) {
+        var wanPptpConList = $.act(ACT_GS, WAN_PPTP_CONN, null, wanStk);
+    }
+
+    if (!$.exe()) {
+        $.each(wanIpConListUSB, function() {
+            if (this.enable == 1 && this.X_TP_TransportType == "DHCP4G") {
+                connType = "4G";
+                wan.name = this.name;
+                wan.connType = connType;
+                wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                wan.ip = this.externalIPAddress;
+                wan.mask = this.subnetMask || "255.255.255.255";
+                wan.dfgw = connType != "Bridge" ? (this.defaultGateway == "" ? "0.0.0.0" : this.defaultGateway) : "";
+                var dns = this.DNSServers.split(",");
+                wan.primDns = dns[0];
+                if (dns.length == 2)
+                    wan.secDns = dns[1];
+                else
+                    wan.secDns = "";
+                if (INCLUDE_IPV6) {
+                    if (this.X_TP_IPv4Enabled == 1) 
+                    {
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanArray.unshift(wan);
+                        else
+                        wanArray.push(wan);
+                        wan = {};
+                    }
+
+                    if (this.X_TP_IPv6Enabled == 1)
+                    {
+                        wan.name = this.name;
+                        wan.connType = connType;
+                        wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                        wan.ip = this.X_TP_ExternalIPv6Address;
+                        wan.mask = "";
+                        wan.dfgw = this.X_TP_DefaultIPv6Gateway
+                        dns = this.X_TP_IPv6DNSServers.split(",");
+                        wan.primDns = dns[0];
+                        if (dns.length == 2)
+                            wan.secDns = dns[1];
+                        else
+                            wan.secDns = "";
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanV6Array.unshift(wan);
+                        else
+                        wanV6Array.push(wan);
+                    }
+                } else {
+                    if (this.name == l3Forward.__ifAliasName)
+                        wanArray.unshift(wan);
+                    else
+                    wanArray.push(wan);
+                }
+
+                wan = {};
+            }
+        });
+        $.each(wanPppConListUSB, function() {
+            if (this.enable == 1 && this.transportType == "PPP3G") {
+                connType = "3G";
+                wan.name = this.name;
+                wan.connType = connType;
+                wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                wan.ip = this.externalIPAddress;
+                wan.mask = this.subnetMask || "255.255.255.255";
+                wan.dfgw = connType != "Bridge" ? (this.defaultGateway == "" ? "0.0.0.0" : this.defaultGateway) : "";
+                var dns = this.DNSServers.split(",");
+                wan.primDns = dns[0];
+                if (dns.length == 2)
+                    wan.secDns = dns[1];
+                else
+                    wan.secDns = "";
+                if (INCLUDE_IPV6) {
+                    if (this.X_TP_IPv4Enabled == 1)
+                    {
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanArray.unshift(wan);
+                        else
+                        wanArray.push(wan);
+                        wan = {};
+                    }
+                    if (this.X_TP_IPv6Enabled == 1)
+                    {
+                        wan.name = this.name;
+                        wan.connType = connType;
+                        wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                        wan.ip = this.X_TP_ExternalIPv6Address;
+                        wan.mask = "";
+                        wan.dfgw = this.X_TP_DefaultIPv6Gateway
+                        dns = this.X_TP_IPv6DNSServers.split(",");
+                        wan.primDns = dns[0];
+                        if (dns.length == 2)
+                            wan.secDns = dns[1];
+                        else
+                            wan.secDns = "";
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanV6Array.unshift(wan);
+                        else
+                        wanV6Array.push(wan);
+                    }
+                } else {
+                    if (this.name == l3Forward.__ifAliasName)
+                        wanArray.unshift(wan);
+                    else
+                    wanArray.push(wan);
+                }
+
+                wan = {};
+            }
+        });
+        $.each(wanIpConList, function() {
+            if (this.enable == 1) {
+                if (this.connectionType == "IP_Bridged") {
+                    connType = s_str.bridge;
+                } else if (this.connectionType == "IP_Routed") {
+                    /*
+                    var dslLnkStk = $.stkPop(this.__stack, 1);
+                    var wanComStk = $.stkPop(this.__stack, 2);
+                    var wanComInf = $.act(ACT_GET, WAN_COMMON_INTF_CFG, wanComStk, null, null);
+                    var wanDslLnk = $.act(ACT_GET, WAN_DSL_LINK_CFG, dslLnkStk, null, null);
+                    */
+                    /* CCy: Need to Change Here, can not get wanDslLnk, cannot keep it because will report error 9804, not found such object */
+                    if (!$.exe()) {
+                        /* MYUA: DSL Mode's IPoA IPoE still belongs to wanIPConList, have no difference with ETH Mode */
+                        /*
+                        if (wanComInf.WANAccessType == "DSL" && wanDslLnk.linkType == "IPoA") {
+                            connType = "IPoA";
+                        } else 
+                        */
+                        if (this.addressingType == "DHCP") {
+                            connType = s_str.dynip;
+                        } else if (this.addressingType == "Static") {
+                            connType = s_str.staip;
+                        }
+                    }
+                }
+
+                wan.name = this.name;
+                wan.connType = connType;
+                wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                wan.ip = this.externalIPAddress;
+                wan.mask = this.subnetMask;
+                wan.dfgw = (this.connectionType != "IP_Bridged") ? (this.defaultGateway == "" ? "0.0.0.0" : this.defaultGateway) : "";
+                var dns = this.DNSServers.split(",");
+                wan.primDns = dns[0];
+                if (dns.length == 2)
+                    wan.secDns = dns[1];
+                else
+                    wan.secDns = "";
+                if (INCLUDE_IPV6) {
+                    if (this.X_TP_IPv4Enabled == 1)
+                    {
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanArray.unshift(wan);
+                        else
+                        wanArray.push(wan);
+                        wan = {};
+                    }
+                    if (this.X_TP_IPv6Enabled == 1)
+                    {
+                        wan.name = this.name;
+                        wan.connType = connType;
+                        wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                        wan.ip = this.X_TP_ExternalIPv6Address;
+                        wan.mask = "";
+                        wan.dfgw = this.X_TP_DefaultIPv6Gateway
+                        dns = this.X_TP_IPv6DNSServers.split(",");
+                        wan.primDns = dns[0];
+                        if (dns.length == 2)
+                            wan.secDns = dns[1];
+                        else
+                            wan.secDns = "";
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanV6Array.unshift(wan);
+                        else
+                        wanV6Array.push(wan);
+                    }
+                } else {
+                    if (this.name == l3Forward.__ifAliasName)
+                        wanArray.unshift(wan);
+                    else
+                    wanArray.push(wan);
+                }
+
+                wan = {};
+            }
+        });
+        $.each(wanPppConList, function() {
+            if (this.enable == 1) {
+                wan.name = this.name;
+                wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                wan.ip = this.externalIPAddress;
+                wan.mask = "255.255.255.255";
+                wan.dfgw = (this.defaultGateway == "" ? "0.0.0.0" : this.defaultGateway);
+                var dns = this.DNSServers.split(",");
+                wan.primDns = dns[0];
+                if (dns.length == 2)
+                    wan.secDns = dns[1];
+                else
+                    wan.secDns = "";
+                wan.connType = this.transportType;
+                if (INCLUDE_IPV6) {
+                    if (this.X_TP_IPv4Enabled == 1)
+                    {
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanArray.unshift(wan);
+                        else
+                        wanArray.push(wan);
+                        wan = {};
+                    }
+                    if (this.X_TP_IPv6Enabled == 1)
+                    {
+                        wan.name = this.name;
+                        wan.connType = this.transportType;
+                        wan.mac = this.MACAddressOverride == 1 ? this.X_TP_ClonedMACAddress : this.MACAddress;
+                        wan.ip = this.X_TP_ExternalIPv6Address;
+                        wan.mask = "";
+                        wan.dfgw = this.X_TP_DefaultIPv6Gateway;
+                        dns = this.X_TP_IPv6DNSServers.split(",");
+                        wan.primDns = dns[0];
+                        if (dns.length == 2)
+                            wan.secDns = dns[1];
+                        else
+                            wan.secDns = "";
+
+                        if (this.name == l3Forward.__ifAliasName || (l3Forward.__ifAliasName == "NO_INTERFACE" && this.name == l3ForwardIpv6.__ifAliasName))
+                            wanV6Array.unshift(wan);
+                        else
+                        wanV6Array.push(wan);
+                    }
+                } else {
+                    if (this.name == l3Forward.__ifAliasName)
+                        wanArray.unshift(wan);
+                    else
+                    wanArray.push(wan);
+                }
+
+                wan = {};
+            }
+        });
+        if (INCLUDE_L2TP) {
+            $.each(wanL2tpConList, function() {
+                if (this.enable == 1) {
+                    wan.name = this.name;
+                    wan.mac = this.MACAddressOverride == 1 ? this.clonedMACAddress : this.MACAddress;
+                    wan.ip = this.externalIPAddress;
+                    wan.mask = "255.255.255.255";
+                    wan.dfgw = this.defaultGateway == "" ? "0.0.0.0" : this.defaultGateway;
+                    var dns = this.DNSServers.split(",");
+                    wan.primDns = dns[0];
+                    if (dns.length == 2)
+                        wan.secDns = dns[1];
+                    else
+                        wan.secDns = "";
+                    wan.connType = "L2TP";
+                    if (this.name == l3Forward.__ifAliasName)
+                        wanArray.unshift(wan);
+                    else
+                    wanArray.push(wan);
+
+                    wan = {};
+                }
+            });
+        }
+        if (INCLUDE_PPTP) {
+            $.each(wanPptpConList, function() {
+                if (this.enable == 1) {
+                    wan.name = this.name;
+                    wan.mac = this.MACAddressOverride == 1 ? this.clonedMACAddress : this.MACAddress;
+                    wan.ip = this.externalIPAddress;
+                    wan.mask = "255.255.255.255";
+                    wan.dfgw = this.defaultGateway == "" ? "0.0.0.0" : this.defaultGateway;
+                    var dns = this.DNSServers.split(",");
+                    wan.primDns = dns[0];
+                    if (dns.length == 2)
+                        wan.secDns = dns[1];
+                    else
+                        wan.secDns = "";
+                    wan.connType = "PPTP";
+                    if (this.name == l3Forward.__ifAliasName)
+                        wanArray.unshift(wan);
+                    else
+                    wanArray.push(wan);
+
+                    wan = {};
+                }
+            });
+        }
+    }
+
+    if (wanArray.length > 0)
+        clickWanV4(0);
+    if (wanV6Array.length > 0)
+        clickWanV6(0);
+}
+
+function clickWanV4(index) {
+    $('#nameV4').prop('value', wanArray[index].name);
+    $('#macAddrV4').prop('value', wanArray[index].mac);
+    $('#IPV4').prop('value', wanArray[index].ip);
+    $('#maskV4').prop('value', wanArray[index].mask);
+    $('#gateV4').prop('value', wanArray[index].dfgw);
+    $('#DNS1V4').prop('value', wanArray[index].primDns);
+    $('#DNS2V4').prop('value', wanArray[index].secDns);
+    $('#connTypeV4').prop('value', wanArray[index].connType);
+    if (index == 0)
+        $('#leftWanIpv4').addClass("gray");
+    else
+        $('#leftWanIpv4').removeClass("gray");
+    if (index == wanArray.length - 1)
+        $('#rightWanIpv4').addClass("gray");
+    else
+        $('#rightWanIpv4').removeClass("gray");
+
+    /* For PPPoE Second Connnection, only show first Connection */
+    $('#rightWanIpv4').addClass("gray");
+}
+
+function clickWanV6(index) {
+    $('#nameV6').prop('value', wanV6Array[index].name);
+    $('#macAddrV6').prop('value', wanV6Array[index].mac);
+    $('#IPV6').prop('value', wanV6Array[index].ip);
+    $('#maskV6').prop('value', wanV6Array[index].mask);
+    $('#gateV6').prop('value', wanV6Array[index].dfgw);
+    $('#DNS1V6').prop('value', wanV6Array[index].primDns);
+    $('#DNS2V6').prop('value', wanV6Array[index].secDns);
+    $('#connTypeV6').prop('value', wanV6Array[index].connType);
+    if (index == 0)
+        $('#leftWanIpv6').addClass("gray");
+    else
+        $('#leftWanIpv6').removeClass("gray");
+    if (index == wanV6Array.length - 1)
+        $('#rightWanIpv6').addClass("gray");
+    else
+        $('#rightWanIpv6').removeClass("gray");
+}
+
+$('#leftWanIpv4').on('click.status', function(e) {
+    if (wanIndex > 0) {
+        wanIndex = wanIndex - 1;
+        clickWanV4(wanIndex);
+    } else {
+        return;
+    }
+});
+$('#rightWanIpv4').on('click.status', function(e) {
+    if (wanIndex < wanArray.length - 1) {
+        wanIndex = wanIndex + 1;
+        clickWanV4(wanIndex);
+    } else {
+        return;
+    }
+});
+
+$('#leftWanIpv6').on('click.status', function(e) {
+    if (wanV6Index > 0) {
+        wanV6Index = wanV6Index - 1;
+        clickWanV6(wanV6Index);
+    } else {
+        return;
+    }
+});
+$('#rightWanIpv6').on('click.status', function(e) {
+    if (wanV6Index < wanV6Array.length - 1) {
+        wanV6Index = wanV6Index + 1;
+        clickWanV6(wanV6Index);
+    } else {
+        return;
+    }
+});
+
+
+function initWireless() {
+    var basicList = $.act(ACT_GL, LAN_WLAN, null, null, ["name",
+        "Standard",
+        "SSID",
+        "BSSID",
+        "X_TP_Band",
+        "subBand",
+        "PossibleChannels",
+        "AutoChannelEnable",
+        "Channel",
+        "X_TP_Bandwidth",
+        "Enable",
+        "BasicEncryptionModes",
+        "BeaconType"
+    ]);
+    if (!$.exe()) {
+        $.each(basicList, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                wlanObj_2g = this;
+            } else if (INCLUDE_LAN_WLAN_DUALBAND && "5GHz" == this.X_TP_Band) {
+                wlan5gArray.push(this);
+                if (1 == this.subBand)
+                wlanObj_5g = this;
+                else if (4 == this.subBand)
+                    wlanObj_5g_2 = this;
+                else
+                    /*do nothing*/;
+            }
+        });
+
+        initWirelessParam(wlanObj_2g, '_2g');
+        initWirelessParam(wlanObj_5g, '_5g');
+        initWirelessParam(wlanObj_5g_2, '_5g_2');
+    }
+
+    var vapList_2g = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_2g.__stack, ["Name", "Enable", "SSID", "SSIDAdvertisementEnable", "isolateClients", "BasicEncryptionModes", "BeaconType"]);
+    var vapList_5g = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_5g.__stack, ["Name", "Enable", "SSID", "SSIDAdvertisementEnable", "isolateClients", "BasicEncryptionModes", "BeaconType"]);
+    var vapList_5g_2 = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_5g_2.__stack, ["Name", "Enable", "SSID", "SSIDAdvertisementEnable", "isolateClients", "BasicEncryptionModes", "BeaconType"]);
+
+    var guestnetObj2G = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_2g.__stack, null, ["Enable", "Name"]);
+    var guestnetObj5G = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_5g.__stack, null, ["Enable", "Name"]);
+    var guestnetObj5G_2 = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_5g_2.__stack, null, ["Enable", "Name"]);
+
+    var localObj = $.act(ACT_GET, LOCAL, null, null, ["WirelessPhyBtn"]);
+
+    if (!$.exe()) {
+        $.each(vapList_2g, function(arg, index) {
+            if (this.name == guestnetObj2G.name)
+                vapObj_2g = this;
+        });
+        $.each(vapList_5g, function(arg, index) {
+            if (this.name == guestnetObj5G.name){
+                vapObj_5g = this;
+                wlan5gGstArray.push(this);
+            }     
+        });
+        $.each(vapList_5g_2, function(arg, index) {
+            if (this.name == guestnetObj5G_2.name){
+                vapObj_5g_2 = this;
+                wlan5gGstArray.push(this);
+            }
+        });
+        initGuestParam(vapObj_2g, '_2g', wlanObj_2g);
+        initGuestParam(vapObj_5g, '_5g', wlanObj_5g);
+        initGuestParam(vapObj_5g_2, '_5g_2', wlanObj_5g_2);
+    }
+
+    if (localObj.wirelessPhyBtn == false){
+        $('#conn_status_wireless_2g').removeClass('no-sec');
+        $('#conn_status_wireless_2g').addClass('disconn');
+        $('#conn_status_wireless_5g').removeClass('no-sec');
+        $('#conn_status_wireless_5g').addClass('disconn');
+        $('#conn_status_wireless_5g_2').removeClass('no-sec');
+        $('#conn_status_wireless_5g_2').addClass('disconn');
+
+        $('#conn_status_guest_2g').removeClass('no-sec');
+        $('#conn_status_guest_2g').addClass('disconn');
+        $('#conn_status_guest_5g').removeClass('no-sec');
+        $('#conn_status_guest_5g').addClass('disconn');
+        $('#conn_status_guest_5g_2').removeClass('no-sec');
+        $('#conn_status_guest_5g_2').addClass('disconn');
+    }
+}
+
+function initWirelessParam(wlanObj, band) {
+    $('#ssid' + band).prop('value', wlanObj.SSID);
+    if (wlanObj.enable == 1) {
+        $('#radio' + band).prop('value', s_str.on);
+        if (wlanObj.basicEncryptionModes == 'None' && wlanObj.beaconType == 'Basic') {
+            $('#conn_status_wireless' + band).addClass('no-sec');
+        } else {
+            $('#conn_status_wireless' + band).removeClass('no-sec');
+        }
+    } else {
+        $('#radio' + band).prop('value', s_str.off);
+        $('#conn_status_wireless' + band).removeClass('no-sec');
+        $('#conn_status_wireless' + band).addClass('disconn');
+    }
+    for (var key in strMode) {
+        if (key == wlanObj.standard) {
+            $('#mode' + band).prop('value', strMode[key]);
+        }
+    }
+    $('#channelWidth' + band).prop('value', (wlanObj.X_TP_Bandwidth == 'Auto') ? m_str.auto : (wlanObj.X_TP_Bandwidth + 'Hz'));
+    if (wlanObj.autoChannelEnable == 1) {
+        $('#channel' + band).prop('value', s_str.auto + '(' + wlanObj.channel + ')');
+    } else {
+        $('#channel' + band).prop('value', wlanObj.channel);
+    }
+    $('#mac' + band).prop('value', wlanObj.BSSID);
+}
+
+function initGuestParam(wlanObj, band, mainWlanObj) {
+    $('#guestSSID' + band).prop('value', wlanObj.SSID);
+    if (wlanObj.enable == 1 && mainWlanObj.enable == 1) {
+        $('#guestRadio' + band).prop('value', s_str.on);
+        if (wlanObj.basicEncryptionModes == 'None' && wlanObj.beaconType == 'Basic') {
+            $('#conn_status_guest' + band).addClass('no-sec');
+        } else {
+            $('#conn_status_guest' + band).removeClass('no-sec');
+        }
+    } else {
+        $('#guestRadio' + band).prop('value', s_str.off);
+        $('#conn_status_guest' + band).removeClass('no-sec');
+        $('#conn_status_guest' + band).addClass('disconn');
+    }
+    $('#HideSSID' + band).prop('value', wlanObj.SSIDAdvertisementEnable == 1 ? s_str.off : s_str.on);
+    $('#guestComm' + band).prop('value', wlanObj.isolateClients == 1 ? s_str.off : s_str.on);
+}
+
+function initLan() {
+    var index;
+    var lan = {};
+    var lanV6 = {};
+    var brList = $.act(ACT_GL, L2_BRIDGING_ENTRY, null, null, ["bridgeName"]);
+
+    if (!$.exe()) {
+        for (index = 0; index < brList.length; index++) {
+            var info = $.act(ACT_GET, LAN_HOST_CFG, brList[index].__stack, null, null);
+            var ipList = $.act(ACT_GS, LAN_IP_INTF, null, brList[index].__stack, ["IPInterfaceIPAddress", "IPInterfaceSubnetMask", "X_TP_MACAddress"]);
+            var infoV6 = $.act(ACT_GET, LAN_IP6_HOST_CFG, brList[index].__stack, null, null);
+            var ipListV6 = $.act(ACT_GS, LAN_IP6_INTF, null, brList[index].__stack, ["IPv6InterfaceAddress", "IPv6InterfaceAddressPrefixLength", "IPv6InterfaceAddressingType"]);
+            if (!$.exe()) {
+                if (info.IPInterfaceNumberOfEntries == 1) {
+                    lan.IPInterfaceIPAddress = ipList[0].IPInterfaceIPAddress;
+                    lan.IPInterfaceSubnetMask = ipList[0].IPInterfaceSubnetMask;
+                    lan.X_TP_MACAddress = ipList[0].X_TP_MACAddress;
+                    lan.DHCPServerEnable = info.DHCPServerEnable;
+                    lanArray[index] = lan;
+                    lan = {};
+                }
+
+                if (infoV6.IPv6InterfaceNumberOfEntries == 1) {
+                    lanV6.X_TP_MACAddress = ipList[0].X_TP_MACAddress;
+                    //lanV6.IPv6SitePrefix = infoV6.IPv6SitePrefix;
+                    lanV6.IPv6SitePrefix = ipListV6[0].IPv6InterfaceAddress;
+                    lanV6.IPv6SitePrefixLength = infoV6.IPv6SitePrefixLength;
+                    if (infoV6.IPv6SitePrefixConfigType == 'Static') {
+                        lanV6.IPv6SitePrefixConfigType = s_str.staip;
+                    } else if (infoV6.IPv6SitePrefixConfigType == 'Delegated') {
+                        lanV6.IPv6SitePrefixConfigType = n_str.dhcp.t_delegated;
+                    }
+                    lanV6Array[index] = lanV6;
+                    lanV6 = {};
+                }
+            }
+        }
+        clickLanV4(0);
+        clickLanV6(0);
+    }
+}
+
+function clickLanV6(index) {
+    $('#macAddrLanV6').prop('value', lanV6Array[index].X_TP_MACAddress);
+    $('#IPLanV6').prop('value', lanV6Array[index].IPv6SitePrefix);
+    $('#prefixLanV6').prop('value', lanV6Array[index].IPv6SitePrefixLength);
+    $('#assignedLanV6').prop('value', lanV6Array[index].IPv6SitePrefixConfigType);
+    if (index == 0)
+        $('#leftLanIpv6').addClass("gray");
+    else
+        $('#leftLanIpv6').removeClass("gray");
+    if (index == lanV6Array.length - 1)
+        $('#rightLanIpv6').addClass("gray");
+    else
+        $('#rightLanIpv6').removeClass("gray");
+}
+
+function clickLanV4(index) {
+    $('#macAddrLanV4').prop('value', lanArray[index].X_TP_MACAddress);
+    $('#IPLanV4').prop('value', lanArray[index].IPInterfaceIPAddress);
+    $('#maskLanV4').prop('value', lanArray[index].IPInterfaceSubnetMask);
+    $('#dhcpLanV4').prop('value', lanArray[index].DHCPServerEnable == 1 ? s_str.on : s_str.off);
+    if (index == 0)
+        $('#leftLanIpv4').addClass("gray");
+    else
+        $('#leftLanIpv4').removeClass("gray");
+    if (index == lanArray.length - 1)
+        $('#rightLanIpv4').addClass("gray");
+    else
+        $('#rightLanIpv4').removeClass("gray");
+}
+
+/*
+function initDsl() {
+    if ($.sysMode != 'DSL') {
+        $('#dslContent').addClass('nd');
+        return;
+    }
+
+    var dslStk;
+    var wanComInfList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    $.exe(function() {
+        $.each(wanComInfList, function() {
+            if (this.WANAccessType == "DSL") {
+                dslStk = this.__stack;
+            } else {
+                //$('#dslContent').addClass('nd');
+            }
+        });
+
+        var wanDslCfg = $.act(ACT_GET, WAN_DSL_INTF_CFG, dslStk, null, ["status", "modulationType", "X_TP_AdslModulationCfg",
+            "upstreamCurrRate", "downstreamCurrRate", "X_TP_AnnexType",
+            "upstreamMaxRate", "downstreamMaxRate",
+            "upstreamNoiseMargin", "downstreamNoiseMargin",
+            "upstreamAttenuation", "downstreamAttenuation"
+        ]);
+
+        var wanDslInfSta = $.act(ACT_GL, WAN_DSL_INTF_STATS_TOTAL, dslStk, null, ["ATUCCRCErrors", "CRCErrors", "ATUCFECErrors", "FECErrors",
+            "SeverelyErroredSecs", "X_TP_US_SeverelyErroredSecs",
+            "erroredSecs", "X_TP_US_ErroredSecs"
+        ]);
+        $.exe(function() {
+            if ((wanDslCfg.status == "Initializing") || (wanDslCfg.status == "EstablishingLink")) {
+                $('#dslLink').prop('value', m_str.initing);
+                $('#dslMode').prop('value', m_str.obtaining);
+            } else if (wanDslCfg.status == "Up") {
+                $('#dslLink').prop('value', m_str.connected);
+                $('#dslMode').prop('value', wanDslCfg.modulationType == "Multimode" ? s_str.multimode : wanDslCfg.modulationType);
+            } else {
+                $('#dslLink').prop('value', m_str.disconnected);
+                $('#dslMode').prop('value', wanDslCfg.X_TP_AdslModulationCfg == "Multimode" ? s_str.multimode : wanDslCfg.X_TP_AdslModulationCfg);
+            }
+            if (wanDslCfg.X_TP_AnnexType)
+                $('#annex').prop('value', wanDslCfg.X_TP_AnnexType);
+            if (wanDslCfg.upstreamCurrRate)
+                $('#upstreamCurrRate').html(wanDslCfg.upstreamCurrRate);
+            if (wanDslCfg.downstreamCurrRate)
+                $('#downstreamCurrRate').html(wanDslCfg.downstreamCurrRate);
+            if (wanDslCfg.upstreamMaxRate)
+                $('#upstreamMaxRate').html(wanDslCfg.upstreamMaxRate);
+            if (wanDslCfg.downstreamMaxRate)
+                $('#downstreamMaxRate').html(wanDslCfg.downstreamMaxRate);
+            if (wanDslCfg.upstreamNoiseMargin)
+                $('#upstreamNoiseMargin').html(wanDslCfg.upstreamNoiseMargin / 10);
+            if (wanDslCfg.downstreamNoiseMargin)
+                $('#downstreamNoiseMargin').html(wanDslCfg.downstreamNoiseMargin / 10);
+            if (wanDslCfg.upstreamAttenuation)
+                $('#upstreamAttenuation').html(wanDslCfg.upstreamAttenuation / 10);
+            if (wanDslCfg.downstreamAttenuation)
+                $('#downstreamAttenuation').html(wanDslCfg.downstreamAttenuation / 10);
+            $('#UCRC').html((wanDslInfSta.ATUCCRCErrors) ? wanDslInfSta.ATUCCRCErrors : 0);
+            $('#DCRC').html((wanDslInfSta.CRCErrors) ? wanDslInfSta.CRCErrors : 0);
+        });
+    });
+}
+*/
+
+
+$('#leftLanIpv4').on('click.status', function(e) {
+    if (lanIndex > 0) {
+        lanIndex = lanIndex - 1;
+        clickLanV4(lanIndex);
+    } else {
+        return;
+    }
+});
+$('#rightLanIpv4').on('click.status', function(e) {
+    if (lanIndex < lanArray.length - 1) {
+        lanIndex = lanIndex + 1;
+        clickLanV4(lanIndex);
+    } else {
+        return;
+    }
+});
+$('#leftLanIpv6').on('click.status', function(e) {
+    if (lanV6Index > 0) {
+        lanV6Index = lanV6Index - 1;
+        clickLanV6(lanV6Index);
+    } else {
+        return;
+    }
+});
+$('#rightLanIpv6').on('click.status', function(e) {
+    if (lanV6Index < lanV6Array.length - 1) {
+        lanV6Index = lanV6Index + 1;
+        clickLanV6(lanV6Index);
+    } else {
+        return;
+    }
+});
+$('#showWireless_2g').on('click.status', function(e) {
+    if (wlanPageFromIndex == 2)
+    $('#conn_status_wireless_5g').addClass('hidden');
+    else
+        $('#conn_status_wireless_5g_2').addClass('hidden');
+
+    $('#conn_status_wireless_2g').removeClass('hidden');
+    wlanPageFromIndex = 1;
+});
+$('#showWireless_5g').on('click.status', function(e) {
+    if (wlanPageFromIndex == 1)
+    $('#conn_status_wireless_2g').addClass('hidden');
+    else
+        $('#conn_status_wireless_5g_2').addClass('hidden');
+    
+    $('#conn_status_wireless_5g').removeClass('hidden');
+    wlanPageFromIndex = 2;
+});
+$('#showWireless_5g_2').on('click.status', function(e) {
+    if (wlanPageFromIndex == 2)
+        $('#conn_status_wireless_5g').addClass('hidden');
+    else
+        $('#conn_status_wireless_2g').addClass('hidden');
+    
+    $('#conn_status_wireless_5g_2').removeClass('hidden');
+    wlanPageFromIndex = 3;
+});
+/*$('#leftWlan5g').on('click.status', function(e) {
+    initWirelessParam(wlan5gArray[0], "_5g");
+    $('#leftWlan5g').addClass("gray");
+    $('#rightWlan5g').removeClass("gray");
+});
+$('#rightWlan5g').on('click.status', function(e) {
+    initWirelessParam(wlan5gArray[1], "_5g");
+    $('#leftWlan5g').removeClass("gray");
+    $('#rightWlan5g').addClass("gray");
+});*/
+
+/*$('#showGuest_2g').on('click.status', function(e) {
+    $('#conn_status_guest_5g').addClass('hidden');
+    $('#conn_status_guest_2g').removeClass('hidden');
+});
+$('#showGuest_5g').on('click.status', function(e) {
+    $('#conn_status_guest_2g').addClass('hidden');
+    $('#conn_status_guest_5g').removeClass('hidden');
+    initGuestParam(wlan5gGstArray[0], "_5g");
+    $('#rightWlan5gGuest').removeClass("gray");
+    $('#leftWlan5gGuest').addClass("gray");
+});*/
+$('#showGuest_2g').on('click.status', function(e) {
+    if (wlanGuestPageFromIdx == 2)
+        $('#conn_status_guest_5g').addClass('hidden');
+    else
+        $('#conn_status_guest_5g_2').addClass('hidden');
+
+    $('#conn_status_guest_2g').removeClass('hidden');
+    wlanGuestPageFromIdx = 1;
+});
+$('#showGuest_5g').on('click.status', function(e) {
+    if (wlanGuestPageFromIdx == 1)
+        $('#conn_status_guest_2g').addClass('hidden');
+    else
+        $('#conn_status_guest_5g_2').addClass('hidden');
+    
+    $('#conn_status_guest_5g').removeClass('hidden');
+    wlanGuestPageFromIdx = 2;
+});
+$('#showGuest_5g_2').on('click.status', function(e) {
+    if (wlanGuestPageFromIdx == 2)
+        $('#conn_status_guest_5g').addClass('hidden');
+    else
+        $('#conn_status_guest_2g').addClass('hidden');
+    
+    $('#conn_status_guest_5g_2').removeClass('hidden');
+    wlanGuestPageFromIdx = 3;
+}); 
+/*$('#leftWlan5gGuest').on('click.status', function(e) {
+    initGuestParam(wlan5gGstArray[0], "_5g");
+    $('#leftWlan5gGuest').addClass("gray");
+    $('#rightWlan5gGuest').removeClass("gray");
+});
+$('#rightWlan5gGuest').on('click.status', function(e) {
+    initGuestParam(wlan5gGstArray[1], "_5g");
+    $('#leftWlan5gGuest').removeClass("gray");
+    $('#rightWlan5gGuest').addClass("gray");
+});*/
+</script>
+
+
+<div id="" class="map-panel-cnt">
+    <div class="pure-g">
+        <div class="pure-u-1-2">
+            <div class="content">
+                <h4 class="status">
+                    <span class="status-icon status-icon-internet"></span>
+                    <span id="status_internet_title" class="T_internet">Internet</span>
+                    <!-- <span id="conn_status_internet" class="conn-status conn-internet-connected"></span> -->
+                </h4>
+                <div class="mode-change">
+                    <span class="mode-select">IPv4</span>
+                    <span>IPv6</span>
+                </div>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main">
+                        <div class="pure-control-group nd">
+                            <b class="m T_c_name">Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="nameV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="macAddrV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_ipaddr">IP Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="IPV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_netmask">Subnet Mask:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="maskV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_defgw">Default Gateway:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="gateV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_primdns">Primary DNS:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="DNS1V4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_secdns">Secondary DNS:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="DNS2V4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_conntype">Connection Type:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="connTypeV4" />
+                        </div>
+                    </div>
+                    <div class="status-panel-page nd">
+                        <span class="page gray" id="leftWanIpv4"></span>
+                        <span class="page right gray" id="rightWanIpv4"></span>
+                    </div>
+                </form>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main">
+                        <div class="pure-control-group nd">
+                            <b class="m T_c_name">Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="nameV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="macAddrV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_ipaddr">IP Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="IPV6" />
+                        </div>
+                        <div class="pure-control-group" style="display: none">
+                            <b class="m T_c_netmask">Subnet Mask:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="maskV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_defgw">Default Gateway:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="gateV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_primdns">Primary DNS:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="DNS1V6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_secdns">Secondary DNS:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="DNS2V6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_conntype">Connection Type:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="connTypeV6" />
+                        </div>
+                    </div>
+                    <div class="status-panel-page nd">
+                        <span class="page gray" id="leftWanIpv6"></span>
+                        <span class="page right gray" id="rightWanIpv6"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="pure-u-1-2">
+            <div class="content">
+                <h4 class="status">
+                    <span class="status-icon status-icon-wireless"></span>
+                    <span id="status_wirless_title" class="T_wireless">Wireless</span>
+                    <span id="conn_status_wireless_2g" class="conn-status conn-wireless-connected"></span>
+                    <span id="conn_status_wireless_5g" class="conn-status conn-wireless-connected hidden"></span>
+                    <span id="conn_status_wireless_5g_2" class="conn-status conn-wireless-connected hidden"></span>
+                </h4>
+                <div class="mode-change mode-3">
+                    <span id="showWireless_2g" class="mode-select">2.4G</span>
+                    <span id="showWireless_5g">5G-1</span>
+                    <span id="showWireless_5g_2">5G-2</span>
+                </div>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main">
+                        <div class="pure-control-group">
+                            <b class="m T_c_netname">Network Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="ssid_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_wlradio">Wireless Radio:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="radio_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_mode">Mode:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="mode_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_chnwidth">Channel Width:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="channelWidth_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_channel">Channel:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="channel_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="mac_2g" />
+                        </div>
+                    </div>
+                </form>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main">
+                        <div class="pure-control-group">
+                            <b class="m T_c_netname">Network Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="ssid_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_wlradio">Wireless Radio:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="radio_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_mode">Mode:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="mode_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_chnwidth">Channel Width:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="channelWidth_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_channel">Channel:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="channel_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="mac_5g" />
+                        </div>
+                    </div>
+    
+                </form>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main">
+                        <div class="pure-control-group">
+                            <b class="m T_c_netname">Network Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="ssid_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_wlradio">Wireless Radio:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="radio_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_mode">Mode:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="mode_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_chnwidth">Channel Width:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="channelWidth_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_channel">Channel:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="channel_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="mac_5g_2" />
+                        </div>
+                    </div>
+    
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1-2">
+            <div class="content">
+                <h4 class="status">
+                    <span class="status-icon status-icon-lan"></span>
+                    <span id="status_lan_title" class="T_c_lan">LAN</span>
+                    <span></span>
+                </h4>
+                <div class="mode-change">
+                    <span class="mode-select">IPv4</span>
+                    <span>IPv6</span>
+                </div>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main s">
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="macAddrLanV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_ipaddr">IP Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="IPLanV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_netmask">Subnet Mask:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="maskLanV4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_dhcp">DHCP:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="dhcpLanV4" />
+                        </div>
+                    </div>
+                    <div class="status-panel-page nd">
+                        <span class="page gray" id="leftLanIpv4"></span>
+                        <span class="page right gray" id="rightLanIpv4"></span>
+                    </div>
+                </form>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main s">
+                        <div class="pure-control-group">
+                            <b class="m T_c_macaddr">MAC Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="macAddrLanV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_ipaddr">IP Address:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="IPLanV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_plen">Prefix Length:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="prefixLanV6" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_assigntype">Assigned Type:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="assignedLanV6" />
+                        </div>
+                    </div>
+                    <div class="status-panel-page nd">
+                        <span class="page gray" id="leftLanIpv6"></span>
+                        <span class="page right gray" id="rightLanIpv6"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="pure-u-1-2">
+            <div class="content">
+                <h4 class="status">
+                    <span class="status-icon status-icon-wireless"></span>
+                    <span id="status_guest_title" class="T_c_wlguest">Guest</span>
+                    <span id="conn_status_guest_2g" class="conn-status conn-wireless-connected"></span>
+                    <span id="conn_status_guest_5g" class="conn-status conn-wireless-connected hidden"></span>
+                    <span id="conn_status_guest_5g_2" class="conn-status conn-wireless-connected hidden"></span>
+                </h4>
+                <div class="mode-change mode-3">
+                    <span id="showGuest_2g" class="mode-select">2.4G</span>
+                    <span id="showGuest_5g">5G-1</span>
+                    <span id="showGuest_5g_2">5G-2</span>
+                </div>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main s">
+                        <div class="pure-control-group">
+                            <b class="m T_c_netname">Network Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestSSID_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_hidessid">Hide SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="HideSSID_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_wlradio">Wireless Radio:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestRadio_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_seeeach">See each other:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestComm_2g" />
+                        </div>
+                    </div>
+                </form>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main s">
+                        <div class="pure-control-group">
+                            <b class="m T_c_netname">Network Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestSSID_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_hidessid">Hide SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="HideSSID_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_wlradio">Wireless Radio:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestRadio_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_seeeach">See each other:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestComm_5g" />
+                        </div>
+                    </div>
+                </form>
+                <form class="pure-form pure-form-aligned">
+                    <div class="status-panel-main s">
+                        <div class="pure-control-group">
+                            <b class="m T_c_netname">Network Name:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestSSID_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_hidessid">Hide SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="HideSSID_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_wlradio">Wireless Radio:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestRadio_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="m T_c_seeeach">See each other:</b>
+                            <input type="text" readonly="ture" class="tp-input-text l" id="guestComm_5g_2" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>   
+</div>
+
+<script type="text/javascript">
+//$(document).ready(function(e) {
+    initWan();
+    initWireless();
+    initLan();
+//});
+</script>

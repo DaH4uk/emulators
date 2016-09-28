@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/Advanced_OperationMode_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 09 Nov 2009 11:18:07 GMT -->
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - </title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="usp_style.css">
+<script language="JavaScript" type="text/javascript" src="state.js"></script>
+<script language="JavaScript" type="text/javascript" src="jquery.js"></script>
+<script language="JavaScript" type="text/javascript" src="general.js"></script>
+<script language="JavaScript" type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" language="JavaScript" src="help.js"></script>
+<script type="text/javascript" language="JavaScript" src="detect.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+var sw_mode = '';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '33663168'; }
+function login_ip_str() { return '192.168.1.2'; }
+function login_ip_str_now() { return '192.168.1.2'; }
+function login_mac_str() { return '00:1A:92:47:00:02'; }
+
+var wireless = [];	// [[MAC, associated, authorized], ...]
+
+function initial(){
+	show_banner(1);
+	show_menu(5,6,1);
+	show_footer();
+	setmode();
+	setScenerion(sw_mode);
+}
+
+function setmode(){
+	if(wan_route_x == "IP_Routed" && wan_nat_x == '1'){
+		sw_mode = '1';
+	}
+	else if(wan_route_x == "IP_Routed" && wan_nat_x == '0'){
+		sw_mode = '2';
+	}
+	else if(wan_route_x == "IP_Bridged"){
+		sw_mode = '3';
+	}
+}
+
+function saveMode(){
+		
+	if(document.form.sw_mode[sw_mode-1].checked == true){
+		alert("RT-N16 have already configured to be this mode.");
+		return false;
+	}
+	
+	if(document.form.sw_mode[0].checked == true){
+		document.form.flag.value = 'router_mode';
+		document.form.wan_proto.value = 'pppoe';
+		document.form.wan_nat_x.value = '1';
+		document.form.wan_route_x.value = 'IP_Routed';
+	}
+	else if(document.form.sw_mode[1].checked == true){
+		document.form.flag.value = 'router_mode';
+		document.form.wan_proto.value = 'static';
+		document.form.wan_nat_x.value = '0';
+		document.form.wan_route_x.value = 'IP_Routed';
+	}
+	else if(document.form.sw_mode[2].checked == true){
+		document.form.flag.value = 'bridge_mode';
+		document.form.wan_proto.value = 'static';
+		document.form.wan_nat_x.value = '0';
+		document.form.wan_route_x.value = 'IP_Bridged';
+	}
+	
+	document.form.submit();
+}
+
+function applyRule(){
+	document.form.action_mode.value = " Apply ";
+	document.form.next_page.value = "";	
+	document.form.submit();
+}
+
+function done_validating(action){
+	refreshpage();
+}
+
+var $j = jQuery.noConflict();
+var id_WANunplungHint;
+
+function setScenerion(mode){
+	if(mode == '1'){
+		$j("#Senario").css("background","url(images/gw.gif) no-repeat");
+		$j("#radio2").hide();
+		$j("#Internet_span").hide();
+		$j("#ap-line").show();
+		//$j("#ap-line").animate({width:"133px"}, 2000);
+		$j("#AP").html("Internet");
+		$j("#mode_desc").html("In the Brodaband share mode, RT-N16 connects to the Internet via PPPoE,Automatic IP, PPTP, L2TP, or Static IP.It provides you with wireless radio signal. The NAT, firewall, and broadband sharing services for LAN clients are enabled. Furthermore, it also support UPnP and Dynamic DNS for SOHO or home user.");
+		//$j("#nextButton").attr("value","Next");
+	}	
+	else if(mode == '2'){
+		$j("#Senario").css("background", "url(images/rt.gif) no-repeat");
+		//$j("#radio2").css("display", "block");
+		$j("#Internet_span").css("display", "block");
+		$j("#AP").html("Router");
+		$j("#mode_desc").html("In the router mode, We suggest you to connect RT-N16 with the existing LAN via the ethernet cable in WAN port. Then select the proper settings to build WAN connection.RT-N16 extends your LAN and provides you configure the static routing protocol but disables NAT to allow connection and service accessing between clients under RT-N16 and clients in LAN( <span style='color:#EE0000'>Note. You have to add static routing rule in original router.</span>).");
+		//$j("#nextButton").attr("value","Next");
+		clearTimeout(id_WANunplungHint);
+		$j("#Unplug-hint").css("display", "none");
+		$j("#ap-line").css("display", "none");
+	}
+	else if(mode == '3'){
+		$j("#Senario").css("background", "url(images/ap.gif) no-repeat");
+		$j("#radio2").css("display", "none");
+		$j("#Internet_span").css("display", "block");
+		$j("#ap-line").css("display", "block");
+		$j("#AP").html("Router");
+		$j("#mode_desc").html("In the AP mode, we suggest you to connect RT-N16 with LAN via the ethernet cable in any port to get IP for connecting to WAN. At this time, four LAN ports and WAN port in the RT-N16 and other wireless devices are bridged together.It provides you with wireless radio signal. The NAT, firewall, and broadband sharing services are disabled.");
+		//$j("#nextButton").attr("value","Next");
+		clearTimeout(id_WANunplungHint);
+		$j("#Unplug-hint").css("display", "none");
+	}
+}
+
+</script>
+</head>
+
+<body onload="initial();" onunLoad="disable_auto_hint(11, 3);return unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="Advanced_OperationMode_Content.html#" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" id="ruleForm" action="https://admin:admin@192.168.1.1/QIS_wizard.htm">
+<input type="hidden" name="productid" value="RT-N16">
+
+<input type="hidden" name="prev_page" value="Advanced_OperationMode_Content.html">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="wan_proto" value="dhcp">
+<input type="hidden" name="wan_nat_x" value="0">
+<input type="hidden" name="wan_route_x" value="IP_Routed">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+
+<input type="hidden" name="flag" value="">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td width="23">&nbsp;</td>
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div><br />
+		<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td valign="top" >
+		
+<table width="95%" border="0" align="center" cellpadding="5" cellspacing="0" class="FormTitle">
+	<thead>
+	<tr>
+		<td>System Setup - Operation Mode</td>
+	</tr>
+	</thead>
+	<!--tbody>
+	<tr>
+	  <td bgcolor="#FFFFFF">RT-N16 supports three operation modes to meet different requirements. Please select the mode that match your situation.</td>
+	  </tr>
+	</tbody-->
+	<tr>
+	  <td bgcolor="#C0DAE4">
+	<fieldset style="width:95%; margin:0 auto; padding-bottom:3px;">
+	<legend>
+		<span style="font-size:13px; font-weight:bold;">
+			<input type="radio" name="sw_mode" class="input" value="1" onclick="setScenerion(1);" checked>Broadband Share
+			<input type="radio" name="sw_mode" class="input" value="2" onclick="setScenerion(2);" >Router
+			<input type="radio" name="sw_mode" class="input" value="3" onclick="setScenerion(3);" >Access Point
+		</span>
+	</legend>
+	<div id="mode_desc" style="position:relative;display:block; height:60px;z-index:90;">
+		In the router mode, We suggest you to connect RT-N16 with the existing LAN via the ethernet cable in WAN port. Then select the proper settings to build WAN connection.
+	</div>
+	<div id="Senario">
+		<span style="margin:140px 0px 0px 200px;">RT-N16</span>
+		<span id="AP" style="margin:120px 0px 0px 355px;">Access Point</span>
+		<span id="Internet_span" style="margin:70px 0px 0px 405px;">Internet</span>
+		<span style="margin:220px 0px 0px 40px;">Wireless Clients</span>
+		<span style="margin:220px 0px 0px 360px;">Wired Clients</span>
+		<!--EMBED id="radio1" style="position:absolute; margin:150px 0px 0px 100px;" src="images/radio1.gif" width=85 height=85 type=application/x-shockwave-flash allowscriptaccess="never" wmode="transparent"></EMBED-->
+			<object id="radio1" style="position:absolute; margin:130px 0px 0px 100px;" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="85" height="85">
+			<param name="movie" value="images/radio1.gif" />
+			<param name="wmode" value="transparent">
+			<param name="quality" value="high" />
+			<embed src="images/radio1.gif" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="85" height="85" wmode="transparent"></embed>
+			</object>
+			<object id="radio2" style="position:absolute; margin:70px 0px 0px 240px; background:transparent;" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="85" height="85">
+			<param name="movie" value="images/radio2.gif" />
+			<param name="wmode" value="transparent">
+			<param name="quality" value="high" />
+			<embed src="images/radio2.gif" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="85" height="85" wmode="transparent"></embed>
+			</object>
+		<!--EMBED id="radio2" style="position:absolute; margin:90px 0px 0px 240px;" src="images/radio2.gif" width=85 height=85 type=application/x-shockwave-flash allowscriptaccess="never" wmode="transparent"></EMBED-->
+		<div id="ap-line" style="border:0px solid #333;margin:77px 0px 0px 245px;width:133px; height:41px; position:absolute; background:url(images/wanlink.gif) no-repeat;"></div>
+		<div id="Unplug-hint" style="border:2px solid red; background-color:#FFF; padding:3px;margin:0px 0px 0px 150px;width:250px; position:absolute; display:block; display:none;">Please check the cable between the WAN port of RT-N16 and Internet is connected correctly or not.</div>
+		<div id="switch_hint"></div>
+	</div>	
+	</fieldset>
+	  </td>
+	</tr>
+	<tr>
+		<td align="right" bgColor="#C0DAE4">
+			<input name="button" type="button" class="button" onClick="saveMode();" value="Save">
+		</td>
+	</tr>
+</table>
+</td>
+		<td id="help_td" style="width:15px;" valign="top">
+			<div id="helpicon" onClick="openHint(0,0);" title="Click to open Help."><img src="images/help.gif" /></div>
+	  	<div id="hintofPM" style="display:none;">
+	    <table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:;" onclick="closeHint()" ><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tr>				
+			<td valign="top" >
+			  <div class="hint_body2" id="hint_body"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="Advanced_OperationMode_Content.html#" frameborder="0"></iframe>
+			</td>
+		  </tr>
+			</table>
+	  	</div><!--End of hintofPM--> 
+		 </td>
+		</tr>
+      </table>
+		<!--===================================Ending of Main Content===========================================-->
+	</td>
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+</form>
+<form name="hint_form"></form>
+<div id="footer"></div>
+</body>
+
+<!-- Mirrored from 192.168.1.1/Advanced_OperationMode_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 09 Nov 2009 11:18:07 GMT -->
+</html>

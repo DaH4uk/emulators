@@ -1,0 +1,205 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/DEV_device.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "basic";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "basic";
+var G_Page = "DEV_device";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//LAN
+var LanHosts = [];
+var LanSelect = [];
+var LanWireHosts = [];
+var LanWirelessHosts = [];
+var LanActive = [];
+var m = 0;
+LanHosts[m] = [ m+1,
+"192.168.1.2", //IPAddress
+"00:00:00:00:00:00".toUpperCase(),//MACAddress
+"NoName"
+];
+LanSelect[m] = "InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1.";
+++m;
+function LanSelectHosts(){
+var LanTemp=[];
+var _k=0,_l=0;
+for(var i=0;i < LanSelect.length; i++)
+{
+LanTemp =LanSelect[i].split('.');
+if(LanTemp[3]=='LANEthernetInterfaceConfig'){
+LanWireHosts[_k]=LanHosts[i];
+LanWireHosts[_k][0]=_k+1;
+_k++;
+}
+else if(LanTemp[3]=='WLANConfiguration'){
+LanWirelessHosts[_l]=LanHosts[i];
+LanWirelessHosts[_l][0]=_l+1;
+_l++;
+}
+}
+}
+function uiRefresh()
+{
+$H({
+'obj-action' : 'set',
+'var:page' : 'dhcpclients',
+'var:errorpage' : 'dhcpclients',
+'getpage' : '../html/basic_home.htm',
+'errorpage' : '../html/basic_home.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+$F(':InternetGatewayDevice.LANDevice.Hosts.HostDetectAction', '1');
+}
+function uiOnload(){
+LanSelectHosts();
+$T('td_lanClients',LanWireHosts);
+$T('td_lanWirelessClients',LanWirelessHosts);
+}
+addListeners(uiOnload);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="DEV_device.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+.page_title{ width: 100%; height: 5px; font: bold 17px arial; color: #9d98ff; position: absolute; top: 0px; left: 0px;}
+.title_line{border-top:2px solid #9966FF; margin-top:5px; padding:8px 0 0;}
+.main{ width: 100%; overflow: auto; position: absolute; top: 20px; left: 0px; bottom: 30px;}
+-->
+</style>
+<div class="page_title" id="lang_header">Attached Devices</div>
+<div id="main" class="main">
+<table class="content" style="background:white; width:100%;">
+<tr>
+<!-- config -->
+<td class="mainFramWidth">
+<div class="config3">
+<a tabindex=-1 href="javascript:loadhelp('')"><p class="bk_black3_black" id="lang_wired_devices" style="padding:25 0 10;margin-top:15px ">Wired Devices</p></a>
+<table border="0" id="td_lanClients" cellspacing="0" cellpadding="2" width="100%" class="td_table_s3">
+<tr class="table_header">
+<td id="td_lanClients_head0" nowrap="" width="10%" align="center">#</td>
+<td id="td_lanClients_head1" nowrap="" width="30%" align="center">IP Address</td>
+<td id="td_lanClients_head2" nowrap="" width="30%" align="center">MAC Address</td>
+<td id="td_lanClients_head3" nowrap="" width="30%" align="center">Device Name</td>
+</tr>
+</table>
+<p class="do bk_black3_black_noborder" id="lang_wireless_devices" style="padding:25 0 10;margin-top:15px ">Wireless Devices(Wireless intruders also show up here)</p>
+<table border="0" id="td_lanWirelessClients" cellspacing="0" cellpadding="2" width="100%" class="td_table_s3">
+<tr class="table_header">
+<td id="td_wirelessClients_head0" nowrap="" width="10%" align="center">#</td>
+<td id="td_wirelessClients_head1" nowrap="" width="30%" align="center">IP Address</td>
+<td id="td_wirelessClients_head2" nowrap="" width="30%" align="center">MAC Address</td>
+<td id="td_wirelessClients_head3" nowrap="" width="30%" align="center">Device Name</td>
+</tr>
+</table>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="3">
+<tr>
+<td nowrap="" colspan="2" style="padding-top:15px;"><div class="title_line">&nbsp;</div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2" align="center">
+<input class="common_bt" type="button" name="refresh" id="refresh" value="Refresh" >
+</td>
+</tr>
+</table>
+</div><!--end of config3-->
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("DEV_device")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

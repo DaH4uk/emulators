@@ -1,0 +1,372 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/STR_add.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "STR_routes";
+var G_SubPage = "STR_add";
+var G_ErrorPage = "-";
+//Static Routing List
+var G_EbAddress = "1";
+var G_IPAddress = "192.168.1.1";
+var G_SubAddress = "255.255.255.0";
+var G_IPRouters = "192.168.1.1";
+var G_SubnetMask = "255.255.255.0";
+var G_AllowOtherGateway = "0";
+var G_Enable=G_Status=G_DestIPAddress=G_DestSubnetMask=G_GatewayIPAddress=G_Interface=G_ForwardingMetric=G_StaticRoute=G_ErrorInfo='';
+var wanConnection = new Array();
+var n = 0;
+wanConnection[n] = new Array();
+wanConnection[n][0] = "WAN";//name
+wanConnection[n][1] = "InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1";//path
+wanConnection[n][2] = "Disconnected";
+++n;
+//获取桥连接名
+var m = 0;
+wanConnection[n] = new Array();
+wanConnection[n][0] = "LAN";//name
+wanConnection[n][1] = "InternetGatewayDevice.LANDevice.1";//path
+++n;
+++m;
+var option = '-';
+var path_index = -1;
+function uiOnload()
+{
+}
+function checkBlank(fieldObj)
+{
+if (fieldObj.value.length < 1)
+{
+return false;
+}
+return true;
+}
+function checkInt(text_input_field, min_value, max_value)
+{
+var str = text_input_field.value;
+if (text_input_field.value.length==0)
+{
+return false;
+}
+else
+{
+for (var i=0; i < str.length; i++)
+{
+if ((str.charAt(i) < '0') || (str.charAt(i) > '9'))
+return false;
+}
+var int_value = parseInt(str,10);
+if (int_value < min_value)
+return false;
+if (int_value > max_value)
+return false;
+}
+return true;
+}
+function checkData()
+{
+var cf = document.forms[0];
+if(!checkBlank($('route_name')))
+{
+alertError('STR_routesBlankWrong',1);
+$('route_name').focus();
+return false;
+}
+if( $('route_name').value.match( /[^\x20-\x7E]/))
+{
+alertError('STR_routesNameWrong',1);
+$('route_name').focus();
+return false;
+}
+if(checkIP($('SRouteDestAddr1'),$('SRouteDestAddr2'),$('SRouteDestAddr3'),$('SRouteDestAddr4'),254)
+|| ($('SRouteDestAddr1').value == 127) || ($('SRouteDestAddr1').value >= 224))
+{
+alertError('STR_routesIpWrong',1);
+$('SRouteDestAddr1').focus();
+return false;
+}
+var SRouteGatewayAddr = $('SRouteGatewayAddr1').value+'.'+$('SRouteGatewayAddr2').value+'.'+$('SRouteGatewayAddr3').value+'.'+$('SRouteGatewayAddr4').value;
+var SRouteDestAddr = $('SRouteDestAddr1').value+'.'+$('SRouteDestAddr2').value+'.'+$('SRouteDestAddr3').value+'.'+$('SRouteDestAddr4').value;
+var SRouteSubnetMask= $('SRouteSubnetMask1').value+'.'+$('SRouteSubnetMask2').value+'.'+$('SRouteSubnetMask3').value+'.'+$('SRouteSubnetMask4').value;
+SRouteGatewayAddr = address_parseInt(SRouteGatewayAddr);
+SRouteSubnetMask = address_parseInt(SRouteSubnetMask);
+if(checkIP($('SRouteSubnetMask1'),$('SRouteSubnetMask2'),$('SRouteSubnetMask3'),$('SRouteSubnetMask4'),255))
+{
+alertError('STR_routesSubmaskWrong',1);
+$('SRouteSubnetMask1').focus();
+return false;
+}
+if(checkIP($('SRouteGatewayAddr1'),$('SRouteGatewayAddr2'),$('SRouteGatewayAddr3'),$('SRouteGatewayAddr4'),254)
+|| ($('SRouteGatewayAddr1').value == 127) || ($('SRouteGatewayAddr1').value >= 224)
+|| (parseInt($('SRouteGatewayAddr4').value,10) == 0) )
+{
+alertError('STR_routesGatewayWrong',1);
+$('SRouteGatewayAddr1').focus();
+return false;
+}
+if(isSameSubNet(SRouteDestAddr, SRouteSubnetMask, G_IPAddress, SRouteSubnetMask) == true || isSameSubNet(SRouteDestAddr, G_SubnetMask, G_IPAddress, G_SubnetMask) == true ){
+alertError('BKS_keywordInvalidIP',1);
+$('SRouteDestAddr1').focus();
+return false;
+}
+if(!checkInt($('route_metric'), 2, 15))
+{
+alertError('STR_routesMetricWrong',1);
+$('route_metric').focus();
+return false;
+}
+return true;
+}
+function uiSubmit()
+{
+// remove leading 0
+for (var i=1; i<=4; i++)
+{
+$('SRouteDestAddr'+i).value /= 1;
+$('SRouteSubnetMask'+i).value /= 1;
+$('SRouteGatewayAddr'+i).value /= 1;
+}
+$('route_metric').value /= 1;
+if(!checkData())
+{
+return false;
+}
+var tmpDescription=$('route_name').value;
+if(tmpDescription=='')
+{
+alertError('StaticRouteNullName');
+return;
+}
+var tmpDestinationIP=$('SRouteDestAddr1').value+'.'+$('SRouteDestAddr2').value+'.'+$('SRouteDestAddr3').value+'.'+$('SRouteDestAddr4').value;
+var tmpSubnetMask=$('SRouteSubnetMask1').value+'.'+$('SRouteSubnetMask2').value+'.'+$('SRouteSubnetMask3').value+'.'+$('SRouteSubnetMask4').value;
+var tmpStaticRoutingGateway=$('SRouteGatewayAddr1').value+'.'+$('SRouteGatewayAddr2').value+'.'+$('SRouteGatewayAddr3').value+'.'+$('SRouteGatewayAddr4').value;
+var tmpMetric=$('route_metric').value;
+var tmpEnable=$('SRouteActive').checked;
+$H({
+':Enable': tmpEnable,
+':DestIPAddress' : tmpDestinationIP,
+':DestSubnetMask' : tmpSubnetMask,
+':GatewayIPAddress' :tmpStaticRoutingGateway,
+':ForwardingMetric': tmpMetric,
+':Description': tmpDescription,
+'var:menu': G_Menu,
+'var:page': G_Page,
+'getpage': 'html/page.htm',
+'errorpage': 'html/page.htm',
+'var:errorpage': 'STR_add',
+'var:CacheLastData': ViewState.Save()
+}, true);
+$F('add-obj','InternetGatewayDevice.Layer3Forwarding.Forwarding.');
+$F('obj-action','add-set');
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorPage(arrayHint, G_Error_Msg);
+}
+function uiJumpToFormerPage()
+{
+$G('../html/STR_routes.htm',{
+'var:page' : 'STR_routes',
+'getpage' : '../html/STR_routes.htm',
+'errorpage' : '../html/STR_routes.htm'
+});
+}
+addListeners(dealWithError,uiOnload);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="STR_add.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style>
+<!-- config -->
+<div class="page_title" id="idStaticRouteHeader">Static Routes</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type="button" id="Cancel" name="Cancel" value="Cancel" onClick="uiJumpToFormerPage();">
+<input class="apply_bt" type="submit" id="Apply" name="Apply" value="Apply" onClick="uiSubmit();">
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tr>
+<td nowrap=""><span id="idRouteName">Route Name</span></td>
+<td nowrap=""><input type="text" id="route_name" name="route_name" value="" maxlength="30" /></td>
+</tr>
+<!--
+<tr>
+<td nowrap=""><input type="checkbox" id="idPrivate" onclick="" /><span>&nbsp;</span><span id="idPrivateContext">Private</span></td>
+<td nowrap="">&nbsp;</td>
+</tr>
+-->
+<tr>
+<td nowrap=""><input type="checkbox" id="SRouteActive" name="SRouteActive" onClick="" checked="checked"/><span>&nbsp;</span><span id="idActiveContext">Active</span></td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap=""><span id="idDestIPAddress">Destination IP Address</span></td>
+<td nowrap="">
+<input type='text' id="SRouteDestAddr1" name="SRouteDestAddr1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteDestAddr2" name="SRouteDestAddr2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteDestAddr3" name="SRouteDestAddr3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteDestAddr4" name="SRouteDestAddr4" maxlength=3 style="width:30px" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />
+</td>
+</tr>
+<tr>
+<td nowrap=""><span id="idSubnetMask">IP Subnet Mask</span></td>
+<td nowrap="">
+<input type='text' id="SRouteSubnetMask1" name="SRouteSubnetMask1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteSubnetMask2" name="SRouteSubnetMask2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteSubnetMask3" name="SRouteSubnetMask3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteSubnetMask4" name="SRouteSubnetMask4" maxlength=3 style="width:30px" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />
+</td>
+</tr>
+<tr>
+<td nowrap=""><span id="idGatewayIP">Gateway IP Address</span></td>
+<td nowrap="">
+<input type='text' id="SRouteGatewayAddr1" name="SRouteGatewayAddr1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteGatewayAddr2" name="SRouteGatewayAddr2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteGatewayAddr3" name="SRouteGatewayAddr3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="SRouteGatewayAddr4" name="SRouteGatewayAddr4" maxlength=3 style="width:30px" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" onKeyPress="return getkey('num',event);" />
+</td>
+</tr>
+<tr>
+<td nowrap=""><span id="idMetric">Metric</span></td>
+<td nowrap=""><input type="text" id="route_metric" name="route_metric" style="width:30px" onKeyPress="return getkey('num',event);" />(2-15)</td>
+</tr>
+<!--
+<tr>
+<td nowrap=""><span id = "lang_config_interface">Interface</span></td>
+<td nowrap=""><select name="selectConnectionName" class="hold" id="selectConnectionName"><option></option></select></td>
+</tr>-->
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</table>
+</div>
+<!--
+<div id="rtRouteAddInfo" style="display:none">
+<p class="do bk_black" id = "lang_config_add">Static Route Add </p>
+<div class="div_black">
+<div class="div_left"><span id = "lang_config_dst">Destination Network Address :</span></div><div class="div_right"><input type="text" maxlength=15 name="DestinationAddress" id="DestinationAddress" value=""/></div>
+<div class="div_left"><span id = "lang_config_mask">Subnet Mask :</span></div><div class="div_right"><input type="text" maxlength=15 name="SubnetMask" id="SubnetMask" value="" /></div>
+<div class="div_left"><span id = "lang_config_gw">Use Gateway IP Address :</span> </div><div class="div_right"><input type="text" maxlength=15 name="staticRougingGateway" id="staticRougingGateway" value=""/></div>
+<div class="div_left"><span id = "lang_config_metric">Metric :</span> </div><div class="div_right"><input type="text" maxlength=2 name="Metric" id="Metric" value=""/></div>
+<div class="div_left"><span id = "lang_config_interface">Use Interface :</span></div><div class="div_right"><select name="selectConnectionName" class="hold" id="selectConnectionName"><option></option></select></div>
+</div>
+<div class="div_button do"><input type="button" id="submit" value="Apply" onClick="uiSubmit();"> <input type="button" id="cancel" value="Cancel" onClick="uiPageRefresh();"></div>
+</div>
+-->
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("STR_add")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

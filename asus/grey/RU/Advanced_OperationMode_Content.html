@@ -1,0 +1,710 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//RU" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/Advanced_OperationMode_Content.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:32:34 GMT -->
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>ASUS Wireless Router RT-AC66U - Режим работы</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="usp_style.css">
+<link rel="stylesheet" type="text/css" href="other.css">
+<script language="JavaScript" type="text/javascript" src="state.js"></script>
+<script language="JavaScript" type="text/javascript" src="jquery.js"></script>
+<script language="JavaScript" type="text/javascript" src="general.js"></script>
+<script language="JavaScript" type="text/javascript" src="popup.js"></script>
+<script language="JavaScript" type="text/javascript" src="help.js"></script>
+<script language="JavaScript" type="text/javascript" src="detect.js"></script>
+<style type="text/css">
+.contentM_qis{
+	width:650px;
+	height:475px;
+	margin-top:-160px;
+	margin-left:250px;
+	position:absolute;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	z-index:2000;
+	background-color:#2B373B;
+	display:none;
+	behavior: url(PIE.htc);
+}
+.QISmain{
+	width:730px;
+	/*font-family:Verdana, Arial, Helvetica, sans-serif;*/
+	font-size:14px;
+	z-index:2000;
+	position:relative;
+	background-color:balck:
+}	
+.QISform_wireless{
+	width:600px;
+	font-size:12px;
+	color:#FFFFFF;
+	margin-top:10px;
+	*margin-left:10px;
+}
+
+.QISform_wireless thead{
+	font-size:15px;
+	line-height:20px;
+	color:#FFFFFF;	
+}
+
+.QISform_wireless th{
+	padding-left:10px;
+	*padding-left:30px;
+	font-size:12px;
+	font-weight:bolder;
+	color: #FFFFFF;
+	text-align:left; 
+}
+               
+.QISform_wireless li{	
+	margin-top:10px;
+}
+.QISGeneralFont{
+	font-family:Segoe UI, Arial, sans-serif;
+	margin-top:10px;
+	margin-left:70px;
+	*margin-left:50px;
+	margin-right:30px;
+	color:white;
+	LINE-HEIGHT:18px;
+}	
+.description_down{
+	margin-top:10px;
+	margin-left:10px;
+	padding-left:5px;
+	font-weight:bold;
+	line-height:140%;
+	color:#ffffff;	
+}
+</style>
+<script>
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '2785126592'; }
+function login_ip_str() { return '192.168.1.166'; }
+function login_ip_str_now() { return '192.168.1.166'; }
+function login_mac_str() { return '50:e5:49:a2:00:f8'; }
+
+var wireless = [["A8:26:D9:31:2B:49", "Yes", "No"], ["98:4B:E1:CB:DA:D6", "Yes", "No"]];	// [[MAC, associated, authorized], ...]
+var sw_mode_orig = '1';
+if(sw_mode_orig == 3 && '0' == 1)
+	sw_mode_orig = 4;
+
+function initial(){
+	show_menu();
+	setScenerion(sw_mode_orig);
+	Senario_shift();
+
+	if(repeater_support < 0)
+		$("repeaterMode").style.display = "none";
+
+	if(psta_support == -1)
+		$("mbMode").style.display = "none";
+}
+
+function Senario_shift(){
+	var isIE = navigator.userAgent.search("MSIE") > -1; 
+	if(isIE)
+		$("Senario").style.width = "700px";
+		$("Senario").style.marginLeft = "5px";
+}
+
+function restore_wl_config(prefix){
+	var wl_defaults = {
+		ssid: {_name: prefix+"ssid", _value: "ASUS"},
+		wep: {_name: prefix+"wep_x", _value: "0"},
+		key: {_name: prefix+"key", _value: "1"},
+		key1: {_name: prefix+"key1", _value: ""},
+		key2: {_name: prefix+"key2", _value: ""},
+		key3: {_name: prefix+"key3", _value: ""},
+		key4: {_name: prefix+"key4", _value: ""},
+		auth_mode: {_name: prefix+"auth_mode_x", _value: "open"},
+		crypto: {_name: prefix+"crypto", _value: "tkip+aes"},
+		wpa_psk: {_name: prefix+"wpa_psk", _value: ""},
+		nbw_cap: {_name: prefix+"nbw_cap", _value: "1"},
+		bw_cap: {_name: prefix+"bw", _value: "1"},
+		hwaddr: {_name: prefix+"hwaddr", _value: ""}
+	}
+	
+	if(prefix.length == 6)
+		wl_defaults.ssid._value = "ASUS_Guest" + prefix[4];
+
+	if(prefix[2] == 1)
+		wl_defaults.ssid._value = wl_defaults.ssid._value.replace("ASUS", "ASUS_5G");
+
+	for(var i in wl_defaults) 
+		set_variable(wl_defaults[i]._name, wl_defaults[i]._value);
+}
+function restore_wl_config_wep(prefix){
+	var wl_defaults = {
+		wep: {_name: prefix+"wep_x", _value: "0"},
+		key: {_name: prefix+"key", _value: "1"},
+		key1: {_name: prefix+"key1", _value: ""},
+		key2: {_name: prefix+"key2", _value: ""},
+		key3: {_name: prefix+"key3", _value: ""},
+		key4: {_name: prefix+"key4", _value: ""},
+		nbw_cap: {_name: prefix+"nbw_cap", _value: "1"},
+		bw_cap: {_name: prefix+"bw", _value: "1"}
+	}
+
+	for(var i in wl_defaults) 
+		set_variable(wl_defaults[i]._name, wl_defaults[i]._value);
+}
+function close_guest_unit(_unit, _subunit){
+	var NewInput = document.createElement("input");
+	NewInput.type = "hidden";
+	NewInput.name = "wl"+ _unit + "." + _subunit +"_bss_enabled";
+	NewInput.value = "0";
+	document.form.appendChild(NewInput);
+}
+
+function saveMode(){
+	if(sw_mode_orig == document.form.sw_mode.value){
+		alert("RT-AC66U RT-AC66U уже в этом режиме.");
+		return false;
+	}
+
+  if(document.form.sw_mode.value == 2){
+		parent.location.href = 'QIS_wizard.htm?flag=sitesurvey';
+		return false;
+	}
+	else if(document.form.sw_mode.value == 3){
+		parent.location.href = 'QIS_wizard.htm?flag=lanip';
+		return false;
+	}
+	else if(document.form.sw_mode.value == 4){
+		parent.location.href = 'QIS_wizard.htm?flag=sitesurvey_mb';
+		return false;
+	}
+	else{ // default router
+		document.form.lan_proto.value = 'static';
+		document.form.lan_ipaddr.value = document.form.lan_ipaddr_rt.value;
+		document.form.lan_netmask.value = document.form.lan_netmask_rt.value;
+		document.form.lan_gateway.value = document.form.lan_ipaddr_rt.value;
+		document.form.wlc_psta.value = 0;
+		document.form.wlc_psta.disabled = false;
+
+		if(sw_mode_orig == '2' || sw_mode_orig == '4'){
+			inputCtrl(document.form.wl0_ssid,1);	
+			inputCtrl(document.form.wl0_auth_mode_x,1);	
+			inputCtrl(document.form.wl0_crypto,1);	
+			inputCtrl(document.form.wl0_wpa_psk,1);
+
+			if(sw_mode_orig == '2'){
+				restore_wl_config("wl0.1_");
+				restore_wl_config_wep("wl0_");
+				
+				if(band5g_support != -1){
+					restore_wl_config_wep("wl1_");
+					restore_wl_config("wl1.1_");
+				}
+				document.form.w_Setting.value = 0;				
+			}
+			
+			close_guest_unit(0,1);
+			if(band5g_support != -1){
+				inputCtrl(document.form.wl1_ssid,1);
+				inputCtrl(document.form.wl1_crypto,1);
+				inputCtrl(document.form.wl1_wpa_psk,1);
+				inputCtrl(document.form.wl1_auth_mode_x,1);
+				close_guest_unit(1,1);
+			}
+			
+			if(band5g_support == -1){			
+				$('wl_unit_field_1').style.display="none";
+				$('wl_unit_field_2').style.display="none";
+				$('wl_unit_field_3').style.display="none";	
+				$('routerSSID').style.height="370px";				
+			}
+			
+			cal_panel_block();
+			$j("#routerSSID").fadeIn(300);
+			$j("#forSSID_bg").fadeIn(300);
+			$("forSSID_bg").style.visibility = "visible";	
+			return true;			
+		}
+	}
+
+	applyRule();
+}
+
+function applyRule(){
+	if(document.form.sw_mode.value == 1 && (sw_mode_orig == '2' || sw_mode_orig == '4')){
+		if(!validate_string_ssid(document.form.wl0_ssid)){ //validate 2.4G SSID
+			document.form.wl0_ssid.focus();
+			return false;
+		}	
+
+		if(document.form.wl0_wpa_psk.value != ""){
+			if(!validate_psk(document.form.wl0_wpa_psk))		//validate 2.4G WPA2 key
+				return false;
+				
+			document.form.wl0_auth_mode_x.value = "psk2";		//
+			document.form.wl0_crypto.value = "aes";
+		}
+		else
+			document.form.wl0_auth_mode_x.value = "open";
+
+		if(band5g_support >= 0){  // for Dualband 5G
+			inputCtrl(document.form.wl1_ssid,1);
+			inputCtrl(document.form.wl1_crypto,1);
+			inputCtrl(document.form.wl1_wpa_psk,1);
+			inputCtrl(document.form.wl1_auth_mode_x,1);
+			if(!validate_string_ssid(document.form.wl1_ssid)){   //validate 5G SSID
+				document.form.wl1_ssid.focus();
+				return false;
+			}
+			
+			if(document.form.wl1_wpa_psk.value != ""){
+				if(!validate_psk(document.form.wl1_wpa_psk))	//validate 5G WPA2 key
+					return false;
+			
+				document.form.wl1_auth_mode_x.value = "psk2";
+				document.form.wl1_crypto.value = "aes";
+			}
+			else
+				document.form.wl1_auth_mode_x.value = "open";
+		}			
+	}
+
+	showLoading(2);	
+	document.form.target="hidden_frame";
+	$("forSSID_bg").style.visibility = "hidden";
+	//document.form.submit();	
+}
+
+function done_validating(action){
+	refreshpage();
+}
+
+var $j = jQuery.noConflict();
+var id_WANunplungHint;
+
+function setScenerion(mode){
+	if(mode == '2'){
+		document.form.sw_mode.value = 2;
+		$j("#Senario").css("height", "");
+		$j("#Senario").css("background","url(images/New_ui/re.jpg) center no-repeat");
+		$j("#Senario").css("margin-bottom", "60px");
+		$j("#radio2").css("display", "none");
+		$j("#Internet_span").css("display", "block");
+		$j("#ap-line").css("display", "none");
+		$j("#AP").html("Маршрутизатор");
+		$j("#mode_desc").html("В режиме повторителя, RT-AC66U расширяет покрытие существующей беспроводной сети и улучшает качество сигнала.");
+		$j("#nextButton").attr("value","Далее");
+		clearTimeout(id_WANunplungHint);
+		$j("#Unplug-hint").css("display", "none");
+		document.form.sw_mode_radio[1].checked = true;
+	}
+	else if(mode == '3'){
+		document.form.sw_mode.value = 3;
+		$j("#Senario").css("height", "");
+		$j("#Senario").css("background","url(images/New_ui/ap.jpg) center no-repeat");
+		$j("#Senario").css("margin-bottom", "60px");
+		$j("#radio2").css("display", "none");
+		$j("#Internet_span").css("display", "block");
+		$j("#ap-line").css("display", "none");
+		$j("#AP").html("Маршрутизатор");
+		$j("#mode_desc").html("В Режим точки доступа (AP) RT-AC66U подключается к роутеру с помощью Ethernet кабеля для увеличения зоны покрытия беспроводной сети. В этом режиме, функции брандмауэра, IP sharing и NAT отключены по умолчанию.<br/><span style=\"color:#FC0\">IP-адрес изменится в режиме точки доступа (AP). Для определения IP-адреса роутера используйте <a href="http://event.asus.com/2012/nw/dummy_ui/RU/\&quot;http://dlcdnet.asus.com/pub/ASUS/LiveUpdate/Release/Wireless/Discovery.zip\&quot;" style=\"font-family:Lucida Console;text-decoration:underline;color:#FC0;\">утилиту Device Discovery</a>.</span>");
+		$j("#nextButton").attr("value","Далее");
+		clearTimeout(id_WANunplungHint);
+		$j("#Unplug-hint").css("display", "none");
+		document.form.sw_mode_radio[2].checked = true;
+	}
+	else if(mode == '4'){
+		document.form.sw_mode.value = 4;
+		var pstaDesc =  "RT-AC66U может быть сконфигурирован в режим Media bridge.";
+				pstaDesc += "Режим Media bridge обеспечивает высокоскоростное подключение для нескольких устройств одновременно.";
+				pstaDesc += "Для установки режима Media bridge необходимо два RT-AC66U: один сконфигурирован как Media bridge и другой как роутер.";
+				pstaDesc += "Для обеспечения одновременного подключения мультимедийных устройств настройте один RT-AC66U в качестве роутера, а другой RT-AC66U как Media bridge.";
+				pstaDesc += "Включите режим Медиа Мост, чтобы обеспечить одновременное 802.11ac Wi-Fi соединение для вашего медиа устройств.";
+				pstaDesc += "<br/><span style=\"color:#FC0\">Для определения IP-адреса роутера используйте <a href="http://event.asus.com/2012/nw/dummy_ui/RU/\&quot;http://dlcdnet.asus.com/pub/ASUS/LiveUpdate/Release/Wireless/Discovery.zip\&quot;" style=\"font-family:Lucida Console;text-decoration:underline;color:#FC0;\">утилиту Device Discovery</a>.</span>";
+
+		$j("#Senario").css("height", "300px");
+		$j("#Senario").css("background", "url(images/New_ui/re.jpg) center no-repeat");
+		$j("#Senario").css("margin-bottom", "-20px");
+		$j("#radio2").css("display", "none");
+		$j("#Internet_span").css("display", "block");
+		$j("#ap-line").css("display", "none");
+		$j("#AP").html("Маршрутизатор");
+		$j("#mode_desc").html(pstaDesc);
+		$j("#nextButton").attr("value","Далее");
+		clearTimeout(id_WANunplungHint);
+		$j("#Unplug-hint").css("display", "none");
+		document.form.sw_mode_radio[3].checked = true;
+	}
+	else{ // Default: Router
+		document.form.sw_mode.value = 1;
+		$j("#Senario").css("height", "");
+		$j("#Senario").css("background","url(images/New_ui/rt.jpg) center no-repeat");
+		$j("#Senario").css("margin-bottom", "60px");
+		$j("#radio2").hide();
+		$j("#Internet_span").hide();
+		$j("#ap-line").css("display", "none");	
+		$j("#AP").html("Интернет");
+		$j("#mode_desc").html("Беспроводной роутер, RT-AC66U подключается к сети Интернет через PPPoE, DHCP, PPTP, L2TP или статический IP и обеспечивает беспроводную сеть. В этом режиме NAT, Firewall и DHCP включены по умолчанию. UPnP и Dynamic DNS поддерживается для SOHO и домашних пользователей. Выберите этот режим, если Вы начинающий пользователь или не используете другие роутеры");
+		$j("#nextButton").attr("value","Далее");
+		document.form.sw_mode_radio[0].checked = true;
+	}
+}
+
+/* change password type depend on browser for fix IE issue*/
+function replace_pass_type(obj, _Type){
+	if(navigator.userAgent.indexOf("MSIE") != -1){ // fix IE issue
+		var input2 = document.createElement('<input class="input_25_table" autocapitalization="off">');  // create input element
+		with (input2){ 
+			id = obj.id; 
+			value = obj.value; 
+			type = _Type; // change input type
+			name = obj.name;
+		} 
+		obj.parentNode.replaceChild(input2,obj);
+	}
+	else{	
+		obj.type= _Type;
+	}
+}
+function Sync_2ghz(band){
+	if(band == 2){
+		if(document.form.sync_with_2ghz.checked == true){
+			document.form.wl1_ssid.value = document.form.wl0_ssid.value; 
+			document.form.wl1_wpa_psk.value = document.form.wl0_wpa_psk.value; 
+		}
+	}
+	else
+		document.form.sync_with_2ghz.checked = false;
+}
+function cal_panel_block(){
+	var blockmarginLeft;
+	if (window.innerWidth)
+		winWidth = window.innerWidth;
+	else if ((document.body) && (document.body.clientWidth))
+		winWidth = document.body.clientWidth;
+		
+	if (document.documentElement  && document.documentElement.clientHeight && document.documentElement.clientWidth){
+		winWidth = document.documentElement.clientWidth;
+	}
+
+	if(winWidth >1050){	
+		winPadding = (winWidth-1050)/2;	
+		winWidth = 1105;
+		blockmarginLeft= (winWidth*0.25)+winPadding;
+	}
+	else if(winWidth <=1050){
+		if(isMobile()){
+			if(document.body.scrollLeft < 50)
+				blockmarginLeft= (winWidth)*0.25+document.body.scrollLeft;
+			else if(document.body.scrollLeft >320)
+				blockmarginLeft= 320;			
+			else
+				blockmarginLeft= document.body.scrollLeft;		
+		}
+		else{
+			blockmarginLeft= (winWidth)*0.25+document.body.scrollLeft;	
+		}
+	}
+
+	$("routerSSID").style.marginLeft = blockmarginLeft+"px";
+}
+function cancel_SSID_Block(){
+	$j("#routerSSID").fadeOut(300);
+	$j("#forSSID_bg").fadeOut(300);
+	//$("hiddenMask").style.visibility = "hidden";
+	//$("forSSID_bg").style.visibility = "hidden";
+}
+</script>
+</head>
+
+<body onload="initial();" onunload="return unload_body();">
+<div id="TopBanner"><form method="post" name="titleForm" id="titleForm" action="/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="current_page" value="">
+<input type="hidden" name="action_mode" value="apply">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="action_wait" value="5">
+<input type="hidden" name="wl_unit" value="" disabled="">
+<input type="hidden" name="wl_subunit" value="-1" disabled="">
+<input type="hidden" name="preferred_lang" value="EN">
+<input type="hidden" name="flag" value="">
+</form>
+<form method="post" name="diskForm_title" action="device-map/safely_remove_disk.html" target="hidden_frame">
+<input type="hidden" name="disk" value="">
+</form>
+<form method="post" name="internetForm_title" action="start_apply2.htm" target="hidden_frame">
+<input type="hidden" name="current_page" value="index.html">
+<input type="hidden" name="next_page" value="index.html">
+<input type="hidden" name="action_mode" value="apply">
+<input type="hidden" name="action_script" value="restart_wan_if">
+<input type="hidden" name="action_wait" value="5">
+<input type="hidden" name="wan_enable" value="1">
+<input type="hidden" name="wan_unit" value="0">
+</form>
+<div class="banner1" align="center"><img src="images/New_ui/asustitle.png" width="218" height="54" align="left">
+<div style="margin-top:13px;margin-left:-90px;*margin-top:0px;*margin-left:0px;" align="center"><span id="modelName_top" onclick="this.focus();" class="modelName_top">RT-AC66U</span></div><a href="javascript:logout();"><div style="margin-top:13px;margin-left:25px; *width:136px;" class="titlebtn" align="center"><span>Выход</span></div></a>
+<a href="javascript:reboot();"><div style="margin-top:13px;margin-left:0px;*width:136px;" class="titlebtn" align="center"><span>Перезагрузка</span></div></a>
+<ul class="navigation"><a href="#"></a><li><a href="#"></a><dl><a href="#"><dt id="selected_lang">Pусский</dt>
+</a><dd><a href="#"></a><a onclick="submit_language(this)" id="EN">English</a></dd><dd><a onclick="submit_language(this)" id="TW">繁體中文</a></dd>
+<dd><a onclick="submit_language(this)" id="CN">简体中文</a></dd>
+<dd><a onclick="submit_language(this)" id="CZ">Česky</a></dd>
+<dd><a onclick="submit_language(this)" id="PL">Polski</a></dd>
+<dd><a onclick="submit_language(this)" id="RU">Pусский</a></dd>
+<dd><a onclick="submit_language(this)" id="DE">Deutsch</a></dd>
+<dd><a onclick="submit_language(this)" id="FR">Français</a></dd>
+<dd><a onclick="submit_language(this)" id="TR">Türkçe</a></dd>
+<dd><a onclick="submit_language(this)" id="TH">ไทย</a></dd>
+<dd><a onclick="submit_language(this)" id="MS">Malay</a></dd>
+<dd><a onclick="submit_language(this)" id="NO">Norsk</a></dd>
+<dd><a onclick="submit_language(this)" id="FI">Finsk</a></dd>
+<dd><a onclick="submit_language(this)" id="DA">Dansk</a></dd>
+<dd><a onclick="submit_language(this)" id="SV">Svensk</a></dd>
+<dd><a onclick="submit_language(this)" id="BR">Portuguese(Brazil)</a></dd>
+<dd><a onclick="submit_language(this)" id="JP">日本語</a></dd>
+<dd><a onclick="submit_language(this)" id="ES">Español</a></dd>
+<dd><a onclick="submit_language(this)" id="IT">Italiano</a></dd>
+<dd><a onclick="submit_language(this)" id="UK">Ukrainian</a></dd>
+<dd><a onclick="submit_language(this)" id="HU">Hungarian</a></dd>
+<dd><a onclick="submit_language(this)" id="RO">Romanian</a></dd>
+</dl></li>
+</ul></div>
+<table width="998" border="0" align="center" cellpadding="0" cellspacing="0" class="statusBar">
+<tbody><tr>
+<td background="images/New_ui/midup_bg.png" height="179" valign="top"><table width="764" border="0" cellpadding="0" cellspacing="0" height="35px" style="margin-left:230px;">
+<tbody><tr>
+<td valign="center" class="titledown" width="auto"><span style="font-family:Verdana, Arial, Helvetica, sans-serif;">Режим работы:<span class="title_link" style="text-decoration: none;" id="op_link"><a href="Advanced_OperationMode_Content.html" style="color:white"><span id="sw_mode_span" style="text-decoration: underline;">Беспроводной роутер</span></a></span>
+<span style="font-family:Verdana, Arial, Helvetica, sans-serif;">Версия прошивки:<a href="Advanced_FirmwareUpgrade_Content.html" style="color:white;"><span id="firmver" class="title_link">3.0.0.4.372_67</span></a>
+<span style="font-family:Verdana, Arial, Helvetica, sans-serif;" id="ssidTitle">SSID:<span onclick="change_wl_unit_status(0)" id="elliptic_ssid_2g" class="title_link">ASUS</span><span onclick="change_wl_unit_status(1)" id="elliptic_ssid_5g" style="margin-left:-5px;" class="title_link">ASUS_5G</span>
+</span></span></span></td>
+<td width="30"><div id="guestnetwork_status" class="guestnetworkstatuson"></div></td>
+<td width="30"><div id="connect_status" class="connectstatuson"></div></td>
+<td width="30"><div id="usb_status" class="usbstatuson"></div></td>
+<td width="30"><div id="printer_status" class="printstatuson"></div></td>
+<td width="17"></td>
+</tr></tbody></table></td></tr></tbody></table>
+</div>
+<div id="hiddenMask" class="popup_bg">
+<table cellpadding="4" cellspacing="0" id="dr_sweet_advise" class="dr_sweet_advise" align="center">
+		<tbody><tr>
+		<td>
+			<div class="drword" id="drword">Подождите,  Выполнение...
+				<br>
+				<br>
+		    </div>
+		  <div class="drImg"><img src="images/alertImg.png"></div>
+			<div style="height:70px; "></div>
+		</td>
+		</tr>
+	</tbody></table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+<div id="forSSID_bg" class="popup_bg" style="z-index: 99;"></div>
+<div id="Loading" class="popup_bg"><table cellpadding="5" cellspacing="0" id="loadingBlock" class="loadingBlock" align="center">
+<tbody><tr>
+<td width="20%" height="80" align="center"><img src="images/loading.gif"></td>
+<td><span id="proceeding_main_txt">Подождите, </span><span id="proceeding_txt" style="color:#FFFFCC;"></span></td>
+</tr>
+</tbody></table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+<iframe name="hidden_frame" id="hidden_frame" src="#" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" id="ruleForm" action="http://admin:admin@192.168.1.1/start_apply.htm">
+<input type="hidden" name="productid" value="RT-AC66U">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="apply">
+<input type="hidden" name="action_script" value="restart_all">
+<input type="hidden" name="action_wait" value="70">
+<input type="hidden" name="prev_page" value="Advanced_OperationMode_Content.html">
+<input type="hidden" name="current_page" value="Advanced_OperationMode_Content.html">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="RU">
+<input type="hidden" name="firmver" value="3.0.0.4">
+<input type="hidden" name="flag" value="">
+<input type="hidden" name="sw_mode" value="1">
+<input type="hidden" name="lan_proto" value="static">
+<input type="hidden" name="lan_ipaddr" value="192.168.1.1">
+<input type="hidden" name="lan_netmask" value="255.255.255.0">
+<input type="hidden" name="lan_gateway" value="0.0.0.0">
+<input type="hidden" name="lan_ipaddr_rt" value="192.168.1.1">
+<input type="hidden" name="lan_netmask_rt" value="255.255.255.0">
+<input type="hidden" name="wl0_auth_mode_x" value="open" disabled="disabled">
+<input type="hidden" name="wl0_crypto" value="aes" disabled="disabled">
+<input type="hidden" name="wl1_auth_mode_x" value="open" disabled="disabled">
+<input type="hidden" name="wl1_crypto" value="aes" disabled="disabled">
+<input type="hidden" name="w_Setting" value="1">
+<!-- AC66U's repeater mode -->
+<input type="hidden" name="wlc_psta" value="0" disabled="">
+
+<!-- Input SSID and Password block for switching Repeater to Router mode -->
+<div id="routerSSID" class="contentM_qis" style="box-shadow: 3px 3px 10px #000;">
+	<div class="description_down">Параметры беспроводной сети</div><div class="QISGeneralFont" align="left">Назначьте уникальное имя или SSID (Идентификатор беспроводной сети) для идентификации Вашей беспроводной сети.</div><div style="margin:5px;*margin-left:-5px;"><img style="width: 640px; *width: 640px; height: 2px;" src="images/New_ui/export/line_export.png"></div><table class="QISform_wireless" width="400" border="0" align="center" cellpadding="5" cellspacing="0">
+		<tbody><tr>
+			
+		</tr>
+		<tr>
+			
+		</tr>
+		<tr>
+			
+		</tr>
+		<tr>
+			<th width="180">2.4GHz - Безопасность</th>
+			<td class="QISformtd"></td>
+		</tr>
+		<tr>
+			<th width="180">
+				<span onmouseout="return nd();" onclick="openHint(0, 22);" style="cursor:help;">Имя сети (SSID)<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="images/New_ui/helpicon.png"></span>
+			</th>
+			<td class="QISformtd">
+				<input type="text" id="wl0_ssid" name="wl0_ssid" onkeypress="return is_string(this, event);" onkeyup="Sync_2ghz(2);" style="height:25px;" class="input_32_table" maxlength="32" value="" disabled="disabled">
+			</td>
+		</tr>
+		<tr id="wl_unit_field_0">
+			<th width="180">
+				<span onmouseout="return nd();" onclick="openHint(0, 23);" style="cursor:help;">Сетевой ключ<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="images/New_ui/helpicon.png"></span>		
+			</th>
+			<td class="QISformtd">
+				<input id="wl0_wpa_psk" name="wl0_wpa_psk" type="password" autocapitalization="off" onblur="replace_pass_type(this, 'password');" onfocus="replace_pass_type(this,'text');" value="" onkeyup="Sync_2ghz(2);" style="height:25px;" class="input_32_table" maxlength="65" disabled="disabled">
+			</td>
+		</tr>
+		<tr id="wl_unit_field_1">
+			<th width="180">5GHz - Безопасность </th>
+			<td class="QISformtd">
+				<span id="syncCheckbox"><input type="checkbox" id="sync_with_2ghz" name="sync_with_2ghz" class="input" onclick="setTimeout('Sync_2ghz(2);',0);">Копировать настройки 2.4 GHz в 5GHz.</span>
+			</td>
+		</tr>
+		<tr id="wl_unit_field_2">
+			<th width="180">
+				<span onmouseout="return nd();" onclick="openHint(0, 22);" style="cursor:help;">Имя сети (SSID)<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="images/New_ui/helpicon.png"></span>
+			</th>
+			<td class="QISformtd">
+				<input type="text" id="wl1_ssid" name="wl1_ssid" onkeypress="return is_string(this, event);" onkeyup="Sync_2ghz(5);" style="height:25px;" class="input_32_table" maxlength="32" value="" disabled="disabled">
+			</td>
+		</tr>
+		<tr id="wl_unit_field_3">
+			<th width="180">
+				<span onmouseout="return nd();" onclick="openHint(0, 23);" style="cursor:help;">Сетевой ключ<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="images/New_ui/helpicon.png"></span>
+			</th>
+			<td class="QISformtd">
+				<input id="wl1_wpa_psk" name="wl1_wpa_psk" type="password" autocapitalization="off" onblur="replace_pass_type(this, 'password');" onfocus="replace_pass_type(this,'text');" value="" onkeyup="Sync_2ghz(5);" style="height:25px;" class="input_32_table" maxlength="65" disabled="disabled">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="QISGeneralFont">Введите сетевой ключ длиной от 8 до 63 символов (буквы, цифры или их сочетание) или 64 шестнадцатеричных цифры. По умолчанию настройки безопасности установлены как WPA2-Personal AES. Если Вы не хотите настраивать сетевую безопасность, оставьте поле ключа безопасности пустым, но это не защищает сеть от несанкционированного доступа</div>
+			</td>
+		</tr>
+	</tbody></table>
+	<div style="margin-top:20px;text-align:center;background-color:#2B373B">
+		<input type="button" value="Отмена" class="button_gen" onclick="cancel_SSID_Block();">
+		<input type="button" id="btn_next_step" value="Применить" class="button_gen" onclick="applyRule();">
+	</div>
+</div>
+<!-- End input SSID and Password block for switching Repeater to Router mode -->
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tbody><tr>
+	<td width="17">&nbsp;</td>
+	<td valign="top" width="202">
+	  <div id="mainMenu"><div class="m_qis_r" style="margin-top:-170px;cursor:pointer;" onclick="go_setting('QIS_wizard.htm?flag=detect');"><table><tbody><tr><td><div id="index_img0"></div></td><td><div>Быстрая настройка Интернет</div></td></tr></tbody></table></div>
+<div class="m0_r" style="margin-top:10px;" id="option0"><table width="192px" height="37px"><tbody><tr><td>Общие</td></tr></tbody></table></div>
+<div class="menu" id="option1" onclick="location.href='index.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="index_img1"></div></td><td><div id="menu_string" style="width:120px;">Карта сети</div></td></tr></tbody></table></div>
+<div class="menu" id="option2" onclick="location.href='Guest_network.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="index_img2"></div></td><td><div id="menu_string" style="width:120px;">Гостевая сеть</div></td></tr></tbody></table></div>
+<div class="menu" id="option3" onclick="location.href='QoS_EZQoS.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="index_img3"></div></td><td><div id="menu_string" style="width:120px;">Диспетчер трафика</div></td></tr></tbody></table></div>
+<div class="menu" id="option4" onclick="location.href='ParentalControl.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="index_img4"></div></td><td><div id="menu_string" style="width:120px;">Родительский контроль</div></td></tr></tbody></table></div>
+<div class="menu" id="option5" onclick="location.href='APP_Installation.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="index_img5"></div></td><td><div id="menu_string" style="width:120px;">USB-приложение</div></td></tr></tbody></table></div>
+<div class="menu" id="option6" onclick="location.href='cloud_main.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="index_img6"></div></td><td><div id="menu_string" style="width:120px;">AiCloud</div></td></tr></tbody></table></div>
+<div class="m0_r" style="margin-top:10px;" id="option0"><table width="192px" height="37px"><tbody><tr><td>Дополнительные настройки</td></tr></tbody></table></div>
+<div id="supported_link"><div class="test_text"><a href="http://event.asus.com/2013/nw/ASUSWRT/index.htm" target="_blank" style="text-decoration: underline;">Check ASUSWRT supported models</a></div><div style="margin-left:11px;"><a href="http://event.asus.com/2013/nw/ASUSWRT/index.htm" target="_blank" style="text-decoration: underline;"><img style="width:25px;height:25px;" src="images/white arrow.png"></a></div></div></div>
+	  <div id="subMenu"><div class="menu" id="option1" onclick="location.href='Advanced_Wireless_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img1"></div></td><td><div id="option_str1" style="width:120px;">Беспроводная сеть</div></td></tr></tbody></table></div>
+<div class="menu" id="option2" onclick="location.href='Advanced_LAN_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img2"></div></td><td><div id="option_str1" style="width:120px;">Локальная сеть</div></td></tr></tbody></table></div>
+<div class="menu" id="option3" onclick="location.href='Advanced_WAN_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img3"></div></td><td><div id="option_str1" style="width:120px;">Интернет</div></td></tr></tbody></table></div>
+<div class="menu" id="option5" onclick="location.href='Advanced_IPv6_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img5"></div></td><td><div id="option_str1" style="width:120px;">IPv6</div></td></tr></tbody></table></div>
+<div class="menu" id="option6" onclick="location.href='Advanced_PPTP_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img6"></div></td><td><div id="option_str1" style="width:120px;">VPN сервер</div></td></tr></tbody></table></div>
+<div class="menu" id="option7" onclick="location.href='Advanced_BasicFirewall_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img7"></div></td><td><div id="option_str1" style="width:120px;">Брандмауэр</div></td></tr></tbody></table></div>
+<div class="m8_r" id="option8"><table><tbody><tr><td><div id="menu_img8"></div></td><td><div id="option_str1" style="width:120px;">Администри- рование</div></td></tr></tbody></table></div>
+<div class="menu" id="option9" onclick="location.href='Main_LogStatus_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img9"></div></td><td><div id="option_str1" style="width:120px;">Системный журнал</div></td></tr></tbody></table></div>
+<div class="menu" id="option10" onclick="location.href='Main_Analysis_Content.html'" style="cursor:pointer;"><table><tbody><tr><td><div id="menu_img10"></div></td><td><div id="option_str1" style="width:120px;">Сетевые утилиты</div></td></tr></tbody></table></div>
+</div>
+	</td>
+	
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"><table border="0" cellspacing="0" cellpadding="0"><tbody><tr>
+<td><div class="tabclick"><span><table><tbody><tr><td>Режим работы</td></tr></tbody></table></span></div></td><td><div class="tab" onclick="location.href='Advanced_System_Content.html'" style="cursor:pointer;"><span><table><tbody><tr><td>Система</td></tr></tbody></table></span></div></td><td><div class="tab" onclick="location.href='Advanced_FirmwareUpgrade_Content.html'" style="cursor:pointer;"><span><table><tbody><tr><td>Обновление микропрограммы</td></tr></tbody></table></span></div></td><td><div class="tab" onclick="location.href='Advanced_SettingBackup_Content.html'" style="cursor:pointer;"><span><table><tbody><tr><td>Управление настройками</td></tr></tbody></table></span></div></td></tr></tbody></table>
+</div>
+		<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td valign="top">
+		
+	<table width="760px" border="0" cellpadding="5" cellspacing="0" class="FormTitle" id="FormTitle" style="height: 838px;">
+	<tbody><tr bgcolor="#4D595D" valign="top" height="100px">
+	  	<td>
+	  		<div>&nbsp;</div>
+	  		<div class="formfonttitle">Администрирование - Режим работы</div>
+	  		<div style="margin-left:5px;margin-top:10px;margin-bottom:10px"><img src="images/New_ui/export/line_export.png"></div>
+		  	<div class="formfontdesc">RT-AC66U поддерживает несколько режимов работы для соответствия различным требованиям</div>
+
+		</td>
+	</tr>
+
+	<tr>
+	  <td bgcolor="#4D595D" valign="top" height="500px">
+	<div style="width:95%; margin:0 auto; padding-bottom:3px;">
+		<span style="font-size:16px; font-weight:bold;color:white;text-shadow:1px 1px 0px black">
+			<input type="radio" name="sw_mode_radio" class="input" value="1" onclick="setScenerion(1);" checked="">Беспроводной роутер (по умолчанию)
+			&nbsp;&nbsp;
+			<span id="repeaterMode" style="display: none;"><input type="radio" name="sw_mode_radio" class="input" value="2" onclick="setScenerion(2);">Режим повторителя</span>
+			&nbsp;&nbsp;
+			<input type="radio" name="sw_mode_radio" class="input" value="3" onclick="setScenerion(3);">Режим точки доступа (AP)
+			&nbsp;&nbsp;
+			<span id="mbMode"><input type="radio" name="sw_mode_radio" class="input" value="4" onclick="setScenerion(4);">Media bridge</span>
+		</span>
+	<div id="mode_desc" style="position:relative;display:block;margin-top:10px;margin-left:5px;height:60px;z-index:75;">Беспроводной роутер, RT-AC66U подключается к сети Интернет через PPPoE, DHCP, PPTP, L2TP или статический IP и обеспечивает беспроводную сеть. В этом режиме NAT, Firewall и DHCP включены по умолчанию. UPnP и Dynamic DNS поддерживается для SOHO и домашних пользователей. Выберите этот режим, если Вы начинающий пользователь или не используете другие роутеры</div>
+		<br><br>
+	<div id="Senario" style="margin-top: 40px; margin-bottom: 60px; margin-left: 5px; background: url(&quot;images/New_ui/rt.jpg&quot;) center center no-repeat;">
+		<!--div id="ap-line" style="border:0px solid #333; width:133px; height:41px; position:absolute; background:url(images/wanlink.gif) no-repeat;"></div-->
+		<div id="Unplug-hint" style="border:2px solid red; background-color:#FFF; padding:3px;margin:0px 0px 0px 150px;width:250px; position:absolute; display:block; display:none;">Проверьте правильность подключения кабеля между портом WAN RT-AC66U и Интернетом.</div>
+	</div>	
+	</div>
+	<div class="apply_gen">
+		<input name="button" type="button" class="button_gen" onclick="saveMode();" value="Сохранить">
+	</div>
+	</td>
+	</tr>
+</tbody></table>
+</td>
+
+
+		</tr>
+      </tbody></table>
+		<!--===================================Ending of Main Content===========================================-->
+	</td>
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</tbody></table>
+
+</form>
+<div id="footer"><div align="center" class="bottom-image"></div>
+<div align="center" class="copyright">2013 &nbsp;ASUSTeK Computer Inc.&nbsp;Все&nbsp;права&nbsp;защищены.</div><br><div style="margin-top:-75px;margin-left:205px;"><table width="765px" border="0" align="center" cellpadding="0" cellspacing="0"><tbody><tr><td width="20" align="right"><div id="bottom_help_icon" style="margin-right:3px;"></div></td><td width="100" id="bottom_help_title" align="left">Help &amp; Support</td><td width="200" id="bottom_help_link" align="left">&nbsp;&nbsp;<a style="font-weight: bolder;text-decoration:underline;cursor:pointer;" href="http://support.asus.com/download.aspx?SLanguage=en&amp;m=RT-AC66U" target="_blank">Manual</a> | <a style="font-weight: bolder;text-decoration:underline;cursor:pointer;" href="http://support.asus.com/download.aspx?SLanguage=en&amp;m=RT-AC66U" target="_blank">Utility</a></td><td width="390" id="bottom_help_FAQ" align="right" style="font-family:Arial, Helvetica, sans-serif;">FAQ&nbsp;&nbsp;<input type="text" id="FAQ_input" name="FAQ_input" class="input_FAQ_table" maxlength="40"></td><td width="30" align="left"><div id="bottom_help_FAQ_icon" class="bottom_help_FAQ_icon" style="cursor:pointer;margin-left:3px;" target="_blank" onclick="search_supportsite();"></div></td></tr></tbody></table></div>
+</div>
+
+
+<!-- Mirrored from 192.168.1.1/Advanced_OperationMode_Content.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:32:34 GMT -->
+
+</body>
+
+<!-- Mirrored from 192.168.1.1/Advanced_OperationMode_Content.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:32:34 GMT -->
+</html>

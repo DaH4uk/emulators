@@ -1,0 +1,148 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language="javascript" src="general.js" tppabs="http://192.168.1.1/js/general.js"></script>
+<script language='javascript'>
+function switchFilterType(object)
+{
+var index = object.selectedIndex;
+switch(index)
+{
+case 0:
+window.location='access_ipfilter.htm'/*tpa=http://192.168.1.1/access/access_ipfilter.htm*/;
+break;
+case 1:
+window.location='access_appfilter.htm'/*tpa=http://192.168.1.1/access/access_appfilter.htm*/;
+break;
+}
+}
+function ModifyFilterFlag(data)
+{
+document.forms[0].flag.value=data;
+location.reload();
+}
+function changeindex()
+{
+document.URLFILTERform.URLindexFlag.value=1;
+location.reload();
+}
+function URLCheck()
+{
+var url = document.URLFILTERform.URLFILTER_URL;
+if(chineseCheck(url, "URLId"))
+{
+url.value="";
+url.focus();
+return false;
+}
+}
+</script>
+</head><body>
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/access_URLfilter_1" name="URLFILTERform"><div align=center>
+<table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Filter</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10"> </td><td width="440"></td></tr><tr>
+<td height="25" class="title-sub">
+<font color="#000000">Filter Type</font></td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Filter Type Selection</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="FILTERTYPE_index" SIZE="1" onchange="switchFilterType(this)"><OPTION>IP / MAC Filter
+<OPTION>Application Filter
+<OPTION SELECTED>URL Filter
+</SELECT></td></tr><tr>
+<td height="25" class="title-sub">
+<font color="#000000">URL Filter Editing</font></td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Active</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="RuleIndex_active" VALUE="1"><font color="#000000">Yes</font><INPUT TYPE="RADIO" NAME="RuleIndex_active" VALUE="0" CHECKED><font color="#000000">No</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">URL Index</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="URLFILTER_index" SIZE="1" onchange="changeindex();"><OPTION SELECTED>1
+<OPTION>2
+<OPTION>3
+<OPTION>4
+<OPTION>5
+<OPTION>6
+<OPTION>7
+<OPTION>8
+<OPTION>9
+<OPTION>10
+<OPTION>11
+<OPTION>12
+<OPTION>13
+<OPTION>14
+<OPTION>15
+<OPTION>16
+</SELECT><INPUT TYPE="HIDDEN" NAME="URLindexFlag" VALUE="0"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right id="URLId">
+<font color="#000000">URL</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="URLFILTER_URL" SIZE="48" MAXLENGTH="48" VALUE=""><INPUT TYPE="TEXT" NAME="PreventEnterKey" SIZE="20" MAXLENGTH="20" VALUE="" style="display:none"></td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" class="title-sub">
+<font color="#000000">URL Filter Listing</font></td><td width="10" class="light-orange"></td><td width="10" ><hr noshade class="light-orange-line"></td><td width="580"><hr noshade class="light-orange-line"></td><td width="10" ><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td>&nbsp;</td><td><table width="580" border="1" align=center cellpadding="0" cellspacing="0" bordercolor="#CCCCCC" bgcolor="#FFFFFF">
+<tr>
+<td width="15"  align=center class="tabdata">
+<strong>Index</strong></td><td width="45"  align=center class="tabdata"><strong>
+<font color="#000000">URL</font></strong></td></tr><tr>
+<td align=center class="tabdata">
+1<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+2<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+3<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+4<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+5<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+6<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+7<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+8<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+9<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+10<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+11<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+12<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+13<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+14<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+15<td width="130" class="tabdata">
+</td></tr><tr>
+<td align=center class="tabdata">
+16<td width="130" class="tabdata">
+</td></tr></table></td><td>&nbsp;</td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" height="42" class="black">&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="HIDDEN" NAME="flag" VALUE="0"><INPUT TYPE="button" NAME="URLFilterApply" VALUE="SAVE" onClick="location.reload();"><INPUT TYPE="BUTTON" NAME="URLFilterDelete" VALUE="DELETE" onClick="ModifyFilterFlag(1);"><INPUT TYPE="BUTTON" NAME="URLFilterCancel" VALUE="CANCEL" onClick="ModifyFilterFlag(2);"></td></tr></table></div></form>
+</body></html>

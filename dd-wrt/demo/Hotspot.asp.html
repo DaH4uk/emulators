@@ -1,0 +1,667 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Hotspot</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function user_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_user";
+F.submit();
+}
+function iradius_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_iradius";
+F.submit();
+}
+function user_remove_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "remove_user";
+F.submit();
+}
+function to_submit(F) {
+
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+if(F._hotss_customsplash) {
+F.hotss_customsplash.value = F._hotss_customsplash.checked ? 1 : 0;
+}
+apply(F);
+}
+function to_apply(F) {
+
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+if(F._hotss_customsplash) {
+F.hotss_customsplash.value = F._hotss_customsplash.checked ? 1 : 0;
+}
+applytake(F);
+}
+function handle_hotss(F,value)
+{if(value == 0) {
+choose_enable(F._hotss_customsplash);
+}
+else {
+F._hotss_customsplash.checked = false;
+choose_disable(F._hotss_customsplash);
+}
+}
+function setHotss(val) {
+if (val == "1") {
+
+setElementsActive("chilli_enable", "chilli_additional", false);
+show_layer_ext(this, 'idhotspotsys', true);
+show_layer_ext(this, 'idchilli', false);
+}
+else {
+setElementsActive("chilli_enable", "chilli_additional", true);
+show_layer_ext(this, 'idhotspotsys', false);
+show_layer_ext(this, 'idchilli', 0 == 1);
+if (0 == 1) {
+show_layer_ext(this, 'idchilli', false);
+setElementsActive("chilli_enable", "chilli_additional", false);
+}
+}
+}
+var update;
+addEvent(window, "load", function() {
+show_layer_ext(document.setup.apd_enable, 'idsputnik', 0 == 1);
+show_layer_ext(document.setup.wd_enable, 'idwifidog', 0 == 1);
+show_layer_ext(document.setup.wd_sslavailable, 'idwifidogssl', 0 == 1);
+show_layer_ext(document.setup.chilli_enable, 'idchilli', 0 == 1);
+show_layer_ext(document.setup.anchorfree_enable, 'idanchorfree', 0 == 1);
+show_layer_ext(document.setup.http_redirect_enable, 'idhttpredirect', 0 == 1);
+show_layer_ext(document.setup.NC_enable, 'idnocat', 0 == 1);
+show_layer_ext(document.setup.smtp_redirect_enable, 'smtpredirect', 0 == 1);
+show_layer_ext(document.setup.wd_auth, 'idauth', 0 == 1);
+show_layer_ext(document.setup.hotss_enable, 'idhotspotsys', 0 == 1);
+show_layer_ext(document.setup.hotss_uamenable, 'idhotssuam', 0 == 1);
+show_layer_ext(document.setup.hotss_nowifibridge, 'idhotssdhcp', 0 == 1);
+show_layer_ext(document.setup.chilli_nowifibridge, 'idchillidhcp', 0 == 1);
+setHotss("0");
+if (document.setup.hotss_loginonsplash)
+handle_hotss(document.setup, 0 == 1);
+
+update = new StatusbarUpdate();
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesServices)</script></strong></a></li>
+      <li><a href="FreeRadius.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesRadius)</script></strong></a></li>
+      <li><a href="PPPoE_Server.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPppoesrv)</script></strong></a></li>
+      <li><a href="PPTP.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPptp)</script></strong></a></li>
+      <li><a href="USB.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesUSB)</script></strong></a></li>
+      <li><a href="NAS.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesNAS)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.servicesHotspot)</script></strong></span></li>
+      <li><a href="Milkfish.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesMilkfish)</script></strong></a></li>
+      <li><a href="AnchorFree.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesAnchorFree)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="setup" action="#" method="post">
+<input type="hidden" name="submit_button" value="Hotspot" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="commit" value="1"/>
+<input type="hidden" name="hotss_preconfig" value="0"/>
+<input type="hidden" name="hotss_customsplash" />
+
+<h2><script type="text/javascript">Capture(hotspot.h2)</script></h2>
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.sputnik_legend)</script></legend>
+	<div class="center"><img src="images/sputnik.png" alt="sputnik logo" /></div><br />
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspot.sputnik_srv)</script></div>
+		<input class="spaceradio" type="radio" name="apd_enable" value="1"  onclick="show_layer_ext(this, 'idsputnik', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="apd_enable" value="0" checked="checked" onclick="show_layer_ext(this, 'idsputnik', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idsputnik">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.sputnik_mode)</script></div>
+				<select name="sputnik_mode" >
+					<script type="text/javascript">
+					//<![CDATA[
+						document.write("<option value=\"standard\" selected=\"selected\" >" + share.standard + "</option>");
+					//]]>
+					</script>
+					<option value="nms"  >NMS</option>
+				</select>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.sputnik_id)</script></div>
+			<input class="spaceradio" type="radio" name="sputnik_mjid_type" value="0" checked="checked" /><script type="text/javascript">Capture(hotspot.sputnik_instant)</script>
+		</div>
+		<div class="setting">	
+			<div class="label">&nbsp;</div>
+			<input class="spaceradio" type="radio" name="sputnik_mjid_type" value="1"  /><script type="text/javascript">Capture(hotspot.sputnik_express)</script>
+		</div>
+		<!--
+		<div class="setting">	
+			<div class="label">&nbsp;</div>
+			<input class="spaceradio" type="radio" name="sputnik_mjid_type" value="2"  /><script type="text/javascript">Capture(share.use)</script>&nbsp;
+			<input class="text" maxLength="100" size="35" name="sputnik_mjid" value="" />
+		</div>
+		-->
+		<div class="center">
+			<a href="http://dd-wrt.com/www.sputnik.com/products/ddwrt.html" target="_blank"><script type="text/javascript">Capture(hotspot.sputnik_learn)</script></a>&nbsp;<script type="text/javascript">Capture(hotspot.sputnik_about)</script>
+		</div>
+	</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspotsys.legend)</script></legend>
+	<div class="center"><a href="http://dd-wrt.com/www.hotspotsystem.com/default.htm" target="_blank"><img src="images/hotspotsystem.png" alt="hotspotsystem logo" border="0" /></a></div><br />
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspotsys.legend)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="hotss_enable"  onclick="setHotss(this.value);" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="hotss_enable" checked onclick="setHotss(this.value);" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idhotspotsys">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.operatorid)</script></div>
+			<input class="text" maxLength="500" size="25" name="hotss_operatorid" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.locationid)</script></div>
+			<input class="text" maxLength="25" size="25" name="hotss_locationid" value="" />
+		</div>
+		<div class="setting"> 
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.dhcp)</script></div> 
+			<select name="hotss_interface">
+<option value="br0"  >LAN</option>
+</select>
+ 
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.net)</script></div>
+			<input class="text" maxLength="20" size="20" name="hotss_net" value="192.168.182.0/24" />
+		</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspotsys.uamenable)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="hotss_uamenable"  onclick="show_layer_ext(this, 'idhotssuam', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="hotss_uamenable" checked onclick="show_layer_ext(this, 'idhotssuam', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idhotssuam">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.whitelabelproto)</script></div>
+			<input class="spaceradio" type="radio" value="http" name="hotss_customuamproto"   />http&nbsp;
+			<input class="spaceradio" type="radio" value="https" name="hotss_customuamproto" checked />https
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.whitelabel)</script></div>
+			<input class="text" maxLength="64" size="25" name="hotss_customuam" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.loginonsplash)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="hotss_loginonsplash" onclick="handle_hotss(this.form,1)"   /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="hotss_loginonsplash" onclick="handle_hotss(this.form,0)" checked /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.customsplash)</script></div>
+			<input type="checkbox" value="1" name="_hotss_customsplash"  />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspotsys.allowuam)</script></div>
+			<input class="text" maxLength="500" size="25" name="hotss_uamallowed" value="" />
+		</div>
+	</div>	
+	</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.wifidog_legend)</script></legend>
+	<div class="center"><img src="images/wifidog.png" alt="wifidog logo" /></div><br />
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_srv)</script></div>
+		<input class="spaceradio" type="radio" name="wd_enable" value="1"  onclick="show_layer_ext(this, 'idwifidog', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="wd_enable" value="0" checked="checked" onclick="show_layer_ext(this, 'idwifidog', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idwifidog">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_id)</script></div>
+			<input class="text" maxlength="100" size="39" name="wd_gwid" value="default" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_httpdname)</script></div>
+			<input class="text" maxlength="100" size="39" name="wd_httpdname" value="WiFiDog" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_port)</script></div>
+			<input class="num" maxlength="5" size="5" onblur="valid_range(this,1,65535,hotspot.wifidog_port)" name="wd_gwport" value="2060" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+				document.write("(" + share.deflt + ": 2060, " + share.range + ": 1 - 65535)");
+			//]]>
+			</script>
+			</span>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_httpdconn)</script></div>
+			<input class="num" maxlength="2" size="5" onblur="valid_range(this,1,50,hotspot.wifidog_httpdconn)" name="wd_httpdcon" value="10" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+				document.write("(" + share.deflt + ": 10, " + share.range + ": 1 - 50)");
+			//]]>
+			</script>
+			</span>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_checkinter)</script></div>
+			<input class="num" maxlength="4" size="5" onblur="valid_range(this,1,3600,hotspot.wifidog_checkinter)" name="wd_interval" value="60" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+				document.write("(" + share.deflt + ": 60, " + share.range + ": 1 - 3600)");
+			//]]>
+			</script>
+			</span>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_checktimeout)</script></div>
+			<input class="num" maxlength="2" size="5" onblur="valid_range(this,1,99,hotspot.wifidog_checktimeout)" name="wd_timeout" value="5" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+				document.write("(" + share.deflt + ": 5, " + share.range + ": 1 - 99)");
+			//]]>
+			</script>
+			</span>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_tmaclist)</script></div>
+			<input class="text" maxlength="200" size="39" name="wd_maclist" value="" />
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_authsrv)</script></div>
+			<input class="text" maxlength="100" size="39" name="wd_hostname" value="" />
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_authsrvssl)</script></div>
+			<input class="spaceradio" type="radio" name="wd_sslavailable" value="1"  onclick="show_layer_ext(this, 'idwifidogssl', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="wd_sslavailable" value="0" checked="checked" onclick="show_layer_ext(this, 'idwifidogssl', false)" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div id="idwifidogssl">
+			<div class="setting">	
+			    <div class="label"><script type="text/javascript">Capture(hotspot.wifidog_authsrvsslport)</script></div>
+			    <input class="num" maxlength="5" size="5" onblur="valid_range(this,1,65535,wifidog_authsrvsslport)" name="wd_sslport" value="443" />
+			    <span class="default"><script type="text/javascript">
+						//<![CDATA[
+						document.write("(" + share.deflt + ": 443, " + share.range + ": 1 - 65535)");
+						//]]>
+						</script>
+					</span>
+			</div>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_authsrvhttpport)</script></div>
+			<input class="num" maxlength="5" size="5" onblur="valid_range(this,1,65535,wifidog_authsrvhttpport)" name="wd_httpport" value="80" />
+			<span class="default"><script type="text/javascript">
+				//<![CDATA[
+				document.write("(" + share.deflt + ": 80, " + share.range + ": 1 - 65535)");
+				//]]>
+				</script>
+			</span>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_authsrvpath)</script></div>
+			<input class="text" maxlength="100" size="39" name="wd_path" value="/wifidog" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_auth)</script></div>
+			<input class="spaceradio" type="radio" name="wd_auth" value="1"  onclick="show_layer_ext(this, 'idauth', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="wd_auth" value="0" checked="checked" onclick="show_layer_ext(this, 'idauth', false)" /><script type="text/javascript">Capture(share.disable)</script> 
+			<div id="idauth">
+				<div class="setting">
+					<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_realm)</script></div>
+					<input name="wd_realm" size="40" maxlength="63" onblur="valid_name(this,share.usrname)" value="" />
+					<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_username)</script></div>
+					<input name="wd_username" size="40" maxlength="63" onblur="valid_name(this,share.usrname)" value="" />
+					<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_password)</script></div>
+					<input name="wd_password" size="40" maxlength="63" onblur="valid_name(this,share.passwd)" type="password" value="" />
+				</div>
+			</div>
+		</div>
+		<div class="setting">	
+			<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_messagefile)</script></div>
+			<input class="text" maxlength="100" size="39" name="wd_messagefile" value="" />
+		</div>
+		<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(hotspot.wifidog_config)</script></div>
+				<textarea cols="60" rows="4" id="dnsmasq_options" name="wd_config"></textarea>
+				<script type="text/javascript">
+				//<![CDATA[
+					var wd_config = fix_cr( '' );
+					document.getElementById("dnsmasq_options").value = wd_config;
+				//]]>
+				</script>
+		</div>
+	</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspot.hotspot)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="chilli_enable"  onclick="show_layer_ext(this, 'idchilli', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="chilli_enable" checked onclick="show_layer_ext(this, 'idchilli', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idchilli">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.dhcp)</script></div>
+			<select name="chilli_interface">
+<option value="br0"  >LAN</option>
+</select>
+
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.net)</script></div>
+			<input class="text" maxLength="20" size="20" name="chilli_net" value="192.168.182.0/24" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.pserver)</script></div>
+			<input class="text" maxLength="100" size="25" name="chilli_radius" value="0.0.0.0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.bserver)</script></div>
+			<input class="text" maxLength="100" size="25" name="chilli_backup" value="0.0.0.0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.dns)</script></div>
+			<input class="text" maxLength="15" size="15" name="chilli_dns1" value="0.0.0.0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.url)</script></div>
+			<input class="text" maxLength="100" size="25" name="chilli_url" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.share_key)</script></div>
+			<input class="text" maxLength="100" size="25" name="chilli_pass" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.radnas)</script></div>
+			<input class="text" maxLength="500" size="25" name="chilli_radiusnasid" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.uam)</script></div>
+			<input class="text" maxLength="500" size="25" name="chilli_uamsecret" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.uamdns)</script></div>
+			<input class="text" maxLength="500" size="25" name="chilli_uamanydns" value="0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.allowuam)</script></div>
+			<input class="text" maxLength="500" size="25" name="chilli_uamallowed" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.macauth)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="chilli_macauth"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="chilli_macauth" checked /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.option)</script></div>
+			<textarea id="chilli_additional" name="chilli_additional" cols="60" rows="4"></textarea>
+	        <script type="text/javascript">
+	        //<![CDATA[
+	        	var chilli_additional = fix_cr( '' );
+	        	document.getElementById("chilli_additional").value = chilli_additional;
+	        //]]>
+	        </script>
+	    </div>
+	   </div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.fon_chilli)</script></legend>
+	<input type="hidden" name="fon_userlist" value="13" />
+	<table class="table center" summary="fon users table">
+		<tr>
+			<th colspan="2"><script type="text/javascript">Capture(hotspot.fon_user)</script></th>
+		</tr>
+		<tr>
+			<th><script type="text/javascript">Capture(share.usrname)</script></th>
+			<th><script type="text/javascript">Capture(share.passwd)</script></th>
+		</tr>
+		
+	</table><br />
+	<div class="center">
+		<script type="text/javascript">
+		//<![CDATA[
+			document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.add + "\" onclick=\"user_add_submit(this.form);\" />");
+			document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.remove + "\" onclick=\"user_remove_submit(this.form);\" />");
+		//]]>
+		</script>
+	</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.http_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspot.http_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="http_redirect_enable"  onclick="show_layer_ext(this, 'idhttpredirect', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="http_redirect_enable" checked onclick="show_layer_ext(this, 'idhttpredirect', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idhttpredirect">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.http_ip)</script></div>
+			<input type="hidden" name="http_redirect_destination" value="0.0.0.0"/>
+			<input size="3" maxlength="3" class="num" name="http_redirect_destination_0" onblur="valid_range(this,0,255,hotspot.http_ip)" value="0" />.<input size="3" maxlength="3" class="num" name="http_redirect_destination_1" onblur="valid_range(this,0,255,hotspot.http_ip)" value="0" />.<input size="3" maxlength="3" class="num" name="http_redirect_destination_2" onblur="valid_range(this,0,255,hotspot.http_ip)" value="0" />.<input size="3" maxlength="3" class="num" name="http_redirect_destination_3" onblur="valid_range(this,1,254,hotspot.http_ip)" value="0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.http_port)</script></div>
+			<input size="5" maxlength="5" class="num" name="http_redirect_port" onblur="valid_range(this,1,65535,hotspot.http_port)" value="3128" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.http_net)</script></div>
+			<input type="hidden" name="http_source_network" value="0.0.0.0"/>
+			<input size="3" maxlength="3" class="num" name="http_source_network_0" onblur="valid_range(this,0,255,hotspot.http_net)" value="0" />.<input size="3" maxlength="3" class="num" name="http_source_network_1" onblur="valid_range(this,0,255,hotspot.http_net)" value="0" />.<input size="3" maxlength="3" class="num" name="http_source_network_2" onblur="valid_range(this,0,255,hotspot.http_net)" value="0" />.<input size="3" maxlength="3" class="num" name="http_source_network_3" onblur="valid_range(this,0,254,'HTTP Source IP')" value="0" />
+		</div>
+	</div>
+</fieldset><br/>
+
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.nocat_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspot.nocat_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="NC_enable"  onclick="show_layer_ext(this, 'idnocat', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="NC_enable" checked="checked" onclick="show_layer_ext(this, 'idnocat', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idnocat">
+		<div class="setting">
+            		<div class="label"><script type="text/javascript">Capture(hotspot.nocat_gatewayaddr)</script></div>
+			<input type="hidden" name="NC_GatewayAddr" value="0.0.0.0" />
+			<input size="3" maxlength="3" class="num" name="NC_GatewayAddr_0" onblur="valid_range(this,0,255,'IP')" value="0" />.<input size="3" maxlength="3" class="num" name="NC_GatewayAddr_1" onblur="valid_range(this,0,255,'IP')" value="0" />.<input size="3" maxlength="3" class="num" name="NC_GatewayAddr_2" onblur="valid_range(this,0,255,'IP')" value="0" />.<input size="3" maxlength="3" class="num" name="NC_GatewayAddr_3" onblur="valid_range(this,0,255,'IP')" value="0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_gateway)</script></div>
+			<input maxlength="39" name="NC_GatewayName" size="39" value="DD-WRT" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_extifname)</script></div>
+			<select name="NC_extifname">
+<option value="auto" selected="selected" >auto</option>
+<option value="br0"  >LAN</option>
+</select>
+
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_ifname)</script></div>
+			<select name="NC_ifname">
+<option value="br0"  >LAN</option>
+</select>
+
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_home)</script></div>
+			<input maxlength="100" name="NC_HomePage" size="39" value="http://www.dd-wrt.com" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_redirect)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="NC_ForcedRedirect"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="NC_ForcedRedirect" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_allowweb)</script></div>
+			<input maxlength="100" name="NC_AllowedWebHosts" size="39" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_docroot)</script></div>
+			<input maxlength="100" name="NC_DocumentRoot" size="39" value="/www" /> /splash.html
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_splash)</script></div>
+			<input maxlength="100" name="NC_SplashURL" size="39" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_port)</script></div>
+			<input maxlength="39" name="NC_ExcludePorts" size="39" value="25" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_MAClist)</script></div>
+			<input name="NC_MACWhiteList" size="39" value="" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_timeout)</script></div>
+			<input class="num" type="text" size="6" name="NC_LoginTimeout" value="86400" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_verbose)</script></div>
+			<select name="NC_Verbosity">
+				<option value="0"  >0</option>
+				<option value="1"  >1</option>
+				<option value="2" selected="selected" >2</option>
+				<option value="3"  >3</option>
+				<option value="4"  >4</option>
+				<option value="5"  >5</option>
+				<option value="6"  >6</option>
+				<option value="7"  >7</option>
+				<option value="8"  >8</option>
+				<option value="9"  >9</option>
+				<option value="10"  >10</option>
+			</select>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.nocat_route)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="NC_RouteOnly"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="NC_RouteOnly" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+	</div>
+</fieldset><br/>
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.shat_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.shat_srv2)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="shat_enable"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="shat_enable" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.range)</script></div>
+			<input class="text" maxLength="100" size="25" name="shat_range" value="192.168.1.79+20" />
+		</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(hotspot.smtp_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(hotspot.smtp_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="smtp_redirect_enable"  onclick="show_layer_ext(this, 'smtpredirect', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="smtp_redirect_enable" checked="checked" onclick="show_layer_ext(this, 'smtpredirect', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="smtpredirect">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.smtp_ip)</script></div>
+			<input type="hidden" name="smtp_redirect_destination" value="0.0.0.0"/>
+			<input size="3" maxlength="3" class="num" name="smtp_redirect_destination_0" onBlur="valid_range(this,0,255,hotspot.smtp_ip)" value="0" />.<input size="3" maxlength="3" class="num" name="smtp_redirect_destination_1" onBlur="valid_range(this,0,255,hotspot.smtp_ip)" value="0" />.<input size="3" maxlength="3" class="num" name="smtp_redirect_destination_2" onBlur="valid_range(this,0,255,hotspot.smtp_ip)" value="0" />.<input size="3" maxlength="3" class="num" name="smtp_redirect_destination_3" onBlur="valid_range(this,1,254,hotspot.smtp_ip)" value="0" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(hotspot.smtp_net)</script></div>
+			<input type="hidden" name="smtp_source_network" value="0.0.0.0"/>
+			<input size="3" maxlength="3" class="num" name="smtp_source_network_0" onBlur="valid_range(this,0,255,hotspot.smtp_net)" value="0" />.<input size="3" maxlength="3" class="num" name="smtp_source_network_1" onBlur="valid_range(this,0,255,hotspot.smtp_net)" value="0" />.<input size="3" maxlength="3" class="num" name="smtp_source_network_2" onBlur="valid_range(this,0,255,hotspot.smtp_net)" value="0" />.<input size="3" maxlength="3" class="num" name="smtp_source_network_3" onBlur="valid_range(this,0,254,hotspot.smtp_net)" value="0" />
+		</div>
+	</div>
+</fieldset><br/>
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div><br/>
+<a href="javascript:openHelpWindow('HHotspot.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:13 up 24 min, load average: 0.07, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

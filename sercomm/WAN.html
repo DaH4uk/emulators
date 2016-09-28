@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html class="product16" style="display: block;">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!--[if lt IE 9]>
+	<script src="js/html5.js"></script>
+	<![endif]-->
+    <link href="./img/entry-level.png" type="image/png" rel="icon">
+    <link rel="stylesheet" href="./css/reset.css" type="text/css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <link rel="stylesheet" href="./css/content.css" type="text/css">
+    <!--[if lt IE 9]><style type="text/css">article .button-cancel, article .button-apply, article .button-blank, #progress-bar-buttons .button-apply, #progress-bar-buttons .button-cancel { padding-bottom: 3px; }</style><![endif]-->
+    <script src="./js/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <style type="text/css">
+         :root .banner_box,
+         :root .adv {
+            display: none !important;
+        }
+    </style>
+    <style type="text/css">
+        #chromereload_page_informer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(142, 255, 186, 0.5);
+            height: 24px;
+            padding: 10px 10px 0 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #4A4A4A;
+            z-index: 99999;
+            cursor: pointer;
+        }
+    </style>
+    <script src="./js/jquery.easing.1.3.js" type="text/javascript"></script>
+    <script src="./js/jquery.hashchange.js" type="text/javascript"></script>
+    <!-- justin add -->
+    <!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie8content.css" type="text/css" />
+	<![endif]-->
+    <script src="./js/mainFunctions.js" type="text/javascript"></script>
+    <script src="./js/mainFrame.js" type="text/javascript"></script>
+    <script src="./js/pageLoadFunctions.js" type="text/javascript"></script>
+    <script src="./js/multi_lang.js" type="text/javascript"></script>
+
+    <script src="./js/settings.js" type="text/javascript"></script>
+
+    <!-- justin add end -->
+    <link rel="stylesheet" href="./css/settings.css" type="text/css">
+    <script src="./js/functionsNotOverview.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var category = 'settings';
+        var defaultSub = '60';
+        // get submenu and subsubmenu
+        var gets = getHashVars();
+        sub = gets['sub'];
+        var subSub = gets['subSub'];
+        var load = ''; // content to load
+        var oldCat = 'value';
+        var task = false;
+        var messagesCat = false;
+    </script>
+
+    <title>WAN</title>
+</head>
+
+<body class="en expert settings">
+
+    <div id="wrap">
+        <header id="header">
+            <div id="head-wrap" class="clearfix">
+                <a href="./overview.html" class="logos"><img src="./img/entry-level.png" alt="Sercomm Logo"></a><a href="./index.html" id="logout">&nbsp;</a>
+                <div id="dropDownBasExp" class="admin" style="display: none;">
+                    <div href="" id="selectBasic" class="selectBasic"><span id="lang700056">Базовый режим</span></div>
+                    <div href="" id="selectExpert" class="selectExpert"><span id="lang700057">Эксперт-режим</span></div>
+                </div>
+            </div>
+            <nav>
+                <ul class="clearfix five settingsMenu ">
+                    <li id="overview"><a href="./overview.html"><span id="lang700031">Обзор</span></a></li>
+                    <li id="internet"><a href="./internet.html"><span id="lang700033">Интернет</span></a></li>
+                    <li id="wifi"><a href="./wifi.html"><span id="lang700034">Wi-Fi</span></a></li>
+                    <li id="settings" class="active"><a href="./settings.html"><span id="lang700035">Параметры</span></a></li>
+                    <li id="status-and-support"><a href="./status-and-support.html"><span id="lang700036">Статус и поддержка</span></a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="inner-wrap" class="clearfix notOverview">
+            <script>
+                document.write('<div id="indicator"><img src="img/indicator.png" alt="Indicator" /></div>');
+            </script>
+            <div id="indicator" style="display: none;"><img src="./img/indicator.png" alt="Indicator"></div>
+            <div id="navigation">
+                <ul>
+                    <li id="77" class="menuItem"><a href="./settings.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905021">Язык</span></a></li>
+                    <li id="60" class="menuItem"><a href="./password.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905001">Пароль</span></a></li>
+                    <li id="58" class="menuItem"><a href="./USB.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905003">USB</span></a></li>
+                    <li id="56" class="menuItem sub"><a href="./shared_USB_access.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505001">Общий доступ к USB</span></a>
+                        <div class="subMenu" style="display: none; height: 0px;">
+                            <ul>
+                                <li id="57" class="subMenuItem sub"><a href="./DLNA.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905004">DLNA</span></a></li>
+                                <li id="51" class="subMenuItem sub"><a href="./file_server.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505005">Файловый сервер</span></a></li>
+                                <li id="50" class="subMenuItem sub"><a href="./FTP.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905011">FTP</span></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li id="54" class="menuItem"><a href="./configuration_file.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905007">Файл конфигурации</span></a></li>
+                    <li id="52" class="menuItem"><a href="./LAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905009">LAN</span></a></li>
+                    <li id="59" class="menuItem"><a href="./firmware_update.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905002">Обновление прошивки</span></a></li>
+                    <li id="73" class="menuItem"><a href="./QoS.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905018">QoS</span></a></li>
+                    <li id="74" class="menuItem"><a href="./time_synchronization.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang513001">Синхронизация времени</span></a></li>
+                    <li id="75" class="menuItem"><a href="./TR-069.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905019">TR-069</span></a></li>
+                    <li id="80" class="menuItem"><a href="./Access_control.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang906017">Контроль доступа</span></a></li>
+                    <li id="68" class="menuItem active"><a href="./WAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903013">WAN</span></a></li>
+                    <li id="302" class="menuItem"><a href="./PPPoE_Realy.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">PPPoE Relay</span></a></li>
+                    <li id="301" class="menuItem"><a href="./VLAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">VLAN</span></a></li>
+                    <li id="300" class="menuItem"><a href="./IPTV.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang606029">IPTV</span></a></li>
+                    <li id="303" class="menuItem"><a href="./syslog_client.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1310572">Syslog Client</span></a></li>
+                    <li id="97" class="menuItem"><a href="./IPv6.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905023">IPv6</span></a></li>
+                    <li id="86" class="menuItem"><a href="./static_routes.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang522001">Статические маршруты</span></a></li>
+                    <li id="93" class="menuItem"><a href="./policy_routing.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903018">Политики маршрутизации</span></a></li>
+                </ul>
+            </div>
+
+            <article id="settings">
+                <div id="content" class="sub68">
+
+
+
+
+
+
+                    <h1><span id="lang518001">Публичная сеть</span></h1>
+                    <h2>
+                        <!--&nbsp;-->
+                    </h2>
+
+                    <h3><span id="lang518001">Публичная сеть</span></h3>
+                    <div class="h3-content">
+                        <div class="table wan">
+                            <div class="table-row table-row-head">
+                                <div class="table-col table-col1"><span id="lang508022">Имя</span></div>
+                                <div class="table-col table-col2"><span id="lang518055">Используется для</span></div>
+                                <div class="table-col table-col3"><span id="lang1301110">Тип доступа</span></div>
+                                <div class="table-col table-col4"><span id="lang518081">Firewall</span></div>
+                                <div class="table-col table-col5"><span id="lang518057">Статус</span></div>
+                                <div class="table-col table-col6">&nbsp;</div>
+                                <div class="table-col table-col7">&nbsp;</div>
+                                <div class="table-col table-col8">&nbsp;</div>
+                            </div>
+                            <div class="table-row italic no-entry tC" style="display: none;">
+                                <span id="lang518058">Интернет-подключения не заданы</span>
+                            </div>
+                            
+                            <div class="table-row in_data inactive" id="3">
+                                <div class="table-col table-col1">Internet-STATIC</div>
+                                <div class="table-col table-col2">Только данные IPTV Управление </div>
+                                <div class="table-col table-col3">Ethernet</div>
+                                <div class="table-col table-col4">Включено</div>
+                                <div class="table-col table-col5">Disconnected</div>
+                                <div class="table-col table-col6"><input class="button checkbox button-edit-small wanEdit" value="" type="button"></div>
+                                <div class="table-col table-col7"><input class="button checkbox button-delete-small" value="" type="button"></div>
+                                <div class="table-col table-col8"><input class="button button-off" type="button"></div><input type="hidden" tmp_id="3" tmp_create_id="0" tmp_enable="0" tmp_status="Disconnected" tmp_name="Internet-STATIC" tmp_access_type="ethernet" tmp_used_for="data,management,iptv,"
+                                    tmp_nat="1" tmp_firewall="1" tmp_dsl_latency="undefined" tmp_vpi="undefined" tmp_vci="undefined" tmp_encapsulation_mode="undefined" tmp_service_category="undefined" tmp_peak_cell_rate="undefined" tmp_sustainable_cell_rate="undefined"
+                                    tmp_maximum_burst_size="undefined" tmp_ptm_priority="undefined" tmp_vlan_id="" tmp_802dot1p="-1" tmp_connection_type="static" tmp_wan_ipv6_enable="0" tmp_username="" tmp_password="" tmp_service_name="" tmp_ac_name="" tmp_authentication_method="ms_chap"
+                                    tmp_connection_trigger="manual" tmp_lcp_echo_request_interval="" tmp_lcp_echo_retry_times="" tmp_ip_addr="0.0.0.0" tmp_netmask="0.0.0.0" tmp_gateway="0.0.0.0" tmp_mtu="1500" tmp_idle_time="" tmp_obtain_dns_servers_automatically="0"
+                                    tmp_advanced_settings="1" tmp_primary_dns_server="0.0.0.0" tmp_secondary_dns_server="0.0.0.0" tmp_option_12_host_name="S1010.ER" tmp_option_60_vendor_id="" tmp_option_61_iaid="" tmp_option_61_duid="" tmp_option_125="undefined"
+                                    tmp_pptp_host_name="undefined" tmp_pptp_server="undefined" tmp_pptp_ip_addr_type="undefined" tmp_pptp_ip_addr="undefined"></div>
+                            <div class="table-row in_data inactive" id="1">
+                                <div class="table-col table-col1">Internet-IPoE</div>
+                                <div class="table-col table-col2">Только данные Управление </div>
+                                <div class="table-col table-col3">Ethernet</div>
+                                <div class="table-col table-col4">Включено</div>
+                                <div class="table-col table-col5">Disconnected</div>
+                                <div class="table-col table-col6"><input class="button checkbox button-edit-small wanEdit" value="" type="button"></div>
+                                <div class="table-col table-col7"><input class="button checkbox button-delete-small" value="" type="button"></div>
+                                <div class="table-col table-col8"><input class="button button-off" type="button"></div><input type="hidden" tmp_id="1" tmp_create_id="0" tmp_enable="0" tmp_status="Disconnected" tmp_name="Internet-IPoE" tmp_access_type="ethernet" tmp_used_for="data,management,"
+                                    tmp_nat="1" tmp_firewall="1" tmp_dsl_latency="undefined" tmp_vpi="undefined" tmp_vci="undefined" tmp_encapsulation_mode="undefined" tmp_service_category="undefined" tmp_peak_cell_rate="undefined" tmp_sustainable_cell_rate="undefined"
+                                    tmp_maximum_burst_size="undefined" tmp_ptm_priority="undefined" tmp_vlan_id="" tmp_802dot1p="-1" tmp_connection_type="dhcp" tmp_wan_ipv6_enable="0" tmp_username="89103312480@sochi20" tmp_password="IJlrtOw/Cy7u3ia01qD0gA=="
+                                    tmp_service_name="" tmp_ac_name="DOM.RU" tmp_authentication_method="auto" tmp_connection_trigger="always_on" tmp_lcp_echo_request_interval="10" tmp_lcp_echo_retry_times="5" tmp_ip_addr="0.0.0.0" tmp_netmask="0.0.0.0" tmp_gateway="0.0.0.0"
+                                    tmp_mtu="1500" tmp_idle_time="0" tmp_obtain_dns_servers_automatically="1" tmp_advanced_settings="1" tmp_primary_dns_server="0.0.0.0" tmp_secondary_dns_server="0.0.0.0" tmp_option_12_host_name="S1010.ER" tmp_option_60_vendor_id="ERT Sercomm S1010"
+                                    tmp_option_61_iaid="" tmp_option_61_duid="" tmp_option_125="undefined" tmp_pptp_host_name="undefined" tmp_pptp_server="undefined" tmp_pptp_ip_addr_type="undefined" tmp_pptp_ip_addr="undefined"></div>
+                        </div>
+                        <div class="table-row add-row">
+                            <div class="table-col-full">
+                                <input id="wanAdd" class="button button-add" value="" type="button">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="apply-cancel-margin-top">
+
+                        <div class="clearfix apply-cancel">
+                            <div class="right">
+                                <input id="cancelButton" class="button button-cancel right" value="Отмена" type="button">
+                            </div>
+                            <div class="right">
+                                <input id="applyButton" class="button button-apply right" value="Применить" type="button">
+                            </div>
+                        </div>
+
+                        <div class="message-arrowbox" style="display: none;">
+                            <div class="message-arrowbox-right">
+                                <span id="lang700175">Некоторые параметры были изменены</span>
+                            </div>
+                        </div>
+                        <div class="message-arrowbox-applied" style="display: none;">
+                            <div class="message-arrowbox-applied-right">
+                                <span id="lang700176">Изменения были применены.</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="data_store" style="display:none;"></div>
+                    <div class="popup big" style="display: none;"></div>
+                    <div class="blackBackground" style="display: none;">&nbsp;</div>
+                    <input id="create_id" type="hidden" value="0">
+                    <input id="del_id_list" type="hidden" value="">
+                    <input id="edit_id_list" type="hidden" value="">
+
+
+
+                    <style>
+                        .table-row {
+                            height: auto;
+                            min-height: 30px;
+                            padding-top: 6px;
+                        }
+                        
+                        .table.wan .table-col {
+                            padding-right: 3px;
+                            word-wrap: break-word;
+                            overflow: hidden;
+                        }
+                        
+                        .table.wan .table-col.table-col1 {
+                            width: 130px;
+                        }
+                        
+                        .table.wan .table-col.table-col2 {
+                            width: 90px;
+                        }
+                        
+                        .table.wan .table-col.table-col3 {
+                            width: 110px;
+                        }
+                        
+                        .table.wan .table-col.table-col4 {
+                            width: 59px;
+                        }
+                        
+                        .table.wan .table-col.table-col5 {
+                            width: 90px;
+                        }
+                        
+                        .table.wan .table-col.table-col6 {
+                            width: 30px;
+                        }
+                        
+                        .table.wan .table-col.table-col7 {
+                            width: 30px;
+                        }
+                        
+                        .table.wan .table-col.table-col8 {
+                            width: 75px;
+                        }
+                        
+                        .table.wan .table-row.inactive {
+                            opacity: 0.5;
+                        }
+                        
+                        .popup .row.multiple {
+                            height: auto;
+                        }
+                        
+                        select[multiple] {
+                            height: 100%;
+                        }
+                    </style>
+
+                    <!--[if lt IE 9]>
+<style>
+.table-row.inactive {
+	color: rgb(192, 192, 192);
+}
+.table-row.inactive .button-edit-small {
+	background-image: url("../img/button-edit-small-inactive.png");
+}
+.table-row.inactive .button-delete-small {
+	background-image: url("../img/button-delete-small-inactive.png");
+}
+.table-row.inactive .button-off {
+	background-image: url("../img/button-off-inactive.png");
+}
+</style>
+<![endif]-->
+                </div>
+            </article>
+        </section>
+    </div>
+    <div id="langAndFirmware" class="clearfix">
+        <div class="left" id="langSelector"><a href="javascript:lang_change(&#39;en&#39;);" class="language-links line">English</a><a href="javascript:lang_change(&#39;ru&#39;);" class="language-links">Русский</a></div>
+        <div class="right firmwareVersion">
+        </div>
+    </div>
+
+
+    <script>
+        //#cancelButton
+
+
+        var access_type_list_ary;
+        $(function() {
+            //#wanAdd
+            $('#wanAdd').bind("click", function() {
+                if (logMessage && window.console)
+                    console.log('#wanAdd click');
+                $('body, html').animate({
+                    scrollTop: '0px'
+                });
+                $('.popup').html(page_settings_wan2_popup_add_html_str(null));
+                // page_settings_wan2_popup_func_load(null);
+                document.getElementById("mtu_string").innerHTML = document.getElementById("mtu_string").innerHTML.replace('1500', '1492');
+                //
+                var tmp_access_type = $('.popup #tmp_access_type').val();
+                $('.popup .ethernet, .popup .adsl, .popup .vdsl, .popup .umts').hide();
+                $('.popup .' + tmp_access_type).show();
+                var tmp_service_category = $('.popup #tmp_service_category').val();
+                $('.popup .ubr_with_pcr, .popup .cbr, .popup .non_realtime_vbr, .popup .realtime_vbr').hide();
+                $('.popup .' + tmp_service_category).show();
+                var tmp_connection_type = $('.popup #tmp_connection_type').val();
+                $('.popup .pppoe, .popup .pptp, .popup .static, .popup .ipoe, .popup .ipoa, .popup .dhcp, .popup .mer').hide();
+                $('.popup .' + tmp_connection_type).show();
+                //
+                $('.popup, .blackBackground').fadeIn();
+                
+                
+                
+                
+                
+                $(cancelButton55).bind("click", function() {
+                    $('.popup, .blackBackground').fadeOut();
+                });
+                
+                
+                
+                $(saveButton55).bind("click", function() {
+                    $('.popup, .blackBackground').fadeOut();
+                });
+            });
+
+            //#applyButton
+            $('#applyButton').bind("click", function() {
+                if (logMessage && window.console)
+                    console.log('#applyButton click');
+                if ($('#lang700175').closest('.message-arrowbox').css('display') != 'block')
+                    return; //no any change
+
+                //disabled button
+                $('#cancelButton').attr('disabled', 'disabled');
+                $('#applyButton').attr('disabled', 'disabled');
+                //Check Validation
+                /*
+                 $('.scm_error_msg').remove();
+                 $('input').removeClass('input-message-error');
+
+                 if(!chkInputTextValidation('input[type="text"]')){
+                 //page_wifi_wds_InvalidMessageShow('input[type="text"]');
+                 $('.message-arrowbox').hide();
+
+                 //enabled button
+                 $('#cancelButton').removeAttr('disabled');
+                 $('#applyButton').removeAttr('disabled');
+                 return;
+                 }
+                 */
+                //Check Validation End
+
+                var have_data = false;
+                var out_str = '';
+                out_str += '[';
+                $('.table.wan .in_data').each(function() {
+                    have_data = true;
+                    var tmp_data = $(this).find('input[type=hidden]');
+                    var tmp_id = tmp_data.attr('tmp_id');
+                    var tmp_create_id = tmp_data.attr('tmp_create_id');
+                    var tmp_enable = tmp_data.attr('tmp_enable');
+                    var tmp_status = tmp_data.attr('tmp_status');
+                    var tmp_name = tmp_data.attr('tmp_name');
+                    var tmp_access_type = tmp_data.attr('tmp_access_type');
+                    var tmp_used_for = tmp_data.attr('tmp_used_for');
+                    var tmp_nat = tmp_data.attr('tmp_nat');
+                    var tmp_firewall = tmp_data.attr('tmp_firewall');
+                    var tmp_dsl_latency = tmp_data.attr('tmp_dsl_latency');
+                    var tmp_vpi = tmp_data.attr('tmp_vpi');
+                    var tmp_vci = tmp_data.attr('tmp_vci');
+                    var tmp_encapsulation_mode = tmp_data.attr('tmp_encapsulation_mode');
+                    var tmp_service_category = tmp_data.attr('tmp_service_category');
+                    var tmp_peak_cell_rate = tmp_data.attr('tmp_peak_cell_rate');
+                    var tmp_sustainable_cell_rate = tmp_data.attr('tmp_sustainable_cell_rate');
+                    var tmp_maximum_burst_size = tmp_data.attr('tmp_maximum_burst_size');
+                    var tmp_ptm_priority = tmp_data.attr('tmp_ptm_priority');
+                    var tmp_vlan_id = tmp_data.attr('tmp_vlan_id');
+                    var tmp_802dot1p = tmp_data.attr('tmp_802dot1p');
+                    var tmp_connection_type = tmp_data.attr('tmp_connection_type');
+                    var tmp_wan_ipv6_enable = tmp_data.attr('tmp_wan_ipv6_enable');
+                    var tmp_username = tmp_data.attr('tmp_username');
+                    var tmp_password = tmp_data.attr('tmp_password');
+                    var tmp_service_name = tmp_data.attr('tmp_service_name');
+                    var tmp_ac_name = tmp_data.attr('tmp_ac_name');
+                    var tmp_authentication_method = tmp_data.attr('tmp_authentication_method');
+                    var tmp_connection_trigger = tmp_data.attr('tmp_connection_trigger');
+                    var tmp_lcp_echo_request_interval = tmp_data.attr('tmp_lcp_echo_request_interval');
+                    var tmp_lcp_echo_retry_times = tmp_data.attr('tmp_lcp_echo_retry_times');
+                    var tmp_ip_addr = tmp_data.attr('tmp_ip_addr');
+                    var tmp_netmask = tmp_data.attr('tmp_netmask');
+                    var tmp_gateway = tmp_data.attr('tmp_gateway');
+                    var tmp_mtu = tmp_data.attr('tmp_mtu');
+                    var tmp_idle_time = tmp_data.attr('tmp_idle_time');
+                    var tmp_obtain_dns_servers_automatically = tmp_data.attr('tmp_obtain_dns_servers_automatically');
+                    var tmp_advanced_settings = tmp_data.attr('tmp_advanced_settings');
+                    var tmp_primary_dns_server = tmp_data.attr('tmp_primary_dns_server');
+                    var tmp_secondary_dns_server = tmp_data.attr('tmp_secondary_dns_server');
+                    var tmp_option_12_host_name = tmp_data.attr('tmp_option_12_host_name');
+                    var tmp_option_60_vendor_id = tmp_data.attr('tmp_option_60_vendor_id');
+                    var tmp_option_61_iaid = tmp_data.attr('tmp_option_61_iaid');
+                    var tmp_option_61_duid = tmp_data.attr('tmp_option_61_duid');
+                    var tmp_option_125 = tmp_data.attr('tmp_option_125');
+                    var tmp_pptp_host_name = tmp_data.attr('tmp_pptp_host_name');
+                    var tmp_pptp_server = tmp_data.attr('tmp_pptp_server');
+                    var tmp_pptp_ip_addr_type = tmp_data.attr('tmp_pptp_ip_addr_type');
+                    var tmp_pptp_ip_addr = tmp_data.attr('tmp_pptp_ip_addr');
+                    out_str += '{';
+                    out_str += '"id" : "' + tmp_id + '",';
+                    out_str += '"create_id" : "' + tmp_create_id + '",';
+                    out_str += '"enable" : "' + tmp_enable + '",';
+                    out_str += '"status" : "' + tmp_status + '",';
+                    out_str += '"name" : "' + tmp_name + '",';
+                    out_str += '"access_type" : "' + tmp_access_type + '",';
+                    out_str += '"used_for" : "' + tmp_used_for + '",';
+                    out_str += '"nat" : "' + tmp_nat + '",';
+                    out_str += '"firewall" : "' + tmp_firewall + '",';
+                    out_str += '"dsl_latency" : "' + tmp_dsl_latency + '",';
+                    out_str += '"vpi" : "' + tmp_vpi + '",';
+                    out_str += '"vci" : "' + tmp_vci + '",';
+                    out_str += '"encapsulation_mode" : "' + tmp_encapsulation_mode + '",';
+                    out_str += '"service_category" : "' + tmp_service_category + '",';
+                    out_str += '"peak_cell_rate" : "' + tmp_peak_cell_rate + '",';
+                    out_str += '"sustainable_cell_rate" : "' + tmp_sustainable_cell_rate + '",';
+                    out_str += '"maximum_burst_size" : "' + tmp_maximum_burst_size + '",';
+                    out_str += '"ptm_priority" : "' + tmp_ptm_priority + '",';
+                    out_str += '"vlan_id" : "' + tmp_vlan_id + '",';
+                    out_str += '"802dot1p" : "' + tmp_802dot1p + '",';
+                    out_str += '"connection_type" : "' + tmp_connection_type + '",';
+                    out_str += '"wan_ipv6_enable" : "' + tmp_wan_ipv6_enable + '",';
+                    out_str += '"username" : "' + tmp_username + '",';
+                    out_str += '"password" : "' + tmp_password + '",';
+                    out_str += '"service_name" : "' + tmp_service_name + '",';
+                    out_str += '"ac_name" : "' + tmp_ac_name + '",';
+                    out_str += '"authentication_method" : "' + tmp_authentication_method + '",';
+                    out_str += '"connection_trigger" : "' + tmp_connection_trigger + '",';
+                    out_str += '"lcp_echo_request_interval" : "' + tmp_lcp_echo_request_interval + '",';
+                    out_str += '"lcp_echo_retry_times" : "' + tmp_lcp_echo_retry_times + '",';
+                    out_str += '"ip_addr" : "' + tmp_ip_addr + '",';
+                    out_str += '"netmask" : "' + tmp_netmask + '",';
+                    out_str += '"gateway" : "' + tmp_gateway + '",';
+                    out_str += '"mtu" : "' + tmp_mtu + '",';
+                    out_str += '"idle_time" : "' + tmp_idle_time + '",';
+                    if ('static' != tmp_connection_type) {
+                        out_str += '"obtain_dns_servers_automatically" : "' + tmp_obtain_dns_servers_automatically + '",';
+                    }
+                    out_str += '"advanced_settings" : "' + tmp_advanced_settings + '",';
+                    out_str += '"primary_dns_server" : "' + tmp_primary_dns_server + '",';
+                    out_str += '"secondary_dns_server" : "' + tmp_secondary_dns_server + '",';
+                    out_str += '"option_12_host_name" : "' + tmp_option_12_host_name + '",';
+                    out_str += '"option_60_vendor_id" : "' + tmp_option_60_vendor_id + '",';
+                    //out_str += '"option_61_iaid" : "'+tmp_option_61_iaid+'",';
+                    //out_str += '"option_61_duid" : "'+tmp_option_61_duid+'",';
+                    out_str += '"option_125" : "' + tmp_option_125 + '",';
+                    out_str += '"pptp_host_name" : "' + tmp_pptp_host_name + '",';
+                    out_str += '"pptp_server" : "' + tmp_pptp_server + '",';
+                    out_str += '"pptp_ip_addr_type" : "' + tmp_pptp_ip_addr_type + '",';
+                    out_str += '"pptp_ip_addr" : "' + tmp_pptp_ip_addr + '"';
+                    out_str += '},';
+                });
+                if (have_data)
+                    out_str = out_str.slice(0, -1);
+                out_str += ']';
+                var data_format = [{
+                    nameObj: settingsWanDataList,
+                    value: out_str
+                }, {
+                    nameObj: settingsWanDelIDList,
+                    value: $('#del_id_list').val()
+                }, {
+                    nameObj: settingsWanEditIDList,
+                    value: $('#edit_id_list').val()
+                }, ];
+                dataBatchSend(data_format, settingsWanDataListRet, "settings_wan2");
+
+                function settingsWanDataListRet(data, textStatus, jqXHR) {
+                    if (data) {
+                        page_settings_wan2_refresh_id(data);
+                        $('.message-arrowbox').hide();
+                        $('.message-arrowbox-applied').show();
+                    }
+                    else {
+                        $('.message-arrowbox').hide();
+                    }
+
+                    //enabled button
+                    $('#cancelButton').removeAttr('disabled');
+                    $('#applyButton').removeAttr('disabled');
+                }
+
+            });
+        });
+
+
+        function page_settings_wan2_insert_del_id_func(id) {
+            if (parseInt(id, 10) != 0) { //not new add data
+                $('#del_id_list').val($('#del_id_list').val() + id + ',');
+                var tmp_id_list_ary = $('#edit_id_list').val().split(',');
+                $('#edit_id_list').val('');
+                for (var key in tmp_id_list_ary) {
+                    if (tmp_id_list_ary[key] != id && tmp_id_list_ary[key] != '') {
+                        $('#edit_id_list').val($('#edit_id_list').val() + tmp_id_list_ary[key] + ',');
+                    }
+                }
+            }
+        }
+
+
+        function page_settings_wan2_insert_edit_id_func(id) {
+            if (parseInt(id, 10) != 0 && id != undefined) { //not new add data
+                var tmp_id_list_ary = $('#edit_id_list').val().split(',');
+                if (!in_array(id, tmp_id_list_ary)) {
+                    $('#edit_id_list').val($('#edit_id_list').val() + id + ',');
+                }
+            }
+        }
+
+        function page_settings_wan2_popup_add_html_str(obj) {
+            var html = '';
+            html += '<p class="title tL">Добавить подключение к Интернет</p>'; //Add internet connection
+            html += page_settings_wan2_popup_html_str(obj);
+            return html;
+        }
+
+
+
+
+        function page_settings_wan2_popup_html_str(obj) {
+
+
+            var html = '<div class="row"><div class="left">Имя</div><div class="right"><input id="tmp_name" value="Internet-PPPoE" type="text"></div></div><div class="row"><div class="left">Тип доступа</div><div class="right"><select id="tmp_access_type"><option value="ethernet" selected="">Ethernet</option><option value="umts">UMTS</option></select></div></div><div class="row multiple"><div class="left">Используется для</div><div class="right"><select id="tmp_used_for" size="3" multiple="multiple"><option value="data" selected="">Только данные</option><option value="iptv">IPTV</option><option value="management">Управление</option></select></div></div><div class="row"><div class="left">NAT</div><div class="right"><input id="tmp_nat" class="button button-on" name="" value="" type="button"></div></div><div class="row"><div class="left">Firewall</div><div class="right"><input id="tmp_firewall" class="button button-on" name="" value="" type="button"></div></div><div class="adsl vdsl" style="display: none;"><div class="row"><div class="left">DSL задержка</div><div class="right"><select id="tmp_dsl_latency"><option value="0" selected="">Path0</option><option value="1">Path1</option></select></div></div></div><div class="adsl" style="display: none;"><div class="row"><div class="left">VPI [0-255]</div><div class="right"><input id="tmp_vpi" class="scm_max_number scm_min_number" scm_max_number="255" scm_min_number="0" value="0" type="text"></div></div><div class="row"><div class="left">VCI [32-65535]</div><div class="right"><input id="tmp_vci" class="scm_max_number scm_min_number" scm_max_number="65535" scm_min_number="32" value="32" type="text"></div></div><div class="row"><div class="left">Режим инкапсуляции </div><div class="right"><select id="tmp_encapsulation_mode"><option value="llc" selected="">LLC</option><option value="vc">VC</option></select></div></div><div class="row"><div class="left">Категория сервиса</div><div class="right"><select id="tmp_service_category"><option value="ubr_without_pcr" selected="">UBR без PCR</option><option value="ubr_with_pcr">UBR с PCR</option><option value="cbr">CBR</option><option value="non_realtime_vbr">VBR не реального времени</option><option value="realtime_vbr">VBR реального времени</option></select></div></div><div class="ubr_with_pcr cbr non_realtime_vbr realtime_vbr" style="display: none;"><div class="row"><div class="left">Пиковая скорость ячеек [21-2493] (кбит/с)</div><div class="right"><input id="tmp_peak_cell_rate" style="width: 124px;" value="" type="text"></div></div></div><div class="non_realtime_vbr realtime_vbr" style="display: none;"><div class="row"><div class="left">Устойчивая скорость ячеек [21-2493] (кбит/с)</div><div class="right"><input id="tmp_sustainable_cell_rate" style="width: 124px;" value="" type="text"></div></div><div class="row"><div class="left">Размер максимального всплеска [53-5300000] (байт)</div><div class="right"><input id="tmp_maximum_burst_size" style="width: 124px;" value="" type="text"></div></div></div></div><div class="vdsl" style="display: none;"><div class="row"><div class="left">Приоритет PTM</div><div class="right"><select id="tmp_ptm_priority"><option value="0" selected="">Обычный приоритет</option><option value="1">Высокий приоритет (Preemption)</option></select></div></div></div><div class="ethernet adsl vdsl" style="display: block;"><div class="not_ipoa"><div class="row"><div class="left">VLAN ID</div><div class="right"><input id="tmp_vlan_id" value="" type="text"></div></div><div class="row"><div class="left">802.1 P</div><div class="right"><input id="tmp_802dot1p" value="7" type="text"></div></div></div></div><div class="ethernet" style="display: block;"><div class="row"><div class="left">Тип подключения</div><div class="right"><select id="tmp_connection_type"><option value="pppoe" selected="">PPPoE</option><option value="dhcp">DHCP</option><option value="static">Статический</option><option value="pptp">PPTP</option></select></div></div></div><div class="pppoe" style="display: block;"><div class="ipv6_status"><div class="row"><div class="left">Включить IPv6 на WAN</div><div class="right"><input id="tmp_wan_ipv6_enable" class="button button-on" name="" value="" type="button"></div></div></div></div><div class="pppoe pptp" style="display: block;"><div class="row"><div class="left">Имя пользователя</div><div class="right"><input id="tmp_username" class="scm_basic_valid" value="v12345678" type="text"></div></div><div class="row"><div class="left">Пароль</div><div class="right"><input id="tmp_password" class="scm_basic_valid" value="12345678" type="text"></div></div></div><div class="pppoe" style="display: block;"><div class="row"><div class="left">Имя службы</div><div class="right"><input id="tmp_service_name" value="" type="text"></div></div><div class="row"><div class="left">AC Name</div><div class="right"><input id="tmp_ac_name" value="DOM.RU" type="text"></div></div><div class="row"><div class="left">Метод проверки подлинности</div><div class="right"><select id="tmp_authentication_method"><option value="auto" selected="">Авто</option><option value="pap">PAP</option><option value="chap">CHAP</option><option value="ms_chap">MS-CHAP</option></select></div></div><div class="row"><div class="left">Триггер подключения</div><div class="right"><select id="tmp_connection_trigger"><option value="always_on" selected="">Всегда подключен</option></select></div></div><div class="row"><div class="left">Интервал эхо-запроса LCP (сек)</div><div class="right"><input id="tmp_lcp_echo_request_interval" value="10" type="text"></div></div><div class="row"><div class="left">LCP Echo retry times</div><div class="right"><input id="tmp_lcp_echo_retry_times" value="5" type="text"></div></div></div><div class="static ipoe ipoa" style="display: none;"><div class="row"><div class="left">IP-адрес</div><div id="tmp_ip_addr" class="right"><input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0"></div></div><div class="row"><div class="left">Маска</div><div id="tmp_netmask" class="right"><input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0"></div></div><div class="row"><div class="left">Шлюз</div><div id="tmp_gateway" class="right"><input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0"></div></div></div><div class="pptp" style="display: none;"><div class="row"><div class="left">Имя хоста</div><div class="right"><input id="tmp_pptp_host_name" class="scm_basic_valid" value="" type="text"></div></div><div class="row"><div class="left">Сервер</div><div class="right"><input id="tmp_pptp_server" class="scm_basic_valid" value="" type="text"></div></div><div class="row"><div class="left">IP-адрес</div><div class="right"><select id="tmp_pptp_ip_addr_type"><option value="dhcp" selected="">DHCP</option><option value="static">Статический</option></select></div></div><div class="pptp_static"><div class="row"><div class="left">&nbsp;</div><div id="tmp_pptp_ip_addr" class="right"><input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0"></div></div></div></div><div class="pppoe dhcp mer static ipoe ipoa" style="display: block;"><div class="row"><div class="left" id="mtu_string">MTU [68-1492]</div><div class="right"><input id="tmp_mtu" class="scm_max_number scm_min_number" scm_min_number="68" scm_max_number="1500" value="1492" type="text"></div></div></div><div class="pppoe pptp" style="display: block;"><div class="row"><div class="left">Время простоя (сек)</div><div class="right"><input id="tmp_idle_time" value="0" type="text"></div></div></div><div class="pppoe dhcp mer static ipoe ipoa pptp" style="display: block;"><div class="row" id="display_obtain_dns_servers_automatically"><div class="left">Получить DNS-серверы автоматически</div><div class="right"><input id="tmp_obtain_dns_servers_automatically" class="button button-on reverse" name="" value="" type="button"></div></div><div class="tmp_obtain_dns_servers_automatically" style="display:none;width:100%;"><div class="row"><div class="left">Первичный DNS-сервер</div><div id="tmp_primary_dns_server" class="right"><input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4" type="text" maxlength="3" value="0"></div></div><div class="row"><div class="left">Вторичный DNS-сервер</div><div id="tmp_secondary_dns_server" class="right"><input class="max3 scm_ip4_and_empty" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4_and_empty" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4_and_empty" type="text" maxlength="3" value="0">.<input class="max3 scm_ip4_and_empty" type="text" maxlength="3" value="0"></div></div></div></div><div class="dhcp mer" style="display: none;"><div class="row"><div class="left">Расширенные настройки</div><div class="right"><input id="tmp_advanced_settings" class="button button-on" name="" value="" type="button"></div></div><div class="tmp_advanced_settings" style="width:100%;"><div class="row"><div class="left">Опция 12 - Имя хоста</div><div class="right"><input id="tmp_option_12_host_name" name="" value="" type="text"></div></div><div class="row"><div class="left">Опция 60 - Идентификатор поставщика</div><div class="right"><input id="tmp_option_60_vendor_id" name="" value="" type="text"></div></div><div class="row"><div class="left">Опция 125</div><div class="right"><input id="tmp_option_125" class="button button-off" name="" value="" type="button"></div></div></div></div><div class="clearfix apply-cancel"><div class="right"><input id="cancelButton55" class="button button-cancel right" value="Отмена" type="button"></div><div class="right"><input class="button button-apply right" value="Сохранить" id="saveButton55" type="button"></div></div>';
+            //TODO: ДОДЕЛАТЬ ВЫХОД
+
+            return html;
+        }
+    </script>
+</body>
+
+</html>

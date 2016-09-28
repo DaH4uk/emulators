@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html class="product16" style="display: block;">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!--[if lt IE 9]>
+	<script src="js/html5.js"></script>
+	<![endif]-->
+    <link href="./img/entry-level.png" type="image/png" rel="icon">
+    <link rel="stylesheet" href="./css/reset.css" type="text/css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <link rel="stylesheet" href="./css/content.css" type="text/css">
+    <!--[if lt IE 9]><style type="text/css">article .button-cancel, article .button-apply, article .button-blank, #progress-bar-buttons .button-apply, #progress-bar-buttons .button-cancel { padding-bottom: 3px; }</style><![endif]-->
+    <script src="./js/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <style type="text/css">
+         :root .banner_box,
+         :root .adv {
+            display: none !important;
+        }
+    </style>
+    <style type="text/css">
+        #chromereload_page_informer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(142, 255, 186, 0.5);
+            height: 24px;
+            padding: 10px 10px 0 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #4A4A4A;
+            z-index: 99999;
+            cursor: pointer;
+        }
+    </style>
+    <script src="./js/jquery.easing.1.3.js" type="text/javascript"></script>
+    <script src="./js/jquery.hashchange.js" type="text/javascript"></script>
+    <!-- justin add -->
+    <!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie8content.css" type="text/css" />
+	<![endif]-->
+    <script src="./js/mainFunctions.js" type="text/javascript"></script>
+    <script src="./js/mainFrame.js" type="text/javascript"></script>
+    <script src="./js/pageLoadFunctions.js" type="text/javascript"></script>
+    <script src="./js/multi_lang.js" type="text/javascript"></script>
+
+    <script src="./js/settings.js" type="text/javascript"></script>
+
+    <!-- justin add end -->
+    <link rel="stylesheet" href="./css/settings.css" type="text/css">
+    <script src="./js/functionsNotOverview.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var category = 'settings';
+        var defaultSub = '60';
+        // get submenu and subsubmenu
+        var gets = getHashVars();
+        sub = gets['sub'];
+        var subSub = gets['subSub'];
+        var load = ''; // content to load
+        var oldCat = 'value';
+        var task = false;
+        var messagesCat = false;
+    </script>
+
+    <title>Контроль доступа</title>
+</head>
+
+<body class="en expert settings">
+
+    <div id="wrap">
+        <header id="header">
+            <div id="head-wrap" class="clearfix">
+                <a href="./overview.html" class="logos"><img src="./img/entry-level.png" alt="Sercomm Logo"></a><a href="./index.html" id="logout">&nbsp;</a>
+                <div id="dropDownBasExp" class="admin" style="display: none;">
+                    <div href="" id="selectBasic" class="selectBasic"><span id="lang700056">Базовый режим</span></div>
+                    <div href="" id="selectExpert" class="selectExpert"><span id="lang700057">Эксперт-режим</span></div>
+                </div>
+            </div>
+            <nav>
+                <ul class="clearfix five settingsMenu ">
+                    <li id="overview"><a href="./overview.html"><span id="lang700031">Обзор</span></a></li>
+                    <li id="internet"><a href="./internet.html"><span id="lang700033">Интернет</span></a></li>
+                    <li id="wifi"><a href="./wifi.html"><span id="lang700034">Wi-Fi</span></a></li>
+                    <li id="settings" class="active"><a href="./settings.html"><span id="lang700035">Параметры</span></a></li>
+                    <li id="status-and-support"><a href="./status-and-support.html"><span id="lang700036">Статус и поддержка</span></a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="inner-wrap" class="clearfix notOverview">
+            <script>
+                document.write('<div id="indicator"><img src="img/indicator.png" alt="Indicator" /></div>');
+            </script>
+            <div id="indicator" style="display: none;"><img src="./img/indicator.png" alt="Indicator"></div>
+            <div id="navigation">
+                <ul>
+                    <li id="77" class="menuItem"><a href="./settings.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905021">Язык</span></a></li>
+                    <li id="60" class="menuItem"><a href="./password.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905001">Пароль</span></a></li>
+                    <li id="58" class="menuItem"><a href="./USB.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905003">USB</span></a></li>
+                    <li id="56" class="menuItem sub"><a href="./shared_USB_access.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505001">Общий доступ к USB</span></a>
+                        <div class="subMenu" style="display: none; height: 0px;">
+                            <ul>
+                                <li id="57" class="subMenuItem sub"><a href="./DLNA.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905004">DLNA</span></a></li>
+                                <li id="51" class="subMenuItem sub"><a href="./file_server.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505005">Файловый сервер</span></a></li>
+                                <li id="50" class="subMenuItem sub"><a href="./FTP.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905011">FTP</span></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li id="54" class="menuItem"><a href="./configuration_file.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905007">Файл конфигурации</span></a></li>
+                    <li id="52" class="menuItem"><a href="./LAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905009">LAN</span></a></li>
+                    <li id="59" class="menuItem"><a href="./firmware_update.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905002">Обновление прошивки</span></a></li>
+                    <li id="73" class="menuItem"><a href="./QoS.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905018">QoS</span></a></li>
+                    <li id="74" class="menuItem"><a href="./time_synchronization.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang513001">Синхронизация времени</span></a></li>
+                    <li id="75" class="menuItem"><a href="./TR-069.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905019">TR-069</span></a></li>
+                    <li id="80" class="menuItem active"><a href="./Access_control.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang906017">Контроль доступа</span></a></li>
+                    <li id="68" class="menuItem"><a href="./WAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903013">WAN</span></a></li>
+                    <li id="302" class="menuItem"><a href="./PPPoE_Realy.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">PPPoE Relay</span></a></li>
+                    <li id="301" class="menuItem"><a href="./VLAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">VLAN</span></a></li>
+                    <li id="300" class="menuItem"><a href="./IPTV.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang606029">IPTV</span></a></li>
+                    <li id="303" class="menuItem"><a href="./syslog_client.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1310572">Syslog Client</span></a></li>
+                    <li id="97" class="menuItem"><a href="./IPv6.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905023">IPv6</span></a></li>
+                    <li id="86" class="menuItem"><a href="./static_routes.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang522001">Статические маршруты</span></a></li>
+                    <li id="93" class="menuItem"><a href="./policy_routing.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903018">Политики маршрутизации</span></a></li>
+                </ul>
+            </div>
+
+            <article id="settings">
+                <div id="content" class="sub80">
+
+
+
+
+
+
+                    <h1><span id="lang517011">Услуги контроля доступа</span></h1>
+                    <h2>
+                        <!--span id="lang512002" title="512002">I??m a Placeholder for H2 !!!</span-->
+                    </h2>
+                    <h3><span id="lang517011">Услуги контроля доступа</span></h3>
+                    <div class="h3-content">
+                        <div class="row">
+                            <div class="right marginDrop tC">
+                                LAN
+                            </div>
+                            <div class="right marginDrop tC">
+                                WAN
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang517001">ICMP</span> </div>
+                            <div class="right marginDrop">
+                                <select id="icmp_lan"><option value="allow">Разрешить</option><option value="deny">Отклонить</option></select>
+                            </div>
+                            <div class="right">
+                                <select id="icmp_wan"><option value="allow">Разрешить</option><option value="deny">Отклонить</option><option value="trusted">Только надежные</option></select>
+                            </div>
+                        </div>
+                        <!--div class="row">
+                    <div class="left">
+                            <span id="lang517002" title="517002">SNMP</span>		</div>
+                    <div class="right marginDrop">
+                            <select id="snmp_lan">
+                            </select>
+                    </div>
+                    <div class="right">
+                            <select id="snmp_wan">
+                            </select>
+                    </div>
+            </div-->
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang517016">SSH</span> </div>
+                            <div class="right marginDrop">
+                                <select id="ssh_lan"><option value="allow">Разрешить</option><option value="deny" selected="true">Отклонить</option></select>
+                            </div>
+                            <div class="right">
+                                <select id="ssh_wan"><option value="allow">Разрешить</option><option value="deny">Отклонить</option><option value="trusted" selected="true">Только надежные</option></select>
+                            </div>
+                        </div>
+                        <!--div class="row">
+                    <div class="left">
+                            <span id="lang517003" title="517003">Telnet</span>		</div>
+                    <div class="right marginDrop">
+                            <select id="telnet_lan">
+                            </select>
+                    </div>
+                    <div class="right">
+                            <select id="telnet_wan">
+                            </select>
+                    </div>
+            </div-->
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang517004">HTTP</span> </div>
+                            <div class="right marginDrop">
+                                <select id="http_lan"><option value="allow">Разрешить</option><option value="deny">Отклонить</option></select>
+                            </div>
+                            <div class="right">
+                                <select id="http_wan"><option value="allow">Разрешить</option><option value="deny">Отклонить</option><option value="trusted" selected="true">Только надежные</option></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang517005">TR69</span> </div>
+                            <div class="right marginDrop">
+                                <select id="tr069_lan"><option value="allow">Разрешить</option><option value="deny" selected="true">Отклонить</option></select>
+                            </div>
+                            <div class="right">
+                                <select id="tr069_wan"><option value="allow">Разрешить</option><option value="deny">Отклонить</option><option value="trusted">Только надежные</option></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang526026">WAN порт</span> </div>
+
+                            <div class="right">
+                                <input type="text" id="wan_access_port" maxlength="5" value="8080" class="max5">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <h3><span id="lang517012">Доверенная сеть</span></h3>
+                    <div class="h3-content">
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang517012">Доверенная сеть</span> </div>
+                            <div class="right">
+                                <input id="trustedNetwork" class="button button-on" name="" value="" type="button">
+                            </div>
+                        </div>
+                        <div class="table trustedNetwork">
+                            <div class="table-row table-row-head" style="height: auto; min-height: 30px;">
+                                <div class="table-col table-col1">
+                                    <span id="lang517013">Начальный IP-адрес </span> </div>
+                                <div class="table-col table-col2">
+                                    <span id="lang517014">Конечный IP-адрес </span> </div>
+                                <div class="table-col table-col3">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div style="display: none;" class="table-row italic no-entry tC"><span id="lang517015">Диапазоны не заданы</span></div>
+                            <div class="table-row data-row">
+                                <div class="table-col table-col1">212.33.225.224</div>
+                                <div class="table-col table-col2">212.33.225.255</div>
+                                <div class="table-col table-col3"><input value="" name="" class="button button-delete" type="button"></div>
+                            </div>
+                            <div class="table-row data-row">
+                                <div class="table-col table-col1">212.33.233.40</div>
+                                <div class="table-col table-col2">212.33.233.47</div>
+                                <div class="table-col table-col3"><input value="" name="" class="button button-delete" type="button"></div>
+                            </div>
+                            <div class="table-row data-row">
+                                <div class="table-col table-col1">212.33.232.102</div>
+                                <div class="table-col table-col2">212.33.232.102</div>
+                                <div class="table-col table-col3"><input value="" name="" class="button button-delete" type="button"></div>
+                            </div>
+                            <div class="table-row data-row">
+                                <div class="table-col table-col1">10.2.0.0</div>
+                                <div class="table-col table-col2">10.2.1.255</div>
+                                <div class="table-col table-col3"><input value="" name="" class="button button-delete" type="button"></div>
+                            </div>
+                            <div class="table-row add-row">
+                                <input class="button button-add" name="" value="" type="button">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="apply-cancel-margin-top">
+
+                        <div class="clearfix apply-cancel">
+                            <div class="right">
+                                <input id="cancelButton" class="button button-cancel right" value="Отмена" type="button">
+                            </div>
+                            <div class="right">
+                                <input id="applyButton" class="button button-apply right" value="Применить" type="button">
+                            </div>
+                        </div>
+
+                        <div class="message-arrowbox" style="display: none;">
+                            <div class="message-arrowbox-right">
+                                <span id="lang700175">Некоторые параметры были изменены</span>
+                            </div>
+                        </div>
+                        <div class="message-arrowbox-applied" style="display: none;">
+                            <div class="message-arrowbox-applied-right">
+                                <span id="lang700176">Изменения были применены.</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <style>
+                        .trustedNetwork {
+                            width: 100%;
+                        }
+                        
+                        .table-row {
+                            height: auto;
+                            min-height: 30px;
+                        }
+                        
+                        .table.trustedNetwork .table-col.table-col1 {
+                            width: 210px;
+                        }
+                        
+                        .table.trustedNetwork .table-col.table-col2 {
+                            width: 210px;
+                        }
+                        
+                        .table.trustedNetwork .table-col.table-col3 {
+                            width: 50px;
+                            float: right;
+                            text-align: right;
+                        }
+                    </style>
+                </div>
+            </article>
+        </section>
+    </div>
+    <div id="langAndFirmware" class="clearfix">
+        <div class="left" id="langSelector"><a href="javascript:lang_change(&#39;en&#39;);" class="language-links line">English</a><a href="javascript:lang_change(&#39;ru&#39;);" class="language-links">Русский</a></div>
+        <div class="right firmwareVersion">
+        </div>
+    </div>
+
+<script>
+    
+    //.table.trustedNetwork .button-add
+    $('.table.trustedNetwork .button-add').bind('click', function () {
+        if (logMessage && window.console)
+            console.log(".table.trustedNetwork .button-add click");
+
+        if ($('.table.trustedNetwork .data-row').length >= 32) {
+            return;
+        }
+        var html = '';
+        html += '<div class="table-row data-row">';
+        html += '<div class="table-col table-col1">';
+        html += '<input value="" class="max3 scm_ip4" type="text" maxlength="3">.<input value="" class="max3 scm_ip4" type="text" maxlength="3">.<input value="" class="max3 scm_ip4" type="text" maxlength="3">.<input value="" class="max3 scm_ip4" type="text" maxlength="3">';
+        html += '</div>';
+        html += '<div class="table-col table-col2">';
+        html += '<input value="" class="max3 scm_ip4" type="text" maxlength="3">.<input value="" class="max3 scm_ip4" type="text" maxlength="3">.<input value="" class="max3 scm_ip4" type="text" maxlength="3">.<input value="" class="max3 scm_ip4" type="text" maxlength="3">';
+        html += '</div>';
+        html += '<div class="table-col table-col3">';
+        html += '<input value="" name="" class="button button-delete" type="button">';
+        html += '</div>';
+        html += '</div>';
+
+        $('.table.trustedNetwork .no-entry').hide();
+
+        $(this).closest('.table-row').before(html);
+
+    });
+    
+    
+    $('.button.button-delete:not(.op40)').live("click", function () {
+        if (logMessage && window.console)
+            console.log('.button.button-delete:not(.op40) click');
+
+        $(this).closest('.table-row').fadeOut(function () {
+            $(this).remove();
+            if ($('.table.trustedNetwork .table-row').length <= 3)
+                $('.table.trustedNetwork .no-entry').show();
+
+
+        });
+    });
+</script>
+
+</body>
+
+</html>

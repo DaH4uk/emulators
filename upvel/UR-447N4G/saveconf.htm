@@ -1,0 +1,108 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<SCRIPT language=Javascript src="saveconf.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Save/Reload Setting</title>
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script>
+function fileCheck()
+{
+	var oFile = document.getElementById('binary'); 
+    	if(oFile.value == ""){ 
+		alert("please select a file!");
+		return false;
+	} 
+	return true;
+}
+
+function resetClick()
+{
+   if ( !confirm('Do you really want to reset the current settings to default?') ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+function saveClick(url)
+{
+  if (verifyBrowser() == "ie4" ) {
+	window.location.href = url;
+	return false;
+  }
+  else
+  	return true;
+}
+
+function initTranslate()
+{
+	document.title = saveconf_header;
+	var tr = document.getElementById("sc_title");
+	tr.innerHTML = saveconf_header; 
+	tr = document.getElementById("sc_intro");
+	tr.innerHTML = saveconf_header_explain;
+	tr = document.getElementById("sc_savefl");
+	tr.innerHTML = saveconf_save_to_file;
+	tr = document.getElementById("save");
+	tr.value = saveconf_save;
+	tr = document.getElementById("sc_loadset");
+	tr.innerHTML = saveconf_load_from_file;
+	tr = document.getElementById("load");
+	tr.value = saveconf_load;
+	tr = document.getElementById("sc_reset");
+	tr.innerHTML = saveconf_reset_to_default;
+	tr = document.getElementById("reset");
+	tr.value = saveconf_reset;
+	
+	
+}
+
+function init()
+{
+initTranslate();
+}
+
+</script>
+
+</head>
+<body onload="init();">
+<blockquote>
+<h2><font id="sc_title">Save/Reload Settings</font></h2>
+  <table border="0" cellspacing="4" width="500">
+  <tr><font size=2 id="sc_intro">
+ This page allows you save current settings to a file or reload the settings
+ from the file which was saved previously. Besides, you could reset the current
+ configuration to factory default.
+  </tr>
+  <tr><hr size=1 noshade align=top></tr>
+  <form action="http://upvel.ru/emulators/UR-447N4G/%22javascript:if(confirm(%27http://192.168.10.1/boafrm/formSaveConfig?save=Save..."  \n\nThis file was not retrieved by Teleport Pro, because it was unavailable, or its retrieval was aborted, or the project was stopped too soon.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/boafrm/formSaveConfig?save=Save...%27%22 tppabs="http://192.168.10.1/boafrm/formSaveConfig?save=Save..." method=POST name="saveConfig">
+  <tr>
+    <td width="32%"><font size=2 id="sc_savefl"><b>Save Settings to File:</b></td>
+    <td width="30%"><font size=2>
+        <p><input type="submit" value="Save..." id="save" name="save" onclick="return saveClick('config.dat'/*tpa=http://192.168.10.1/config.dat*/)"></p>
+   </tr>
+  </form>
+  <form method="post" action="http://192.168.10.1/boafrm/formUploadConfig" enctype="multipart/form-data" name="uploadConfig">
+  	<input type="hidden" value="/saveconf.htm" name="submit-url">
+  <tr>
+    <td width="32%"><font size=2 id="sc_loadset"><b>Load Settings from File:</b></td>
+    <td width="30%"><font size=2><input type="file" name="binary" id="binary" size=24></td>
+    <td width="20%"><font size=2><input type="submit" value="Upload" id="load" name="load" onclick="return fileCheck()"></td>
+  </tr>
+  </form>
+  <form action="http://upvel.ru/emulators/UR-447N4G/%22javascript:if(confirm(%27http://192.168.10.1/boafrm/formSaveConfig?reset=Reset"  \n\nThis file was not retrieved by Teleport Pro, because it was unavailable, or its retrieval was aborted, or the project was stopped too soon.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/boafrm/formSaveConfig?reset=Reset%27%22 tppabs="http://192.168.10.1/boafrm/formSaveConfig?reset=Reset" method=POST name="saveConfig">
+  <tr>
+    <td width="32%"><font size=2 id="sc_reset"><b>Reset Settings to Default:</b></td>
+    <td width="30%"><font size=2><input type="submit" value="Reset" id="reset" name="reset" onclick="return resetClick()"></td>
+  </tr>
+  </form>
+</table>
+</blockquote>
+</body>
+</html>

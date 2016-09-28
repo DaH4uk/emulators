@@ -1,0 +1,1165 @@
+<script language="javascript" type="text/javascript">
+var tmpWeek;
+var week;
+var idIndex;
+var blackIndex;
+var whiteIndex;
+var blackUrl;
+var whiteUrl;
+var blackParentName;
+var whiteParentName;
+var deviceStack;
+var allBlackUrl;
+var allBlackUrlType;
+var allWhiteUrl;
+var allWhiteUrlType;
+var delBlackUrlList;
+var delWhiteUrlList;
+var delBlackUrlIndex;
+var delWhiteUrlIndex;
+var parentSche = {};
+var ruleList;
+var scheList;
+var hostList;
+var fwInfo;
+var isEdit;
+var editStackIndex;
+var newSche;
+var showOrEdit;
+var tpGridSelect;
+var tpGridBackup;
+
+/* add by wuzeyu 2014.12.23*/
+var maxDevNum;
+var curDevNum;
+
+var usePosfix = 0;/*把后缀放在后面添加删除*/
+var posfix = "";
+var posfixLen = 0;
+/*add end*/
+
+function init() {
+
+	/*add by wuzeyu***********************/
+	maxDevNum = 32;
+	curDevNum = 0;
+	
+	if (usePosfix == 1)
+	{
+		posfix = "-P";
+		posfixLen = 2;
+	}
+	else
+	{
+		posfix = "";
+		posfixLen = 0;		
+	}
+	
+	/*end add*****************************/
+    blackIndex = 0;
+    whiteIndex = 0;
+    blackUrl = [];
+    whiteUrl = [];
+    allBlackUrl = [];
+    allWhiteUrl = [];
+    allBlackUrlType = [];
+    allWhiteUrlType = [];
+    delBlackUrlList = [];
+    delWhiteUrlList = [];
+    delBlackUrlIndex = 0;
+    delWhiteUrlIndex = 0;
+    isEdit = 0;
+    showOrEdit = 0;
+    deviceStack = [];
+    newSche = 1;
+    week = [];
+
+    initSche();
+
+    var DevicesUnderParentalCtrlHeadArray = [{
+        "text": '<div><input type="checkbox" id="checkbox_1" /><label></label></div>',
+        "width": "5%"
+    }, {
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.devname,
+        "width": "20%"
+    }, {
+        "text": table_str.mac,
+        "width": "25%"
+    }, {
+        "text": table_str.accesstime,
+        "width": "10%"
+    }, {
+        "text": table_str.description,
+        "width": "15%"
+    }, {
+        "text": table_str.status,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+
+    var AccessDevicesListHeadArray = [{
+        "text": table_str.id,
+        "width": "10%"
+    }, {
+        "text": table_str.devname,
+        "width": "20%"
+    }, {
+        "text": table_str.ip,
+        "width": "20%"
+    }, {
+        "text": table_str.mac,
+        "width": "20%"
+    }, {
+        "text": table_str.operation,
+        "width": "20%"
+    }];
+
+    fwInfo = $.act(ACT_GET, FIREWALL, null, null, ["enalbeParentCtrl", "parentCtrlMode"]);
+    var blackParentCfg = $.act(ACT_GET, EXTERNAL_HOST, "1,0,0,0,0,0", null);
+    var whiteParentCfg = $.act(ACT_GET, EXTERNAL_HOST, "2,0,0,0,0,0", null);
+    var urlCfgList = $.act(ACT_GL, URL_CFG, null, null, ["urlAddr"]);
+    ruleList = $.act(ACT_GL, RULE, null, null);
+    scheList = $.act(ACT_GL, TASK_SCHEDULE, null, null);
+
+    $.initTableHead($("#tableDevicesUnderParentalControl"), DevicesUnderParentalCtrlHeadArray);
+    $("#tableDevicesUnderParentalControl").tpTable(initDeviceUnderParentalCtrlTable);
+
+    $.initTableHead($("#tableAccessDevicesList"), AccessDevicesListHeadArray);
+    $("#tableAccessDevicesList").tpTable(initAccessDevicesListTable);
+
+    if (!$.exe()) {
+
+        blackParentName = blackParentCfg.entryName;
+        whiteParentName = whiteParentCfg.entryName;
+
+        if (fwInfo.enalbeParentCtrl == 1) {
+            $("#enableParentalCtrlOn").addClass("selected");
+        } else {
+            $("#enableParentalCtrlOff").addClass("selected");
+        }
+
+        if (fwInfo.parentCtrlMode == 1) {
+            $("#radioBlack").prop('checked', true);
+            $("#radioWhite").prop('checked', false);
+        } else if (fwInfo.parentCtrlMode == 0) {
+            $("#radioBlack").prop('checked', false);
+            $("#radioWhite").prop('checked', true);
+        }
+
+        for (var i = 0; i < blackParentCfg.urlIndexs.length; i++) {
+            if (blackParentCfg.urlIndexs.charAt(i) == 1) {
+                allBlackUrl[blackIndex] = urlCfgList[i].urlAddr;
+                $("#addUrl").append('<div class="keyword pure-control-group blackKey"><input type="text" class="tp-input-text" id="black' + blackIndex + '" value="' + allBlackUrl[blackIndex] + '" required="true" disabled="disabled"/><span class="table-icon delete-icon"></span></div>');
+                allBlackUrlType[blackIndex] = 1;
+                blackIndex++;
+            }
+        }
+
+        $("div.blackKey span.delete-icon").click(function() {
+            delBlackUrlList[delBlackUrlIndex] = $(this).parent("div.keyword").children("input").val();
+            $(this).parent("div.keyword").remove();
+            delBlackUrlIndex++;
+        });
+
+        for (var i = 0; i < whiteParentCfg.urlIndexs.length; i++) {
+            if (whiteParentCfg.urlIndexs.charAt(i) == 1) {
+                allWhiteUrl[whiteIndex] = urlCfgList[i].urlAddr;
+                $("#delUrl").append('<div class="keyword pure-control-group whiteKey"><input type="text" class="tp-input-text" id="white' + whiteIndex + '" value="' + allWhiteUrl[whiteIndex] + '" required="true" disabled="disabled"/><span class="table-icon delete-icon"></span></div>');
+                allWhiteUrlType[whiteIndex] = 1;
+                whiteIndex++;
+            }
+        }
+
+        $("div.whiteKey span.delete-icon").click(function() {
+            delWhiteUrlList[delWhiteUrlIndex] = $(this).parent("div.keyword").children("input").val();
+            $(this).parent("div.keyword").remove();
+            delWhiteUrlIndex++;
+        });
+    }
+
+    $("#addBlackUrl").click(function() {
+        $("#addBlackUrl").parent("div").append('<div class="keyword pure-control-group"><input type="text" class="tp-input-text" id="black' + blackIndex + '" maxlength="32" required="true" /><span class="table-icon delete-icon"></span></div>');
+
+        $("span.delete-icon").click(function() {
+            $(this).parent("div.keyword").remove();
+        });
+
+        blackIndex++;
+    });
+
+    $("#addWhiteUrl").click(function() {
+        $("#addWhiteUrl").parent("div").append('<div class="keyword pure-control-group"><input type="text" class="tp-input-text" id="white' + whiteIndex + '" maxlength="32" required="true"/><span class="table-icon delete-icon"></span></div>');
+
+        $("span.delete-icon").click(function() {
+            $(this).parent("div.keyword").remove();
+        });
+
+        whiteIndex++;
+    });
+
+    $("#radioBlack").click(function() {
+        $("#delUrl").addClass("nd");
+        $("#addUrl").removeClass("nd");
+    });
+
+    $("#radioWhite").click(function() {
+        $("#addUrl").addClass("nd");
+        $("#delUrl").removeClass("nd");
+    });
+
+    $("#editOk").on("click", function() {
+        $.addLoading($(this));
+        doSave();
+    });
+
+    $("#editCancel").click(function() {
+        $("#editContainerClientDevices").addClass("nd");
+        $("#editContainerClientDevices").removeClass("editor-container");
+        $("#tableDevicesUnderParentalControl").unmask();
+        $.reload();
+    });
+
+    $("#saveListMode").on("click", function() {
+        doSaveContentRestriction();
+    });
+
+    $("#enableParentalCtrlOn").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, FIREWALL, null, null, ["enalbeParentCtrl=1"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                $.reload();
+            }
+        });
+    });
+
+    $("#enableParentalCtrlOff").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, FIREWALL, null, null, ["enalbeParentCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                $.reload();
+            }
+        });
+    });
+
+    $("#checkbox_1").click(function() {
+        var td = $("#tableDevicesUnderParentalControl").find("tbody tr td");
+        if ($("#checkbox_1").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', true);
+                $(this).next("label").find('.text').addClass("span-click");
+                $(this).next("label").find('.icon').addClass("checkbox-click");
+            });
+        } else if ($("#checkbox_1").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', false);
+                $(this).next("label").find('.text').removeClass("span-click");
+                $(this).next("label").find('.icon').removeClass("checkbox-click");
+            });
+        }
+    });
+    $("#timePicker").css("height", 660);
+	setFormFixedCentral($("#accessDevList"));
+    $.setFixedCentral($("#timePicker"));
+
+    $("#restoreTimePicker").click(function() {
+        tpGridSelect.resetGridValue();
+    });
+
+    $("#saveTimePicker").click(function() {
+        tpGridSelect.stopGridSelect();
+        $("#timePicker").fadeOut(20, function() {
+            $("#timePicker").removeClass("on-mask timepicker-container").addClass("nd");
+        });
+
+        $("#mask").hide();
+    });
+}
+
+function setFormFixedCentral(me) {
+		var me = me || this;
+	
+		var posX = parseInt(($(window).width() - me.width()) / 2, 10);
+		var posY = parseInt(($(window).height() - me.height()) / 3, 10);
+
+		me.css({
+	        left: posX,
+	        top: posY,
+	        bottom:"auto",
+	        right:"auto",
+	        position: "fixed"
+	    });
+	 
+	    var changeSize = function() {
+	        posX = parseInt(($(window).width() - me.width()) / 2, 10);
+	        posY = parseInt(($(window).height() - me.height()) / 2, 10);
+	 
+	        me.css({
+	        left: posX,
+		    top: posY
+	     });
+	    };
+	 
+	    $(window).off("resize.setfixed");
+	    $("body").off("resize.setfixed");
+	    $(window).on("resize.setfixed", changeSize);
+	    $("body").on("resize.setfixed", changeSize);	
+}
+
+
+$("#addDev").click(function() {
+    $("#deviceName").val("");
+    $("#macAddress").val("");
+    $("#description").val("");
+    $("#enableThisEntry").prop("checked", true);
+    $("#enableThisEntry").data('tpCheckbox').refresh();
+    clearTimePicker();
+});
+
+$("#delDev").click(function() {
+    $.confirm(c_str.del_choosed, deleteSelEntry, null);
+});
+
+function deleteSelEntry() {
+    var td = $("#tableDevicesUnderParentalControl").find("tbody tr td");
+    var tr = td.find("span.checkbox-click").parents("tr");
+
+    td.find("span.checkbox-click").each(function() {
+        var childStackIndex = $(this).parents("tr").find("td:eq(1)").text();
+        var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfix; /* add + posfix by wuzeyu 2014.12.26*/
+
+
+        if (childStackIndex < 0 || childStackIndex == "") return true;
+
+        $.each(ruleList, function(index) {
+            if (this.isParentCtrl == 2 && this.internalHostRef == childDeviceName) {
+                $.act(ACT_DEL, RULE, this.__stack, null);
+            }
+        });
+
+        $.each(scheList, function(index) {
+            if (this.entryName == childDeviceName) {
+                $.act(ACT_DEL, TASK_SCHEDULE, this.__stack, null);
+            }
+        });
+
+        $.act(ACT_DEL, INTERNAL_HOST, deviceStack[childStackIndex], null);
+
+    });
+    tr.remove();
+    var grid = 0;
+    $("#tableDevicesUnderParentalControl").find("thead tr th").each(function() {
+        grid++;
+    });
+    $.addEmptyBody($("#tableDevicesUnderParentalControl"), grid);
+    $.exe(function(err) {
+        if (!err) {
+			/*add by wuzeyu*/
+			curDevNum --;
+			/*end add*/
+            $.reload();
+        }
+    });
+}
+
+function initDeviceUnderParentalCtrlTable() {
+    var index = 1;
+    var array = [];
+    var deviceList = $.act(ACT_GL, INTERNAL_HOST, null, null);
+
+    if (!$.exe()) {
+
+        $.each(deviceList, function() {
+            var entryName = this.entryName;
+            var description;
+            var enable;
+            if (this.isParentCtrl == 2) {
+				/*add by wuzeyu*/
+				curDevNum ++;
+                $.each(ruleList, function() {
+                    if (this.internalHostRef == entryName && this.isParentCtrl == 2) {
+                        description = this.description;
+				if (description == "")
+					description = " ";
+				//alert("entryName: "+entryName+"description: "+description);
+                        enable = this.enable;
+                    }
+                });
+
+		var entryNameLen = (this.entryName).length > posfixLen ? 
+			                     ((this.entryName).length - posfixLen) :  (this.entryName).length;
+                array.push([{
+                    "text": '<div><input type="checkbox" id="checkbox_parent_' + (index) + '"/><label></label></div>',
+                    "width": "5%"
+                }, {
+                    "text": (index),
+                    "width": "5%"
+                }, {
+                   //  "text": this.entryName,/*change by wuzeyu 2014.12.26*/
+			 "text": (this.entryName).substring(0, entryNameLen),
+                    "width": "15%"
+                }, {
+                    "text": this.mac.toUpperCase(),
+                    "width": "15%"
+                }, {
+                    "text": "<span class='table-grid-icon clock-icon' id='timePicker" + index + "'></span>",
+                    "width": "10%"
+                }, {
+                	 "text": description,
+                     "width": "15%"
+                }, {
+                    "text": (enable == 1) ? "<span class='table-grid-icon enable-icon'></span>" : "<span class='table-grid-icon disable-icon'></span>",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon edit-modify-icon'></span><span class='table-grid-icon edit-trash-icon'></span>",
+                    "width": "30%"
+                }]);
+
+                deviceStack[index] = this.__stack;
+                index++;
+            }
+        });
+        $.initTableBody($("#tableDevicesUnderParentalControl"), array);
+        $.tablePages($("#tableDevicesUnderParentalControl"), 8);
+
+        $("span.table-grid-icon.clock-icon").click(function() {
+            var childStackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+            var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfix; /*add +posfix by wuzeyu 2014.12.26*/
+            showOrEdit = 0;
+
+            $.each(scheList, function() {
+                if (this.entryName == childDeviceName) {
+                    refreshTimePicker(this);
+                    $("#restoreTimePicker").parents("div.button-container").addClass("nd");
+                    $("#applyTo").hide();
+                    $("#endTime").hide();
+                    $("#startTime").hide();
+                    $("#addButton").hide();
+                    $("#timePicker").find("tr.block").removeClass("block").addClass("blockex");
+                    $("#timePicker").find("th.block").removeClass("block").addClass("blockex");
+                    showTimePicker();
+                }
+            });
+        });
+
+        $("span.edit-trash-icon").click(function() {
+            var childStackIndex = $(this).parents("tr").find("td:eq(1)").text();
+            var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfix; /*add +posfix by wuzeyu 2014.12.26*/
+
+            $.each(ruleList, function(index) {
+                if (this.isParentCtrl == 2 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_DEL, RULE, this.__stack, null);
+                }
+            });
+
+            $.each(scheList, function(index) {
+                if (this.entryName == childDeviceName) {
+                    $.act(ACT_DEL, TASK_SCHEDULE, this.__stack, null);
+                }
+            });
+
+            $.act(ACT_DEL, INTERNAL_HOST, deviceStack[childStackIndex], null);
+
+            $.exe(function(err) {
+                if (!err) {
+			/*add by wuzeyu*/
+			curDevNum --;
+		     /*end add*/
+                    $.reload();
+                }
+            });
+        });
+
+        $("span.edit-modify-icon").click(function() {
+            isEdit = 1;
+            editStackIndex = $(this).parents("tr").find("td:eq(1)").text();
+            var deviceName = $(this).parents("tr").find("td:eq(2)").text();
+	     /*add by wuzeyu 2014.12.26 */
+	     var deviceNameIn = $(this).parents("tr").find("td:eq(2)").text() + posfix;
+		/*end add*/ 
+            var macAddress = $(this).parents("tr").find("td:eq(3)").text();
+		var description = $(this).parents("tr").find("td:eq(5)").text();
+
+            $("#deviceName").val(deviceName);
+            $("#macAddress").val(macAddress);
+	     $("#description").val(description);
+
+
+            $.each(scheList, function(index) {
+                if (this.entryName == deviceNameIn) {
+                    refreshTimePicker(this);
+                }
+            });
+
+            $.each(ruleList, function(index) {
+
+                if (this.isParentCtrl == 2 && this.internalHostRef == deviceNameIn) {
+                    if (this.enable == 1) {
+                        $("#enableThisEntry").prop("checked", true);
+                        $("#enableThisEntry").data('tpCheckbox').refresh();
+                    } else {
+                        $("#enableThisEntry").prop("checked", false);
+                        $("#enableThisEntry").data('tpCheckbox').refresh();
+                    }
+                }
+            });
+        });
+
+        $("span.enable-icon").click(function() {
+            var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfix; /*add +posfix by wuzeyu 2014.12.26*/
+            $.each(ruleList, function() {
+                if (this.isParentCtrl == 2 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_SET, RULE, this.__stack, null, ["enable=0"]);
+                }
+            });
+            $.exe(function() {
+                $.reload();
+            });
+        });
+
+        $("span.disable-icon").click(function() {
+            var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfix; /*add +posfix by wuzeyu 2014.12.26*/
+            $.each(ruleList, function() {
+                if (this.isParentCtrl == 2 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_SET, RULE, this.__stack, null, ["enable=1"]);
+                }
+            });
+            $.exe(function() {
+                $.reload();
+            });
+        });
+    }
+}
+
+function refreshTimePicker(scheCfg) {
+
+    tmpWeek = [];
+
+    for (var i = 0; i < 7; i++) {
+        tmpWeek[i] = "";
+    }
+
+    var createGridValue = function(dayTime, tmpWeek, tIndex) {
+        var count = 0;
+        while (dayTime > 0) {
+            if (dayTime % 4 == 3)
+                tmpWeek[tIndex] += "1";
+            else if (dayTime % 4 == 0)
+                tmpWeek[tIndex] += "0";
+            count++;
+            dayTime = Math.floor(dayTime / 4);
+    }
+        while (count < 12) {
+            tmpWeek[tIndex] += "0";
+            count++;
+    }
+    };
+
+    createGridValue(scheCfg.sunAm, tmpWeek, 0);
+    createGridValue(scheCfg.sunPm, tmpWeek, 0);
+    createGridValue(scheCfg.monAm, tmpWeek, 1);
+    createGridValue(scheCfg.monPm, tmpWeek, 1);
+    createGridValue(scheCfg.tueAm, tmpWeek, 2);
+    createGridValue(scheCfg.tuePm, tmpWeek, 2);
+    createGridValue(scheCfg.wedAm, tmpWeek, 3);
+    createGridValue(scheCfg.wedPm, tmpWeek, 3);
+    createGridValue(scheCfg.thuAm, tmpWeek, 4);
+    createGridValue(scheCfg.thuPm, tmpWeek, 4);
+    createGridValue(scheCfg.friAm, tmpWeek, 5);
+    createGridValue(scheCfg.friPm, tmpWeek, 5);
+    createGridValue(scheCfg.satAm, tmpWeek, 6);
+    createGridValue(scheCfg.satPm, tmpWeek, 6);
+
+    buildTimePicker();
+}
+
+function showTimePicker() {
+
+    $("#timePicker").fadeIn(5, function() {
+        $("#timePicker").removeClass("nd").addClass("timepicker-container on-mask");
+
+    });
+
+    $("#mask").show();
+}
+
+function buildTimePicker() {
+    tpGridSelect.initGridSelectVal(tmpWeek);
+}
+
+function clearTimePicker() {
+    tpGridSelect.resetGridValue();
+}
+
+function initAccessDevicesListTable() {
+
+    var array = [];
+    var index = 1;
+    var deviceOnline = $.act(ACT_GL, LAN_HOST_ENTRY, null, null);
+
+    $.exe(function(err) {
+        if (err) return;
+
+        $.each(deviceOnline, function() {
+			if (this.active != 1)
+				return;
+
+            array.push([{
+                "text": index,
+                "width": "5%"
+            }, {
+                "text": this.hostName,
+                "width": "10%"
+            }, {
+                "text": this.IPAddress,
+                "width": "10%"
+            }, {
+                "text": this.MACAddress,
+                "width": "15%"
+            }, {
+                "text": "<span class='table-grid-icon add-icon'></span>",
+                "width": "15%"
+            }]);
+            index++
+        });
+
+        $.initTableBody($("#tableAccessDevicesList"), array);
+        $.tablePages($("#tableAccessDevicesList"), 5);
+
+        $("span.add-icon").click(function() {
+            var hostName = $(this).parents("tr").find("td:eq(1)").text().substring(0, 32);//match(/^[0-9a-zA-Z\-]{1,32}/);
+            var macAddress = $(this).parents("tr").find("td:eq(3)").text();
+
+            $("#deviceName").val(hostName);
+            $("#macAddress").val(macAddress);
+            $("#accessDevList").fadeOut(20, function() {
+                $("#accessDevList").removeClass("on-mask msg-container").addClass("nd");
+            });
+
+            $("#mask").hide();
+        });
+    });
+}
+
+function initSche() {
+    options = {
+        colHeads: [s_str.sun, s_str.mon, s_str.tues, s_str.wed, s_str.thur, s_str.fri, s_str.sat],
+        rowHeads: ['0:00', '1:00', '2:00', '3:00', '4:00', '5:00', '6:00', '7:00', '8:00', '9:00', '10:00',
+            '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00',
+            '22:00', '23:00', '24:00'
+        ],
+        cellsInTd: 1,
+        tableRowHeadWidth: 40,
+        tableBodyWidth: 769,
+        textInExample: n_str.parentCtrl.t_time
+    };
+
+    $('#timeTbl').after('<div class="inline-btn-right"><div class="table-btn"><button type="submit" class="green xl" id="restoreTimePicker">' + m_str.restore + '</button></div><div class="table-btn"><button type="submit" class="green xl" id="saveTimePicker">' + m_str.ok + '</button></div></div>');
+    $('#restoreTimePicker').css('margin', '3px');
+    $('#saveTimePicker').css('margin', '3px');
+    tpGridSelect = $('#timeTbl').tpGridSelect(options);
+
+}
+
+function selTime() {
+    var gridList = tpGridSelect.getGridSelectVal();
+    var dayList = [];
+    for (var i = 0; i < 7; i++) {
+        dayList[i] = "";
+        for (var j = 23; j >= 0; j--) {
+            if ("1" === gridList[i].charAt(j)) {
+                dayList[i] += "3";
+            } else {
+                dayList[i] += "0"
+    }
+        }
+    }
+    parentSche.sunAm = parseInt(dayList[0].substr(12), 4);
+    parentSche.sunPm = parseInt(dayList[0].substr(0, 12), 4);
+    parentSche.monAm = parseInt(dayList[1].substr(12), 4);
+    parentSche.monPm = parseInt(dayList[1].substr(0, 12), 4);
+    parentSche.tueAm = parseInt(dayList[2].substr(12), 4);
+    parentSche.tuePm = parseInt(dayList[2].substr(0, 12), 4);
+    parentSche.wedAm = parseInt(dayList[3].substr(12), 4);
+    parentSche.wedPm = parseInt(dayList[3].substr(0, 12), 4);
+    parentSche.thuAm = parseInt(dayList[4].substr(12), 4);
+    parentSche.thuPm = parseInt(dayList[4].substr(0, 12), 4);
+    parentSche.friAm = parseInt(dayList[5].substr(12), 4);
+    parentSche.friPm = parseInt(dayList[5].substr(0, 12), 4);
+    parentSche.satAm = parseInt(dayList[6].substr(12), 4);
+    parentSche.satPm = parseInt(dayList[6].substr(0, 12), 4);
+}
+
+function doClick(val) {
+
+    var tmpTimeId = "timeid" + val;
+    if (idIndex[val] == 0 && showOrEdit == 1) {
+        $("#" + tmpTimeId).addClass("sel");
+        idIndex[val] = 1;
+    } else if (idIndex[val] == 1 && showOrEdit == 1) {
+        $("#" + tmpTimeId).removeClass("sel");
+        idIndex[val] = 0;
+    }
+}
+
+function doSave() {
+
+    var internHost = {};
+    var parentRule = {};
+    var editRuleStack;
+    var editScheStack;
+    var isRuleDuplicate = 0;
+	/*add by wuzeyu*/
+	var isMacDuplicate = 0;
+	var isDevNameDuplicate = 0;
+	/*end add*/
+    if (isEdit == 1) {
+        var editDevice = $.act(ACT_GET, INTERNAL_HOST, deviceStack[editStackIndex], null);
+        $.exe();
+        $.each(ruleList, function() {
+            if (this.isParentCtrl == 2 && this.internalHostRef == editDevice.entryName) {
+                editRuleStack = this.__stack;
+            }
+        });
+
+        $.each(scheList, function() {
+            if (this.entryName == editDevice.entryName) {
+                editScheStack = this.__stack;
+            }
+        });
+    }
+
+	/*add by wuzeyu*********************************/
+	if(isEdit == 0 && curDevNum >= maxDevNum)
+	{
+		$.alert(ERR_FW_REACH_MAX_DEV);
+       	 return false;
+	}
+    /*end add*/
+
+
+    if (($("#macAddress").val() == "") || ($.mac($("#macAddress").val(), true))) {
+        $.alert(ERR_MAC_FORMAT);
+        return false;
+    }
+
+    if (!($.isname($("#deviceName").val()))) {
+        $.alert(ERR_FW_ENTRYNAME_INVAD);
+        return false;
+    }
+/*
+    if (!($.isname($("#description").val()))) {
+        $.alert(ERR_FW_ENTRYNAME_INVAD);
+        return false;
+    }
+*/
+        var tr = $("#tableDevicesUnderParentalControl").find("tbody tr");
+        tr.each(function() {
+			
+			/*add by wuzeyu**********************************/
+			var devIndex = $(this).find("td:eq(1)").text();
+			var boolEditIndex = 1;
+			if (isEdit == 1 && devIndex == editStackIndex)
+			{
+				boolEditIndex = 0;
+			}
+
+			if (boolEditIndex == 1)
+			{
+            var ruleDes = $(this).find("td:eq(5)").text();
+				var devNameDes = $(this).find("td:eq(2)").text();
+				var macDes = $(this).find("td:eq(3)").text();
+
+			if (devNameDes == $("#deviceName").val()) 
+			{
+	                	isDevNameDuplicate = 1;
+	               	 return false;
+	           	 }
+				
+				if (macDes == ($("#macAddress").val()).toUpperCase()) 
+			{
+	               	 isMacDuplicate = 1;
+                return false;
+            }
+			/*end add*******************************************/
+			
+		}
+        });
+
+		/*add by wuzeyu ************************/
+		if (isMacDuplicate == 1) 
+		{
+            $.alert(ERR_FW_MAC_CONFILIC);
+			isMacDuplicate = 0;
+            return false;
+        }
+	    if (isDevNameDuplicate == 1)
+		{
+            $.alert(ERR_FW_DEV_NAME_CONFILIC);
+			isDevNameDuplicate = 0;
+            return false;
+    }
+        /*end add ******************************/
+
+    selTime();
+
+    parentSche.isParentCtrl = 2;
+    parentSche.entryName = $("#deviceName").val() + posfix; /*add + posfix by wuzeyu 2014.12.26*/
+
+    internHost.isParentCtrl = 2;
+    internHost.type = 1;
+
+
+    internHost.entryName = $("#deviceName").val() + posfix;
+    internHost.mac = $("#macAddress").val();
+
+    parentRule.ruleName = $("#deviceName").val() + posfix;
+    parentRule.isParentCtrl = 2;
+    parentRule.enable = $("#enableThisEntry").prop("data-checked") ? 1 : 0;
+    parentRule.action = $("#radioBlack").prop("checked") ? 1 : 0;
+    parentRule.description = $("#description").val();
+    parentRule.protocol = 0;
+    parentRule.direction = 1;
+
+    parentRule.internalHostRef = internHost.entryName;
+    parentRule.externalHostRef = (fwInfo.parentCtrlMode == 1) ? blackParentName : whiteParentName;
+    parentRule.scheduleRef = parentSche.entryName;
+
+    if (isEdit == 0) {
+        $.act(ACT_ADD, INTERNAL_HOST, null, null, internHost);
+        $.act(ACT_ADD, TASK_SCHEDULE, null, null, parentSche);
+        $.act(ACT_ADD, RULE, null, null, parentRule);
+    } else if (isEdit == 1) {
+        $.act(ACT_SET, INTERNAL_HOST, deviceStack[editStackIndex], null, internHost);
+        $.act(ACT_SET, TASK_SCHEDULE, editScheStack, null, parentSche);
+        $.act(ACT_SET, RULE, editRuleStack, null, parentRule);
+       // isEdit = 0; /*changed by wuzeyu*/
+    }
+
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err)
+		{
+			$.reload();
+			/*add by wueyu*/
+			if (isEdit == 0)
+			curDevNum ++;
+			/*end add*/
+		}
+		isEdit = 0; /*add by wueyu*/
+    });
+}
+
+function doSaveContentRestriction() {
+
+    var urlAttrs = {};
+    var tmpBlackUrlList;
+    var tmpWhiteUrlList;
+    var isInvalidURL = false;
+
+    allBlackUrl = [];
+    allWhiteUrl = [];
+
+    if ($("#radioBlack").prop("checked") == true) {
+
+        tmpBlackUrlList = $("#addUrl").find("input.tp-input-text");
+        $.each(tmpBlackUrlList, function(index) {
+            if (($(this).val() == "") || (!$.isdomain($(this).val()))) {
+                isInvalidURL = true;
+                return;
+            }
+            allBlackUrl[index] = $(this).val();
+        });
+
+        if (isInvalidURL == true) {
+            $.alert(ERR_FW_URL_INVAD);
+            return;
+        }
+
+        $.addLoading($("#saveListMode"));
+
+        $.each(delBlackUrlList, function(index) {
+            urlAttrs.addUrl = 0;
+            urlAttrs.tmpUrl = delBlackUrlList[index];
+            $.act(ACT_SET, EXTERNAL_HOST, "1,0,0,0,0,0", null, urlAttrs);
+        });
+
+        $.each(allBlackUrl, function(index) {
+            urlAttrs.type = 2;
+            urlAttrs.addUrl = 1;
+            urlAttrs.tmpUrl = allBlackUrl[index].toLowerCase();
+            $.act(ACT_SET, EXTERNAL_HOST, "1,0,0,0,0,0", null, urlAttrs);
+        });
+
+        clearBlackDelList();
+
+        $.act(ACT_SET, FIREWALL, null, null, ["parentCtrlMode=1"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.reload();
+            }
+        });
+    } else if ($("#radioWhite").prop("checked") == true) {
+
+        tmpWhiteUrlList = $("#delUrl").find("input.tp-input-text");
+        $.each(tmpWhiteUrlList, function(index) {
+            if (($(this).val() == "") || (!$.isdomain($(this).val()))) {
+                isInvalidURL = true;
+                return;
+            }
+            allWhiteUrl[index] = $(this).val();
+        });
+
+        if (isInvalidURL == true) {
+            $.alert(ERR_FW_URL_INVAD);
+            return;
+        }
+
+        $.addLoading($("#saveListMode"));
+
+        $.each(delWhiteUrlList, function(index) {
+            urlAttrs.addUrl = 0;
+            urlAttrs.tmpUrl = delWhiteUrlList[index];
+            $.act(ACT_SET, EXTERNAL_HOST, "2,0,0,0,0,0", null, urlAttrs);
+        });
+
+        $.each(allWhiteUrl, function(index) {
+            urlAttrs.type = 2;
+            urlAttrs.addUrl = 1;
+            urlAttrs.tmpUrl = allWhiteUrl[index].toLowerCase();
+            $.act(ACT_SET, EXTERNAL_HOST, "2,0,0,0,0,0", null, urlAttrs);
+        });
+
+        clearWhiteDelList();
+
+        $.act(ACT_SET, FIREWALL, null, null, ["parentCtrlMode=0"]);
+
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.reload();
+            }
+        });
+    }
+}
+
+function clearBlackDelList() {
+    delBlackUrlList = [];
+    delBlackUrlIndex = 0;
+}
+
+function clearWhiteDelList() {
+    delWhiteUrlList = [];
+    delWhiteUrlIndex = 0;
+}
+
+$("#t_viewdev").click(function() {
+    $("#accessDevList").fadeIn(20, function() {
+        $("#accessDevList").removeClass("nd").addClass("on-mask msg-container");
+    });
+
+    $("#mask").show();
+});
+
+$("#closeDeviceList").click(function() {
+    $("#accessDevList").fadeOut(20, function() {
+        $("#accessDevList").removeClass("on-mask msg-container").addClass("nd");
+    });
+
+    $("#mask").hide();
+});
+
+$("#viewTimePicker").click(function() {
+    tpGridBackup = tpGridSelect.getGridSelectVal();
+    tpGridSelect.startGridSelect();
+    $("#restoreTimePicker").parents("div.button-container").removeClass("nd");
+    $("#timePicker").fadeIn(20, function() {
+        showOrEdit = 1;
+        $("#timePicker").removeClass("nd").addClass("on-mask timepicker-container");
+        $("#applyTo").show();
+        $("#endTime").show();
+        $("#startTime").show();
+        $("#addButton").show();
+        $("#timePicker").find("tr.blockex").removeClass("blockex").addClass("block");
+        $("#timePicker").find("th.blockex").removeClass("blockex").addClass("block");
+    });
+
+    $("#mask").show();
+});
+
+$("#closeTimePicker").click(function() {
+    tpGridSelect.initGridSelectVal(tpGridBackup);
+    tpGridSelect.stopGridSelect();
+    showOrEdit = 0;
+    $("#timePicker").fadeOut(20, function() {
+        $("#timePicker").removeClass("on-mask timepicker-container").addClass("nd");
+    });
+
+    $("#mask").hide();
+});
+</script>
+
+<body>
+    <div id="mask" class="mask"></div>
+    <h3 id="t_title1">Parental Controls</h3>
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+            <div class="button-group-container" id="enableParentalCtrl">
+                <b id="t_en">Status:</b>
+                <ul>
+                    <li>
+                        <button id="enableParentalCtrlOn" class="fst" value="on">On</button>
+                    </li>
+                    <li>
+                        <button id="enableParentalCtrlOff" class="lst" value="off">Off</button>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+
+    <h3 id="t_title2">Devices Under Parental Controls</h3>
+
+    <div>
+        <p class="T_scheduleTip cfg-line">The Effective Time Schedule is based on the time of the Router. The time can be set in "System Tools -> Time Settings"</p>
+    </div>
+
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+            <div class="table-op">
+                <div class="table-btn">
+                <!--
+                    <span class="refresh-icon" id="refDev"></span>
+                    <label class="T_refresh">Refresh</label>
+                    -->
+                    <span class="add-icon" id="addDev"></span>
+                    <label class="T_add">Add</label>
+                    <span class="delete-icon" id="delDev"></span>
+                    <label class="T_del">Delete</label>
+                </div>
+            </div>
+
+            <table id="tableDevicesUnderParentalControl">
+                <thead></thead>
+                <tbody id="bodyDevicesUnderParentalControl">
+                    <tr id="editContainerClientDevices" class="nd">
+                        <td colspan="8">
+                            <div>
+                                <b id="t_devname">Device Name: </b>
+                                <input type="text" id="deviceName" maxlength="32" required/>
+                                <button type="submit" class="blue xl" id="t_viewdev">View Devices</button>
+                            </div>
+
+                            <div>
+                                <b id="t_macaddr">MAC Address: </b>
+                                <input type="text" id="macAddress" maxlength="17" required/>
+                            </div>
+
+                            <div class="pure-control-group">
+                                <label id="t_acctime" class="label-title">Effective Time:</label>
+                                <span class="table-grid-icon clock-icon" id="viewTimePicker"></span>
+                            </div>
+
+                            <div>
+                                <b id="t_description">Description: </b>
+                                <input type="text" id="description" maxlength="32" required/>(optional)
+                            </div>
+
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="enableThisEntry" />
+                                <label id="t_enentry">Enable</label>
+                            </div>
+                            <div class="inline-btn-right">
+                                <button type="submit" class="green T_cancel" id="editCancel">Cancel</button>
+                                <button type="submit" class="green T_ok" id="editOk">OK</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <div class="part-separate"></div>
+
+    <div>
+        <form class="pure-form pure-form-aligned">
+            <div id="accessDevList" class="nd">
+                <div id="closeDeviceList" class="table-op">
+                    <div class="table-btn">
+                        <span class="close-icon table-icon"></span>
+                    </div>
+                </div>
+
+                <table id="tableAccessDevicesList">
+                    <thead></thead>
+                    <tbody id="bodyAccessDevicesList">
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+
+    <div style="position:relative;">
+        <form class="pure-form pure-form-aligned">
+            <p class="br"></p>
+            <div id="timePicker" class="nd">
+                <div class="table-op">
+                    <div class="table-btn">
+                        <span id="closeTimePicker" class="close-icon table-icon"></span>
+                    </div>
+                </div>
+
+                <div id="timeTbl"></div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+    <h3 id="t_title3">Content Restriction</h3>
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+            <div id="contentRestrictionMode">
+                <b id="t_cmode">Restriction</b>
+                <input type="radio" name="radioNameContentRestrictionMode" id="radioBlack" />
+                <label id="t_blm">Blacklist</label>
+                <input type="radio" name="radioNameContentRestrictionMode" id="radioWhite" />
+                <label id="t_wlm">Whitelist</label>
+            </div>
+
+            <div class="nd" id="addUrl" style="line-height: 36px;">
+                <span id="addBlackUrl"><!-- div change to span  -->
+                    <span class="table-icon add-icon" style="margin-left: 0;"></span>
+                    <label id="t_ak1" class="table-icon-text">Add a new keyword</label><br><!--br for change line  -->
+                </span>
+            </div>
+
+            <div class="nd" id="delUrl" style="line-height: 36px;">
+                <span id="addWhiteUrl" ><!-- div change to span  -->
+                    <span class="table-icon add-icon" style="margin-left: 0;"></span>
+                    <label id="t_ak2" class="table-icon-text">Add a new keyword</label><br><!--br for change line  -->
+                </span>
+            </div>
+
+            <button id="saveListMode" type="submit" class="green T_save">Save</button>
+        </form>
+    </div>
+</body>
+
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>

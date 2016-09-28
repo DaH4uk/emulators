@@ -1,0 +1,290 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+<!--
+<!-- RpUseIdentifier RpIdentifier=doLoadFunc RpItemType=ItemGroup -->
+    function doLoad()
+    {
+        top.buttom.location="buttom.html";
+    }
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+    var szHelp="h_ContentFilter.html";
+
+
+    function doHelp() {
+        window.open(szHelp, 'HELP', 'width=450,height=250,scrollbars=yes,resizable=yes');
+    }
+
+    function checkAndSetWeekdays()
+    {
+    	if ( document.forms[0].cfSchedule_Everyday.checked )
+    	{
+            document.forms[0].cfSchedule_Sun.checked=true;
+    	    document.forms[0].cfSchedule_Mon.checked=true;
+    	    document.forms[0].cfSchedule_Tue.checked=true;
+    	    document.forms[0].cfSchedule_Wed.checked=true;
+    	    document.forms[0].cfSchedule_Thu.checked=true;
+    	    document.forms[0].cfSchedule_Fri.checked=true;
+    	    document.forms[0].cfSchedule_Sat.checked=true;
+    	    return;
+    	}
+    	
+    	if ( !document.forms[0].cfSchedule_Sun.checked )
+    	    return; 	    
+      	if ( !document.forms[0].cfSchedule_Mon.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Tue.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Wed.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Thu.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Fri.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Sat.checked )
+    	    return;
+	
+	document.forms[0].cfSchedule_Everyday.checked = true;
+    }
+
+    function checkAndSetDaytime()
+    {  
+        if ( document.forms[0].cfSchedule_Allday.checked )
+        {
+            document.forms[0].cfSchedule_StartHour.value="0";
+            document.forms[0].cfSchedule_StartMinute.value="0";
+            document.forms[0].cfSchedule_EndHour.value="0";
+            document.forms[0].cfSchedule_EndMinute.value="0";
+            return;
+        }
+    }
+
+// -->
+</script>
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+
+<form method="post" action="http://www.zyxeltech.de/Forms/SCFilter_1" target="buttom">
+
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>
+               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+Filter                   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="SCFilterSchedule.html" target="main" class="sub"><b><FONT class=NaviText>
+Schedule             	   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+
+                 </tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>
+                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Trusted IP Setup                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td class="cfig_word">
+A trusted computer has full access to all blocked resources. 0.0.0.0 means there is no trusted computer.                         </td>
+</tr>
+<tr>
+                         <td>Trusted Computer IP Address:<input type="text" name="FwTrustedIP" size="15" maxlength="15" value="0.0.0.0" onblur="checkIPFormat(this)" />
+                         </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Restrict Web Features                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td><input type="checkbox" name="cfCategories_ActiveX" />
+
+ActiveX&nbsp;&nbsp;
+<input type="checkbox" name="cfCategories_Java" />
+Java&nbsp;&nbsp;
+<input type="checkbox" name="cfCategories_Cookies" />
+Cookies&nbsp;&nbsp;
+<input type="checkbox" name="cfCategories_WebProxy" />
+Web Proxy                         </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Keyword Blocking                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td><input type="checkbox" name="cfKeyWord_Enable" />
+Enable URL Keyword Blocking                         </td>
+</tr>
+<tr>
+                         <td>Keyword                  &nbsp;
+<input type="text" name="cfKeyWord_Domain" size="48" maxlength="127" value="" />
+		&nbsp;&nbsp;
+		
+<input type="submit" name="cfKeyWord_AddKeyword" value="Add" style="width:60pt;" />
+                    </td>
+</tr>
+<tr>
+                         <td>&nbsp;</td>
+</tr>
+<tr>
+                         <td>Keyword List                       <br />
+<select name="cfKeyWord_DomainList" size="6" OnChange="this.form.cfKeyWord_Domain.value = this.options[this.selectedIndex].text;">
+</select>                         </td>
+</tr>
+<tr>
+                         <td height="5"></td>
+</tr>
+<tr>
+                         <td><input type="submit" name="cfKeyWord_DeleteKeyword" value="Delete" style="width:60pt;" />
+&nbsp;
+<input type="submit" name="cfKeyWord_ClearList" value="Clear All" style="width:60pt;" />
+                         </td>
+</tr>
+<tr>
+                         <td>&nbsp;</td>
+</tr>
+<tr>
+                         <td>Message to display when a site is blocked                         </td>
+</tr>
+<tr>
+                         <td>Denied Access Message			&nbsp;
+<input type="text" name="Bolcked_Message" size="48" maxlength="127" value="" />
+                         </td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+<input type="submit" name="sysSubmit" value="Apply" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">                    </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+
+</form>
+<!-- WaterMark Begin -->
+<!-- WaterMark End -->
+ <p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Security > Content Filter > Filter');
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

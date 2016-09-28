@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="ndm.abbr" content="Access Rules">
+<meta name="ndm.abbr" content="Межсетевой экран" xml:lang="RU" lang="RU">
+
+<title>ZyXEL Keenetic - 
+				Межсетевой экран</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css">
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+function AccessGroups(element, form, defSectionName) {
+	var p_;
+	var default_;
+	var table_ = new Table(element);
+	table_.showColumns("action", "protocol", "source", "src-port-operator", "source-port", "destination", "dst-port-operator", "destination-port");
+	table_.setEditorForm(form);
+	table_.onStopEditing = function(element) {
+		if( this.getFlag(element) == TBL_ROW_INSERTED ) this.deleteRow(element);
+	}
+//public:
+	this.init = function() {
+		p_ = new Packet();
+	}
+	this.cleanup = function() {
+		table_.stopEditing();
+		while(element.tBodies.length) element.removeChild(element.tBodies[0]);
+	}
+	this.load = function(node) {
+		var acl = getNodeValue(node, "acl");
+		var sect = table_.newSection(acl, "rules for " + (getNodeValue(node, "direction") == "in" ? "incoming" : "outgoing") + " connections (" + acl + ") :");
+		sect.__direction = getNodeValue(node, "direction");
+		if( acl == defSectionName ) default_ = sect;
+		p_.Config("access-list", {"acl": acl}, sect);
+	}
+	this.loadLists = function(logger) {
+		p_.proceed(logger);
+	}
+	this.getTable = function() {
+		if( table_.getActiveSection() ) return table_.getActiveSection();
+		if( !default_ ) {
+			default_ = table_.newSection(defSectionName, "rules for incoming connections (" + defSectionName + ") :");
+			default_.__direction = "in";
+			default_.init();
+		}
+		return default_;
+	}
+}
+AccessGroups.prototype = new ParameterSet();
+var acg;
+var ifName;
+var interfaces;
+
+function loadValues(ifName_) {
+	if( ifName_ ) {
+		if( acg ) acg.cleanup();
+		acg = new AccessGroups(document.getElementById("rules"), new Form(document.getElementById("editor")), _WEBADMIN + "_" + ifName_);
+		var p = new Packet();
+		if( !interfaces ) {
+			interfaces = new IfList(document.iface.name);
+			p.Command("show interface", null, interfaces);
+		}
+		p.Config("interface ip access-group", {"name": ifName_}, acg);	
+		p.onLoad = function() {
+			acg.loadLists(document.getElementById("logger"));
+			ifName = ifName_;
+		}
+		p.proceed(document.getElementById("logger"));
+	}
+}
+function add() {
+	var rules = acg.getTable();
+	rules.startEditing(rules.insertRow({"acl": rules.getSectionName()}));
+}
+function save() {
+	var rules = acg.getTable();
+	var selected = rules.getSelectedRow();
+	var f = rules.getEditorForm();
+	var found = rules.find(f.getParameters());
+	if( f.getParameter("source") && found && found != selected ) {
+		alert(l10n(65542, "There is such rule already. Duplicate rules are not allowed."));
+	} else {
+		var p = new Packet();
+		if( rules.getFlag(selected) != TBL_ROW_INSERTED ) {
+			p.No("access-list", {"acl": rules.getSectionName()});
+			rules.forEach(function(values, isSelected) {
+				p.Command("access-list " + (isSelected ? f.getParameter("action") : values["action"]),
+						isSelected ? f.getParameters() : values, isSelected ? f : null, true);
+			});
+		} else {
+			p.Command("access-list " + f.getParameter("action"), f.getParameters(), f, true);
+		}
+		p.Command("interface ip access-group", {"name": ifName, "acl": rules.getSectionName(), "direction": rules.__direction});
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) rules.setRowValues(selected, f.getParameters(true)); 
+		}
+		p.proceed(document.getElementById("logger"));
+	}
+	return false;
+}
+function drop() {
+	var rules = acg.getTable();
+	var selected = rules.getSelectedRow();
+	if( rules.getFlag(selected) != TBL_ROW_INSERTED ) {
+		var p = new Packet();
+		p.No("access-list " + rules.getRowValues(selected)["action"], rules.getRowValues(selected), null, true);
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) rules.deleteRow(selected); 
+		}
+		p.proceed(document.getElementById("logger"));
+	} else {
+		rules.stopEditing();
+	}
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues(_WAN)">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0"></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default">English</option><option selected="selected" value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security.png');" class="selected"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br></div></div><div style="height: 639px;" id="content"><div id="title">Безопасность<div id="subtitle"></div></div><ul class="tabs"><li><a href="statics.html"><span>Трансляция сетевых адресов (NAT)</span></a></li><li><a class="current" href="acl.html"><span>Межсетевой экран</span></a></li></ul><div class="block red" style="border-bottom: none;">
+		<h1>Межсетевой экран</h1>
+		<div class="rounded">
+		<p>Выберите из списка интерфейс, чтобы просмотреть существующие для 
+него правила или создать новое. Правила могут разрешать или запрещать 
+прохождение определенных пакетов, удовлетворяющих условиями правила. Для
+ редактирования созданного правила щелкните его запись в списке.</p>
+		</div>
+		<form action="" name="iface" id="iface">
+			<label for="direction">Правила для интерфейса:</label>
+				<select name="name" id="name" style="width: 280px;" onchange="loadValues(this.options[this.selectedIndex].value)">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option><option value="PPTP0">PPTP0</option><option value="Switch0/VLAN9">Switch0/VLAN9</option><option value="PPTP1">PPTP1</option><option value="L2TP0">L2TP0</option><option value="PPPoE0">PPPoE0</option></select><br>
+		</form>
+		<br>
+		<table style="width: 100%;" id="rules" class="styled" cellspacing="0">
+		<thead>
+			<tr>
+			<th>Действие</th>
+			<th>Протокол</th>
+			<th>Источник</th>
+			<th colspan="2">Порт источника</th>
+			<th>Назначение</th>
+			<th colspan="2">Порт назначения</th>
+			</tr>
+		</thead>
+		<tbody></tbody><tbody><tr><td class="section" colspan="8"><h1>rules for incoming connections (_WEBADMIN_ISP) :</h1></td></tr></tbody><tbody><tr class=" highlight"><td colspan="8">(пусто)</td></tr><tr><td colspan="8" class="editor"><form action="" name="editor" id="editor" onsubmit="return save();" onreset="acg.getTable().stopEditing();">
+			<div class="header"><h1>Настройка правила</h1><div class="close_button"><a href="acl.html" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите действие, которое нужно выполнить для входящих пакетов, и
+ укажите условия, при которых это действие должно быть выполнено.</p>
+			</div>
+			<fieldset> 
+			<input value="_WEBADMIN_ISP" id="_ndm_1304672343651" name="acl" type="hidden">
+			<label for="action">Действие</label>
+				<select name="action">
+					<option selected="selected" value="permit">Разрешить</option>
+					<option value="deny">Запретить</option>
+				</select>
+			</fieldset>
+			<fieldset>
+			<label for="source">IP-адрес источника:</label>
+				<span class="nobr"><input name="source" size="15" type="text"> / 
+				<input name="source-mask" size="15" value="255.255.255.255" type="text"></span><br>
+			<label for="destination">IP-адрес назначения:</label>
+				<span class="nobr"><input name="destination" size="15" type="text"> /
+				<input name="destination-mask" size="15" value="255.255.255.255" type="text"></span><br>
+			<label for="protocol">Протокол:</label>
+				<select name="protocol">
+					<option selected="selected" value="tcp">TCP</option>
+					<option value="udp">UDP</option>
+				</select><br>
+			<label for="source-port">Номер порта источника:</label>
+				<span class="nobr"><select name="src-port-operator">
+					<option value="" selected="selected"></option>
+					<option value="eq">равен</option>
+					<option value="gt">больше чем</option>
+					<option value="lt">меньше чем</option>
+				</select>
+				<input name="source-port" type="text"></span><br>
+			<label for="destination-port">Номер порта назначения:</label>
+				<span class="nobr"><select name="dst-port-operator">
+					<option value="" selected="selected"></option>
+					<option value="eq">равен</option>
+					<option value="gt">больше чем</option>
+					<option value="lt">меньше чем</option>
+				</select>
+				<input name="destination-port" type="text"></span><br>
+	
+			<label for="nothing"></label>
+				<button class="apply" type="button" name="editor_apply">Сохранить</button>
+				<button class="cancel" onclick="document.location='acl.html'" type="button" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="">Удалить правило</button>
+			</fieldset>
+			</div>
+		</form></td></tr></tbody></table>
+
+		<br>
+		<button name="add_rule" onclick="add()">Добавить правило</button>
+
+		<div style="display:none;">
+		<form action="" name="editor" id="editor" onsubmit="return save();" onreset="acg.getTable().stopEditing();">
+			<div class="header"><h1>Настройка правила</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите действие, которое нужно выполнить для входящих пакетов, и
+ укажите условия, при которых это действие должно быть выполнено.</p>
+			</div>
+			<fieldset> 
+			<input name="acl" type="hidden">
+			<label for="action">Действие</label>
+				<select name="action">
+					<option selected="selected" value="permit">Разрешить</option>
+					<option value="deny">Запретить</option>
+				</select>
+			</fieldset>
+			<fieldset>
+			<label for="source">IP-адрес источника:</label>
+				<span class="nobr"><input name="source" size="15" type="text"> / 
+				<input name="source-mask" size="15" value="255.255.255.255" type="text"></span><br>
+			<label for="destination">IP-адрес назначения:</label>
+				<span class="nobr"><input name="destination" size="15" type="text"> /
+				<input name="destination-mask" size="15" value="255.255.255.255" type="text"></span><br>
+			<label for="protocol">Протокол:</label>
+				<select name="protocol">
+					<option selected="selected" value="tcp">TCP</option>
+					<option value="udp">UDP</option>
+				</select><br>
+			<label for="source-port">Номер порта источника:</label>
+				<span class="nobr"><select name="src-port-operator">
+					<option value="" selected="selected"></option>
+					<option value="eq">равен</option>
+					<option value="gt">больше чем</option>
+					<option value="lt">меньше чем</option>
+				</select>
+				<input name="source-port" type="text"></span><br>
+			<label for="destination-port">Номер порта назначения:</label>
+				<span class="nobr"><select name="dst-port-operator">
+					<option value="" selected="selected"></option>
+					<option value="eq">равен</option>
+					<option value="gt">больше чем</option>
+					<option value="lt">меньше чем</option>
+				</select>
+				<input name="destination-port" type="text"></span><br>
+	
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="editor_apply">Сохранить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить правило</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+
+		<div style="right: -225px; display: none;" class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif"></a></div></div>
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+</body></html>

@@ -1,0 +1,153 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<SCRIPT language=Javascript src="ipfilter.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Фильтрация по IP-адресам</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script>
+function addClick()
+{
+  if (!document.formFilterAdd.enabled.checked)
+  	return true;
+
+  if (document.formFilterAdd.ip.value=="" && document.formFilterAdd.comment.value=="" )
+	return true;
+
+  if ( checkIpAddr(document.formFilterAdd.ip, firewall_ipaddr_invalid) == false )
+	    return false;
+  return true;
+}
+
+
+function deleteClick()
+{
+  if ( !confirm(firewall_delete_selectconfm) ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+function deleteAllClick()
+{
+   if ( !confirm(firewall_delete_allconfm) ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+
+function disableDelButton()
+{
+	disableButton(document.formFilterDel.deleteSelFilterIp);
+	disableButton(document.formFilterDel.deleteAllFilterIp);
+}
+
+function updateState()
+{
+  if (document.formFilterAdd.enabled.checked) {
+ 	enableTextField(document.formFilterAdd.ip);
+	enableTextField(document.formFilterAdd.protocol);
+	enableTextField(document.formFilterAdd.comment);
+  }
+  else {
+ 	disableTextField(document.formFilterAdd.ip);
+  	disableTextField(document.formFilterAdd.protocol);
+	disableTextField(document.formFilterAdd.comment);
+  }
+}
+
+function Load_Setting()
+{
+	if ( 0 )
+		document.formFilterAdd.enabled.checked = true;
+	updateState();
+}
+</script>
+</head>
+
+<body oncontextmenu="return false" onload="Load_Setting();">
+<blockquote>
+<h2><script>dw(ipfilter_header)</script></h2>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td>
+<script>dw(ipfilter_header_explain)</script>
+</td></tr>
+</table>
+<br>
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http://192.168.10.1/%22http://192.168.10.1/boafrm/formFilter%22%22" method=POST name="formFilterAdd">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td class="item_td">
+   	<input type="checkbox" name="enabled" value="ON" ONCLICK=updateState()>&nbsp;&nbsp;<script>dw(ipfilter_enable)</script>
+  </td></tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">  
+  <tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(firewall_local_ipaddr)</script></td>
+	<td width ="70%" class="item_td"><input type="text" name="ip" size="10" maxlength="15">
+  </td></tr>
+  <tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(firewall_proto)</script></td>
+  	<td width ="70%" class="item_td"><select name="protocol">
+    		<option select value="0"><script>dw(firewall_proto_both)</script></option>
+    		<option value="1"><script>dw(firewall_proto_tcp)</script></option>
+    		<option value="2"><script>dw(firewall_proto_udp)</script></option>
+    		</select>
+    </td></tr>
+  <tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(firewall_comm)</script></td>
+	<td width ="70%" class="item_td"><input type="text" name="comment" size="12" maxlength="20"></td>
+  </tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">  
+	<tr><td>     
+     <input type="submit"  name="addFilterIp" onClick="return addClick()">&nbsp;&nbsp;
+     	<script>document.formFilterAdd.addFilterIp.value=firewall_apply;</script>
+        <!--<input type="reset" value="Reset" name="reset">-->
+        <input type="hidden" value="/ipfilter.htm" name="submit-url">
+     
+   </td></tr>
+</table>
+  <script> updateState(); </script>
+</form>
+
+<br>
+<form action="http://upvel.ru/emulators/UR-447N4G/%22javascript:if(confirm(%27http://192.168.10.1/boafrm/formFilter?deleteSelFilterIp=/ipfilter.htm&amp;deleteAllFilterIp=&amp;submit-url="  \n\nThis file was not retrieved by Teleport Pro, because it was unavailable, or its retrieval was aborted, or the project was stopped too soon.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/boafrm/formFilter?deleteSelFilterIp=/ipfilter.htm&deleteAllFilterIp=&submit-url=%27%22 tppabs="http://192.168.10.1/boafrm/formFilter?deleteSelFilterIp=/ipfilter.htm&deleteAllFilterIp=&submit-url=" method=POST name="formFilterDel">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  
+</table>
+<table border=1 width=550 cellpadding=0 cellspacing=0 class="form" >
+     <tr><td colspan="4" class="title"><b><script>dw(firewall_filtertbl)</script></b></td></tr>  
+
+  <tr><td align=center width="30%" class="head"><font size="2"><b><script>dw(firewall_tbl_localipaddr)</script></b></font></td>
+<td align=center width="25%" class="head"><font size="2"><b><script>dw(firewall_tbl_proto)</script></b></font></td>
+<td align=center width="25%" class="head"><font size="2"><b><script>dw(firewall_tbl_comm)</script></b></font></td>
+<td align=center width="20%" class="head"><font size="2"><b><script>dw(firewall_tbl_select)</script></b></font></td></tr>
+
+  </table>
+  <br>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td>  
+  <input type="submit"  name="deleteSelFilterIp" onClick="return deleteClick()">&nbsp;&nbsp;
+  <script>document.formFilterDel.deleteSelFilterIp.value=firewall_delete_select;</script>
+  <input type="submit"  name="deleteAllFilterIp" onClick="return deleteAllClick()">&nbsp;&nbsp;&nbsp;
+  <script>document.formFilterDel.deleteAllFilterIp.value=firewall_delete_all;</script>
+  <!--<input type="reset" value="Reset" name="reset">-->
+  <input type="hidden" value="/ipfilter.htm" name="submit-url">
+	</td></tr>
+</table>  
+ <script>
+	if ( 0 == 0 )
+		disableDelButton();
+ </script>
+</form>
+
+</blockquote>
+</body>
+</html>

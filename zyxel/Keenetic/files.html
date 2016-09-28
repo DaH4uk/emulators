@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="File Manager" />
+<meta name="ndm.abbr" lang="RU" content="Файлы" xml:lang="RU" />
+
+<title>ZyXEL Keenetic - 
+				Управление файлами</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+#files td.col_name {
+	padding-left: 25px;
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+tr.D .col_name { background-image: url("img/folder.png"); }
+tr.default-config .col_name,tr.startup-config .col_name { background-image: url("img/document.png"); }
+tr.firmware .col_name { background-image: url("img/firmware.png"); }
+tr.running-config .col_name { background-image: url("img/running-config.png"); }
+</style>
+<script type="text/javascript">
+<!--
+var files;
+var logger;
+
+function onProgress(value) {
+	document.getElementById("busy").style.display = 
+	document.getElementById("popup").style.display = (value == 100) ? "none" : "block";
+	if( value != 0 ) document.getElementById("progress_bar").style.width = value + "%";
+}
+function download() {
+	var p = new Packet();
+	var section = files.getActiveSection();
+	var fname = section.getSectionName() + section.getEditorForm().getParameter("name");
+	p.Command("get", {"filename": fname});
+	p.onLoad = function() {
+		if( !this.getErrorState() ) {
+			window.location.assign("../ci/default.htm" + fname.replace("-config", "-config.txt"));
+		}
+	}
+	p.proceed(logger);
+}
+function update() {
+	var section = files.getActiveSection();
+	var f = section.getEditorForm().getElement();
+	if( f.Filedata.value ) {
+		var fname = section.getSectionName() + section.getEditorForm().getParameter("name");
+		if( confirm(l10n(65543, "Replacing \uE000. Proceed?", [fname])) ) {
+			var p = new Packet();
+			p.Command("put", {"filename": fname});
+			p.onLoad = function() {
+				if( !this.getErrorState() ) f.submit();
+			}
+			p.onProgress = onProgress;
+			p.proceed(logger);
+		}
+	} else {
+		alert(l10n(65544, "Please, choose some file first."));
+	}
+}
+function loadValues() {
+	enableProgressIndicator();
+	continuer.blinkingCursor = false;
+	logger = document.getElementById("logger");
+	files = new Table(document.getElementById("files"));
+	files.showColumns("name", "size");
+	files.defineRow("entry");
+	files.setEditorForm(new Form(document.manage));
+	files.onRowChange = function(element, values) {
+		this.setClassName(element, values["type"] + " " + values["name"]);
+	}
+
+	var p = new Packet();
+	p.Command("ls", {"directory": "flash:"}, files.newSection("flash:"));
+	p.Command("ls", {"directory": "system:"}, files.newSection("system:"));
+	p.onLoad = function() {
+		//TODO: inspect the error
+		if( this.getErrorState() ) {
+			continuer.onProgress = onProgress;
+			continuer.schedule(logger, null, 1000);
+		}
+	}
+	p.proceed(logger);
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools.png');" class="selected"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Система<div id="subtitle"></div></div><ul class="tabs"><li><a href="log.html"><span>Журнал</span></a></li><li><a href="ping.html"><span>Ping</span></a></li><li><a class="current" href="files.html"><span>Файлы</span></a></li><li><a href="reboot.html"><span>Перезагрузка</span></a></li><li><a href="clock.html"><span>Дата и время</span></a></li><li><a href="users.html"><span>Пользователи</span></a></li><li><a href="components.html"><span>Компоненты</span></a></li></ul><div class="block green" style="border-bottom: none;">
+		<h1>Управление системными файлами</h1>
+	<div class="rounded">Интернет-центром можно управлять, загружая в него следующие системные файлы:
+			<ul><li>startup-config&nbsp;&mdash; набор команд, приводящий интернет-центр в определенное состояние и выполняемый при  запуске системы</li>
+				<li>firmware&nbsp;&mdash; микропрограмма интернет-центра.</li>
+			</ul>Следующие системные файлы можно только просмотреть:
+			<ul>
+			<li>default-config&nbsp;&mdash; файл, призванный заменить собой файл «startup-config» при сбросе настроек кнопкой «RESET» на корпусе интернет-центра</li>
+			<li>running-config&nbsp;&mdash; набор команд, который соответствует текущим настройкам интернет-центра.</li>
+			</ul>
+		</div>
+		<table cellspacing="0" style="width:100%" id="files" class="styled">
+		<caption>Для работы с файлом щелкните его имя в списке.</caption>
+		<thead>
+			<tr>
+			<th>Имя файла</th>
+			<th>Размер</th>
+			</tr>
+		</thead>
+		</table>
+
+		<div style="display:none;">
+		<!-- iframe id="upload_target" name="upload_target" src="" style="width:0;height:0;border:0px solid #fff;"></iframe -->
+		<form action="../ci/default.htm" method="post" enctype="multipart/form-data" name="manage" onreset="files.stopEditing();" id="manage"><!-- target="upload_target" -->
+			<div class="header"><h1>Управление файлом</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif" /></a></div></div>
+			<div class="controls">
+			<fieldset>
+				<input type="hidden" name="name" />
+
+				<label for="Filedata">Заменить файл:</label><input type="file" name="Filedata" /><br />
+				<label for="Update"></label><button type="button" onclick="update()">Заменить</button>
+			</fieldset>
+			<fieldset>
+				<label for="Download">Сохранить файл на компьютере:</label>
+				<button type="button" onclick="download()">Сохранить</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+	</div></div></div>
+
+	<div id="busy" style="display:none;"></div>
+	<div id="popup" style="display:none;">Выполняется файловая операция.<br />Пожалуйста, не выключайте устройство
+		<br />
+		<br />
+
+		<div id="progress" style="text-align:left;">
+		<div id="progress_bar" style="width:100%"> </div>
+		</div>
+	</div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

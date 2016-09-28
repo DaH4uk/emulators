@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - MAC Address Clone</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function to_submit(F) {
+F.submit_type.value = "";
+F.change_action.value = "";	
+F.save_button.value = sbutton.saving;
+apply(F);
+}
+function to_apply(F) {
+F.submit_type.value = "";
+F.change_action.value = "";	
+F.save_button.value = sbutton.saving;
+applytake(F);
+}
+function CloneMAC(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "clone_mac";
+F.submit();
+}
+function SelMac(val) {
+show_layer_ext(document.mac.mac_clone_enable,'idmac', val == "1");
+setElementsActive("def_hwaddr", "def_whwaddr_5", val == "1");
+}
+var update;
+addEvent(window, "load", function() {
+SelMac("0");
+
+
+update = new StatusbarUpdate();
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupbasic)</script></strong></a></li>
+      <li><a href="DDNS.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupddns)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.setupmacclone)</script></strong></span></li>
+      <li><a href="Routing.asp.html"><strong><script type="text/javascript">Capture(bmenu.setuprouting)</script></strong></a></li>
+      <li><a href="Networking.asp.html"><strong><script type="text/javascript">Capture(bmenu.networking)</script></strong></a></li>
+      <li><a href="eop-tunnel.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupeop)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="mac" action="#" method="post">
+<input type="hidden" name="submit_button" value="WanMAC" />
+<input type="hidden" name="action" value="Apply"/>
+<input type="hidden" name="change_action"/>
+<input type="hidden" name="submit_type" />
+
+<h2><script type="text/javascript">Capture(wanmac.h2)</script></h2>
+
+<fieldset>
+<legend><script type="text/javascript">Capture(wanmac.legend)</script></legend>
+<div class="setting">
+<input class="spaceradio" type="radio" value="1" name="mac_clone_enable" onclick="SelMac(this.value)"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="mac_clone_enable" onclick="SelMac(this.value)" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idmac">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(wanmac.wan)</script></div>
+<input type="hidden" name="def_hwaddr" value="6" />
+<input class="num" size="2" maxlength="2" name="def_hwaddr_0" onblur="valid_mac(this,0)" value="00" />:<input class="num" size="2" maxlength="2" name="def_hwaddr_1" onblur="valid_mac(this,1)" value="D0" />:<input class="num" size="2" maxlength="2" name="def_hwaddr_2" onblur="valid_mac(this,1)" value="12" />:<input class="num" size="2" maxlength="2" name="def_hwaddr_3" onblur="valid_mac(this,1)" value="F8" />:<input class="num" size="2" maxlength="2" name="def_hwaddr_4" onblur="valid_mac(this,1)" value="EC" />:<input class="num" size="2" maxlength="2" name="def_hwaddr_5" onblur="valid_mac(this,1)" value="23" />
+</div>
+<div class="setting">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"clone_b\" value=\"" + sbutton.wanmac + "\" onclick=\"CloneMAC(this.form);\" />");
+//]]>
+</script>
+</div>
+
+<hr width="90%" /><br />
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(wanmac.wlan)</script></div>
+<input type="hidden" name="def_whwaddr" value="6" />
+<input class="num" size="2" maxlength="2" name="def_whwaddr_0" onblur="valid_mac(this,0)" value="00" />:<input class="num" size="2" maxlength="2" name="def_whwaddr_1" onblur="valid_mac(this,1)" value="D0" />:<input class="num" size="2" maxlength="2" name="def_whwaddr_2" onblur="valid_mac(this,1)" value="12" />:<input class="num" size="2" maxlength="2" name="def_whwaddr_3" onblur="valid_mac(this,1)" value="F8" />:<input class="num" size="2" maxlength="2" name="def_whwaddr_4" onblur="valid_mac(this,1)" value="EC" />:<input class="num" size="2" maxlength="2" name="def_whwaddr_5" onblur="valid_mac(this,1)" value="24" />
+</div>
+</div>
+</fieldset><br />
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(wanmac.legend)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hwanmac.right2)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HWanMAC.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:08 up 24 min, load average: 0.08, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//RU" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>ASUS Wireless Router RT-AC66U - Управление настройками</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="other.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script language="JavaScript" type="text/javascript" src="jquery.js"></script>
+<script language="JavaScript" type="text/javascript" src="ajax.js"></script>
+<script>
+var $j = jQuery.noConflict();
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+var varload = 0;
+var lan_ipaddr = '192.168.1.1';
+
+
+function initial(){
+	show_menu();
+}
+
+function restoreRule(){
+	var alert_string = "All current settings are deleted and the router will be restored to its factory default settings.\n";
+	if(lan_ipaddr != "192.168.1.1")
+		alert_string += "The default LAN IP of RT-AC66U is 192.168.1.1.\nIf you can't back setting page later, please renew IP configuration of your computer.\n\n";			
+	alert_string += "Are you sure you want to continue?";
+	if(confirm(alert_string)){
+		document.form.action1.blur();
+		showtext($("loading_block2"), "System is restarting now! Please wait and we will redirect to home of RT-AC66U.");
+		$('loading_block3').style.display = "none";
+		showLoading(60);
+		//document.restoreform.submit();
+	}
+	else
+		return false;
+}
+
+function saveSetting(){
+	location.href='Settings_'+productid+'.CFG';
+}
+
+function uploadSetting(){
+  var file_obj = document.form.file;
+	
+	if(file_obj.value == ""){
+		alert("Fields cannot be blank.");
+		file_obj.focus();
+	}
+	else if(file_obj.value.length < 6 ||
+					file_obj.value.lastIndexOf(".CFG")  < 0 || 
+					file_obj.value.lastIndexOf(".CFG") != (file_obj.value.length)-4){		
+		alert("File format or path is invalid!");
+		file_obj.focus();
+	}
+	else{		
+		disableCheckChangedStatus();
+		showtext($("loading_block2"), "Setting is uploading! Please wait about 60 seconds.");
+		$('loading_block3').style.display = "none";
+		showLoading(60);
+		//document.form.submit();
+	}	
+}
+
+var dead = 0;
+function detect_httpd(){
+
+	$j.ajax({
+    		url: '/httpd_check.htm',
+    		dataType: 'script',
+				timeout: 1500,
+    		error: function(xhr){
+    				dead++;
+    				if(dead < 6){
+    						setTimeout("detect_httpd();", 1000);
+    				}else{
+    						$('loading_block1').style.display = "none";
+    						$('loading_block2').style.display = "none";
+    						$('loading_block3').style.display = "";
+    						$('loading_block3').innerHTML = "<div>The IP address for your router has been changed. Please use the Device Discovery utility to search for your router's new IP address.</div>";
+    				}
+    		},
+
+    		success: function(){
+    				setTimeout("hideLoadingBar();",1000);
+      			location.href = "index.html";
+  			}
+  		});
+}
+
+</script>
+</head>
+
+<body onload="initial();">
+<div id="TopBanner"></div>
+
+<div id="LoadingBar" class="popup_bar_bg">
+<table cellpadding="5" cellspacing="0" id="loadingBarBlock" class="loadingBarBlock" align="center">
+	<tr>
+		<td height="80">
+		<div id="loading_block1" class="Bar_container">
+			<div id="proceeding_img_text"></div>
+			<div id="proceeding_img"></div>
+		</div>
+		<div id="loading_block2" style="margin:5px auto; width:85%;"></div>
+		<div id="loading_block3" style="margin:5px auto; width:85%; font-size:12pt;"></div>	
+		</td>
+	</tr>
+</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+<div id="hiddenMask" class="popup_bg">
+	<table cellpadding="5" cellspacing="0" id="dr_sweet_advise" class="dr_sweet_advise" align="center">
+		<tr>
+		<td>
+			<div class="drword" id="drword">Подождите,  Выполнение...
+				<br/>
+				<br/>
+		    </div>
+		  <div class="drImg"><img src="images/alertImg.png"></div>
+			<div style="height:70px; "></div>
+		</td>
+		</tr>
+	</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+<div id="Loading" class="popup_bg"></div>
+<!--for uniform show, useless but have exist-->
+
+<iframe name="hidden_frame" id="hidden_frame" src="Advanced_SettingBackup_Content.html" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" name="form" action="http://event.asus.com/2012/nw/dummy_ui/RU/upload.cgi" target="hidden_frame" enctype="multipart/form-data">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="action_wait" value="">
+<input type="hidden" name="productid" value="RT-AC66U">
+<input type="hidden" name="current_page" value="Advanced_SettingBackup_Content.html">
+<input type="hidden" name="next_page" value="Advanced_SettingBackup_Content.html">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="RU">
+<input type="hidden" name="firmver" value="3.0.0.4">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="17">&nbsp;</td>
+		
+		<td valign="top" width="202">				
+		<div  id="mainMenu"></div>	
+		<div  id="subMenu"></div>		
+		</td>				
+		
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div>
+		<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="left" valign="top" >
+          
+		<table width="760px" border="0" cellpadding="5" cellspacing="0" class="FormTitle" id="FormTitle">
+		<tbody>
+		<tr>
+		  <td bgcolor="#4D595D" valign="top">
+		  <div>&nbsp;</div>
+		  <div class="formfonttitle">Администрирование - Управление настройками</div>
+		  <div style="margin-left:5px;margin-top:10px;margin-bottom:10px"><img src="images/New_ui/export/line_export.png"></div>
+		  <div class="formfontdesc">Эта функция позволяет сохранять текущие настройки RT-AC66U в файл и загрузить настройки из файла.</div>
+
+		<table width="100%" border="1" align="center" cellpadding="6" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+          <tr>
+            <th width="25%" align="right"><a class="hintstyle"  href="javascript:void(0);" onclick="openHint(19,1)">Заводские настройки</a></th>
+            <td>
+              <input class="button_gen" onclick="restoreRule();" type="button" value="Restore" name="action1" />
+              <input type="hidden" name="wl_gmode_protection_x" value="" /></td>
+          </tr>
+          <tr>
+            <th align="right"><a class="hintstyle"  href="javascript:void(0);" onclick="openHint(19,2)">Сохранение настроек</a></th>
+            <td>
+              <input class="button_gen" onclick="saveSetting();" type="button" value="Save" name="action2" />
+            </td>
+          </tr>
+          <tr>
+            <th align="right"><a class="hintstyle" href="javascript:void(0);" onclick="openHint(19,3)">Восстановление настроек</a></th>
+            <td>
+				<div style="margin-left:-10px;"><table><tr>
+					<td style="border:0px"><input type="button" class="button_gen" onclick="uploadSetting();" value="Отправить"/></td>
+					<td style="border:0px"><input type="file" name="file" class="input" style="color:#FFCC00;"/></td>
+				</tr></table></div>
+            </td>
+          </tr>
+        </table>
+			  </td>
+            </tr>
+          </tbody>
+		</table>
+		</td>
+</form>
+
+
+        </tr>
+      </table>		
+	</td>
+		
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+
+<form method="post" name="restoreform" action="http://event.asus.com/2012/nw/dummy_ui/RU/apply.cgi" target="hidden_frame">
+<input type="hidden" name="action_mode" value="Restore">
+<input type="hidden" name="next_page" value="">
+</form>
+</body>
+</html>

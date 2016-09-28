@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+uprev1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Restore Previous Settings';
+var menuSection	='Util';
+var menuItem	='Restore Previous Settings';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+function messageCheck() 
+{	
+    if(document.webForm.mtenrestorecfg.value.length == 0) 
+    {
+        alert(uprev3);
+        return false;
+    } 
+    else 
+    {
+        if (confirm(uprev4))	
+        {
+            alert(uprev5);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+function logoutF()
+{
+	document.webForm.logout.value=1;
+	document.webForm.submit();
+	return true;
+}
+
+function showMessage()
+{
+    var msgVar = document.webForm.message.value;
+    if (msgVar.length > 1)
+    {
+        alert(msgVar);
+    }
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" marginheight="0" onload="showMessage();">
+<form ENCTYPE="multipart/form-data" name="webForm" method="post" action="/belkin/3.00.02/En/ut_prev_success.html">
+<input type=hidden name=webpage value=ut_prev.html>
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+
+<input type="hidden" name="action" value="">
+
+<script>
+dw('<input type="hidden" name="message" value="'+""+'">');
+</script>
+
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp; <script language="javascript" type="text/javascript">dw(uprev1);</script><br><br>
+<table border=0 class="copy_1"><tr><td width=5>&nbsp;</td><td>
+<table width=600 border="0" cellspacing="3" cellpadding="0" align=left class="copy_1"><tr>
+<td class="body"><div align="center"><script language="javascript" type="text/javascript">dw(uprev2);</script></div>
+</td></tr>
+	<tr><td align="center"><br><br><input type="FILE" size="25" maxlength="31" name="mtenrestorecfg" value=""></td>
+	</tr><tr><td> <br><br><div align="center">
+	<script language="javascript" type="text/javascript">strHtml='<input type="submit" name="mtenRestore" style="{width:120px;}" class="submitBtn" value="'+Restore+'" onclick="return messageCheck();"></td>';
+		  			dw(strHtml);</script></div></td>
+	</tr></table></td></tr></table>
+</td>                     
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

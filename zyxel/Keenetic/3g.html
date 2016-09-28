@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="3G" />
+
+<title>ZyXEL Keenetic - 
+				USB 3G Модемы</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+form label {
+	width: 230px;
+}
+</style>
+<script type="text/javascript">
+<!--
+var modems;
+var _3g;
+var presets = [
+	{apn: "internet.mts.ru", identity: "mts", password: "mts", phone: "*99#"},
+	{apn: "internet.beeline.ru", identity: "beeline", password: "beeline", phone: "*99#"},
+	{apn: "internet", identity: "gdata", password: "gdata", phone: "*99#"},
+	{apn: "", identity: "mobile", password: "internet", phone: "#777"}
+];
+
+function onOperatorChange(select) {
+	modems.getEditorForm().setParameters(presets[select.selectedIndex - 1]);
+}
+function submit3g() {
+	var f = modems.getEditorForm();
+
+	_3g.onLoad = function() {
+		if( !this.getErrorState() ) {
+			modems.stopEditing();
+			var p = new Packet();
+			p.Command("show interface", null, modems);
+			p.proceed(document.getElementById("logger"));
+		}
+	}
+
+	_3g.Command("interface description", {"description": ""}, f);
+	_3g.Command("interface ip apn", {"apn":""}, f);
+	_3g.saveCredentials();
+
+	if( f.getParameter("code") ) {
+		_3g.Command("interface modem pin-code", {"code":""}, f);
+	} else {
+		_3g.No("interface modem pin-code");
+	}
+
+	_3g.Command("interface modem connect", {"phone":""}, f);
+	_3g.Command("interface authentication chap");
+	_3g.saveConnectState();
+	_3g.savePriority();
+	_3g.ConfigSave();
+	_3g.proceed(document.getElementById("logger"));
+
+	return false;
+}
+function drop() {
+	var selected = modems.getSelectedRow();
+	_3g.onLoad = function() {
+		if( !this.getErrorState() ) modems.deleteRow(selected); 
+	}
+	_3g.No("interface");
+	_3g.proceed(document.getElementById("logger"));
+}
+function loadValues() {
+	enableProgressIndicator();
+	modems = new Table(document.getElementById("modems"));
+	modems.defineRow("interface");
+	modems.showColumns("name", "description", "plugged");
+	modems.setEditorForm(new Form(document.editor));
+	modems.keepWidth(true);
+	modems.filterBy(function(row) {
+		return (row["type"].match(/^Usb.*/));
+	});
+	modems.onStartEditing = function(element) {
+		var f = this.getEditorForm();
+		_3g = new PPP(this.getRowValues(element)["name"]);
+
+		_3g.Config("interface", {"comment":""}, f);
+		_3g.loadConnectState(f.getElement().state);
+		_3g.loadPriority(f.getElement().global);
+		_3g.loadCredentials(f.getElement().identity, f.getElement().password);
+		_3g.Config("interface modem pin-code", {"code":""}, f);
+		_3g.Config("interface ip apn", {"apn":""}, f);
+		_3g.Config("interface modem connect", {"phone":""}, f);
+		_3g.proceed(document.getElementById("logger"));
+	}
+
+	var p = new Packet();
+	p.Command("show interface", null, modems);
+	p.onLoad = function() {
+		var e = modems.find({"name": self.document.location.hash.substring(1)});
+		if( e ) modems.startEditing(e);
+	}
+	p.proceed(document.getElementById("logger"));
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues();">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a href="broadband.html"><span>IPoE</span></a></li><li><a href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a class="current" href="3g.html"><span>3G</span></a></li><li><a href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a href="dyndns.html"><span>DyDNS</span></a></li><li><a href="routes.html"><span>Маршруты</span></a></li></ul><div class="block orange" style="border-bottom: none;">
+
+		<h1>Соединение через мобильную сеть 3G</h1>
+		<div class="rounded">
+		<p>Чтобы получить доступ в Интернет через оператора сотовой связи, подключите к USB-разъему совместимый 3G-модем. Для настройки модема щелкните его запись в списке.</p>
+		</div>
+		<h1>3G Модемы</h1>
+		<table cellspacing="0" style="width:100%" id="modems" class="styled">
+		<thead>
+			<tr>
+			<th width="150px">Интерфейс</th>
+			<th>Описание</th>
+			<th width="10px">Подключен</th>
+			</tr>
+		</thead>
+		</table>
+
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return submit3g();" onreset="modems.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка Подключения к сети 3G</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif" /></a></div></div>
+			<div class="rounded">
+			<p>Выберите вашего оператора сотовой связи из списка или укажите предоставленные им параметры подключения. Введите PIN-код для установленной в модеме SIM- или RUIM-карты.</p>
+			</div>
+			<div class="controls">
+			<fieldset>
+			<input type="hidden" name="name" />
+			<label for="state">Включить модем:</label>
+				<input type="checkbox" name="state" id="state" value="on" /><br />
+			<label for="global">Использовать для доступа в Интернет:</label>
+				<input type="checkbox" name="global" value="300" /><br /><br />
+			<label for="description">Оператор сети 3G:</label>
+			<select name="description" onchange="onOperatorChange(this)">
+				<option selected="selected"></option>
+				<option value="MTS">МТС</option>
+				<option value="Beeline">Билайн</option>
+				<option value="MegaFon">МегаФон</option>
+				<option value="SKYLINK">Скай Линк</option>
+			</select><br />
+			<label for="apn">Имя точки доступа (APN):</label><input type="text" name="apn" /><br />
+			<label for="identity">Имя пользователя:</label><input type="text" name="identity" /><br />
+			<label for="password">Пароль:</label><input type="text" name="password" /><br />
+			<label for="phone">Номер телефона:</label><input type="text" name="phone" /><br />
+			<label for="code">PIN-код:</label><input type="text" name="code" /><br />
+			<label for="nothing"></label><button class="apply" type="submit" name="apply">Применить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

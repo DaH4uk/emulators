@@ -1,0 +1,80 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language='javascript'>
+function doInactive() {
+// Check if Disabled is selected
+var value =document.forms[0].dmz_active[1].checked;
+if (value) {
+document.forms[0].dmzHostIP.disabled = true;
+document.forms[0].dmzHostIP.value = "0.0.0.0";
+}
+else {
+document.forms[0].dmzHostIP.disabled = false;
+}
+}
+function isValidIpAddr(ip1,ip2,ip3,ip4)
+{
+if(ip1==0 || ip4==0 || ip4==255 || ip1==127 )
+return false;
+return true;
+}
+function inValidAddress(Address)
+{
+var address = Address.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits;
+var i;
+if(address == null) {
+alert("IP address is empty or wrong format!");return true;
+}
+else
+{
+digits = address[0].split(".");
+for(i=0; i < 4; i++)
+{
+if((Number(digits[i]) > 255 ) || (Number(digits[i]) < 0 ) || (Number(digits[0]) > 223))
+{
+alert("Invalid IP address: " + Address);return true;
+}
+}
+if(!isValidIpAddr(digits[0],digits[1],digits[2],digits[3],false))	{
+alert("Invalid IP address: " + Address);return true;
+}
+}
+return false;
+}
+function doSave() {
+var value =document.forms[0].dmz_active[0].checked;
+if (value) {
+value = document.forms[0].dmzHostIP.value;
+if (inValidAddress(value))
+return;
+}
+document.forms[0].submit();
+}
+</script>
+</head><body onLoad="doInactive()">
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/adv_nat_dmz_1" name="NAT_DMZ_form"><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">DMZ</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10" ></td><td width="440"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">DMZ setting for</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+Single IP Account</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">DMZ</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="dmz_active" VALUE="1" onClick="doInactive()"><font color="#000000">Enabled</font><INPUT TYPE="RADIO" NAME="dmz_active" VALUE="0" CHECKED onClick="doInactive()"><font color="#000000">Disabled</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">DMZ Host IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="dmzHostIP" SIZE="15" MAXLENGTH="15" VALUE="0.0.0.0"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" height="42" class="black">&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="BUTTON" NAME="SaveBtn" VALUE="SAVE" onClick="doSave();"><INPUT TYPE="BUTTON" NAME="BackBtn" VALUE="BACK" onClick="javascript:window.location='adv_nat_top.htm'/*tpa=http://192.168.1.1/advanced/adv_nat_top.htm*/"></td></tr></table></div></form>
+</body></html>

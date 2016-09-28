@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!-- Mirrored from 192.168.1.1/qis/QIS_internet_account.htm by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:40:36 GMT -->
+<head>                                     
+
+<!-- Mirrored from 192.168.1.1/qis/QIS_internet_account.htm by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:40:36 GMT -->
+<head>     
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="stylesheet" type="text/css" href="../form_style.css">
+<link rel="stylesheet" type="text/css" href="qis_style.css">
+<script type="text/javascript" src="../help.js"></script>
+<script type="text/JavaScript" src="../state.js"></script>
+<script type="text/javascript" src="../alttxt.js"></script>
+<script>
+var now_flag = '';
+
+
+function QKaccount_load_body(){
+	//parent.document.title = "ASUS Wireless Router RT-AC66U - ISP 帳號設定";
+//	parent.set_step("t2");
+
+	hideLinkTag();
+	flash_button();
+	
+		$("descritpion_tail1").innerHTML = "Получите имя пользователя и пароль у Вашего провайдера.";
+	
+	get_value_from_parent();
+	
+	if(now_flag != "auto_way_pppoe")
+		show_prev_button();
+				
+	document.getElementById("nextButton").focus();
+} 
+
+function get_value_from_parent(){
+	if(now_flag == "auto_way")
+		document.form.flag.value = now_flag;
+	
+	if(now_flag == "auto_way_pppoe")
+		document.form.wan_proto.value = "pppoe";
+	else
+		document.form.wan_proto.value = parent.document.QKform.wan_proto.value;
+	
+	document.form.wan_pppoe_username.value = parent.document.QKform.wan_pppoe_username.value;
+	document.form.wan_pppoe_passwd.value = parent.document.QKform.wan_pppoe_passwd.value;
+	
+	document.form.wan_nat_x.value = parent.document.QKform.wan_nat_x.value;
+	document.form.wan_route_x.value = parent.document.QKform.wan_route_x.value;
+	
+	document.form.wan_ipaddr_x.value = parent.document.QKform.wan_ipaddr_x.value;
+	document.form.wan_netmask_x.value = parent.document.QKform.wan_netmask_x.value;
+	document.form.wan_gateway_x.value = parent.document.QKform.wan_gateway_x.value;
+	
+	document.form.wan_dns1_x.value = parent.document.QKform.wan_dns1_x.value;
+	document.form.wan_dns2_x.value = parent.document.QKform.wan_dns2_x.value;
+	
+	document.form.wan_heartbeat_x.value = parent.document.QKform.wan_heartbeat_x.value;
+	
+	if(now_flag == "auto_way"){
+		document.form.wan_dhcpenable_x.value = parent.document.QKform.wan_dhcpenable_x.value;
+		document.form.wan_dnsenable_x.value = parent.document.QKform.wan_dnsenable_x.value;
+	}
+}
+
+function show_prev_button(){
+	if(now_flag == "auto_way"){
+		document.form.prev_page.value = parent.document.QKform.prev_page.value;
+		parent.document.QKform.prev_page.value = "QIS_internet_ip.htm";
+	}
+	else if(parent.$("flag").value == "pppoe"){
+		$("prevButton").value = 'Перейти к дополнительным настройкам';
+		
+		document.form.prev_page.value = "../Advanced_WAN_Content.html";
+	}
+}
+
+function submitForm(o, s){
+	if(document.form.wan_pppoe_username.value.length == 0){
+		alert("Требуется ввести имя учетной записи.");
+		document.form.wan_pppoe_username.select();
+		document.form.wan_pppoe_username.focus();
+		return false;
+	}
+	if(!validate_string(document.form.wan_pppoe_username)){
+		document.form.wan_pppoe_username.select();
+		document.form.wan_pppoe_username.focus();
+		return false;
+	}
+	
+	if(!validate_string(document.form.wan_pppoe_passwd)){
+		document.form.wan_pppoe_passwd.select();
+		document.form.wan_pppoe_passwd.focus();
+		return false;
+	}
+	
+	if(now_flag == "auto_way"){
+		//parent.showLoading();
+		simple_showLoading();
+		
+		document.form.wan_ipaddr_x.disabled = false;
+		document.form.wan_netmask_x.disabled = false;
+		document.form.wan_gateway_x.disabled = false;
+		document.form.wan_dns1_x.disabled = false;
+		document.form.wan_dns2_x.disabled = false;
+		document.form.wan_heartbeat_x.disabled = false;
+		
+		$("x_Setting").disabled = false;
+		document.form.x_Setting.value = '1';
+		
+		document.form.sw_mode.value = parent.document.QKform.sw_mode.value;
+		
+		document.form.flag.value = "verify_detect";
+		document.form.next_page.value = "../QIS_wizard.htm";	
+		document.form.submit();
+	}
+	else if(document.form.wan_proto.value == 'pppoe' || document.form.wan_proto.value == ''){
+		//parent.showLoading();
+		simple_showLoading();
+
+		// uinfi
+		var original_switch_wantag = 'none';
+		document.form.switch_wantag.value = parent.document.QKform.switch_wantag.value;
+		document.form.switch_wan0tagid.value = parent.document.QKform.switch_wan0tagid.value;
+		document.form.switch_wan0prio.value = parent.document.QKform.switch_wan0prio.value;
+		document.form.switch_wan1tagid.value = parent.document.QKform.switch_wan1tagid.value;
+		document.form.switch_wan1prio.value = parent.document.QKform.switch_wan1prio.value;
+		document.form.switch_wan2tagid.value = parent.document.QKform.switch_wan2tagid.value;
+		document.form.switch_wan2prio.value = parent.document.QKform.switch_wan2prio.value;
+		document.form.switch_stb_x.value = parent.document.QKform.switch_stb_x.value;
+		if(original_switch_wantag != document.form.switch_wantag.value){
+				document.form.action_script.value	= "reboot";
+				document.form.action_wait.value	= "50";
+				$("loadHint").style.display = "";
+				$("nextButton").style.display = "none";
+				$("prevButton").style.display = "none";
+		}
+
+		$("x_Setting").disabled = false;
+		document.form.x_Setting.value = '1';
+		document.form.sw_mode.value = parent.document.QKform.sw_mode.value;
+		document.form.flag.value = "verify_detect";
+		document.form.next_page.value = "../QIS_wizard.htm";
+		document.form.submit();
+	}
+	else if(document.form.wan_proto.value == 'pptp'|| document.form.wan_proto.value == 'l2tp'){
+		document.form.next_page.value = "QIS_internet_ip.htm";
+		
+		parent.document.QKform.wan_pppoe_username.value = document.form.wan_pppoe_username.value;
+		parent.document.QKform.wan_pppoe_passwd.value = document.form.wan_pppoe_passwd.value;
+		
+		location.href = document.form.next_page.value;
+		return true;
+	}
+	else
+		alert("System error!");	// no translate.
+}
+
+function simple_showLoading(){
+	document.getElementById("loadingIcon").style.display = "";
+}
+
+function submitenter(myfield,e)
+{	
+	var keycode;
+	if (window.event) keycode = window.event.keyCode;
+	else if (e) keycode = e.which;
+	else return true;
+
+	if (keycode == 13){
+		submitForm();
+   	return false;
+  }
+	else
+   	return true;
+}
+</script>                                          
+</head>   
+
+<body onLoad="QKaccount_load_body();" onunLoad="" onKeyPress="submitenter(this,event)">
+<div id="navtxt" class="navtext" style="position:absolute; top:50px; left:-100px; visibility:hidden; font-family:Arial, Verdana"></div>
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" action="http://admin:admin@192.168.1.1/start_apply.htm" target="hidden_frame" onsubmit="return submitForm();" autocomplete="off">
+<input type="hidden" name="prev_page" value="QIS_internet_type.htm">
+<input type="hidden" name="current_page" value="QIS_internet_account.htm">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="flag" value="">
+<input type="hidden" name="action_mode" value="apply">
+<input type="hidden" name="action_script" value="restart_wan_if">
+<input type="hidden" name="action_wait" value="5">
+<input type="hidden" name="preferred_lang" value="TW">
+<input type="hidden" name="wan_proto" value="">
+<input type="hidden" name="wan_nat_x" value="">
+<input type="hidden" name="wan_route_x" value="">
+<input type="hidden" name="wan_dhcpenable_x" value="1">
+<input type="hidden" name="wan_ipaddr_x" value="" disabled>
+<input type="hidden" name="wan_netmask_x" value="" disabled>
+<input type="hidden" name="wan_gateway_x" value="" disabled>
+<input type="hidden" name="wan_dnsenable_x" value="1">
+<input type="hidden" name="wan_dns1_x" value="" disabled>
+<input type="hidden" name="wan_dns2_x" value="" disabled>
+<input type="hidden" name="wan_heartbeat_x" value="" disabled>
+<input type="hidden" name="wan_unit" value="0">
+<input type="hidden" name="x_Setting" id="x_Setting" value="" disabled>
+<input type="hidden" name="sw_mode" value="">
+<!-- unifi -->
+<input type="hidden" name="switch_wantag" value="">
+<input type="hidden" name="switch_wan0tagid" value="">
+<input type="hidden" name="switch_wan0prio" value="">
+<input type="hidden" name="switch_wan1tagid" value="">
+<input type="hidden" name="switch_wan1prio" value="">
+<input type="hidden" name="switch_wan2tagid" value="">
+<input type="hidden" name="switch_wan2prio" value="">
+<input type="hidden" name="switch_stb_x" value="">
+
+<div class="QISmain">
+		<div>
+			<table width="730px">
+				<tr>
+					<td align="left">
+						<span class="description_down">Настройка учетной записи</span>
+					</td>
+					<td align="right">
+						<img onclick="parent.location.href = '../index.html';"" style="cursor:pointer;" align="right" title="Go to Home" src="../images/backtohome.png" onMouseOver="this.src='..//images/backtohomeclick.png'" onMouseOut="this.src='..//images/backtohome.png'">
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div style="margin:5px;"><img style="width: 720px; *width: 710px; height: 2px;" src="../images/New_ui/export/line_export.png"></div>
+<br/><br/>
+<p class="QISGeneralFont" style="margin-left:70px;margin-right:70px;">Please enter the required information below.</p>
+<br/>
+<table id="tblsetting_1" class="QISform" width="400" border=0 align="center" cellpadding="5" cellspacing="0">
+  <tr>
+	<th width="180"><span onmouseout="return nd();" onclick="openHint(7, 27);" style="cursor:help;">User Name<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="../images/New_ui/helpicon.png"></span></th>
+	<td class="QISformtd">
+	  <input type="text" name="wan_pppoe_username" maxlength="64" value="" onkeypress="return is_string(this, event);" class="input_32_table" size="36"/>
+	</td>
+  </tr>
+
+  <tr>
+	<th width="180"><span onmouseout="return nd();" onclick="openHint(7, 27);" style="cursor:help;">Password<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="../images/New_ui/helpicon.png"></span></th>
+	<td class="QISformtd">
+	  <input type="password" name="wan_pppoe_passwd" maxlength="64" value="" onkeypress="return is_string(this, event);" class="input_32_table" size="36"/>
+	</td>
+  </tr>
+  <tr><td colspan=2>&nbsp;</td></tr>
+  <tr>
+  	<td colspan=2 class="QISformtd">
+	  	<div id="descritpion_tail1"></div>
+		</td>
+  </tr>
+</table>
+
+<div class="apply_gen" style="margin-top:30px">
+  <input type="button" id="prevButton" value="Назад" onclick="gotoprev(document.form);" class="button_gen" align="center">
+  <input type="button" id="nextButton" value="Далее" class="button_gen" align="center" onclick="location.href ='QIS_wireless.htm';">
+	<span id="loadHint" style="display:none">Примечание. Это займет около 60 секунд.</span>
+	<img id="loadingIcon" style="display:none;" src="../images/InternetScan.gif"></span>
+</div>
+
+</div>
+</form> 
+</body>
+
+<!-- Mirrored from 192.168.1.1/qis/QIS_internet_account.htm by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:40:36 GMT -->
+</html>

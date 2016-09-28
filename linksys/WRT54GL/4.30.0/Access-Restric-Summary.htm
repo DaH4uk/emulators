@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0036)http://192.168.1.1/FilterSummary.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>Filter Summary Table</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=expires content=0>
+<META http-equiv=cache-control content=no-cache>
+<META http-equiv=pragma content=no-cache>
+<SCRIPT src="Access-Restric-Summary_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="Access-Restric-Summary_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-Summary_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-Summary_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-Summary_files/capapp.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-Summary_files/capasg.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-Summary_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-Summary_files/layout.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript>
+function filter_del(F)
+{
+       F.submit_button.value="FilterSummary";
+       F.change_action.value="gozila_cgi";
+       F.submit_type.value="delete";
+       F.submit();
+}
+function Refresh()
+{
+	top.opener.window.location.href='Filters.asp';
+}
+function init()
+{
+	window.focus();
+	
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY bgColor=white onload=init()>
+<FORM action="http://ui.linksys.com/WRT54GL/4.30.0/apply.cgi" method=post><INPUT type=hidden name=submit_button> <INPUT 
+type=hidden name=submit_type> <INPUT type=hidden name=change_action> 
+<CENTER>
+<TABLE cellSpacing=1 border=0>
+  <TBODY>
+  <TR align=middle bgColor=#b3b3b3>
+    <TH width=550 bgColor=#ffffff colSpan=4 height=30>
+      <P align=left><FONT face=Arial color=#0000ff><SPAN 
+style="FONT-SIZE: 14pt">
+      <SCRIPT>Capture(summary.policy)</SCRIPT>
+      </SPAN></FONT></P></TH>
+    <TH width=70 bgColor=#ffffff height=30>&nbsp;</TH></TR>
+  <TR align=middle bgColor=#b3b3b3>
+    <TH width=50><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(summary.num)</SCRIPT>
+      </SPAN></FONT></TH>
+    <TH width=200><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(summary.policyname)</SCRIPT>
+      </FONT></SPAN></TH>
+    <TH width=150><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(summary.days)</SCRIPT>
+      </FONT></FONT></SPAN></TH>
+    <TH width=150><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(summary.tmofday)</SCRIPT>
+      </FONT></FONT></SPAN></TH>
+    <TH width=70><FONT face=Arial size=2>
+      <input type=button name=delete_button value="Delete">
+      </FONT></TH></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>1.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum1></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>2.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum2></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>3.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum3></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>4.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum4></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>5.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum5></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>6.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum6></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>7.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum7></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>8.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum8></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>9.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum9></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50><FONT face=Arial size=2>10.</FONT></TD>
+    <TD width=200><FONT face=Arial size=2>---</FONT></TD>
+    <TD borderColor=#000000 width=150 bgColor=#cccccc height=30>
+      <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#000000 cellSpacing=1 
+      width=124 bgColor=#ffffff border=1>
+        <TBODY>
+        <TR>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sun1) {Capture(filter.sun1);} else {document.write("S");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.mon1) {Capture(filter.mon1);} else {document.write("M");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.tue1) {Capture(filter.tue1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.wed1) {Capture(filter.wed1);} else {document.write("W");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.thu1) {Capture(filter.thu1);} else {document.write("T");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.fri1) {Capture(filter.fri1);} else {document.write("F");}</SCRIPT>
+          </TD>
+          <TD 
+          style="BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid" 
+          width=17 bgColor=#ffffff>
+            <SCRIPT>if (filter.sat1) {Capture(filter.sat1);} else {document.write("S");}</SCRIPT>
+          </TD></TR></TBODY></TABLE></TD>
+    <TD width=150><FONT face=Arial size=2>--- </FONT></TD>
+    <TD width=70><INPUT type=checkbox value=1 name=sum10></TD></TR>
+  <TR align=middle bgColor=#cccccc>
+    <TD width=50 bgColor=#ffffff>&nbsp;</TD>
+    <TD width=200 bgColor=#ffffff>&nbsp;</TD>
+    <TD width=150 bgColor=#ffffff>&nbsp;</TD>
+    <TD width=150 bgColor=#ffffff>&nbsp;</TD>
+    <TD width=70 bgColor=#ffffff>
+      <SCRIPT>document.write("<INPUT onclick=self.close() type=button name=close_button value=\"" + sbutton.close + "\">");</SCRIPT>
+    </TD></TR></TBODY></TABLE></CENTER></FORM></BODY></HTML>

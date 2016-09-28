@@ -1,0 +1,63 @@
+var NOTIFY_M = new function() {
+    var $nPage = {
+            countMess: 0,
+            led: "#savewarning",
+            notifybox: "#savewarning .notifyboxM"
+        },
+        $notifybox = "#notifyboxM",
+        $saveblock = "#savewarning";
+    this.show = function(id) {
+        var item = $notifybox.find(">" + id + ".item");
+        return item.length && !item.hasClass("visible") && ($nPage.countMess++, item.appendTo($notifybox).addClass("visible").css({
+            opacity: ""
+        }).show(), item.find(">.desc").unbind("click").bind("click", function(e) {
+            $(e.target).parents(".item").find(">.title").trigger("click")
+        })), this
+    }, this.hide = function(id) {
+        var item = $notifybox.find(">" + id + ".item");
+        return item.length && item.hasClass("visible") && ($nPage.countMess--, item.removeClass("visible").slideUp(400, function() {
+            $(this).hide()
+        })), this
+    }, this.messboxclose = function() {
+        $($nPage.notifybox).hide()
+    }, this.messboxInit = function() {
+        $($nPage.led).unbind("click").bind("click", callback(this, function() {
+            $($nPage.notifybox).show()
+        })), $($nPage.led).unbind("click").bind("click", callback(this, function() {
+            this.messboxclose(), this.messbox()
+        })), this.messbox()
+    }, this.messbox = function() {
+        if ($nPage.countMess > 0) {
+            var $notyvisible = $notifybox.find(".item.visible");
+            $($nPage.led).show(), $($nPage.led + ">.title>span").empty().append($notyvisible.find(".desc").last().clone()), $($nPage.led + ">.title>span").unbind("click").bind("click", callback(this, function() {
+                var $item = $notyvisible.last();
+                $item.find(".title").trigger("click")
+            }))
+        }
+        else $($nPage.led).hide(), this.messboxclose()
+    }, this.visible = function(id, visible) {
+        return is.set(visible) ? (visible ? this.show(id) : this.hide(id), this.messbox(), this) : $notifybox.find(">" + id + ".item").is(":visible")
+    }, this.reboot = function(andSave, noConfirm) {
+        return (noConfirm || confirm(lng("config_aplly_ok_reboot"))) && (LOGIC.stop(), WAITER.start("airRebooting", 9e4, function() {
+            var lanipold = getCookie("lan_ip_older"),
+                lanipnew = getCookie("lan_ip");
+            deleteCookie("lan_ip_older"), "" != lanipold && lanipold != lanipnew ? confirm(lng("airRedirectIpConf")) ? (reload(lanipnew), newIp(lanipnew)) : reload() : reload()
+        }), device.stop().system.reboot(andSave), device.lock(!0)), this
+    }, $(document).bind("ready", callback(this, function() {
+        $notifybox = $($notifybox), $saveblock = $($saveblock), $saveblock.bind("click", callback(this, function() {
+            $notifybox.find(".save").hasClass("visible") && ($notifybox.find(".save").addClass("loading"), WAITER.start(), device.system.save(callback(this, function() {
+                $notifybox.find(".save").removeClass("loading"), NOTIFY_M.hide(".save"), WAITER.stop()
+            }))), $notifybox.find(".reboot").hasClass("visible") && (NOTIFY_M.hide(".reboot"), this.reboot(!0))
+        }))
+    }))
+};
+$(document).bind("ready", function() {
+    this.notify = {
+        save: function(need) {
+            NOTIFY_M.visible(".save", need)
+        },
+        reboot: function(need) {
+            NOTIFY_M.visible(".reboot", need)
+        }
+    }, device.hook(device.notify.SAVE, this.notify.save), device.hook(device.notify.REBOOT, this.notify.reboot)
+});

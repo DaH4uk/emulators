@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/lan_status.js"></script>
+    <script type="text/javascript" src="./js/boot.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "-";
+        var G_Menu = "status";
+        var G_Page = "lan_status";
+        var G_SubPage = "-";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = '' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = uiGetPageUrl();
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('1' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+        //lan status
+        var G_LanStatus = [];
+        var m = 0;
+        G_LanStatus[m] = [];
+        G_LanStatus[m][0] = "NoLink"; //status
+        G_LanStatus[m][1] = "0"; //bytesSent
+        G_LanStatus[m][2] = "0"; //BytesReceived
+        G_LanStatus[m][3] = "0"; //PacketsSent
+        G_LanStatus[m][4] = "0"; //PacketsReceived
+        m++;
+        G_LanStatus[m] = [];
+        G_LanStatus[m][0] = "Up"; //status
+        G_LanStatus[m][1] = "1005756"; //bytesSent
+        G_LanStatus[m][2] = "556379"; //BytesReceived
+        G_LanStatus[m][3] = "3480"; //PacketsSent
+        G_LanStatus[m][4] = "4284"; //PacketsReceived
+        m++;
+        G_LanStatus[m] = [];
+        G_LanStatus[m][0] = "NoLink"; //status
+        G_LanStatus[m][1] = "0"; //bytesSent
+        G_LanStatus[m][2] = "0"; //BytesReceived
+        G_LanStatus[m][3] = "0"; //PacketsSent
+        G_LanStatus[m][4] = "0"; //PacketsReceived
+        m++;
+        G_LanStatus[m] = [];
+        G_LanStatus[m][0] = "NoLink"; //status
+        G_LanStatus[m][1] = "0"; //bytesSent
+        G_LanStatus[m][2] = "0"; //BytesReceived
+        G_LanStatus[m][3] = "0"; //PacketsSent
+        G_LanStatus[m][4] = "0"; //PacketsReceived
+        m++;
+
+
+        function uiOnload() {
+            setJSONValue({
+                //'TD_LAN_Status'         :G_LanStatus[0][0],
+                'TD_LAN_BytesSent': G_LanStatus[0][1] || 0,
+                'TD_LAN_BytesReceived': G_LanStatus[0][2] || 0,
+                'TD_LAN_PacketsSent': G_LanStatus[0][3] || 0,
+                'TD_LAN_PacketsReceived': G_LanStatus[0][4] || 0
+            });
+
+            setJSONValue({
+                //'TD_LAN_Status2'         :G_LanStatus[1][0],
+                'TD_LAN_BytesSent2': G_LanStatus[1][1] || 0,
+                'TD_LAN_BytesReceived2': G_LanStatus[1][2] || 0,
+                'TD_LAN_PacketsSent2': G_LanStatus[1][3] || 0,
+                'TD_LAN_PacketsReceived2': G_LanStatus[1][4] || 0
+            });
+
+            setJSONValue({
+                //'TD_LAN_Status3'         :G_LanStatus[2][0],
+                'TD_LAN_BytesSent3': G_LanStatus[2][1] || 0,
+                'TD_LAN_BytesReceived3': G_LanStatus[2][2] || 0,
+                'TD_LAN_PacketsSent3': G_LanStatus[2][3] || 0,
+                'TD_LAN_PacketsReceived3': G_LanStatus[2][4] || 0
+            });
+
+            setJSONValue({
+                //'TD_LAN_Status4'         :G_LanStatus[3][0],
+                'TD_LAN_BytesSent4': G_LanStatus[3][1] || 0,
+                'TD_LAN_BytesReceived4': G_LanStatus[3][2] || 0,
+                'TD_LAN_PacketsSent4': G_LanStatus[3][3] || 0,
+                'TD_LAN_PacketsReceived4': G_LanStatus[3][4] || 0
+            });
+        }
+
+        addListeners(uiOnload);
+
+        //]]>
+        //���������Ҽ�
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class="on"><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!--<li class=""><a href="./lang_wizard.html"><span id="lang_wizard"></span></a></li> -->
+                <li class="HidMark"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('1' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "./zte";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_status" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+            <div class="M1">
+                <p id="">
+                    <a href="./index.html" id="lang_system_msg">系统信息</a>
+                </p>
+
+
+
+                <p id="">
+                    <a href="./lang_lan_clients.html" id="lang_lan_clients">LAN主机列表</a>
+                </p>
+
+
+                <p id="">
+                    <a href="./lang_lan_connection.html" id="lang_lan_connection">LAN Connections Status</a>
+                </p>
+                <p id="up">
+                    <a href="./lang_lan_status.html" id="lang_lan_status">LAN统计信息</a>
+                </p>
+
+
+                <p id="">
+                    <a href="./lang_connection_status.html" id="lang_connection_status">WAN连接状态</a>
+                </p>
+
+                <!--<p id="">
+			<a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=status&var:page=wan_status" id="lang_wan_status">WAN统计信息</a>
+			</p>
+
+			<p id="">
+				<a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=status&var:page=mobile_msg" id="lang_mobile_msg">移动网络状态</a>
+			</p>-->
+
+
+                <p id="">
+                    <a href="./lang_wireless_connection.html" id="lang_wireless_connection">WLAN连接状态</a>
+                </p>
+                <p id="">
+                    <a href="./lang_wireless_status.html" id="lang_wireless_status">WLAN统计信息</a>
+                </p>
+
+                <p id="">
+                    <a href="./lang_usb_status.html" id="lang_usb_status">USB信息</a>
+                </p>
+            </div>
+
+
+            <!-- setup -->
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+
+            <!-- management -->
+
+        </div>
+
+        <!--  content -->
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go;"><img id="pointTo" src="/html/skin/helpBook.gif" alt="Help" /></a> <span id="lang_title">LAN数据统计</span></div>
+            <div id="MainTable">
+                <table class="td_table">
+                    <tr>
+                        <td id="lang_port"></td>
+                        <td id="TD_port1">1</td>
+                        <td id="TD_port2">2</td>
+                        <td id="TD_port3">3</td>
+                        <td id="TD_port4">4</td>
+                    </tr>
+
+                    <tr>
+                        <td id="lang_bytesSent">已发送字节数</td>
+                        <td id="TD_LAN_BytesSent"></td>
+                        <td id="TD_LAN_BytesSent2"></td>
+                        <td id="TD_LAN_BytesSent3"></td>
+                        <td id="TD_LAN_BytesSent4"></td>
+                    </tr>
+                    <tr>
+                        <td id="lang_bytesReceived">已收到字节数</td>
+                        <td id="TD_LAN_BytesReceived"></td>
+                        <td id="TD_LAN_BytesReceived2"></td>
+                        <td id="TD_LAN_BytesReceived3"></td>
+                        <td id="TD_LAN_BytesReceived4"></td>
+                    </tr>
+                    <tr>
+                        <td id="lang_packetsSent">已发送包数</td>
+                        <td id="TD_LAN_PacketsSent"></td>
+                        <td id="TD_LAN_PacketsSent2"></td>
+                        <td id="TD_LAN_PacketsSent3"></td>
+                        <td id="TD_LAN_PacketsSent4"></td>
+                    </tr>
+                    <tr>
+                        <td id="lang_packetsReceived">已接收到包数</td>
+                        <td id="TD_LAN_PacketsReceived"></td>
+                        <td id="TD_LAN_PacketsReceived2"></td>
+                        <td id="TD_LAN_PacketsReceived3"></td>
+                        <td id="TD_LAN_PacketsReceived4"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- if loading and content will not display-->
+        <div id="Loading">
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="802.1x" />
+
+<title>ZyXEL Keenetic - 
+				Авторизация 802.1x</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+form label {
+	width: 230px;
+}
+</style>
+<script type="text/javascript">
+<!--
+var conn_;
+var dot1x;
+
+function loadValues() {
+	enableProgressIndicator();
+	conn_ = new Table(document.getElementById("connections"));
+	conn_.defineRow("interface");
+	conn_.showColumns("name", "description");
+	conn_.setEditorForm(new Form(document.editor));
+	conn_.keepWidth(true);
+	conn_.filterBy(function(row) {
+		return ((row["type"].match("VLAN") && row["index"] != 1) ||
+				row["type"].match("FastEthernet"));	
+	});
+	conn_.onStartEditing = function(element) {
+		var f = this.getEditorForm().getElement();
+		dot1x = new PPP(this.getRowValues(element)["name"]);
+		dot1x.loadCredentials(f.identity, f.password);
+		dot1x.Config("interface authentication eap-md5", null, new Trigger(document.getElementById("eap-md5")));
+		dot1x.Config("interface authentication mschap-v2", null, new Trigger(document.getElementById("mschap-v2")));
+		dot1x.proceed(document.getElementById("logger"));
+	}
+
+	var p = new Packet();
+	p.Command("show interface", null, conn_);
+	p.onLoad = function() {
+		var e = conn_.find({"name": self.document.location.hash.substring(1)});
+		if( e ) conn_.startEditing(e);
+	}
+	p.proceed(document.getElementById("logger"));
+}
+function submitDot1x() {
+	dot1x.onLoad = function() {
+		if( !this.getErrorState() ) {
+			conn_.stopEditing();
+			var p = new Packet();
+			p.Command("show interface", null, conn_);
+			p.proceed(document.getElementById("logger"));
+		}
+	}
+	dot1x.saveCredentials();
+	var authMode = conn_.getEditorForm().getParameter("authMode");
+	if( authMode ) {
+		dot1x.Command("interface authentication " + authMode);
+	} else {
+		dot1x.No("interface authentication");
+	}
+	dot1x.ConfigSave();
+	dot1x.proceed(document.getElementById("logger"));
+	return false;
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a href="broadband.html"><span>IPoE</span></a></li><li><a href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a class="current" href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a href="3g.html"><span>3G</span></a></li><li><a href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a href="dyndns.html"><span>DyDNS</span></a></li><li><a href="routes.html"><span>Маршруты</span></a></li></ul><div class="block orange" style="border-bottom: none;">
+		<h1>Проверка подлинности по стандарту 802.1x</h1>
+		<div class="rounded">
+		<p>Если для установки соединения с сетью требуется проверка подлинности по стандарту IEEE 802.1x, включите ее на интерфейсе, который отвечает за это соединение.</p>
+		</div>
+		<table cellspacing="0" style="width:100%" id="connections" class="styled">
+		<caption>Для настройки щелкните имя интерфейса в списке.</caption>
+		<thead>
+			<tr>
+			<th width="100px">Имя</th>
+			<th>Описание</th>
+			</tr>
+		</thead>
+		</table>
+	
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return submitDot1x();" onreset="conn_.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка 802.1x</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif" /></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Укажите идентификационные данные для подключения к сети и метод проверки подлинности.</p>
+			</div>
+			<fieldset> 
+			<label for="identity">Имя пользователя:</label><input type="text" name="identity" /><br />
+			<label for="password">Пароль:</label><input type="text" name="password" /><br />
+			<label for="authMode">Метод проверки подлинности:</label>
+			<select name="authMode">				
+				<option value="" selected="selected">Выключено</option>
+				<option value="eap-md5" id="eap-md5">EAP-MD5</option>
+				<option value="mschap-v2" id="mschap-v2">EAP-TTLS/MSCHAP-v2</option>
+			</select><br />
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="apply">Применить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

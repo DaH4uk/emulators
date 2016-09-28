@@ -1,0 +1,11 @@
+function onHashChanged(objEvent, newHash) {
+    void 0 == newHash && (newHash = window.location.hash), newHash = newHash.substring(1), newHash != MENU.path() && "" != newHash && MENU.open(newHash)
+}! function($) {
+    if ("onhashchange" in window) window.onhashchange = onHashChanged;
+    else {
+        var strHash = window.location.hash;
+        setInterval(function() {
+            strHash != window.location.hash && (strHash = window.location.hash, $(window.location).trigger("change", strHash))
+        }, 100), $(window.location).bind("change", onHashChanged)
+    }
+}(jQuery);

@@ -1,0 +1,512 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="Microsoft FrontPage 6.0">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+
+
+    function doLoad() {
+        top.buttom.location="buttom.html";
+    }
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+	function checkAndSetWeekdays()
+    {
+    	if ( document.forms[0].FwServices_Everyday.checked )
+    	{
+            document.forms[0].FwServices_Sun.checked=true;
+    	    document.forms[0].FwServices_Mon.checked=true;
+    	    document.forms[0].FwServices_Tue.checked=true;
+    	    document.forms[0].FwServices_Wed.checked=true;
+    	    document.forms[0].FwServices_Thu.checked=true;
+    	    document.forms[0].FwServices_Fri.checked=true;
+    	    document.forms[0].FwServices_Sat.checked=true;
+    	    return;
+    	}
+    	
+    	if ( !document.forms[0].FwServices_Sun.checked )
+    	    return; 	    
+      	if ( !document.forms[0].FwServices_Mon.checked )
+    	    return;
+    	if ( !document.forms[0].FwServices_Tue.checked )
+    	    return;
+    	if ( !document.forms[0].FwServices_Wed.checked )
+    	    return;
+    	if ( !document.forms[0].FwServices_Thu.checked )
+    	    return;
+    	if ( !document.forms[0].FwServices_Fri.checked )
+    	    return;
+    	if ( !document.forms[0].FwServices_Sat.checked )
+    	    return;
+	
+	document.forms[0].FwServices_Everyday.checked = true;
+    }
+
+    function checkAndSetDaytime(form, str)
+    {  
+        if (str == 'all')
+        {
+	    form.FwServices_StartHour.disabled = true;
+	    form.FwServices_StartMinute.disabled = true;
+	    form.FwServices_EndHour.disabled = true;
+	    form.FwServices_EndMinute.disabled = true;
+	    return;
+        }else{
+	    form.FwServices_StartHour.disabled = false;
+	    form.FwServices_StartMinute.disabled = false;
+	    form.FwServices_EndHour.disabled = false;
+	    form.FwServices_EndMinute.disabled = false;
+	    return;
+        }
+    }
+
+    function serviceSelect(obj)
+    {
+	var ndx = 0;
+        var str;
+
+        ndx = obj.selectedIndex; 
+        str = obj.options[ndx].text;
+      
+        if ( str == "Custom Port..." )
+        {
+            obj.form.FWPortStart.disabled=false;
+            obj.form.FWPortEnd.disabled=false;        
+            obj.form.FWServiceType.focus();	       
+        }
+        else
+        {
+            obj.form.FWPortStart.disabled=true;
+            obj.form.FWPortEnd.disabled=true;            
+        }
+    }
+	function AddIP(form)
+	{
+		if( (form.FW_IP_PoolList.selectedIndex >= 0 ) && (form.FW_IP_PoolList.options.length > 0) )
+		{
+			document.forms[0].FW_btn_Flag.value = 2;
+			form.Fw_IPPoolSelect.text = form.FW_IP_PoolList.options[form.FW_IP_PoolList.selectedIndex].text;
+			form.Fw_IPPoolSelect.value = form.FW_IP_PoolList.options[form.FW_IP_PoolList.selectedIndex].text;
+		}else{
+			form.Fw_IPPoolSelect.text = "0";
+			form.Fw_IPPoolSelect.value = "0";
+		}
+		return;
+	}
+
+	function DeleteIP(form)
+	{
+		if( (form.FW_IP_PoolList_Dest.selectedIndex >= 0 ) && (form.FW_IP_PoolList_Dest.options.length > 0) )
+		{
+			document.forms[0].FW_btn_Flag.value = 3;
+			form.Fw_IPPoolSelect.text = form.FW_IP_PoolList_Dest.options[form.FW_IP_PoolList_Dest.selectedIndex].text;
+			form.Fw_IPPoolSelect.value = form.FW_IP_PoolList_Dest.options[form.FW_IP_PoolList_Dest.selectedIndex].text;
+		}else{
+			form.Fw_IPPoolSelect.text = "0";
+			form.Fw_IPPoolSelect.value = "0";
+		}
+		return;
+	}
+	function doTypeChange()
+	{
+		document.forms[0].FW_btn_Flag.value = 1;
+		return;
+	}
+	function docancel()
+	{
+		document.forms[0].FW_btn_Flag.value = 4;
+		return;
+	}
+	function checkIPFormat(address) {
+		var IP = address.value;
+		if (IP == "N/A")
+			return;
+		IP = IP.replace(/ /g, "");
+		address.value = IP;
+		IPsplit = IP.split(".");
+
+		if(IPsplit.length != 4 ) {
+				alert("IP format error !");
+				address.focus();
+				address.value="0.0.0.0";
+				return (false);
+		}
+
+		for(i = 0; i < 4; i++) {
+			if((isNaN(IPsplit[i])) || (IPsplit[i] == 'undefined') || (IPsplit[i] == "")) {
+				alert("IP format error !");
+				address.focus();
+				address.value="0.0.0.0";
+				return(false);
+			} else {
+				if((parseInt(IPsplit[i], 10) > 255) || (parseInt(IPsplit[i], 10) < 0)) {
+					alert("IP format error !");
+					address.focus();
+					address.value="0.0.0.0";
+					return(false);
+				}
+			}
+		}	
+	}
+</script>
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+
+<form method="POST" action="FWServicesEnhance.html" target="_self">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>					 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Firewall Edit Rule                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+					   <tr>
+                         <td colspan="5">
+<input type="checkbox" name="FW_Rule_Active" />
+Active                  		</td>
+</tr>
+<tr>
+                         <td colspan="5">
+Address Type&nbsp;&nbsp;
+<select name="FW_Rule_Type" size="1" onChange="doTypeChange();submit();">
+<option value=00000000>Any IP
+<option value=00000001>Single IP
+<option value=00000002>IP Range
+<option value=00000003 selected>IP Pool
+</select>                  		</td>
+</tr>
+					   <tr>
+					   	 <td colspan="3">
+					   	 	<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+						 		<tr>
+					   	 			<td width="3%">&nbsp;
+						 			</td>
+<td colspan="2">
+	IP Pool list                         			</td  width="30%">
+                         			<td width="19%">&nbsp;</td>
+<td  width="47%">
+	Selected IP list                         			</td>
+</tr>
+<tr>
+					   	 			<td width="3%">&nbsp;
+						 			</td>
+<td colspan="2">
+	<select name="FW_IP_PoolList" size="8" onChange="serviceSelect(this);">
+<option selected>192.168.1.33 (00:18:F3:47:A8:D9)
+</select>                         			</td>
+<td width="19%" >
+	<input type="submit" name="FW_IP_Add" value="Add >>" style="width:70pt;" onClick="AddIP(this.form);" />
+                             		<br />
+<br />
+<input type="submit" name="FW_IP_Delete" value="<< Remove" style="width:70pt;" onClick="DeleteIP(this.form);" />
+	<input type="hidden" name="Fw_IPPoolSelect" value="" />
+                         			</td>
+<td><select name="FW_IP_PoolList_Dest" size="8">
+<option selected>(00:13:02:DC:7A:45)
+</select>                         			</td>
+</tr>
+</table>
+</td>
+</tr>
+					 </table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Service Setup                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td height="10"><table width="100%"  border="0" align=center cellpadding="0" cellspacing="0">
+                             <tr>
+                               <td>Available Services                               </td>
+<td>Blocked Services                               </td>
+</tr>
+<tr>
+                               <td width="50%">
+<select name="FwServices_ServiceSrc" size="8" onChange="serviceSelect(this);">
+<option selected>Custom Port...
+<option>Any(TCP)
+<option>Any(UDP)
+<option>IPSEC_TUNNEL(ESP:0)
+<option>MULTICAST(IGMP:0)
+<option>PPTP_TUNNEL(GRE:0)
+<option>MSN Messenger
+<option>BGP(TCP:179)
+<option>BOOTP_CLIENT(UDP:68)
+<option>BOOTP_SERVER(UDP:67)
+<option>CU-SEEME(TCP/UDP:7648,24032)
+<option>DNS(TCP/UDP:53)
+<option>FINGER(TCP:79)
+<option>FTP(TCP:20,21)
+<option>HTTP(TCP:80)
+<option>ICQ(UDP:4000)
+<option>IRC(TCP/UDP:6667)
+<option>NEWS(TCP:144)
+<option>NFS(UDP:2049)
+<option>NNTP(TCP:119)
+<option>PPTP(TCP:1723)
+<option>RCMD(TCP:512)
+<option>REAL-AUDIO(TCP:7070)
+<option>REXEC(TCP:514)
+<option>RLOGIN(TCP:513)
+<option>RTELNET(TCP:107)
+<option>RTSP(TCP/UDP:554)
+<option>SFTP(TCP:115)
+<option>SMTP(TCP:25)
+<option>SNMP(TCP/UDP:161)
+<option>SNMP-TRAPS(TCP/UDP:162)
+<option>SQL-NET(TCP:1521)
+<option>SSH(TCP/UDP:22)
+<option>STRMWORKS(UDP:1558)
+<option>TELNET(TCP:23)
+<option>TFTP(UDP:69)
+<option>VDOLIVE(TCP:7000)
+</select>                               </td>
+<td width="50%">
+<select name="FwServices_ServiceDest" size="8">
+<option selected>PING(ICMP:0)
+</select>                               </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+                         <td height="10"></td>
+</tr>
+<tr>
+                         <td>Select "Custom Port", you can give new port range for blocking                  </td>
+</tr>
+<tr>
+                         <td><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                             <tr>
+                               <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                               <td width="25%">
+Type&nbsp;&nbsp;
+<select name="FWServiceType" size="1" onChange="this.form.FWPortStart.focus();">
+<option value=00000000 selected>TCP
+<option value=00000001>UDP
+<option value=00000002>TCP and UDP
+</select>                               </td>
+<td width="75%">
+Port Number&nbsp;&nbsp;
+<input type="text" name="FWPortStart" size="5" maxlength="5" value="0" onkeypress="chk_num(event)" />
+&nbsp;
+~&nbsp;
+<input type="text" name="FWPortEnd" size="5" maxlength="5" value="0" onkeypress="chk_num(event)" />
+                               </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+                         <td><input type="button" name="FWServices_Add" value="Add" style="width=60pt;" onClick="document.forms[0].FW_btn_Flag.value='5';this.form.target='buttom';submit();" />
+<input type="button" name="FWServices_Del" value="Delete" style="width=60pt;" onClick="document.forms[0].FW_btn_Flag.value='6';this.form.target='buttom';;submit();" />
+<input type="button" name="FWServices_Clear" value="Clear All" style="width=60pt;" onClick="document.forms[0].FW_btn_Flag.value='7';this.form.target='buttom';submit();" />
+	<input type="hidden" name="FW_btn_Flag" value="0" />
+                         </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Schedule to Block                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+		<td>Day to Block                         </td>
+</tr>
+<tr>
+                         <td><input type="checkbox" name="FwServices_Everyday" checked onClick="checkAndSetWeekdays();" />
+Everyday                         </td>
+</tr>
+<tr>
+                         <td><input type="checkbox" name="FwServices_Sun" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Sun&nbsp;
+<input type="checkbox" name="FwServices_Mon" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Mon&nbsp;
+<input type="checkbox" name="FwServices_Tue" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Tue&nbsp;
+<input type="checkbox" name="FwServices_Wed" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Wed<input type="checkbox" name="FwServices_Thu" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Thu&nbsp;
+<input type="checkbox" name="FwServices_Fri" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Fri&nbsp;
+<input type="checkbox" name="FwServices_Sat" checked onClick="if (!this.checked){document.forms[0].FwServices_Everyday.checked=false;} checkAndSetWeekdays();" />
+Sat                         </td>
+</tr>
+<tr>
+                         <td>&nbsp;</td>
+</tr>
+<tr>
+                         <td>Time of Day to Block                    <span class="hint">
+(24-Hour Format)                  </span> </td>
+</tr>
+<tr>
+                         <td><input type="radio" name="FwServices_Allday" value="0" onClick="checkAndSetDaytime(form,'all');" />
+All day                         </td>
+</tr>
+<tr>
+                         <td><input type="radio" name="FwServices_Allday" value="1" checked onClick="checkAndSetDaytime(form,'selected');" />
+                         
+From :                  &nbsp;
+Start&nbsp;
+<input type="text" name="FwServices_StartHour" size="2" maxlength="2" value="8" onkeypress="chk_num(event)" onFocus="if (this.form.FwServices_Allday[0].checked) this.form.FwServices_Allday[0].focus();" />
+                  <span class="hint">
+(hour)                  </span> &nbsp;
+<input type="text" name="FwServices_StartMinute" size="2" maxlength="2" value="0" onkeypress="chk_num(event)" onFocus="if (this.form.FwServices_Allday[0].checked) this.form.FwServices_Allday[0].focus();" />
+                  <span class="cfig_word">
+<!-- hint RpName="textFWServices_24" RpGetType=Complex RpGetPtr="textFWServices_24" RpTextType="ASCIIExtended"  -->
+                  (min)
+                  </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+End&nbsp;
+<input type="text" name="FwServices_EndHour" size="2" maxlength="2" value="19" onkeypress="chk_num(event)" onFocus="if (this.form.FwServices_Allday[0].checked) this.form.FwServices_Allday[0].focus();" />
+                  <span class="hint">
+(hour)                  </span> &nbsp;
+<input type="text" name="FwServices_EndMinute" size="2" maxlength="2" value="0" onkeypress="chk_num(event)" onFocus="if (this.form.FwServices_Allday[0].checked) this.form.FwServices_Allday[0].focus();" />
+                  <span class="hint">
+<!-- hint RpName="textFWServices_24" RpGetType=Complex RpGetPtr="textFWServices_24" RpTextType="ASCIIExtended"  -->
+                  (min)
+                </span> </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Log                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+					   <tr>
+                         <td colspan="5">
+<input type="checkbox" name="FW_Log_Active" checked />
+Active(Log packets match this rule)                  		</td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+		<input type="submit" name="sysSubmit" value="Apply" />
+		<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">		<input type="submit" name="FW_Cancel" value="Cancel" class="button" onClick="docancel();" />
+                    </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+</form>
+<!-- WaterMark Begin -->
+<!-- WaterMark End -->
+ <p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Security > Firewall > Services');
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

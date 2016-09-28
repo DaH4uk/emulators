@@ -1,0 +1,683 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Administration</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function SelPort(num,F)	{
+if(num == 1 && F.PasswdModify.value == 1){
+if(ChangePasswd(F) == true)
+port_enable_disable(F,num);
+} else
+port_enable_disable(F,num);
+}
+function port_enable_disable(F,I) {
+if ( I == "0" ){
+if (F.http_wanport) choose_disable(F.http_wanport);
+if (F._remote_mgt_https) choose_disable(F._remote_mgt_https);
+} else {
+if (F.http_wanport) choose_enable(F.http_wanport);
+if (F._remote_mgt_https) choose_enable(F._remote_mgt_https);
+}
+if(F._http_enable.checked == false)
+if(F._https_enable)
+if(F._https_enable.checked == true) {
+if (F._remote_mgt_https)
+{
+choose_disable(F._remote_mgt_https);
+F._remote_mgt_https.checked = true;
+}
+}
+if(F._https_enable)
+if(F._http_enable.checked == true && F._https_enable.checked == false)
+choose_disable(F._remote_mgt_https);
+}
+function ChangePasswd(F) {
+if((F.PasswdModify.value==1 && F.http_passwd.value == "d6nw5v1x2pc7st9m") || F.http_passwd.value == "admin") {
+if(confirm(errmsg.err51)) {
+F.remote_management[1].checked = true;
+return false;
+} else {
+F.remote_management[1].checked = true;
+return false;
+}
+}
+return true;
+}
+function valid_password(F) {
+if (F.http_passwd.value != F.http_passwdConfirm.value) {
+alert(errmsg.err10);
+F.http_passwdConfirm.focus();
+F.http_passwdConfirm.select();
+return false;
+}
+return true;
+}
+function handle_https(F)
+{if(F._https_enable.checked == true && F.remote_management[0].checked == true) {
+choose_enable(F._remote_mgt_https);
+}
+else {
+F._remote_mgt_https.checked = false;
+choose_disable(F._remote_mgt_https);
+}
+}
+function selSSH(val, load) {
+if (load == 1) {
+sshd = document.getElementsByName('remote_mgt_ssh');
+setElementActive("remote_mgt_ssh", val == "1");
+setElementActive("sshd_wanport", val == "1" && sshd[0].checked);
+} else {
+setElementActive("sshd_wanport", val == "1");
+}
+}
+function selTelnet(val, load) {
+if (load == 1) {
+telnet = document.getElementsByName('remote_mgt_telnet');
+setElementActive("remote_mgt_telnet", val == "1");
+setElementActive("telnet_wanport", val == "1" && telnet[0].checked);
+} else {
+setElementActive("telnet_wanport", val == "1");
+}
+}
+function to_reboot(F) {
+F.action.value="Reboot";
+apply(F);
+}
+function submitcheck(F) {
+if( F.http_passwd.value != F.http_passwdConfirm.value ) {
+alert(errmsg.err52);
+F.http_passwd.focus();
+return false;
+}
+valid_password(F);
+if(F.remote_management)
+if(F.remote_management[0].checked == true) {
+if(!ChangePasswd(F))
+return false;
+}
+
+if(F._remote_mgt_https) {
+if(F.http_enable.checked == true && F.https_enable.checked == false)
+F._remote_mgt_https.checked == false;
+if(F.http_enable.checked == false && F.https_enable.checked == true)
+F._remote_mgt_https.checked == true;
+if(F._remote_mgt_https.checked == true)
+F.remote_mgt_https.value = 1;
+else
+F.remote_mgt_https.value = 0;
+}
+
+if(F._https_enable) {
+if(F._https_enable.checked == true)
+F.https_enable.value = 1;
+else
+F.https_enable.value = 0;
+}
+if(F._http_enable) {
+if(F._http_enable.checked == true)
+F.http_enable.value = 1;
+else
+F.http_enable.value = 0;
+}
+
+if(F._info_passwd) {
+if(F._info_passwd.checked == true)
+F.info_passwd.value = 1;
+else
+F.info_passwd.value = 0;
+}
+if (F.remote_ip_any)
+if (F.remote_ip_any[1].checked == true){
+if(F.remote_ip_0.value == "0" && F.remote_ip_1.value == "0" && F.remote_ip_2.value == "0" && F.remote_ip_3.value == "0" ) {
+alert(errmsg.err111);
+return false;
+}
+if(parseInt(F.remote_ip_3.value) > parseInt(F.remote_ip_4.value)) {
+alert(errmsg.err110);
+F.remote_ip_4.focus();
+return false;
+}
+}
+F.save_button.value = sbutton.saving;
+return true;
+}
+function to_submit(F) {
+if (submitcheck(F))
+apply(F);
+}
+function to_apply(F) {
+if (submitcheck(F))
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+port_enable_disable(document.setup, "1");
+if (document.setup.remote_mgt_ssh)
+selSSH("0", 1);
+if (document.setup.remote_mgt_telnet)
+selTelnet("1", 1);
+show_layer_ext(document.setup.ipv6_enable0,'idipv6', 0 == 1);
+show_layer_ext(document.setup.remote_mgt_ssh, 'idssh', 0 == 1);
+show_layer_ext(document.setup.remote_mgt_telnet, 'idtelnet', 1 == 1);
+show_layer_ext(document.setup.remote_ip_any, 'idremip', 0 == 1);
+show_layer_ext(document.setup.remote_management, 'idhttpd', 1 == 1);
+show_layer_ext(document.setup.status_auth, 'idsysinfo', 1 == 1);
+show_layer_ext(document.setup.cron_enable, 'idcron', 1 == 1);
+show_layer_ext(document.setup.samba_mount, 'idsamba', 0 == 1);
+show_layer_ext(document.setup.enable_jffs2, 'idjffs2', 0 == 1);
+show_layer_ext(document.setup.mmc_enable0, 'idmmc', 0 == 1);
+show_layer_ext(document.setup.mmc_gpio, 'idmmcgpio', 0 == 1);
+
+update = new StatusbarUpdate();
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><span><strong><script type="text/javascript">Capture(bmenu.adminManagement)</script></strong></span></li>
+      <li><a href="Alive.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminAlive)</script></strong></a></li>
+      <li><a href="Diagnostics.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminDiag)</script></strong></a></li>
+      <li><a href="Wol.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminWol)</script></strong></a></li>
+      <li><a href="Factory_Defaults.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminFactory)</script></strong></a></li>
+      <li><a href="Upgrade.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminUpgrade)</script></strong></a></li>
+      <li><a href="config.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminBackup)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="setup" action="#" method="post">
+<input type="hidden" name="submit_button" value="Management" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="commit" value="1" />
+<input type="hidden" name="PasswdModify" value="0" />
+<input type="hidden" name="remote_mgt_https" />
+<input type="hidden" name="http_enable" />
+<input type="hidden" name="info_passwd" />
+<input type="hidden" name="https_enable" />
+<h2><script type="text/javascript">Capture(management.h2)</script></h2>
+<div>
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.psswd_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.psswd_user)</script></div>
+			<input type="password" maxlength="63" size="20" value="d6nw5v1x2pc7st9m" name="http_username" onblur="valid_name(this,management.psswd_user,SPACE_NO)" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.psswd_pass)</script></div>
+			<input type="password" maxlength="63" size="20" value="d6nw5v1x2pc7st9m" name="http_passwd" onblur="valid_name(this,management.psswd_pass,SPACE_NO)" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.pass_conf)</script></div>
+			<input type="password" maxlength="63" size="20" value="d6nw5v1x2pc7st9m" name="http_passwdConfirm" onblur="valid_name(this,management.pass_conf,SPACE_NO)" />
+		</div>
+	</fieldset><br />
+	
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.web_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.proto)</script></div>
+			<input class="spaceradio" type="checkbox" value="1" name="_http_enable" checked="checked" />HTTP&nbsp;
+			<input class="spaceradio" type="checkbox" value="1" onclick="handle_https(this.form)" name="_https_enable"  />HTTPS
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.web_refresh)</script></div>
+			<input class="num" name="refresh_time" size="2" maxlength="2" value="3" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.web_sysinfo)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="status_auth" checked="checked" onclick="show_layer_ext(this, 'idsysinfo', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="status_auth"  onclick="show_layer_ext(this, 'idsysinfo', false)" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div id="idsysinfo">
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(management.web_sysinfopass)</script></div>
+				<input class="spaceradio" type="checkbox" value="1" name="_info_passwd"  /><script type="text/javascript">Capture(share.enabled)</script>
+			</div>
+			<div class="setting">
+		  		<div class="label"><script type="text/javascript">Capture(management.web_sysinfomasq)</script></div>
+		  		<input class="spaceradio" type="radio" value="1" name="maskmac" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		  		<input class="spaceradio" type="radio" value="0" name="maskmac"  /><script type="text/javascript">Capture(share.disable)</script>
+			</div>
+		</div>
+	</fieldset><br />
+	
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.remote_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.remote_gui)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="remote_management" onclick="show_layer_ext(this, 'idhttpd', true);SelPort(1,this.form)" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="remote_management" onclick="show_layer_ext(this, 'idhttpd', false);SelPort(0,this.form)"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div id="idhttpd">
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(management.remote_https)</script></div>
+				<input type="checkbox" value="1" name="_remote_mgt_https"  />
+			</div>
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(management.remote_guiport)</script></div>
+				<input class="num" maxlength="5" size="5" name="http_wanport" onblur="valid_range(this,1,65535,management.remote_guiport)" value="80" />
+				<span class="default"><script type="text/javascript">
+				//<![CDATA[
+				document.write("(" + share.deflt + ": 8080, " + share.range + ": 1 - 65535)");
+				//]]>
+				</script></span>
+			</div>
+		</div>
+		
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.remote_ssh)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="remote_mgt_ssh" onclick="show_layer_ext(this, 'idssh', true);selSSH(this.value, 0)"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="remote_mgt_ssh" onclick="show_layer_ext(this, 'idssh', false);selSSH(this.value, 0)" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting" id="idssh">
+			<div class="label"><script type="text/javascript">Capture(management.remote_sshport)</script></div>
+			<input class="num" maxlength="5" size="5" name="sshd_wanport" onblur="valid_range(this,1,65535,management.remote_sshport)" value="22" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": 22, " + share.range + ": 1 - 65535)");
+			//]]>
+			</script></span>
+		</div>
+		
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.remote_telnet)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="remote_mgt_telnet" onclick="show_layer_ext(this, 'idtelnet', true);selTelnet(this.value, 0)" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="remote_mgt_telnet" onclick="show_layer_ext(this, 'idtelnet', false);selTelnet(this.value, 0)"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting" id="idtelnet">
+			<div class="label"><script type="text/javascript">Capture(management.remote_telnetport)</script></div>
+			<input class="num" maxlength="5" size="5" name="telnet_wanport" onblur="valid_range(this,1,65535,management.remote_telnetport)" value="23" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": 23, " + share.range + ": 1 - 65535)");
+			//]]>
+			</script></span>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.remote_allowanyip)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="remote_ip_any" onclick="show_layer_ext(this, 'idremip', false)" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="remote_ip_any" onclick="show_layer_ext(this, 'idremip', true)"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting" id="idremip">
+			<div class="label"><script type="text/javascript">Capture(management.remote_ip)</script></div>
+			<input type="hidden" name="remote_ip" value="4" />
+			<input class="num" maxLength="3" size="3" onBlur="valid_range(this,1,223,'IP')" value="0" name="remote_ip_0" /> .
+            <input class="num" maxLength="3" size="3" onBlur="valid_range(this,0,255,'IP')" value="0" name="remote_ip_1" /> .
+            <input class="num" maxLength="3" size="3" onBlur="valid_range(this,0,255,'IP')" value="0" name="remote_ip_2" /> .
+            <input class="num" maxLength="3" size="3" onBlur="valid_range(this,1,254,'IP')" value="0" name="remote_ip_3" /> <script type="text/javascript">Capture(share.to)</script>
+            <input class="num" maxLength="3" size="3" onBlur="valid_range(this,1,254,'IP')" value="0" name="remote_ip_4" />	
+		</div>
+	</fieldset><br />
+	
+	
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.boot_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.boot_srv)</script></div>
+			<input class="spaceradio" type="radio" value="on" name="boot_wait" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="off" name="boot_wait"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+	</fieldset><br />
+	
+	
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.cron_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.cron_srvd)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="cron_enable" checked="checked" onclick="show_layer_ext(this, 'idcron', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="cron_enable"  onclick="show_layer_ext(this, 'idcron', false)" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting" id="idcron">
+				<div class="label"><script type="text/javascript">Capture(management.cron_jobs)</script></div>
+					<textarea cols="60" rows="4" id="cron_jobs" name="cron_jobs"></textarea>
+					<script type="text/javascript">
+					//<![CDATA[
+						var cron_jobs = fix_cr( '' );
+						document.getElementById("cron_jobs").value = cron_jobs;
+					//]]>
+					</script>
+		</div>
+	</fieldset><br />
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.wifi_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.wifi_srv)</script></div>
+			<input class="spaceradio" type="radio" name="nas_enable" value="1" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="nas_enable" value="0"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+	</fieldset><br />
+	
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.rst_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.rst_srv)</script></div>
+			<input class="spaceradio" type="radio" name="resetbutton_enable" value="1" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="resetbutton_enable" value="0"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+	</fieldset><br />
+	
+	<fieldset>
+		<legend><script type="text/javascript">Capture(management.routing_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.routing_srv)</script></div>
+			<input class="spaceradio" type="radio" name="zebra_enable" value="1" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="zebra_enable" value="0"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+	</fieldset><br />
+</div>
+<fieldset>
+	<legend><script type="text/javascript">Capture(management.ipv6_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(management.ipv6_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="ipv6_enable0"  onclick="show_layer_ext(this, 'idipv6', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="ipv6_enable0" checked="checked" onclick="show_layer_ext(this, 'idipv6', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idipv6">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.ipv6_rad)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="radvd_enable"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="radvd_enable" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.ipv6_radconf)</script></div>
+			<textarea id="radvd_conf" name="radvd_conf" cols="60" rows="4"></textarea>
+			<script type="text/javascript">
+			//<![CDATA[
+				var radvd_conf = fix_cr( '' );
+				document.getElementById("radvd_conf").value = radvd_conf;
+			//]]>
+			</script>
+		</div>
+	</div>
+</fieldset><br/>
+<fieldset>
+	<legend><script type="text/javascript">Capture(management.jffs_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(management.jffs_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="enable_jffs2"  onclick="show_layer_ext(this, 'idjffs2', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="enable_jffs2" checked="checked" onclick="show_layer_ext(this, 'idjffs2', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idjffs2">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.jffs_clean)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="clean_jffs2"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="clean_jffs2" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.fssize)</script></div>
+			<script type="text/javascript">
+			//<![CDATA[
+			var my_jffs = {
+  	size: 13500416,
+  	free: 0
+  	};
+
+			document.write( ((0) && (my_jffs.size)) ? (scaleSize(my_jffs.size) + ' / ' + scaleSize(my_jffs.free)) : '<span style="color:#999999;"><em>(' + share.nmounted + ')</em></span>' );
+			//]]>
+			</script>
+		</div>
+	</div>
+</fieldset><br/>
+
+<fieldset>
+  <legend><script type="text/javascript">Capture(management.lang_legend)</script></legend>
+  <div class="setting">
+      <div class="label"><script type="text/javascript">Capture(management.lang_srv)</script></div>
+      <select name="language">
+      <script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"chinese_simplified\"  >" + management.lang_chinese_simplified + "</option>");
+document.write("<option value=\"chinese_traditional\"  >" + management.lang_chinese_traditional + "</option>");
+document.write("<option value=\"croatian\"  >" + management.lang_croatian + "</option>");
+document.write("<option value=\"dutch\"  >" + management.lang_dutch + "</option>");
+document.write("<option value=\"english\" selected=\"selected\" >" + management.lang_english + "</option>");
+document.write("<option value=\"french\"  >" + management.lang_french + "</option>");
+document.write("<option value=\"german\"  >" + management.lang_german + "</option>");
+document.write("<option value=\"hungarian\"  >" + management.lang_hungarian + "</option>");
+document.write("<option value=\"italian\"  >" + management.lang_italian + "</option>");
+document.write("<option value=\"japanese\"  >" + management.lang_japanese + "</option>");
+document.write("<option value=\"latvian\"  >" + management.lang_latvian + "</option>");
+document.write("<option value=\"polish\"  >" + management.lang_polish + "</option>");
+document.write("<option value=\"portuguese_braz\"  >" + management.lang_portuguese_braz + "</option>");
+document.write("<option value=\"romanian\"  >" + management.lang_romanian + "</option>");
+document.write("<option value=\"russian\"  >" + management.lang_russian + "</option>");
+document.write("<option value=\"slovenian\"  >" + management.lang_slovenian + "</option>");
+document.write("<option value=\"spanish\"  >" + management.lang_spanish + "</option>");
+document.write("<option value=\"swedish\"  >" + management.lang_swedish + "</option>");
+//]]>
+</script>
+
+      </select>
+  </div>
+</fieldset><br/>
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(management.net_legend)</script></legend>
+	<div class="setting">
+<div class="label"><script type="text/javascript">Capture(management.net_conctrl)</script></div>
+<select name="tcp_congestion_control">
+<option value="vegas" selected >vegas</option>
+<option value="westwood"  >westwood</option>
+<option value="reno"  >reno</option>
+<option value="bic"  >bic</option>
+<option value="cubic"  >cubic</option>
+<option value="highspeed"  >highspeed</option>
+<option value="hybla"  >hybla</option>
+<option value="htcp"  >htcp</option>
+<option value="veno"  >veno</option>
+<option value="scalable"  >scalable</option>
+<option value="lp"  >lp</option>
+<option value="yeah"  >yeah</option>
+<option value="illinois"  >illinois</option>
+</select>
+</div>
+
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(management.net_port)</script></div>
+		<input class="num" size="5" maxlength="5" name="ip_conntrack_max" onblur="valid_range(this,256,65535,management.net_port)" value="32768" />&nbsp;
+		<span class="default"><script type="text/javascript">
+		//<![CDATA[
+		document.write("(" + share.deflt + ": 32768, " + share.range + ": 256 - 65535)");
+		//]]>
+		</script></span>
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(management.net_tcptimeout)</script></div>
+		<input class="num" size="5" maxlength="5" name="ip_conntrack_tcp_timeouts" onblur="valid_range(this,1,86400,management.net_tcptimeout)" value="3600" />&nbsp;
+		<span class="default"><script type="text/javascript">
+		//<![CDATA[
+		document.write("(" + share.deflt + ": 3600, " + share.range + ": 1 - 86400)");
+		//]]>
+		</script></span>
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(management.net_udptimeout)</script></div>
+		<input class="num" size="5" maxlength="5" name="ip_conntrack_udp_timeouts" onblur="valid_range(this,1,86400,management.net_udptimeout)" value="120" />&nbsp;
+		<span class="default"><script type="text/javascript">
+		//<![CDATA[
+		document.write("(" + share.deflt + ": 120, " + share.range + ": 1 - 86400)");
+		//]]>
+		</script></span>
+	</div>
+</fieldset><br/>
+
+<fieldset>
+  <legend><script type="text/javascript">Capture(management.clock_legend)</script></legend>
+  <div class="setting">
+    <script type="text/javascript">Capture(management.clock_support)</script>
+</div>
+
+</fieldset><br/>
+<script type="text/javascript">
+//<![CDATA[
+function previewStyle(val) {
+	var linkTags = document.getElementsByTagName("link");
+	for(var i = 0; i < linkTags.length; i++) {
+		var t = linkTags[i];
+		if(t.getAttribute("rel") != "stylesheet") continue;
+		if(t.getAttribute("href").indexOf("style/pwc/") != -1) continue;
+		if(t.getAttribute("href").indexOf("default") != -1) continue;
+		if(t.getAttribute("href").indexOf("/" + val + "default.htm") != -1) return false;
+		var newStyle = t.getAttribute("href").replace(/\?[a-z]*/,"");
+		newStyle = newStyle.replace(/style\/\w+\//, "style/" + val + "default.htm") + "?" + val;
+		t.removeAttribute("href");
+		t.setAttribute("href", newStyle);
+	}
+	return true;
+}
+document.forms[0].onreset = function() { 
+	previewStyle("elegant"); 
+}
+//]]>
+</script>
+<fieldset>
+	<legend><script type="text/javascript">Capture(management.gui_style)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(share.styl)</script></div>
+		<select name="router_style">
+		    <option value="blue" >blue</option>
+<option value="brainslayer" >brainslayer</option>
+<option value="cyan" >cyan</option>
+<option value="elegant" selected="selected">elegant</option>
+<option value="green" >green</option>
+<option value="kromo" >kromo</option>
+<option value="orange" >orange</option>
+<option value="red" >red</option>
+<option value="wikar" >wikar</option>
+<option value="xirian" >xirian</option>
+<option value="yellow" >yellow</option>
+
+		</select>&nbsp;
+		<script type="text/javascript">
+		//<![CDATA[
+		document.write("<input class=\"button\" type=\"button\" name=\"preview_button\" value=\"" + sbutton.preview + "\" onclick=\"previewStyle(this.form.router_style.value)\" />");
+		//]]>
+		</script>
+	</div>
+</fieldset><br />
+<fieldset>
+	<legend><script type="text/javascript">Capture(management.samba_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(management.samba_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="samba_mount"  onclick="show_layer_ext(this, 'idsamba', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="samba_mount" checked="checked" onclick="show_layer_ext(this, 'idsamba', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idsamba">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.samba_share)</script></div>
+			<input maxlength="100" size="25" name="samba_share" value="//yourserverip/yourshare" onblur="valid_name(this,management.samba_share,SPACE_NO)" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+			<input maxlength="100" size="25" name="samba_user" value="username/computer" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+			<input type="password" id="samba_password" maxlength="100" size="25" name="samba_password" value="iwer573495u7340" />&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="_samba_password_unmask" value="0" onclick="setElementMask('samba_password', this.checked)" />&nbsp;<script type="text/javascript">Capture(share.unmask)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(management.samba_stscript)</script></div>
+			<input maxlength="100" size="25" name="samba_script" value="yourscript" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.fssize)</script></div>
+			<script type="text/javascript">
+			//<![CDATA[
+			var samba = {
+  	size: 0,
+  	free: 0
+  	};
+
+			document.write( ((0) && (samba.size)) ? (scaleSize(samba.size) + ' / ' + scaleSize(samba.free)) : '<span style="color:#999999;"><em>(' + share.nmounted + ')</em></span>' );
+			//]]>
+			</script>
+		</div>
+	</div>
+</fieldset><br/>
+
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(hmanagement.right1)</script></dt>
+<dd class="definition"><script type="text/javascript">Capture(hmanagement.right2)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HManagement.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:33:59 up 23 min, load average: 0.00, 0.00, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<script type="text/javascript">
+var stackList = [];
+$("#t_on").click(function()
+{
+	$.act(ACT_SET, STAT_CFG, null, null,["Enable=1"]);
+	if (!$.exe())
+	{
+		$.reload();
+	}
+});
+$("#t_off").click(function()
+{
+	$.act(ACT_SET, STAT_CFG, null, null,["Enable=0"]);
+	if (!$.exe())
+	{
+		$.reload();
+	}
+	var tr = $("#table-stat").find("tbody tr:not(.nd)");
+    tr.remove();
+});
+$("#resetAll").click(function()
+{
+	$.act(ACT_SET, STAT_CFG, null, null, ["action=1"]);
+	$.exe(function(ret){if (!ret) $.reload();});
+});
+$("#freshAll").click(function()
+{
+	$.reload();
+});
+$("#delAll").click(function()
+{
+	$.act(ACT_SET, STAT_CFG, null, null, ["action=2"]);
+	$.exe(function(ret){if (!ret) $.reload();});
+});
+function doRefresh(index)
+{
+	$.act(ACT_SET, STAT_ENTRY, stackList[index], null, null);
+
+	if (!$.exe())
+		$.reload('stat.htm');
+}
+function doDelete(index)
+{
+	$.act(ACT_DEL, STAT_ENTRY, stackList[index], null);
+	
+	if (!$.exe())
+		$.reload('stat.htm');
+}
+function initTable()
+{
+	var array = new Array();
+	var statCfg = $.act(ACT_GET, STAT_CFG, null, null);
+	var statEntryList = $.act(ACT_GL, STAT_ENTRY, null, null);
+	if (!$.exe())
+	{	
+		if (statCfg.enable == 1) 
+		{
+			$("#t_on").addClass('selected');
+			$("#t_off").removeClass('selected');
+		}
+		else 
+		{
+			$("#t_off").addClass('selected');
+			$("#t_on").removeClass('selected');
+		}
+		if (statCfg.enable == 1) 
+		{
+			var string;
+			var int1, int2, int3, int4;
+			var totalPkts;
+			var totalBytes;
+			var currPkts;
+			var currBytes;
+			var currIcmp;
+			var currUdp;
+			var currSyn;
+
+			for (var i = 0; i < statEntryList.length; i++)
+			{
+				int4 = statEntryList[i].ipAddress%256;
+				int3 = (parseInt(statEntryList[i].ipAddress/256))%256;
+				int2 = (parseInt(statEntryList[i].ipAddress/Math.pow(256,2)))%256;
+				int1 = (parseInt(statEntryList[i].ipAddress/Math.pow(256,3)));
+				string = int1 + '.' + int2 + '.' + int3 + '.' + int4 + ' ' + statEntryList[i].macAddress;
+				totalPkts = $.formatNum(statEntryList[i].totalPkts);
+				totalBytes = $.formatNum(statEntryList[i].totalBytes);
+				currPkts = $.formatNum(statEntryList[i].currPkts);
+				currBytes = $.formatNum(statEntryList[i].currBytes);
+				currIcmp = statEntryList[i].currIcmp;
+				currUdp = statEntryList[i].currUdp;
+				currSyn = statEntryList[i].currSyn;
+
+				array.push([{"text":string, "width":"20%"},
+				{"text":totalPkts, "width":"10%"},
+				{"text":totalBytes, "width":"10%"},
+				{"text":currPkts, "width":"10%"},
+				{"text":currBytes, "width":"10%"},
+				{"text":currIcmp, "width":"10%"},
+				{"text":currUdp, "width":"10%"},
+				{"text":currSyn, "width":"10%"},
+				{"text":"<span class='table-grid-icon reset-icon' id='refresh_"+i+"' onclick='doRefresh("+i+");'></span><span class='table-grid-icon edit-trash-icon' id='del_"+i+"' onclick='doDelete("+i+");'></span>", "width":"10%"}
+				]);
+				stackList[i] = statEntryList[i].__stack;
+			}
+		}
+	}
+	$.initTableBody($("#table-stat"), array);
+	return array;
+	
+}
+</script>
+<h3 id="et">Traffic Statistics</h3>
+<div class="content-container">
+	<form class="pure-form pure-form-aligned" >
+		<div class="button-group-container">
+			<b id="t_entraf">Enable Traffic Statistics: </b>
+			<ul>
+				<li>
+					<button id="t_on" class="fst" value="on">On</button>
+				</li>
+				<li>
+					<button id="t_off" class="lst" value="off">Off</button>
+				</li>
+			</ul>
+		</div>
+	</form>
+</div>
+<h3 id="t_list">Traffic Statistics List</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+	<div class="table-op" id="addItem" >
+    		<div class="table-btn" >
+				<span id="freshAll" class="refresh-icon"></span>
+		    	<label class="T_refresh">Refresh</label>
+		    	<span id="resetAll" class="reset-icon"></span>
+		    	<label class="T_reset">Reset</label>
+	    		<span id="delAll" class="delete-all-icon"></span>
+	    		<label class="T_delall">Delete All</label>
+    		</div>
+    </div>
+	<table id="table-stat">
+	    <thead></thead>
+		<tbody></tbody>
+	</table>
+	</form>		
+</div>
+<script type="text/javascript">
+var headArray = [  
+		{"text":table_str.ipmacaddr, "width":"20%"}, 
+		{"text":table_str.ttpackets, "width":"10%"}, 
+		{"text":table_str.ttbytes, "width":"10%"},
+		{"text":table_str.crpackets, "width":"10%"}, 
+		{"text":table_str.crbytes, "width":"10%"},
+		{"text":table_str.cricmptx, "width":"10%"},
+		{"text":table_str.crudptx, "width":"10%"}, 
+		{"text":table_str.crsynyx, "width":"10%"},
+		{"text":table_str.modify, "width":"10%"}		
+	];
+	$.initTableHead($("#table-stat"), headArray);
+	$("#table-stat").tpTable(initTable);
+	$.tpInit();
+</script>

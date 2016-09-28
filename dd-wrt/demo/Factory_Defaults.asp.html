@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Factory Defaults</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function submitcheck(F) {
+F.save_button.value = sbutton.saving;
+}
+function to_apply(F) {
+if( F.FactoryDefaults[0].checked == 1 ) {
+if(!confirm(factdef.mess1)) {
+return false;
+}
+submitcheck(F);
+applyupdate(F);
+return true;
+}
+}
+var update;
+addEvent(window, "load", function() {
+
+update = new StatusbarUpdate();
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminManagement)</script></strong></a></li>
+      <li><a href="Alive.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminAlive)</script></strong></a></li>
+      <li><a href="Diagnostics.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminDiag)</script></strong></a></li>
+      <li><a href="Wol.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminWol)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.adminFactory)</script></strong></span></li>
+      <li><a href="Upgrade.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminUpgrade)</script></strong></a></li>
+      <li><a href="config.asp.html"><strong><script type="text/javascript">Capture(bmenu.adminBackup)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="default" action="#" method="post">
+<input type="hidden" name="submit_button" value="Factory_Defaults" />
+<input type="hidden" name="action" value="Restore" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+
+<h2><script type="text/javascript">Capture(factdef.h2)</script></h2>
+
+<fieldset>
+<legend><script type="text/javascript">Capture(factdef.legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(factdef.restore)</script></div>
+<input class="spaceradio" type="radio" name="FactoryDefaults" value="1" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" name="FactoryDefaults" value="0" checked="checked" /><script type="text/javascript">Capture(share.no)</script>
+</div>
+</fieldset><br/>
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input title=\"" + sbutton.applytitle + "\" class=\"button\" type=\"button\" name=\"save_button\" value=\"" + sbutton.apply + "\" onclick=\"to_apply(this.form);\" />");
+document.write("<input title=\"" + sbutton.canceltitle + "\" class=\"button\" type=\"button\" name=\"reset_button\" value=\"" + sbutton.cancel + "\" onclick=\"window.location.reload();\" />");
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dd class="definition"><script type="text/javascript">Capture(hfactdef.right1)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HDefault.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:10 up 24 min, load average: 0.07, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="ndm.abbr" content="IPoE">
+
+<title>ZyXEL Keenetic - 
+				Прямые подключения</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css">
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src=js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+form label {
+	width: 230px;
+}
+div.column {
+	float: left;
+	width: 51px;
+	white-space: normal;
+	text-align: center;
+	vertical-align: middle;
+	background-repeat: no-repeat;
+}
+</style>
+<script type="text/javascript">
+<!--
+function Switch(ifName) {
+//private:
+	var trunks_ = new Array();
+	var members_ = new Array();
+
+	function loadVlanTable() {
+		if( members_.length ) {
+			var named = new Named(ifName);
+			for( var m in members_ )
+				named.Config("interface port " + (trunks_[members_[m].portnum].isEnabled() ? "trunk" : "access"),
+						{"port": members_[m].portnum}, members_[m].trigger);
+			named.proceed();
+		}
+	}
+
+	Named.call(this, ifName);
+//public:
+	this.loadTrunkState = function(portnum, trigger) {
+		trunks_[portnum] = new Trigger(trigger);
+		this.Config("interface port mode trunk", {"port": portnum}, trunks_[portnum]);
+	}
+	this.isTrunk = function(portnum) {
+		return trunks_[portnum] && trunks_[portnum].isEnabled();
+	}
+	this.saveTrunkState = function(portnum) {
+		trunks_[portnum].save(this, "interface port mode trunk", {"port": portnum});
+	}
+	this.saveTrunkStates = function() {
+		for( var t in trunks_ ) this.saveTrunkState(t);
+	}
+	this.loadVlanMembership = function(portnum, vid, trigger) {
+		this.onLoad = loadVlanTable;	
+		members_.push({portnum: portnum, vid: vid, trigger: new Trigger(trigger, {tag: "vid", hasValue: vid})});
+	}
+	this.saveVlanTable = function() {
+		for( var m in members_ ) {
+			var mm = members_[m];
+			if( this.isTrunk(mm.portnum) ) {
+				this.Command("interface port trunk", {"port": mm.portnum, "vid": mm.vid}, mm.trigger);
+			} else {
+				this.No("interface port trunk", {"port": mm.portnum});
+				if( mm.trigger.isEnabled() ) {
+					this.Command("interface port access", {"port": mm.portnum, "vid": mm.vid}, mm.trigger);
+				} else if( mm.trigger.isChanged() ) {
+					this.Command("interface port access", {"port": mm.portnum, "vid": 1}, mm.trigger);
+				}
+			}
+		}
+	}
+	this.dropVlanEntries = function() {
+		for( var m in members_ ) {
+			var mm = members_[m];
+			this.No("interface port trunk", {"port": mm.portnum, "vid": mm.vid});
+			if( mm.trigger.isEnabled() )
+				this.Command("interface port access", {"port": mm.portnum, "vid": 1}, mm.trigger);
+		}
+	}
+}
+Switch.prototype = new Named();
+
+var switch_;
+var wan_;
+var conn_;
+var maxId = -1;
+
+function loadValues() {
+	enableProgressIndicator();
+	conn_ = new Table(document.getElementById("connections"));
+	conn_.defineRow("interface");
+	conn_.showColumns("name", "description", "state", "global");
+	conn_.setEditorForm(new Form(document.editor));
+	conn_.keepWidth(true);
+	conn_.filterBy(function(row) {
+		return ((row["type"].match("VLAN") && row["index"] != 1) ||
+				row["type"].match("FastEthernet"));
+	});
+	conn_.onRowChange = function(element, values) {
+		if( (values["index"] * 1) > maxId ) maxId = (values["index"] * 1); 
+	}
+	conn_.onStartEditing = function(element) {
+		var f = this.getEditorForm().getElement();
+		var values = this.getRowValues(element);
+		switch_ = new Switch(_SWITCH);
+		switch_.loadTrunkState(1, f.share_port1);
+		switch_.loadTrunkState(2, f.share_port2);
+		switch_.loadTrunkState(3, f.share_port3);
+		switch_.loadTrunkState(4, f.share_port4);
+		switch_.loadTrunkState(5, f.share_port5);
+		switch_.loadVlanMembership(1, values["index"], f.use_port1);
+		switch_.loadVlanMembership(2, values["index"], f.use_port2);
+		switch_.loadVlanMembership(3, values["index"], f.use_port3);
+		switch_.loadVlanMembership(4, values["index"], f.use_port4);
+		switch_.loadVlanMembership(5, values["index"], f.use_port5);
+
+		wan_ = new Interface(values["name"]);
+		wan_.create();
+		wan_.loadState(f.enabled);
+		wan_.loadDescription(f.description);
+		wan_.loadIp(f.ip_address, f.ip_mask);
+		wan_.loadDhcpState(f.dhcp);
+		wan_.loadPriority(f.global);
+		wan_.flushTo(switch_);
+		switch_.proceed(document.getElementById("logger"));
+	}
+
+	var p = new Packet();
+	p.Command("show interface", null, conn_);
+	p.onLoad = function() {
+		var e = conn_.find({"name": self.document.location.hash.substring(1)});
+		if( e ) conn_.startEditing(e);
+	}
+	p.proceed(document.getElementById("logger"));
+}
+function add() {
+	var id = ++maxId;
+	var invalid;
+	do {
+		id = prompt(l10n(65550, "Please, enter a new connection identifier (vid)"), id);
+		invalid = (id != null) && conn_.find({"index": id});
+		if( invalid )
+			alert(l10n(65545, "There is a connection with such id already. Please, choose another one."));
+	} while( invalid );
+
+	if( id ) conn_.startEditing(conn_.insertRow({name: _SWITCH + "/VLAN" + id, type: "VLAN", index: id}));
+}
+function drop() {
+	var selected = conn_.getSelectedRow();
+	switch_.onLoad = function() {
+		if( !this.getErrorState() ) conn_.deleteRow(selected); 
+	}
+	switch_.dropVlanEntries();
+	wan_.No("interface");
+	wan_.ConfigSave();
+	wan_.flushTo(switch_);
+	switch_.proceed(document.getElementById("logger"));
+}
+function submitWan() {
+	switch_.onLoad = function() {
+		if( !this.getErrorState() ) {
+			conn_.stopEditing();
+			var p = new Packet();
+			p.Command("show interface", null, conn_);
+			p.proceed(document.getElementById("logger"));
+		}
+	}
+	switch_.saveTrunkStates();
+	switch_.saveVlanTable();
+	wan_.saveState();
+	wan_.saveDescription();
+	wan_.saveIp();
+	wan_.saveDhcpState();
+	wan_.savePriority();
+	wan_.ConfigSave();
+	wan_.flushTo(switch_);
+	switch_.proceed(document.getElementById("logger"));
+	return false;	
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0"></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default">English</option><option selected="selected" value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br></div></div><div style="height: 639px;" id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a class="current" href="broadband.html"><span>IPoE</span></a></li><li><a href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a href="3g.html"><span>3G</span></a></li><li><a href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a href="dyndns.html"><span>DyDNS</span></a></li><li><a href="routes.html"><span>Маршруты</span></a></li></ul><div class="block orange" style="border-bottom:none;">
+		<h1>Соединение Ethernet</h1>
+		<div class="rounded">
+		<p>Соединение необходимо для подключения к Интернету по выделенной 
+линии Ethernet или через DSL-модем. Для каждого нового соединения 
+необходимо задать идентификатор виртуальной сети (VLAN ID). Авторизация в
+ сети провайдера по протоколам 802.1x, PPPoE, PPTP, L2TP настраивается в
+ соответствующих вкладках. Для редактирования созданного подключения 
+щелкните его запись в списке.</p>
+		</div>
+		<table style="width: 100%;" id="connections" class="styled" cellspacing="0">
+		<caption>Нажмите на имя подключения для настройки:</caption>
+		<thead>
+			<tr>
+			<th width="100px">Интерфейс</th>
+			<th>Описание</th>
+			<th width="10px">Включен</th>
+			<th width="10px">Интернет</th>
+			</tr>
+		</thead>
+		<tbody><tr class=""><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">ISP</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 409px;">Broadband connection</div></td><td class="col_state"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">up</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">yes</div></td></tr><tr class=""><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">Switch0/VLAN3</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 409px;">&nbsp;</div></td><td class="col_state"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">up</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">no</div></td></tr><tr class=""><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">Switch0/VLAN4</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 409px;">&nbsp;</div></td><td class="col_state"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">up</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">no</div></td></tr><tr class=""><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">Switch0/VLAN5</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 409px;">&nbsp;</div></td><td class="col_state"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">up</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">no</div></td></tr><tr class=""><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">Switch0/VLAN7</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 409px;">&nbsp;</div></td><td class="col_state"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">&nbsp;</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">&nbsp;</div></td></tr><tr class=" highlight"><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">Switch0/VLAN8</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 409px;">&nbsp;</div></td><td class="col_state"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">&nbsp;</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">&nbsp;</div></td></tr><tr><td colspan="4" class="editor"><form action="" name="editor" onsubmit="return submitWan();" onreset="conn_.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка интерфейса для соединения по Ethernet</h1><div class="close_button"><a href="broadband.html" onclick="document.location='broadband.html'"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите разъем, который будет использоваться соединением. Можно 
+выбрать несколько разъемов, которые будут логически объединены в один 
+VLAN. Если данное соединение предназначается для подключения к 
+Интернету, установите соответствующий флажок. Используйте автоматическое
+ получение параметров IP или задайте их вручную. При необходимости 
+укажите адреса <a href="dns.html">DNS-серверов</a> и <a href="mac.html">MAC-адрес</a> интерфейса.</p>
+			</div>
+			<fieldset>
+				<label for="imgs"></label>
+				<div class="column" style="background-image: url(&quot;img/ether-yellow.png&quot;); height: 40px;"><br>4</div>
+				<div class="column" style="background-image: url(&quot;img/ether-yellow.png&quot;); height: 40px;"><br>3</div>
+				<div class="column" style="background-image: url(&quot;img/ether-yellow.png&quot;); height: 40px;"><br>2</div>
+				<div class="column" style="background-image: url(&quot;img/ether-yellow.png&quot;); height: 40px;"><br>1</div>
+				<div class="column" style="background-image: url(&quot;img/ether-blue.png&quot;); height: 40px;">&nbsp;</div><br>
+				
+				<label for="enable">Использовать разъем:</label>
+				<div class="column"><input name="use_port4" type="checkbox"></div>
+				<div class="column"><input name="use_port3" type="checkbox"></div>
+				<div class="column"><input name="use_port2" type="checkbox"></div>
+				<div class="column"><input name="use_port1" type="checkbox"></div>
+				<div class="column"><input name="use_port5" type="checkbox"></div><br>
+
+				<label for="share">Передавать теги VLAN ID:</label>
+				<div class="column"><input name="share_port4" type="checkbox"></div>
+				<div class="column"><input name="share_port3" type="checkbox"></div>
+				<div class="column"><input name="share_port2" type="checkbox"></div>
+				<div class="column"><input name="share_port1" type="checkbox"></div>
+				<div class="column"><input name="share_port5" type="checkbox"></div>
+			</fieldset>
+			<fieldset>
+				<label for="enabled">Включить интерфейс:</label>
+					<input name="enabled" type="checkbox"><br>
+				<label for="description">Описание:</label><input name="description" type="text"><br>
+				<label for="index">Идентификатор сети (VLAN ID):</label>
+					<input value="8" id="_ndm_1304666107864" name="index" disabled="disabled" type="text"><br>
+			</fieldset>
+			<fieldset>
+			<label for="ip_address">IP-адрес:</label><input name="ip_address" type="text"><br>
+			<label for="ip_mask">Маска подсети:</label><input name="ip_mask" type="text"><br>
+			<label for="dhcp">Получить адрес по DHCP:</label><input name="dhcp" type="checkbox"><br>
+			<label for="global">Это прямое подключение к Интернет:</label>
+				<input id="_ndm_1304666107865" name="global" value="700" type="checkbox"><br>
+
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="apply">Применить</button>
+				<button class="cancel" type="reset" onclick="document.location='broadband.html'" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="">Удалить</button>
+			</fieldset>
+			</div>
+		</form></td></tr></tbody></table>
+
+		<br>
+		<button name="add_conn" onclick="add()">Добавить интерфейс</button>
+
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return submitWan();" onreset="conn_.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка интерфейса для соединения по Ethernet</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите разъем, который будет использоваться соединением. Можно 
+выбрать несколько разъемов, которые будут логически объединены в один 
+VLAN. Если данное соединение предназначается для подключения к 
+Интернету, установите соответствующий флажок. Используйте автоматическое
+ получение параметров IP или задайте их вручную. При необходимости 
+укажите адреса <a href="dns.html">DNS-серверов</a> и <a href="mac.html">MAC-адрес</a> интерфейса.</p>
+			</div>
+			<fieldset>
+				<label for="imgs"></label>
+				<div class="column" style="background-image:url(img/ether-yellow.png); height:40px;"><br>4</div>
+				<div class="column" style="background-image:url(img/ether-yellow.png); height:40px;"><br>3</div>
+				<div class="column" style="background-image:url(img/ether-yellow.png); height:40px;"><br>2</div>
+				<div class="column" style="background-image:url(img/ether-yellow.png); height:40px;"><br>1</div>
+				<div class="column" style="background-image:url(img/ether-blue.png); height:40px;">&nbsp;</div><br>
+				
+				<label for="enable">Использовать разъем:</label>
+				<div class="column"><input name="use_port4" type="checkbox"></div>
+				<div class="column"><input name="use_port3" type="checkbox"></div>
+				<div class="column"><input name="use_port2" type="checkbox"></div>
+				<div class="column"><input name="use_port1" type="checkbox"></div>
+				<div class="column"><input name="use_port5" type="checkbox"></div><br>
+
+				<label for="share">Передавать теги VLAN ID:</label>
+				<div class="column"><input name="share_port4" type="checkbox"></div>
+				<div class="column"><input name="share_port3" type="checkbox"></div>
+				<div class="column"><input name="share_port2" type="checkbox"></div>
+				<div class="column"><input name="share_port1" type="checkbox"></div>
+				<div class="column"><input name="share_port5" type="checkbox"></div>
+			</fieldset>
+			<fieldset>
+				<label for="enabled">Включить интерфейс:</label>
+					<input name="enabled" type="checkbox"><br>
+				<label for="description">Описание:</label><input name="description" type="text"><br>
+				<label for="index">Идентификатор сети (VLAN ID):</label>
+					<input name="index" disabled="disabled" type="text"><br>
+			</fieldset>
+			<fieldset>
+			<label for="ip_address">IP-адрес:</label><input name="ip_address" type="text"><br>
+			<label for="ip_mask">Маска подсети:</label><input name="ip_mask" type="text"><br>
+			<label for="dhcp">Получить адрес по DHCP:</label><input name="dhcp" type="checkbox"><br>
+			<label for="global">Это прямое подключение к Интернет:</label>
+				<input name="global" value="700" type="checkbox"><br>
+
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="apply">Применить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div style="right: -225px; display: block;" class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif"></a></div><span class="message">Created interface Switch0/VLAN8.</span><br></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+<div style="margin: 0px; padding: 0px; position: absolute; left: 48%; top: 30%; width: auto; display: none;" id="ajaxBusy"><p><img src="img/loading.gif"></p></div></body></html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="Users" />
+<meta name="ndm.abbr" lang="RU" content="Пользователи" xml:lang="RU" />
+
+<title>ZyXEL Keenetic - 
+				Пользователи и Пароли</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+form label {
+	width: 160px;
+}
+</style>
+<script type="text/javascript">
+<!--
+var users;
+var http, ftp, torrent;
+
+function loadValues() {
+	enableProgressIndicator();
+	users = new Table(document.getElementById("users"));
+	users.showColumns("name");
+	users.setEditorForm(new Form(document.editor));
+	users.onStartEditing = function(element) {
+		var f = this.getEditorForm().getElement();
+		if( this.getFlag(element) != TBL_ROW_INSERTED ) f.name.disabled = true;
+		var p = new Named(this.getRowValues(element)["name"]);
+		http = new Trigger(f.http, {tag: "tag", hasValue: "http"});
+		ftp = new Trigger(f.ftp, {tag: "tag", hasValue: "ftp"});
+		torrent = new Trigger(f.torrent, {tag: "tag", hasValue: "torrent"});
+		p.Config("user tag", null, new Aggregator(http, ftp, torrent));
+		p.proceed(document.getElementById("logger"));
+	}
+	users.onStopEditing = function(element) {
+		if( this.getFlag(element) == TBL_ROW_INSERTED ) this.deleteRow(element);
+	}
+
+	var p = new Packet();
+	p.Config("user password", null, users);
+	p.proceed(document.getElementById("logger"));
+}
+function save() {
+	var selected = users.getSelectedRow();
+	var f = users.getEditorForm();
+	var name = f.getParameter("name");
+	var found = users.find({"name": name});
+	if( name && found && found != selected ) {
+		alert(l10n(65539, "The name \"\uE000\" is already taken. Please, choose another name.", [name]));
+	} else {
+		var p = new Named(f.getParameter("name"));
+		p.Command("user", null, f);
+		if( f.getParameter("password") ) p.Command("user password", {"password": ""}, f);
+		http.save(p, "user tag", {"tag": "http"});
+		ftp.save(p, "user tag", {"tag": "ftp"});
+		torrent.save(p, "user tag", {"tag": "torrent"});
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) users.setRowValues(selected, f.getParameters(true)); 
+		}
+		p.proceed(document.getElementById("logger"));
+	}
+	return false;
+}
+function drop() {
+	var selected = users.getSelectedRow();
+	if( users.getFlag(selected) != TBL_ROW_INSERTED ) {
+		var p = new Packet();
+		p.No("user", users.getRowValues(selected));
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) users.deleteRow(selected); 
+		}
+		p.proceed(document.getElementById("logger"));
+	} else {
+		users.stopEditing();
+	}
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools.png');" class="selected"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Система<div id="subtitle"></div></div><ul class="tabs"><li><a href="log.html"><span>Журнал</span></a></li><li><a href="ping.html"><span>Ping</span></a></li><li><a href="files.html"><span>Файлы</span></a></li><li><a href="reboot.html"><span>Перезагрузка</span></a></li><li><a href="clock.html"><span>Дата и время</span></a></li><li><a class="current" href="users.html"><span>Пользователи</span></a></li><li><a href="components.html"><span>Компоненты</span></a></li></ul><div class="block blue" style="border-bottom: none;">
+		<h1>Управление учетными записями</h1>
+		<div class="rounded">
+		<p>Учетные записи пользователей нужны для управления доступом к службам и приложениям, установленным на интернет-центре. Для редактирования прав доступа пользователя щелкните его запись в списке.</p>
+		</div>
+		<table cellspacing="0" style="width:100%" id="users" class="styled">
+		<thead>
+			<tr>
+			<th>Имя</th>
+			</tr>
+		</thead>
+		</table>
+
+		<br />
+		<button name="add" onclick="document.location='users1.html'">Добавить пользователя</button>
+
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return save();" onreset="users.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка прав доступа</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif" /></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Чтобы предоставить пользователю права доступа к той или иной службе, поставьте отметку около названия службы. Для повышения безопасности не предоставляйте административных прав пользователю, имеющему доступ к другим службам и приложениям.</p>
+			</div>
+			<fieldset> 
+			<label for="name">Имя:</label><input type="text" name="name" /><br />
+			<label for="password">Установить пароль:</label>
+				<input type="password" name="password" /><br />
+			<label>Права доступа:</label><br />
+			<label for="http"></label><input type="checkbox" name="http" />http<br />
+			<label for="ftp"></label><input type="checkbox" name="ftp" />ftp<br />
+			<label for="torrent"></label><input type="checkbox" name="torrent" />torrent<br />
+
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="editor_apply">Сохранить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить пользователя</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

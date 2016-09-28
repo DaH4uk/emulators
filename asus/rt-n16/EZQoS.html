@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - EZQoS Bandwidth Management</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="usp_style.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '0';
+wan_proto = 'dhcp';
+
+var qos_pshack 	= parseInt('0');            //Game
+var qos_shortpkt = parseInt('0'); 	    //Internet
+var qos_service_enable_x = parseInt('0'); //FTP
+var qos_tos = parseInt('0');		    //VOIP
+
+var qosflag = [0, 0, 0, 0];
+var Bar_name = ['game', 'internet', 'aidisk', 'streaming'];
+var qosDesp = new Array();
+
+qosDesp[0] = "";
+qosDesp[1] = "Under Gaming Blaster, RT-N16 handles gaming traffic at first priority. You can then enjoy latency-free gaming experiences!";
+qosDesp[2] = "E-mail, web browsing, and other Internet applications are handled at first priority.";
+qosDesp[3] = "The speed of download/upload to RT-N16\'s USB FTP server is faster. Otherwise, you can resolve more bandwidth for this service at \"User Specify Service\" page.";
+qosDesp[4] = "RT-N16 manages all the audio/video traffic. No more latency when talking over IP phone or watching online video. When you choose this and under P2P case, the bandwidth of P2P  will limit to 10%.";
+
+var qos_ubw = parseInt("");
+var qos_manual_ubw = parseInt("0");
+
+function initial(){
+	show_banner(0);
+	show_menu(4, -1, 0);
+	show_footer();
+	
+	$("statusframe").style.display = "block";
+	
+	with(document.form){
+		qosflag[0] = qos_pshack;
+		qosflag[1] = qos_shortpkt;
+		qosflag[2] = qos_service_enable_x;
+		qosflag[3] = qos_tos;
+		
+		show_all_bar();
+	}
+	openHint(16, 1);
+	if(qos_ubw >= 40000 || qos_manual_ubw >= 40000){
+		$('qosdespblock').innerHTML = "<span>＊Your uplink speed has reached ideal value. We suggest you need not enable EzQoS for saving system resource.</span>";
+	}
+}
+
+function showDescription(a, btn_obj){
+	if(a > 0){ //for IE mouseover event
+		$('qosdespblock').innerHTML = qosDesp[a];
+		btn_obj.style.cursor = 'pointer';
+	}
+	else{
+		$('qosdespblock').innerHTML = "Click the Internet application and make the application remain the high priority even the network is busy.";
+		if(qos_ubw <= 40000 || qos_manual_ubw >= 40000){
+			$('qosdespblock').innerHTML = "Click the Internet application and make the application remain the high priority even the network is busy.";
+		}
+	}
+}
+
+function setBW(qosnum){
+	if(qosflag[qosnum] == 0)
+		qosflag[qosnum] = 1;
+	else
+		qosflag[qosnum] = 0;
+	
+	show_all_bar();
+}
+
+function show_all_bar(){
+	$('qospipe').style.backgroundColor = '#cbdbf0';
+	
+	for(var i = 0; i < 4; ++i){  //Set button style
+		if(qosflag[i] == 1){
+			$(Bar_name[i]).style.display = 'block';
+			$(Bar_name[i]+"_btn").style.background = 'url(images/band-'+(i+1)+'d.gif) no-repeat center';
+		}
+		else{
+			$(Bar_name[i]).style.display = 'none';
+			$(Bar_name[i]+"_btn").style.background = 'url(images/band-'+(i+1)+'.gif) no-repeat center';
+		}
+	}
+
+	var flag_sum = qosflag[0] + qosflag[1] + qosflag[2] + qosflag[3];
+	var BarPercent = 25;
+	
+	if(qosflag[3]){ 
+		BarPercent = 81/flag_sum;// when use 100/x, IE will occur wrong!
+		$('p2p').style.width = "18%";
+		$('p2p').title = "Available Bandwidth of P2P: 10%";
+		$('p2p').innerHTML = "P2P: 10%";
+	}
+	else if(flag_sum > 0){
+		$('p2p').style.width = (99 - BarPercent * flag_sum) + "%";
+		$('p2p').title = "Priority of P2P packets is lower than application you choose.";
+		$('p2p').innerHTML = "P2P Priority: Low";
+	}
+	else{
+		$('p2p').style.width = (99 - BarPercent * flag_sum) + "%";
+		$('p2p').style.display = "block";
+		$('p2p').title = "In default case, P2P will use all bandwidth.";
+		$('p2p').innerHTML = "Available Bandwidth of P2P: 100%";
+	}
+	
+	$('game').style.width = BarPercent+"%";
+	$('internet').style.width = BarPercent+"%";
+	$('aidisk').style.width = BarPercent+"%";
+	$('streaming').style.width = BarPercent+"%";
+	
+}
+
+function submitQoS(){
+	with(document.form){
+		if(qosflag[0] != qos_pshack ||
+				qosflag[1] != qos_shortpkt ||
+				qosflag[2] != qos_service_enable_x ||
+				qosflag[3] != qos_tos){
+			showLoading();
+			
+			if(qosflag[0]+qosflag[1]+qosflag[2]+qosflag[3]){
+				qos_global_enable.value = 1;
+			}
+			else{
+				qos_global_enable.value = 0;
+			}
+			
+			if(qosflag[0] == 1)
+				qos_pshack_prio.value = 1;
+			else
+				qos_pshack_prio.value = 0;
+			
+			if(qosflag[1] == 1)
+				qos_shortpkt_prio.value = 1;
+			else
+				qos_shortpkt_prio.value = 0;
+			
+			if(qosflag[2] == 1)
+				qos_service_enable.value = 1;
+			else
+				qos_service_enable.value = 0;
+			
+			if(qosflag[3] == 1)
+				qos_tos_prio.value = 1;
+			else
+				qos_tos_prio.value = 0;
+			
+			action_mode.value = " Apply ";
+			
+			flag.value = "nodetect";
+			
+			submit();
+		}
+		else
+			alert("Please select the applications that match your situation.");
+	}
+}
+
+function unload_body(){
+	$("game_btn").onmouseover = function(){};
+	$("game_btn").onmouseout = function(){};
+	
+	$("internet_btn").onmouseover = function(){};
+	$("internet_btn").onmouseout = function(){};
+	
+	$("aidisk_btn").onmouseover = function(){};
+	$("aidisk_btn").onmouseout = function(){};
+	
+	$("streaming_btn").onmouseover = function(){};
+	$("streaming_btn").onmouseout = function(){};
+}
+</script>
+</head>
+
+<body onload="initial();" onunload="unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+<!--for uniform show, useless but have exist-->
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" name="form" action="/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+
+<input type="hidden" name="current_page" value="/EZQoS.html">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="sid_list" value="PrinterStatus;">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="action_mode" value="">
+
+<input type="hidden" name="flag" value="">
+
+<input type='hidden' name='qos_global_enable'>
+<input type='hidden' name='qos_pshack_prio'> <!-- Game -->
+<input type='hidden' name='qos_shortpkt_prio'><!-- Internet -->
+<input type='hidden' name='qos_service_enable'><!-- FTP -->
+<input type='hidden' name='qos_tos_prio'><!-- VOIP -->
+</form>
+
+<table border="0" align="center" cellpadding="0" cellspacing="0" class="content">
+	<tr>
+		<td valign="top" width="23">&nbsp;</td>
+
+		<!--=====Beginning of Main Menu=====-->
+		<td valign="top" width="202">
+			<div id="mainMenu"></div>
+			<div id="subMenu"></div>
+		</td>		
+
+		<td height="430" align="center" valign="top">
+			<div id="tabMenu"></div>
+
+<!--=====Beginning of Main Content=====-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td valign="top" align="center">
+		    <br/>
+			<!--div class="bandtext">Bandwidth</div-->
+			<div id="qospipe">				
+				<div class="qosbar" id="game">Game</div>
+				<div class="qosbar" id="internet">Internet</div>
+				<div class="qosbar" id="aidisk">AiDisk</div>
+				<div class="qosbar" id="streaming">Stream</div>
+				<div id="p2p"></div>
+			</div>
+
+			<div id="qosbox">
+				<table width="400" border="0" cellspacing="0" cellpadding="0">
+					<tr align="center">
+						<td id="game_btn" width="100" class="qosbutton1" onmouseover="showDescription(1, this);" onmouseout="showDescription(0, this);" onclick="setBW(0);"><a href="#"></a></td>
+						<td id="internet_btn" width="100" class="qosbutton2" onmouseover="showDescription(2, this);" onmouseout="showDescription(0, this);" onclick="setBW(1);"><a href="#"></a></td>
+						<td id="aidisk_btn" width="100" class="qosbutton3" onmouseover="showDescription(3, this);" onmouseout="showDescription(0, this);" onclick="setBW(2);"><a href="#"></a></td>
+						<td id="streaming_btn" width="100" class="qosbutton4" onmouseover="showDescription(4, this);" onmouseout="showDescription(0, this);" onclick="setBW(3);"><a href="#"></a></td>
+					</tr>
+
+					<tr>
+						<td width="25%" class="band">Gaming Blaster</td>
+						<td width="25%" class="band">Internet Application</td>
+						<td width="25%" class="band">AiDisk</td>
+						<td width="25%" class="band">Voip/Video Streaming</td>
+					</tr>
+				</table>
+
+				<div id="qosdespblock">Click the Internet application and make the application remain the high priority even the network is busy.</div>
+			</div>
+
+			<div class="apply1"><a href="javascript:submitQoS();">Save</a></div>
+	</td>
+	
+	<!--==============Beginning of hint content=============-->
+	<td id="help_td" style="width:15px;" align="center" valign="top">
+		<form name="hint_form"></form>
+		<div id="helpicon"></div>
+		<div id="hintofPM" style="display:none;">
+			<table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+				<thead>
+				<tr>
+					<td>
+						<div id="helpname" class="AiHintTitle"></div>
+					</td>
+				</tr>
+				</thead>
+				
+				<tr>
+					<td valign="top">
+						<div class="hint_body2" id="hint_body"></div>
+						<iframe id="statusframe" name="statusframe" class="statusframe" src="" frameborder="0"></iframe>						
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+	<!--==============Ending of hint content=============-->
+				</tr>
+			</table>
+		</td>
+
+		<td width="20"></td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+</body>
+</html>

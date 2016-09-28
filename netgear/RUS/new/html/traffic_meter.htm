@@ -1,0 +1,1054 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/traffic_meter.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "traffic_meter";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//Traffic Meter
+var LocalTimeZone="-04:00";
+var language_cgi = "Russian";
+var G_wanConnction = [];
+var m = 0;
+G_wanConnction[m] = ["InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.", //Path
+"Disconnected", //ConnectionStatus
+"1_INTERNET_R", //name
+"1", //enalbe
+"IP_Routed", //ConnectionType
+"DHCP", //AddressingType
+"", //igmp
+"Enable", //qos
+"", //ip addr
+"", //default gw
+"0", // dnsoverride
+"", // dnsserver
+"", //user dns
+"" //mask
+];
+++m;
+var G_Enable = "0";
+var G_TrffcVlmCtl = "1";
+var G_TrffcVlmCtlOpt = "NoLimit";
+var G_TrffcVlmMonthlyLimit = "0";
+var G_TrffcVlmRndUpVlmPreCnn = "0";
+var G_CnnTimeCtl = "0";
+var G_CnnTimeMonthlyLimit = "0";
+var G_TrffcCnter = "";
+var G_TrffcCtlOver = "0";
+var G_TrffcCtlDiscnn = "0";
+var G_TrffcLimitWarning = "NoWarning";
+var G_StartDataAndTime = "0";
+var G_CurrDataAndTime = "0";
+var G_TrffcVlmLeft = "0";
+var G_TdCnnTime = "0";
+var G_TdUpVlm = "0";
+var G_TdDownVlm = "0";
+var G_TdTotalVlm = "0";
+var G_YdCnnTime = "0";
+var G_YdUpVlm = "0";
+var G_YdDownVlm = "0";
+var G_YdTotalVlm = "0";
+var G_WkCnnTime = "0";
+var G_WkUpVlm = "0";
+var G_WkUpAvg = "0";
+var G_WkDownVlm = "0";
+var G_WkDownAvg = "0";
+var G_WkTotalVlm = "0";
+var G_WkTotalAvg = "0";
+var G_MthCnnTime = "0";
+var G_MthUpVlm = "0";
+var G_MthUpAvg = "0";
+var G_MthDownVlm = "0";
+var G_MthDownAvg = "0";
+var G_MthTotalVlm = "0";
+var G_MthTotalAvg = "0";
+var G_LmthCnnTime = "0";
+var G_LmthUpVlm = "0";
+var G_LmthUpAvg = "0";
+var G_LmthDownVlm = "0";
+var G_LmthDownAvg = "0";
+var G_LmthTotalVlm = "0";
+var G_LmthTotalAvg = "0";
+function JumpToTrafficShow()
+{
+window.open ("../html/traffic_status.htm", "newwindow", "height=400, width=600, toolbar =no, menubar=no, scrollbars=no, resizable=no, location=no, status=no") ;
+}
+function getPrototype()
+{
+var _prototype = 'Unknown';
+if(G_wanConnction[0][0].indexOf('IP') > 0){
+return G_wanConnction[0][5];
+} else {
+return G_wanConnction[0][4];
+}
+}
+function uialertReset(){
+$H({
+'obj-action' : 'set',
+'var:page' : 'traffic_alert',
+'var:errorpage' : 'traffic_alert',
+'var:alertselect' : G_alertselect,
+'var:alerttime' : G_CurrDataAndTime,
+'var:alertvolumt' : G_alertvolumt,
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcLimitWarning','NoWarning');
+$('uiPostForm').submit();
+}
+var G_alertvolumt = 0;
+var G_alertselect = 'NoWarning';
+function alertTurnOut()
+{
+switch(G_TrffcLimitWarning)
+{
+case 'VolumeOver' :
+G_alertselect = 'VolumeOver';
+G_alertvolumt = G_TrffcVlmMonthlyLimit;
+uialertReset();
+break;
+case 'TimeOver' :
+G_alertselect = 'TimeOver';
+G_alertvolumt = G_CnnTimeMonthlyLimit;
+uialertReset();
+break;
+case 'VolumeReachedLimit' :
+G_alertselect = 'VolumeReachedLimit';
+if(G_TrffcVlmCtlOpt=='DownloadOnly')
+{
+G_alertvolumt = Math.round(G_TrffcVlmMonthlyLimit-KbToMb(G_MthDownVlm));
+uialertReset();
+}
+else if(G_TrffcVlmCtlOpt=='BothDirctions')
+{
+G_alertvolumt = Math.round(G_TrffcVlmMonthlyLimit-KbToMb(G_MthTotalVlm));
+uialertReset();
+}
+else if(G_TrffcVlmCtlOpt=='NoLimit')
+{
+break;
+}
+break;
+case 'TimeReachedLimit' :
+G_alertselect = 'TimeReachedLimit';
+G_alertvolumt = Math.round((parseInt(G_CnnTimeMonthlyLimit)*60)-(parseInt(G_MthCnnTime)/60));
+uialertReset();
+break;
+case 'NoWarning' :
+break;
+}
+}
+function GrayChange(flag1,flag2)
+{
+var _tmp_proto = getPrototype();
+if(0==flag1)
+{
+$('INPUT_TrffcVlmCtl').disabled=true;
+$('INPUT_TrffcVlmCtlOpt').disabled=true;
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+$('INPUT_CnnTimeCtl').disabled=true;
+$('conntime_monthly_limit').disabled=true;
+$('hour').disabled=true;
+$('min').disabled=true;
+$('ampm').disabled=true;
+$('day').disabled=true;
+$('waterMark').disabled=true;
+$('checkBlock').disabled=true;
+$('restartCounter').disabled=true;
+$('refresh').disabled=true;
+$('traffic_status').disabled=true;
+document.getElementById("restartCounter").className = "long_common_gray_bt";
+document.getElementById("refresh").className = "common_gray_bt";
+document.getElementById("traffic_status").className = "common_gray_bt";
+}
+else if(1==flag1)
+{
+$('INPUT_TrffcVlmCtl').disabled=false;
+$('INPUT_CnnTimeCtl').disabled=false;
+if(0==flag2){
+//this is controlled by wan protocol(static,dhcp,ppoe,pptp,l2tp)
+if(_tmp_proto=='Static'||_tmp_proto=='DHCP'||_tmp_proto=='DHCPPlus')
+{
+$('INPUT_TrffcVlmCtl').disabled=false;
+$('INPUT_TrffcVlmCtlOpt').disabled=false;
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+$('volume_monthly_limit').disabled=true;
+}
+else
+{
+$('volume_monthly_limit').disabled=false;
+}
+$('round_up_volume').disabled=true;
+$('INPUT_CnnTimeCtl').disabled=true;
+$('conntime_monthly_limit').disabled=true;
+}
+else if(_tmp_proto=='IP_Routed'||_tmp_proto=='PPTP_Relay'||_tmp_proto=='L2TP_Relay'||_tmp_proto=='PPPoE_Plus'||_tmp_proto=='PPPoE_Dynamic'||_tmp_proto=='PPPoE_Other1'||_tmp_proto=='PPPoE_Other2')
+{
+if(1==G_TrffcVlmCtl)
+{
+$('INPUT_TrffcVlmCtlOpt').disabled=false;
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+}
+else
+{
+$('volume_monthly_limit').disabled=false;
+$('round_up_volume').disabled=false;
+}
+$('conntime_monthly_limit').disabled=true;
+}
+else if(1==G_CnnTimeCtl)
+{
+$('INPUT_TrffcVlmCtlOpt').disabled=true;
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+$('conntime_monthly_limit').disabled=false;
+}
+}
+}
+else{
+if(_tmp_proto=='Static'||_tmp_proto=='DHCP'||_tmp_proto=='DHCPPlus')
+{
+$('INPUT_TrffcVlmCtl').disabled=false;
+$('INPUT_TrffcVlmCtlOpt').disabled=false;
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+$('volume_monthly_limit').disabled=true;
+}
+else
+{
+$('volume_monthly_limit').disabled=false;
+}
+$('round_up_volume').disabled=true;
+$('INPUT_CnnTimeCtl').disabled=true;
+$('conntime_monthly_limit').disabled=true;
+}
+else if(_tmp_proto=='IP_Routed'||_tmp_proto=='PPTP_Relay'||_tmp_proto=='L2TP_Relay'||_tmp_proto=='PPPoE_Plus'||_tmp_proto=='PPPoE_Dynamic'||_tmp_proto=='PPPoE_Other1'||_tmp_proto=='PPPoE_Other2')
+{
+if($('INPUT_TrffcVlmCtl').checked)
+{
+$('INPUT_TrffcVlmCtlOpt').disabled=false;
+$('volume_monthly_limit').disabled=false;
+$('round_up_volume').disabled=false;
+$('conntime_monthly_limit').disabled=true;
+}
+else if($('INPUT_CnnTimeCtl').checked)
+{
+$('INPUT_TrffcVlmCtlOpt').disabled=true;
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+$('conntime_monthly_limit').disabled=false;
+}
+}
+}
+$('hour').disabled=false;
+$('min').disabled=false;
+$('ampm').disabled=false;
+$('day').disabled=false;
+$('waterMark').disabled=false;
+$('checkBlock').disabled=false;
+$('restartCounter').disabled=false;
+$('refresh').disabled=false;
+$('traffic_status').disabled=false;
+document.getElementById("restartCounter").className = "long_common_bt";
+document.getElementById("refresh").className = "common_bt";
+document.getElementById("traffic_status").className = "common_bt";
+}
+else if(2==flag1)
+{
+if($('INPUT_TrffcVlmCtl').checked)
+{
+$('INPUT_TrffcVlmCtlOpt').disabled=false;
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+}
+else
+{
+$('volume_monthly_limit').disabled=false;
+if(_tmp_proto=='Static'||_tmp_proto=='DHCP'||_tmp_proto=='DHCPPlus')
+$('round_up_volume').disabled=true;
+else
+$('round_up_volume').disabled=false;
+}
+$('conntime_monthly_limit').disabled=true;
+}
+else if($('INPUT_CnnTimeCtl').checked)
+{
+$('INPUT_TrffcVlmCtlOpt').disabled=true;
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+$('conntime_monthly_limit').disabled=false;
+}
+}
+else if(3==flag1)
+{
+if(_tmp_proto=='Static'||_tmp_proto=='DHCP'||_tmp_proto=='DHCPPlus')
+{
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+$('volume_monthly_limit').disabled=true;
+else
+$('volume_monthly_limit').disabled=false;
+}
+else if(_tmp_proto=='IP_Routed'||_tmp_proto=='PPTP_Relay'||_tmp_proto=='L2TP_Relay'||_tmp_proto=='PPPoE_Plus'||_tmp_proto=='PPPoE_Dynamic'||_tmp_proto=='PPPoE_Other1'||_tmp_proto=='PPPoE_Other2')
+{
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+$('volume_monthly_limit').disabled=true;
+$('round_up_volume').disabled=true;
+}
+else
+{
+$('volume_monthly_limit').disabled=false;
+$('round_up_volume').disabled=false;
+}
+}
+}
+}
+function KbToMb(_Kb)
+{
+var _Mb=Math.floor((parseInt(_Kb)*1000)/1024)/1000;
+return _Mb;
+}
+function SecondToHourMin(_second)
+{
+var _hour = Math.floor(parseInt(_second)/60/60);
+var _minute = Math.floor(parseInt(_second)/60%60);
+return(_hour+':'+_minute);
+}
+function KbToGbMbKb(_Kb)
+{
+var _Gb=Math.floor((parseInt(_Kb)/1024)/1024);
+var _Mb=Math.floor((parseInt(_Kb)/1024)%1024);
+var _Kb=Math.floor(parseInt(_Kb)%1024);
+return (_Gb + 'GBytes' + ' ' + _Mb + 'MBytes' + ' ' + _Kb + 'KBytes');
+}
+function StatisticsTableShow(){
+supplyValue('INPUT_TdCnnTime',SecondToHourMin(G_TdCnnTime));
+supplyValue('INPUT_TdUpVlm',KbToMb(G_TdUpVlm));
+supplyValue('INPUT_TdDownVlm',KbToMb(G_TdDownVlm));
+supplyValue('INPUT_TdTotalVlm',KbToMb(G_TdTotalVlm));
+supplyValue('INPUT_YdCnnTime',SecondToHourMin(G_YdCnnTime));
+supplyValue('INPUT_YdUpVlm',KbToMb(G_YdUpVlm));
+supplyValue('INPUT_YdDownVlm',KbToMb(G_YdDownVlm));
+supplyValue('INPUT_YdTotalVlm',KbToMb(G_YdTotalVlm));
+supplyValue('INPUT_WkCnnTime',SecondToHourMin(G_WkCnnTime));
+supplyValue('INPUT_WkUpVlmAvg',KbToMb(G_WkUpVlm)+'/'+KbToMb(G_WkUpAvg));
+supplyValue('INPUT_WkDownVlmAvg',KbToMb(G_WkDownVlm)+'/'+KbToMb(G_WkDownAvg));
+supplyValue('INPUT_WkTotalVlmAvg',KbToMb(G_WkTotalVlm)+'/'+KbToMb(G_WkTotalAvg));
+supplyValue('INPUT_MthCnnTime',SecondToHourMin(G_MthCnnTime));
+supplyValue('INPUT_MthUpVlmAvg',KbToMb(G_MthUpVlm)+'/'+KbToMb(G_MthUpAvg));
+supplyValue('INPUT_MthDownVlmAvg',KbToMb(G_MthDownVlm)+'/'+KbToMb(G_MthDownAvg));
+supplyValue('INPUT_MthTotalVlmAvg',KbToMb(G_MthTotalVlm)+'/'+KbToMb(G_MthTotalAvg));
+supplyValue('INPUT_LmthCnnTime',SecondToHourMin(G_LmthCnnTime));
+supplyValue('INPUT_LmthUpVlmAvg',KbToMb(G_LmthUpVlm)+'/'+KbToMb(G_LmthUpAvg));
+supplyValue('INPUT_LmthDownVlmAvg',KbToMb(G_LmthDownVlm)+'/'+KbToMb(G_LmthDownAvg));
+supplyValue('INPUT_LmthTotalVlmAvg',KbToMb(G_LmthTotalVlm)+'/'+KbToMb(G_LmthTotalAvg));
+}
+function showTime(_objD)
+{
+var localOffset = _objD.getTimezoneOffset() * 60000;
+var utc = _objD.getTime() + localOffset;
+var bombay = utc - (3600000*parseFloat(LocalTimeZone));
+var nd = new Date(bombay);
+var yy = nd.getYear();
+if(yy<1900) yy = yy+1900;
+var MM = nd.getMonth()+1;
+if(MM<10) MM = '0' + MM;
+var dd = nd.getDate();
+if(dd<10) dd = '0' + dd;
+var hh = nd.getHours();
+if(hh<10) hh = '0' + hh;
+var mm = nd.getMinutes();
+if(mm<10) mm = '0' + mm;
+var ss = nd.getSeconds();
+if(ss<10) ss = '0' + ss;
+var ww = nd.getDay();
+var strLang = "Russian";
+strLang = (strLang == null) ? "en_us" : strLang;
+if('zh_cn'==strLang)
+{
+ww=lang_traffmeter_week[parseInt(ww)];
+var _str =yy + "-" + MM + "-" + dd + " " + ww +" "+ hh + ":" + mm + ":" + ss;
+}else {
+ww=lang_traffmeter_week[ww];
+var _str =yy + "-" + MM + "-" + dd + " " + ww +" "+ hh + ":" + mm + ":" + ss;
+}
+return(_str);
+}
+function uiOnload(){
+//var _time='02:30pm-02';
+//var _time;
+var _time = (G_TrffcCnter == '' ? '00:00am-01' : G_TrffcCnter);
+var _a=_time.split(':');
+var _b=_a[1].split('-');
+var _c=[_b[0].substr(0,2),_b[0].substr(2,2)];
+var _cnnTimeHour = _a[0];
+var _cnnTimeMinute = _c[0];
+var _cnnTimeAmPm = _c[1];
+var _cnnTimeDay = _b[1];
+Form.Checkbox('checkTraffic',G_Enable);
+Form.Checkbox('checkBlock',G_TrffcCtlDiscnn);
+var _tmp_proto = getPrototype();
+if(_tmp_proto=='Static'||_tmp_proto=='DHCP'||_tmp_proto=='DHCPPlus')
+{
+Form.Radio('tm_type','tvolume');
+}
+else if(_tmp_proto=='IP_Routed'||_tmp_proto=='PPTP_Relay'||_tmp_proto=='L2TP_Relay'||_tmp_proto=='PPPoE_Plus'||_tmp_proto=='PPPoE_Dynamic'||_tmp_proto=='PPPoE_Other1'||_tmp_proto=='PPPoE_Other2')
+{
+if(G_CnnTimeCtl=='1')
+{
+Form.Radio('tm_type','conntime');
+}
+else if(G_TrffcVlmCtl=='1')
+{
+Form.Radio('tm_type','tvolume');
+}
+}
+var BeginTime = new Date();
+BeginTime.setTime(G_StartDataAndTime*1000);
+var CurrentTime = new Date();
+CurrentTime.setTime(G_CurrDataAndTime*1000);
+if('1'==G_TrffcVlmCtl)
+{
+var _TrffcVlmLeft = KbToGbMbKb(G_TrffcVlmLeft);
+supplyValue('lang_TrffcVlmTimeLeft',lang_traffmeter_vlmtime_left[0]);
+}
+else
+{
+G_TrffcVlmLeft = SecondToHourMin(G_TrffcVlmLeft);
+var _TrffcTimeLeft = G_TrffcVlmLeft.split(':');
+supplyValue('lang_TrffcVlmTimeLeft',lang_traffmeter_vlmtime_left[1]);
+}
+setJSONValue({
+'INPUT_TrffcVlmCtlOpt' : (G_TrffcVlmCtlOpt=='NoLimit') ? 'No limit' : ((G_TrffcVlmCtlOpt=='DownloadOnly') ? 'Download only' : 'Both directions'),
+'volume_monthly_limit' : G_TrffcVlmMonthlyLimit,
+'round_up_volume' : G_TrffcVlmRndUpVlmPreCnn,
+'conntime_monthly_limit' : G_CnnTimeMonthlyLimit,
+'hour':_cnnTimeHour,
+'min':_cnnTimeMinute,
+'ampm':_cnnTimeAmPm=='am' ? '0' : '1',
+'day':_cnnTimeDay,
+'waterMark' : G_TrffcCtlOver,
+'INPUT_StartDataAndTime' : showTime(BeginTime),
+'INPUT_CurrDataAndTime' : showTime(CurrentTime),
+'INPUT_TrffcVlmLeft' : G_TrffcVlmCtlOpt=='NoLimit'&&Form.Checkbox('INPUT_CnnTimeCtl') == '0'? lang_traffmeter_vlmtime_left[2] :(G_TrffcVlmCtl == '1' ? _TrffcVlmLeft : (_TrffcTimeLeft[0] + ' ' + 'hour(s)' + ' ' + _TrffcTimeLeft[1] + ' ' + 'minute(s)'))
+});
+if(language_cgi=="German")
+{
+ChangInGermany();
+}
+StatisticsTableShow();
+GrayChange(G_Enable,0);
+alertTurnOut();
+}
+//test the input if is number;true return 1,false return 0
+function IsNum(num){
+var reNum=/^\d*$/;
+return(reNum.test(num));
+}
+function ChangInGermany()
+{
+document.getElementById("day1").innerHTML = "1ter";
+document.getElementById("day2").innerHTML = "2ter";
+document.getElementById("day3").innerHTML = "3ter";
+document.getElementById("day4").innerHTML = "4ter";
+document.getElementById("day5").innerHTML = "5ter";
+document.getElementById("day6").innerHTML = "6ter";
+document.getElementById("day7").innerHTML = "7ter";
+document.getElementById("day8").innerHTML = "8ter";
+document.getElementById("day9").innerHTML = "9ter";
+document.getElementById("day10").innerHTML = "10ter";
+document.getElementById("day11").innerHTML = "11ter";
+document.getElementById("day12").innerHTML = "12ter";
+document.getElementById("day13").innerHTML = "13ter";
+document.getElementById("day14").innerHTML = "14ter";
+document.getElementById("day15").innerHTML = "15ter";
+document.getElementById("day16").innerHTML = "16ter";
+document.getElementById("day17").innerHTML = "17ter";
+document.getElementById("day18").innerHTML = "18ter";
+document.getElementById("day19").innerHTML = "19ter";
+document.getElementById("day20").innerHTML = "20ter";
+document.getElementById("day21").innerHTML = "21ter";
+document.getElementById("day22").innerHTML = "22ter";
+document.getElementById("day23").innerHTML = "23ter";
+document.getElementById("day24").innerHTML = "24ter";
+document.getElementById("day25").innerHTML = "25ter";
+document.getElementById("day26").innerHTML = "26ter";
+document.getElementById("day27").innerHTML = "27ter";
+document.getElementById("day28").innerHTML = "28ter";
+document.getElementById("day29").innerHTML = "29ter";
+document.getElementById("day30").innerHTML = "30ter";
+document.getElementById("day31").innerHTML = "31ter";
+}
+function numCheck(_flag)
+{
+var _a = _flag.substr(0,1);
+var _b = _flag.substr(1,1);
+if(_b=='')
+return _a;
+else if(_a=='0')
+return _b;
+else
+return _flag;
+}
+function getINPUT_TrffcVlmCtlOptValue()
+{
+if($('INPUT_TrffcVlmCtlOpt').value=='No limit')
+{
+return 'NoLimit';
+}
+else if($('INPUT_TrffcVlmCtlOpt').value=='Download only')
+{
+return 'DownloadOnly';
+}
+else if($('INPUT_TrffcVlmCtlOpt').value=='Both directions')
+{
+return 'BothDirctions';
+}
+}
+function uiSubmit(){
+var _TrffcCnter='0';
+var _nodes = $('hour','min','ampm','day');
+//use for time input check
+if((IsNum(_nodes[0].value)==0 ? 0 : (IsNum(_nodes[1].value)==0 ? 0 : 1))==1)
+{
+if(parseInt(_nodes[0].value)>11||parseInt(_nodes[0].value)<0||parseInt(_nodes[1].value)<0||parseInt(_nodes[1].value)>59)
+{
+alertError('TraffMeterTimeInput',1);
+return;
+}
+else
+{
+if(parseInt(numCheck(_nodes[0].value))<10)
+{_nodes[0].value='0'+parseInt(numCheck(_nodes[0].value))}
+_TrffcCnter = _nodes[0].value + ':';
+if(parseInt(numCheck(_nodes[1].value))<10)
+{_nodes[1].value='0'+parseInt(numCheck(_nodes[1].value))}
+_TrffcCnter += _nodes[1].value;
+_TrffcCnter +=(_nodes[2].value=='0' ? 'am' : 'pm')+'-'+ _nodes[3].value;
+}
+}
+else
+{
+alertError('TraffMeterTimeInputNoNum',1);
+return;
+}
+if(Form.Checkbox('checkTraffic')==true)
+{
+if('1'==Form.Checkbox('INPUT_TrffcVlmCtl'))
+{
+if('No limit'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+if(''==$('volume_monthly_limit').value)
+{
+alertError('TraffMeterMonLimBlank',1);
+return;
+}
+else if(!_isNumeric($('volume_monthly_limit').value))
+{
+alertError('TraffMeterMonLimBlank',1);
+return false;
+}
+if(' '==$('round_up_volume').value)
+{
+alertError('TraffMeterRoundVolBlank',1);
+return;
+}
+else if(!_isNumeric($('round_up_volume').value))
+{
+alertError('TraffMeterRoundVolBlank',1);
+return false;
+}
+if(' '==$('waterMark').value)
+{
+alertError('TraffMeterLeftVolBlank',1);
+return;
+}
+if(!_isNumeric($('waterMark').value))
+{
+alertError('TraffMeterLeftVolBlank',1);
+return false;
+}
+}
+else if('Download only'==$('INPUT_TrffcVlmCtlOpt').value||'Both directions'==$('INPUT_TrffcVlmCtlOpt').value)
+{
+if('0'==$('volume_monthly_limit').value)
+{
+alertError('TraffMeterMonLimZero',1);
+return;
+}
+else if(''==$('volume_monthly_limit').value)
+{
+alertError('TraffMeterMonLimBlank',1);
+return;
+}
+else if(!_isNumeric($('volume_monthly_limit').value))
+{
+alertError('TraffMeterMonLimBlank',1);
+return false;
+}
+if(''==$('round_up_volume').value)
+{
+alertError('TraffMeterRoundVolBlank',1);
+return;
+}
+else if(!_isNumeric($('round_up_volume').value))
+{
+alertError('TraffMeterRoundVolBlank',1);
+return false;
+}
+if(''==$('waterMark').value)
+{
+alertError('TraffMeterLeftVolBlank',1);
+return;
+}
+if(!_isNumeric($('waterMark').value))
+{
+alertError('TraffMeterLeftVolBlank',1);
+return false;
+}
+}
+if(''==$('waterMark').value)
+{
+alertError('TraffMeterLeftVolBlank',1);
+return;
+}
+if(parseInt($('round_up_volume').value)>parseInt($('volume_monthly_limit').value))
+{
+alertError('TraffMeterRoundVolSmaller',1);
+return;
+}
+if(parseInt($('waterMark').value)>(parseInt($('volume_monthly_limit').value)))
+{
+alertError('TraffMeterLeftVolSmaller',1);
+return;
+}
+}
+else
+{
+if(''==$('conntime_monthly_limit').value)
+{
+alertError('TraffMeterMonLimBlank',1);
+return;
+}
+else if('0'==$('conntime_monthly_limit').value)
+{
+alertError('TraffMeterMonLimZero',1);
+return;
+}
+if(parseInt($('waterMark').value)>(parseInt($('conntime_monthly_limit').value))*60)
+{
+alertError('TraffMeterLeftVolSmaller',1);
+return;
+}
+}
+}
+if(Form.Checkbox('checkTraffic')==true)
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmCtl' : Form.Checkbox('INPUT_TrffcVlmCtl'),
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmCtlOpt' : Form.Checkbox('INPUT_TrffcVlmCtl') == '1' ? getINPUT_TrffcVlmCtlOptValue() : undefined,
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmMonthlyLimit' : Form.Checkbox('INPUT_TrffcVlmCtl') == '1' ? $('volume_monthly_limit').value : undefined,
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmRndUpVlmPreCnn' : Form.Checkbox('INPUT_TrffcVlmCtl') == '1' ? $('round_up_volume').value : undefined,
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.CnnTimeCtl' : Form.Checkbox('INPUT_CnnTimeCtl'),
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.CnnTimeMonthlyLimit' : Form.Checkbox('INPUT_CnnTimeCtl') == '1' ? $('conntime_monthly_limit').value : undefined,
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.Enable' : Form.Checkbox('checkTraffic'),
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnn' : Form.Checkbox('checkBlock'),
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlOver' : $('waterMark').value,
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCnter' : _TrffcCnter,
+'obj-action' : 'set',
+'var:page' : 'traffic_meter',
+'var:errorpage': 'traffic_meter',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+});
+}else{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.Enable' : Form.Checkbox('checkTraffic'),
+'obj-action' : 'set',
+'var:page' : 'traffic_meter',
+'var:errorpage': 'traffic_meter',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+});
+}
+if(Form.Checkbox('checkTraffic')==false)
+{
+if(G_Enable=='1')
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnnAct',"Connect");
+}
+if(( Form.Checkbox('INPUT_TrffcVlmCtl') == '1') &&(G_TrffcVlmMonthlyLimit<$('volume_monthly_limit').value))
+{
+if(G_MthTotalVlm>=G_TrffcVlmMonthlyLimit)
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnnAct',"Connect");
+}
+if(( Form.Checkbox('INPUT_CnnTimeCtl') == '1' ) &&(G_CnnTimeMonthlyLimit<$('conntime_monthly_limit').value))
+{
+if(G_MthCnnTime>G_CnnTimeMonthlyLimit)
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnnAct',"Connect");
+}
+$('uiPostForm').submit();
+}
+function restartCounter(){
+if(alertError('RestartCounter',2)==false)
+{
+return false;
+}
+$H({
+'obj-action' : 'set',
+'var:page' : 'traffic_meter',
+'var:errorpage': 'traffic_meter',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCnterAct',1);
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnnAct',"Connect");
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload,dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="traffic_meter.htm"></form>
+<style type="text/css">
+<!--
+.STYLE {
+moz-background-clip:border;
+-moz-background-inline-policy:continuous;
+-moz-background-origin:padding;
+color: #000000;
+font-weight: bold;
+background:white none repeat scroll 0 0;
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+input[type=text] {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+letter-spacing:1px;
+}
+-->
+</style>
+<div class="page_title" id="lang_Traffic_Meter">Traffic Meter</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type="button" name="cancel" id="Cancel" value="Cancel"/>
+<input class="apply_bt" type="button" name="apply" id="Apply" onClick="uiSubmit();" value="Apply"/>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" colspan="2" >
+<a tabindex=-1 href="javascript:loadhelp('internet')"><b id="lang_Internet_Traffic_Meter">Internet Traffic Meter</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap=""><input type="checkbox" id='checkTraffic' name="checkTraffic" value="Enable" onClick="GrayChange(this.checked,1);">
+<a tabindex=-1 href="javascript:loadhelp('meter')"><label for="checkTraffic" id="lang_enable_traffmeter" >Enable Traffic Meter</label></a></td>
+<td nowrap=""></td>
+</tr>
+<tr>
+<td nowrap=""><input type="radio" name="tm_type" value="tvolume" id="INPUT_TrffcVlmCtl" onClick="GrayChange(2,1);"/>
+<label for="INPUT_TrffcVlmCtl" id="lang_TrffcVlmCtl">Traffic volume control by</label></td>
+<td nowrap=""><select name="traff_dir" id="INPUT_TrffcVlmCtlOpt" onChange="GrayChange(3,1);">
+<option value="No limit" id="lang_Nolimit">No limit</option>
+<option value="Download only" id="lang_Downloadonly">Download only</option>
+<option value="Both directions" id="lang_Bothdirections">Both directions</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_monthly_limit1" style="padding-left:25px">Monthly limit</td>
+<td nowrap=""><input type="text" name="volume_monthly_limit" id="volume_monthly_limit" value="" maxlength="6" size="16" onKeyPress="return getkey('num',event);"/><span id="lang_mbyte1">MBytes</span></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_round_up" style="padding-left:25px">Round up data volume for each connection by</td>
+<td nowrap=""><input type="text" name="round_up_volume" value="0" id="round_up_volume" maxlength="6" size="16" onKeyPress="return getkey('num',event);"/><span id="lang_mbyte2">MBytes</span></td>
+</tr>
+<tr>
+<td nowrap=""><input type="radio" name="tm_type" id="INPUT_CnnTimeCtl" value="conntime" onClick="GrayChange(2,1);"/>
+<label for="INPUT_CnnTimeCtl" id="lang_CnnTimeCtl">Connection time control</label></td>
+<td nowrap=""></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_monthly_limit2" style="padding-left:25px">Monthly limit</td>
+<td nowrap=""><input type="text" name="conntime_monthly_limit" onKeyPress="return getkey('num', event)" value="" id="conntime_monthly_limit" maxlength="6" size="16"/><span id="lang_hours">Hours</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a tabindex=-1 href="javascript:loadhelp('counter')"><p class="do bk_black3_black" id="lang_Traffic_Counter">Traffic Counter</p></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><span id="lang_restart_traffcounter">Restart traffic counter at&nbsp;</span>
+<input type="text" name="hour" id="hour" value="00" maxlength="2" size="2" style="width:30px" />
+:
+<input type="text" name="min" id="min" value="00" maxlength="2" size="2" style="width:30px" />
+&nbsp;
+<select name="ampm" id="ampm">
+<option value=0 >am</option>
+<option value=1 >pm</option>
+</select>
+<span id="lang_per_month">On the</span>
+<select id="day" name="day">
+<option id="day1" value="01">1st</option>
+<option id="day2" value="02">2nd</option>
+<option id="day3" value="03">3rd</option>
+<option id="day4" value="04">4th</option>
+<option id="day5" value="05">5th</option>
+<option id="day6" value="06">6th</option>
+<option id="day7" value="07">7th</option>
+<option id="day8" value="08">8th</option>
+<option id="day9" value="09">9th</option>
+<option id="day10" value="10">10th</option>
+<option id="day11" value="11">11th</option>
+<option id="day12" value="12">12th</option>
+<option id="day13" value="13">13th</option>
+<option id="day14" value="14">14th</option>
+<option id="day15" value="15">15th</option>
+<option id="day16" value="16">16th</option>
+<option id="day17" value="17">17th</option>
+<option id="day18" value="18">18th</option>
+<option id="day19" value="19">19th</option>
+<option id="day20" value="20">20th</option>
+<option id="day21" value="21">21th</option>
+<option id="day22" value="22">22th</option>
+<option id="day23" value="23">23th</option>
+<option id="day24" value="24">24th</option>
+<option id="day25" value="25">25th</option>
+<option id="day26" value="26">26th</option>
+<option id="day27" value="27">27th</option>
+<option id="day28" value="28">28th</option>
+<option id="day29" value="29">29th</option>
+<option id="day30" value="30">30th</option>
+<option id="day31" value="31">31th</option>
+</select>
+<span id="lang_day">day of each month</span></td>
+</tr>
+<tr>
+<td nowrap="" align="right" colspan="2"><input type="button" class="long_common_bt" id="restartCounter" name="restartCounter" onClick="restartCounter();" value="Restart Counter Now"/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('reached')"><p class="do bk_black3_black" id="lang_Traffic_Control">Traffic Control</p></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div id="lang_popup_warning">Pop up a warning message</div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div style="padding:3px 0px 0px 0px"><input type="text" name="waterMark" value="0" id="waterMark" maxlength="6" size="16" onKeyPress="return getkey('num',event);"/><span id="lang_mlimit_remaimd2">MBytes/Minutes before the monthly limit is reached</span></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div id="lang_reach_limit">When the monthly limit is reached</div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div>
+<input type="checkbox" id="checkBlock" name="checkBlock" onClick="">
+<label for="checkBlock" id="lang_TrffcCtlDiscnn">Disconnect and disable the Internet connection</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('statistics')"> <p class="do bk_black3_black" id="lang_Internet_Traffic_Statistics">Internet Traffic Statistics</p></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div><span id="lang_StartDataAndTime">Start Date / Time:&nbsp;</span><span id="INPUT_StartDataAndTime"></span></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div><span id="lang_CurrDataAndTime">Current Date / Time:&nbsp;</span><span id="INPUT_CurrDataAndTime"></span></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div style="padding-bottom:2px "><span id="lang_TrffcVlmTimeLeft">Traffic Volume Left:</span>&nbsp;<span id="INPUT_TrffcVlmLeft"></span></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<table width="100%" border="1" align="center" cellpadding="2" cellspacing="1">
+<tbody>
+<tr>
+<th nowrap="" rowspan="2"><div align="center"><span class="STYLE" id="lang_CountingPeriod">Counting Period</span></div></th>
+<th nowrap="" rowspan="2"><div align="center"><span class="STYLE" id="lang_ConnectionTime">Connection Time <br> (hh:mm)</span></div></th>
+<th colspan=3 nowrap="" style="border-bottom-style:none"><div align="center"><span class="STYLE" id="lang_TrafficVolume">Traffic Volume (MBytes)</span></div></th>
+</tr>
+<tr>
+<th nowrap="" style="border-top-style:none; border-right-style:none"><div align="center"><span class="STYLE" id="lang_TrafficVolume1">Upload/Avg</span></div></th>
+<th nowrap="" style="border-top-style:none; border-left-style:none; border-right-style:none"><div align="center"><span class="STYLE" id="lang_TrafficVolume2">Download/Avg</span></div></th>
+<th nowrap="" style="border-top-style:none; border-left-style:none"><div align="center"><span class="STYLE" id="lang_TrafficVolume3">Total/Avg</span></div></th>
+</tr>
+<tr>
+<td nowrap=""><div align="center"><span class="STYLE" id="lang_Today">Today</span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_TdCnnTime"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_TdUpVlm"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_TdDownVlm"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_TdTotalVlm"></span></div></td>
+</tr>
+<tr>
+<td nowrap=""><div align="center"><span class="STYLE" id="lang_Yesterday">Yesterday</span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_YdCnnTime"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_YdUpVlm"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_YdDownVlm"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_YdTotalVlm"></span></div></td>
+</tr>
+<tr>
+<td nowrap=""><div align="center"><span class="STYLE" id="lang_Thisweek">This week</span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_WkCnnTime"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_WkUpVlmAvg"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_WkDownVlmAvg"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_WkTotalVlmAvg"></span></div></td>
+</tr>
+<tr>
+<td nowrap=""><div align="center"><span class="STYLE" id="lang_Thismonth">This month</span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_MthCnnTime"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_MthUpVlmAvg"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_MthDownVlmAvg"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_MthTotalVlmAvg"></span></div></td>
+</tr>
+<tr>
+<td nowrap=""><div align="center"><span class="STYLE" id="lang_Lastmonth">Last month</span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_LmthCnnTime"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_LmthUpVlmAvg"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_LmthDownVlmAvg"></span></div></td>
+<td nowrap=""><div align="center" style="font-size:14px"><span id="INPUT_LmthTotalVlmAvg"></span></div></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div class="div_button3_no" style="padding:3px 0px 5px 0px">
+<input type="button" class="common_bt" name="refresh" id="refresh" value="Refresh"/>
+<input type="button" class="common_bt" name="trafficStatus" id="traffic_status" onClick="JumpToTrafficShow();" value="Traffic Status"/>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("traffic_meter")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

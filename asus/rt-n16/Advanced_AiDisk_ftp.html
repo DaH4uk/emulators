@@ -1,0 +1,1045 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - FTP Share</title>
+<link rel="stylesheet" type="text/css" href="index_style.css">
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="aidisk/AiDisk_style.css">
+<link rel="stylesheet" type="text/css" href="http://event.asus.com/2009/networks/dummy_ui/rt-n16/SubMenu/sub_menu.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="disk_functions.js"></script>
+<script type="text/javascript" src="aidisk/AiDisk_folder_tree.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript">
+wan_route_x = 'IP_Routed';
+wan_nat_x = '0';
+wan_proto = 'dhcp';
+
+function total_disk_sizes(){
+    return ["126976"];
+}
+
+function disk_interface_names(){
+    return ["usb"];
+}
+
+function pool_names(){
+    return ["part0"];
+}
+
+function pool_types(){
+    return ["vfat"];
+}
+
+function pool_mirror_counts(){
+    return [0];
+}
+
+function pool_status(){
+    return ["rw"];
+}
+
+function pool_kilobytes(){
+    return [126704];
+}
+
+function pool_encryption_password_is_missing(){
+    return ["no"];
+}
+
+function pool_kilobytes_in_use(){
+    return [15793];
+}
+
+function disk_usage(){
+    return [126704];
+}
+
+function per_pane_pool_usage_kilobytes(pool_num, disk_num){
+    if(pool_num == 0){
+        if(disk_num == 0){
+            return [126704];
+        }
+    }
+}
+
+
+function available_disks(){ return [];}
+
+function available_disk_sizes(){ return [];}
+
+function claimed_disks(){ return [];}
+
+function claimed_disk_interface_names(){ return [];}
+
+function claimed_disk_model_info(){ return [];}
+
+function claimed_disk_total_size(){ return [];}
+
+function claimed_disk_total_mounted_number(){ return [];}
+
+function blank_disks(){ return [];}
+
+function blank_disk_interface_names(){ return [];}
+
+function blank_disk_model_info(){ return [];}
+
+function blank_disk_total_size(){ return [];}
+
+function blank_disk_total_mounted_number(){ return [];}
+
+function foreign_disks(){
+    return ["USB DISK"];
+}
+
+function foreign_disk_interface_names(){
+    return ["1"];
+}
+
+function foreign_disk_model_info(){
+    return [" USB DISK"];
+}
+
+function foreign_disk_total_size(){
+    return ["126976"];
+}
+
+function foreign_disk_total_mounted_number(){
+    return ["1"];
+}
+
+
+
+function get_cifs_status(){
+    return 1;
+}
+
+function get_ftp_status(){
+    return 1;
+}
+
+function get_dms_status(){
+    return 1;
+}
+
+function get_share_management_status(protocol){
+    if(protocol == "cifs")
+        return 1;
+    else if(protocol == "ftp")
+        return 1;
+    else
+        return -1;
+}
+
+function get_sharedfolder_in_pool(poolName){
+    if(poolName == "part0"){
+        return ["traffic_www", "share", "www_an23_0910", "an23"];
+    }
+}
+
+
+function get_account_permissions_in_pool(account, pool){
+    return [];
+}
+
+function get_dms_permissions_in_pool(pool){
+    if(pool == "part0"){
+        return [["traffic_www", 1],
+                ["share", 1],
+                ["www_an23_0910", 1],
+                ["an23", 1]];
+    }
+}
+
+
+
+var PROTOCOL = "ftp";
+
+var NN_status = get_cifs_status();  // Network-Neighborhood
+var FTP_status = get_ftp_status(); // FTP
+var AM_to_cifs = get_share_management_status("cifs");  // Account Management for Network-Neighborhood
+var AM_to_ftp = get_share_management_status("ftp");  // Account Management for FTP
+
+var accounts = [];
+
+var lastClickedAccount = 0;
+var selectedAccount = "";
+
+// changedPermissions[accountName][poolName][folderName] = permission
+var changedPermissions = new Array();
+
+var folderlist = new Array();
+
+var ddns_enable = '0';
+
+function initial(){
+	show_banner(1);
+	show_menu(5, 4, 2);
+	show_footer();
+	
+	// show page's control
+	showShareStatusControl(PROTOCOL);
+	showAccountControl(PROTOCOL);
+	
+	// show accounts
+	showAccountMenu();
+	
+	// show the kinds of permission
+	showPermissionTitle();
+	
+	// show folder's tree
+	setTimeout('get_disk_tree();', 1000);
+	
+	// the click event of the buttons
+	onEvent();
+}
+
+function show_footer(){ 
+	footer_code = '<div align="center" class="bottom-image"></div>';
+	footer_code +='<div align="center" class="copyright">2009 ASUSTek Computer Inc. All rights reserved.</div>';
+	
+	$("footer").innerHTML = footer_code;
+
+	flash_button();
+}
+
+function get_disk_tree(){
+	if(this.isLoading == 0){
+		get_layer_items("0", "gettree");
+		setTimeout('get_disk_tree();', 1000);
+	}
+	else
+		;
+}
+
+function get_accounts(){
+	return this.accounts;
+}
+
+function switchAppStatus(protocol){  // turn on/off the share
+	var status;
+	var confirm_str_on, confirm_str_off;
+	
+	if(protocol == "cifs"){
+		status = this.NN_status;
+		
+		confirm_str_off= "Are you sure you want to disable the disk shared in the Network Neighborhood?";
+		confirm_str_on = "Are you sure you want to share the disk in the Network Neighborhood?";
+	}
+	else if(protocol == "ftp"){
+		status = this.FTP_status;
+		
+		confirm_str_off = "Are you sure you want to disable the disk shared via the FTP server?";
+		confirm_str_on = "Are you sure you want to share the disk by via the FTP server?";
+	}
+	
+	switch(status){
+		case 1:
+			if(confirm(confirm_str_off)){
+				showLoading();  location.href = "as.html";  location.href = "as.html";
+				
+				document.aidiskForm.action = "/aidisk/switch_AiDisk_app.html";
+				document.aidiskForm.protocol.value = protocol;
+				document.aidiskForm.flag.value = "off";
+				
+				document.aidiskForm.submit();
+			}
+			break;
+		case 0:
+			if(confirm(confirm_str_on)){
+				showLoading();  location.href = "as.html";  location.href = "as.html";
+				
+				document.aidiskForm.action = "/aidisk/switch_AiDisk_app.html";
+				document.aidiskForm.protocol.value = protocol;
+				document.aidiskForm.flag.value = "on";
+				
+				document.aidiskForm.submit();
+			}
+			break;
+	}
+}
+
+function resultOfSwitchAppStatus(){
+	refreshpage();
+}
+
+function showShareStatusControl(protocol){
+	var status;
+	var str_on, str_off;
+	
+	if(protocol == "cifs"){
+		status = this.NN_status;
+		
+		str_on = "Enable Share";
+		str_off = "Disable Share";
+	}
+	else if(protocol == "ftp"){
+		status = this.FTP_status;
+		
+		str_on = "Enable FTP";
+		str_off = "Disable FTP";
+	}
+	else
+		return;
+	
+	switch(status){
+		case 1:
+			$("sharebtn").value = str_off;
+			$("tableMask").style.width = "0px";
+			$("accountbtn").disabled = false;
+			
+			showDDNS();
+			break;
+		case 0:
+			$("sharebtn").value = str_on;
+			$("tableMask").style.width = "500px";
+			$("accountbtn").disabled = true;
+			
+			showDDNS();
+			break;
+	}
+}
+
+function showDDNS(){
+	if(FTP_status == 1){
+		$("ShareClose").style.display = "none";
+		$("DDNSinfo").style.display = "block";
+		
+		if(ddns_enable == "1"){
+			if(AM_to_ftp == 1)
+				$("haveDDNS").style.display = "block";
+			else
+				$("haveDDNS2").style.display = "block";
+		}
+		else{
+			$("noDDNS").style.display = "block";
+		}
+	}
+	else{
+		$("ShareClose").style.display = "block";
+		$("DDNSinfo").style.display = "none";
+	}
+}
+
+function switchAccount(protocol){
+	var status;
+	var confirm_str_on, confirm_str_off;
+	
+	if(protocol == "cifs")
+		status = this.AM_to_cifs;
+	else if(protocol == "ftp")
+		status = this.AM_to_ftp;
+	else
+		return;
+	
+	confirm_str_on = "Enabling share with account enables multiple computers, with different access rights, to access the file resources. Are you sure you want to enable it?";
+	confirm_str_off = "Through share without account, accounts  kept hidden. Are you sure you want to disable it?";
+	
+	switch(status){
+		case 2:
+		case 4:
+			if(confirm(confirm_str_off)){
+				document.aidiskForm.action = "/aidisk/switch_share_mode.html";
+				$("protocol").value = protocol;
+				$("mode").value = "share";
+				
+				showLoading();  location.href = "as.html";  location.href = "as.html";
+				document.aidiskForm.submit();
+			}
+			break;
+		case 1:
+		case 3:
+			if(confirm(confirm_str_on)){
+				document.aidiskForm.action = "/aidisk/switch_share_mode.html";
+				$("protocol").value = protocol;
+				$("mode").value = "account";
+				
+				showLoading();  location.href = "as.html";  location.href = "as.html";
+				document.aidiskForm.submit();
+			}
+			break;
+	}
+}
+
+function resultOfSwitchShareMode(){
+	refreshpage();
+}
+
+function showAccountControl(protocol){
+	var status;
+	var str_on, str_off;
+	
+	if(protocol == "cifs")
+		status = this.AM_to_cifs;
+	else if(protocol == "ftp")
+		status = this.AM_to_ftp;
+	else
+		return;
+	
+	str_on = "Share with account";
+	str_off = "Share without account";
+	
+	switch(status){
+		case 2:
+		case 4:
+			$("accountMask").style.display = "none";
+			$("accountbtn").value = str_off;
+			break;
+		case 1:
+		case 3:
+			$("accountMask").style.display = "block";
+			$("accountbtn").value = str_on;
+			break;
+	}
+}
+
+function showAccountMenu(){
+	var account_menu_code = "";
+	
+	if(this.accounts.length <= 0)
+		account_menu_code += '<div class="noAccount">No Account</div>\n'
+	else
+		for(var i = 0; i < this.accounts.length; ++i){
+			account_menu_code += '<div class="accountName" id="';
+			account_menu_code += "account"+i;
+			account_menu_code += '" onClick="setSelectAccount(this);">'
+			account_menu_code += this.accounts[i];
+			account_menu_code += '</div>\n';
+		}
+	
+	$("account_menu").innerHTML = account_menu_code;
+	
+	if(this.accounts.length > 0){
+		if(PROTOCOL == "cifs" && (AM_to_cifs == 2 || AM_to_cifs == 4))
+			setSelectAccount($("account0"));
+		else if(PROTOCOL == "ftp" && AM_to_ftp == 2)
+			setSelectAccount($("account0"));
+	}
+}
+
+function showPermissionTitle(){
+	var code = "";
+	
+	code += '<table border="0"><tr>';
+	
+	if(PROTOCOL == "cifs"){
+		code += '<td width="56" align="center">R/W</td>';
+		code += '<td width="56" align="center">R</td>';
+		code += '<td width="56" align="center">No</td>';
+	}else if(PROTOCOL == "ftp"){
+		code += '<td width="42" align="center">R/W</td>';
+		code += '<td width="42" align="center">W</td>';
+		code += '<td width="42" align="center">R</td>';
+		code += '<td width="42" align="center">No</td>';
+	}
+	
+	code += '</tr></table>';
+	
+	$("permissionTitle").innerHTML = code;
+}
+
+var controlApplyBtn = 0;
+function showApplyBtn(){
+	if(this.controlApplyBtn == 3)
+		$("changePermissionBtn").disabled = 0;
+	else
+		$("changePermissionBtn").disabled = 1;
+}
+
+function setSelectAccount(selectedObj){
+	this.selectedAccount = selectedObj.firstChild.nodeValue;
+	
+	if(this.controlApplyBtn == 0 || this.controlApplyBtn == 2)
+		this.controlApplyBtn += 1;
+	showApplyBtn();
+	onEvent();
+	$("account_FTP_address_link").href = "FTP://"+this.selectedAccount+"@"+'';
+	show_permissions_of_account(selectedObj, PROTOCOL);
+	contrastSelectAccount(selectedObj);
+}
+
+function getSelectedAccount(){
+	return this.selectedAccount;
+}
+
+function show_permissions_of_account(selectedObj, protocol){
+	var accountName = selectedObj.firstChild.nodeValue;
+	var poolName;
+	var permissions;
+	
+	for(var i = 0; i < pool_names().length; ++i){
+		poolName = pool_names()[i];
+		if(!this.clickedFolderBarCode[poolName])
+			continue;
+		
+		permissions = get_account_permissions_in_pool(accountName, poolName);
+		for(var j = 0; j < permissions.length; ++j){
+			var folderBarCode = get_folderBarCode_in_pool(poolName, permissions[j][0]);
+			
+			if(protocol == "cifs")
+				showPermissionRadio(folderBarCode, permissions[j][1]);
+			else if(protocol == "ftp")
+				showPermissionRadio(folderBarCode, permissions[j][2]);
+			else{
+				alert("Wrong protocol when get permission!");	// system error msg. must not be translate
+				return;
+			}
+		}
+	}
+}
+
+function get_permission_of_folder(accountName, poolName, folderName, protocol){
+	var permissions = get_account_permissions_in_pool(accountName, poolName);
+	
+	for(var i = 0; i < permissions.length; ++i)
+		if(permissions[i][0] == folderName){
+			if(protocol == "cifs")
+				return permissions[i][1];
+			else if(protocol == "ftp")
+				return permissions[i][2];
+			else{
+				alert("Wrong protocol when get permission!");	// system error msg. must not be translate
+				return;
+			}
+		}
+	
+	alert("Wrong folderName when get permission!");	// system error msg. must not be translate
+}
+
+function contrastSelectAccount(selectedObj){
+	if(this.lastClickedAccount != 0){
+		this.lastClickedAccount.style.marginRight = "0px";
+		this.lastClickedAccount.style.background = "url(images/AiDisk/user_icon0.gif) #F8F8F8 left no-repeat";
+		this.lastClickedAccount.style.cursor = "pointer";
+		this.lastClickedAccount.style.fontWeight ="normal";
+	}
+	
+	selectedObj.style.marginRight = "-1px";
+	selectedObj.style.background = "url(images/AiDisk/user_icon.gif) #FFF left no-repeat";
+	selectedObj.style.cursor = "default";
+	selectedObj.style.fontWeight ="bolder";
+	
+	this.lastClickedAccount = selectedObj;
+}
+
+function submitChangePermission(protocol){
+	var orig_permission;
+	
+	for(var i = 0; i < accounts.length; ++i){
+		if(!this.changedPermissions[accounts[i]])
+			continue;
+		
+		for(var j = 0; j < pool_names().length; ++j){
+			if(!this.changedPermissions[accounts[i]][pool_names()[j]])
+				continue;
+			
+			folderlist = get_sharedfolder_in_pool(pool_names()[j]);
+			
+			for(var k = 0; k < folderlist.length; ++k){
+				if(!this.changedPermissions[accounts[i]][pool_names()[j]][folderlist[k]])
+					continue;
+				
+				orig_permission = get_permission_of_folder(accounts[i], pool_names()[j], folderlist[k], PROTOCOL);
+				if(this.changedPermissions[accounts[i]][pool_names()[j]][folderlist[k]] == orig_permission)
+					continue;
+				
+				// the item which was set already
+				if(this.changedPermissions[accounts[i]][pool_names()[j]][folderlist[k]] == -1)
+					continue;
+				
+				document.aidiskForm.action = "/aidisk/set_account_permission.html";
+				$("account").value = accounts[i];
+				$("pool").value = pool_names()[j];
+				$("folder").value = folderlist[k];
+				$("protocol").value = protocol;
+				$("permission").value = this.changedPermissions[accounts[i]][pool_names()[j]][folderlist[k]];
+				
+				// mark this item which is set
+				this.changedPermissions[accounts[i]][pool_names()[j]][folderlist[k]] = -1;
+				/*alert("account = "+$("account").value+"\n"+
+					  "pool = "+$("pool").value+"\n"+
+					  "folder = "+$("folder").value+"\n"+
+					  "protocol = "+$("protocol").value+"\n"+
+					  "permission = "+$("permission").value);//*/
+				showLoading();  location.href = "as.html";  location.href = "as.html";
+				document.aidiskForm.submit();
+				return;
+			}
+		}
+	}
+	
+	refreshpage();
+}
+
+function changeActionButton(selectedObj, type, action, flag){
+	if(type == "User")
+		if(this.accounts.length <= 0)
+			if(action == "Del" || action == "Mod")
+				return;
+	
+	if(typeof(flag) == "number")
+		selectedObj.src = 'images/AiDisk/'+type+action+'_'+flag+'.gif';
+	else
+		selectedObj.src = 'images/AiDisk/'+type+action+'.gif';
+}
+
+function resultOfCreateAccount(){
+	refreshpage();
+}
+
+function onEvent(){
+	// account action buttons
+	if(AM_to_ftp == 2 && accounts.length < 6){
+		changeActionButton($("createAccountBtn"), 'User', 'Add', 0);
+		
+		$("createAccountBtn").onclick = function(){
+				popupWindow('OverlayMask','/aidisk/popCreateAccount.html');
+			};
+		$("createAccountBtn").onmouseover = function(){
+				changeActionButton(this, 'User', 'Add', 1);
+			};
+		$("createAccountBtn").onmouseout = function(){
+				changeActionButton(this, 'User', 'Add', 0);
+			};
+	}
+	else{
+		changeActionButton($("createAccountBtn"), 'User', 'Add');
+		
+		$("createAccountBtn").onclick = function(){};
+		$("createAccountBtn").onmouseover = function(){};
+		$("createAccountBtn").onmouseout = function(){};		
+		$("createAccountBtn").title = (accounts.length < 6)?"Add new account":"Only 6 accounts allowed.";
+	}
+	
+	if(this.accounts.length > 0 && this.selectedAccount.length > 0){
+		changeActionButton($("deleteAccountBtn"), 'User', 'Del', 0);
+		changeActionButton($("modifyAccountBtn"), 'User', 'Mod', 0);
+		
+		$("deleteAccountBtn").onclick = function(){
+				if(!selectedAccount){
+					alert("No chosen account!");
+					return;
+				}
+				
+				popupWindow('OverlayMask','/aidisk/popDeleteAccount.html');
+			};
+		$("deleteAccountBtn").onmouseover = function(){
+				changeActionButton(this, 'User', 'Del', 1);
+			};
+		$("deleteAccountBtn").onmouseout = function(){
+				changeActionButton(this, 'User', 'Del', 0);
+			};
+		
+		$("modifyAccountBtn").onclick = function(){
+				if(!selectedAccount){
+					alert("No chosen account!");
+					return;
+				}
+				
+				popupWindow('OverlayMask','/aidisk/popModifyAccount.html');
+			};
+		$("modifyAccountBtn").onmouseover = function(){
+				changeActionButton(this, 'User', 'Mod', 1);
+			};
+		$("modifyAccountBtn").onmouseout = function(){
+				changeActionButton(this, 'User', 'Mod', 0);
+			};
+	}
+	else{
+		changeActionButton($("deleteAccountBtn"), 'User', 'Del');
+		changeActionButton($("modifyAccountBtn"), 'User', 'Mod');
+		
+		$("deleteAccountBtn").onclick = function(){};
+		$("deleteAccountBtn").onmouseover = function(){};
+		$("deleteAccountBtn").onmouseout = function(){};
+		
+		$("modifyAccountBtn").onclick = function(){};
+		$("modifyAccountBtn").onmouseover = function(){};
+		$("modifyAccountBtn").onmouseout = function(){};
+	}
+	
+	// folder action buttons
+	if(this.selectedPool.length > 0){
+		changeActionButton($("createFolderBtn"), 'Folder', 'Add', 0);
+		
+		$("createFolderBtn").onclick = function(){
+				if(!selectedDisk){
+					alert("No chosen Disk for creating the shared-folder!");
+					return;
+				}
+				if(!selectedPool){
+					alert("No chosen Partition for creating the shared-folder!");
+					return;
+				}
+				
+				popupWindow('OverlayMask','/aidisk/popCreateFolder.html');
+			};
+		$("createFolderBtn").onmouseover = function(){
+				changeActionButton(this, 'Folder', 'Add', 1);
+			};
+		$("createFolderBtn").onmouseout = function(){
+				changeActionButton(this, 'Folder', 'Add', 0);
+			};
+	}
+	else{
+		changeActionButton($("createFolderBtn"), 'Folder', 'Add');
+		
+		$("createFolderBtn").onclick = function(){};
+		$("createFolderBtn").onmouseover = function(){};
+		$("createFolderBtn").onmouseout = function(){};
+	}
+	
+	if(this.selectedFolder.length > 0){
+		changeActionButton($("deleteFolderBtn"), 'Folder', 'Del', 0);
+		changeActionButton($("modifyFolderBtn"), 'Folder', 'Mod', 0);
+		
+		$("deleteFolderBtn").onclick = function(){
+				if(!selectedFolder){
+					alert("No chosen folder!");
+					return;
+				}
+				
+				popupWindow('OverlayMask','/aidisk/popDeleteFolder.html');
+			};
+		$("deleteFolderBtn").onmouseover = function(){
+				changeActionButton(this, 'Folder', 'Del', 1);
+			};
+		$("deleteFolderBtn").onmouseout = function(){
+				changeActionButton(this, 'Folder', 'Del', 0);
+			};
+		
+		$("modifyFolderBtn").onclick = function(){
+				if(!selectedFolder){
+					alert("No chosen folder!");
+					return;
+				}
+				
+				popupWindow('OverlayMask','/aidisk/popModifyFolder.html');
+			};
+		$("modifyFolderBtn").onmouseover = function(){
+				changeActionButton(this, 'Folder', 'Mod', 1);
+			};
+		$("modifyFolderBtn").onmouseout = function(){
+				changeActionButton(this, 'Folder', 'Mod', 0);
+			};
+	}
+	else{
+		changeActionButton($("deleteFolderBtn"), 'Folder', 'Del');
+		changeActionButton($("modifyFolderBtn"), 'Folder', 'Mod');
+		
+		$("deleteFolderBtn").onclick = function(){};
+		$("deleteFolderBtn").onmouseover = function(){};
+		$("deleteFolderBtn").onmouseout = function(){};
+		
+		$("modifyFolderBtn").onclick = function(){};
+		$("modifyFolderBtn").onmouseover = function(){};
+		$("modifyFolderBtn").onmouseout = function(){};
+	}
+	
+	$("changePermissionBtn").onclick = function(){
+			submitChangePermission(PROTOCOL);
+		};
+}
+
+function unload_body(){
+	$("createAccountBtn").onclick = function(){};
+	$("createAccountBtn").onmouseover = function(){};
+	$("createAccountBtn").onmouseout = function(){};
+	
+	$("deleteAccountBtn").onclick = function(){};
+	$("deleteAccountBtn").onmouseover = function(){};
+	$("deleteAccountBtn").onmouseout = function(){};
+	
+	$("modifyAccountBtn").onclick = function(){};
+	$("modifyAccountBtn").onmouseover = function(){};
+	$("modifyAccountBtn").onmouseout = function(){};
+	
+	$("createFolderBtn").onclick = function(){};
+	$("createFolderBtn").onmouseover = function(){};
+	$("createFolderBtn").onmouseout = function(){};
+	
+	$("deleteFolderBtn").onclick = function(){};
+	$("deleteFolderBtn").onmouseover = function(){};
+	$("deleteFolderBtn").onmouseout = function(){};
+	
+	$("modifyFolderBtn").onclick = function(){};
+	$("modifyFolderBtn").onmouseover = function(){};
+	$("modifyFolderBtn").onmouseout = function(){};
+}
+</script>
+</head>
+
+<body onLoad="initial();" onunload="unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0" scrolling="no"></iframe>
+
+<form method="post" name="aidiskForm" action="Advanced_AiDisk_ftp.html" target="hidden_frame">
+<input type="hidden" name="motion" id="motion" value="">
+<input type="hidden" name="layer_order" id="layer_order" value="">
+<input type="hidden" name="protocol" id="protocol" value="">
+<input type="hidden" name="mode" id="mode" value="">
+<input type="hidden" name="flag" id="flag" value="">
+<input type="hidden" name="account" id="account" value="">
+<input type="hidden" name="pool" id="pool" value="">
+<input type="hidden" name="folder" id="folder" value="">
+<input type="hidden" name="permission" id="permission" value="">
+</form>
+
+<form name="form">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+</form>
+
+<table width="983" border="0" align="center" cellpadding="0" cellspacing="0" class="content">
+  <tr>
+	<td width="23">&nbsp;</td>				
+	
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+	<td valign="top">
+	  <!--=====Beginning of Main Content=====-->
+	  <div id="tabMenu" class="submenuBlock"></div>
+	  <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
+	  <tr>
+		<td valign="top">
+    <table width="500" align="center" cellpadding="4" cellspacing="0" class="shareconfig">
+	  <tr>
+	    <td>
+		  <input id="sharebtn" type="button" value="" class="button" onClick="switchAppStatus(PROTOCOL);">
+	      <input id="accountbtn" type="button" value="" class="button" onClick="switchAccount(PROTOCOL);">
+		</td>
+	  </tr>
+    </table>
+		
+		<!-- The table of share. -->
+	    <div id="shareStatus">
+		  <!-- The mask of all share table. -->
+	      <div id="tableMask"></div>
+		  
+		  <!-- The mask of accounts. -->
+	      <div id="accountMask"></div>
+		  
+		  <!-- The action buttons of accounts and folders. -->
+	      <table height="35" cellpadding="2" cellspacing="0" class="accountBar">
+		    <tr>
+			  <!-- The action buttons of accounts. -->
+    	      <td width="140" height="25" valign="bottom">	
+		        <img id="createAccountBtn" src="images/AiDisk/UserAdd.gif" hspace="1" title="Add new account">
+				<img id="deleteAccountBtn" src="images/AiDisk/UserDel.gif" hspace="1" title="Delete this account">
+				<img id="modifyAccountBtn" src="images/AiDisk/UserMod.gif" hspace="1" title="Modify this account">
+		  	  </td>
+			  
+			  <!-- The action buttons of folders. -->
+    	  	  <td valign="bottom">
+				<img id="createFolderBtn" src="images/AiDisk/FolderAdd.gif" hspace="1" title="Add new folder">
+				<img id="deleteFolderBtn" src="images/AiDisk/FolderDel.gif" hspace="1" title="Delete this folder">
+				<img id="modifyFolderBtn" src="images/AiDisk/FolderMod.gif" hspace="1" title="Rename this folder">
+		  	  </td>
+  			</tr>
+	  	  </table>
+	  	</div>
+		<!-- The table of accounts and folders. -->
+	    <table width="500" height="200"  border="0" align="center" cellpadding="0" cellspacing="1" bgcolor="#999999">
+  		  <tr>
+		    <!-- The table of accounts. -->
+    	    <td valign="top" bgcolor="#F8F8F8">
+			  <div id="account_menu"></div>
+		    </td>
+		    
+			<!-- The table of folders. -->
+    	    <td width="352" valign="top" bgcolor="#FFFFFF">
+			  <table width="345"  border="0" cellspacing="0" cellpadding="0" class="FileStatusTitle">
+		  	    <tr>
+		    	<td width="175" height="20" align="left">
+				  <img src="images/500icon.gif" width="20" height="20" hspace="2" align="absmiddle">RT-N16
+					</td>
+		    	  <td width="175" height="20" align="left">
+				    <div class="machineName">RT-N16</div>
+				    </td>
+				  <td>
+				    <div id="permissionTitle"></div>
+				  </td>
+		    	</tr>
+			  </table>
+			  
+ 			  <!-- the tree of folders -->
+  		      <div id="e0" class="FdTemp" style="font-size: 10pt; margin-top: 2px;"><table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td valign="top" width="19" height="16">
+<img id="a0_0" onclick='$("d0_0").onclick();' class="FdOpen" src="images/Tree/vert_line_s11.gif">
+</td>
+<td>
+
+<div id="b0_0" class="FdText">
+<img id="c0_0" onclick='$("d0_0").onclick();' src="images/Tree/disk.gif" align="top">
+<span class="lastfolderClicked" id="d0_0" onclick="GetFolderItem(this, 1);" title="USB&nbsp;DISK">USB DISK</span>
+</div>
+<div id="e0_0" class="FdTemp"><table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td valign="top" width="19" height="16">
+<img id="a0_0_0" onclick='$("d0_0_0").onclick();' class="FdOpen" src="images/Tree/vert_line_s11.gif">
+</td>
+<td>
+<div id="b0_0_0" class="FdText">
+<img id="c0_0_0" onclick='$("d0_0_0").onclick();' src="images/Tree/part.gif" align="top">
+<span class="folderClicked" id="d0_0_0" onclick="GetFolderItem(this, 1);" title="AiDisk_a1">AiDisk_a1</span>
+</div>
+<div id="e0_0_0" class="FdTemp"><table border="0" cellpadding="0" cellspacing="0">
+
+<tbody><tr>
+<td valign="top" width="19" height="16">
+<img id="a0_0_0_0" onclick='$("d0_0_0_0").onclick();' class="FdRead" src="images/Tree/vert_line_n00.gif">
+</td>
+<td>
+<div id="b0_0_0_0" style="overflow: hidden; float: left; width: 117px;" class="FdText">
+<img id="c0_0_0_0" onclick='$("d0_0_0_0").onclick();' src="images/Tree/folder.gif" align="top">
+<span id="d0_0_0_0" onclick="GetFolderItem(this, 0);" title="Music">Music</span>
+</div>
+<div id="f0_0_0_0" class="FileStatus" onclick="getChangedPermission(this);"><input name="g0_0_0_0" value="3" checked="checked" disabled="disabled" type="radio"><input name="g0_0_0_0" value="2" disabled="disabled" type="radio"><input name="g0_0_0_0" value="1" disabled="disabled" type="radio"><input name="g0_0_0_0" value="0" disabled="disabled" type="radio"></div>
+
+</td>
+</tr>
+<tr>
+<td valign="top" width="19" height="16">
+<img id="a0_0_0_1" onclick='$("d0_0_0_1").onclick();' class="FdRead" src="images/Tree/vert_line_n00.gif">
+
+</td>
+<td>
+<div id="b0_0_0_1" style="overflow: hidden; float: left; width: 117px;" class="FdText">
+<img id="c0_0_0_1" onclick='$("d0_0_0_1").onclick();' src="images/Tree/folder.gif" align="top">
+<span id="d0_0_0_1" onclick="GetFolderItem(this, 0);" title="share">share</span>
+</div>
+<div id="f0_0_0_1" class="FileStatus" onclick="getChangedPermission(this);"><input name="g0_0_0_1" value="3" checked="checked" disabled="disabled" type="radio"><input name="g0_0_0_1" value="2" disabled="disabled" type="radio"><input name="g0_0_0_1" value="1" disabled="disabled" type="radio"><input name="g0_0_0_1" value="0" disabled="disabled" type="radio"></div>
+
+</td>
+</tr>
+<tr>
+<td valign="top" width="19" height="16">
+<img id="a0_0_0_2" onclick='$("d0_0_0_2").onclick();' class="FdRead" src="images/Tree/vert_line_n00.gif">
+</td>
+<td>
+<div id="b0_0_0_2" style="overflow: hidden; float: left; width: 117px;" class="FdText">
+
+<img id="c0_0_0_2" onclick='$("d0_0_0_2").onclick();' src="images/Tree/folder.gif" align="top">
+<span id="d0_0_0_2" onclick="GetFolderItem(this, 0);" title="Movie">Movie</span>
+</div>
+<div id="f0_0_0_2" class="FileStatus" onclick="getChangedPermission(this);"><input name="g0_0_0_2" value="3" checked="checked" disabled="disabled" type="radio"><input name="g0_0_0_2" value="2" disabled="disabled" type="radio"><input name="g0_0_0_2" value="1" disabled="disabled" type="radio"><input name="g0_0_0_2" value="0" disabled="disabled" type="radio"></div>
+
+</td>
+</tr>
+<tr>
+<td valign="top" width="19" height="16">
+<img id="a0_0_0_3" onclick='$("d0_0_0_3").onclick();' class="FdRead" src="images/Tree/vert_line_n10.gif">
+</td>
+<td>
+<div id="b0_0_0_3" style="overflow: hidden; float: left; width: 117px;" class="FdText">
+<img id="c0_0_0_3" onclick='$("d0_0_0_3").onclick();' src="images/Tree/folder.gif" align="top">
+<span id="d0_0_0_3" onclick="GetFolderItem(this, 0);" title="Picture">Picture</span>
+
+</div>
+<div id="f0_0_0_3" class="FileStatus" onclick="getChangedPermission(this);"><input name="g0_0_0_3" value="3" checked="checked" disabled="disabled" type="radio"><input name="g0_0_0_3" value="2" disabled="disabled" type="radio"><input name="g0_0_0_3" value="1" disabled="disabled" type="radio"><input name="g0_0_0_3" value="0" disabled="disabled" type="radio"></div>
+
+</td>
+</tr>
+</tbody></table>
+</div>
+</td>
+</tr>
+</tbody></table>
+</div>
+</td>
+</tr>
+</tbody></table>
+</div>
+			  				<!-- the tree of folders -->
+
+
+			  <div style="text-align:right; margin:10px auto; border-top:1px dotted #CCC; width:95%; padding:2px;">
+			    <input name="changePermissionBtn" id="changePermissionBtn" type="button" value="Apply" class="button" disabled="disabled">
+			  </div>
+		    </td>
+          </tr>
+	    </table>
+	</td>
+    <td id="help_td"  style="width:15px;" align="center" valign="top">
+	<!--==============Beginning of hint content=============-->
+	  <form name="hint_form"></form>
+	  <div id="helpicon" onClick="openHint(0,0);" title="Click to open Help" style="display:none;margin-top:20px;"><img src="images/help.gif" /></div>
+	  <div id="hintofPM">
+	  <table class="Help" bgcolor="#999999" width="180" border="0" cellpadding="0" cellspacing="1" style="margin-top:20px;">
+		<thead>
+		<tr>
+		  <td>
+			<div id="helpname" class="AiHintTitle">How to Share?</div>
+			<a href="javascript:closeHint();">
+				<img src="images/button-close.gif" class="closebutton">
+			</a>			
+		  </td>
+		</tr>
+		</thead>		
+		<tr>
+		  <td valign="top">
+		  	<div id="hint_body" class="hint_body2">
+			  <div id="ShareClose" class="ShareClose" style="display:none; ">Share via the FTP is disabled.</div>			  
+			  <!-- the condition when run share. -->
+			  <div id="DDNSinfo" style="display:none;">
+					<!-- the info of FTP. -->
+					<div id="haveDDNS" style="display:none;">
+						<a href="FTP://" target="_blank">Click here</a>
+						to enter FTP share space.
+					</div>
+					
+				<div id="haveDDNS2" style="display:none;">
+  				  <a id="account_FTP_address_link" href="Advanced_AiDisk_ftp.html" target="_blank">Click here</a>
+				          to enter FTP share space.
+				</div>				  
+				<div id="noDDNS" style="display:none;">
+                  Enable the DDNS service to allow access via the ftp, or click the following link:<a href="ftp://192.168.39.174" target="_blank">ftp://192.168.39.174</a>
+				  (Only accessible in LAN.)
+				  	
+                </div>
+              </div>
+              <!--p>PS. Account management function cannot work on NTFS partition.</p-->
+			  </div>
+              <iframe name="statusframe" id="statusframe" class="statusframe" src="Advanced_AiDisk_ftp.html" frameborder="0"></iframe>
+		  </td>
+		</tr>
+	  </table>
+	  </div>
+	<!--==============Ending of hint content=============-->	</td>
+  </tr>
+</table>
+	  <!-- The table of DDNS. -->
+    </td>
+  <td width="10"></td>
+  </tr>
+</table>
+
+<div id="footer"></div>
+
+<!-- mask for disabling AiDisk -->
+<div id="OverlayMask" class="popup_bg">
+	<div align="center">
+	<iframe src="Advanced_AiDisk_ftp.html" frameborder="0" scrolling="no" id="popupframe" width="400" height="400" allowtransparency="true" style="margin-top:150px;"></iframe>
+	</div>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!-- Mirrored from 192.168.1.1/aidisk/Aidisk-1.html by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:41:14 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.html">
+<link rel="icon" href="images/favicon.html">
+<title>AiDisk Wizard</title>
+<link rel="stylesheet" type="text/css" href="../NM_style.css">
+<link rel="stylesheet" type="text/css" href="aidisk.css">
+<link rel="stylesheet" type="text/css" href="../form_style.css">
+<script type="text/javascript" src="../state.js"></script>
+<script>
+var dummyShareway = '';
+var FTP_status = parent.get_ftp_status();  // FTP  0=disable 1=enable
+var FTP_mode = parent.get_share_management_status("ftp");  // if share by account. 1=no 2=yes
+var accounts = ["admin"];
+var ddns_enable = '0';
+var ddns_server = '';
+var ddns_hostname = '';
+var format_of_first_partition = parent.pool_types()[0]; //"ntfs";
+
+function initial(){
+	showtext($("noWAN_link"), "DDNS is not enable yet. You can enable it in WAN / DDNS when people need to access FTP via the domain name from WAN.");
+	//parent.hideLoading();
+	showdisklink();
+}
+
+function showdisklink(){
+	if(detect_mount_status() == 0){ // No USB disk plug.
+		$("AiDiskWelcome_desp").style.display = 'none';
+		$("linkdiskbox").style.display = 'none';
+		$("Nodisk_hint").style.display = 'block';
+		$("gotonext").style.display = 'none';
+		return;
+	}
+	else if(dummyShareway != ""){  // Ever config aidisk wizard
+		$("AiDiskWelcome_desp").style.display = 'none';
+		$("linkdiskbox").style.display = 'block';
+		$("settingBtn").innerHTML = "Reset";
+
+		show_share_link();
+	}
+	else{  // Never config aidisk wizard
+		$("linkdiskbox").style.display = 'none';
+//		$("AiDisk_scenerio").style.display = 'block';
+	}	
+	// access the disk from LAN
+}
+
+function show_share_link(){
+
+	/*if(NN_status == 1 && nav == false)
+		$("ie_link").style.display = "block";
+	if(FTP_status == 1 && FTP_mode == 1)
+		$("notie_link").style.display = "block";
+	else{
+		$("noLAN_link").style.display = "block";
+		
+		if(NN_status != 1)
+			showtext($("noLAN_link"), "尚未開啟網路芳鄰分享，請至 USB 應用程式開啟。");
+		else
+			showtext($("noLAN_link"), "您的瀏覽器不支援以超連結的方式進入網路芳鄰。");
+	}*/
+	
+	//alert("FTP"+FTP_status);
+	// access the disk from WAN
+	if(FTP_status == 1 && ddns_enable == 1 && ddns_server.length > 0 && ddns_hostname.length > 0){
+		if(FTP_mode == 1 || dummyShareway == 0){
+			$("ddnslink1").style.display = ""; 
+			$("desc_2").style.display = ""; 
+			$("ddnslink1_LAN").style.display = ""; 			
+			showtext($("ddnslink1_LAN"), 'LAN&nbsp;FTP link:&nbsp;<a id="ddnslink1_LAN_link" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">ftp://192.168.1.1</a>');
+			$("ddnslink1_LAN_link").href = '../index.html';
+		}
+		else if(FTP_mode == 2){
+			$("ddnslink2").style.display = "";
+			$("desc_2").style.display = ""; 
+			$("ddnslink2_LAN").style.display = ""; 			
+			showtext($("ddnslink2_LAN"), 'LAN&nbsp;FTP link:&nbsp;<a id="ddnslink2_LAN_link" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">ftp://192.168.1.1</a>');
+			$("ddnslink2_LAN_link").href = 'ftp://'+accounts[0]+':'+accounts[0]+'@192.168.1.1';
+			$("ddnslink2_LAN_link").innerHTML = '../index.html';
+		}
+	}
+	else{
+		$("noWAN_link").style.display = "";		
+		if(FTP_status != 1)
+			showtext($("noWAN_link"), 'FTP server is not enabled. Enable the FTP server in <a href="http://event.asus.com/2012/nw/dummy_ui/EN/Advanced_AiDisk_ftp.html" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">here</a>.');
+		else if(ddns_enable != 1){
+			showtext($("noWAN_link"), "DDNS is not enable yet. You can enable it in WAN / DDNS when people need to access FTP via the domain name from WAN.");
+			$("desc_2").style.display = ""; 
+			$("ddnslink1_LAN").style.display = "";			
+			if(FTP_mode == 1){
+					showtext($("ddnslink1_LAN"), 'LAN&nbsp;FTP link:&nbsp;<a id="ddnslink1_LAN_link" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">ftp://192.168.1.1</a>');
+					$("ddnslink1_LAN_link").href = '../index.html';
+			}else{
+					showtext($("ddnslink1_LAN"), 'LAN&nbsp;FTP link:&nbsp;<a id="ddnslink1_LAN_link" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">ftp://192.168.1.1</a>');
+					$("ddnslink1_LAN_link").href = 'ftp://'+accounts[0]+':'+accounts[0]+'@192.168.1.1';
+					$("ddnslink1_LAN_link").innerHTML = '../index.html';
+			}		
+		}else if(ddns_hostname.length <= 0){
+			showtext($("noWAN_link"), "DDNS is enable but register of domain name is fail. People still can't access FTP by domain name from WAN.");
+		}else
+			alert("FTP and ddns exception");
+	}
+}
+
+function detect_mount_status(){
+	var mount_num = 0;
+	for(var i = 0; i < parent.foreign_disk_total_mounted_number().length; ++i)
+		mount_num += parent.foreign_disk_total_mounted_number()[i];
+	return mount_num;
+}
+
+function go_next_page(){
+	document.redirectForm.action = "Aidisk-1.html";
+	//document.redirectForm.target = "_self";
+	document.redirectForm.submit();
+}
+</script>
+</head>
+<body onload="initial();">
+<form method="GET" name="redirectForm" action="Aidisk-5.html#">
+<input type="hidden" name="flag" value="">
+</form>
+<form method="post" name="form" target="hidden_frame">
+<input type="hidden" name="current_page" value="aidisk/Aidisk-1.html">
+</form>
+<div class="aidisk1_table">
+<table>
+<tr>
+  <td valign="top" bgcolor="#4d595d" style="padding-top:25px;">
+  <table width="740" height="125" border="0">
+	<!-- start Step 0 -->  
+	<tr>
+		<td class="formfonttitle">
+			<span style="margin-left:3px;">Welcome to AiDisk wizard</span>
+			<img onclick="go_setting_parent('../APP_Installation.html')" align="right" style="cursor:pointer;margin-right:20px;margin-top:-20px;" title="Go to APP Gallery" src="../images/backprev.png" onMouseOver="this.src='/images/backprevclick.png'" onMouseOut="this.src='/images/backprev.png'">
+  	</td>
+  </tr>
+   
+  <tr>
+  	<td height="20">
+  		<img src="../images/New_ui/export/line_export.png" />
+  	</td>
+  </tr>
+
+	<tr>
+		<td>
+			<div style="width:660px; line-height:180%;">
+	  		<div id="Nodisk_hint" class="alert_string" style="display:none;">No USB disk detected.</div>
+
+				<div id="AiDiskWelcome_desp" style="display:none;">
+			  	AiDisk enables you to:
+			  	<ul>
+			  		<li>Share files in the USB disk through the Internet.</li>
+			  		<li>Create your own domain name for the FTP server.</li>
+						<li>For advanced file-sharing configuration. Click <a href="http://event.asus.com/2012/nw/dummy_ui/EN/Advanced_AiDisk_ftp.html" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">here</a></li>
+		  		</ul>
+		  	</div>
+		  	
+		  	<div id="linkdiskbox" style="">
+		  			<span style="margin-left:5px;">After configuring the settings in AiDisk Wizard, refer to the information below to access the disk:</span><br/>
+		  			<ul>
+		  				<li> 
+		  					<span id="noWAN_link" style=""></span>
+		  					<span id="ddnslink1" style="display:none;">
+		  					&nbsp;FTP link:&nbsp;<a target="_blank" href="ftp:///" style="text-decoration: underline; font-family:Lucida Console;">ftp://</a>
+		  					</span>
+		  					<span id="ddnslink2" style="display:none;">
+		  					&nbsp;FTP link:&nbsp;<a target="_blank" href="ftp:///" style="text-decoration: underline; font-family:Lucida Console;">ftp://</a>
+		  					</span>
+		  				</li>
+		  				<li id="desc_2" style="display:none;margin-top:8px;">
+		  					<span id="ddnslink1_LAN" style="">
+		  					<!-- #t2LAN#>&nbsp;FTP 連結：&nbsp;<a target="_blank" href="ftp://192.168.1.1" style="text-decoration: underline; font-family:Lucida Console;">ftp://192.168.1.1</a -->
+		  					</span>
+		  					<span id="ddnslink2_LAN" style="display:none;">
+		  					<!-- #t2LAN#>&nbsp;FTP 連結：&nbsp;<a target="_blank" href="ftp://192.168.1.1" style="text-decoration: underline; font-family:Lucida Console;">ftp://192.168.1.1</a -->
+		  					</span>
+		  				</li>
+							<li>For advanced file-sharing configuration. Click <a href="http://event.asus.com/2012/nw/dummy_ui/EN/Advanced_AiDisk_ftp.html" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">here</a></li>
+							<li>Warning: The AiDisk had been set. If you set the AiDisk again, the previous account/password and access permission will be reset. To add more account, Select <a href="http://event.asus.com/2012/nw/dummy_ui/EN/Advanced_AiDisk_ftp.html" target="_blank" style="text-decoration: underline; font-family:Lucida Console;">here</a> to edit the account profile.</li>
+		  			</ul>
+		  	</div>		
+			</div>
+	  </td>
+  </tr>
+      
+  <tr>
+  	<td align="center" width="740px" height="60px">
+			<div id="gotonext">
+  			<a href="javascript:go_next_page();"><div class="titlebtn" style="margin-left:300px;_margin-left:150px;" align="center"><span id="settingBtn" style="*width:190px;">Reset</span></div></a>
+			</div>
+  	</td>
+  </tr>
+<!-- end -->    
+  </table>
+
+  </td>
+</tr>  
+</table>
+</div>  <!--  //Viz-->
+</body>
+
+<!-- Mirrored from 192.168.1.1/aidisk/Aidisk-1.html by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:41:14 GMT -->
+</html>

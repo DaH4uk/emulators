@@ -1,0 +1,519 @@
+function stopupload(name) {
+    for (var i = 0; i < window.frames.length; i++)
+        if (window.frames[i].name == name) return jQuery.browser.msie ? window.frames[i].document.execCommand("Stop") : window.frames[i].stop(), !0;
+    return !1
+}
+var __SYSTEM = new function() {
+        function loading_p(i, visible) {
+            var $port = $grouport.find(".port").eq(i - 1);
+            visible ? $port.find(".loading").show() : $port.find(".loading").hide()
+        }
+
+        function loading_usb(visible) {
+            var $usb = $grouport.find(".usb");
+            visible ? $usb.find(".loading").show() : $usb.find(".loading").hide()
+        }
+
+        function processing(visible) {
+            visible ? $device.find(".processing").show() : $device.find(".processing").hide()
+        }
+
+        function newIp(msg) {
+            return LOGIC.stop(), $("#overlaybox").css("display", "none"), $("#overlayboxIP .msg").html(lng("airRedirectIp") + "."), $("#overlayboxIP a").text(msg).attr("href", "http://" + msg), $("#overlayboxIP").css("display", "block").fadeIn(400), this
+        }
+
+        function checkIpInSubnet(ip1, ip2, mask) {
+            if (ip1 && ip2 && mask) {
+                for (var dev_ip = ip1.split("."), cl_ip = ip2.split("."), nw_mask = mask.split("."), dev_nw_ip = [], cl_nw_ip = [], i = 0; 4 > i; i++) dev_nw_ip.push(dev_ip[i] & nw_mask[i]), cl_nw_ip.push(cl_ip[i] & nw_mask[i]);
+                return dev_nw_ip.join(".") == cl_nw_ip.join(".")
+            }
+            return !1
+        }
+        var self = this,
+            $$ = {
+                virgin: !0,
+                backup: {}
+            },
+            $device = ".service.device",
+            $grouport = ".service.device>.statbar.grouport",
+            $notifybox = "#notifybox";
+        this.toggleIPtv = function(i) {
+            return loading_p(i, !0), $$.backup.vlanset[1].ports["port" + i] ? ($grouport.find(".port").eq(i - 1).removeClass("iptv"), $$.backup.vlanset[0].ports["port" + i] = $$.backup.vlanset[1].ports["port" + i], delete $$.backup.vlanset[1].ports["port" + i]) : ($grouport.find(".port").eq(i - 1).addClass("iptv"), $$.backup.vlanset[1].ports["port" + i] = $$.backup.vlanset[0].ports["port" + i], delete $$.backup.vlanset[0].ports["port" + i]), $$.backup.vlanset[0].pos = 0, $$.backup.vlanset[1].pos = 1, $$.backup.vlanset[1].not_delete = !0, device.config.write([
+                [119, $$.backup.vlanset[0], 0],
+                [119, $$.backup.vlanset[1], 1]
+            ], callback(this, function(i) {
+                loading_p(i, !1)
+            }, i)), this
+        }, this.umount = function(volume) {
+            return loading_usb(!0), device.config.write(154, {
+                name: volume ? volume : "usball"
+            }, callback(this, function() {
+                loading_usb(!1), $grouport.find(".usb").removeClass("active")
+            })), this
+        }, this.reboot = function(andSave, noConfirm) {
+            return (noConfirm || confirm(lng("config_aplly_ok_reboot"))) && (LOGIC.stop(), WAITER.start("airRebooting", 9e4, function() {
+                var client_ip = getCookie("user_ip");
+                client_ip && (client_ip = client_ip.replace(/^.*:/i, ""));
+                var lan_ip_old = getCookie("lan_ip_older"),
+                    lan_ip_new = getCookie("lan_ip"),
+                    lan_mask_old = getCookie("lan_mask_older");
+                deleteCookie("lan_ip_older"), "" != lan_ip_old && lan_ip_old != lan_ip_new && checkIpInSubnet(lan_ip_old, client_ip, lan_mask_old) ? confirm(lng("airRedirectIpConf")) ? (reload(lan_ip_new), newIp(lan_ip_new)) : reload() : reload()
+            }), device.stop().system.reboot(andSave), device.lock(!0)), this
+        }, this.reset = function() {
+            return confirm(lng("resetconfigAlarm") + " 95 " + lng("second") + ", " + lng("resetconfigContinue")) && (LOGIC.stop(), WAITER.start("airReseting", 95e3, function() {
+                reload("192.168.0.1")
+            }), device.stop().system.reset(), device.lock(!0)), this
+        }, this.updateSettings = function(portinfo, vlanset, usbvolume, g3info, g3code) {
+            function addPort(id, notIPtv) {
+                var port = $("					<div class='port n" + id + "' direct='left'>						<div class='id'>" + id + "</div>						<div class='loading'></div>					</div>				").appendTo(group);
+                return notIPtv || port.attr({
+                    tip: lng("airPortTip"),
+                    langkey: "airPortTip"
+                }), port
+            }
+
+            function addVolume(part, vol) {
+                var percent = 100 * (vol.total - vol.free) / vol.total,
+                    total = lookSize(1048576 * vol.total),
+                    used = lookSize(1048576 * (vol.total - vol.free)),
+                    $volume = $("						<li>							<div class='info'>								<div class='fs'>" + vol.file_system.toUpperCase() + "</div>								<div class='size'>" + used.value + lng(used.metric) + "/" + total.value + lng(total.metric) + "</div>								<div class='clear'></div>							</div>							<div class='volume'>								<div class='total'>									<div class='used' style='width: " + percent + "%'></div>								</div>							</div>							<div class='eject'></div>						</li>					").appendTo(usb.find("ul"));
+                $volume.find(".eject").bind("click", callback(self, function(part) {
+                    HELPER.hide(), this.umount(part)
+                }, part))
+            }
+            if (portinfo) var portcount = Object.keys(portinfo).length;
+            if ($$.virgin) {
+                var group = $("<div class='group' />").appendTo($grouport);
+                usbvolume || g3info && g3info.status ? $("					<div class='usb'>						<div class='statbar'>							<div class='info1'></div>							<div class='info2'></div>						</div>						<div class='loading'></div>					</div>				").appendTo(group) : $("<div class='dummy'></div").appendTo(group), addPort("1"), portcount > 2 && (addPort("2"), addPort("3"), addPort("4")), portcount > 5 && (group = $("<div class='group second' />").prependTo($grouport), addPort("5"), addPort("6"), addPort("7"), addPort("8")), addPort("I", !0).attr({
+                    tip: "Internet"
+                }), $$.virgin = !1
+            }
+            var usb = $grouport.find(".usb");
+            if (usb.removeClass("active").find(".tip").unbind().remove(), usb.find(".info1, .info2").html(""), usb.length)
+                if (g3info && g3info.status) {
+                    usb.addClass("active"), usb.find(".info1").text(g3info.vendor.capitalize() + " " + g3info.model.toUpperCase());
+                    var sig = g3info.percent <= 100 ? Math.ceil(g3info.percent / 20) : 0,
+                        mode = g3info.actual_mode ? g3info.actual_mode + "/" : "";
+                    if (usb.find(".info2").html(mode + g3info.operator + " <img src='image/sig" + sig + ".gif' />"), g3code) {
+                        var att_left = g3code.pin_att_left,
+                            att_total = 3;
+                        2 == g3code.pinstatus ? (att_left = g3code.puk_att_left, att_total = g3code.puk_att_total) : 4 == g3code.pinstatus && (att_left = g3code.puk2_att_left, att_total = g3code.puk2_att_total), $notifybox.find(".SIM span.left").text(att_left), $notifybox.find(".SIM span.total").text("/" + att_total)
+                    }
+                }
+                else if (Object.keys(usbvolume).length > 0) {
+                usb.addClass("active"), usb.append("					<div class='tip'>						<ul></ul>						<div class='ex'>							<a href='#' langkey='airUmount'>" + lng("airUmount") + "</a>						</div>					</div>				").find("a").bind("click", callback(this, function() {
+                    HELPER.hide(), this.umount()
+                }));
+                var total = 0,
+                    fs = new Array;
+                usb.find("ul>li").unbind().remove();
+                for (var dev in usbvolume) dev && (addVolume(dev, usbvolume[dev]), total += usbvolume[dev].total, fs.push(usbvolume[dev].file_system.toUpperCase()));
+                total = lookSize(1048576 * total), usb.find(".info1").text(total.value + lng(total.metric)), usb.find(".info2").text(fs.join("/"))
+            }
+            $grouport.find(".port").removeClass("iptv active");
+            for (var port in portinfo)
+                if (port) {
+                    var i = $grouport.find(".port").length;
+                    "wan" != port.toLowerCase() && (i = port.substr(3), $grouport.find(".port").eq(i - 1).addClass(vlanset[1].ports["port" + i] ? "iptv" : "").unbind("click").bind("click", callback(this, this.toggleIPtv, i)))
+                }
+            return $$.backup.portinfo = portinfo, $$.backup.vlanset = vlanset, $$.backup.usbvolume = usbvolume, $$.backup.g3info = g3info, $$.backup.g3code = g3code, this
+        }, this.loadSettings = function() {
+            return device.config.read([175, 119], callback(this, function(data) {
+                this.updateSettings(data.rq[0].resident, data.rq[1].resident.vlans, data.rq[2] ? data.rq[2].resident.usb_storage : null, data.rq[3] ? data.rq[3].resident : null, data.rq[4] ? data.rq[4].resident : null)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $device = $($device), $grouport = $($grouport), $notifybox = $($notifybox), $device.find(".system a.reboot").bind("click", callback(this, function() {
+                HELPER.hide(), this.reboot(!0)
+            })), $device.find(".system a.backup").bind("click", callback(this, function() {
+                HELPER.hide(), SAVEME.lock(), device.system.backup(function() {
+                    SAVEME.unlock()
+                })
+            })), $device.find(".system a.restore").bind("click", callback(this, function() {
+                location.href = "#system/sysconf", MSWITCH.settings()
+            })), $device.find(".system a.factory").bind("click", callback(this, function() {
+                HELPER.hide(), this.reset()
+            })), $device.find(".system a.firmware").bind("click", callback(this, function() {
+                HELPER.hide(), __FIRMWARE.show()
+            })), $device.find(".system a.logout").bind("click", callback(this, function() {
+                HELPER.hide(), device.system.auth("", "", function() {
+                    reload()
+                })
+            })), $("#fastmenu>.system>.icon>.tip").html($device.find(".tip>*").clone(!0)), $("#fastmenu>.system>.text").bind("mouseover mouseout", function(e) {
+                $("#fastmenu>.system>.icon").trigger(e.type)
+            }), $notifybox.find(".defpass a").bind("click", callback(this, function(e) {
+                var a = $(e.target),
+                    controls = a.parents(".controls");
+                if (a.hasClass("cancel")) controls.slideUp(400);
+                else if (a.hasClass("apply")) {
+                    var passwd = controls.find(":input:eq(0)"),
+                        confirm = controls.find(":input:eq(1)"),
+                        err = controls.find(".error"),
+                        re = new RegExp("[А-яЁё]+", "g");
+                    if (err.hide(), "" == passwd.val() || re.test(passwd.val())) return bounce(passwd), err.show(), "" == passwd.val() ? err.attr("langkey", "passwEmptyPass").html(lng("passwEmptyPass")) : err.attr("langkey", "passwWrongPass").html(lng("passwWrongPass")), !1;
+                    if (passwd.val() != confirm.val()) return bounce(confirm), err.show(), err.attr("langkey", "passwConfirmMismatch").html(lng("passwConfirmMismatch")), !1;
+                    $notifybox.find(".defpass").addClass("loading");
+                    var login = getCookie("current_login"),
+                        pass = passwd.val();
+                    device.config.write(69, {
+                        login: login,
+                        pass: pass
+                    }, callback(this, function(data) {
+                        52 == data.status ? alert(lng("passwInvalidLogin")) : NOTIFY.hide(".defpass"), $notifybox.find(".defpass").removeClass("loading")
+                    }))
+                }
+                return !1
+            })), $notifybox.find(".defpass :input").bind("keypress", function(e) {
+                if (13 == e.keyCode) {
+                    var controls = $(e.target).parents(".controls");
+                    return controls.find("a.apply").trigger("click"), !1
+                }
+            }), $notifybox.find(".save .title").bind("click", callback(this, function() {
+                $notifybox.find(".save").addClass("loading"), WAITER.start(), device.system.save(callback(this, function() {
+                    $notifybox.find(".save").removeClass("loading"), NOTIFY.hide(".save"), WAITER.stop()
+                }))
+            })), $notifybox.find(".reboot .title").bind("click", callback(this, function() {
+                NOTIFY.hide(".reboot"), this.reboot(!0)
+            })), $notifybox.find(".autoupdate .title").bind("click", callback(this, function() {
+                __SYSTEM.autoupdate(), NOTIFY.hide(".autoupdate")
+            })), $notifybox.find(".reset .title").bind("click", callback(this, function() {
+                NOTIFY.hide(".reset"), this.reset()
+            })), $notifybox.find(".defpass .title").bind("click", callback(this, function(e) {
+                var controls = $(e.target).parents(".item").find(".controls");
+                return controls.is(":hidden") && controls.slideDown(400).find(":input").val("").eq(0).focus(), !1
+            })), $notifybox.find(".SMS .title").bind("click", callback(this, function() {
+                return NOTIFY.hide(".SMS"), window.location.hash = "3g/sms/inbox", !1
+            })), $notifybox.find(".SIM .title").bind("click", callback(this, function(e) {
+                var controls = $(e.target).parents(".item").find(".controls");
+                return controls.is(":hidden") && controls.slideDown(400).find(":input").val("").eq(0).focus(), !1
+            })), $notifybox.find(".SIM a").bind("click", callback(this, function(e) {
+                var a = $(e.target),
+                    controls = a.parents(".controls");
+                if (a.hasClass("cancel")) controls.slideUp(400);
+                else if (a.hasClass("apply")) {
+                    var code = controls.find(":input:eq(0)"),
+                        ncode = controls.find(":input:eq(1)").not(":hidden"),
+                        re = new RegExp("^[0-9]{4,8}$", "g"),
+                        re2 = new RegExp("^[0-9]{4}$", "g");
+                    if (!re.test(code.val())) return bounce(code.focus()), !1;
+                    if (ncode.length && !re2.test(ncode.val())) return bounce(ncode.focus()), !1;
+                    $notifybox.find(".SIM").addClass("loading"), device.config.write(135, {
+                        pin: code.val(),
+                        newpin: ncode.length ? ncode.val() : "",
+                        pinoff: $$.backup.g3code.pin_off
+                    }, callback(this, function(answer) {
+                        $notifybox.find(".SIM").removeClass("loading"), Ok(answer.status) ? (NOTIFY.hide(".SIM"), $notifybox.find(".SIM :input").val("")) : bounce($notifybox.find(".SIM .controls :input:eq(0)"))
+                    }))
+                }
+                return !1
+            })), $notifybox.find(".SIM :input").bind("keypress", function(e) {
+                if (13 == e.keyCode) {
+                    var controls = $(e.target).parents(".controls");
+                    return controls.find("a.apply").trigger("click"), !1
+                }
+            }), $notifybox.find(".warning .title").bind("click", function() {
+                reload()
+            }), $notifybox.find(".wifiopen .title").bind("click", callback(this, function() {
+                var notiwifitype = $notifybox.find(".wifiopen .desc").attr("langkey");
+                switch (notiwifitype) {
+                    case "airWiFiDesc2.4G":
+                    case "airWiFiDesc2.4G5G":
+                        MENU.open(menuWifi.alias + "/" + pWifiSec.alias + "/" + pWifiSec.tabs[0].alias);
+                        break;
+                    case "airWiFiDesc5G":
+                        MENU.open(menuWifi.alias + "/" + pWifiSec.alias + "/" + pWifiSec.tabs[1].alias);
+                        break;
+                    case "airWiFiDesc":
+                        MENU.open(menuWifi.alias + "/" + pWifiSec.alias)
+                }
+            })), $notifybox.find(".ltestatus .title").bind("click", callback(this, function() {
+                MENU.open(menuNet.alias + "/" + pageLAN.alias)
+            })), device.hook(device.notify.AUTH, this.notify.auth), device.hook(device.signal.PROCESS, this.notify.proc), device.hook(device.signal.AVAILABLE, this.notify.avail), device.hook(device.notify.SAVE, this.notify.save), device.hook(device.notify.REBOOT, this.notify.reboot), device.hook(device.notify.RESET, this.notify.reset), device.hook(device.notify.PASSWD, this.notify.defpass), device.hook(device.notify.SSID, this.notify.defssid), device.hook(device.notify.SSID_5GHz, this.notify.defssid_5GHz), device.hook(device.notify.PASSWDSSID, this.notify.defssidpass), device.hook(device.notify.PIN, this.notify.pin), device.hook(device.notify.SMS, this.notify.sms), device.hook(device.notify.MODE, this.notify.mode), device.hook(device.notify.UPDATE, this.notify.autoupdate), device.hook(device.notify.WIFI, this.notify.wifiopen), device.hook(device.notify.LTESTATUS, this.notify.ltestatus), device.hook(device.notify.HOTWIFI, this.notify.hotwifi)
+        })), this.notify = {
+            auth: function(auth) {
+                auth || reload()
+            },
+            proc: function(active) {
+                processing(active)
+            },
+            avail: function(avail) {
+                NOTIFY.visible(".warning", !avail)
+            },
+            save: function(need) {
+                NOTIFY.visible(".save", need)
+            },
+            reboot: function(need) {
+                NOTIFY.visible(".reboot", need)
+            },
+            autoupdate: function(need) {
+                NOTIFY.visible(".autoupdate", need)
+            },
+            reset: function(need) {
+                NOTIFY.visible(".reset", need)
+            },
+            defpass: function(need) {
+                NOTIFY.visible(".defpass", need), need ? (__DEFPASS.showItem(".passwd"), __DEFPASS.showItem(".confirm"), __DEFPASS.show()) : (__DEFPASS.hideItem(".passwd"), __DEFPASS.hideItem(".confirm"))
+            },
+            defssid: function(need, rpcWiFi, rpcWAN) {
+                NOTIFY.visible(".defssid", need), need ? (__DEFPASS.showItem(".ssid", rpcWiFi, rpcWAN), __DEFPASS.show(rpcWiFi)) : __DEFPASS.hideItem(".ssid")
+            },
+            defssid_5GHz: function(need, rpcWiFi, rpcWAN) {
+                NOTIFY.visible(".defssid5", need), need ? (__DEFPASS.showItem(".ssid5", rpcWiFi, rpcWAN), __DEFPASS.show(rpcWiFi)) : __DEFPASS.hideItem(".ssid5")
+            },
+            defssidpass: function(need) {
+                NOTIFY.visible(".defssidpass", need)
+            },
+            pin: function(need, status) {
+                if (need) {
+                    var Xcode = ["", "PIN", "PUK", "PIN2", "PUK2"];
+                    $notifybox.find(".SIM").addClass(Xcode[status]).find(".Xcode").text(" " + Xcode[status] + " "), $notifybox.find(".SIM .Ncode").text(""), $notifybox.find(".SIM .field:eq(1)").hide(), status > 1 && ($notifybox.find(".SIM .Ncode").attr({
+                        langkey: "airAndPIN"
+                    }).text(lng("airAndPIN")), $notifybox.find(".SIM .field:eq(1)").show())
+                }
+                NOTIFY.visible(".SIM", need)
+            },
+            sms: function(need) {
+                NOTIFY.visible(".SMS", need)
+            },
+            wifiopen: function(need) {
+                NOTIFY.visible(".wifiopen", need)
+            },
+            ltestatus: function(need, subnet) {
+                subnet && $notifybox.find(".ltestatus").find(".desc span.ltesubnet").text(" (" + subnet.toString() + ")"), NOTIFY.visible(".ltestatus", need)
+            },
+            hotwifi: function(need) {
+                NOTIFY.visible(".hotwifi", need)
+            }
+        }, this.autoupdate = function() {
+            function onerror(answer) {
+                55 == answer.status && (WAITER.stop(), alert(lng("firmware_invalid")))
+            }
+            confirm(lng("fwupdeteWarning")) && (WAITER.start("airUpdating", 245e3, function() {
+                location.reload(!0)
+            }), device.config.write(178, {
+                need_update: !0
+            }, callback(this, onerror)))
+        }
+    },
+    __NTPCHECKER = new function() {
+        var $$ = {
+                backup: null
+            },
+            $notifybox = "#notifybox";
+        this.activation = function() {
+            var timezone = (new Date).getTimezoneOffset() / 60;
+            return $notifybox.find(".ntp").addClass("loading"), device.config.write(65, {
+                enable: !0,
+                hour: timezone.toString(),
+                servers: ["ntp1.dlink.com"]
+            }, callback(this, function() {
+                $notifybox.find(".ntp").removeClass("loading"), NOTIFY.hide(".ntp")
+            })), this
+        }, this.updateSettings = function(ntp) {
+            var ddate = new Date(1e3 * ntp.CurrentTimeUnix),
+                udate = new Date;
+            if (0 == ntp.enable && (ddate.getFullYear() != udate.getFullYear() || ddate.getMonth() != udate.getMonth() || ddate.getDay() != udate.getDay())) {
+                var time = ddate.toLocaleTimeString().split(":");
+                time.pop(), $notifybox.find(".datetime>.time").text(time.join(":")), $notifybox.find(".datetime>.date").text(ddate.toLocaleDateString()), NOTIFY.show(".ntp")
+            }
+            return $$.backup = ntp, this
+        }, this.loadSettings = function() {
+            return device.config.read(65, callback(this, function(data) {
+                this.updateSettings(data.resident.ntpclient)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $notifybox = $($notifybox), $notifybox.find(".ntp a").bind("click", callback(this, function(e) {
+                var a = $(e.target),
+                    controls = a.parents(".controls");
+                return a.hasClass("cancel") ? controls.slideUp(400) : a.hasClass("enable") && this.activation(), !1
+            })), $notifybox.find(".ntp .title").bind("click", callback(this, function(e) {
+                var controls = $(e.target).parents(".item").find(".controls");
+                return controls.is(":hidden") && controls.slideDown(400), !1
+            }))
+        }))
+    },
+    __FIRMWARE = new function() {
+        function reset() {
+            $form.find("input[type=reset]").trigger("click"), $form[0].reset()
+        }
+        var $$ = {
+                uploading: !1
+            },
+            $firmware = "#winFirmware",
+            $form = "#winFirmware form",
+            $iframe = "#winFirmware iframe";
+        this.show = function() {
+            return disableFlag("firmware_remote_update") || DIALOG.show("#" + $firmware.attr("id"), !0), this
+        }, this.hide = function() {
+            return DIALOG.hide("#" + $firmware.attr("id")), this
+        }, $(document).bind("ready", callback(this, function() {
+            $firmware = $($firmware), $form = $($form), $iframe = $($iframe), $firmware.find("input.browse").bind("click", function() {
+                return $form.find("input[type=file]").trigger("click"), !1
+            }), $firmware.find(".status a").bind("click", function() {
+                return $firmware.removeClass("uploading"), stopupload($iframe.attr("name")), reset(), $$.uploading = !1, LOGIC.start(), !1
+            }), $firmware.find("input.btnUpdate").bind("click", callback(this, function() {
+                $form.submit(), WAITER.start()
+            })), $iframe.bind({
+                load: callback(this, function() {
+                    $$.uploading && device.system.fwupdate({
+                        complite: callback(this, function() {
+                            this.hide(), LOGIC.stop(), WAITER.start("airUpdating", 225e3, function() {
+                                reload()
+                            })
+                        }),
+                        cancel: callback(this, function() {
+                            $firmware.removeClass("uploading"), $$.uploading = !1, WAITER.stop()
+                        }),
+                        error: callback(this, function(data) {
+                            1 == data.error ? ($firmware.removeClass("uploading"), $$.uploading = !1, WAITER.stop(), alert(lng("file_upload_bad_fw"))) : 5 == data.error ? ($firmware.removeClass("uploading"), $$.uploading = !1, WAITER.stop(), alert(lng("unsupported_software_version"))) : 3 == data.error && reload()
+                        })
+                    })
+                })
+            }), $form.find("input[type=file]").bind("change", callback(this, function(e) {
+                var path = $(e.target).val();
+                "" != path && (clearTimeouts(), LOGIC.stop(), path = basename(path), $firmware.addClass("uploading").find(".status b").text(path), $$.uploading = !0)
+            }))
+        }))
+    },
+    __DEFPASS = new function() {
+        var self = this;
+        this.dataRpcWiFi;
+        var $winDefPass = "#winDefPass";
+        this.show = function(rpcWiFi) {
+            this.dataRpcWiFi = rpcWiFi, $winDefPass.hasClass("cancel") || DIALOG.show("#" + $winDefPass.attr("id"), !0)
+        }, this.hide = function() {
+            DIALOG.hide("#" + $winDefPass.attr("id"))
+        }, this.disable = function() {
+            $winDefPass.addClass("cancel"), this.hide()
+        }, this.hideItem = function(name) {
+            $($winDefPass).find(".controls").find(name).parent().hide()
+        }, this.showItem = function(name, rpcWiFi, rpcWAN) {
+            if ($($winDefPass).find(".controls").find(name).parent().show(), ".ssid" == name && "" == $($winDefPass).find(".controls").find("input.ssid").val()) {
+                var ssid = rpcWiFi.mbssid[0].SSID + "-" + getWanMac(rpcWAN, 4);
+                $($winDefPass).find(".controls").find("input.ssid").val(ssid)
+            }
+            if (".ssid5" == name && "" == $($winDefPass).find(".controls").find("input.ssid5").val()) {
+                var ssid5 = rpcWiFi["5G_mbssid"][0].SSID + "-" + getWanMac(rpcWAN, 4);
+                $($winDefPass).find(".controls").find("input.ssid5").val(ssid5)
+            }
+            ".passwd" == name && $($winDefPass).find(".dialcaptionPass").show(), (".ssid" == name || ".ssid5" == name) && $($winDefPass).find(".dialcaptionSsid").show()
+        }, this.loading = function(mode, flag) {
+            DIALOG.loading("#winDefPass.window", flag)
+        }, $(document).bind("ready", callback(this, function() {
+            $winDefPass = $($winDefPass), $winDefPass.find(".action input").bind("click", callback(this, function(e) {
+                var a = $(e.target),
+                    controls = $winDefPass.find(".controls");
+                if (a.hasClass("cancel")) this.hide(), $winDefPass.addClass("cancel");
+                else if (a.hasClass("apply")) {
+                    rootView.showModalOverlay(), this.loading(!0);
+                    var errPass = controls.find(".errorPass"),
+                        errSsid = controls.find(".errorSsid"),
+                        statusErr = !1,
+                        re = new RegExp("[А-яЁё]+", "g"),
+                        re2 = new RegExp("[<>%]+", "g");
+                    errPass.hide(), errSsid.hide();
+                    var passwd = null,
+                        confirm = null,
+                        ssid = null,
+                        ssid5 = null;
+                    if (controls.find(".passwd").parent().is(":visible") && (passwd = controls.find("input.passwd"), confirm = controls.find("input.confirm"), "" == passwd.val() ? (errPass.show(), errPass.attr("langkey", "emptyField").html(lng("emptyField")), statusErr = !0) : re.test(passwd.val()) ? (errPass.show(), errPass.attr("langkey", "passwConfirmCirill").html(lng("passwConfirmCirill")), statusErr = !0) : re2.test(passwd.val()) && (errPass.show(), errPass.attr("langkey", "illegalCharacters").html(lng("illegalCharacters")), statusErr = !0), passwd.val() != confirm.val() && (errPass.show(), errPass.attr("langkey", "passwConfirmMismatch").html(lng("passwConfirmMismatch")), statusErr = !0)), controls.find(".ssid").parent().is(":visible")) {
+                        var ssid = controls.find("input.ssid");
+                        "" == ssid.val() && (errSsid.show(), errSsid.attr("langkey", "emptyField").html(lng("emptyField")), statusErr = !0);
+                        var defssid = self.dataRpcWiFi.mbssid[0].SSID;
+                        ssid.val() == defssid && (errSsid.show(), errSsid.attr("langkey", "airSsidDesc").html(lng("airSsidDesc")), statusErr = !0), "" == ssid.val() || new RegExp("^[^а-яА-ЯёЁ]+$").test(ssid.val()) || (errSsid.show(), errSsid.attr("langkey", "ssidCyrillicError").html(lng("ssidCyrillicError")), statusErr = !0)
+                    }
+                    if (controls.find(".ssid5").parent().is(":visible")) {
+                        ssid5 = controls.find("input.ssid5"), "" == ssid5.val() && (errSsid.show(), errSsid.attr("langkey", "emptyField").html(lng("emptyField")), statusErr = !0);
+                        var defssid5 = self.dataRpcWiFi["5G_mbssid"][0].SSID;
+                        ssid5.val() == defssid5 && (errSsid.show(), errSsid.attr("langkey", "ssid5Default").html(lng("ssid5Default")), statusErr = !0), "" == ssid5.val() || new RegExp("^[^а-яА-ЯёЁ]+$").test(ssid5.val()) || (errSsid.show(), errSsid.attr("langkey", "ssidCyrillicError").html(lng("ssidCyrillicError")), statusErr = !0)
+                    }
+                    if (controls.find(".ssid").parent().is(":visible") && controls.find(".ssid5").parent().is(":visible") && ssid.val() == defssid && ssid5.val() == defssid5 && (errSsid.show(), errSsid.attr("langkey", "ssid25Default").html(lng("ssid25Default")), statusErr = !0), statusErr) rootView.hideModalOverlay();
+                    else {
+                        this.hide(300), rootView.showModalOverlay(), this.loading(!0);
+                        var mode;
+                        switch (passwd && (ssid || ssid5) ? mode = "3" : passwd ? mode = "1" : (ssid || ssid5) && (mode = "2"), mode) {
+                            case "1":
+                                var login = getCookie("current_login"),
+                                    pass = passwd.val();
+                                device.config.write(69, {
+                                    login: login,
+                                    pass: pass
+                                }, callback(this, function(data) {
+                                    var self = this;
+                                    52 == data.status ? (alert(lng("passwInvalidLogin")), self.loading(!1)) : device.system.auth(login, pass, function() {
+                                        NOTIFY.hide(".defpass"), location.reload(!0), self.loading(!1)
+                                    })
+                                }));
+                                break;
+                            case "2":
+                                var ssidobj = {};
+                                ssid && (ssidobj.mbssid = [], ssidobj.mbssid[0] = {
+                                    SSID: ssid.val()
+                                }), ssid5 && (ssidobj["5G_mbssid"] = [], ssidobj["5G_mbssid"][0] = {
+                                    SSID: ssid5.val()
+                                }), device.config.write(35, ssidobj, callback(this, function() {
+                                    var self = this;
+                                    NOTIFY.hide(".defssid"), location.reload(!0), self.loading(!1)
+                                }));
+                                break;
+                            case "3":
+                                var login = getCookie("current_login"),
+                                    pass = passwd.val(),
+                                    ssidobj = {};
+                                ssid && (ssidobj.mbssid = [], ssidobj.mbssid[0] = {
+                                    SSID: ssid.val()
+                                }), ssid5 && (ssidobj["5G_mbssid"] = [], ssidobj["5G_mbssid"][0] = {
+                                    SSID: ssid5.val()
+                                }), device.config.write([
+                                    [35, ssidobj],
+                                    [69, {
+                                        login: login,
+                                        pass: pass
+                                    }]
+                                ], callback(this, function(data) {
+                                    var self = this;
+                                    52 == data.status ? (alert(lng("passwInvalidLogin")), self.loading(!1)) : device.system.auth(login, pass, function() {
+                                        NOTIFY.hide(".defpass"), NOTIFY.hide(".defssid"), location.reload(!0), self.loading(!1)
+                                    })
+                                }))
+                        }
+                    }
+                }
+                return !1
+            })), $winDefPass.find(".field :input").bind("keypress", function(e) {
+                return 13 == e.keyCode ? ($(e.target).parents().find("input.apply").trigger("click"), !1) : void 0
+            })
+        }))
+    },
+    __RECOVERY = new function() {
+        function reset() {
+            $form.find("input[type=reset]").trigger("click"), $form[0].reset()
+        }
+        var $$ = {
+                uploading: !1
+            },
+            $recovery = "#winRecovery",
+            $form = "#winRecovery form",
+            $iframe = "#winRecovery iframe";
+        this.show = function() {
+            return DIALOG.show("#" + $recovery.attr("id"), !0), this
+        }, this.hide = function() {
+            return DIALOG.hide("#" + $recovery.attr("id")), this
+        }, $(document).bind("ready", callback(this, function() {
+            $recovery = $($recovery), $form = $($form), $iframe = $($iframe), $recovery.find("input.browse").bind("click", function() {
+                return $form.find("input[type=file]").trigger("click"), !1
+            }), $recovery.find(".status a").bind("click", function() {
+                return $recovery.removeClass("uploading"), stopupload($iframe.attr("name")), reset(), $$.uploading = !1, LOGIC.start(), !1
+            }), $recovery.find("input.btnUpdate").bind("click", callback(this, function() {
+                $form.submit()
+            })), $iframe.bind({
+                load: callback(this, function(e) {
+                    $$.uploading && (is.RPC_SUCCESS($(e.target).contents().find("body").html()) ? ($firmware.removeClass("uploading"), $$.uploading = !1, WAITER.stop(), alert(lng("lng_config_upload_failed")), LOGIC.start()) : (reset(), this.hide(), device.system.reboot(), WAITER.start("airRestoring", 9e4, function() {
+                        reload()
+                    })))
+                })
+            }), $form.find("input[type=file]").bind("change", callback(this, function(e) {
+                var path = $(e.target).val();
+                "" != path && (LOGIC.stop(), path = basename(path), $recovery.addClass("uploading").find(".status b").text(path), $$.uploading = !0, $(".btnUpdate"))
+            }))
+        }))
+    };

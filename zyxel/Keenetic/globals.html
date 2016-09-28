@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="ndm.abbr" content="Summary"/>
+<meta name="ndm.abbr" lang="RU" content="Список" xml:lang="RU"/>
+<title>ZyXEL Keenetic - Подключения к Интернету и другим сетям</title>
+<link rel="stylesheet" href="./css/keenetic.css" type="text/css"/>
+<script src="js/jquery.js" type="text/javascript"/>
+<script src="js/constants.js" type="text/javascript"/>
+<script src="l10n.js" type="text/javascript" charset="utf-8"/>
+<script src="js/ndm.js" type="text/javascript"/>
+<style type="text/css">
+#conn td.col_description {
+	padding-left: 25px;
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+tr.connected .col_description { background-image: url("img/connected.png"); }
+tr.disconnected .col_description { background-image: url("img/disconnected.png"); }
+tr.down .col_description { background-image: url("img/down.png"); }
+}
+</style>
+<script type="text/javascript">
+    
+var conn;
+var types = {
+	"PPT": "pptp.html",
+	"L2T": "l2tp.html",
+	"PPP": "pppoe.html",
+	"WiM": "yota.html",
+	"Jin": "yota.html",
+	"Usb": "3g.html",
+	"VLA": "broadband.html",
+	"Wif": "station.html",
+	"Fas": "#"
+}
+
+function apply() {
+	var p = new Packet();
+	var i = 0;
+	conn.forEach(function(values, isSelected) {
+		if( values["global"] == "yes" ) { 
+			p.Command("interface ip global", {"name":values["name"], "priority":""}, 
+				new FieldSet({"priority":document.getElementsByName("priority")[i]}));
+			++i;
+		}
+	});
+	p.onLoad = function () {
+		if( !this.getErrorState() ) {
+			conn.keepTrack(true);
+			var p = new Packet();
+			p.Command("show interface", null, conn);
+			p.proceed(document.getElementById("logger"));
+		}
+	}
+	p.ConfigSave();
+	p.proceed(document.getElementById("logger"));
+}
+function loadValues() {
+	enableProgressIndicator(true);
+	conn = new Table(document.getElementById("conn"));
+	conn.defineRow("interface");
+	conn.filterBy(function(row) {
+		return (row["type"] != "VLAN" || row["index"] != 1) &&
+			row["global"] && types[row["type"].substr(0, 3)];
+	});
+	conn.onRowChange = function(element, values) {
+		if( values["link"] == "down" ) {
+			if( values["fail"] == "no" || values["state"] == "down" ) {
+				this.setClassName(element, "down");
+			} else {
+				this.setClassName(element, "disconnected");
+			}
+		} else {
+			this.setClassName(element, "connected");
+		}
+	}
+	conn.drawCell_ = conn.drawCell;
+	conn.drawCell = function(element, value, col, row) {
+		if( col == "priority" && value ) {
+			var input = document.createElement("input");
+			input.type = "text";
+			input.name = "priority";
+			input.value = value;
+			input.style.width = "100%";
+			input.onfocus = input.onclick = function() { conn.keepTrack(false); };
+			element.appendChild(input);
+		} else {
+			this.drawCell_(element, value, col, row);
+			element.onclick = function() {
+				var values = conn.getRowValues(row);
+				var link = types[values["type"].substr(0, 3)] || types[values["name"].substr(0, 3)];
+				if( link ) window.location.assign(link + "#" + values["name"]);
+			}
+		}
+	}
+	conn.showColumns("description", "name", "global", "priority");
+	conn.keepTrack(true);
+
+	var p = new Packet();
+	p.Command("show interface", null, conn);
+	p.proceed(document.getElementById("logger"));
+}
+-->
+</script>
+</head>
+<body>
+<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+<div id="page">
+<div id="topframe">
+<div id="logo">
+<a href="status.html">
+<img src="img/logo.gif" border="0"/>
+</a>
+</div>
+<div id="logoname">Keenetic</div>
+<div id="sysinfo">
+<script type="text/javascript">    
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>
+Язык: 
+<select id="lang" onchange="setLang(this)">
+<option value="/" class="default">English</option>
+<option value="/RU/">Русский</option>
+</select>
+</div>
+</div>
+<div id="menu_position">
+<div id="tabs">
+<ul>
+<li style="background:url('img/status-shade.png');">
+<a href="status.html">Монитор</a>
+</li>
+<li style="background:url('img/broadband.png');" class="selected">
+<a href="globals.html">Интернет</a>
+</li>
+<li style="background:url('img/home-shade.png');">
+<a href="home.html">Домашняя сеть</a>
+</li>
+<li style="background:url('img/wireless-shade.png');">
+<a href="wireless.html">Wi-Fi</a>
+</li>
+<li style="background:url('img/security-shade.png');">
+<a href="statics.html">Безопасность</a>
+</li>
+<li style="background:url('img/tools-shade.png');">
+<a href="log.html">Система</a>
+</li>
+<li style="background:url('img/usb-shade.png');">
+<a href="swap.html">USB</a>
+</li>
+</ul>
+<br/>
+</div>
+</div>
+<div id="content" style="height: 196px">
+<div id="title">
+Интернет
+<div id="subtitle"/>
+</div>
+<ul class="tabs">
+<li>
+<a class="current" href="globals.html">
+<span>Список</span>
+</a>
+</li>
+<li>
+<a href="broadband.html">
+<span>IPoE</span>
+</a>
+</li>
+<li>
+<a href="pptp.html">
+<span>PPTP</span>
+</a>
+</li>
+<li>
+<a href="l2tp.html">
+<span>L2TP</span>
+</a>
+</li>
+<li>
+<a href="pppoe.html">
+<span>PPPoE</span>
+</a>
+</li>
+<li>
+<a href="dot1x.html">
+<span>802.1x</span>
+</a>
+</li>
+<li>
+<a href="mac.html">
+<span>MAC</span>
+</a>
+</li>
+<li>
+<a href="3g.html">
+<span>3G</span>
+</a>
+</li>
+<li>
+<a href="yota.html">
+<span>Yota</span>
+</a>
+</li>
+<li>
+<a href="dns.html">
+<span>DNS</span>
+</a>
+</li>
+<li>
+<a href="dyndns.html">
+<span>DyDNS</span>
+</a>
+</li>
+<li>
+<a href="routes.html">
+<span>Маршруты</span>
+</a>
+</li>
+</ul>
+<div class="block orange" style="border-bottom: none;">
+<h1>Подключения к Интернету и другим сетям</h1>
+<div class="rounded">
+<p>Полный список сетевых интерфейсов интернет-центра, предназначенных для соединения с внешними сетями. Пиктограммы показывают состояние интерфейсов. Если создано несколько интерфейсов для подключения к Интернету, можно, используя приоритеты, настроить резервирование интернет-канала за счет подключения к разным провайдерам. Рабочее соединение, имеющее больший приоритет, будет активным, а остальные будут находиться в режиме ожидания. Чтобы изменить параметры соединения, щелкните его запись в списке. Для создания нового соединения перейдите во вкладку IPoE, PPTP, L2TP или PPPoE.</p>
+</div>
+<table cellspacing="0" style="width:100%" id="conn" class="styled">
+<!--caption></caption-->
+<thead>
+<tr>
+<th>Описание</th>
+<th>Интерфейс</th>
+<th>Интернет</th>
+<th width="50px">Приоритет</th>
+</tr>
+</thead>
+<tbody>
+<tr class="down">
+<td class="col_description"><a href="station.html">Wi-Fi client</a></td>
+<td class="col_name"><a href="station.html">WifiStation0</a></td>
+<td class="col_global"><a href="station.html">yes</a></td>
+<td class="col_priority">
+<input type="text" name="priority" style="width: 100%"/>
+</td>
+</tr>
+
+<tr class="disconnected">
+<td class="col_description"><a href="yota.htm">yota.htmlYota</a></td>
+<td class="col_name"><a href="yota.htm">WiMax0</a></td>
+<td class="col_global"><a href="yota.htm">yes</a></td>
+<td class="col_priority">
+<input type="text" name="priority" style="width: 100%"/>
+</td>
+</tr>
+
+</tbody>
+</table>
+<br/>
+<button name="apply" onclick="apply()" disabled="true">Сохранить приоритеты</button>
+<div class="logger" id="logger" style="right: -225px; display: none">
+<div id="logger_close">
+<a href="#" onclick="document.getElementById('logger').style.display='none'">
+<img src="img/logger_close.gif"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="js/screensize.js" type="text/javascript"/>
+<script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+</body>
+</html>

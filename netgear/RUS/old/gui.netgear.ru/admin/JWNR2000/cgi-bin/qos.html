@@ -1,0 +1,189 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../qos.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_qos');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#qos.html" target=formframe>
+<input type=hidden name=submit_flag value="">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(qos_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var qos_width=""; 
+var lan_ip="192.168.1.1"
+var lan_subnet="255.255.255.0"
+var qos_su_ip="0.0.0.0"
+var qos_enable_su="0"
+var qos_uprate=parseInt("256"); 
+var qos_auto_bandwidth="0";
+var qos_bw_mode="0";
+var qos_uprate_det="256"
+var check_qos_uprate="";
+var model=""
+function loadvalue()
+{
+cf=document.forms[0];
+if('2' != '1' )
+{
+ cf.wmm_enable.disabled=true;
+ cf.wmm_enable.checked = true;
+}
+else
+{
+ if("0"=="1")
+ cf.wmm_enable.checked = true;
+ else
+ cf.wmm_enable.checked = false;
+}
+if("0"=="1")
+cf.qosEnable.checked =true;
+else
+cf.qosEnable.checked = false;
+
+if ( "0" == "2" )
+{
+alert(qos_wrong_wanip);
+}
+
+ if("0" == "1") 
+ cf.turn_qos_bandwidth_on.checked = true; 
+ else 
+ cf.turn_qos_bandwidth_on.checked = false; 
+ 
+ if( "0" == "0" )
+ {
+  cf.bw_mode[0].checked = true;
+  
+ }
+ else
+ {
+ cf.bw_mode[1].checked = true;
+ } 
+ 
+if ( qos_width == "Mbps") 
+ { 
+ cf.qos_uprate_web.value = parseInt(qos_uprate/1024); 
+ cf.qos_width.selectedIndex=1; 
+ } 
+ else 
+ { 
+ cf.qos_uprate_web.value = qos_uprate; 
+ cf.qos_width.selectedIndex=0; 
+ } 
+ 
+ 
+if ("0" == "1" )
+{
+ if(check_qos_uprate == "0" || check_qos_uprate == "")
+ {
+  qos_uprate_det = 256;
+ alert(qos_check_no_respone);
+ }
+ else
+ {
+  qos_uprate_det = check_qos_uprate;
+ }
+ qos_width = "Kbps";
+ //overwrite
+ cf.qos_uprate_web.value = qos_uprate_det;
+ cf.qos_width.selectedIndex=0; 
+ 
+} 
+ 
+ 
+ cf.uprate_det.value = qos_uprate_det;
+ document.getElementById('qos_uprate_det').innerHTML = qos_uprate_det; 
+ 
+ 
+ show_suip();
+if("0"=="0")
+{
+cf.su_enable.checked = false;
+cf.su_IPAddress4.disabled=true;
+cf.su_IPAddress4.value="";
+}
+else 
+{
+cf.su_enable.checked = true;
+cf.su_IPAddress4.disabled=false;
+var trusted_array=new Array();
+trusted_array=qos_su_ip.split('.');
+cf.su_IPAddress4.value=trusted_array[3];
+}
+ 
+}
+</script>
+<input type="hidden" name="qos_endis_wmm">
+<input type="hidden" name="qos_endis_on">
+<input type="hidden" name="qos_endis_bandwidth"> 
+<input type="hidden" name="qos_hidden_uprate"> 
+<input type="hidden" name="wan_ip" > 
+<input type="hidden" name="dns_ip" > 
+<input type="hidden" name="qos_su_enable">
+<input type="hidden" name="su_IPAddress">
+<input type="hidden" name="uprate_det">
+<input type="hidden" name="hidden_bw_mode">
+<TR><TD><input type="checkbox" name="wmm_enable" value="1"><a tabindex=-1 href="javascript:loadhelp('_qos','wifi')"><b><script>document.write(qos_enable_wmm);</script></b></a></TD></TR>
+<script>document.write(bluebar);</script>
+<TR><TD><input type="checkbox" name="qosEnable" value="1"><a tabindex=-1 href="javascript:loadhelp('_qos','qos_on')"><b><script>document.write(qos_turn_qos_on);</script></b></a></TD></TR>
+<script>document.write(bluebar);</script>
+<tr>
+<td><input type="checkbox" name="turn_qos_bandwidth_on" value="0"><b><script>document.write(qos_bandwidth_ctl);</script></b></TD>
+</tr>
+<tr>
+ <td><img src="../spacer.gif" width="35" height="18" border="0" alt="" /><input type="radio" name="bw_mode" value="0"><b><script>document.write(qos_uplink_width);</script></b>&nbsp;&nbsp;&nbsp;&nbsp;<b><script>document.write(qos_width_maximum);</script></b>&nbsp;&nbsp;<input type="text" name="qos_uprate_web" size="6" onKeyPress="return getkey('num',event)" >
+ <select name="qos_width" size="1">
+ <option value="Kbps"><script>document.write(qos_Kbps);</script></option>
+ <option value="Mbps"><script>document.write(qos_Mbps);</script></option>
+ </TD>
+</tr>
+<tr><td nowrap><img src="../spacer.gif" width="35" height="18" border="0" alt="" /><input type="radio" name="bw_mode" value="1"><b><script>document.write(qos_check+' : <span id="qos_uprate_det">256</span>Kbps</b>&nbsp;&nbsp;<input type="button" name="check_uplink_bandwidth" value="'+check_mark+'" /></td></tr>');</script> 
+<TR><td colspan=2><img src="../liteblue.gif" width=100% height=12><b><script>document.write(qos_rule_list);</script></b>
+<img src="../spacer.gif" width="60" height="18" border="0" alt="" /><script>document.write('<input type="button" name="setup_qos_rule" value="'+qos_setrule_mark+'" />');</script>
+</td>
+</TR>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script>
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+<input type="checkbox" name="su_enable" value="1" onclick= "checkSUIP();"><a tabindex=-1 href="javascript:loadhelp('_qos','su')"><b><script>document.write(qos_en_trusted_ip);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+<script>document.write(hd);</script><b><script>document.write(trust_ip);</script></b></a></td>
+<script>document.write(hd_r);</script>
+<input type="text" name="su_IPAddress1" size="4" maxlength="3" readonly onKeyPress="return getkey('num',event)">.
+<input type="text" name="su_IPAddress2" size="4" maxlength="3" readonly onKeyPress="return getkey('num',event)">.
+<input type="text" name="su_IPAddress3" size="4" maxlength="3" readonly onKeyPress="return getkey('num',event)">.
+<input type="text" name="su_IPAddress4" size="4" maxlength="3" disabled onKeyPress="return getkey('num',event)">
+</td>
+ </tr>
+</table>
+<script>document.write(bluebar);</script>
+<!--<tr>
+<td align=center nowrap>
+<script>
+ str='<input type="button" name="edit" value="'+edit_mark+'" onClick="check_qoslist_editnum(document.forms[0]);"><input type="button" name="delete" value="'+delete_mark+'" onClick="check_qoslist_delnum(document.forms[0]);"><br><input type="button" name="add" value="'+qos_add_prioritye+'" onClick="location.href=\'qos_adva_add.html\';">'
+document.write(str);
+</script>
+</td>
+</tr>
+<script>document.write(bluebar);</script> -->
+<tr>
+<td align=center>
+<script>
+document.write('<input type="submit" name="apply" value="'+apply_mark+'" onClick="check_qos_apply(document.forms[0]);return false;">');document.write("<input type='button' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"qos.html\";'>");</script>
+ </td>
+</tr>
+</table>
+</form>
+</body>
+</html>

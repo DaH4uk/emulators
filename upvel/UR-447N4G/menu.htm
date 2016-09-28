@@ -1,0 +1,291 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title><script>dw(page_title)</script></title>
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.10.1/style.css" type="text/css">
+<script type="text/javascript" src="util_gw.js"></script>
+<style>
+.on {display:on;}
+.off {display:none;}
+a {
+	color:#ffffff;
+	font-family:Arial, Helvetica, sans-serif;
+	text-decoration:none;
+}
+body.menu{
+	font-size:12px;
+	font-family:Arial, Tahoma, Helvetica, Geneva, sans-serif;
+	margin-top:0px;
+	margin-left:0px;
+	background:#e2e2e2;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+table.menu{
+	width:248px;
+	margin:0 4px 0 4px;
+	background:inherit;
+	background:#e2e2e2;
+}
+table.menu a {
+	color:#000000;
+}
+.submenus {
+	font-size:11px;
+	color:#000000;
+	font-family:Arial, Helvetica, sans-serif;
+	text-decoration:none;
+}
+.submenus:hover {
+	color:#e56c20;
+}
+.menu {
+	height:20px;
+	font-size:15px;
+}
+.ulmen {
+	margin:0 0 5px 0;
+	padding:0 0 0 15px;
+	width:155px;
+	
+}
+.ulmen li {
+	margin:0px;
+	padding:0px;
+}
+td.menu {
+	padding-left:7px;
+}
+</style>
+<script type="text/javascript">
+var last_menu="menu_status";
+var lan_url = 'ushare.html'/*tpa=http://192.168.10.1:49200/web/ushare.html*/;
+
+function changemenu(show_it)
+{
+	if(last_menu != show_it)
+	{
+		//wizardHideDiv();
+		show_div(true, show_it);
+		show_div(false, last_menu);
+		
+		last_menu=show_it;
+		
+	}
+	
+}
+
+function changemenuw0()
+{
+		changeback("wireless_id0");
+		changemenu("menu_wireless0");
+	
+}
+
+function changemenuw1()
+{
+		changeback("wireless_id1");		
+		changemenu("menu_wireless1");
+}
+
+
+var last_id="status_id";
+function changeback(now_id)
+{
+	if(last_id != now_id)
+	{
+		document.getElementById(now_id).style.backgroundImage='url(left_bar_act.png)';
+		document.getElementById(now_id).getElementsByTagName('a')[0].style.color="#000000";
+		document.getElementById(last_id).style.backgroundImage='url(left_bar.png)';
+		document.getElementById(last_id).getElementsByTagName('a')[0].style.color="#000000";
+		last_id=now_id;
+		
+	}
+	
+}
+
+function wizardHideDiv()
+{
+	show_div(false, "menu_status");
+	show_div(false, "menu_route");
+	show_div(false, "menu_wireless");
+	var dual_band=0;
+	if(dual_band==1)
+		show_div(false, "menu_wireless1");
+	show_div(false, "menu_main");
+	show_div(false, "ipv6_main");
+	show_div(false, "menu_access");
+	show_div(false, "menu_usb");
+	show_div(false, "menu_management");
+	show_div(false, "menu_advanced");
+
+}
+
+</script>
+</head>
+
+<body class="menu">
+<table border="0" cellpadding="0" cellspacing="2" align="left" class="menu" height="100%">
+	<tr>
+		<td class="menu" id="status_id" style="background:url(left_bar_act.png)/*tpa=http://192.168.10.1/icons/left_bar_act.png*/ no-repeat;color:#000000;height:36px;"  onClick='changeback("status_id");changemenu("menu_status");'>
+			<a href="status.htm" tppabs="http://192.168.10.1/status.htm" target="view" style="color:#000000;"><b><span id="treeSysStatus"><script>dw(menu_status)</script></span></b></a>
+		</td>
+	</tr>
+	<tr id="menu_status" class="on">
+		<td class="menu">
+			<ul class="ulmen">
+				<li><a href="status.htm" tppabs="http://192.168.10.1/status.htm" target="view" class="submenus"><span id="treeStatus"><script>dw(menu_system_status)</script></span></a></li>
+				<li><a href="stats.htm" tppabs="http://192.168.10.1/stats.htm" target="view" class="submenus"><span id="treeTrafficStatistics"><script>dw(menu_statistics)</script></span></a></li>
+				<li><a href="syslog.htm" tppabs="http://192.168.10.1/syslog.htm" target="view" class="submenus"><span id="treeLog"><script>dw(menu_log)</script></span></a></li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td class="menu" id="main_id"  style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("main_id");changemenu("menu_main");'>
+			<a href="tcpiplan.htm" tppabs="http://192.168.10.1/tcpiplan.htm" target="view"><b><span id="treeMain"><script>dw(menu_tcpip)</script></span></b></a>
+		</td>
+	</tr>
+	<tr id="menu_main" class="off">
+		<td class="menu">
+			<ul class="ulmen">
+				<li><a href="tcpiplan.htm" tppabs="http://192.168.10.1/tcpiplan.htm" target="view" class="submenus"><span id="treeLAN"><script>dw(menu_lan)</script></span></a></li>
+				
+				<li><a href="tcpipwan.htm" tppabs="http://192.168.10.1/tcpipwan.htm" target="view" class="submenus"><span id="treeWAN"><script>dw(menu_wan)</script></span></a></li>
+				<li><a href="ntp.htm" tppabs="http://192.168.10.1/ntp.htm" target="view" class="submenus"><span id="treeNTP"><script>dw(menu_timeZone)</script></span></a></li>
+				
+				<li><a href="vlan.htm" tppabs="http://192.168.10.1/vlan.htm" target="view" class="submenus"><span id="treeVLAN"><script>dw(menu_vlan)</script></span></a></li>
+				<li><a href="javascript:if(confirm(%27http://192.168.10.1/vlan_wan.htm  \n\nThis file was not retrieved by Teleport Pro, because the server reports that this file cannot be found.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/vlan_wan.htm%27" tppabs="http://192.168.10.1/vlan_wan.htm" target="view" class="submenus"><span id="treeSIP">SIP</span></a></li>
+			</ul>
+		</td>
+	</tr>
+<tr><td class="menu_ipv6" id="ipv6_id" onClick='changeback("ipv6_id");changemenu("ipv6_main");'><a href="ipv6_wan.htm" tppabs="http://192.168.10.1/ipv6_wan.htm" target="view"><b>IPv6</b></a></td></tr><tr id="ipv6_main" class="off"><td class="menu"><ul class="ulmen"><li><a target="view" class="submenus" href="ipv6_wan.htm" tppabs="http://192.168.10.1/ipv6_wan.htm" target="view">IPv6 Wan Setting</a></li><li><a target="view" class="submenus" href="dhcp6s.htm" tppabs="http://192.168.10.1/dhcp6s.htm" target="view">IPv6 LAN Setting</a></li><li><a target="view" class="submenus" href="radvd.htm" tppabs="http://192.168.10.1/radvd.htm" target="view">Router Advertisement Daemon</a></li><li><a target="view" class="submenus" href="dnsv6.htm" tppabs="http://192.168.10.1/dnsv6.htm" target="view">DNS Proxy Daemon</a></li><li><a target="view" class="submenus" href="tunnel6.htm" tppabs="http://192.168.10.1/tunnel6.htm" target="view">Tunnel 6over4</a></li></ul></td></tr>	
+	<script>
+function get_form(page, wlan_id){
+	return page;
+}
+wlan_num = 1; 
+for(i=0;i < wlan_num ;i ++){
+	document.write('<td class="menu" id="wireless_id'+i+'" onClick="changemenuw'+i+'();" style="background:url(left_bar.png) no-repeat;height:36px;">');
+	if(i == 0 ) { 	
+		if(wlan_num == 2) {	
+	document.write('<a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("basic.htm",i)+ '" target="view"><b><span id="treeWireless">'+menu_wireless+' 5 GHz</span></b></a></td>');
+		} else {
+	document.write('<a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("basic.htm",i)+ '" target="view"><b><span id="treeWireless">'+menu_wireless+' </span></b></a></td>');
+		}
+	} else if(i == 1 ) {
+	document.write('<a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("basic.htm",i)+ '" target="view"><b><span id="treeWireless">'+menu_wireless+' 2.4 GHz</span></b></a></td>');
+	} 
+	document.write('</tr> <tr id="menu_wireless'+i+'" class="off"><td class="menu"><ul class="ulmen">');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("basic.htm",i)+ '" target="view" class="submenus">'+menu_basic+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("advanced.htm",i)+'" target="view" class="submenus">'+menu_advance+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("security.htm",i)+'" target="view" class="submenus">'+menu_security+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("ACL.htm",i)+'" target="view" class="submenus">'+menu_accessControl+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("search_Wi-Fi.htm",i)+'" target="view" class="submenus">'+menu_siteSurvey+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("WDS.htm",i)+'" target="view" class="submenus">'+menu_wds+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("wlan_schedule.htm",i)+'" target="view" class="submenus">'+menu_schedule+'</a></li>');
+	document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+get_form("WPS.htm",i)+'" target="view" class="submenus">'+menu_wps+'</a></li></ul></td></tr>');
+}
+</script>	
+	<tr>
+		<td class="menu" id="route_id" style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("route_id");changemenu("menu_route");'>
+			<a href="route.htm" tppabs="http://192.168.10.1/route.htm" target="view"><b><span id="treeRoute"><script>dw(menu_routeSetup)</script></span></b></a>
+		</td>
+	</tr>
+	<tr id="menu_route" class="off">
+		<td class="menu">
+			<ul class="ulmen">
+				<li><a href="route.htm" tppabs="http://192.168.10.1/route.htm" target="view" class="submenus"><span id="treeRouteStatic"><script>dw(menu_staticRoute)</script></span></a></li>
+				<li><a href="routetbl.htm" tppabs="http://192.168.10.1/routetbl.htm" target="view" class="submenus"><span id="treeRouteTable"><script>dw(menu_routeTbl)</script></span></a></li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td class="menu" id="access_id" style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("access_id");changemenu("menu_access");'>
+			<a href="ipfilter.htm" tppabs="http://192.168.10.1/ipfilter.htm" target="view"><b><span id="treeFirewall"><script>dw(menu_fireWall)</script></span></b></a>
+		</td>
+	</tr>
+
+	<tr id="menu_access" class="off">
+		<td class="menu">
+			<ul class="ulmen">
+				<li><a href="ip6filter.htm" tppabs="http://192.168.10.1/ip6filter.htm" target="view" class="submenus"><span id="treeIP"><script>dw(menu_ipFilter)</script></span></a></li>
+				<li><a href="portfilter.htm" tppabs="http://192.168.10.1/portfilter.htm" target="view" class="submenus"><script>dw(menu_portFilter)</script></a></li>
+				<li><a href="macfilter.htm" tppabs="http://192.168.10.1/macfilter.htm" target="view" class="submenus"><span id="treeMAC"><script>dw(menu_macFilter)</script></span></a></li>
+				<li><a href="urlfilter.htm" tppabs="http://192.168.10.1/urlfilter.htm" target="view" class="submenus"><span id="treeURL"><script>dw(menu_urlFilter)</script></span></a></li>
+				<li><a href="portfw.htm" tppabs="http://192.168.10.1/portfw.htm" target="view" class="submenus"><span id="treePort"><script>dw(menu_portFw)</script></span></a></li>
+				<li><a href="dmz.htm" tppabs="http://192.168.10.1/dmz.htm" target="view" class="submenus"><span id="treeDMZ"><script>dw(menu_dmz)</script></span></a></li>
+				<li><a href="dos.htm" tppabs="http://192.168.10.1/dos.htm" target="view" class="submenus"><span id="treeDoS"><script>dw(menu_dos)</script></span></a></li>
+			</ul>
+		</td>
+	</tr>
+
+	
+
+	<tr>
+		<td class="menu" id="usb_id" style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("usb_id");changemenu("menu_usb");'>
+			<a href="usb-switch.htm" tppabs="http://192.168.10.1/usb-switch.htm" target="view"><b><span id="treeManage"><script>dw(menu_usb)</script></span></b></a>
+		</td>
+	</tr>
+	<tr id="menu_usb" class="off">
+		<td class="menu">
+			<ul class="ulmen">
+				<li><a href="usb-switch.htm" tppabs="http://192.168.10.1/usb-switch.htm" target="view" class="submenus"><span id="treeUpgrade"><script>dw(menu_usb_settings)</script></span></a></li>
+				<li><a href="javascript:if(confirm(%27http://192.168.10.1/http_files.htm  \n\nThis file was not retrieved by Teleport Pro, because the server reports that this file cannot be found.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/http_files.htm%27" tppabs="http://192.168.10.1/http_files.htm" target="view" class="submenus"><span id="treeSave">Share Browser</span></a></li>
+				<script>
+				document.write('<li><a href="http://upvel.ru/emulators/UR-447N4G/'+lan_url+'" target="view" class="submenus"> ');
+				</script>
+				<span id="treePassword">DLNA/UPnP A/V Media Server</span></a></li>
+			</ul>
+		</td>
+	</tr>
+
+
+	<tr>
+		<td class="menu" id="management_id" style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("management_id");changemenu("menu_management");'>
+			<a href="upload.htm" tppabs="http://192.168.10.1/upload.htm" target="view"><b><span id="treeManage"><script>dw(menu_management)</script></span></b></a>
+		</td>
+	</tr>
+	<tr id="menu_management" class="off">
+		<td class="menu">
+			<ul class="ulmen">
+				<li><a href="upload.htm" tppabs="http://192.168.10.1/upload.htm" target="view" class="submenus"><span id="treeUpgrade"><script>dw(menu_updateFm)</script></span></a></li>
+				<li><a href="saveconf.htm" tppabs="http://192.168.10.1/saveconf.htm" target="view" class="submenus"><span id="treeSave"><script>dw(menu_settings)</script></span></a></li>
+				<li><a href="password.htm" tppabs="http://192.168.10.1/password.htm" target="view" class="submenus"><span id="treePassword"><script>dw(menu_pwd)</script></span></a></li>
+				<li><a href="reboot.htm" tppabs="http://192.168.10.1/reboot.htm" target="view" class="submenus"><span id="treeReboot"><script>dw(menu_reboot)</script></span></a></li>
+			</ul>
+		</td>
+	</tr>
+
+
+	<tr>
+		<td class="menu" id="advanced_id"  style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("advanced_id");changemenu("menu_advanced");'>
+			<a href="ddns.htm" tppabs="http://192.168.10.1/ddns.htm" target="view"><b><span id="treeAdvancedMenu"><script>dw(menu_adv)</script></span></b></a></td>
+	</tr>
+	<tr id="menu_advanced" class="off">
+		<td class="menu">
+			<ul class="ulmen">
+						
+				<li><a href="ddns.htm" tppabs="http://192.168.10.1/ddns.htm" target="view" class="submenus"><span id="treeDDNS"><script>dw(menu_ddns)</script></span></a></li>
+				<li><a href="ip6_qos.htm" tppabs="http://192.168.10.1/ip6_qos.htm" target="view" class="submenus"><span id="treeQoS"><script>dw(menu_qos)</script></span></a></li>
+				
+				<li><a href="opmode.htm" tppabs="http://192.168.10.1/opmode.htm" target="view" class="submenus"><span id="treeOpMode"><script>dw(menu_opmode)</script></span></a></li>
+				<li class="off"><a href="syscmd.htm" tppabs="http://192.168.10.1/syscmd.htm" target="view" class="submenus"><script>dw(menu_sysCmd)</script></a></li>
+<li><a class="submenus" href="tr069config.htm" tppabs="http://192.168.10.1/tr069config.htm" target="view">TR-069 config</a></li>
+				</ul>
+		</td>
+	</tr>
+	<tr>
+		<td class="menu" id="wizard_id"  style="background:url(left_bar.png)/*tpa=http://192.168.10.1/icons/left_bar.png*/ no-repeat;height:36px;" onClick='changeback("wizard_id");'>
+			<a href="wizard.htm" tppabs="http://192.168.10.1/wizard.htm" target="view"><b><span id="treeWizard"><script>dw(menu_wizard)</script></span></b></a>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

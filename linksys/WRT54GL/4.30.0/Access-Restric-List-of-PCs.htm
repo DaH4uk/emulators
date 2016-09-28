@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0034)http://192.168.1.1/FilterIPMAC.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>List of PCs</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=expires content=0>
+<META http-equiv=cache-control content=no-cache>
+<META http-equiv=pragma content=no-cache><LINK 
+href="Access-Restric-List-of-PCs_files/style.css" type=text/css rel=stylesheet>
+<SCRIPT src="Access-Restric-List-of-PCs_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="Access-Restric-List-of-PCs_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-List-of-PCs_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-List-of-PCs_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-List-of-PCs_files/capapp.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-List-of-PCs_files/capasg.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Access-Restric-List-of-PCs_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript>
+function to_submit(F)
+{
+        F.submit_button.value = "FilterIPMAC";
+        F.action.value = "Apply";
+        F.submit();
+}
+function valid_macs_all(I)
+{
+	if(I.value == "")
+		return true;
+	else if(I.value.length == 12)
+		valid_macs_12(I);
+	else if(I.value.length == 17)
+		valid_macs_17(I);
+	else{
+//              alert('The MAC Address length is not correct!!');
+                alert(errmsg.err5);
+		I.value = I.defaultValue;
+        }
+	
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY bgColor=white>
+<FORM name=ipfilter action="http://ui.linksys.com/WRT54GL/4.30.0/apply.cgi" method=post><INPUT type=hidden 
+name=submit_button> <INPUT type=hidden name=change_action> <INPUT type=hidden 
+name=small_screen> <INPUT type=hidden name=action> <INPUT type=hidden 
+name=filter_ip_value> <INPUT type=hidden name=filter_mac_value> 
+<CENTER>
+<TABLE height=397 cellSpacing=0 cellPadding=10 width=620 border=1>
+  <TBODY>
+  <TR>
+    <TD width=610>
+      <TABLE cellSpacing=0 cellPadding=0 border=0>
+        <TBODY>
+        <TR>
+          <TD height=35>
+            <P align=center><B><FONT face=Arial color=#0000ff><SPAN 
+            style="FONT-SIZE: 14pt">
+            <SCRIPT>Capture(filterpc.listpc)</SCRIPT>
+            </SPAN></FONT></B></P></TD></TR>
+        <TR>
+          <TD align=right height=27>
+            <P align=center><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+            <SCRIPT>Capture(filterpc.entermacaddr)</SCRIPT>
+            &nbsp;: xxxxxxxxxxxx</SPAN></FONT></P></TD></TR>
+        <TR>
+          <TD align=middle height=27><B><FONT face=Arial><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac01)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 
+            name=mac0></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <B><FONT face=Arial><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac05)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 name=mac4></FONT></TD></TR>
+        <TR>
+          <TD align=middle height=27><B><FONT face=Arial><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac02)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 
+            name=mac1></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <B><FONT face=Arial><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac06)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 name=mac5></FONT></TD></TR>
+        <TR>
+          <TD align=middle height=27><B><FONT face=Arial><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac03)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 
+            name=mac2></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <B><FONT face=Arial><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac07)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 name=mac6></FONT></TD></TR>
+        <TR>
+          <TD align=middle height=27><B><FONT face=Arial><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac04)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 
+            name=mac3></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <B><FONT face=Arial><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.mac08)</SCRIPT>
+            &nbsp;:&nbsp;</SPAN></B></FONT><FONT face=Arial>&nbsp; <INPUT 
+            class=num onblur=valid_macs_all(this) maxLength=17 size=17 
+            value=00:00:00:00:00:00 name=mac7></FONT></TD></TR>
+        <TR>
+          <TD align=right>
+            <HR align=right color=#c0c0c0>
+          </TD></TR>
+        <TR>
+          <TD align=right height=27>
+            <P align=center><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+            <SCRIPT>Capture(filterpc.enterip)</SCRIPT>
+            </SPAN></FONT></P></TD></TR>
+        <TR>
+          <TD align=middle height=27><FONT face=Arial><B><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.ip01)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1.</SPAN></FONT> <INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip0></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <FONT face=Arial><B><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.ip04)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1.</SPAN></FONT> <INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip3></FONT></TD></TR>
+        <TR>
+          <TD align=middle height=27><FONT face=Arial><B><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.ip02)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1. </SPAN></FONT><INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip1></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <FONT face=Arial><B><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.ip05)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1. </SPAN></FONT><INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip4></FONT></TD></TR>
+        <TR>
+          <TD align=middle height=27><FONT face=Arial><B><SPAN 
+            style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.ip03)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1. </SPAN></FONT><INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip2></FONT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <FONT face=Arial><B><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.ip06)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1. </SPAN></FONT><INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip5></FONT></TD></TR>
+        <TR>
+          <TD align=right>
+            <HR align=right color=#c0c0c0>
+          </TD></TR>
+        <TR>
+          <TD align=right height=27>
+            <P align=center><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+            <SCRIPT>Capture(filterpc.enteriprange)</SCRIPT>
+            </SPAN></FONT></P></TD></TR>
+        <TR>
+          <TD align=right height=27>
+            <P align=left><FONT face=Arial><B><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.iprange01)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1. </SPAN></FONT><INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip_range0_0><B><SPAN style="FONT-SIZE: 12pt"> ~ 
+            </SPAN></B><INPUT class=num onblur='valid_range(this,0,254,"IP")' 
+            maxLength=3 size=3 value=0 name=ip_range0_1><FONT size=2>&nbsp; 
+            </FONT></FONT><FONT face=Arial><B><SPAN style="FONT-SIZE: 12pt">
+            <SCRIPT>Capture(filterpc.iprange02)</SCRIPT>
+            &nbsp;:&nbsp;</B>&nbsp; 192.168.1. </SPAN></FONT><INPUT class=num 
+            onblur='valid_range(this,0,254,"IP")' maxLength=3 size=3 value=0 
+            name=ip_range1_0><B><SPAN style="FONT-SIZE: 12pt"> ~ 
+            </SPAN></B><INPUT class=num onblur='valid_range(this,0,254,"IP")' 
+            maxLength=3 size=3 value=0 name=ip_range1_1><FONT size=2>&nbsp; 
+            </FONT></FONT></P></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<P>
+<SCRIPT>document.write("<input type=button name=save_button" + " value=\"" + sbutton.save + "\" >");</SCRIPT>
+&nbsp;
+<SCRIPT>document.write("<input type=button name=cancel_button" + " value=\"" + sbutton.cancel + "\" onClick=window.location.replace(\"Access-Restric-List-of-PCs.htm\")>");</SCRIPT>
+ </CENTER></P></FORM></BODY></HTML>

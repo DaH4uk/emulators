@@ -1,0 +1,208 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<SCRIPT language=Javascript src="radvd.htm"></SCRIPT>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Configuring Router Advertisement</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<SCRIPT>
+function onclick_func()
+{
+	var fm = document.Radvdform;
+	if(fm.enable_radvd.checked == false)
+	{
+		fm.interfacename.disabled=true;
+		fm.MaxRtrAdvInterval.disabled=true;
+		fm.MinRtrAdvInterval.disabled=true;
+		fm.MinDelayBetweenRAs.disabled=true;
+		fm.AdvManagedFlag.disabled=true;
+		fm.AdvOtherConfigFlag.disabled=true;
+		fm.AdvLinkMTU.disabled=true;
+		fm.AdvReachableTime.disabled=true;
+		fm.AdvRetransTimer.disabled=true;
+		fm.AdvCurHopLimit.disabled=true;
+		fm.AdvDefaultLifetime.disabled=true;
+		fm.AdvDefaultPreference.disabled=true;
+		fm.AdvSourceLLAddress.disabled=true;
+		fm.UnicastOnly.disabled=true;
+		
+		fm.radvdprefix0_1.disabled=true;
+		fm.radvdprefix0_2.disabled=true;
+		fm.radvdprefix0_3.disabled=true;
+		fm.radvdprefix0_4.disabled=true;
+		fm.radvdprefix0_5.disabled=true;
+		fm.radvdprefix0_6.disabled=true;
+		fm.radvdprefix0_7.disabled=true;
+		fm.radvdprefix0_8.disabled=true;
+		fm.radvdprefix0_len.disabled=true;
+		fm.AdvOnLinkFlag_0.disabled=true;
+		fm.AdvAutonomousFlag_0.disabled=true;
+		fm.AdvValidLifetime_0.disabled=true;
+		fm.AdvPreferredLifetime_0.disabled=true;
+		fm.AdvRouterAddr_0.disabled=true;
+		fm.if6to4_0.disabled=true;
+		
+		fm.radvdprefix1_1.disabled=true;
+		fm.radvdprefix1_2.disabled=true;
+		fm.radvdprefix1_3.disabled=true;
+		fm.radvdprefix1_4.disabled=true;
+		fm.radvdprefix1_5.disabled=true;
+		fm.radvdprefix1_6.disabled=true;
+		fm.radvdprefix1_7.disabled=true;
+		fm.radvdprefix1_8.disabled=true;
+		fm.radvdprefix1_len.disabled=true;
+		fm.AdvOnLinkFlag_1.disabled=true;
+		fm.AdvAutonomousFlag_1.disabled=true;
+		fm.AdvValidLifetime_1.disabled=true;
+		fm.AdvPreferredLifetime_1.disabled=true;
+		fm.AdvRouterAddr_1.disabled=true;
+		fm.if6to4_1.disabled=true;
+	}
+	else
+	{
+		fm.interfacename.disabled=false;
+		fm.MaxRtrAdvInterval.disabled=false;
+		fm.MinRtrAdvInterval.disabled=false;
+		fm.MinDelayBetweenRAs.disabled=false;
+		fm.AdvManagedFlag.disabled=false;
+		fm.AdvOtherConfigFlag.disabled=false;
+		fm.AdvLinkMTU.disabled=false;
+		fm.AdvReachableTime.disabled=false;
+		fm.AdvRetransTimer.disabled=false;
+		fm.AdvCurHopLimit.disabled=false;
+		fm.AdvDefaultLifetime.disabled=false;
+		fm.AdvDefaultPreference.disabled=false;
+		fm.AdvSourceLLAddress.disabled=false;
+		fm.UnicastOnly.disabled=false;
+		
+		fm.radvdprefix0_1.disabled=false;
+		fm.radvdprefix0_2.disabled=false;
+		fm.radvdprefix0_3.disabled=false;
+		fm.radvdprefix0_4.disabled=false;
+		fm.radvdprefix0_5.disabled=false;
+		fm.radvdprefix0_6.disabled=false;
+		fm.radvdprefix0_7.disabled=false;
+		fm.radvdprefix0_8.disabled=false;
+		fm.radvdprefix0_len.disabled=false;
+		fm.AdvOnLinkFlag_0.disabled=false;
+		fm.AdvAutonomousFlag_0.disabled=false;
+		fm.AdvValidLifetime_0.disabled=false;
+		fm.AdvPreferredLifetime_0.disabled=false;
+		fm.AdvRouterAddr_0.disabled=false;
+		fm.if6to4_0.disabled=false;
+		
+		fm.radvdprefix1_1.disabled=false;
+		fm.radvdprefix1_2.disabled=false;
+		fm.radvdprefix1_3.disabled=false;
+		fm.radvdprefix1_4.disabled=false;
+		fm.radvdprefix1_5.disabled=false;
+		fm.radvdprefix1_6.disabled=false;
+		fm.radvdprefix1_7.disabled=false;
+		fm.radvdprefix1_8.disabled=false;
+		fm.radvdprefix1_len.disabled=false;
+		fm.AdvOnLinkFlag_1.disabled=false;
+		fm.AdvAutonomousFlag_1.disabled=false;
+		fm.AdvValidLifetime_1.disabled=false;
+		fm.AdvPreferredLifetime_1.disabled=false;
+		fm.AdvRouterAddr_1.disabled=false;
+		fm.if6to4_1.disabled=false;
+	
+	}
+}
+function radvd_save()
+{
+	with(document.Radvdform)
+	{
+		if(!checkIpv6Addr(radvdprefix0_1,radvdprefix0_2,radvdprefix0_3,radvdprefix0_4,radvdprefix0_5,
+			radvdprefix0_6,radvdprefix0_7,radvdprefix0_8,radvdprefix0_len,"First prefix address invalid!"))
+			return false;
+
+		if(!checkIpv6Addr(radvdprefix1_1,radvdprefix1_2,radvdprefix1_3,radvdprefix1_4,radvdprefix1_5,
+			radvdprefix1_6,radvdprefix1_7,radvdprefix1_8,radvdprefix1_len,"Second prefix address invalid!"))
+			return false;
+	}
+	
+	return true;
+	
+}
+</SCRIPT>
+</head>
+
+<body bgcolor="#ffffff" text="#000000">
+<h2><font id="radvd_title">Router Advertisement Daemon</font></h2>
+<form method="POST" action="http://192.168.10.1/boafrm/formRadvd" name=Radvdform>
+
+<table border="0" width="480" class="form">
+<tr><td class="title" colspan="2">Configuring Router Advertisement</td></tr>
+<tr><td class="head">Enable</td><td><input type=checkbox name=enable_radvd value =1  onclick="onclick_func()"></td></tr>
+<tr><td class="head">radvdinterfacename</td><td><input type=text name=interfacename size=15 maxlength=15 value="br0"></td></tr>
+<tr><td class="head">MaxRtrAdvInterval</td><td><input type=text name=MaxRtrAdvInterval size=15 maxlength=15 value="600"></td></tr>
+<tr><td class="head">MinRtrAdvInterval</td><td><input type=text name=MinRtrAdvInterval size=15 maxlength=15 value="198"></td></tr>
+<tr><td class="head">MinDelayBetweenRAs</td><td><input type=text name=MinDelayBetweenRAs size=15 maxlength=15 value="3"></td></tr>
+<tr><td class="head">AdvManagedFlag</td><td><input type=checkbox name=AdvManagedFlag value =1 ></td></tr>
+<tr><td class="head">AdvOtherConfigFlag</td><td><input type=checkbox name=AdvOtherConfigFlag value =1 ></td></tr>
+<tr><td class="head">AdvLinkMTU</td><td><input type=text name=AdvLinkMTU size=15 maxlength=15 value="1500"></td></tr>
+<tr><td class="head">AdvReachableTime</td><td><input type=text name=AdvReachableTime size=15 maxlength=15 value="0"></td></tr>
+<tr><td class="head">AdvRetransTimer</td><td><input type=text name=AdvRetransTimer size=15 maxlength=15 value="0"></td></tr>
+<tr><td class="head">AdvCurHopLimit</td><td><input type=text name=AdvCurHopLimit size=15 maxlength=15 value="64"></td></tr>
+<tr><td class="head">AdvDefaultLifetime</td><td><input type=text name=AdvDefaultLifetime size=15 maxlength=15 value="1800"></td></tr>
+<tr><td class="head">AdvDefaultPreference</td><td><select name=AdvDefaultPreference><option >high<option selected>medium<option >low</select></td></tr>
+<tr><td class="head">AdvSourceLLAddress</td><td><input type=checkbox name=AdvSourceLLAddress value=1 checked></td></tr>
+<tr><td class="head">UnicastOnly</td><td><input type=checkbox name=UnicastOnly value=1 ></td></tr>
+</table>
+
+<table border="0" width="480" class="form">
+<tr><td class="title" colspan="2">prefix1</td></tr>
+<tr><td class="head">Enabled</td><td><input type=checkbox name=Enabled_0 value=1 checked></td></tr>
+<tr><td class="head">prefix</td><td>
+	<input type=text name=radvdprefix0_1 size=4 maxlength=4 enable value="2001">:
+	<input type=text name=radvdprefix0_2 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix0_3 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix0_4 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix0_5 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix0_6 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix0_7 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix0_8 size=4 maxlength=4 enable value="0000">/
+	<input type=text name=radvdprefix0_len size=4 maxlength=4 enable value="64"></td></tr>
+	
+	<tr><td class="head">AdvOnLinkFlag</td><td><input type=checkbox name=AdvOnLinkFlag_0 value=1 checked></td></tr>
+	<tr><td class="head">AdvAutonomousFlag</td><td><input type=checkbox name=AdvAutonomousFlag_0 value=1 checked></td></tr>
+	<tr><td class="head">AdvValidLifetime</td><td><input type=text name=AdvValidLifetime_0 size=15 maxlength=15 value="2592000"></td></tr>
+	<tr><td class="head">AdvPreferredLifetime</td><td><input type=text name=AdvPreferredLifetime_0 size=15 maxlength=15 value="604800"></td></tr>
+	<tr><td class="head">AdvRouterAddr</td><td><input type=checkbox name=AdvRouterAddr_0 value=1 ></td></tr>
+	<tr><td class="head">if6to4</td><td><input type=text name=if6to4_0 size=15 maxlength=15 value="eth1"></td></tr>
+</table>
+
+<table border="0" width="480" class="form">
+<tr><td class="title" colspan="2">prefix2</td></tr>
+<tr><td class="head">Enabled</td><td><input type=checkbox name=Enabled_1 value=1 checked></td></tr>
+<tr><td class="head">prefix</td><td>
+	<input type=text name=radvdprefix1_1 size=4 maxlength=4 enable value="2002">:
+	<input type=text name=radvdprefix1_2 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix1_3 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix1_4 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix1_5 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix1_6 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix1_7 size=4 maxlength=4 enable value="0000">:
+	<input type=text name=radvdprefix1_8 size=4 maxlength=4 enable value="0000">/
+	<input type=text name=radvdprefix1_len size=4 maxlength=4 enable value="64"></td></tr>
+	
+	<tr><td class="head">AdvOnLinkFlag</td><td><input type=checkbox name=AdvOnLinkFlag_1 value=1 checked></td></tr>
+	<tr><td class="head">AdvAutonomousFlag</td><td><input type=checkbox name=AdvAutonomousFlag_1 value=1 checked></td></tr>
+	<tr><td class="head">AdvValidLifetime</td><td><input type=text name=AdvValidLifetime_1 size=15 maxlength=15 value="2592000"></td></tr>
+	<tr><td class="head">AdvPreferredLifetime</td><td><input type=text name=AdvPreferredLifetime_1 size=15 maxlength=15 value="604800"></td></tr>
+	<tr><td class="head">AdvRouterAddr</td><td><input type=checkbox name=AdvRouterAddr_1 value=1 ></td></tr>
+	<tr><td class="head">if6to4</td><td><input type=text name=if6to4_1 size=15 maxlength=15 value=""></td></tr>
+</table>
+
+<input type="hidden" value="/radvd.htm" name="submit-url">
+<tr><td colspan=2><input type=submit name="submit" value="Save" onclick="return radvd_save()"></td></tr>
+</form>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<html>
+<head>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script>
+<!--
+var loadedcolor='blue' ;
+var unloadedcolor='white';
+var bordercolor='black';
+
+//barwidth = blocksize * waitTime * 10
+var barheight=50;
+var barwidth=450;
+var waitTime=2;
+var blocksize=23.5;
+var loaded=0;
+var PBouter;
+var PBdone;
+var Pid=0;
+
+var progress_tr_node;
+var progress_tr_tr_node;
+
+function modify(level)
+{
+var progress_elm=document.getElementById("progress_tr");
+var progress_tr_elm=document.getElementById("progress_tr_tr");
+var insert_tr_elm=document.getElementById("PBouter");
+var bt=document.chkfw.CheckFirmware;
+
+	if(level==1)
+	{
+		progress_tr_node=progress_elm.parentNode.removeChild(progress_elm);
+		progress_tr_tr_node=progress_tr_elm.parentNode.removeChild(progress_tr_elm);
+		
+        if('0' == "1")
+        {
+            document.webForm.upgrade_file.disabled=true;
+            document.webForm.start_upg_fw.disabled=true;
+        }
+		
+	}
+	if(level==2)
+	{
+		insert_tr_elm.parentNode.insertBefore(progress_tr_node,insert_tr_elm);
+		insert_tr_elm.parentNode.insertBefore(progress_tr_tr_node,insert_tr_elm);
+	}
+	if(isAPmode==1)
+	    bt.disabled=true;
+}
+
+function incrCount(){
+window.status="Loading...";
+loaded++;
+if(loaded>=waitTime*10){
+clearInterval(Pid);
+window.status=' ';
+loaded--;
+     
+}
+resizeEl(PBdone, blocksize*loaded);
+}
+
+function hidebar(){
+clearInterval(Pid);
+window.status='';
+}
+
+function progressBarInit(){
+PBouter=document.getElementById('PBouter');
+PBdone=document.getElementById('PBdone');
+resizeEl(PBdone,0);
+PBouter.style.visibility="visible";
+Pid=setInterval('incrCount()',10);
+}
+
+function resizeEl(id,r){
+id.style.width=r+'px';
+}
+
+strHtml='<title>'+ufe1+'</title>';
+dw(strHtml);
+var wanStatus	='Down';
+var helpItem 	='Firmware Update';
+var menuSection	='Util';
+var menuItem	='Firmware Update';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode;
+var barwin;
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else isAPmode='0';
+function messageCheck() {
+if(document.webForm.upgrade_file.value.length == 0) alert(ufe9);
+else
+{
+ if (confirm(ufe10))
+ {
+	alert(ufe11);
+	modify(2);
+	progressBarInit();
+	document.webForm.submit();
+	return true;
+ }
+}
+return false;
+}
+function logoutF()
+{
+document.webForm.logout.value=1;
+document.webForm.submit();
+return true;
+}
+function checkfw()
+{
+newwin=window.open("chk_wait.html","Firmware","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,width=395,height=200,resizable=0");
+newwin.focus();
+}
+function closeDep()
+{
+ if (barwin && barwin.open && !barwin.closed) {barwin.opener=null;barwin.close();}
+}
+function showSpMsg()
+{
+  var msgVar=document.forms["webForm"].message.value;
+  if (msgVar.length > 1) 
+  {
+	 	 alert(msgVar);
+     history.back();
+  }
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" marginheight="0" onload = "modify(1);showSpMsg()" onUnload="closeDep()">
+<script language="JavaScript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp; <script>dw(ufe1);</script><br><br>
+<table border=0 class="copy_1"><tr><td width=5>&nbsp;</td><td>
+<table width=600 border="0" cellspacing="3" cellpadding="0" align=left class="copy_1"><tr>
+<td colspan="2" class="body"><p><script>dw(ufe2);</script></p><p><script>dw(ufe3);</script> <a class="more" href="ut_save.html"><script>dw(ufe4);</script></a> <script>dw(ufe5);</script>
+</p></td></tr>
+<tr><td clospan=2>&nbsp;<br></b></tr>
+<tr>
+<form method="post" action="/belkin/3.00.02/En/ut_firew_upload.html" >
+<td width="700" class="bold_body"><script>dw(ufe12);</script></td>
+<td width="260">F5D8236-4_WW_3.00.02</td>
+</form>
+</tr>
+<tr>
+<form name="chkfw" method="post" action="/belkin/3.00.02/En/ut_firew_upload.html" >
+<td width="700" class="bold_body"><script>dw(ufe6);</script></td>
+<script>dw('<td width="260"><input type="button" style="{width:160px;}" class="submitBtn" name="CheckFirmware" value="');dw(ufe7);dw('" onClick="checkfw()"></td>');</script>
+</form>
+</tr>
+<tr><td clospan=2>&nbsp;<br><br></b></tr>
+<tr> <td width="700" class="bold_body"><script>dw(ufe8);</script></td><td width="260">
+<form ENCTYPE="multipart/form-data" name="webForm" method="post" action="/belkin/3.00.02/En/ut_firew_success.html" >
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+
+<script>
+dw('<input type="hidden" name="message" value="'+""+'">');
+</script>
+
+<input type="file" size="25" maxlength="31" name="upgrade_file" value="">
+</td></tr>
+<tr><td  width="340">&nbsp;</td><td><br><br>
+<script language="javascript" type="text/javascript">strHtml='<input type="button" name="start_upg_fw" style="{width:120px;}" class="submitBtn" value="'+Update+'" onclick="return messageCheck();"></td>';
+		  			dw(strHtml);</script></td>
+</tr>
+<tr><td class="formText" width="340">&nbsp;</td><td width="260">&nbsp;</td>
+</tr><tr><td class="formText" colspan="2"><div align="right"><nobr>
+<a href="ut_firew.html" onClick="document.webForm.reset(); return false;" onMouseOver="window.status='Clear'; return true;" onMouseOut="window.status=''; return true;"></a></nobr> </div></td>
+</tr>
+<tr ><td width="340">&nbsp;</td><td><br><br>
+<script>
+var txt='<div id="progress_tr"><font face="verdana,arial" size="1">'+fw_update+'</font></div>';
+txt+='<div id="progress_tr_tr"><font face="verdana,arial" size="1">'+fw_not_interrupt+'</font></div>';
+txt+='<div>&nbsp;</div>';
+txt+='<div id="PBouter" onmouseup="hidebar()" style="position:relative; visibility:hidden; background-color:'+bordercolor+'; width:'+barwidth+'px; height:'+barheight+'px;">';
+txt+='<div style="position:absolute; top:1px; left:1px; width:'+(barwidth-2)+'px; height:'+(barheight-2)+'px; background-color:'+unloadedcolor+'; font-size:1px;"></div>';
+txt+='<div id="PBdone" style="position:absolute; top:1px; left:1px; width:0px; height:'+(barheight-2)+'px; background-color:'+loadedcolor+'; font-size:1px;"></div>';
+txt+='</div>';
+document.write(txt);
+</script>
+</tr>
+</table></form></td></tr></table></td>
+<script language="JavaScript">showTail()</script>

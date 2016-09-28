@@ -1,0 +1,345 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<SCRIPT language=Javascript src="dos.htm"></SCRIPT>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Защита от DoS-атак</title>
+<script language="javascript" type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script>
+function dosEnabledClick(){
+	if(document.formDosCfg.dosEnabled.checked){
+		enableTextField(document.formDosCfg.sysfloodSYN);
+		enableTextField(document.formDosCfg.sysfloodFIN);
+		enableTextField(document.formDosCfg.sysfloodUDP);
+		enableTextField(document.formDosCfg.sysfloodICMP);
+		enableTextField(document.formDosCfg.sysfloodSYNcount);
+		enableTextField(document.formDosCfg.sysfloodFINcount);
+		enableTextField(document.formDosCfg.sysfloodUDPcount);
+		enableTextField(document.formDosCfg.sysfloodICMPcount);
+		enableTextField(document.formDosCfg.ipfloodSYN);
+		enableTextField(document.formDosCfg.ipfloodFIN);
+		enableTextField(document.formDosCfg.ipfloodUDP);
+		enableTextField(document.formDosCfg.ipfloodICMP);
+		enableTextField(document.formDosCfg.ipfloodSYNcount);
+		enableTextField(document.formDosCfg.ipfloodFINcount);
+		enableTextField(document.formDosCfg.ipfloodUDPcount);
+		enableTextField(document.formDosCfg.ipfloodICMPcount);
+		enableTextField(document.formDosCfg.TCPUDPPortScan);
+		enableTextField(document.formDosCfg.portscanSensi);
+		enableTextField(document.formDosCfg.ICMPSmurfEnabled);
+		enableTextField(document.formDosCfg.IPLandEnabled);
+		enableTextField(document.formDosCfg.IPSpoofEnabled);
+		enableTextField(document.formDosCfg.IPTearDropEnabled);
+		enableTextField(document.formDosCfg.PingOfDeathEnabled);
+		enableTextField(document.formDosCfg.TCPScanEnabled);
+		enableTextField(document.formDosCfg.TCPSynWithDataEnabled);
+		enableTextField(document.formDosCfg.UDPBombEnabled);
+		enableTextField(document.formDosCfg.UDPEchoChargenEnabled);
+		enableTextField(document.formDosCfg.sourceIPblock);
+		enableTextField(document.formDosCfg.IPblockTime);
+	}
+	else{
+		document.formDosCfg.sysfloodSYN.checked=0;
+		document.formDosCfg.sysfloodFIN.checked=0;
+		document.formDosCfg.sysfloodUDP.checked=0;
+		document.formDosCfg.sysfloodICMP.checked=0;
+		document.formDosCfg.ipfloodSYN.checked=0;
+		document.formDosCfg.ipfloodFIN.checked=0;
+		document.formDosCfg.ipfloodUDP.checked=0;
+		document.formDosCfg.ipfloodICMP.checked=0;
+		document.formDosCfg.TCPUDPPortScan.checked=0;
+		document.formDosCfg.ICMPSmurfEnabled.checked=0;
+		document.formDosCfg.IPLandEnabled.checked=0;
+		document.formDosCfg.IPSpoofEnabled.checked=0;
+		document.formDosCfg.IPTearDropEnabled.checked=0;
+		document.formDosCfg.PingOfDeathEnabled.checked=0;
+		document.formDosCfg.TCPScanEnabled.checked=0;
+		document.formDosCfg.TCPSynWithDataEnabled.checked=0;
+		document.formDosCfg.UDPBombEnabled.checked=0;
+		document.formDosCfg.UDPEchoChargenEnabled.checked=0;
+		document.formDosCfg.sourceIPblock.checked=0;
+		disableTextField(document.formDosCfg.sysfloodSYN);
+		disableTextField(document.formDosCfg.sysfloodFIN);
+		disableTextField(document.formDosCfg.sysfloodUDP);
+		disableTextField(document.formDosCfg.sysfloodICMP);
+		disableTextField(document.formDosCfg.sysfloodSYNcount);
+		disableTextField(document.formDosCfg.sysfloodFINcount);
+		disableTextField(document.formDosCfg.sysfloodUDPcount);
+		disableTextField(document.formDosCfg.sysfloodICMPcount);
+		disableTextField(document.formDosCfg.ipfloodSYN);
+		disableTextField(document.formDosCfg.ipfloodFIN);
+		disableTextField(document.formDosCfg.ipfloodUDP);
+		disableTextField(document.formDosCfg.ipfloodICMP);
+		disableTextField(document.formDosCfg.ipfloodSYNcount);
+		disableTextField(document.formDosCfg.ipfloodFINcount);
+		disableTextField(document.formDosCfg.ipfloodUDPcount);
+		disableTextField(document.formDosCfg.ipfloodICMPcount);
+		disableTextField(document.formDosCfg.TCPUDPPortScan);
+		disableTextField(document.formDosCfg.portscanSensi);
+		disableTextField(document.formDosCfg.ICMPSmurfEnabled);
+		disableTextField(document.formDosCfg.IPLandEnabled);
+		disableTextField(document.formDosCfg.IPSpoofEnabled);
+		disableTextField(document.formDosCfg.IPTearDropEnabled);
+		disableTextField(document.formDosCfg.PingOfDeathEnabled);
+		disableTextField(document.formDosCfg.TCPScanEnabled);
+		disableTextField(document.formDosCfg.TCPSynWithDataEnabled);
+		disableTextField(document.formDosCfg.UDPBombEnabled);
+		disableTextField(document.formDosCfg.UDPEchoChargenEnabled);
+		disableTextField(document.formDosCfg.sourceIPblock);
+		disableTextField(document.formDosCfg.IPblockTime);
+	}
+}
+
+function SelectAll(){
+	if(document.formDosCfg.dosEnabled.checked){
+		document.formDosCfg.sysfloodSYN.checked=1;
+		document.formDosCfg.sysfloodFIN.checked=1;
+		document.formDosCfg.sysfloodUDP.checked=1;
+		document.formDosCfg.sysfloodICMP.checked=1;
+		document.formDosCfg.ipfloodSYN.checked=1;
+		document.formDosCfg.ipfloodFIN.checked=1;
+		document.formDosCfg.ipfloodUDP.checked=1;
+		document.formDosCfg.ipfloodICMP.checked=1;
+		document.formDosCfg.TCPUDPPortScan.checked=1;
+		document.formDosCfg.ICMPSmurfEnabled.checked=1;
+		document.formDosCfg.IPLandEnabled.checked=1;
+		document.formDosCfg.IPSpoofEnabled.checked=1;
+		document.formDosCfg.IPTearDropEnabled.checked=1;
+		document.formDosCfg.PingOfDeathEnabled.checked=1;
+		document.formDosCfg.TCPScanEnabled.checked=1;
+		document.formDosCfg.TCPSynWithDataEnabled.checked=1;
+		document.formDosCfg.UDPBombEnabled.checked=1;
+		document.formDosCfg.UDPEchoChargenEnabled.checked=1;
+	}
+}
+
+function ClearAll(){
+	if(document.formDosCfg.dosEnabled.checked){
+		document.formDosCfg.sysfloodSYN.checked=0;
+		document.formDosCfg.sysfloodFIN.checked=0;
+		document.formDosCfg.sysfloodUDP.checked=0;
+		document.formDosCfg.sysfloodICMP.checked=0;
+		document.formDosCfg.ipfloodSYN.checked=0;
+		document.formDosCfg.ipfloodFIN.checked=0;
+		document.formDosCfg.ipfloodUDP.checked=0;
+		document.formDosCfg.ipfloodICMP.checked=0;
+		document.formDosCfg.TCPUDPPortScan.checked=0;
+		document.formDosCfg.ICMPSmurfEnabled.checked=0;
+		document.formDosCfg.IPLandEnabled.checked=0;
+		document.formDosCfg.IPSpoofEnabled.checked=0;
+		document.formDosCfg.IPTearDropEnabled.checked=0;
+		document.formDosCfg.PingOfDeathEnabled.checked=0;
+		document.formDosCfg.TCPScanEnabled.checked=0;
+		document.formDosCfg.TCPSynWithDataEnabled.checked=0;
+		document.formDosCfg.UDPBombEnabled.checked=0;
+		document.formDosCfg.UDPEchoChargenEnabled.checked=0;
+	}
+}
+
+function init()
+{
+	var cf = document.formDosCfg;
+	var dosEnabled = 0;
+
+    	if(dosEnabled & 1) 
+        	cf.dosEnabled.checked = 1;
+        else
+        	cf.dosEnabled.checked = 0;
+
+	if (cf.dosEnabled.checked) {
+	    	if((dosEnabled>>1) & 1)
+	        	cf.sysfloodSYN.checked = 1;
+	        else
+	        	cf.sysfloodSYN.checked = 0;
+	        
+	        if((dosEnabled>>2) & 1)
+	        	cf.sysfloodFIN.checked = 1;
+	        else
+	        	cf.sysfloodFIN.checked = 0;
+	        	
+	        if((dosEnabled>>3) & 1)
+	        	cf.sysfloodUDP.checked = 1;
+	        else
+	        	cf.sysfloodUDP.checked = 0;
+	        
+	        if((dosEnabled>>4) & 1)
+	        	cf.sysfloodICMP.checked = 1;
+	        else
+	        	cf.sysfloodICMP.checked = 0;
+
+	        if((dosEnabled>>5) & 1)
+	        	cf.ipfloodSYN.checked = 1;
+	        else
+	        	cf.ipfloodSYN.checked = 0;
+
+	        if((dosEnabled>>6) & 1)
+	        	cf.ipfloodFIN.checked = 1;
+	        else
+	        	cf.ipfloodFIN.checked = 0;
+
+	        if((dosEnabled>>7) & 1)
+	        	cf.ipfloodUDP.checked = 1;
+	        else
+	        	cf.ipfloodUDP.checked = 0;
+
+	        if((dosEnabled>>8) & 1)
+	        	cf.ipfloodICMP.checked = 1;
+	        else
+	        	cf.ipfloodICMP.checked = 0;
+
+	        if((dosEnabled>>9) & 1)
+	        	cf.TCPUDPPortScan.checked = 1;
+	        else
+	        	cf.TCPUDPPortScan.checked = 0;
+
+	        if((dosEnabled>>10) & 1)
+	        	cf.ICMPSmurfEnabled.checked = 1;
+	        else
+	        	cf.ICMPSmurfEnabled.checked = 0;
+
+	        if((dosEnabled>>11) & 1)
+	        	cf.IPLandEnabled.checked = 1;
+	        else
+	        	cf.IPLandEnabled.checked = 0;
+
+	        if((dosEnabled>>12) & 1)
+	        	cf.IPSpoofEnabled.checked = 1;
+	        else
+	        	cf.IPSpoofEnabled.checked = 0;
+
+	        if((dosEnabled>>13) & 1)
+	        	cf.IPTearDropEnabled.checked = 1;
+	        else
+	        	cf.IPTearDropEnabled.checked = 0;
+
+	        if((dosEnabled>>14) & 1)
+	        	cf.PingOfDeathEnabled.checked = 1;
+	        else
+	        	cf.PingOfDeathEnabled.checked = 0;
+
+	        if((dosEnabled>>15) & 1)
+	        	cf.TCPScanEnabled.checked = 1;
+	        else
+	        	cf.TCPScanEnabled.checked = 0;
+
+	        if((dosEnabled>>16) & 1)
+	        	cf.TCPSynWithDataEnabled.checked = 1;
+	        else
+	        	cf.TCPSynWithDataEnabled.checked = 0;
+
+	        if((dosEnabled>>17) & 1)
+	        	cf.UDPBombEnabled.checked = 1;
+	        else
+	        	cf.UDPBombEnabled.checked = 0;
+
+	        if((dosEnabled>>18) & 1)
+	        	cf.UDPEchoChargenEnabled.checked = 1;
+	        else
+	        	cf.UDPEchoChargenEnabled.checked = 0;
+
+	        if((dosEnabled>>22) & 1)
+	        	cf.sourceIPblock.checked = 1;
+	        else
+	        	cf.sourceIPblock.checked = 0;
+
+	        if((dosEnabled>>23) & 1)
+	        	cf.portscanSensi.selectedIndex = 1;
+	        else
+	        	cf.portscanSensi.selectedIndex = 0;
+	}
+	dosEnabledClick();
+}
+</script>
+</head>
+
+<blockquote>
+<h2><script>dw(dos_header)</script></h2>
+
+<body onload="init();">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td>
+    <script>dw(dos_header_explain)</script>
+  </td></tr>
+</table>
+
+<br>
+
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http:///%22http://192.168.10.1/boafrm/formDosCfg%22%22" method=POST name="formDosCfg">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td class="item_td"><input type="checkbox" name="dosEnabled" value="ON" onclick="dosEnabledClick()">&nbsp;&nbsp;<script>dw(dos_enable)</script>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="button"  name="selectAll" onClick="SelectAll()">&nbsp;&nbsp;
+		 <script>document.formDosCfg.selectAll.value=dos_select_all;</script>
+		<input type="button"  name="clearAll" onClick="ClearAll()">&nbsp;&nbsp;
+		<script>document.formDosCfg.clearAll.value=dos_clear_all;</script>
+  </td></tr>
+</table>
+  <table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sysfloodSYN" value="ON" > <script>dw(dos_sysflood_syn)</script><br></td>
+  <td width="40%" class="item_td"><input type="text" name="sysfloodSYNcount" size="6" maxlength="4" value=0 > <script>dw(dos_packet_sec)</script><br></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sysfloodFIN" value="ON" > <script>dw(dos_sysflood_fin)</script> <br></td>
+  <td width="40%" class="item_td"><input type="text" name="sysfloodFINcount" size="6" maxlength="4" value=0 > <script>dw(dos_packet_sec)</script><br></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sysfloodUDP" value="ON" >  <script>dw(dos_sysflood_udp)</script> <br></td>
+  <td width="40%" class="item_td"><input type="text" name="sysfloodUDPcount" size="6" maxlength="4" value=0 >  <script>dw(dos_packet_sec)</script><br></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sysfloodICMP" value="ON" >  <script>dw(dos_sysflood_icmp)</script><br></td>
+  <td width="40%" class="item_td"><input type="text" name="sysfloodICMPcount" size="6" maxlength="4" value=0 >  <script>dw(dos_packet_sec)</script><br></td></tr>
+
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ipfloodSYN" value="ON" >  <script>dw(dos_ipflood_syn)</script> <br></td>
+  <td width="40%" class="item_td"><input type="text" name="ipfloodSYNcount" size="6" maxlength="4" value=0 >  <script>dw(dos_packet_sec)</script><br></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ipfloodFIN" value="ON" > <script>dw(dos_ipflood_fin)</script> <br></td>
+  <td width="40%" class="item_td"><input type="text" name="ipfloodFINcount" size="6" maxlength="4" value=0 >  <script>dw(dos_packet_sec)</script><br></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ipfloodUDP" value="ON" >  <script>dw(dos_ipflood_udp)</script> <br></td>
+  <td width="40%" class="item_td"><input type="text" name="ipfloodUDPcount" size="6" maxlength="4" value=0 >  <script>dw(dos_packet_sec)</script><br></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ipfloodICMP" value="ON" > <script>dw(dos_ipflood_icmp)</script> <br></td>
+  <td width="40%" class="item_td"><input type="text" name="ipfloodICMPcount" size="6" maxlength="4" value=0 > <script>dw(dos_packet_sec)</script><br></td></tr>
+
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="TCPUDPPortScan" value="ON" > <script>dw(dos_portscan)</script></td>
+	<td width="40%" class="item_td">
+		<select name="portscanSensi">
+			<option value=0><script>dw(dos_portscan_low)</script> </option>
+			<option value=1><script>dw(dos_portscan_high)</script> </option>
+		</select>
+	 <script>dw(dos_portscan_sensitivity)</script> </td>
+  </tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ICMPSmurfEnabled" value="ON" > <script>dw(dos_icmp_smurf)</script></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="IPLandEnabled" value="ON" >  <script>dw(dos_ip_land)</script></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="IPSpoofEnabled" value="ON" >  <script>dw(dos_ip_spoof)</script> </td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="IPTearDropEnabled" value="ON" > <script>dw(dos_ip_teardrop)</script></td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="PingOfDeathEnabled" value="ON" > <script>dw(dos_pingofdeath)</script> </td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="TCPScanEnabled" value="ON" >  <script>dw(dos_tcp_scan)</script> </td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="TCPSynWithDataEnabled" value="ON" > <script>dw(dos_tcp_synwithdata)</script> </td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="UDPBombEnabled" value="ON" > <script>dw(dos_udp_bomb)</script> </td></tr>
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="UDPEchoChargenEnabled" value="ON" > <script>dw(dos_udp_echochargen)</script> </td></tr>
+
+    </table>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+
+  <tr><td width="40%" class="item_td">&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="sourceIPblock" value="ON" >  <script>dw(dos_enable_srcipblocking)</script></td>
+
+   <td width="40%" class="item_td"><input type="text" name="IPblockTime" size="4" maxlength="3" value=0 >  <script>dw(dos_block_time)</script><br></td></tr>
+
+  </table>
+  <br>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">  
+  <input type="submit"  name="enableDos" >&nbsp;&nbsp;
+  <script>document.formDosCfg.enableDos.value=dos_apply;</script>
+
+  <input type="hidden" value="/dos.htm" name="submit-url">
+</table>
+ <script>
+	dosEnabledClick();
+ </script>
+</form>
+
+</body>
+
+</html>

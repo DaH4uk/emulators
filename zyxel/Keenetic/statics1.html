@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="ndm.abbr" content="Address translation Rules (NAT)">
+<meta name="ndm.abbr" content="Трансляция сетевых адресов (NAT)" xml:lang="RU" lang="RU">
+
+<title>ZyXEL Keenetic - 
+				Правила трансляции сетевых адресов (NAT)</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css">
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+var _CMD = "ip static";
+var rules;
+
+function loadValues() {
+	enableProgressIndicator();
+	var interfaces = new IfList(document.getElementById("interface"));
+	rules = new Table(document.getElementById("rules"));
+	rules.showColumns("if-desc", "from", "from-port", "to-address", "to-port");
+	rules.setEditorForm(new Form(document.editor));
+	rules.onStopEditing = function(element) {
+		if( this.getFlag(element) == TBL_ROW_INSERTED ) this.deleteRow(element);
+	}
+	rules.setRowValues_ = rules.setRowValues;
+	rules.setRowValues = function(element, values) {
+		if( values["address"] ) values["from"] = values["address"] + " / " + values["mask"];
+		if( values["protocol"] ) values["from-port"] = values["protocol"] + " / " + values["port"];
+		values["if-desc"] = interfaces.getDescription(values["interface"]);
+		return this.setRowValues_(element, values);
+	}
+
+	var p = new Packet();
+	p.Command("show interface", null, interfaces);
+	p.Config(_CMD, null, rules);
+	p.proceed(document.getElementById("logger"));
+}
+function onIfChange(select) {
+	var f = select.form;
+	var value = select.options[select.selectedIndex].value;
+	f.address.disabled = f.mask.disabled = (value && value != "");
+	if( f.address.disabled ) f.address.value = f.mask.value = "";
+}
+function save() {
+	var selected = rules.getSelectedRow();
+	var f = rules.getEditorForm();
+	var found = rules.find(f.getParameters());
+	if( f.getParameter("to-address") && found && found != selected ) {
+		alert(l10n(65541, "There is such rule already. Duplicate rules are not allowed."));
+	} else {
+		var p = new Packet();
+		if( rules.getFlag(selected) != TBL_ROW_INSERTED ) {
+			p.No(_CMD);
+			rules.forEach(function(values, isSelected) {
+				p.Command(_CMD, isSelected ? f.getParameters() : values, isSelected ? f : null, true);
+			});
+		} else {
+			p.Command(_CMD, f.getParameters(), f, true);
+		}
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) rules.setRowValues(selected, f.getParameters(true)); 
+		}
+		p.proceed(document.getElementById("logger"));
+	}
+	return false;
+}
+function drop() {
+	var selected = rules.getSelectedRow();
+	if( rules.getFlag(selected) != TBL_ROW_INSERTED ) {
+		var p = new Packet();
+		p.No(_CMD, rules.getRowValues(selected), null, true);
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) rules.deleteRow(selected); 
+		}
+		p.proceed(document.getElementById("logger"));
+	} else {
+		rules.stopEditing();
+	}
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0"></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default">English</option><option selected="selected" value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security.png');" class="selected"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br></div></div><div style="height: 639px;" id="content"><div id="title">Безопасность<div id="subtitle"></div></div><ul class="tabs"><li><a class="current" href="statics.html"><span>Трансляция сетевых адресов (NAT)</span></a></li><li><a href="acl.html"><span>Межсетевой экран</span></a></li></ul><div class="block red" style="border-bottom: none;">
+		<h1>Правила трансляции сетевых адресов (NAT)</h1>
+			<div class="rounded">
+			<p>Можно создать правила для статической трансляции сетевых адресов 
+или сетевых адресов и портов транспортного протокола, а также  правила 
+для перенаправления всех пакетов, входящих на определенный интерфейс или
+ IP-адрес. Чтобы разрешить доступ из Интернета в домашнюю сеть, 
+потребуется также настроить правила межсетевого экрана во вкладке 
+«Межсетевой экран». Для редактирования созданного правила трансляции 
+щелкните в списке его запись.</p>
+		</div>
+		<table style="width: 100%;" id="rules" class="styled" cellspacing="0">
+		<thead>
+			<tr>
+			<th>Сеть</th>
+			<th>Исходный адрес</th>
+			<th>Порт</th>
+			<th colspan="2">Назначение</th>
+			</tr>
+		</thead>
+		<tbody><tr class=" highlight"><td colspan="5">(пусто)</td></tr><tr><td colspan="5" class="editor"><form action="" name="editor" onsubmit="return save();" onreset="rules.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка правила трансляции адресов</h1><div class="close_button"><a href="statics.html" onclick=""><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите входящий интерфейс (или IP-адрес) и при необходимости 
+укажите порт назначения входящих пакетов. Укажите IP-адрес и при 
+необходимости номер порта, на которые будут перенаправляться все 
+входящие пакеты, удовлетворяющие заданному условию.</p>
+			<p>Поля «Пакеты на адрес» и «маска» можно оставить пустыми, если для 
+подключения к Интернету используется динамический IP-адрес. В 
+большинстве случаев достаточно указать только интерфейс.</p>
+			</div>
+			<fieldset>
+			<label for="interface">Интерфейс:</label>
+				<select name="interface" id="interface" onchange="onIfChange(this)" onkeyup="onIfChange(this)" style="width: 280px;">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option><option value="PPTP0">PPTP0</option><option value="Switch0/VLAN9">Switch0/VLAN9</option><option value="PPTP1">PPTP1</option><option value="L2TP0">L2TP0</option><option value="PPPoE0">PPPoE0</option></select><br>
+			<label for="address">Пакеты на адрес:</label>
+				<span class="nobr"><input name="address" id="address" size="15" type="text">маска:
+				<input name="mask" id="mask" size="15" type="text"></span><br>
+			<label for="port">С номером порта назначения:</label>
+				<select name="protocol" id="protocol">
+					<option selected="selected"></option>
+					<option value="tcp">TCP</option>
+					<option value="udp">UDP</option>
+				</select>
+				<input name="port" id="port" type="text"><br>
+			</fieldset>
+
+			<fieldset>
+			<label for="to-address">Перенаправить на адрес:</label>
+				<input name="to-address" id="to-address" size="15" type="text"><br>
+			<label for="to-port">Новый номер порта назначения:</label>
+				<input name="to-port" id="to-port" size="15" type="text"><br>			
+
+			<label for="nothing"></label>
+				<button class="apply" type="button" name="editor_apply">Сохранить</button>
+				<button class="cancel" onclick="document.location='statics.html'" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="">Удалить правило</button>
+			</fieldset>
+			</div>
+		</form></td></tr></tbody></table>
+
+		<br>
+		<button name="add_rule" onclick="rules.startEditing(rules.insertRow({}))">Добавить правило</button>
+
+		<div style="display: none;">
+		<form action="" name="editor" onsubmit="return save();" onreset="rules.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка правила трансляции адресов</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите входящий интерфейс (или IP-адрес) и при необходимости 
+укажите порт назначения входящих пакетов. Укажите IP-адрес и при 
+необходимости номер порта, на которые будут перенаправляться все 
+входящие пакеты, удовлетворяющие заданному условию.</p>
+			<p>Поля «Пакеты на адрес» и «маска» можно оставить пустыми, если для 
+подключения к Интернету используется динамический IP-адрес. В 
+большинстве случаев достаточно указать только интерфейс.</p>
+			</div>
+			<fieldset>
+			<label for="interface">Интерфейс:</label>
+				<select name="interface" id="interface" onchange="onIfChange(this)" onkeyup="onIfChange(this)" style="width: 280px;">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option><option value="PPTP0">PPTP0</option><option value="Switch0/VLAN9">Switch0/VLAN9</option><option value="PPTP1">PPTP1</option><option value="L2TP0">L2TP0</option><option value="PPPoE0">PPPoE0</option></select><br>
+			<label for="address">Пакеты на адрес:</label>
+				<span class="nobr"><input name="address" id="address" size="15" type="text">маска:
+				<input name="mask" id="mask" size="15" type="text"></span><br>
+			<label for="port">С номером порта назначения:</label>
+				<select name="protocol" id="protocol">
+					<option selected="selected"></option>
+					<option value="tcp">TCP</option>
+					<option value="udp">UDP</option>
+				</select>
+				<input name="port" id="port" type="text"><br>
+			</fieldset>
+
+			<fieldset>
+			<label for="to-address">Перенаправить на адрес:</label>
+				<input name="to-address" id="to-address" size="15" type="text"><br>
+			<label for="to-port">Новый номер порта назначения:</label>
+				<input name="to-port" id="to-port" size="15" type="text"><br>			
+
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="editor_apply">Сохранить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить правило</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div style="right: -225px; display: none;" class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif"></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+<div style="margin: 0px; padding: 0px; position: absolute; left: 48%; top: 30%; width: auto; display: none;" id="ajaxBusy"><p><img src="img/loading.gif"></p></div></body></html>

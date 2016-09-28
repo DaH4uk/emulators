@@ -1,0 +1,482 @@
+<script language="javascript" type="text/javascript">
+var index;
+var arpStack;
+var bindingListStack;
+var arpEntryEditStack;
+var opt;
+
+function init() {
+    index = 0;
+    opt = 0;
+    arpStack = [];
+    bindingListStack = [];
+
+    var arpListHeadArray = [{
+        "text": '<div><input type="checkbox" id="checkbox_arp_1" /><label></label></div>',
+        "width": "5%"
+    }, {
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.devname,
+        "width": "20%"
+    }, {
+        "text": table_str.mac,
+        "width": "20%"
+    }, {
+        "text": table_str.ip,
+        "width": "15%"
+    }, {
+        "text": table_str.bound,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "5%"
+    }];
+
+    var bindingListHeadArray = [{
+        "text": '<div><input type="checkbox" id="checkbox_bind_1" /><label></label></div>',
+        "width": "5%"
+    }, {
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.mac,
+        "width": "20%"
+    }, {
+        "text": table_str.ip,
+        "width": "20%"
+    }, {
+        "text": table_str.status,
+        "width": "10%"
+    }, {
+        "text": table_str.enable,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+
+    $.initTableHead($("#table_arpList"), arpListHeadArray);
+    $("#table_arpList").tpTable(initArpTable);
+    $.initTableHead($("#table_bindingList"), bindingListHeadArray);
+    $("#table_bindingList").tpTable(initBindingTable);
+
+    var arpList = $.act(ACT_GL, ARP_ENTRY, null, null);
+    var bindingList = $.act(ACT_GL, ARP_BIND_ENTRY, null, null);
+    var arpCfg = $.act(ACT_GET, ARP_BIND, null, null, ["enable"]);
+
+    if (!$.exe()) {
+        if (arpCfg.enable == 1)
+            $("#enArpBindOn").addClass("selected");
+        else
+            $("#enArpBindOff").addClass("selected");
+
+        $.each(bindingList, function() {
+            index++;
+            bindingListStack[index - 1] = this.__stack;
+        });
+
+        index = 0;
+
+        $.each(arpList, function() {
+            index++;
+            arpStack[index - 1] = this.__stack;
+        });
+    }
+
+    $("#addBindingList").click(function() {
+        opt = 0;
+    });
+
+    $("#editCancel").click(function() {
+        $.reload();
+    });
+
+    $("#editOk").on("click", function(e) {
+        $.addLoading($(this));
+        doSave(bindingListStack);
+    });
+
+    $("#del_testIcon").on("click", function(e) {
+        $.confirm(c_str.del_choosed, doDel, null);
+    });
+
+    $("#add_testIcon").on("click", function(e) {
+        $("#enableThisEntry").prop("checked", true);
+        $("#enableThisEntry").data('tpCheckbox').refresh();
+    });
+
+    $("span.edit-modify-icon").on("click", function(e) {
+        $(this).parents("tr");
+    });
+
+    $("#enArpBindOn").click(function() {
+        $.act(ACT_SET, ARP_BIND, null, null, ["enable=1"]);
+        $.exe(function(err) {
+            if (!err) {
+                $.reload();
+            }
+        });
+    });
+
+    $("#enArpBindOff").click(function() {
+        $.act(ACT_SET, ARP_BIND, null, null, ["enable=0"]);
+        $.exe(function(err) {
+            if (!err) {
+                $.reload();
+            }
+        });
+    });
+
+    $("#checkbox_arp_1").click(function() {
+        var td = $("#table_arpList").find("tbody tr td");
+        if ($("#checkbox_arp_1").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', true);
+                $(this).next("label").find('.text').addClass("span-click");
+                $(this).next("label").find('.icon').addClass("checkbox-click");
+            });
+        } else if ($("#checkbox_arp_1").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', false);
+                $(this).next("label").find('.text').removeClass("span-click");
+                $(this).next("label").find('.icon').removeClass("checkbox-click");
+            });
+        }
+    });
+
+    $("#checkbox_bind_1").click(function() {
+        var td = $("#table_bindingList").find("tbody tr td");
+        if ($("#checkbox_bind_1").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', true);
+                $(this).next("label").find('.text').addClass("span-click");
+                $(this).next("label").find('.icon').addClass("checkbox-click");
+            });
+        } else if ($("#checkbox_bind_1").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', false);
+                $(this).next("label").find('.text').removeClass("span-click");
+                $(this).next("label").find('.icon').removeClass("checkbox-click");
+            });
+        }
+    });
+
+}
+
+function initArpTable() {
+
+    var array = [];
+    var arpList = $.act(ACT_GL, ARP_ENTRY, null, null);
+    var deviceOnline = $.act(ACT_GL, LAN_HOST_ENTRY, null, null, ["X_TP_ConnType", "MACAddress", "hostName", "IPAddress"]);
+
+    $.exe(function(err) {
+        if (err) return;
+        $.each(arpList, function(index) {
+            var des;
+            var deviceName;
+            var deviceMac = this.mac;
+            if (this.flag == 0) des = m_str.unloaded;
+            else if (this.flag == 1) des = m_str.loaded;
+            else if (this.flag == 2) des = m_str.bound;
+
+            $.each(deviceOnline, function() {
+                if (this.MACAddress == deviceMac) {
+                    deviceName = this.hostName;
+                    return;
+                }
+            });
+
+            deviceName = (deviceName == undefined) ? m_str.unknown : deviceName;
+
+            array.push([{
+                "text": '<div><input type="checkbox" id="checkbox_arpList_' + (index + 1) + '"/><label></label></div>',
+                "width": "5%"
+            }, {
+                "text": index + 1,
+                "width": "5%"
+            }, {
+                "text": deviceName,
+                "width": "10%"
+            }, {
+                "text": this.mac,
+                "width": "15%"
+            }, {
+                "text": $.num2ip(parseInt(this.ip, 10)),
+                "width": "15%"
+            }, {
+                "text": des,
+                "width": "15%"
+            }, {
+                "text": "<span class='table-grid-icon edit-trash-icon arp-list'></span>",
+                "width": "15%"
+            }]);
+        });
+        $.initTableBody($("#table_arpList"), array);
+        $.tablePages($("#table_arpList"), 5);
+
+        $("span.edit-trash-icon.arp-list").click(function() {
+            var arpStackIndex = $(this).parents("tr").find("td").eq(1).text();
+            $.act(ACT_DEL, ARP_ENTRY, arpStack[arpStackIndex - 1], null);
+            $.exe(function(err) {
+                if (!err) {
+                    $.reload();
+                }
+            });
+        })
+    });
+
+    $("#bind").click(function(){
+        $.addLoading($(this));
+        doBind();
+    });
+
+    return array;
+}
+
+function doBind(){
+    var td = $("#table_arpList").find("tbody tr td");
+    td.find("span.checkbox-click").each(function() {
+        var macAddress = $(this).parents("tr").find("td:eq(3)").text();
+        var ipAddress = $(this).parents("tr").find("td:eq(4)").text();
+        $.act(ACT_ADD, ARP_BIND_ENTRY, null, null, ["state=1", "ip=" + $.ip2num(ipAddress), "mac=" + macAddress]);
+    });
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            $.reload();
+        }
+    });    
+}
+
+function initBindingTable() {
+
+    var array = [];
+    var bindingList = $.act(ACT_GL, ARP_BIND_ENTRY, null, null);
+
+    $.exe(function(err) {
+        if (err) return;
+        $.each(bindingList, function(index) {
+            var des;
+            if (this.state == 0) des = m_str.unbound;
+            else if (this.state == 1) des = m_str.bound;
+
+            array.push([{
+                "text": '<div><input type="checkbox" id="checkbox_bindingList_' + index + '"/><label></label></div>',
+                "width": "5%"
+            }, {
+                "text": (index + 1),
+                "width": "5%"
+            }, {
+                "text": this.mac.toUpperCase(),
+                "width": "20%"
+            }, {
+                "text": $.num2ip(parseInt(this.ip, 10)),
+                "width": "20%"
+            }, {
+                "text": des,
+                "width": "10%"
+            }, {
+                "text": "<span class='table-grid-icon enable-icon'></span>",
+                "width": "10%"
+            }, {
+                "text": "<span class='table-grid-icon edit-modify-icon'></span><span class='table-grid-icon edit-trash-icon arp-bind'></span>",
+                "width": "10%"
+            }]);
+
+        });
+
+        $.initTableBody($("#table_bindingList"), array);
+        $.tablePages($("#table_bindingList"), 8);
+
+        $.each(bindingList, function(index) {
+            if (this.state == 1) {
+                $("#body_bindingList").find("tr:eq(" + (index + 1) + ")").find("td:eq(5) span").removeClass("disable-icon");
+                $("#body_bindingList").find("tr:eq(" + (index + 1) + ")").find("td:eq(5) span").addClass("enable-icon");
+            } else if (this.state == 0) {
+                $("#body_bindingList").find("tr:eq(" + (index + 1) + ")").find("td:eq(5) span").removeClass("enable-icon");
+                $("#body_bindingList").find("tr:eq(" + (index + 1) + ")").find("td:eq(5) span").addClass("disable-icon");
+            }
+        });
+
+
+        $("span.edit-trash-icon.arp-bind").click(function() {
+            var stackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+
+            $.act(ACT_DEL, ARP_BIND_ENTRY, bindingListStack[stackIndex], null);
+            $.exe(function(err) {
+                if (!err) {
+                    $.reload();
+                }
+            });
+        });
+
+        $("span.edit-modify-icon").click(function() {
+            var stackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+            var macAddress = $(this).parents("tr").find("td:eq(2)").text();
+            var ipAddress = $(this).parents("tr").find("td:eq(3)").text();
+            arpEntryEditStack = bindingListStack[stackIndex];
+            opt = 1;
+
+            $("#macAddress").val(macAddress);
+            $("#ipAddress").val(ipAddress);
+
+            var arpEnInfo = $.act(ACT_GET, ARP_BIND_ENTRY, arpEntryEditStack, null);
+            $.exe();
+            if (arpEnInfo.state == 1) {
+                $("#enableThisEntry").prop("checked", true);
+                $("#enableThisEntry").data('tpCheckbox').refresh();
+            } else if (arpInfo.state == 0) {
+                $("#enableThisEntry").prop("checked", false);
+                $("#enableThisEntry").data('tpCheckbox').refresh();
+            }
+        });
+
+        $("span.enable-icon").click(function() {
+            var stackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+            arpEntryEditStack = bindingListStack[stackIndex];
+            $.act(ACT_SET, ARP_BIND_ENTRY, arpEntryEditStack, null, ["state=0"]);
+            $.exe(function(err) {
+                if (!err) {
+                    $.reload();
+                }
+            });
+        });
+
+        $("span.disable-icon").click(function() {
+            var stackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+            arpEntryEditStack = bindingListStack[stackIndex];
+
+            $.act(ACT_SET, ARP_BIND_ENTRY, arpEntryEditStack, null, ["state=1"]);
+            $.exe(function(err) {
+                if (!err) {
+                    $.reload();
+                }
+            });
+        });
+
+        return array;
+    });
+
+}
+
+function doSave() {
+
+    var state = $("#enableThisEntry").prop("checked") ? 1 : 0;
+    var ipAddr = $("#ipAddress").val();
+    var macAddr = $("#macAddress").val();
+
+    if ($.ifip(ipAddr, true)) {
+        $.alert(ERR_IP_FORMAT);
+        return false;
+    }
+    if ($.mac(macAddr, true)) {
+        $.alert(ERR_MAC_FORMAT);
+        return false;
+    }
+    if (opt == 0) {
+        $.act(ACT_ADD, ARP_BIND_ENTRY, null, null, ["state=" + state, "ip=" + $.ip2num(ipAddr), "mac=" + macAddr]);
+    } else if (opt == 1) {
+        $.act(ACT_SET, ARP_BIND_ENTRY, arpEntryEditStack, null, ["state=" + state, "ip=" + $.ip2num(ipAddr), "mac=" + macAddr]);
+    }
+
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            $.reload();
+        }
+    });
+}
+
+function doDel() {
+
+    var td = $("#table_bindingList").find("tbody tr td");
+
+    td.find("span.checkbox-click").each(function() {
+        var stackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+        if (stackIndex < 0) return true;
+        $.act(ACT_DEL, ARP_BIND_ENTRY, bindingListStack[stackIndex], null);
+        $.exe(function(err) {
+            if (!err) $.reload();
+        });
+    });
+}
+</script>
+<h3 id="t_title1">Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container" id="enArpBind">
+            <b id="t_en">ARP Binding</b>
+            <ul>
+                <li>
+                    <button id="enArpBindOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="enArpBindOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+<h3 id="t_title3">Binding List</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op" id="addBindingList">
+            <div class="table-btn">
+                <span id="add_testIcon" class="add-icon"></span>
+                <label class="T_add">Add</label>
+                <span id="del_testIcon" class="delete-icon"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+        <table id="table_bindingList">
+            <thead></thead>
+            <tbody id="body_bindingList">
+                <tr id="editContainer_bindingList" class="nd">
+                    <td colspan="7">
+                        <div>
+                            <b id="t_macaddr">MAC Address: </b>
+                            <input type="text" id="macAddress" maxlength="17" required/>
+                        </div>
+                        <div>
+                            <b id="t_ipaddr">IP Address: </b>
+                            <input type="text" id="ipAddress" maxlength="15" required/>
+                        </div>
+                        <div>
+                            <b></b>
+                            <input type="checkbox" id="enableThisEntry">
+                            <label id="t_enentry">Enable</label>
+                        </div>
+                        <div class="inline-btn-right">
+                            <button type="submit" class="green T_cancel" id="editCancel">Cancel</button>
+                            <button type="submit" class="green T_ok" id="editOk">OK</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<h3 id="t_title2">ARP List</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op">
+            <div class="table-btn">
+                <span class="refresh-icon"></span>
+                <label class="T_refresh">Refresh</label>
+                <span id="bind" class="block-icon"></span>
+                <label class="T_bind">Bind</label>
+            </div>
+        </div>
+        <table id="table_arpList">
+            <thead></thead>
+            <tbody id="body_arpList">
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>

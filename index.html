@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <title>Эмуляторы</title>
+    <link type="text/css" rel="stylesheet" href="./css/main.css" media="all">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <h1>Эмуляторы прошивок роутеров</h1>
+    <p>Пожалуйста выберите производителя:</p>
+    <ul class="tab">
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'D-Link')">D-Link</a></li>
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'Tp-Link')">Tp-Link</a></li>
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'Asus')">Asus</a></li>
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'Zyxel')">Zyxel</a></li>
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'Netgear')">Netgear</a></li>
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'Upvel')">Upvel</a></li>
+        <li><a href="#" class="tablinks" onclick="openCity(event, 'Other')">Другие</a></li>
+    </ul>
+
+    <div id="D-Link" class="tabcontent">
+        <h3>D-Link</h3>
+        <p><a target="_blank" href="/d-link/orange/emulators/dir615_revE/510/login.htm">D-Link оранжевая прошивка - ENG</a>
+        <a target="_blank" href="/d-link/orange/emulators/dir615_revE/510/login.htm?manual=true">(режим мануала)</a>
+        </p>
+        <p><a target="_blank" href="/d-link/gray/em.dlink.ru/emul/DIR-615DP1_gray/">D-Link серая прошивка (ENG)</a></p>
+        <p><a target="_blank" href="/d-link/white/em.dlink.ru/emul/DIR-615DP1/">D-Link белая прошивка</a></p>
+    </div>
+
+    <div id="Tp-Link" class="tabcontent">
+        <h3>Tp-Link</h3>
+        <p><a target="_blank" href="/tp-link/eng/index.html">TP-Link зеленая прошивка (ENG)</a></p>
+        <p><a target="_blank" href="/tp-link/rus/Index.html">TP-Link зеленая прошивка (RUS)</a></p>
+        <p><a target="_blank" href="/tp-link/archer/AC3200V1/">TP-Link Archer (ENG)</a></p>
+    </div>
+
+    <div id="Netgear" class="tabcontent">
+        <h3>Netgear</h3>
+        <p><a target="_blank" href="/netgear/RUS/old/gui.netgear.ru/admin/JWNR2000/cgi-bin/">Netgear (RUS) старая</a></p>
+        <p><a target="_blank" href="/netgear/RUS/new/html/index_basic.htm">Netgear (RUS) новая</a></p>
+    </div>
+
+    <div id="Zyxel" class="tabcontent">
+        <h3>Zyxel</h3>
+        <p><a target="_blank" href="/zyxel/nbg334w360ams2/rpSys.html">Zyxel синяя прошивка (Eng)</a></p>
+        <p><a target="_blank" href="/zyxel/Keenetic/status.html">Zyxel Keenetic</a></p>
+    </div>
+
+    <div id="Asus" class="tabcontent">
+        <h3>Asus</h3>
+        <p><a target="_blank" href="/asus/rt-n16/index.html">Asus Синяя (Eng)</a></p>
+        <p><a target="_blank" href="/asus/grey/RU/index.html">Asus серая прошивка (EN/RUS)</a></p>
+    </div>
+
+    <div id="Upvel" class="tabcontent">
+        <h3>Upvel</h3>
+        <p><a target="_blank" href="http://emulators-dah4uk.c9users.io/upvel/UR-314AWN/">Upvel UR-314AWN</a></p>
+        <p><a target="_blank" href="http://emulators-dah4uk.c9users.io/upvel/UR-447N4G/home.htm">Upvel UR-447N4G</a></p>
+    </div>
+
+    <div id="Other" class="tabcontent">
+        <h3>Другие</h3>
+        <p><a target="_blank" href="/linksys/WRT54GL/4.30.0/Status.htm">Linksys</a></p>
+        <p><a target="_blank" href="/dd-wrt/demo/">DD-WRT</a></p>
+        <p><a target="_blank" href="/belkin/">Belkin</a></p>
+        <p><a target="_blank" href="/mikrotik/">Mikrotik</a></p>
+        <p><a target="_blank" href="/sercomm/">Sercomm S1010</a></p>
+        <p><a target="_blank" href="/netis/www.netisru.com/en/Support/NETIS_Emulators/overseas/">Netis</a></p>
+                <p><a target="_blank" href="/zte/">Zte</a></p>
+    </div>
+
+
+    <script>
+        function openCity(evt, cityName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the link that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,447 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="Microsoft FrontPage 6.0">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+<!--
+<!-- RpUseIdentifier RpIdentifier=doLoadFunc RpItemType=ItemGroup -->
+function doLoad()
+{
+	top.buttom.location="buttom.html";
+}
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+function doWEPChange( newIndex )
+{
+	  WLANForm.Authen_Selection.disabled = false;
+	  WLANForm.WEPKey_Code[0].disabled = false;
+	  WLANForm.WEPKey_Code[1].disabled = false;
+	  WLANForm.DefWEPKey[0].disabled = false;
+	  WLANForm.DefWEPKey[1].disabled = false;
+	  WLANForm.DefWEPKey[2].disabled = false;
+	  WLANForm.DefWEPKey[3].disabled = false;
+	  WLANForm.WEP_Key1.disabled = false;
+	  WLANForm.WEP_Key2.disabled = false;
+	  WLANForm.WEP_Key3.disabled = false;
+	  WLANForm.WEP_Key4.disabled = false;
+}
+
+function WEPKey_CodeCheck(form) 
+{
+	if ( form.WEPKey_Code[0].checked == true )
+	{	
+		form.WEP_Key1.value = "";
+		form.WEP_Key2.value = "";
+		form.WEP_Key3.value = "";
+		form.WEP_Key4.value = "";
+	}else{
+		form.WEP_Key1.value = "0x";
+		form.WEP_Key2.value = "0x";
+		form.WEP_Key3.value = "0x";
+		form.WEP_Key4.value = "0x";
+	}
+}
+
+function chkBurstSize(burstvalue,i)
+{
+	if (burstvalue > 1800 || burstvalue < 0){	
+		alert("The Maximum Burst Size value must position between 0 to 1800.");
+		WLANForm.MaxBurstSize.value = 650;
+		WLANForm.MaxBurstSize.focus();
+	}
+}
+
+function doRISChange(form)
+{
+	if (form.IntExtRIS[0].checked){
+		form.RadiusServerAddr.disabled = true;
+		form.RadiusServerPort.disabled = true;
+		form.RadiusServerKey.disabled = true;
+
+		form.BuildinUserActive.disabled = true;
+		form.AccountServerAddr.disabled = true;
+		form.AccountServerPort.disabled = true;
+		form.AccountServerKey.disabled = true;
+	}else{
+		form.RadiusServerAddr.disabled = false;
+		form.RadiusServerPort.disabled = false;
+		form.RadiusServerKey.disabled = false;
+
+		form.BuildinUserActive.disabled = false;
+		form.AccountServerAddr.disabled = false;
+		form.AccountServerPort.disabled= false;
+		form.AccountServerKey.disabled = false;	
+	}
+}
+
+function doSecurityChange()
+{
+	document.WLANForm.SecurityFlag.value = 1;
+	document.WLANForm.target = "main";
+	document.WLANForm.submit();
+	return;
+}
+
+function chkAuthenTimeout(value)
+{
+	if(( value < 60 ) && (value != 0))
+	{
+		alert(" ** The minimum of ReAuthentication Timer is 60. **");
+		WLANForm.WLANCfgAuthenTimeout.value = 60;
+		WLANForm.WLANCfgAuthenTimeout.focus();
+	}
+}
+
+function chkIdleTimeout(value)
+{
+	if( value < 60 )
+	{
+		alert(" ** The minimum of Idle Timeout is 60. **");
+		WLANForm.WLANCfgIdleTimeout.value = 60;
+		WLANForm.WLANCfgIdleTimeout.focus();
+	}
+}
+
+function chkGroupKeyTimer(value)
+{
+	if( value < 60 )
+	{
+		alert(" ** The minimum of Group Key Update Timer is 60. **");
+		WLANForm.WLANCfgWPATimer.value = 60;
+		WLANForm.WLANCfgWPATimer.focus();
+	}
+}
+
+function checkPort(port,i){
+	if(port < 1 || port > 65535){
+		alert(" ** Port range is 1 to 65535. **");
+		if(i==0){
+			WLANForm.WLANCfgRadiusServerPort.value = 1812;
+			WLANForm.WLANCfgRadiusServerPort.focus();
+		}else{
+			WLANForm.WLANCfgAccountServerPort.value = 1813;
+			WLANForm.WLANCfgAccountServerPort.focus();
+		}	
+	}
+}
+
+function checkRadSrvIPRange(address, type) {
+	var IP = address.value;
+	if (IP == "N/A")
+		return;			
+	if(IP == "0.0.0.0"){
+		if(type == 1){
+			alert("0.0.0.0 is not a valid IP address !");
+			return(false);
+		}
+		if(type == 2){
+			if(WLANForm.WLANCfgAccSrv_Active.checked){
+				alert("0.0.0.0 is not a valid IP address !");
+				return(false);
+			}
+		}
+	}	
+			
+	IP = IP.replace(/ /g, "");
+	address.value = IP;
+	IPsplit = IP.split(".");
+
+	if(IPsplit.length != 4 ) {
+		alert("IP format error !");
+		address.value="0.0.0.0";
+		return (false);
+	}
+
+	for(i = 0; i < 4; i++) {
+		if((isNaN(IPsplit[i])) || (IPsplit[i] == 'undefined') || (IPsplit[i] == "")) {
+			alert("IP format error !");
+			address.value="0.0.0.0";
+			return(false);
+		} else {
+			if((parseInt(IPsplit[i], 10) > 255) || (parseInt(IPsplit[i], 10) < 0)) {
+				alert("IP format error !");
+				address.value="0.0.0.0";
+				return(false);
+			}
+		}
+	}
+	
+	if(parseInt(IPsplit[0], 10) > 223){
+		alert("IP format error !");
+		return(false);
+	}		
+}
+
+function WEPKey_CodeCheck(form){
+	if ( form.WEPKey_Code[0].checked == true )
+	{	
+		form.WEP_Key1.value = "";
+		form.WEP_Key2.value = "";
+		form.WEP_Key3.value = "";
+		form.WEP_Key4.value = "";
+	}else{
+		form.WEP_Key1.value = "0x";
+		form.WEP_Key2.value = "0x";
+		form.WEP_Key3.value = "0x";
+		form.WEP_Key4.value = "0x";
+	}
+}
+function doChannelFix(){
+	if(WLANForm.Auto_Channel.checked)
+		WLANForm.Channel_ID.disabled = true;
+	else
+		WLANForm.Channel_ID.disabled = false;
+}
+// -->
+</script>
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/WLAN_General_1" target="buttom" name="WLANForm">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>		   <table border="0" cellspacing="0" cellpadding="0">
+			 <tr>
+			   <td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub">
+			   <div align=center><b>
+	General			   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+			   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			   <div align=center><a href="WLAN_Filter.html" target="main" class="sub"><b><FONT class=NaviText>
+	MAC Filter			   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			   <div align=center><a href="WLAN_Adv.html" target="main" class="sub"><b><FONT class=NaviText>
+	Advanced			   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			  <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_QoS.html" target="main" class="sub"><b><FONT class=NaviText>
+QoS			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			  <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_WPS.html" target="main" class="sub"><b><FONT class=NaviText>
+WPS			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_WPS_Station.html" target="main" class="sub"><b><FONT class=NaviText>
+WPS Station			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			 </tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>				<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+				   <tr>
+					 <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+					 <td width="3%" height="19" class="cTitle">&nbsp;</td>
+<td class="cTitle">
+	Wireless Setup					 </td>
+</tr>
+<tr>
+					 <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+				   <tr>
+					 <td colspan="2">
+	<input type="checkbox" name="EnableWLAN" checked />
+	Enable Wireless LAN					 </td>
+</tr>
+<tr>
+					 <td width="35%">
+	Name(SSID)					 </td>
+<td><input type="text" name="ESSID" size="32" maxlength="32" value="NBG-334W_kk" />
+					 </td>
+</tr>
+<tr>
+					 <td colspan="2">
+	<input type="checkbox" name="ESSID_HIDE_Selection" />
+	Hide SSID					 </td>
+</tr>
+<tr>
+					 <td>Channel Selection					 </td>
+<td><select name="Channel_ID" size="1">
+<option value=00000000>Channel-01 2412MHz
+<option value=00000001>Channel-02 2417MHz
+<option value=00000002>Channel-03 2422MHz
+<option value=00000003>Channel-04 2427MHz
+<option value=00000004>Channel-05 2432MHz
+<option value=00000005 selected>Channel-06 2437MHz
+<option value=00000006>Channel-07 2442MHz
+<option value=00000007>Channel-08 2447MHz
+<option value=00000008>Channel-09 2452MHz
+<option value=00000009>Channel-10 2457MHz
+<option value=0000000a>Channel-11 2462MHz
+<option value=0000000b>Channel-12 2467MHz
+<option value=0000000c>Channel-13 2472MHz
+</select>					 </td>
+</tr>
+<tr>
+					 <td>Operating Channel					 </td>
+<td>Channel-006					 </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				   <tr>
+					 <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+					 <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	Security					 </td>
+</tr>
+<tr>
+					 <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+				   <tr>
+					 <td width="35%">
+	Security Mode</td>
+<td><select name="Security_Sel" size="1" onchange="doSecurityChange(this.form);">
+<option value=00000000>No Security
+<option value=00000001>WPA-PSK
+<option value=00000002 selected>WPA2-PSK
+</select>	<input type="hidden" name="SecurityFlag" value="0" />
+</td>
+</tr>
+              	   <tr>
+                	<td colspan="2">
+    <input type="checkbox" name="WPA_Compatible" checked />
+    WPA Compatible</td>
+</tr>
+				   <tr>
+					 <td>Pre-Shared Key</td>
+<td>
+<input type="text" name="WLANCfgPSK" size="32" maxlength="64" value="12345678" />
+</td>
+</tr>
+				   <tr>
+					 <td>ReAuthentication Timer</td>
+<td><input type="text" name="WLANCfgAuthenTimeout" size="5" maxlength="4" value="0" onBlur="chkAuthenTimeout(this.value);" onkeypress="chk_num(event)" />
+					&nbsp;
+	(In Seconds. 0 means no ReAuthentication)</td>
+</tr>
+<tr>
+					 <td>Idle Timeout</td>
+<td><input type="text" name="WLANCfgIdleTimeout" size="5" maxlength="4" value="3600" onblur="chkIdleTimeout(this.value)" onkeypress="chk_num(event)" />
+					&nbsp;
+	(In Seconds)</td>
+</tr>
+				   <tr>
+					 <td>Group Key Update Timer&nbsp;&nbsp;					 </td>
+<td><input type="text" name="WLANCfgWPATimer" size="5" maxlength="4" value="1800" onkeypress="chk_num(event)" onBlur="chkGroupKeyTimer(this.value);" />
+							&nbsp;
+	(In Seconds)</td>
+</tr>
+
+<table  width="90%" border="0" align=center cellspacing="0">
+ 
+    <tr>
+      <td >&nbsp;</td>
+<td class="note"><img src="images/i_note.gif" width="18" height="17"  align="absmiddle">
+        Note: WPA-PSK and WPA2-PSK can be configured when WPS enabled</td>
+</table>
+
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+	<input type="submit" name="sysSubmit" value="Apply" />
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<INPUT TYPE=RESET NAME="Reset" VALUE="Reset"></td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+</form>
+<p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Network > Wireless LAN > General');
+// -->
+</script>
+<!-- WaterMark End -->
+</html>

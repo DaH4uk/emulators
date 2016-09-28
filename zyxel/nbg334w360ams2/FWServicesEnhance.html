@@ -1,0 +1,293 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="Microsoft FrontPage 6.0">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+
+
+    function doLoad() {
+        top.buttom.location="buttom.html";
+    }
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+  function chk_NATSess(value)
+  {
+  	if (value == "")
+	{	
+		alert("The minimum of NAT/Firewall session per user is 256.");
+		document.forms[0].FW_NATSESS.value = 256;
+	}
+  }
+function chk_num1(numstr)
+{
+	var num
+  	if(numstr.value == ""){
+     	numstr.value = 0;
+  	}
+}	
+function doFindCurrentRule(CurrentIndex)
+{
+	num = parseInt(CurrentIndex);
+	document.forms[0].FW_Rule_rtnCurIndex.value = num;
+}
+function doEditRule()
+{
+	document.forms[0].FW_Rule_rtnFlag.value = 1;
+}
+function doDeleteRule()
+{
+	document.forms[0].FW_Rule_rtnFlag.value = 2;					
+}
+</script>
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+
+<form method="post" action="http://www.zyxeltech.de/Forms/FWServicesEnhance_1" target="buttom">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="FwLogSettings.html" target="main" class="sub"><b><FONT class=NaviText>
+General                   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+Services                   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>					  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+						  <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+						  <td width="3%" height="19" class=cTitle>&nbsp;&nbsp; </td>
+<td class=cTitle>
+			ICMP						  </td>
+</tr>
+<tr>
+						  <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+						<tr> 
+							<td width="35%">
+			Respond to Ping on							</td>
+<td class="cfig_word">
+			<select name="MISCAccessInterface" size="1">
+<option value=00000000 selected>LAN & WAN & Guest WLAN
+<option value=00000001>Disable
+<option value=00000002>LAN
+<option value=00000003>WAN
+<option value=00000004>Guest WLAN
+</select>							</td>
+</tr>
+<tr>
+							<td colspan="2">
+			<input type="checkbox" name="StealthAccess" checked />
+			Do not respond to requests for unauthorized services							</td>
+</tr>
+</table>
+					 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Firewall Rule                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td><div><table width="100%"  border="1" align=center cellpadding="1" cellspacing="0" bordercolor="#FFFFFF">
+                               <tr>
+                                 <td width="5%"  class="tableTitle"><div align=center>#</div>
+</td>
+<td width="8%" height="23"  class="tableTitle"><div align=center>
+	Active								 </div>
+</td>
+<td width="26%" height="23"  class="tableTitle"><div align=center>
+	Service Name								 </div>
+</td>
+<td width="32%" height="23"  class="tableTitle"><div align=center>
+	IP                         		 </div>
+</td>
+<td width="11%"  class="tableTitle"><div align=center>
+	Schedule                                 </div>
+</td>
+<td width="8%"  class="tableTitle"><div align=center>
+	Log                                 </div>
+</td>
+<td width="10%" align=center  class="tableTitle"><div align=center>
+	Modify                                 </div>
+</td>
+</tr>
+                               <tr class="tabcolor2">
+								 <td ><div  align='center'><strong>
+	1								 </strong></div>
+</td>
+<td ><div  align='center'>
+	<img src="images/i_active_off.gif" width="16" height="14">                                 </div>
+</td>
+<td ><div  align='center'>
+	PING(ICMP:0)<br>                                 </div>
+</td>
+<td><div align=center>
+	(00:13:02:DC:7A:45)<br>								 </div>
+</td>
+<td><div align=center>
+	Everyday								 </div>
+</td>
+<td><div align=center>
+	Match                                 </div>
+</td>
+<td><div align=center>
+								 <font style= "cursor:hand;cursor:pointer;">
+									<a href="FWRuleEdit.html" target="_self">
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].submit(); " id=1>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+								   </div>
+</td>
+</tr>
+                            </table>
+<input type="hidden" name="FW_Rule_rtnCurIndex" value="0" />
+<input type="hidden" name="FW_Rule_rtnFlag" value="0" />
+                         </div>
+</td>
+</tr>
+<tr> 
+                            <td colspan="5"> 
+							<input type="submit" name="Fw_Add" value="Add" class="button" onClick="doSubmit();" />
+							new rule before rule							<input type="text" name="FW_InsertRuleNum" size="3" maxlength="3" value="1" onkeypress="chk_num(event)" onblur="chk_num1(this)" />
+							(rule number).							</td>
+</tr>
+<tr> 
+                            <td colspan="5"> 
+							<input type="submit" name="FW_Mov" value="Move" class="button" onClick="doSubmit();" />
+							rule							<input type="text" name="FW_MovRuleNum_From" size="3" maxlength="3" value="1" onkeypress="chk_num(event)" onblur="chk_num1(this)" />
+							to rule							<input type="text" name="FW_MovRuleNum" size="3" maxlength="3" value="1" onkeypress="chk_num(event)" onblur="chk_num1(this)" />
+							(rule number).							</td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Misc setting                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+					 	<tr>
+                         <td><input type="checkbox" name="Fw_BypassTriangle" checked />
+Bypass Triangle Route                         </td>
+</tr>
+                       <tr>
+                         <td>Max NAT/Firewall Session Per User           &nbsp;&nbsp;
+<input type="text" name="FW_NATSESS" size="4" maxlength="4" value="512" onkeypress="chk_num(event)" onblur="chk_NATSess(this.value)" />
+                         </td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+<input type="submit" name="sysSubmit" value="Apply" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">                    </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+</form>
+<!-- WaterMark Begin -->
+<!-- WaterMark End -->
+ <p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

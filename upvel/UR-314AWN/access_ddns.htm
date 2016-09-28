@@ -1,0 +1,105 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+</head><script language="javascript" src="general.js" tppabs="http://192.168.1.1/js/general.js"></script>
+<script language="JavaScript">
+function ddnsSwitch(on_off)
+{
+if(on_off == 0)
+{
+for(i = 2; i < document.DDNS_form.elements.length-1; i++)
+document.DDNS_form.elements[i].disabled = true;
+}else
+{
+for(i = 2; i < document.DDNS_form.elements.length-1 ; i++)
+document.DDNS_form.elements[i].disabled = false;
+}
+}
+function quotationCheck(object, limit_len) {
+var len = object.value.length;
+var c;
+var i, j = 0;
+for (i = 0; i < len; i++)
+{
+var c = object.value.charAt(i);
+if (c == '"')
+{
+j += 6;
+}
+else
+j++;
+}
+if (j > limit_len)
+{
+alert('too many quotation marks!');return true;
+}
+return false;
+}
+function DDNSsave() {
+if (quotationCheck(document.forms[0].sysDNSHost, 63) )
+return;
+if (quotationCheck(document.forms[0].sysDNSEmail, 63) )
+return;
+if (quotationCheck(document.forms[0].sysDNSUser, 31) )
+return;
+if (quotationCheck(document.forms[0].sysDNSPassword, 31) )
+return;
+if(chineseCheck(document.forms[0].sysDNSHost, "access_ddns_HOSTNAME_Id"))
+{
+return;
+}
+if(chineseCheck(document.forms[0].sysDNSEmail, "access_ddns_EMAILADDR_Id"))
+{
+return;
+}
+if(chineseCheck(document.forms[0].sysDNSUser, "access_ddns_USERNAME_Id"))
+{
+return;
+}
+if(chineseCheck(document.forms[0].sysDNSPassword,"access_ddns_PASSWORD_Id"))
+{
+return;
+}
+location.reload();
+}
+</script>
+<body onload="if(!document.DDNS_form.elements[0].checked) ddnsSwitch(0);">
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/access_ddns_1" name="DDNS_form"><div align=center>
+<table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Dynamic DNS</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10" ></td><td width="440"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Dynamic DNS</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="Enable_DyDNS" VALUE="1" onclick="ddnsSwitch(1)"><font color="#000000">Activated</font><INPUT TYPE="RADIO" NAME="Enable_DyDNS" VALUE="0" CHECKED onclick="ddnsSwitch(0)"><font color="#000000">Deactivated</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Service Provider</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+
+www.dyndns.org
+</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right id="access_ddns_HOSTNAME_Id">
+<font color="#000000">My Host Name</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="sysDNSHost" SIZE="32" MAXLENGTH="63" VALUE=""></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right id="access_ddns_EMAILADDR_Id">
+<font color="#000000">E-mail Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="sysDNSEmail" SIZE="32" MAXLENGTH="63" VALUE=""></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right id="access_ddns_USERNAME_Id">
+<font color="#000000">Username</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="sysDNSUser" SIZE="32" MAXLENGTH="31" VALUE=""></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right id="access_ddns_PASSWORD_Id">
+<font color="#000000">Password</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="PASSWORD" NAME="sysDNSPassword" SIZE="32" MAXLENGTH="31" VALUE=""></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Wildcard support</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="Enable_Wildcard" VALUE="1"><font color="#000000">Yes</font><INPUT TYPE="RADIO" NAME="Enable_Wildcard" VALUE="0" CHECKED><font color="#000000">No</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" class="black" height="42" >&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="BUTTON" NAME="SaveBtn" VALUE="SAVE" onClick="DDNSsave()"></td></tr></table></div></form>
+</body></html>

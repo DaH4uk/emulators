@@ -1,0 +1,194 @@
+<script type="text/javascript">
+var logs;
+var first = 0;
+var severities = [
+    s_str.emerg,
+    s_str.alert,
+    s_str.crit,
+    m_str.err,
+    m_str.warn,
+    s_str.notice,
+    s_str.info,
+    s_str.debug
+];
+
+$("#t_setting").click(function() {
+    var arg = [$('#module').data('value'), $('#severity').data('value')];
+    $.loadMain('logConf.htm', arg);
+});
+$("#freshAll").click(function() {
+    $.addLoading($(this), 200, function() {
+        var arg = [$('#module').data('value'), $('#severity').data('value')];
+        $.loadMain('log.htm', arg);
+    });
+});
+$("#module").click(function() {
+    if (first) {
+        bldtbl();
+    }
+});
+$("#severity").click(function() {
+    if (first) {
+        bldtbl();
+    }
+});
+$("#delAll").click(function() {
+    $.cgi('/cgi/log', 'clr');
+    var arg = [$('#module').data('value'), $('#severity').data('value')];
+    $.loadMain('log.htm', arg);
+});
+$("#t_save").click(function() {
+    var fakeLink = document.createElement("a");
+    if (typeof(fakeLink.click) == 'undefined') {
+        location.href = "";
+    } else {
+        fakeLink.href = '/cgi/log?down';
+        document.body.appendChild(fakeLink);
+        fakeLink.click();
+    }
+
+});
+
+function clrtbl() {
+    var tr = $("#table-log").find("tbody tr:not(.nd)");
+    tr.remove();
+}
+
+function bldtbl() {
+    clrtbl();
+    var module = $("#module").data('text');
+    var severity = $("#severity").data('value');
+    var data;
+    var index = 1;
+    var array = [];
+    for (var i = 0, l = logs.length; i < l; i++) {
+
+        if ((0 == $("#module").data('value') || module == logs[i][3]) && parseInt(logs[i][2], 10) <= severity) {
+            array.push([{
+                "text": index,
+                "width": "7%"
+            }, {
+                "text": logs[i][1],
+                "width": "13%"
+            }, {
+                "text": logs[i][3],
+                "width": "10%"
+            }, {
+                "text": severities[logs[i][2]],
+                "width": "13%"
+            }, {
+                "text": logs[i][4].replace(/&/g, "&amp;").replace(/</g, "&lt;"),
+                "width": "57%"
+            }]);
+            index++;
+        }
+    }
+    $.initTableBody($("#table-log"), array);
+    $.tablePages($("#table-log"), 8);
+}
+
+function init() {
+    var opt = "";
+    var l;
+    var optVal;
+    var optText;
+
+    for (var i = 0, l = severities.length; i < l; i++) {
+        optText = severities[i];
+        optVal = i;
+        opt += "<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>";
+    }
+    $("#severity").empty().append(opt);
+
+    if ($.mainParam) {
+        $('#severity option[value="' + $.mainParam[1] + '"]').prop('selected', 'selected');
+    } else {
+        $('#severity option[value="' + optVal + '"]').prop('selected', 'selected');
+    }
+    var option = {
+        refresh: 1
+    };
+    $("#severity").tpSelect(option);
+    if ($.local || $.sim)
+        logs = $.io("./xml/log.txt", false).split("\r\n");
+    else
+        logs = $.io("/cgi/log", false).split("\r\n");
+    var ret = parseInt(logs.shift(), 10);
+    logs.pop();
+    logs.reverse();
+    var modules = [];
+    if (ret) {
+        return $.alert(ret);
+    }
+    for (var i = 0, l = logs.length; i < l; i++) {
+        logs[i] = logs[i].match(/([\d-]+\s[\d:]+)\s\[(\d)\]\s(\w+):\s(.*)/);
+        logs[i][3] = logs[i][3].toUpperCase();
+        if (!$.inArray(logs[i][3], modules))
+            modules.push(logs[i][3]);
+    }
+    modules.sort();
+
+    for (var i = 0, l = modules.length; i < l; i++) {
+        optText = modules[i];
+        optVal = i + 1;
+        $("#module").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+    }
+    if ($.mainParam) {
+        $('#module option[value="' + $.mainParam[0] + '"]').prop('selected', 'selected');
+    } else {
+        $("#module option[value='0']").prop('selected', 'selected');
+    }
+    $("#module").tpSelect(option);
+}
+</script>
+<h3 id="et">System Log</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <b id="t_logtype">Type:</b>
+        <select class="inline" id="module">
+            <option value="0" class="T_all">ALL</option>
+        </select>
+        <div>
+        <b id="t_loglevel">Level:</b>
+        <select class="inline" id="severity">
+        </select>
+        </div>
+        <div class="table-op part-separate" id="addItem">
+            <div class="table-btn">
+                <span id="freshAll" class="refresh-icon"></span>
+                <label class="T_refresh">Refresh</label>
+                <span id="delAll" class="delete-all-icon"></span>
+                <label class="T_delall">Delete All</label>
+            </div>
+        </div>
+        <table id="table-log">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </form>
+    <button type="submit" class="blue inline left xl" id="t_setting">Log Settings</button>
+    <button type="submit" class="blue inline left xl" id="t_save">Save Log</button>
+</div>
+<script type="text/javascript">
+var headArray = [{
+    "text": table_str.id,
+    "width": "7%"
+}, {
+    "text": table_str.time,
+    "width": "13%"
+}, {
+    "text": table_str.type,
+    "width": "10%"
+}, {
+    "text": table_str.lvl,
+    "width": "13%"
+}, {
+    "text": table_str.logcont,
+    "width": "57%"
+}];
+
+$.tpInit(init);
+$.initTableHead($("#table-log"), headArray);
+$("#table-log").tpTable(bldtbl);
+first = 1;
+</script>

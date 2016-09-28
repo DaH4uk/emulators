@@ -1,0 +1,124 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<SCRIPT language=Javascript src="opmode.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title><script>dw(page_title)</script></title>
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script>
+wlan_num =1 ;
+wispWanId = 0 ;
+var isPocketRouter="0"*1;
+function opModeClick()
+{
+	if(wlan_num > 1){
+		if(document.fmOpMode.opMode[2].checked)
+			enableTextField(document.fmOpMode.wispWanId);
+		else
+			disableTextField(document.fmOpMode.wispWanId);
+	}
+}
+</script>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<blockquote>
+<h2><script>dw(menu_opmode)</script></h2>
+
+
+<table border=0 width=550 cellspacing="0" cellpadding="0">
+<tr>
+<td>
+	<span id="opmodeNote0"><script>dw(opmode_explain)</script>
+	</span></td>
+</tr>
+</table>
+<br>
+
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http:///%22http://192.168.10.1/boafrm/formOpMode%22%22" method=POST name="fmOpMode">
+<table border=0 width=550 cellpadding=10 cellspacing=0 class="menu_content_list_table">
+	<tr>
+		 <td width ="23%" valign="top" class="itemdesc_td">
+		<input type="radio" value="0" name="opMode" onClick="opModeClick()" ></input>
+		 <b> <script>dw(opmode_radio_gw)</script> </b> 
+		</td>
+		<td width="77%" class="item_td">
+			<script>dw(opmode_radio_gw_explain)</script>
+		</td>
+	</tr>
+
+	<tr>
+		 <td width ="23%" valign="top" class="itemdesc_td">
+		<input type="radio" value="1" name="opMode" onClick="opModeClick()" ></input>
+		 <b> <script>dw(opmode_radio_br)</script> </b> 
+		</td>
+		<td width="77%" class="item_td">
+			<script>dw(opmode_radio_br_explain)</script>
+		</td>
+	</tr>
+
+	<tr>
+		 <td width ="23%" valign="top" class="itemdesc_td">
+		<input type="radio" value="2" name="opMode" onClick="opModeClick()" ></input>
+		 <b> <script>dw(opmode_radio_wisp)</script> </b> 
+		</td>
+		<td width="77%" class="item_td">
+			<script>dw(opmode_radio_wisp_explain)</script>
+		</td>
+	</tr>
+
+	<tr>
+		 <td width ="23%" valign="top"> </td>
+		<td width="77%" class="item_td">
+			<script>
+			if(wlan_num > 1){
+				document.write('<b>'+opmode_radio_wisp_wanif+'</b>');
+				document.write('<select size="1" name="wispWanId">');
+				for(i=0 ; i < wlan_num ; i++)
+					document.write('<option value="'+i+'">wlan'+(i+1)+'</option>');
+				document.write('</select>');
+			}
+			</script>
+		</td>
+	</tr>
+</table>
+	
+<script>
+	opmode = 0 ;
+	document.fmOpMode.opMode[opmode].defaultChecked= true;
+	document.fmOpMode.opMode[opmode].checked= true;
+	
+	if(isPocketRouter == 1)
+	{
+		document.fmOpMode.opMode[0].disabled =true;
+		document.fmOpMode.opMode[1].disabled =true;
+		document.fmOpMode.opMode[2].disabled =true;
+	}
+		
+	var isWispDisplay =  1 ;
+	if(isWispDisplay == 0)
+		document.fmOpMode.opMode[2].disabled =true;
+		
+	if(wlan_num > 1){
+		document.fmOpMode.wispWanId.defaultSelected= wispWanId;
+		document.fmOpMode.wispWanId.selectedIndex= wispWanId;
+	}
+	opModeClick();
+</script>
+
+  <input type="hidden" value="/opmode.htm" name="submit-url">
+  <input type="submit" value="Apply" name="apply">&nbsp;&nbsp;
+  <script>document.fmOpMode.apply.value=save_changes;</script>
+  <!--<input type="reset" value="Reset" name="set" >-->
+
+</form>
+</blockquote>
+
+</body>
+
+</html>

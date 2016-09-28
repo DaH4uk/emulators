@@ -1,0 +1,472 @@
+﻿<script language="javascript" type="text/javascript">
+function changeToolParams() {
+    if ($("#ipping").prop("checked") == true){
+    	$("#pingClick").removeClass("nd");
+
+    	$("#traceClick").addClass("nd");
+    	$("#trace_adv").addClass("nd");
+    }else if ($("#traceroute").prop("checked") == true){
+    	$("#pingClick").addClass("nd");
+    	$("#ping_adv").addClass("nd");
+
+    	$("#traceClick").removeClass("nd");
+    }
+}
+
+function pingClick(obj) {
+    if ($(obj).hasClass("cln")) {
+        $("#ping_adv").addClass("nd");
+        $(obj).removeClass("cln");
+    } else {
+        $("#ping_adv").removeClass("nd");
+        $(obj).addClass("cln");
+    }
+}
+
+function traceClick(obj){
+	    if ($(obj).hasClass("cln")) {
+        $("#trace_adv").addClass("nd");
+        $(obj).removeClass("cln");
+    } else {
+        $("#trace_adv").removeClass("nd");
+        $(obj).addClass("cln");
+    }
+}
+
+var test_conn;
+var ipping = {};
+var tracert = {};
+
+function disNewLine(info, stat) {
+	var showText = $("#result").html();
+	showText += info + "\r\n";
+	$("#result").html(showText);
+}
+
+function clearTbl() {
+	$("#result").html("");
+}
+
+function doIpping() {
+    $.act(ACT_OP, ACT_OP_IPPING);
+    if (!$.exe()) {
+        return;
+    }
+}
+
+function strstr(str, flag) {
+    var ret = str.search(flag);
+    return ret;
+}
+
+function startDiag() {
+    var result;
+    var icmpPkts;
+    var pktSize;
+    var pingtimeout;
+    var printHeader = 1;
+
+    icmpPkts = parseInt($("#l_ping_pkt").prop("value"), 10);
+    pktSize = parseInt($("#l_ping_pkt_size").prop("value"), 10);
+    pingtimeout = parseInt($("#l_ping_pkt_time").prop("value"), 10);
+
+    if ($("#l_addr").prop("value") == "") {
+        $.alert(ERR_DIAG_IP_ADDR);
+        $("#l_addr").focus();
+        return;
+    }
+
+    if (isNaN(pktSize) || pktSize < 0 || pktSize > 65500) {
+        $.alert(ERR_DIAG_PACKET_SIZE);
+        $("#l_ping_pkt_size").focus();
+        return;
+    }
+
+    if (isNaN(pingtimeout) || pingtimeout < 1 || pingtimeout > 60) {
+        $.alert(ERR_DIAG_TIME_OUT);
+        $("#l_ping_pkt_time").focus();
+        return;
+    }
+    clearTbl();
+    var aliasName = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+    if ($.exe()) {
+        $.alert(ERR_DIAG_EWAN_OFF);
+        return;
+    }
+
+    if (aliasName.__ifAliasName == "NO_INTERFACE") {
+        $.alert(ERR_DIAG_EWAN_OFF);
+        return;
+    }
+
+    /* IP ping */
+    if ($("#ipping").prop("checked") == true) {
+        if (isNaN(icmpPkts) || icmpPkts < 1 || icmpPkts > 50) {
+            $.alert(ERR_DIAG_PING_COUNT);
+            $("#l_ping_pkt").focus();
+            return;
+        }
+        // step 1. collect parameters.
+        ipping = $.act(ACT_GET, IPPING_DIAG, null, null, ["dataBlockSize", "timeout", "numberOfRepetitions", "host", "X_TP_ConnName", "diagnosticsState"]);
+
+        if (!$.exe()) {
+            ipping.diagnosticsState = "Requested";
+            ipping.dataBlockSize = parseInt($("#l_ping_pkt_size").prop("value"), 10);
+            ipping.timeout = parseInt($("#l_ping_pkt_time").prop("value"), 10);
+            ipping.numberOfRepetitions = parseInt($("#l_ping_pkt").prop("value"), 10);
+            ipping.host = $("#l_addr").prop("value");
+            ipping.X_TP_ConnName = test_conn;
+            pktSize = parseInt($("#l_ping_pkt_size").prop("value"), 10) + 8;
+            pingtimeout = parseInt($("#l_ping_pkt_time").prop("value"), 10);
+
+            // step 2. set ip ping object.
+            $.act(ACT_SET, IPPING_DIAG, null, null, ipping);
+            if (!$.exe()) {
+                $("#testButton").prop("disabled", true);
+                $.addLoading($("#testButton"));
+                var gotResult = 1;
+                var i = 1;
+                $.auto(function() {
+                    ipping = $.act(ACT_GET, IPPING_DIAG, null, null, null);
+                    if (!$.exe()) {
+                        if (i > icmpPkts) {
+                            // now display the statistics
+                            result = "";
+                            disNewLine(result, "");
+                            result = "---" + ipping.X_TP_IPAddress + " ping statistics ---";
+                            disNewLine(result, "");
+                            result = ipping.numberOfRepetitions + " packets transmitted, " + ipping.successCount + " packets received," + Math.round(ipping.failureCount * 100 / ipping.numberOfRepetitions) + "% packet loss";
+                            disNewLine(result, "");
+
+                            if (ipping.minimumResponseTime != 65535) {
+                                result = "round-trip min/avg/max = " + ipping.minimumResponseTime / 1000.0 + "/" + ipping.averageResponseTime / 1000.0 + "/" + ipping.maximumResponseTime / 1000.0 + " ms";
+                                disNewLine(result, "");
+                            }
+                            $("#testButton").prop("disabled", false);
+                            $.removeLoading($("testButton"));
+                            return false;
+                        }
+                        if (gotResult) {
+                            $.act(ACT_OP, ACT_OP_IPPING);
+                            if (!$.exe()) {
+                                gotResult = 0;
+                                return true;
+                            }
+                            return false;
+                        }
+                        //ipping = $.act(ACT_GET, IPPING_DIAG, null, null, ["X_TP_Result", "X_TP_IPAddress", "dataBlockSize", "diagnosticsState", "host", "X_TP_ResponseTime"]);
+
+
+                        //if (!$.exe())
+                        {
+                            // display the header. when we can resolve the address.
+                            if (printHeader) {
+                                /*
+								if (ipping.X_TP_Result == "")
+								{
+									gotResult = 0;
+									disNewLine("No new result.", "");
+									return true;
+								}
+								disNewLine(ipping.X_TP_Result, "");
+								*/
+                                result = "PING " + ipping.host;
+                                if ($.ifip(ipping.host, true) == 0) {
+                                    // ping an IP address.
+                                    result = result + " (" + ipping.host + "): " + ipping.dataBlockSize + " data bytes";
+                                    disNewLine(result, "");
+                                    result = "";
+                                    // display a blank line.
+                                    disNewLine(result, "");
+                                    printHeader = 0;
+                                } else {
+                                    // ping an net address.
+                                    if ($.ifip(ipping.X_TP_IPAddress, true) == 0) {
+                                        // we resolve the ip.
+                                        result = result + " (" + ipping.X_TP_IPAddress + "): " + ipping.dataBlockSize + " data bytes";
+                                        disNewLine(result, "");
+                                        result = "";
+                                        // display a blank line.
+                                        disNewLine(result, "");
+                                        printHeader = 0;
+                                    }
+                                }
+                            }
+
+                            // can't resolve host name. just print error and break. 
+                            if ("Error_CannotResolveHostName" == ipping.diagnosticsState) {
+                                result = "PING: unknown host: " + ipping.host;
+                                disNewLine(result, "");
+                                $("#testButton").prop("disabled", false);
+                                $.removeLoading($("#testButton"));
+                                return false;
+                            } else if ("Requested" == ipping.diagnosticsState) {
+                                gotResult = 0;
+                                return true;
+                            } else if ("None" == ipping.diagnosticsState) {
+                                gotResult = 1;
+                                var res = pktSize + " bytes from " + ipping.X_TP_IPAddress + ": icmp_seq=" + i + " ttl=128 time=" + ipping.X_TP_ResponseTime / 1000.0 + " ms";
+                                disNewLine(res, "");
+                                res = "";
+                                i++;
+                            } else if ("Complete" == ipping.diagnosticsState) {
+                                // now display the statistics
+                                if (strstr(ipping.X_TP_Result, "Request timed out.") != -1) {
+                                    result = "Request timed out.";
+                                    disNewLine(result, "");
+                                } else {
+                                    result = pktSize + " bytes from " + ipping.X_TP_IPAddress + ": icmp_seq=" + i + " ttl=128 time=" + ipping.X_TP_ResponseTime / 1000.0 + " ms";
+                                    disNewLine(result, "");
+                                }
+                                result = "";
+                                disNewLine(result, "");
+                                result = "---" + ipping.X_TP_IPAddress + " ping statistics ---";
+                                disNewLine(result, "");
+                                result = ipping.numberOfRepetitions + " packets transmitted, " + ipping.successCount + " packets received," + Math.round(ipping.failureCount * 100 / ipping.numberOfRepetitions) + "% packet loss";
+                                disNewLine(result, "");
+
+                                if (ipping.minimumResponseTime != 65535) {
+                                    result = "round-trip min/avg/max = " + ipping.minimumResponseTime / 1000.0 + "/" + ipping.averageResponseTime / 1000.0 + "/" + ipping.maximumResponseTime / 1000.0 + " ms";
+                                    disNewLine(result, "");
+                                }
+                                $("#testButton").prop("disabled", false);
+                                $.removeLoading($("#testButton"));
+                                return false;
+                            } else if ("Error_Internal" == ipping.diagnosticsState) {
+                                gotResult = 1;
+                                disNewLine(ipping.X_TP_Result, "");
+                            } else {
+                                gotResult = 1;
+                                disNewLine(ipping.X_TP_Result, "");
+                                i++;
+                            }
+
+                            ipping.diagnosticsState = "Requested";
+                            ipping.X_TP_Result = "";
+                            $.act(ACT_SET, IPPING_DIAG, null, null, ["X_TP_Result=", "diagnosticsState=Requested"]);
+                            if (!$.exe()) {;
+                            }
+                        }
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    /* traceroute */
+    else if ($("#traceroute").prop("checked") == true) {
+        var maxHop;
+        maxHop = parseInt($("#l_tr_hop").prop("value"), 10);
+
+        if (isNaN(maxHop) || maxHop < 1 || maxHop > 30) {
+            $.alert(ERR_DIAG_TTL);
+            $("#l_tr_hop").focus();
+            return;
+        }
+
+        tracert = $.act(ACT_GET, TRACEROUTE_DIAG, null, null, ["maxHopCount", "timeout", "numberOfTries", "host", "dataBlockSize", "X_TP_ConnName", "diagnosticsState", "X_TP_HopSeq"]);
+        var HopCount = 0;
+        var tmp;
+        var loopTime = 500;
+        var traceHost;
+        var tpktsize;
+        if (!$.exe()) {
+            tracert.diagnosticsState = "Requested";
+            tracert.host = $("#l_addr").prop("value");
+            tracert.dataBlockSize = 64;
+            tracert.timeout = 50;
+            tracert.numberOfTries = 1;
+            tracert.maxHopCount = parseInt($("#l_tr_hop").prop("value"), 10);
+            tracert.X_TP_ConnName = test_conn;
+            tracert.X_TP_HopSeq = 0;
+            HopCount = parseInt($("#l_tr_hop").prop("value"), 10);
+            traceHost = $("#l_addr").prop("value");
+            tpktsize = 64
+            maxHop = parseInt($("#l_tr_hop").prop("value"), 10);
+            $.act(ACT_SET, TRACEROUTE_DIAG, null, null, tracert);
+            if (!$.exe()) {
+                $("#testButton").prop("disabled", true);
+                $.addLoading($("#testButton"));
+                var i = 0;
+                $.act(ACT_OP, ACT_OP_TRACERT);
+                if ($.exe()) {
+                    $("#testButton").prop("disabled", false);
+                    $.removeLoading($("#testButton"));
+                    return;
+                }
+                $.auto(function() {
+                    tracert = $.act(ACT_GET, TRACEROUTE_DIAG, null, null, ["diagnosticsState", "X_TP_HopSeq", "X_TP_Result"]);
+                    if (!$.exe()) {
+                        // print the header.
+                        if ((tracert.X_TP_HopSeq == 0) && (tracert.X_TP_Result != "") && printHeader) {
+                            printHeader = 0;
+                            if (strstr(tracert.X_TP_Result, "traceroute") >= 0) {
+                                //result += tracert.X_TP_Result;
+                                disNewLine(tracert.X_TP_Result, "");
+                                ++tracert.X_TP_HopSeq;
+                                loopTime = 500;
+                                tracert.X_TP_Result = "";
+                                $.act(ACT_SET, TRACEROUTE_DIAG, null, null, tracert);
+                                if (!$.exe()) {
+                                    return true;
+                                }
+                            } else {
+                                var ip = $.act(ACT_GET, TRACEROUTE_DIAG, null, null, ["X_TP_IPAddress"]);
+                                if (!$.exe()) {
+                                    result = "traceroute to " + traceHost + " (" + ip.X_TP_IPAddress + "), " + maxHop + " hops max, " + tpktsize + " byte packets";
+                                    disNewLine(result, "");
+                                    ++tracert.X_TP_HopSeq;
+                                    loopTime = 500;
+                                    tracert.X_TP_Result = "";
+                                    $.act(ACT_SET, TRACEROUTE_DIAG, null, null, tracert);
+                                    if (!$.exe()) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+
+                        //tmp = " diagnosticsState " + tracert.diagnosticsState;
+                        //disNewLine(tmp, "");
+                        // trace route failed.
+                        if ((tracert.diagnosticsState != "Requested") &&
+                            (tracert.diagnosticsState != "None") &&
+                            (tracert.diagnosticsState != "Complete")) {
+                            //result = traceHost + tracert.X_TP_Result;
+                            disNewLine(tracert.X_TP_Result, "");
+                            tracert.X_TP_Result = "";
+                            $.act(ACT_SET, TRACEROUTE_DIAG, null, null, tracert);
+                            if (!$.exe()) {;
+                            }
+                            $("#testButton").prop("disabled", false);
+                            $.removeLoading($("#testButton"));
+                            //alert("1 :" + tracert.X_TP_Result);
+                            return false;
+                        }
+                        // trace complete.
+                        else if (tracert.diagnosticsState == "Complete") {
+                            //result += tracert.X_TP_Result;
+                            //tmp = " complete result is = (" + tracert.X_TP_Result + ")";
+                            //disNewLine(tmp, "");	
+                            disNewLine(tracert.X_TP_Result, "");
+                            tracert.X_TP_Result = "";
+                            $.act(ACT_SET, TRACEROUTE_DIAG, null, null, tracert);
+                            if (!$.exe()) {;
+                            }
+                            $("#testButton").prop("disabled", false);
+                            $.removeLoading($("#testButton"));
+                            //alert("2 :" + tracert.X_TP_Result);
+                            return false;
+                        }
+
+                        if (tracert.X_TP_Result != "") {
+                            //result += tracert.X_TP_Result;
+                            //result = " ============== " + tracert.X_TP_Result;
+                            disNewLine(tracert.X_TP_Result, "");
+                            loopTime = 500;
+                            ++tracert.X_TP_HopSeq;
+                            tracert.X_TP_Result = "";
+                            $.act(ACT_SET, TRACEROUTE_DIAG, null, null, tracert);
+                            if (!$.exe()) {
+                                return true;
+                            }
+                        }
+                        loopTime += 500;
+
+                        if (tracert.X_TP_HopSeq == HopCount) {
+                            disNewLine(tracert.X_TP_Result, "");
+                            $("#testButton").prop("disabled", false);
+                            $.removeLoading($("#testButton"));
+                            //alert(HopCount);
+                            return false;
+                        }
+                        if (loopTime >= 150000) {
+                            result = "traceroute to (" + traceHost + ") failed!";
+                            disNewLine(result, "");
+                            $("#testButton").prop("disabled", false);
+                            $.removeLoading($("#testButton"));
+                            //alert("4 :" + tracert.X_TP_Result);
+                            return false;
+                        }
+                    }
+                }, 500);
+            }
+        }
+    }
+}
+
+function diagnosticInit() {
+    var index = 0;
+    var i = 0;
+    var aliasName = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+
+    $("#ipping").prop("checked", true);
+    $("#pingClick").removeClass("nd");
+    $("#traceClick").addClass("nd");
+    $("#trace_adv").addClass("nd");
+    $("#result").html(n_str["diagnostic"].t_ready);
+
+    if (!$.exe()) {
+        test_conn = aliasName.__ifAliasName;
+    }
+}
+
+</script>
+<h3 id="et">Diagnostic Tools</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b id="t_test_method">Diagnostic tool:</b>
+            <input type="radio" name="diagnostic_tool" id="ipping" onclick="changeToolParams()" checked />
+            <label id="t_ipping">ping</label>
+            <input type="radio" name="diagnostic_tool" id="traceroute" onclick="changeToolParams()" />
+            <label id="t_tracert">traceroute</label>
+        </div>
+        <div>
+            <b id="t_addr">Target IP Address/Domain Name:</b>
+            <input type="text" class="text" id="l_addr" value="" size="25" maxlength="256" />
+        </div>
+        <p class="br"></p>
+        <button type="submit" class="blue T_start left" id="testButton" value="Start" onClick="startDiag()" >Start</button>
+
+        <div class="advanced-block nd" type="button" id="pingClick" onclick="pingClick(this)">
+            <span class="advanced-icon advanced-hide-icon"></span>
+            <span class="T_adv">Advanced</span>
+        </div>
+
+        <div id="ping_adv" class="nd">
+            <div><b class="item L T T_ping_pkt" id="t_ping_pkt">The number of ping/trace packets:</b>
+                <input type="text" class="text" id="l_ping_pkt" value="4" size="7" maxlength="2" onkeyup="this.value=this.value.replace(/[^0-9]/,'')" />
+                <span class="T T_note1">ping(1 - 50)</span>
+            </div>
+            <div><b class="item L T T_ping_pkt_size" id="t_ping_pkt_size">The size of a ping/trace packet:</b>
+                <input type="text" class="text" id="l_ping_pkt_size" value="64" size="7" maxlength="5" onkeyup="this.value=this.value.replace(/[^0-9]/,'')" />
+                <span class="T T_note2">(0 - 65500 Bytes)</span>
+            </div>
+            <div><b class="item L T T_ping_timeout" id="t_ping_timeout">The timeout for ping/trace test at a time:</b>
+                <input type="text" class="text" size="7" maxlength="4" id="l_ping_pkt_time" value="1" onkeyup="this.value=this.value.replace(/[^0-9]/,'')" />
+                <span class="T T_note2">(1 - 60 Seconds)</span>
+            </div>
+        </div>
+
+        <div class="advanced-block nd" type="button" id="traceClick" onclick="traceClick(this)">
+            <span class="advanced-icon advanced-hide-icon"></span>
+            <span class="T_adv">Advanced</span>
+        </div>
+
+        <div id="trace_adv" class="nd">
+            <div><b class="item L T T_trace_hop" id="t_trace_hop">The max hop for traceroute test:</b>
+                <input type="text" class="text" size="7" maxlength="4" id="l_tr_hop" value="20" onkeyup="this.value=this.value.replace(/[^0-9]/,'')" />
+                <span class="T T_note2">(1 - 30)</span>
+            </div>
+        </div>
+
+        <p class="br"></p>
+        <div class="textarea-container">
+        	<textarea type="text"  id="result" name="result" value="" readonly="readonly" class="textarea-text fix-height xxl"></textarea>
+    	</div>
+    </form>
+</div>
+<script language="javascript" type="text/javascript">
+$.tpInit(diagnosticInit);
+</script>

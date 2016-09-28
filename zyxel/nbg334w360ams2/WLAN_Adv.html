@@ -1,0 +1,287 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+<!--
+<!-- RpUseIdentifier RpIdentifier=doLoadFunc RpItemType=ItemGroup -->
+function doLoad()
+{
+	top.buttom.location="buttom.html";
+}
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+  function do802ModeChange(index)
+  {
+	return;
+  }
+function chkBurstSize(burstvalue,i)
+{
+	if (burstvalue > 1800 || burstvalue < 0)
+	{	alert("The Maximum Burst Size value must position between 0 to 1800.");
+			WLANForm.MaxBurstSize.value = 650;
+			WLANForm.MaxBurstSize.focus();
+	}
+}
+
+function chkPortRange(value)
+{ 
+	port = document.WLANForm.WLAN_RoamPort.value;
+    if (port > 65535 || port < 1)
+    { 
+		alert("The Port value must position between 1 to 65535.");
+      	WLANForm.WLAN_RoamPort.value = 3517;
+      	WLANForm.WLAN_RoamPort.focus();
+    }
+}
+function chkRTSThreshold(value)
+{
+	port = document.WLANForm.RTSThreshold.value;
+    if (port > 2346 || port < 256)
+    { 
+		alert("RTS/CTS Threshold must between 256 to 2346.");
+      	WLANForm.RTSThreshold.value = 2346;
+      	WLANForm.RTSThreshold.focus();
+    }
+}
+function chkFragThreshold(value)
+{
+	port = document.WLANForm.FragmentThreshold.value;
+    if (port > 2346 || port < 256)
+    { 
+		alert("Fragmentation Threshold must between 256 to 2346.");
+      	WLANForm.FragmentThreshold.value = 2346;
+      	WLANForm.FragmentThreshold.focus();
+    }
+}
+function dochecksuperg()
+{
+	if(WLANForm.Supermode_Selection.selectedIndex == 2)
+	{
+		alert("Operating Channel will be fixed on channel-006");
+		return;
+	}
+}
+// -->
+</script>
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/WLAN_Adv_1" target="buttom" name="WLANForm">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="WLAN.html" target="main" class="sub"><b><FONT class=NaviText>
+	General				   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="WLAN_Filter.html" target="main" class="sub"><b><FONT class=NaviText>
+	MAC Filter				   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+	Advanced				   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+			  <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_QoS.html" target="main" class="sub"><b><FONT class=NaviText>
+QoS			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			  <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_WPS.html" target="main" class="sub"><b><FONT class=NaviText>
+WPS			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_WPS_Station.html" target="main" class="sub"><b><FONT class=NaviText>
+WPS Station			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+                 </tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	Roaming Configuration                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td colspan="2">
+	<input type="checkbox" name="WLAN_RoamActive" />
+	Enable Roaming				  		 </td>
+</tr>
+<tr>
+                         <td width="45%">
+	Port						 </td>
+<td width="55%">
+	<input type="text" name="WLAN_RoamPort" size="5" maxlength="5" value="3517" onBlur="chkPortRange(this.value);" onkeypress="chk_num(event)" />
+						 </td>
+</tr>
+</table>
+                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	Wireless Advanced Setup                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td width="45%">
+	RTS/CTS &nbsp;Threshold						 </td>
+<td><input type="text" name="RTSThreshold" size="5" maxlength="4" value="2346" onkeypress="chk_num(event)" onBlur="chkRTSThreshold(this.value);" />
+	(256 ~ 2346)						 </td>
+</tr>
+<tr>
+                         <td>Fragmentation &nbsp;Threshold					     </td>
+<td><input type="text" name="FragmentThreshold" size="5" maxlength="4" value="2346" onkeypress="chk_num(event)" onBlur="chkFragThreshold(this.value);" />
+	(256 ~ 2346)						</td>
+</tr>
+<tr>
+                         <td >&nbsp;</td>
+<td >&nbsp;</td>
+</tr>
+                       <tr>
+                         <td colspan="2">
+	<input type="checkbox" name="En_IntraBSS" checked />
+    Enable Intra-BSS Traffic                         </td>
+</tr>
+                       <tr>
+                         <td width="26%">&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+                       <tr>
+                         <td >
+	Output Power                         </td>
+<td><select name="OutPower_Selection" size="1">
+<option value=00000000 selected>100%
+<option value=00000001>50%
+<option value=00000002>25%
+<option value=00000003>Min
+</select>                         </td>
+</tr>
+                       <tr>
+                         <td >
+	802.11 Mode						 </td>
+<td>	<select name="WLANMode_Selection" size="1" onchange="do802ModeChange(this.selectedIndex)">
+<option value=00000000>802.11b
+<option value=00000001>802.11g
+<option value=00000002 selected>802.11b/g
+</select>						 </td>
+</tr>
+                     </table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+	<input type="submit" name="sysSubmit" value="Apply" />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">                         </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+ 
+</form>
+<p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Network > Wireless LAN > Advanced');
+
+  do802ModeChange(document.forms[0].WLANMode_Selection.selectedIndex);
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

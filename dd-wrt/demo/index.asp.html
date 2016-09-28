@@ -1,0 +1,637 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Setup</title>
+
+<script type="text/javascript">
+//<![CDATA[
+var wan_proto = "pptp";
+var dhcp_win = null;
+function pptpUseDHCP(F, val) {
+setElementsActive("wan_ipaddr_0", "wan_gateway_3", val==0)
+}
+function valid_mtu(I) {
+var start = null;
+var end = null;
+if(wan_proto == "pppoe") {
+start = 576;
+end = 1492;
+} else if (wan_proto == "pptp" || wan_proto == "l2tp") {
+start = 1200;
+end = 1492;
+} else {
+start = 576;
+end = 16320;
+}
+valid_range(I,start,end,"MTU");
+}
+function SelMTU(num,F) {
+mtu_enable_disable(F,num);
+}
+function mtu_enable_disable(F,I) {
+if ( I == "0" )
+choose_disable(F.wan_mtu);
+else
+choose_enable(F.wan_mtu);
+}
+function valid_value(F) {
+if (!('ap' == 'wet') && !('ap' == 'apstawet')) {
+if (F.now_proto.value == "pptp" || F.now_proto.value == "static") {
+pptp_dhcp = "";
+
+
+if (F.now_proto.value == "pptp" &&
+F.wan_ipaddr_0.value == "0" &&
+F.wan_ipaddr_1.value == "0" &&
+F.wan_ipaddr_2.value == "0" &&
+F.wan_ipaddr_3.value == "0")
+pptp_dhcp = "skip";
+
+if (!F.pptp_use_dhcp || F.pptp_use_dhcp.value == "0") {
+if(pptp_dhcp != "skip" && !valid_ip(F,"F.wan_ipaddr","IP",ZERO_NO|MASK_NO))
+return false;
+
+if(pptp_dhcp != "skip" && !valid_mask(F,"F.wan_netmask",ZERO_NO|BCST_NO))
+return false;
+}
+
+
+if(pptp_dhcp != "skip" && F.now_proto.value == "pptp") {
+if (F.pptp_use_dhcp.value == "0") {
+if(!valid_ip(F,"F.pptp_server_ip","Gateway",ZERO_NO|MASK_NO))
+return false;
+
+if(!valid_ip_gw(F,"F.wan_ipaddr","F.wan_netmask","F.pptp_server_ip"))
+return false;
+}
+}
+}
+}
+
+if(F.now_proto.value == "pptp" || F.now_proto.value == "l2tp") {
+if(F.ppp_username.value == "") {
+alert(errmsg.err0);
+F.ppp_username.focus();
+return false;
+}
+}
+
+if(!0) {
+if(!valid_dhcp_server(F))
+return false;
+}
+if(F.router_name)
+if(F.router_name.value == "") {
+alert(errmsg.err1);
+F.router_name.focus();
+return false;
+}
+if(document.setup)
+if(document.setup.now_proto)
+if(document.setup.now_proto.value == "pptp")
+pptpUseDHCP(document.setup, '1');
+return true;
+}
+function valid_dhcp_server(F) {
+if(F.lan_proto == null)
+return true;
+if (F.lan_proto.selectedIndex == 0)
+return true;
+a1 = parseInt(F.dhcp_start.value,10);
+a2 = parseInt(F.dhcp_num.value,10);
+if (a1 + a2 > 255) {
+alert(errmsg.err2);
+return false;
+}
+if (F.wan_dns0 != null)
+if (!valid_ip(F,"F.wan_dns0","DNS",MASK_NO))
+return false;
+
+if (F.wan_dns1 != null)
+if (!valid_ip(F,"F.wan_dns1","DNS",MASK_NO))
+return false;
+
+if (F.wan_dns2 != null)
+if (!valid_ip(F,"F.wan_dns2","DNS",MASK_NO))
+return false;
+
+if (F.wan_wins != null)
+if (!valid_ip(F,"F.wan_wins","WINS",MASK_NO))
+return false;
+return true;
+}
+function SelDHCP(T,F) {
+dhcp_enable_disable(F,T);
+}
+function dhcp_enable_disable(F,T) {
+var start = '';
+var end = '';
+	var total = F.elements.length;
+
+for(var i=0 ; i < total ; i++) {
+if(F.elements[i].name == "dhcp_start")
+start = i;
+if(F.elements[i].name == "wan_wins_3")
+end = i;
+}
+
+if(start == '' || end == '')
+return true;
+if( T == "static" ) {
+for(i = start; i<=end ;i++) {
+choose_disable(F.elements[i]);
+}
+} else {
+for(i = start; i<=end ;i++) {
+choose_enable(F.elements[i]);
+}
+}
+return true;
+}
+function ppp_enable_disable(F,I) {
+if( I == "0") {
+choose_disable(F.ppp_idletime);
+choose_enable(F.ppp_redialperiod);
+} else {
+choose_enable(F.ppp_idletime);
+choose_disable(F.ppp_redialperiod);
+}
+}
+function setDNSMasq(F) {
+if (document.setup._dhcp_dnsmasq) {
+if(F._dhcp_dnsmasq.checked == true) {
+setElementActive("_auth_dnsmasq", true);
+} else {
+F._auth_dnsmasq.checked=false;		
+setElementActive("_auth_dnsmasq", false);
+}
+}
+}
+function SelWAN(num,F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "wan_proto";
+F.wan_proto.value=F.wan_proto.options[num].value;
+F.submit();
+}
+function SelDHCPFWD(num,F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "dhcpfwd";
+F.dhcpfwd_enable.value = F.dhcpfwd_enable.options[num].value;
+F.submit();
+}
+function submitcheck(F) {
+if(valid_value(F)) {
+if(F._dhcp_dnsmasq) {
+F.dhcp_dnsmasq.value = F._dhcp_dnsmasq.checked ? 1 : 0;
+}
+if(F._dns_dnsmasq) {
+F.dns_dnsmasq.value = F._dns_dnsmasq.checked ? 1 : 0;
+}
+if(F._auth_dnsmasq) {
+F.auth_dnsmasq.value = F._auth_dnsmasq.checked ? 1 : 0;
+}
+
+if(F._fullswitch) {
+F.fullswitch.value = F._fullswitch.checked ? 1 : 0;
+}
+
+if(F._ppp_mlppp) {
+F.ppp_mlppp.value = F._ppp_mlppp.checked ? 1 : 0;
+}
+
+F.submit_type.value = "";
+F.change_action.value = "";
+F.save_button.value = sbutton.saving;
+}
+}
+function to_submit(F) {
+submitcheck(F);
+apply(F);
+}
+function to_apply(F) {
+submitcheck(F);
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+mtu_enable_disable(document.setup,'1');
+if (document.setup.now_proto.value == "pppoe" ||
+document.setup.now_proto.value == "pptp" ||
+document.setup.now_proto.value == "l2tp" ||
+document.setup.now_proto.value == "heartbeat")
+ppp_enable_disable(document.setup,'0');
+if (document.setup.now_proto.value == "pptp")
+pptpUseDHCP(document.setup, '1')
+
+dhcp_enable_disable(document.setup,'static');
+setDNSMasq(document.setup);
+
+show_layer_ext(document.setup.ntp_enable, 'idntp', 1 == 1);
+show_layer_ext(document.setup.reconnect_enable, 'idreconnect', 0 == 1);
+update = new StatusbarUpdate();
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><span><strong><script type="text/javascript">Capture(bmenu.setupbasic)</script></strong></span></li>
+      <li><a href="DDNS.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupddns)</script></strong></a></li>
+      <li><a href="WanMAC.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupmacclone)</script></strong></a></li>
+      <li><a href="Routing.asp.html"><strong><script type="text/javascript">Capture(bmenu.setuprouting)</script></strong></a></li>
+      <li><a href="Networking.asp.html"><strong><script type="text/javascript">Capture(bmenu.networking)</script></strong></a></li>
+      <li><a href="eop-tunnel.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupeop)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="setup" action="#" method="post">
+<input type="hidden" name="submit_button" value="index" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action"/>
+<input type="hidden" name="submit_type" />
+
+<input type="hidden" name="now_proto" value="pptp" />
+<input type="hidden" name="dhcp_dnsmasq" value="0" />
+<input type="hidden" name="dns_dnsmasq" value="0" />
+<input type="hidden" name="auth_dnsmasq" value="0" />
+<input type="hidden" name="fullswitch" value="0" />
+<input type="hidden" name="ppp_mlppp" value="0" />
+<input type="hidden" name="lan_ipaddr" value="4" />
+
+<!--
+<h2><script type="text/javascript">Capture(sas.title);</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(sas.title);</script></legend>
+<input type="button" name="start_sas" value="Start" class="button" onclick="document.location='SetupAssistant.asp'">
+</fieldset>
+<br />
+-->	
+
+
+<h2><script type="text/javascript">Capture(idx.h2);</script></h2>
+			
+
+<!--
+<h2><script type="text/javascript">Capture(idx.h22);</script></h2>
+-->
+<!--
+<h2><script type="text/javascript">Capture(idx.h22);</script></h2>
+-->
+
+<fieldset>
+<legend><script type="text/javascript">Capture(idx.legend)</script></legend>
+<!--
+<div class="setting">
+	<div class="label"><script type="text/javascript">Capture(idx.conn_type)</script></div>
+	<script type="text/javascript">Capture(share.disabled)</script>
+</div>
+-->
+
+
+<div class="setting">
+	<div class="label"><script type="text/javascript">Capture(idx.conn_type)</script></div>
+	<select name="wan_proto" onchange="SelWAN(this.form.wan_proto.selectedIndex,this.form)">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"disabled\"  >" + share.disabled + "</option>");
+document.write("<option value=\"static\"  >" + idx.static_ip + "</option>");
+document.write("<option value=\"dhcp\"  >" + idx.dhcp + "</option>");
+
+//]]>
+</script>
+<option value="pppoe" selected="selected">PPPoE</option>
+<option value="pptp" >PPTP</option>
+<option value="l2tp"  >L2TP</option>
+<option value="heartbeat"  >HeartBeat Signal</option>
+<option value="3g"  >3G/UMTS</option>
+
+</select>
+</div>
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ppp_username" size="40" maxlength="63" onblur="valid_name(this,share.usrname)" value="v12345678" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input id="ppp_passwd" name="ppp_passwd" size="40" maxlength="63" onblur="valid_name(this,share.passwd)" type="password" value="12345678" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="_ppp_passwd_unmask" value="0" onclick="setElementMask('ppp_passwd', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label">Service name</div>
+<input name="pptp_server_name" size="40" maxlength="63" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label">PPP Compression</div>
+<input class="spaceradio" type="radio" name="pptp_encrypt" value="1" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="pptp_encrypt" value="0"  checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div class="setting">
+<div class="label">DTAG VDSL Vlan Tagging</div>
+<input class="spaceradio" type="radio" name="pptp_reorder" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="pptp_reorder" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+
+<div class="setting">
+<div class="label">MPPPE Encryption</div>
+<input maxlength="39" name="wan_hostname" size="20" onblur="valid_name(this,&#34;Host%20Name&#34;)" value=""/>
+</div>
+
+<div class="setting">
+<div class="label">Force reconnect</div>
+<input class="spaceradio1" type="radio" name="pptp_reorder1" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio1" type="radio" name="pptp_reorder1" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.stp)</script></div>
+<input class="spaceradio" type="radio" value="1" name="lan_stp"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="lan_stp" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+</fieldset><br />
+
+
+<fieldset>
+<legend><script type="text/javascript">Capture(idx.optional)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.routername)</script></div>
+<input maxlength="39" name="router_name" size="20" onblur="valid_name(this,&#34;Router%20Name&#34;)" value="DD-WRT"/>
+</div>
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input maxlength="39" name="wan_hostname" size="20" onblur="valid_name(this,&#34;Host%20Name&#34;)" value=""/>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.domainname)</script></div>
+<input maxlength="79" name="wan_domain" size="20" onblur="valid_name(this,&#34;Domain%20name&#34;,SPACE_NO)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.mtu)</script></div>
+<select name="mtu_enable" onchange="SelMTU(this.form.mtu_enable.selectedIndex,this.form)">
+<option value="0" >Auto</option>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"1\" selected >" + share.manual + "</option>");
+//]]>
+</script>
+</select>&nbsp;
+<input class="num" maxlength="4" onblur="valid_mtu(this)" size="5" name="wan_mtu" value="1400" />
+</div>
+
+</fieldset><br />
+
+<h2><script type="text/javascript">Capture(idx.h23)</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(idx.routerip)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.lanip)</script></div>
+<input class="num" maxlength="3" size="3" onblur="valid_range(this,1,223,'IP')" name="lan_ipaddr_0" value="172"/>.<input class="num" maxlength="3" size="3" onblur="valid_range(this,0,255,'IP')" name="lan_ipaddr_1" value="16"/>.<input class="num" maxlength="3" size="3" onblur="valid_range(this,0,255,'IP')" name="lan_ipaddr_2" value="1"/>.<input class="num" maxlength="3" size="3" onblur="valid_range(this,1,255,'IP')" name="lan_ipaddr_3" value="1"/>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="lan_netmask" value="4" />
+<input class="num" maxlength="3" size="3" name="lan_netmask_0" onblur="valid_range(this,0,255,'Netmask')" value="255"/>.<input class="num" maxlength="3" size="3" name="lan_netmask_1" onblur="valid_range(this,0,255,'Netmask')" value="255"/>.<input class="num" maxlength="3" size="3" name="lan_netmask_2" onblur="valid_range(this,0,255,'Netmask')" value="255"/>.<input class="num" maxlength="3" size="3" name="lan_netmask_3" onblur="valid_range(this,0,255,'Netmask')" value="0"/>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.gateway)</script></div>
+<input type="hidden" name="lan_gateway" value="4" />
+<input class="num" maxlength="3" size="3" name="lan_gateway_0" onblur="valid_range(this,0,255,share.gateway)" value="0"/>.<input class="num" maxlength="3" size="3" name="lan_gateway_1" onblur="valid_range(this,0,255,share.gateway)" value="0"/>.<input class="num" maxlength="3" size="3" name="lan_gateway_2" onblur="valid_range(this,0,255,share.gateway)" value="0"/>.<input class="num" maxlength="3" size="3" name="lan_gateway_3" onblur="valid_range(this,0,255,share.gateway)" value="0"/>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.localdns)</script></div>
+<input type="hidden" name="sv_localdns" value="4" />
+<input class="num" maxlength="3" size="3" name="sv_localdns_0" onblur="valid_range(this,0,255,share.localdns)" value="10"/>.<input class="num" maxlength="3" size="3" name="sv_localdns_1" onblur="valid_range(this,0,255,share.localdns)" value="88"/>.<input class="num" maxlength="3" size="3" name="sv_localdns_2" onblur="valid_range(this,0,255,share.localdns)" value="193"/>.<input class="num" maxlength="3" size="3" name="sv_localdns_3" onblur="valid_range(this,0,255,share.localdns)" value="1"/>
+</div>
+</fieldset><br />
+
+
+<fieldset><legend><script type="text/javascript">Capture(idx.dhcp_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_type)</script></div>
+<select class="num" size="1" name="dhcpfwd_enable" onchange=SelDHCPFWD(this.form.dhcpfwd_enable.selectedIndex,this.form)>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\" selected=\"selected\" >" + idx.dhcp_srv + "</option>");
+document.write("<option value=\"1\"  >" + idx.dhcp_fwd + "</option>");
+//]]>
+</script>
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_srv)</script></div><input class="spaceradio" type="radio" name="lan_proto" value="dhcp" onclick=SelDHCP('dhcp',this.form)  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="lan_proto" value="static" onclick="SelDHCP('static',this.form)" checked="checked" /><script type="text/javascript">Capture(share.disable)</script></div><input type="hidden" name="dhcp_check" /><div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_start)</script></div>172.16.1.<input class="num" name="dhcp_start" size="3" maxlength="3" onblur="valid_range(this,1,254,idx.dhcp_start)" value="100" /></div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_maxusers)</script></div><input class="num" name="dhcp_num" size="3" maxlength="3" onblur="valid_range(this,0,253,idx.dhcp_maxusers)" value="50" /></div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_lease)</script></div><input class="num" name="dhcp_lease" size="5" maxlength="5" onblur="valid_range(this,0,99999,idx.dhcp_lease)" value="1440" > <script type="text/javascript">Capture(share.minutes)</script></input></div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx_static.dns)</script> 1</div><input type="hidden" name="wan_dns" value="4" /><input class="num" name="wan_dns0_0" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns0_1" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns0_2" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns0_3" size="3" maxlength="3" onblur="valid_range(this,0,254,idx_static.dns)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx_static.dns)</script> 2</div><input class="num" name="wan_dns1_0" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns1_1" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns1_2" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns1_3" size="3" maxlength="3" onblur="valid_range(this,0,254,idx_static.dns)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx_static.dns)</script> 3</div><input class="num" name="wan_dns2_0" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns2_1" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns2_2" size="3" maxlength="3" onblur="valid_range(this,0,255,idx_static.dns)" value="0" />.<input class="num" name="wan_dns2_3" size="3" maxlength="3" onblur="valid_range(this,0,254,idx_static.dns)" value="0" />
+</div><div class="setting">
+<div class="label">WINS</div>
+<input type="hidden" name="wan_wins" value="4" />
+<input class="num" name="wan_wins_0" size="3" maxlength="3" onblur="valid_range(this,0,255,&#34;WINS&#34;)" value="0" />.<input class="num" name="wan_wins_1" size="3" maxlength="3" onblur="valid_range(this,0,255,&#34;WINS&#34;)" value="0" />.<input class="num" name="wan_wins_2" size="3" maxlength="3" onblur="valid_range(this,0,255,&#34;WINS&#34;)" value="0" />.<input class="num" name="wan_wins_3" size="3" maxlength="3" onblur="valid_range(this,0,254,&#34;WINS&#34;)" value="0" /></div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_dnsmasq)</script></div>
+<input type="checkbox" name="_dhcp_dnsmasq" value="1" onclick="setDNSMasq(this.form)" checked="checked" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dns_dnsmasq)</script></div>
+<input type="checkbox" name="_dns_dnsmasq" value="1" checked="checked" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.auth_dnsmasq)</script></div>
+<input type="checkbox" name="_auth_dnsmasq" value="1" checked="checked" />
+</div>
+</fieldset><br />
+
+
+<fieldset>
+<legend><script type="text/javascript">Capture(idx.legend3)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.ntp_client)</script></div>
+<input class="spaceradio" type="radio" name="ntp_enable" id="ntp_enable" value="1" checked="checked" onclick="show_layer_ext(this, 'idntp', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="ntp_enable" id="ntp_enable" value="0"  onclick="show_layer_ext(this, 'idntp', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idntp">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.timeset)</script></div>
+<select name="time_zone">
+<option value="-12" >UTC-12:00</option>
+<option value="-11" >UTC-11:00</option>
+<option value="-10" >UTC-10:00</option>
+<option value="-09.5" >UTC-09:30</option>
+<option value="-09" >UTC-09:00</option>
+<option value="-08" >UTC-08:00</option>
+<option value="-07" >UTC-07:00</option>
+<option value="-06" >UTC-06:00</option>
+<option value="-05" >UTC-05:00</option>
+<option value="-04.5" >UTC-04:30</option>
+<option value="-04" >UTC-04:00</option>
+<option value="-03.5" >UTC-03:30</option>
+<option value="-03" >UTC-03:00</option>
+<option value="-02" >UTC-02:00</option>
+<option value="-01" >UTC-01:00</option>
+<option value="+00" >UTC</option>
+<option value="+01" selected="selected">UTC+01:00</option>
+<option value="+02" >UTC+02:00</option>
+<option value="+03" >UTC+03:00</option>
+<option value="+03.5" >UTC+03:30</option>
+<option value="+04" >UTC+04:00</option>
+<option value="+04.5" >UTC+04:30</option>
+<option value="+05" >UTC+05:00</option>
+<option value="+05.5" >UTC+05:30</option>
+<option value="+05.75" >UTC+05:45</option>
+<option value="+06" >UTC+06:00</option>
+<option value="+06.5" >UTC+06:30</option>
+<option value="+07" >UTC+07:00</option>
+<option value="+08" >UTC+08:00</option>
+<option value="+09" >UTC+09:00</option>
+<option value="+09.5" >UTC+09:30</option>
+<option value="+10" >UTC+10:00</option>
+<option value="+10.5" >UTC+10:30</option>
+<option value="+11" >UTC+11:00</option>
+<option value="+11.5" >UTC+11:30</option>
+<option value="+12" >UTC+12:00</option>
+<option value="+12.75" >UTC+12:45</option>
+<option value="+13" >UTC+13:00</option>
+<option value="+14" >UTC+14:00</option>
+
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dsttime)</script></div>
+<select name="daylight_time">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"1\" >" + idx.summt_opt1 + "</option>");
+document.write("<option value=\"2\" >" + idx.summt_opt2 + "</option>");
+document.write("<option value=\"3\" selected=\"selected\">" + idx.summt_opt3 + "</option>");
+document.write("<option value=\"4\" >" + idx.summt_opt4 + "</option>");
+document.write("<option value=\"5\" >" + idx.summt_opt5 + "</option>");
+document.write("<option value=\"6\" >" + idx.summt_opt6 + "</option>");
+document.write("<option value=\"7\" >" + idx.summt_opt7 + "</option>");
+document.write("<option value=\"8\" >" + idx.summt_opt8 + "</option>");
+document.write("<option value=\"9\" >" + idx.summt_opt9 + "</option>");
+document.write("<option value=\"10\" >" + idx.summt_opt10 + "</option>");
+//]]>
+</script>
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.srvipname)</script></div>
+<input maxlength="32" size="25" name="ntp_server" value="" />
+</div>
+</div>
+</fieldset><br />
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<!--
+<dt class="term"><script type="text/javascript">Capture(sas.title)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.sas)</script></dd>
+-->
+<dt class="term"><script type="text/javascript">Capture(idx.dhcp)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.hostname)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right4)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.domainname)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right6)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(idx.lanip)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right8)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.subnet)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right10)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(idx.dhcp_srv)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right12)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(idx.dhcp_start)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right14)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(idx.dhcp_maxusers)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right16)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(idx.legend3)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hidx.right18)</script></dd>
+</dl>
+<br/>
+<a href="javascript:openHelpWindow('HSetup.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:33:58 up 23 min, load average: 0.00, 0.00, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

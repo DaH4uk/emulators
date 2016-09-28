@@ -1,0 +1,326 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Statisitcs</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"></script>
+</head>
+<body>
+<blockquote>
+<h2><script>dw(stats_header)</script></h2>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td>
+ <script>dw(stats_explain)</script>
+  </table></tr>
+</table>
+<br>
+
+<form action="http://upvel.ru/emulators/UR-447N4G/%22javascript:if(confirm(%27http://192.168.10.1/boafrm/formStats?submit-url=/stats.htm&amp;refresh=Refresh"  \n\nThis file was not retrieved by Teleport Pro, because it was unavailable, or its retrieval was aborted, or the project was stopped too soon.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/boafrm/formStats?submit-url=/stats.htm&refresh=Refresh%27%22 tppabs="http://192.168.10.1/boafrm/formStats?submit-url=/stats.htm&refresh=Refresh" method=POST name="formStats">
+<table border="1" width=550 cellpadding=0 cellspacing=0 class="form">
+<tr><td class="title" colspan="3" style="height:20px;"></td></tr>
+  <script>
+	var wlan_num = 1;
+	var wlanMode = 0;
+	var ssid_drv=new Array();
+  	var tx_pkt_num =new Array();
+  	var rx_pkt_num =new Array();
+  	var rp_enabled=new Array();
+	var rp_tx_pkt_num =new Array();
+  	var rp_rx_pkt_num =new Array();  	
+	var mssid_num=4;
+	var mssid_disable=new Array();
+	var mssid_tx_pkt_num=new Array();
+	var mssid_rx_pkt_num=new Array();
+	var wlanDisabled=new Array();
+	var opMode="0"*1;
+	var vlanOnOff = "0"*1;
+	var isPocketRouter="0"*1;
+	
+	for(i=0; i<wlan_num; i++)
+	{
+		mssid_disable[i] = new Array(mssid_num);
+		mssid_tx_pkt_num[i] = new Array(mssid_num);
+		mssid_rx_pkt_num[i] = new Array(mssid_num);		
+	}
+	
+	if (wlan_num > 0)
+	{
+		
+		ssid_drv[0] = 'UPVEL 2';
+		tx_pkt_num[0] = 18;
+		rx_pkt_num[0] = 4741;
+		rp_enabled[0] = 0;
+		rp_tx_pkt_num[0] = 0;
+		rp_rx_pkt_num[0] = 0;
+		wlanDisabled[0] = 0;
+		if (mssid_num > 0) {
+			mssid_disable[0][0] = 1;
+			mssid_tx_pkt_num[0][0] = 0;
+			mssid_rx_pkt_num[0][0] = 0;
+		}
+		if (mssid_num > 1) {
+			mssid_disable[0][1] = 1;
+			mssid_tx_pkt_num[0][1] = 0;
+			mssid_rx_pkt_num[0][1] = 0;
+		}
+		if (mssid_num > 2) {
+			mssid_disable[0][2] = 1;
+			mssid_tx_pkt_num[0][2] = 0;
+			mssid_rx_pkt_num[0][2] = 0;
+		}
+		if (mssid_num > 3) {
+			mssid_disable[0][3] = 1;
+			mssid_tx_pkt_num[0][3] = 0;
+			mssid_rx_pkt_num[0][3] = 0;
+		}
+		if (mssid_num > 4) {
+			mssid_disable[0][4] = 1;
+			mssid_tx_pkt_num[0][4] = 0;
+			mssid_rx_pkt_num[0][4] = 0;
+		}
+		if (mssid_num > 5) {
+			mssid_disable[0][5] = 0;
+			mssid_tx_pkt_num[0][5] = 0;
+			mssid_rx_pkt_num[0][5] = 0;
+		}
+		if (mssid_num > 6) {
+			mssid_disable[0][6] = 0;
+			mssid_tx_pkt_num[0][6] = 0;
+			mssid_rx_pkt_num[0][6] = 0;
+		}
+		if (mssid_num > 7) {
+			mssid_disable[0][7] = 0;
+			mssid_tx_pkt_num[0][7] = 0;
+			mssid_rx_pkt_num[0][7] = 0;
+		}
+	} /*if (wlan_num > 0)*/
+	
+	if (wlan_num > 1)
+	{
+		
+		ssid_drv[1] = 'UPVEL 2';
+		tx_pkt_num[1] = 18;
+		rx_pkt_num[1] = 4741;
+		rp_enabled[1] = 0;
+		rp_tx_pkt_num[1] = 0;
+		rp_rx_pkt_num[1] = 0;
+		wlanDisabled[1] = 0;
+		if (mssid_num > 0) {
+			mssid_disable[1][0] = 1;
+			mssid_tx_pkt_num[1][0] = 0;
+			mssid_rx_pkt_num[1][0] = 0;
+		}
+		if (mssid_num > 1) {
+			mssid_disable[1][1] = 1;
+			mssid_tx_pkt_num[1][1] = 0;
+			mssid_rx_pkt_num[1][1] = 0;
+		}
+		if (mssid_num > 2) {
+			mssid_disable[1][2] = 1;
+			mssid_tx_pkt_num[1][2] = 0;
+			mssid_rx_pkt_num[1][2] = 0;
+		}
+		if (mssid_num > 3) {
+			mssid_disable[1][3] = 1;
+			mssid_tx_pkt_num[1][3] = 0;
+			mssid_rx_pkt_num[1][3] = 0;
+		}
+		if (mssid_num > 4) {
+			mssid_disable[1][4] = 1;
+			mssid_tx_pkt_num[1][4] = 0;
+			mssid_rx_pkt_num[1][4] = 0;
+		}
+		if (mssid_num > 5) {
+			mssid_disable[1][5] = 0;
+			mssid_tx_pkt_num[1][5] = 0;
+			mssid_rx_pkt_num[1][5] = 0;
+		}
+		if (mssid_num > 6) {
+			mssid_disable[1][6] = 0;
+			mssid_tx_pkt_num[1][6] = 0;
+			mssid_rx_pkt_num[1][6] = 0;
+		}
+		if (mssid_num > 7) {
+			mssid_disable[1][7] = 0;
+			mssid_tx_pkt_num[1][7] = 0;
+			mssid_rx_pkt_num[1][7] = 0;
+		}
+	} /*if (wlan_num > 1)*/
+	
+  	for(i=0 ;i < wlan_num ; i++){
+		if (!wlanDisabled[i]) {
+			if(ssid_drv[i]!=""){
+				document.write(' <tr>\
+					<td width="30%" class="head" rowspan="2">');
+				if (wlan_num > 1) {
+					var num = i + 1;
+					document.write(stats_wifi + num);
+				}
+				else
+					document.write(stats_wifi);
+				document.write("</td>");
+				document.write('<td width="30%">'+stats_send+'</td>\
+					<td width="20%">' + tx_pkt_num[i] +'</td>\
+					</tr>\
+			  		<tr>\
+			    		<td width="30%">'+stats_recv+'</td>\
+			    		<td width="20%">' + rx_pkt_num[i] + '</td>\
+			  		</tr>');
+			} else {
+				mssid_num=0;
+			}
+			  if (rp_enabled[i])
+			  {
+				document.write(' <tr>\
+					<td width="30%" class="head" rowspan="2">');
+				if (wlan_num > 1) {
+					var num = i + 1;
+					document.write(status_wl+ num +stats_repeater + stats_lan);
+				}
+				else
+					document.write(status_wl+ stats_repeater + stats_lan);
+				document.write("</td>");
+			    
+			    document.write('<td width="30%">'+stats_send+'</td>\
+			    <td width="20%">' + rp_tx_pkt_num[i] +'</td>\
+			  </tr>\
+			  <tr>\
+			    <td width="30%">'+stats_recv+'</td>\
+			    <td width="20%">' + rp_rx_pkt_num[i] + '</td>\
+			  </tr>');
+			  }
+			
+			if (wlanMode==0 || wlanMode==3 ) {
+			 for (idx=0; idx<mssid_num; idx++) {
+				if (!mssid_disable[i][idx]) {
+				  document.write(' <tr>\
+				  	<td width="30%" rowspan="2" class="head">&nbsp;&nbsp;Virtual AP'+(idx+1)+'</td>\
+					<td width="30%">'+stats_send+'</td>\
+					<td width="20%">' + mssid_tx_pkt_num[i][idx] +'</td>\
+					</tr>\
+				  	<tr>\
+					<td width="30%">'+stats_recv+'</td>\
+					<td width="20%">' + mssid_rx_pkt_num[i][idx] + '</td>\
+					</tr>');	  	  		
+				}	  
+			}
+			}
+		}
+	 }
+	 
+		function drawLanStatistics()
+		{
+		
+			if(isPocketRouter == 1 && "0"*1 == 1)
+				return;
+			else if(isPocketRouter == 1 && opMode == 0)
+				return;
+				
+
+			if( "0"*1 == 0)
+			{
+				var lanTx="805";
+				var lanRx="812";
+				
+				document.write("<tr><td width='30%' class='head' rowspan='2'>"+stats_eth + stats_lan+"</td>");
+	    	document.write("<td width='30%'>"+stats_send+"</td>");
+	    	document.write("<td width='20%'>"+lanTx+"</td></tr>");
+	  		document.write("<tr><td width='30%'>"+stats_recv+"</td>");
+	    	document.write("<td width='20%'>"+lanRx+"</td></tr>");
+    	}
+    	else
+    	{
+    		var lan1Tx="805";
+				var lan1Rx="812";
+				var lan2Tx="0";
+				var lan2Rx="0";
+				var lan3Tx="805";
+				var lan3Rx="812";
+				var lan4Tx="0";
+				var lan4Rx="0";
+				
+	    	document.write("<tr><td width='30%' class='head' rowspan='2'>LAN1</td>");
+	    	document.write("<td width='30%'>"+stats_send+"</td>");
+	    	document.write("<td width='20%'>"+lan1Tx+"</td></tr>");
+	  		document.write("<tr><td width='30%'>"+stats_recv+"</td>");
+	    	document.write("<td width='20%'>"+lan1Rx+"</td></tr>");
+	    	
+	    	document.write("<tr><td width='30%' class='head' rowspan='2'>LAN2</td>");
+	    	document.write("<td width='30%'>"+stats_send+"</td>");
+	    	document.write("<td width='20%'>"+lan2Tx+"</td></tr>");
+	  		document.write("<tr><td width='30%'>"+stats_recv+"</td>");
+	    	document.write("<td width='20%'>"+lan2Rx+"</td></tr>");
+	    	document.write("<tr><td width='30%' class='head' rowspan='2'>LAN3</td>");
+	    	document.write("<td width='30%'>"+stats_send+"</td>");
+	    	document.write("<td width='20%'>"+lan3Tx+"</td></tr>");
+	  		document.write("<tr><td width='30%'>"+stats_recv+"</td>");
+	    	document.write("<td width='20%'>"+lan3Rx+"</td></tr>");
+	    	
+	    	document.write("<tr><td width='30%' class='head' rowspan='2'>LAN4</td>");
+	    	document.write("<td width='30%'>"+stats_send+"</td>");
+	    	document.write("<td width='20%'>"+lan4Tx+"</td></tr>");
+	  		document.write("<tr><td width='30%'>"+stats_recv+"</td>");
+	    	document.write("<td width='20%'>"+lan4Rx+"</td></tr>");
+	    }
+			
+		}
+		
+		function drawWanStatistics()
+		{			
+			var wanTx="0";
+			var wanRx="0";
+			var isAP = 0;
+				
+			if(opMode == 1 && vlanOnOff == 0)
+				return;
+			
+			if(isPocketRouter == 1 && opMode == 1 && vlanOnOff == 1)
+				document.write("<tr><td width='30%' class='head' rowspan='2'>LAN</td>");
+			else if((opMode == 1 || opMode == 2) && vlanOnOff == 1)
+				document.write("<tr><td width='30%' class='head' rowspan='2'>LAN5</td>");
+			else if((opMode == 1 || opMode == 2) && vlanOnOff == 0)
+				return;
+			else if(vlanOnOff==1 && isAP == 1)
+				document.write("<tr><td width='30%' class='head' rowspan='2'>LAN5</td>");
+			else if(vlanOnOff==0 && isAP == 1)
+				return;
+			else if(opMode == 0)
+				document.write("<tr><td width='30%' class='head' rowspan='2'>"+stats_eth + stats_wan+"</td>");
+				
+		  document.write("<td width='30%'>"+stats_send+"</td>");
+		  document.write("<td width='20%'>"+wanTx+"</td></tr>");
+		  document.write("<tr><td width='30%'>"+stats_recv+"</td>");
+		  document.write("<td width='20%'>"+wanRx+"</td></tr>");
+			
+		}
+  </script>
+  <!--
+  <tr>
+   <td width="30%" rowspan="2">Ethernet LAN</td>
+    <td width="30%">Sent Packets</td>
+    <td width="20%">805</td>
+  </tr>
+  <tr>
+    <td width="30%">Received Packets</td>
+    <td width="20%">812</td>
+  </tr>
+  -->
+  <SCRIPT >drawLanStatistics();</SCRIPT>
+  <SCRIPT >drawWanStatistics();</SCRIPT>
+</table>
+  <br>
+  <input type="hidden" value="/stats.htm" name="submit-url">
+  <input type="submit" value="Refresh" name="refresh">
+  <script>document.formStats.refresh.value = refresh_refresh;</script>
+</form>
+</blockquote>
+</body>
+
+</html>

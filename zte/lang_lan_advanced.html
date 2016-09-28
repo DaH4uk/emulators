@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Pragma" content="No-cache" />
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="-1" />
+<title>Wireless AP</title>
+<link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+<script type="text/javascript" src="./js/error.js"></script>
+<script type="text/javascript" src="./js/menu.js"></script>
+<script type="text/javascript" src="./js/lan_advanced.js"></script>
+<script type="text/javascript" src="./js/boot.js"></script>
+<script type="text/javascript" src="./js/SecBoot.js"></script>
+<script type="text/javascript" src="./js/comBasicFun.js"></script>
+<script type="text/javascript" src="./js/ajax.js"></script>
+<script type="text/javascript" src="./js/wiz_ajax.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+/*---- Global variable define -----*/
+var G_Error	    = "0"; 
+var G_Status	= "0"; 
+var G_Error_Msg	= "";
+var G_ViewState	= "-";
+var userLevel   = "-";
+var G_Menu      = "setup";
+var G_Page      = "lan_advanced";
+var G_SubPage   = "-";
+var G_ErrorPage = "-";
+
+
+/* Get Current Page Url */
+function uiGetPageUrl()
+{
+	IsLanOrWan_russia();
+    var strUrl = ''
+        + '&var:menu=' + G_Menu 
+        + '&var:page=' + G_Page;
+    if(G_SubPage != '0')
+        strUrl += '&var:subpage=' + G_SubPage;
+    if(G_ErrorPage != '0')
+        strUrl += '&var:errorpage=' + G_ErrorPage;
+    
+    return strUrl;
+}
+
+/* Refresh Current Page */
+function uiPageRefresh(){
+    document.location.href = uiGetPageUrl();
+}
+
+
+var G_IsLanOrWan="";
+function IsLanOrWan_russia()
+{
+	if ('1' == '0')
+	{
+		G_IsLanOrWan="wan";
+		return false;
+	}
+	else
+	{
+		G_IsLanOrWan="lan";
+		return true;
+	}
+}
+
+/*
+var G_LanAdvanced = [];
+var m = 0;
+</objget :InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig. "MaxBitRate DuplexMode"
+	G_LanAdvanced[m] = [];
+	G_LanAdvanced[m][0] = "$01";
+	G_LanAdvanced[m][1] = "$02";
+	m++;
+/>
+*/
+// WAN Connection
+var G_MaxBitRate = "Auto";
+var G_DuplexMode = "Auto";
+//WAN
+//var G_QinQ = "</get :InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_QINQ/>";
+//var G_Stag = "</get :InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_STAG/>";
+
+function uiOnload(){
+	var Bit_Mode = G_MaxBitRate + ' '+ G_DuplexMode;
+	switch(Bit_Mode){
+		case '10 Full':{
+			$('Select_Bit_Mode').value = '10 Full';
+			break;
+		}
+		case '10 Half':{
+			$('Select_Bit_Mode').value = '10 Half';
+			break;
+		}
+		case '100 Full':{
+			$('Select_Bit_Mode').value = '100 Full';
+			break;
+		}
+		case '100 Half':{
+			$('Select_Bit_Mode').value = '100 Half';
+			break;
+		}
+		case '1000 Full':{
+			$('Select_Bit_Mode').value = '1000 Full';
+			break;
+		}
+		case '1000 Half':{
+			$('Select_Bit_Mode').value = '1000 Half';
+			break;
+		}
+		case 'Auto Auto':{
+			$('Select_Bit_Mode').value = 'Auto';
+			break;
+		}
+	}
+	
+	IsLanOrWan_russia();
+	if(G_IsLanOrWan=="lan")//pxm~~~~
+	{
+		var _inputs = document.getElementsByTagName("INPUT");
+		for(var i = 0; i < _inputs.length; i++){
+					_inputs[i].disabled = true;
+				}
+		_inputs = document.getElementsByTagName("SELECT");
+		for(var i = 0; i < _inputs.length; i++){
+				_inputs[i].disabled = true;
+				}
+	}
+	//????
+	//$('INPUT_Stag').value = G_Stag;
+	//$('INPUT_Stag').disabled = Form.Checkbox('INPUT_QinQ',G_QinQ) == '1' ? false : true;
+	dealWithError();
+	
+}
+/*
+function ctrlStagText(){
+	$('INPUT_Stag').disabled = Form.Checkbox('INPUT_QinQ') == '1' ? false : true;
+}
+*/
+function uiSubmit(){
+	var Value = ['Auto','Auto'],Bit_Mode = $('Select_Bit_Mode').value;
+	//var Bool_QinQ = Form.Checkbox('INPUT_QinQ');
+
+	
+	if(Bit_Mode != 'Auto'){
+		Value = Bit_Mode.split(' ');
+	}
+	//for(var i = 1, _path; i <= G_LanAdvanced.length; i++){
+		//_path = ':InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.'+ i;
+		$F(':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.MaxBitRate',Value[0]);
+		$F(':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.DuplexMode',Value[1]);
+	//}
+	$H({
+		//':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_QINQ' : Bool_QinQ,
+		//':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_STAG' : Bool_QinQ == '1' ? $('INPUT_Stag').value : undefined,
+		'var:menu'   : 'setup',
+		'var:page'   : 'lan_advanced',
+		'var:errorpage': 'lan_advanced',
+		'obj-action' : 'set'
+	});
+	$('uiPostForm').submit();
+}
+
+function dealWithError(){
+	if (G_Error != 1) return false;
+	
+	var arrayHint = [];
+	arrayHint['MaxBitRate'] = 'Select_Bit_Mode';
+	arrayHint['DuplexMode'] = 'Select_Bit_Mode';
+	//arrayHint['STAG']       = 'INPUT_Stag';
+	
+	dealErrorMsg(arrayHint, G_Error_Msg);
+}
+
+addListeners(uiOnload);
+
+//]]>
+//???????????
+document.oncontextmenu=function(e){return false;}
+</script>
+</head>
+
+<body style="visibility:hidden;">
+<!--  header -->
+<div id="Header">
+	<div id="Logo">
+		<p id="Pic"></p>
+		<p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+	</div>
+	<div id="Navigation"><!-- important -->
+		<ul class="M0">
+			<li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+			<!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+			<li class="on"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+			<li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+			<li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+		
+			<li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+//zp add 20120419
+function uiLogout(session){
+	var form_name = 'uiPostForm';
+	IsLanOrWan_russia();
+	if(G_IsLanOrWan=="wan" || ('1' == '1' && '-' == '1'))
+	{
+		if(document.forms[0]){
+			document.forms[0].action = "";
+		} else {
+			form_name = 'uiLogoutForm';
+			$('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+		}
+		
+		$H({
+			'getpage'   :'html/main.html',
+			//'var:login' :'true',
+			':sessionid':session,
+			'obj-action':'auth',
+			':action'   :'logout'
+		},true);
+		$(form_name).submit();
+	}
+	else
+	{
+	  location.href="./zte";
+	}
+}
+//end
+</script>
+<!--  main content -->
+<div id="Main">
+	<!-- left menu -->
+		<div id="Menu">
+		<div class="rbottom">
+			<div class="r1"></div><div class="r2"></div><div class="r3"></div><div class="r4"></div>
+		</div>
+		<div id="MenuTitle">
+			<div id="Word_setup" class="Word"></div>
+			<a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+		</div>
+<!-- status -->
+	
+
+<!-- setup -->
+		<div class="M1">
+		<p id="down" class="lan"><a href="./lang_setup.html" id="lang_lan">LAN Basic</a></p>
+		<p id="down" class="wan"><a href="./lang_connected.html" id="lang_connected">WAN</a></p>
+		<p id="up"><a href="./lang_lan_advanced.html" id="lang_lan_advanced">WAN Advanced</a></p>
+		<p id=""><a href="./lang_lanIPV6.html" id="lang_lanIPV6">IPV6 LAN</a></p>
+		<p id="" style="display:none;"><a href="./lang_wanIPV6.html" id="lang_wanIPV6">IPV6 WAN</a></p>
+	<!-- <p id="" style="display:none" class="dialing"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=setup&var:page=dialing" id="dialing">Dialing</a><p> --><!--zp delete 20120425-->
+		
+		</div>
+	
+
+<!-- advanced -->
+	
+
+
+		<!-- IGMP -->
+		
+<!--  wireless  -->
+	
+<!-- management -->
+	
+	</div>
+
+	<!--  content -->
+		<div id="Content">
+		<div class="MainTittle"><a href="#" onclick="Help.Go"><img id="pointTo" src="./img/helpBook.gif" alt="Help"/></a> <span id="lang_title">&nbsp;</span></div>
+		<div class="Embody">
+			<!--div class="div_left">QINQ</div><div class="div_middle">&nbsp;<input type="checkbox" id="INPUT_QinQ" onClick="ctrlStagText()"></div><div class="div_right">&nbsp;</div>
+			<div class="div_left">Stag</div><div class="div_middle">&nbsp;<input type="text" id="INPUT_Stag"></div><div class="div_right">&nbsp;</div-->
+			<div class="div_left" id="lang_rateMode">&nbsp;</div><div class="div_middle">&nbsp;<select name="Select_Bit_Mode" id="Select_Bit_Mode">
+			<option value="Auto">Auto</option>
+			<option value="10 Full">10Mbps Full</option>
+			<option value="10 Half">10Mbps Half</option>
+			<option value="100 Full">100Mbps Full</option>
+			<option value="100 Half">100Mbps Half</option>
+			<!--<option value="1000 Full">1000Mbps full</option>
+			<option value="1000 Half">1000Mbps half</option>-->
+			</select></div><div class="div_right">&nbsp;</div>
+			<div class="div_button do"><input type="submit" name="submit" id="submit" onClick="uiSubmit();"/></div><div class="div_button"><input type="button" name="refresh" id="refresh" onClick="uiPageRefresh()"/></div>
+		</div>
+		<form name="uiPostForm" id="uiPostForm" method="post" action="">
+			<input type="hidden" name="getpage" value="./index.html" target="mainFrame" id="uipostGetPage">
+			<input type="hidden" name="errorpage" value="./index.html" target="mainFrame" id="uipostErrPage">
+		</form>
+	</div>
+
+	<!-- if loading and content will not display-->
+	<div id="Loading">
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+fd1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var dhcp_start='192.168.2.1';
+var helpItem 	='DMZ';
+var menuSection	='Fire';
+var menuItem	='DMZ';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else	isAPmode='0';
+
+function filter_num(e)
+{
+    var key = window.event ? e.keyCode:e.which;
+    var keychar = String.fromCharCode(key);
+    reg = /\d/;
+    
+    if(e.ctrlKey)
+        return true;
+        
+    /* enter, backspace, tab, control on IE / firefox, control on MAC */
+    if(13 == key || 8 == key || 9 == key || 0 == key || key > 255)
+        return true;
+    
+    return reg.test(keychar);
+}
+
+function setDisabled(OnOffFlag,formFields)
+{
+	for (var i = 1; i < setDisabled.arguments.length; i++)
+		setDisabled.arguments[i].disabled = OnOffFlag;
+}
+
+function SetFixIP()
+{
+    var index = (document.forward_form.dmz_enable.checked == true) ? 1 : 0;
+    
+    if(index != 1)
+	    setDisabled(true,document.forward_form.dmz_ipaddr);
+	else
+	    setDisabled(false,document.forward_form.dmz_ipaddr);  
+}
+
+function storeData()
+{
+    var routerIP;
+    routerIP=dhcp_start.split(".");
+
+	
+    if(document.forward_form.dmz_enable.checked) {
+        if (document.forward_form.dmz_ipaddr.value==""){
+            document.forward_form.dmz_ipaddr.focus();
+            document.forward_form.dmz_ipaddr.select();
+            msg_dmz_error = msg_dmzIP + msg_blank;
+            alert(msg_dmz_error);
+            
+            return false;
+        }
+        if(isNValidEndIP(document.forward_form.dmz_ipaddr.value))
+        {
+            document.forward_form.dmz_ipaddr.focus();
+            document.forward_form.dmz_ipaddr.select();
+            alert(fvipm); 
+            return false;
+        }
+        if(parseInt(document.forward_form.dmz_ipaddr.value,10) == routerIP[3])
+        {
+           
+            document.forward_form.dmz_ipaddr.focus();
+            document.forward_form.dmz_ipaddr.select();
+            alert(msg_hostIP_invalid);
+            return false;
+        }
+    }
+    else if(document.forward_form.dmz_ipaddr.value!=""){
+        if(isNValidEndIP(document.forward_form.dmz_ipaddr.value))
+        {
+            document.forward_form.dmz_ipaddr.focus();
+            document.forward_form.dmz_ipaddr.select();
+            alert(fvipm); 
+            return false;
+        }
+       if(parseInt(document.forward_form.dmz_ipaddr.value,10) == routerIP[3])
+       {
+           document.forward_form.dmz_ipaddr.focus();
+           document.forward_form.dmz_ipaddr.select();
+           alert(msg_hostIP_invalid);
+           return false;
+       }
+    }
+    
+    return true;
+}
+
+function logoutF()
+{
+	document.forward_form.logout.value=1;
+	document.forward_form.submit();
+	return true;
+}
+function submitF()
+{
+	if(storeData()==false)return false;
+	return true;
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="SetFixIP();">
+<form id="forward_form" name="forward_form" method="post" action="/belkin/3.00.02/En/apply_10_fw_dmz.html" >
+<input type=hidden name=webpage value="">
+<input type=hidden name="action" value="">
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+ <br>
+    &nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(fd1);</script><br><br>
+    <table border=0 class="copy_1">
+               <tr>
+    		<td width=5>&nbsp;</td> 
+    		<td>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="412" class="copy_1">
+			<tr> 
+				<td valign="top">
+				 <span class="bold_body"> DMZ </span>
+				 <table width="95%" border="0" cellspacing="0" cellpadding="0" align="center" class="copy_1">
+				 <tr>
+					<td class="body"><script language="javascript" type="text/javascript">dw(fd2);</script>
+					<font color="red">
+					<script language="javascript" type="text/javascript">dw(fd3);</script></font> <script language="javascript" type="text/javascript">dw(fd4);</script>
+					<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#dmz','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+					<script language="javascript" type="text/javascript">dw(sm1);</script></a></td>
+				 </tr>
+				 </table>
+				 <br>
+				 <table width="485" border="0" cellspacing="10" cellpadding="0" align="left" class="copy_1">
+				 <tr> 
+					<td width="20">&nbsp;</td>
+					<td colspan=2 nowrap class="bold_body"><script language="javascript" type="text/javascript">dw(fd5);</script> &gt;</td>
+				 </tr>
+				 <tr>
+					<td colspan=3>
+					<table align="center" border=0 cellspacing=1 cellpadding=5 width=425 class="copy_1">
+						<tr bgcolor="#666666" class="copy_1"> 
+						<td align="center" nowrap>&nbsp;</td>
+						<th nowrap>
+							<font color="#ffffff"><script language="javascript" type="text/javascript">dw(i17);</script></font>
+						</th>
+						<th nowrap>
+							<font color="#ffffff"><script language="javascript" type="text/javascript">dw(fd7);</script></font>
+						</th>  
+						<th nowrap>
+							<font color="#ffffff"><script language="javascript" type="text/javascript">dw(fd8);</script></font>
+						</th>
+						</tr>
+					<script language="javascript" type="text/javascript">
+					var strHtml;
+					var strTemp;
+				    aliasip_count=2;
+					t1=dhcp_start.indexOf('.');
+					t1=dhcp_start.indexOf('.',(t1+1));
+					t1=dhcp_start.indexOf('.',(t1+1));
+					strHtml='<tr align=center bgcolor="#cccccc"><td nowrap>1.</td><td nowrap>' 
+						+''
+						+'</td><td nowrap>' 
+						+dhcp_start.substring(0,t1+1);
+						document.writeln(strHtml);
+						
+					     
+				</script>
+				<input type="text" name="dmz_ipaddr" size="3" maxlength="3" value="" onkeypress="return filter_num(event)"></td>
+				<td nowrap>
+				<input type="checkbox"  name="dmz_enable" value="enable_dmz" onclick = "SetFixIP()"></td></tr>
+				<script language="javascript" type="text/javascript">
+								
+				    if(!(''==''))
+					{ 
+						strTemp='';
+						count=strTemp.indexOf('/');
+						strHtml='<tr align=center bgcolor="#94CAE4"><td nowrap>'
+							+String(aliasip_count)
+							+'.</td><td nowrap>' 
+							+strTemp.substring(0,count)
+							+'</td><td nowrap>' 
+							+dhcp_start.substring(0,t1+1)
+							+'<input type="text" name="dmz2_ipaddr" size="3" maxlength="3"></td>'
+							+'<td nowrap>' 
+							+'<input type="checkbox" name="dmz2_enable" ></td></tr>';						    
+						document.writeln(strHtml); 
+						aliasip_count++;
+					}//row 3				
+					if(!(''==''))
+					{ 
+						strTemp='';
+						count=strTemp.indexOf('/');
+						strHtml='<tr align=center bgcolor="#94CAE4"><td nowrap>'
+							+String(aliasip_count)
+							+'.</td><td nowrap>' 
+							+strTemp.substring(0,count)
+							+'</td><td nowrap>' 
+							+dhcp_start.substring(0,t1+1)
+							+'<input type="text" name="private_ip_3" size="3" maxlength="3"></td>'
+							+'<td nowrap>' 
+							+'<input type="checkbox" name="enable_3" ></td></tr>';						    
+						document.writeln(strHtml); 
+						aliasip_count++;
+					}//row 4				
+					if(!(''==''))
+					{ 
+						strTemp='';
+						count=strTemp.indexOf('/');
+						strHtml='<tr align=center bgcolor="#94CAE4"><td nowrap>'
+							+String(aliasip_count)
+							+'.</td><td nowrap>' 
+							+strTemp.substring(0,count)
+							+'</td><td nowrap>' 
+							+dhcp_start.substring(0,t1+1)
+							+'<input type="text" name="private_ip_4" size="3" maxlength="3"></td>'
+							+'<td nowrap>' 
+							+'<input type="checkbox" name="enable_4" ></td></tr>';
+						document.writeln(strHtml); 
+						aliasip_count++;
+					}//row 5				
+					if(!(''==''))
+					{ 
+						strTemp='';
+						count=strTemp.indexOf('/');
+						strHtml='<tr align=center bgcolor="#94CAE4"><td nowrap>'
+							+String(aliasip_count)
+							+'.</td><td nowrap>' 
+							+strTemp.substring(0,count)
+							+'</td><td nowrap>' 
+							+dhcp_start.substring(0,t1+1)
+							+'<input type="text" name="private_ip_5" size="3" maxlength="3"></td>'
+							+'<td nowrap>' 
+							+'<input type="checkbox" name="enable_5" ></td></tr>';
+						document.writeln(strHtml); 
+						aliasip_count++;
+					}//row 6				
+					if(!(''==''))
+					{ 
+						strTemp='';
+						count=strTemp.indexOf('/');
+						strHtml='<tr align=center bgcolor="#94CAE4"><td nowrap>'
+							+String(aliasip_count)
+							+'.</td><td nowrap>' 
+							+strTemp.substring(0,count)
+							+'</td><td nowrap>' 
+							+dhcp_start.substring(0,t1+1)
+							+'<input type="text" name="private_ip_6" size="3" maxlength="3"></td>'
+							+'<td nowrap>' 
+							+'<input type="checkbox" name="enable_6" ></td></tr>';
+						document.writeln(strHtml); 
+	                                        aliasip_count++;
+					} 
+				</script>	                             		             
+				</table>					    
+				</td>
+				</tr>
+				<tr> 
+				<td width="20">&nbsp;</td>
+				<td class="formText" width=90% colspan=2 align=center>&nbsp;
+				<script language="javascript" type="text/javascript">strHtml='<input type="button" name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onclick="document.forward_form.reset();initData();" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;';
+				dw(strHtml);
+                            	strHtml='<input type="submit" name="itsbutton1"  value="'+btn2+'" style="{width:160px;}" class="submitBtn" onClick="return submitF();">';
+                            	dw(strHtml);</script>
+				</td>
+				</table>
+				</td>
+				</tr>
+				</table>
+ </td>
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

@@ -1,0 +1,74 @@
+var jsQuickWiFiController = null,
+    jsUMountController = null,
+    jsQuickDevModeController = null,
+    jsQuickTransmissionSettingsController = null,
+    jsQuickWiFi5GController = null,
+    rootCtrl = {
+        checkServerData: function() {
+            return $(window).trigger("overlay.core", {
+                visible: !1,
+                obj: this
+            }), !0
+        },
+        checkClientData: function(responseData) {
+            return responseData
+        },
+        event: function(e, data) {
+            switch (e) {
+                case "resetrebootrq":
+                    confirm(lng("resetconfigAlarm") + " 95 " + lng("second") + ", " + lng("resetconfigContinue")) && (rootView.showWaitScreen(lng("reset_and_reboot_progress"), new Number(95e3) + 0, function() {
+                        location.replace("http://192.168.0.1")
+                    }), device.stop().system.reset(), device.lock(!0));
+                    break;
+                case "cfgsaverebootrq":
+                    __SYSTEM.reboot(!0, !0);
+                    break;
+                case "rebootrq":
+                    confirm(lng("confirm_reboot")) && (rootView.showWaitScreen(lng("rebooting"), 9e4), device.stop().system.reboot(), device.lock(!0));
+                    break;
+                case "badfwrq":
+                    rootView.hideWaitScreen(), alert(lng("file_upload_bad_fw"));
+                    break;
+                case "muterq":
+                    break;
+                case "startfwupdate":
+                    rootView.showWaitScreen(lng("fwupdate_progress"), 225e3);
+                    break;
+                case "startsavereboot":
+                case "startreboot":
+                    LOGIC.stop(), window.hasChanges = null, rootView.showWaitScreen(lng("rebooting"), 9e4), device.stop().system.reboot(!0), device.lock(!0);
+                    break;
+                case "modeswitchhiderq":
+                    MENU.onmodeswitchhiderq();
+                    break;
+                case "modeswitchshowrq":
+                    MENU.onmodeswitchshowrq();
+                    break;
+                case "autoupdaterq":
+                    __SYSTEM.autoupdate();
+                    break;
+                case "changelang":
+                    data && data.lang && LANG.change(data.lang)
+            }
+        }
+    },
+    rootView = {
+        reloadPage: function() {
+            MENU.open(document.location.hash.substring(1))
+        },
+        showModalOverlay: function(message, timeout, cb) {
+            WAITER.start(message, timeout, cb)
+        },
+        hideModalOverlay: function() {
+            WAITER.stop()
+        },
+        hideWaitScreen: function() {
+            WAITER.stop()
+        },
+        showWaitScreen: function(message, timeout, cb) {
+            WAITER.start(message, timeout, cb)
+        }
+    };
+$(window).bind("overlay.core", function(e, data) {
+    data.visible ? WAITER.start("airMsgLoading") : WAITER.stop(), $("body").css("overflow", "auto")
+});

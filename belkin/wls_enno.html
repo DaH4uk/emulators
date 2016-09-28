@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script>
+strHtml='<title>'+wle1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var helpItem 	='Security';
+var menuSection	='WLAN';
+var menuItem	='Security';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else	isAPmode='0';
+
+function GURL(x){location=x}
+
+function logoutF()
+{
+	document.tF.logout.value=1;
+	document.tF.submit();
+	return true;
+}
+
+function doAlert()
+{
+}
+
+function ChangeSecMode(wl0_sec_mode)
+{
+	if(wl0_sec_mode.value == "0")
+		GURL('wls_enno.html');
+	else if(wl0_sec_mode.value == "psk")
+		GURL('wls_psk.html');	
+	else if(wl0_sec_mode.value == "128")
+		GURL('wls_e128.html');	
+	else if(wl0_sec_mode.value == "64")
+		GURL('wls_e64.html');
+
+}
+
+//-->
+</script>
+
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="dataToVisible(document.tF);">
+
+<form action="/belkin/3.00.02/En/apply_10_wls_enno.html" name="tF" method="post">
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+<input type=hidden name=webpage value=wireless_encrypt.html >
+<input type=hidden name=wl0_wep value="" >
+<input type=hidden name=wl0_auth_mode value="">
+<input type=hidden name=wl0_wep_mode value="">
+<input type=hidden name=wl0_auth value="">
+<input type=hidden name="action" value="">
+
+<script language="JavaScript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+ <br>&nbsp;&nbsp; 
+ <script language="javascript" type="text/javascript">dw(wle1);</script>
+ <br><br>     
+<table border=0 class="copy_1">
+<tr>
+
+	<td width=5>&nbsp;</td> 
+	<td>
+<table width="600" border="0" cellspacing="10" cellpadding="0" align="center" class="body">
+<tr>
+
+<td width="26%"><b><script language="javascript" type="text/javascript">dw(wle2);</script></b></td>
+<td nowrap>
+<select name="wl0_sec_mode" onChange="ChangeSecMode(this);"> 
+<option value="0" selected><script language="javascript" type="text/javascript">dw(wle2a);</script></option>
+<option value="psk"><script language="javascript" type="text/javascript">dw(wle2b);</script></option>
+<option value="128"><script language="javascript" type="text/javascript">dw(wle2c);</script></option>
+<option value="64"><script language="javascript" type="text/javascript">dw(wle2d);</script></option>
+</select>
+</td>                                    
+</tr>
+
+<tr>
+ <td colspan="3"><script>dw(wle7);</script>
+<a class="more" href="javascript:void(0);"
+onClick="window.open('glossary.html#wireless_security','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"><script>dw(sm1);</script></a></td>
+				</tr>
+				<tr> 
+					<td width="36">&nbsp;</td>
+					<td width="174">&nbsp;</td>
+					<td width="235">&nbsp;</td>
+				</tr>
+				<tr> 
+					<td width="36">&nbsp;</td>
+					<td  colspan="2" align=right> 
+					<script>dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="'+btn2+'" class="submitBtn" onClick="doAlert()">');</script>
+					</td>
+				</tr>
+			</table>
+			</td>
+		</tr>
+		</table>
+		<input type="hidden" name="h_wl0_sec_mode" value="0">
+		</form>
+	</td>
+</tr>
+</table>     				
+</td>                     
+<script language="JavaScript">showTail()</script>
+

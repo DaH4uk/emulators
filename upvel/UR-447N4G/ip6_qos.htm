@@ -1,0 +1,424 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>QoS</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script type="text/javascript" src="util_qos.js" tppabs="http://192.168.10.1/util_qos.js"> </script>
+
+<script>
+
+var is_l7_qos_support=0 ;	
+
+function checkClientRange(start,end)
+{
+  var start_d, end_d;
+  start_d = getDigit(start,4);
+  start_d += getDigit(start,3)*256;
+  start_d += getDigit(start,2)*256;
+  start_d += getDigit(start,1)*256;
+
+  end_d = getDigit(end,4);
+  end_d += getDigit(end,3)*256;
+  end_d += getDigit(end,2)*256;
+  end_d += getDigit(end,1)*256;
+
+  if ( start_d <= end_d )
+	return true;
+
+  return false;
+}
+
+function addRuleClick()
+{
+  if (!document.formQosAdd.enabled.checked)
+  	return true;
+
+  if (!document.formQosAdd.automaticUplinkSpeed.checked && (document.formQosAdd.manualUplinkSpeed.value=="" || document.formQosAdd.manualUplinkSpeed.value < 100)) {
+	alert("Manual Uplink Speed cannot be empty or less then 100 when Automatic Uplink Speed is disabled.");
+	document.formQosAdd.manualUplinkSpeed.focus();
+	return false;
+  }
+  
+  if (!document.formQosAdd.automaticDownlinkSpeed.checked && (document.formQosAdd.manualDownlinkSpeed.value=="" || document.formQosAdd.manualDownlinkSpeed.value<100)) {
+	alert("Manual Downlink Speed cannot be empty or less then 100 when Automatic Downlink Speed is disabled.");
+	document.formQosAdd.manualDownlinkSpeed.focus();
+	return false;
+  }
+
+
+  if (document.formQosAdd.ipStart.value=="" && document.formQosAdd.ipEnd.value=="" &&
+  	document.formQosAdd.mac.value=="" &&
+	document.formQosAdd.bandwidth.value=="" && document.formQosAdd.bandwidth_downlink.value=="" && 
+		document.formQosAdd.comment.value=="" && document.formQosAdd.ip6_src.value=="")
+	return true;
+
+  if (document.formQosAdd.addressType[0].checked==true) {
+    
+	if ( checkIpAddr(document.formQosAdd.ipStart, 'Invalid IP address') == false )
+	    return false;
+	if ( checkIpAddr(document.formQosAdd.ipEnd, 'Invalid IP address') == false )
+	    return false;
+
+        if ( !checkClientRange(document.formQosAdd.ipStart.value,document.formQosAdd.ipEnd.value) ) {
+		alert('Invalid IP address range!\nEnding address should be greater than starting address.');
+		document.formQosAdd.ipStart.focus();
+		return false;
+        }
+
+	var LAN_IP = ipv4_to_unsigned_integer("192.168.10.1");
+	var LAN_MASK = ipv4_to_unsigned_integer("255.255.255.0");			
+
+	var tarIp = ipv4_to_unsigned_integer(document.formQosAdd.ipStart.value);
+
+	if ((tarIp & LAN_MASK) != (LAN_IP & LAN_MASK))
+	{
+		alert("Invalid start IP address! It should be set within the current subnet.");
+		return false;
+	}
+	tarIp = ipv4_to_unsigned_integer(document.formQosAdd.ipEnd.value);
+
+	if ((tarIp & LAN_MASK) != (LAN_IP & LAN_MASK))
+	{
+		alert("Invalid end IP address! It should be set within the current subnet.");
+		return false;
+	}
+		
+  }
+  else if (document.formQosAdd.addressType[1].checked==true) {
+	  var str = document.formQosAdd.mac.value;
+	  if ( str.length < 12) {
+		alert("Input MAC address is not complete. It should be 12 digits in hex.");
+		document.formQosAdd.mac.focus();
+		return false;
+	  }
+
+	  // add for "All MAC Address field can't reject 00:00:00:00:00:00/ff:ff:ff:ff:ff:ff MAC Address" issue
+	  with(document.formQosAdd)
+  	 {
+		if(!checkMacAddr(mac,"mac address invalid!"))
+			return false;
+  	 }
+  }
+  else if (document.formQosAdd.addressType[2].checked==true){
+	var str = document.formQosAdd.ip6_src.value;
+	if ( str.length >= 40) {
+		alert("Wrong ipv6 address length!");
+		document.formQosAdd.ip6_src.focus();
+		return false;
+	}
+	if(!checkIPv6(str)){
+		alert(" IP address invalid!");
+		document.formQosAdd.ip6_src.focus();
+		return false;
+	}	
+  }
+  if ( (document.formQosAdd.bandwidth.value == "" || document.formQosAdd.bandwidth.value == 0)
+   	&& (document.formQosAdd.bandwidth_downlink.value == "" || document.formQosAdd.bandwidth_downlink.value == 0) ) {
+	alert("Uplink Bandwidth or Downlink Bandwidth cannot be empty.");
+	document.formQosAdd.bandwidth.focus();
+	return false;
+  }
+  
+  if (document.formQosAdd.bandwidth.value!="") {
+  	if ( validateKey( document.formQosAdd.bandwidth.value ) == 0 ) {
+		alert("Invalid input! It should be the decimal number (0-9).");
+		document.formQosAdd.bandwidth.focus();
+		return false;
+  	}
+   }
+   
+   if (document.formQosAdd.bandwidth_downlink.value!="") {
+  	if ( validateKey( document.formQosAdd.bandwidth_downlink.value ) == 0 ) {
+		alert("Invalid input! It should be the decimal number (0-9).");
+		document.formQosAdd.bandwidth_downlink.focus();
+		return false;
+  	}
+   }
+   return true;
+}
+
+function deleteClick()
+{
+  if ( !confirm('Do you really want to delete the selected entry?') ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+function deleteAllClick()
+{
+   if ( !confirm('Do you really want to delete the all entries?') ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+function disableQosDelButton()
+{
+	disableButton(document.formQosDel.deleteSel);
+	disableButton(document.formQosDel.deleteAll);
+}
+
+function ipAddrClicked()
+{
+ 	enableTextField(document.formQosAdd.ipStart);
+ 	enableTextField(document.formQosAdd.ipEnd);
+	disableTextField(document.formQosAdd.mac);
+	disableTextField(document.formQosAdd.ip6_src);
+}
+
+function macAddrClicked()
+{
+ 	disableTextField(document.formQosAdd.ipStart);
+ 	disableTextField(document.formQosAdd.ipEnd);
+	disableTextField(document.formQosAdd.ip6_src);
+	enableTextField(document.formQosAdd.mac);
+}
+	
+function ip6AddrClicked()
+{
+	disableTextField(document.formQosAdd.ipStart);
+ 	disableTextField(document.formQosAdd.ipEnd);
+	disableTextField(document.formQosAdd.mac);
+	enableTextField(document.formQosAdd.ip6_src);	
+}
+
+function updateQosState()
+{
+  if (document.formQosAdd.enabled.checked) {  	
+ 	enableTextField(document.formQosAdd.automaticUplinkSpeed);
+ 	enableTextField(document.formQosAdd.automaticDownlinkSpeed);
+ 	enableTextField(document.formQosAdd.addressType[0]);
+ 	enableTextField(document.formQosAdd.addressType[1]);
+ 	enableTextField(document.formQosAdd.addressType[2]);
+	enableTextField(document.formQosAdd.mode);
+	enableTextField(document.formQosAdd.bandwidth);
+	enableTextField(document.formQosAdd.bandwidth_downlink);
+	enableTextField(document.formQosAdd.comment);
+	
+	updateLinkState();
+	
+	if (document.formQosAdd.addressType[0].checked==true)
+		ipAddrClicked();
+	else if(document.formQosAdd.addressType[1].checked==true)
+		macAddrClicked();
+	else if(document.formQosAdd.addressType[2].checked==true)
+		ip6AddrClicked();
+  }
+  else {
+ 	disableTextField(document.formQosAdd.automaticUplinkSpeed);
+ 	disableTextField(document.formQosAdd.automaticDownlinkSpeed);
+ 	disableTextField(document.formQosAdd.manualUplinkSpeed);
+ 	disableTextField(document.formQosAdd.manualDownlinkSpeed);
+ 	disableTextField(document.formQosAdd.addressType[0]);
+ 	disableTextField(document.formQosAdd.addressType[1]);
+ 	disableTextField(document.formQosAdd.addressType[2]);
+ 	disableTextField(document.formQosAdd.ipStart);
+ 	disableTextField(document.formQosAdd.ipEnd);
+	disableTextField(document.formQosAdd.mac);
+	disableTextField(document.formQosAdd.mode);
+	disableTextField(document.formQosAdd.bandwidth);
+	disableTextField(document.formQosAdd.bandwidth_downlink);
+	disableTextField(document.formQosAdd.comment);
+  }
+}
+
+function updateLinkState()
+{
+  if (document.formQosAdd.automaticUplinkSpeed.checked) {  	
+ 	disableTextField(document.formQosAdd.manualUplinkSpeed);
+  }
+  else {
+ 	enableTextField(document.formQosAdd.manualUplinkSpeed);
+  }
+  
+  if (document.formQosAdd.automaticDownlinkSpeed.checked) {  	
+ 	disableTextField(document.formQosAdd.manualDownlinkSpeed);
+  }
+  else {
+ 	enableTextField(document.formQosAdd.manualDownlinkSpeed);
+  }
+}
+
+function Load_Setting()
+{
+	if ( 0 )
+		document.formQosAdd.enabled.checked = true;
+
+	if ( 1 )
+		document.formQosAdd.automaticUplinkSpeed.checked = true;
+
+	updateQosState();
+	
+	
+	if(is_l7_qos_support == 1)
+	{				
+ 		document.getElementById("l7_qos_div").style.display = ""; 
+	}
+	else
+	{
+		document.getElementById("l7_qos_div").style.display = "none";
+	}
+	//
+}
+</script>
+</head>
+
+<body onload="Load_Setting();">
+<blockquote>
+<h2>QoS</h2>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td>
+<script>dw(ip_qos_header_explain)</script>
+</td></tr>
+</table>
+<br>
+
+
+<table border=0 width=500>
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http://192.168.10.1/%22http://192.168.10.1/boafrm/formIpQoS%22%22" method=POST name="formQosAdd">
+<input type="hidden" value="/ip6_qos.htm" name="submit-url">
+<tr><td><font size=2><b>
+	<input type="checkbox" name="enabled" value="ON" ONCLICK=updateQosState()>&nbsp;&nbsp;<script>dw(ip_qos_enable)</script></b><br>
+ </td></tr>
+
+<tr><td><font size=2><b>
+	<input type="checkbox" name="automaticUplinkSpeed" value="ON" ONCLICK=updateLinkState()>&nbsp;&nbsp;<script>dw(ip_qos_auto_upspeed)</script></b><br>
+ </td></tr>
+
+<tr><td><font size=2><b>
+	<b><script>dw(ip_qos_manu_upspeed)</script></b> <input type="text" name="manualUplinkSpeed" size="8" maxlength="8" value="512">
+	<br><br>
+</td></tr>
+
+<tr><td><font size=2><b>
+   	<input type="checkbox" name="automaticDownlinkSpeed" value="ON" checked ONCLICK=updateLinkState()>&nbsp;&nbsp;<script>dw(ip_qos_auto_downspeed)</script></b><br>
+ </td></tr>
+
+<tr><td><font size=2><b>
+	<b><script>dw(ip_qos_manu_downspeed)</script></b> <input type="text" name="manualDownlinkSpeed" size="8" maxlength="8" value="512">
+	<br><br><br>
+</td></tr>
+
+</table>
+
+<table border=0 width=600>
+
+	<tr>
+      <td width="45%"><font size=2><b><script>dw(ip_qos_rule_set)</script></b></font></td>
+      <td>&nbsp;</td>
+  </tr>
+
+	<tr>
+		<td width="45%"><font size=2><b><script>dw(ip_qos_addrtype)</script></b></font></td>
+		<td>
+		<input type="radio" name="addressType" value="0" checked ONCLICK=ipAddrClicked()>IPv4&nbsp;&nbsp;
+		<input type="radio" name="addressType" value="1" ONCLICK=macAddrClicked()>MAC&nbsp;&nbsp;
+		<input type="radio" name="addressType" value="2" ONCLICK=ip6AddrClicked()>IPv6
+		</td>
+	</tr>
+
+	<tr>
+		<td width="45%"><font size=2><b><script>dw(ip_qos_local_ipaddr)</script></b></font></td>
+		<td>
+			<input type="text" name="ipStart" size="12" maxlength="15" value="">
+      <font face="Arial" size="5">-</font>
+      <input type="text" name="ipEnd" size="12" maxlength="15" value="">
+    </td>
+  </tr>
+  	<tr>
+		<td width="45%"><font size=2><b><script>dw(ipfilter_ipv6)</script></b></font></td>
+		<td><input type="text" name="ip6_src" size="40" maxlength="40"></td>
+	</tr>
+
+  	<tr>
+		<td width="45%"><font size=2><b><script>dw(wlactrl_macaddr)</script></b></font></td>
+		<td><input type="text" name="mac" size="12" maxlength="12"></td>
+	</tr>
+    
+	<tr id="l7_qos_div" style="display:">
+		<td width="45%"><font size=2><b><script>dw(ip_qos_level)</script></b></font></td>
+		<td>
+			<select size="1" name="l7_protocol">
+				<option value="Disable">Disable</option>
+      </select>
+		</td>
+	</tr>
+    
+	<tr>
+		<td width="45%"><font size=2><b><script>dw(ip_qos_mode)</script></b></font></td>
+		<td>
+			<select size="1" name="mode">
+      <option selected value="1"><script>dw(ip_qos_quarant_minband)</script></option>
+      	<option value="2"><script>dw(ip_qos_restrict_maxband)</script></option>
+      </select>
+    </td>
+  </tr>
+  
+  <tr>
+		<td width="45%"><font size=2><b><script>dw(ip_qos_upband)</script></b></font></td>
+		<td><input type="text" name="bandwidth" size="8"></td>
+	</tr>
+	
+	<tr>
+		<td width="45%"><font size=2><b><script>dw(ip_qos_downband)</script></b></font></td>
+		<td><input type="text" name="bandwidth_downlink" size="8"></td>
+	</tr>
+	
+	<tr>
+		<td width="45%"><font size=2><b><script>dw(tcpip_dhcp_comment)</script>:</b></font></td>
+		<td><input type="text" name="comment" size="10" maxlength="15"></td>
+	</tr>
+</table>
+
+<table border=0 width=100>
+	<input type="submit" value="Apply Changes" name="addQos" onClick="return addRuleClick()">&nbsp;&nbsp;
+	<script>document.formQosAdd.addQos.value=ip_qos_apply;</script>
+	<!--<td><input type="reset" value="Reset" name="reset"></td>-->
+  	<script> updateQosState(); </script>
+</form>
+</table>
+
+
+<br>
+<form action="http://upvel.ru/emulators/UR-447N4G/%22javascript:if(confirm(%27http://192.168.10.1/boafrm/formIpQoS?deleteSel=Delete" Selected&deleteAll=Delete All&submit-url=/ip6_qos.htm  \n\nThis file was not retrieved by Teleport Pro, because it was unavailable, or its retrieval was aborted, or the project was stopped too soon.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/boafrm/formIpQoS?deleteSel=Delete Selected&deleteAll=Delete All&submit-url=/ip6_qos.htm%27%22 tppabs="http://192.168.10.1/boafrm/formIpQoS?deleteSel=Delete Selected&deleteAll=Delete All&submit-url=/ip6_qos.htm" method=POST name="formQosDel">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="form">
+  <tr><td colspan="8" class="title"><script>dw(ip_qos_curr_qos)</script></td></tr>
+  <tr><td align=center width="" class="head"><font size="2"><b><script>dw(ip_qos_tbl_localaddr);</script></b></font></td>
+<td align=center width="" class="head"><font size="2"><b><script>dw(ip_qos_tbl_macaddr);</script></b></font></td>
+<td align=center width="20%" class="head"><font size="2"><b>Local IPv6 addr</b></font></td>
+<td align=center width="" class="head"><font size="2"><b><script>dw(ip_qos_tbl_mode);</script></b></font></td>
+<td align=center width="" class="head"><font size="2"><b><script>dw(ip_qos_tbl_upband);</script></b></font></td>
+<td align=center width="" class="head"><font size="2"><b><script>dw(ip_qos_tbl_downband);</script></b></font></td>
+<td align=center width="" class="head"><font size="2"><b><script>dw(firewall_tbl_comm);</script></b></font></td>
+<td align=center width="" class="head"><font size="2"><b><script>dw(ip_qos_tbl_select);</script></b></font></td></tr>
+
+</table>
+
+ <br><input type="submit" value="Delete Selected" name="deleteSel" onClick="return deleteClick()">&nbsp;&nbsp;
+	<script>document.formQosDel.deleteSel.value=ip_qos_delete_select_btn;</script>    
+ <input type="submit" value="Delete All" name="deleteAll" onClick="return deleteAllClick()">&nbsp;&nbsp;&nbsp;
+	<script>document.formQosDel.deleteAll.value=ip_qos_delete_all_btn;</script>     
+	<!-- <input type="reset" value="Reset" name="reset">-->
+ <script>
+	if ( 0 == 0 )
+		disableQosDelButton();
+ </script>
+     <input type="hidden" value="/ip6_qos.htm" name="submit-url">
+</form>
+
+
+</blockquote>
+</body>
+</html>
+

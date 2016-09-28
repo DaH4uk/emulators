@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/ipv6_lan.js"></script>
+    <script type="text/javascript" src="./js/boot.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "-";
+        var G_Menu = "setup";
+        var G_Page = "ipv6_lan";
+        var G_SubPage = "-";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = '' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = uiGetPageUrl();
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('1' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+
+        //IPv6 DHCP
+        var G_DHCPV6 = "1";
+        var G_RADVD = "1";
+        var G_UniqueLocalPrefix = "0";
+        var G_UniqueLocalGlobalID = "11:22:33:44:55";
+        var G_IPv6SitePrefix = "Delegated";
+        var G_SitePrefix = "";
+        var G_SitePrefixLength = "64";
+
+        var G_MaxRAInterval = "15";
+        var G_MinRAInterval = "10";
+        var G_FlagConfType = "Auto";
+        var G_ManagedFlag = "0";
+        var G_OtherConfFlag = "1";
+        var G_MinIPv6Address = "2";
+        var G_MaxIPv6Address = "fe";
+        var G_PreferredLifeTime = "86400";
+        var G_ValidLifeTime = "86400";
+        var G_DelegatedPrefix = "";
+        var G_PrefixLifeTime = "86400";
+
+
+
+        var G_IPv6IntfLinkLocalAddress = "fe80::1";
+        var G_IPv6IntfLinkLocalPrefixLength = "64";
+
+
+
+        var G_WanConns = [];
+        var m = 0;
+        //modify by wuyouhui start 2011-09-29 for IPV6 Connection's default gateway
+
+        G_WanConns[m] = ["IP_Routed" == "IP_Routed" ? "DHCP" : "IP_Routed", //AddressingType
+            "IPv4"
+        ];
+
+        m++;
+        if ("IPv4" == "IPv4") {
+            m--;
+            G_WanConns.splice(m, 1);
+        }
+
+
+
+
+
+
+        function uiShowHint() {
+            var i = 0;
+            $("lang_PrefixHint").style.display = "none";
+            for (i = 0; i < G_WanConns.length; ++i) {
+                if (G_WanConns[i][0] == "Static") {
+                    $("lang_PrefixHint").style.display = "inline";
+                    Form.Radio("Enable", "Static");
+                    $("ID_AddrDistribute_WAN").disabled = true;
+                    $("lang_AutoConfWanAuthPrefix").style.color = '#AAAAAA';
+                    disCtrl('Static_SLAAC', true);
+                }
+            }
+        }
+
+        var G_ValidLifeTime = "86400";
+        var G_LanAddrDistributeStatic = "1";
+        var G_LanAddrDistributeDhcpv6 = "1";
+        var G_LanAddrDistributeType = "0"
+
+        //????
+        var u_ValidLifeTime = "";
+
+        function uiOnload() {
+            var u_ValidLifeTime = ((parseInt(G_ValidLifeTime || 0) - parseInt(G_ValidLifeTime || 0) % 60) / 60);
+
+            setJSONValue({
+                'INPUT_MaxRAInterval': G_MaxRAInterval,
+                'INPUT_MinRAInterval': G_MinRAInterval,
+                'SELECT_FlagConfType': G_FlagConfType,
+                'SELECT_ManagedFlag': G_ManagedFlag,
+                'SELECT_OtherConfFlag': G_OtherConfFlag,
+                'INPUT_UniqueLocalPrefix': G_UniqueLocalPrefix || '0',
+
+                'INPUT_GlobalID': G_UniqueLocalGlobalID || '',
+
+                'SELECT_AddressDispatchType': G_LanAddrDistributeType == 0 ? "Prefix" : "Dhcp",
+                'Enable': G_IPv6SitePrefix || 'Delegated',
+                'RADIO_LanAddrDistributeType': G_LanAddrDistributeStatic == 1 ? "Static" : "DHCPv6",
+                'INPUT_SitePrefix': G_SitePrefix || '',
+                'INPUT_SitePrefixLen': G_SitePrefixLength || '64',
+                'INPUT_IPv6IntfLinkLocalAddress': G_IPv6IntfLinkLocalAddress || '',
+                'INPUT_PreLifeTime': G_PreferredLifeTime / 3600 || '',
+                //		'INPUT_ValidLifeTime'		: G_ValidLifeTime || '',
+                'INPUT_StartIp': G_MinIPv6Address || '',
+                'INPUT_EndIp': G_MaxIPv6Address || '',
+                'INPUT_DelegatedPrefix': G_DelegatedPrefix || '',
+                'INPUT_PrefixLifeTime': G_PrefixLifeTime || ''
+            });
+            //????
+            onchgFlagConfType();
+            onchgAddressType();
+            ShowPrefix();
+            OnUniqueLocalPrefixChg();
+            uiShowHint();
+            // ??true G_IsLanOrWan=="lan" ?lan? ????flase G_IsLanOrWan=="wan" wan?  
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "lan") //pxm~~~~
+            {
+                var _inputs = document.getElementsByTagName("INPUT");
+                for (var i = 0; i < _inputs.length; i++) {
+                    _inputs[i].disabled = true;
+                }
+                _inputs = document.getElementsByTagName("SELECT");
+                for (var i = 0; i < _inputs.length; i++) {
+                    _inputs[i].disabled = true;
+                }
+            }
+            /*if(G_IsLanOrWan=="lan")//pxm~~~~
+            {
+            	document.getElementById('INPUT_DelegatedPrefix').readOnly = true; 
+            	document.getElementById('INPUT_MaxRAInterval').readOnly = true;  
+            	document.getElementById('INPUT_IPv6IntfLinkLocalAddress').readOnly = true;  
+            	document.getElementById('INPUT_GlobalID').readOnly = true;  
+            	document.getElementById('INPUT_MinRAInterval').readOnly = true;    
+            	document.getElementById('SELECT_OtherConfFlag').disabled = true;
+            	document.getElementById('SELECT_ManagedFlag').disabled = true;
+            	document.getElementById('SELECT_FlagConfType').disabled = true;
+            	document.getElementById('INPUT_UniqueLocalPrefix').disabled = true;
+            	document.getElementsByName('RADIO_LanAddrDistributeType')[0].disabled = true;
+            	document.getElementsByName('RADIO_LanAddrDistributeType')[1].disabled = true;
+            	document.getElementById('SELECT_AddressDispatchType').disabled = true;
+            	document.getElementsByName('Enable')[0].disabled = true;
+            	document.getElementsByName('Enable')[1].disabled = true;
+            	document.getElementById('INPUT_SitePrefix').readOnly = true;
+            	document.getElementById('INPUT_SitePrefixLen').readOnly = true;
+            	document.getElementById('INPUT_PreLifeTime').readOnly = true;
+            	document.getElementById('INPUT_ValidLifeTime').readOnly = true;
+            	document.getElementById('INPUT_StartIp').readOnly = true;
+            	document.getElementById('INPUT_EndIp').readOnly = true;
+            }
+            else
+            {
+            	document.getElementById('INPUT_DelegatedPrefix').readOnly = false; 
+            	document.getElementById('INPUT_MaxRAInterval').readOnly = false;  
+            	document.getElementById('INPUT_IPv6IntfLinkLocalAddress').readOnly = false;  
+            	document.getElementById('INPUT_GlobalID').readOnly = false;  
+            	document.getElementById('INPUT_MinRAInterval').readOnly = false;    
+            	document.getElementById('SELECT_OtherConfFlag').disabled = false;
+            	document.getElementById('SELECT_ManagedFlag').disabled = false;
+            	document.getElementById('SELECT_FlagConfType').disabled = false;
+            	document.getElementById('INPUT_UniqueLocalPrefix').disabled = false;
+            	document.getElementsByName('RADIO_LanAddrDistributeType')[0].disabled = false;
+            	document.getElementsByName('RADIO_LanAddrDistributeType')[1].disabled = false;
+            	document.getElementById('SELECT_AddressDispatchType').disabled = false;
+            	document.getElementsByName('Enable')[0].disabled = false;
+            	document.getElementsByName('Enable')[1].disabled = false;
+            	document.getElementById('INPUT_SitePrefix').readOnly = false;
+            	document.getElementById('INPUT_SitePrefixLen').readOnly = false;
+            	document.getElementById('INPUT_PreLifeTime').readOnly = false;
+            	document.getElementById('INPUT_ValidLifeTime').readOnly = false;
+            	document.getElementById('INPUT_StartIp').readOnly = false;
+            	document.getElementById('INPUT_EndIp').readOnly = false;
+            }*/
+        }
+
+        function ShowAddressType() {
+
+            if (Form.Radio('RADIO_LanAddrDistributeType') == 'Static') {
+                $('SELECT_AddressDispatchType').value = 'Prefix';
+                $('SELECT_AddressDispatchType').disabled = true;
+                //$('lang_SitePrefixLengthHint').style.display = 'block';
+            }
+            else {
+                $('SELECT_AddressDispatchType').disabled = false;
+                //$('lang_SitePrefixLengthHint').style.display = 'none';
+            }
+
+            onchgAddressType();
+        }
+
+        function ShowPrefix() {
+            var bShowPrefix = Form.Radio('Enable') == 'Delegated' ? false : true;
+
+            disCtrl('Static_SLAAC', bShowPrefix);
+            ShowAddressType();
+            onchgAddressType();
+        }
+
+        function OnUniqueLocalPrefixChg() {
+            $("INPUT_GlobalID").disalbed = !($("INPUT_UniqueLocalPrefix").checked);
+        }
+
+        function onchgFlagConfType() {
+            var _type = $('SELECT_FlagConfType').value;
+            disCtrl('div_mo', _type == 'Manual');
+
+            //add start by gxw 2012-08.15 for ????????
+            disCtrl('slaac_or_dhcpv6', _type == 'Auto');
+            if (_type == 'Manual')
+                onchgManagedFlag();
+            //add end by gxw 2012-08.15 for ????????
+        }
+
+        //add start by gxw 2012-08.15 for ????????
+        function onchgManagedFlag() {
+            var _type = $('SELECT_ManagedFlag').value;
+            if ('0' == _type) {
+                document.getElementById('ID_AddrDistribute').checked = true;
+                ShowPrefix();
+            }
+            else {
+                document.getElementById('ID_AddrDhcpv6').checked = true;
+                ShowAddressType();
+            }
+        }
+        //add end by gxw 2012-08.15 for ????????
+
+        function onchgAddressType() {
+            if (Form.Radio('RADIO_LanAddrDistributeType') == "Static") {
+                $('div_dhcpType').style.display = 'none';
+            }
+            else {
+                $('div_dhcpType').style.display = 'block';
+            }
+        }
+
+        function uiSubmit() {
+            //add start by gxw 2012-06-04 check ip is ipv6 link local addr
+            if (!checkIpv6LinkLocal($('INPUT_IPv6IntfLinkLocalAddress').value)) {
+                alert("Link Local Address input error!");
+                return;
+            }
+            //add end by gxw 2012-06-04
+
+            $H({
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.IPv6Interface.1.IPv6InterfaceAddress': $('INPUT_IPv6IntfLinkLocalAddress').value,
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.IPv6Interface.1.IPv6InterfacePrefixLength': "64",
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.MaxRAInterval': $('INPUT_MaxRAInterval').value,
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.MinRAInterval': $('INPUT_MinRAInterval').value,
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.FlagConfType': $('SELECT_FlagConfType').value,
+
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.ManagedFlag': $('SELECT_FlagConfType').value == 'Manual' ? $('SELECT_ManagedFlag').value : undefined,
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.OtherConfFlag': $('SELECT_FlagConfType').value == 'Manual' ? $('SELECT_OtherConfFlag').value : undefined,
+
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.UniqueLocalPrefixConfig.Enable': Form.Checkbox('INPUT_UniqueLocalPrefix'),
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.UniqueLocalPrefixConfig.GlobalID': Form.Checkbox('INPUT_UniqueLocalPrefix') == 0 ? undefined : $('INPUT_GlobalID').value,
+
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.SLAACEnabled': Form.Radio('RADIO_LanAddrDistributeType') == "Static" ? 1 : 0,
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.PrefixLifeTime': $('INPUT_PrefixLifeTime').value,
+                ':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.AddressAssignmentEnabled': Form.Radio('RADIO_LanAddrDistributeType') == "Static" ? 0 : 1,
+
+                'obj-action': 'set',
+                'var:menu': 'setup',
+                'var:page': 'ipv6_lan',
+                'var:errorpage': 'ipv6_lan',
+                'getpage': 'html/index.html',
+                'errorpage': 'html/index.html',
+                'var:CacheLastData': ViewState.Save()
+            }, true);
+
+
+            //alert('InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.IPv6SitePrefixConfigType');
+            $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.IPv6SitePrefixConfigType', Form.Radio('Enable'));
+            if (Form.Radio('Enable') == 'Static') {
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.StaticSitePrefixConfig.IPv6SitePrefix', $('INPUT_SitePrefix').value);
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.RadvdConfig.StaticSitePrefixConfig.IPv6SitePrefixLength', $('INPUT_SitePrefixLen').value);
+            }
+            $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.AddressAssigType', 0);
+
+            if (Form.Radio('RADIO_LanAddrDistributeType') == "DHCPv6") {
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.AddressAssigType', 1);
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.PreferredLifeTime', $('INPUT_PreLifeTime').value * 3600);
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.ValidLifeTime', $('INPUT_PreLifeTime').value * 3600);
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.MinIPv6Address', $('INPUT_StartIp').value);
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_IPv6LANHostConfigManagement.DHCPv6ServerConfig.MaxIPv6Address', $('INPUT_EndIp').value);
+
+            }
+
+            $('uiPostForm').submit();
+        }
+
+
+
+        function dealWithError() {
+            if (G_Error != 1) {
+                return false;
+            }
+
+            dealErrorMsg({
+                'MinIPv6Address': 'INPUT_StartIp',
+                'MaxIPv6Address': 'INPUT_EndIp',
+                'PreferredLifeTime': 'INPUT_PreLifeTime',
+                'ValidLifeTime': 'INPUT_PreLifeTime',
+                'IPv6SitePrefix': 'INPUT_SitePrefix',
+                'IPv6SitePrefixLength': 'INPUT_SitePrefixLen',
+                'ManagedFlag': 'SELECT_ManagedFlag',
+                'OtherConfFlag': 'SELECT_OtherConfFlag'
+            }, G_Error_Msg);
+        }
+
+        //add start by gxw 2012-06-04 check ip is ipv6 link local addr
+        function checkIpv6LinkLocal(value) {
+            var patrn = /^[A-Za-z0-9:]+$/;
+            var patrn2 = /^(fe80:|FE80:|Fe80:|fE80:)+/;
+
+            for (var i = 0; i < value.length; i++) {
+                if (!patrn.exec(value.substr(i, 1))) {
+                    return false;
+                }
+            }
+
+            if (!patrn2.exec(value.substr(0, 5))) {
+                return false;
+            }
+
+            return true;
+        }
+        //add end by gxw 2012-06-04
+
+        addListeners(uiOnload, dealWithError);
+
+        //]]>
+        //???????????
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+                <li class="on"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('1' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "./zte";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_setup" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+
+
+            <!-- setup -->
+            <div class="M1">
+                <p id="down" class="lan"><a href="./lang_setup.html" id="lang_lan">LAN Basic</a></p>
+                <p id="down" class="wan"><a href="./lang_connected.html" id="lang_connected">WAN</a></p>
+                <p id=""><a href="./lang_lan_advanced.html" id="lang_lan_advanced">WAN Advanced</a></p>
+                <p id="up"><a href="./lang_lanIPV6.html" id="lang_lanIPV6">IPV6 LAN</a></p>
+                <p id="" style="display:none;"><a href="./lang_wanIPV6.html" id="lang_wanIPV6">IPV6 WAN</a></p>
+                <!-- <p id="" style="display:none" class="dialing"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=setup&var:page=dialing" id="dialing">Dialing</a><p> -->
+                <!--zp delete 20120425-->
+
+            </div>
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+
+            <!-- management -->
+
+        </div>
+
+        <!--  content -->
+
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go"><img id="pointTo" src="./img/helpBook.gif" alt="Help" /></a>
+                <span id="lang_title">&nbsp;</span>
+            </div>
+            <div class="Embody">
+                <p class="SmallTittle" id="lang_IPv6InterfaceAddressSetting">LinkLocal????</p>
+                <div class="div_left" id="lang_IPv6IntfLinkLocalAddress">LinkLocal ??</div>
+                <div class="div_middle">&nbsp;<input type="text" class="control" id="INPUT_IPv6IntfLinkLocalAddress"></div>
+                <div class="div_right">&nbsp;</div>
+
+                <p class="SmallTittle" id="lang_RAInterval">RA????</p>
+                <div class="div_left" id="lang_IntervalMax">??????</div>
+                <div class="div_middle">&nbsp;<input type="text" id="INPUT_MaxRAInterval"><span id="lang_TimeSecond1"> ?</span></div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_IntervalMin">??????</div>
+                <div class="div_middle">&nbsp;<input type="text" id="INPUT_MinRAInterval"><span id="lang_TimeSecond2"> ?</span></div>
+                <div class="div_right">&nbsp;</div>
+
+                <p class="SmallTittle" id="lang_MOSetting">M/O????</p>
+                <div class="div_left" id="lang_MOMode">M/O??????</div>
+                <div class="div_middle">&nbsp;<select id="SELECT_FlagConfType" onChange="onchgFlagConfType()">
+																					   <option value="Auto" id="lang_MOModeAuto">??</option>
+																					   <option value="Manual" id="lang_MOModeManual">??</option>
+																					 </select>
+                </div>
+                <div class="div_right">&nbsp;</div>
+                <!-- M/0?? -->
+                <div id="div_mo">
+                    <div class="div_left" id="lang_mflag">M??</div>
+                    <div class="div_middle">&nbsp;<select id="SELECT_ManagedFlag" onChange="onchgManagedFlag()">
+																			  <option value="0">0</option>
+																			  <option value="1">1</option>
+																		   </select>
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left" id="lang_oflag">O??</div>
+                    <div class="div_middle">&nbsp;<select id="SELECT_OtherConfFlag">
+																			  <option value="0">0</option>
+																			  <option value="1">1</option>
+																		   </select>
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+
+                <p class="SmallTittle"><input type="checkbox" id="INPUT_UniqueLocalPrefix" onchange="OnUniqueLocalPrefixChg()"><span id="lang_EnableUnique_Local"> ??Unique Local Prefix??</span></p>
+                <div class="div_left">Unique Local GlobalID</div>
+                <div class="div_middle">&nbsp;<input type="text" id="INPUT_GlobalID"></div>
+                <div class="div_right">&nbsp;</div>
+
+                <div class="div_right">&nbsp;</div>
+                <p class="SmallTittle"><span id="lang_EnableUnique_Local"> Delegated Prefix: </span>&nbsp;&nbsp;<input type="text" id="INPUT_DelegatedPrefix" readonly="block"></p>
+                <p class="SmallTittle"><span id="lang_PrefixLifeTime"> Prefix Life Time: </span>&nbsp;&nbsp;<input type="text" id="INPUT_PrefixLifeTime"></p>
+                <!-- SLAAC/DHCPv6?? -->
+                <!-- add by gxw 2012-08.15 for ???????? -->
+                <div id="slaac_or_dhcpv6">
+                    <p class="SmallTittle" id=""><span id="lang_LanAddrDispatchType">LAN???????: </span>&nbsp;&nbsp;<input type="radio" id="ID_AddrDistribute" name="RADIO_LanAddrDistributeType" value="Static" onClick="ShowPrefix()" />SLAAC&nbsp;&nbsp;<input type="radio" id="ID_AddrDhcpv6"
+                            name="RADIO_LanAddrDistributeType" value="DHCPv6" onClick="ShowAddressType()" />DHCPv6</span>
+                    </p>
+                </div>
+
+                <div id="prefix_or_pool" style="display:none">
+                    <div class="div_left" id="lang_AddressType">&nbsp;&nbsp;????: </div>
+                    <div class="div_middle">&nbsp;<select id="SELECT_AddressDispatchType" onChange="onchgAddressType()">
+																					   <option value="Prefix" id="lang_PrefixTypeAuto">????</option>
+																					   <option value="Dhcp" id="lang_DhcpTypeAuto">DHCP ?????</option>
+																					 </select>
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <!-- end of prefix_or_pool -->
+
+                <div id="div_dhcpType">
+                    <!-- <div class="div_left" id="lang_ValidLifeTime">ValidLifeTime:</div><div class="div_middle">&nbsp;<input type="text" id="INPUT_ValidLifeTime"> (1-172800)</div><div class="div_right">&nbsp;</div> -->
+                    <div class="div_left" id="lang_StartIp">Interface ID(Start):</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_StartIp"> (compression format "::" can not be used here) </div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left" id="lang_EndIp">Interface ID(End):</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_EndIp"> (compression format "::" can not be used here) </div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left" id="lang_PreLifeTime">Leased Time (hour):</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_PreLifeTime"></div>
+                    <div class="div_right">&nbsp;</div>
+                    <!--
+    			<div class="div_left"><span id = "lang_PrefixLength">Prefix Length:</span></div><div class="div_middle">&nbsp;<input type="text" value="64" class="control" id="INPUT_PrefixLen" readonly></div><div class="div_right">&nbsp;</div>
+    			-->
+                </div>
+                <!-- end of div_dhcpType -->
+
+            </div>
+            <div id="div_prefixType">
+                <p class="SmallTittle"><input type="radio" id="ID_AddrDistribute_WAN" name="Enable" onClick="ShowPrefix()" value="Delegated" /> <span id="lang_AutoConfWanAuthPrefix">????WAN??????</span></p>
+                <p class="SmallTittle"> <input type="radio" id="ID_AddrDistribute_STATIC" name="Enable" onClick="ShowPrefix()" value="Static" /><span id="lang_Static">??</span><span id="lang_PrefixHint" style="color:red;font-weight:normal;text-indent:25px;">(For Static IPv6 Connection,Please get prefix-info from networking manager)</span></p>
+                <div id="Static_SLAAC">
+                    <div class="div_left"> <span id="lang_SitePrefix">Site Prefix</span></div>
+                    <div class="div_middle">&nbsp;<input type="text" class="control" id="INPUT_SitePrefix"></div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left"><span id="lang_SitePrefixLength">Site Prefix Length</span></div>
+                    <div class="div_middle">&nbsp;<input type="text" class="control" id="INPUT_SitePrefixLen"></div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+            </div>
+
+            <div class="div_button do">
+                <input type="submit" id="btn" onClick="uiSubmit();" /> <input type="button" id="refresh" onClick="uiPageRefresh();" />
+            </div>
+        </div>
+        <div id="div_balance"></div>
+        <form name="uiPostForm" id="uiPostForm" method="post" action="webproc"></form>
+    </div>
+
+    <!-- if loading and content will not display-->
+    <div id="Loading">
+    </div>
+    </div>
+</body>
+
+</html>

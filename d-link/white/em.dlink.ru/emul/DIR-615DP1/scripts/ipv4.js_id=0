@@ -1,0 +1,134 @@
+function IPv4() {
+    function byteToBitset(byte) {
+        for (var bitset = "", i = 7; i >= 0; i--) bitset += byte & 1 << i ? "1" : "0";
+        return bitset
+    }
+
+    function bitsetToByte(bitset) {
+        return bitset = bitset.split(""), 128 * bitset[0] + 64 * bitset[1] + 32 * bitset[2] + 16 * bitset[3] + 8 * bitset[4] + 4 * bitset[5] + 2 * bitset[6] + 1 * bitset[7]
+    }
+
+    function hostToIndex(host) {
+        for (var index = 0, R = 1, i = host.length - 1; i >= 0; i--) index += host[i] * R, R *= 256;
+        return index
+    }
+
+    function toBitset(ip) {
+        for (var bitset = new IPv4(ip).ip(), i = 0; 4 > i; i++) bitset[i] = byteToBitset(bitset[i]);
+        return bitset.join("")
+    }
+
+    function fromBitset(bitset, shortmask) {
+        for (var ip = new Array, i = 0; 4 > i; i++) ip.push(bitsetToByte(bitset.substr(8 * i, 8)));
+        return new IPv4(ip.join("."), shortmask)
+    }
+    var $$ = {
+            ip: [0, 0, 0, 0],
+            mask: null
+        },
+        zero = "00000000000000000000000000000000",
+        full = "11111111111111111111111111111111";
+    if (this.toSerial = function() {
+            return hostToIndex(this.ip())
+        }, this.fromSerial = function(serial) {
+            for (var ip = [0, 0, 0, 0], i = 3; i >= 0; i--) ip[i] = serial % 256, serial = Math.floor(serial / 256);
+            return new IPv4(ip.join("."), this.shortmask())
+        }, this.ip = function() {
+            return copy($$.ip)
+        }, this.mask = function() {
+            return $$.mask
+        }, this.subnet = function() {
+            var shortmask = this.shortmask();
+            return this.ip().slice(0, Math.floor(shortmask / 8))
+        }, this.host = function() {
+            var shortmask = this.shortmask();
+            return this.ip().splice(Math.floor(shortmask / 8), 4)
+        }, this.netclass = function() {
+            var n = $$.ip[0];
+            return n >= 0 && 128 > n ? "A" : n >= 128 && 192 > n ? "B" : n >= 192 && 224 > n ? "C" : n >= 224 && 240 > n ? "D" : "E"
+        }, this.detectClassNetwork = function() {
+            var n0 = $$.ip[0],
+                n1 = $$.ip[1],
+                n2 = $$.ip[2],
+                n3 = $$.ip[3];
+            if (n0 >= 0 && 128 > n0) {
+                if (0 == n1 && 0 == n2 && 0 == n3) return "A";
+                if (0 == n2 && 0 == n3) return "B";
+                if (0 == n3) return "C"
+            }
+            if (n0 >= 128 && 192 > n0) {
+                if (0 == n2 && 0 == n3) return "B";
+                if (0 == n3) return "C"
+            }
+            return n0 >= 192 && 224 > n0 && 0 == n3 ? "C" : 0
+        }, this.detectNetwork = function(ip, mask) {
+            for (var arrip = ip.split("."), arrmask = mask.split("."), arrres = [], i = 0; 4 > i; i++) arrres[i] = parseInt(arrip[i]) & parseInt(arrmask[i]);
+            var res = arrres[0] + "." + arrres[1] + "." + arrres[2] + "." + arrres[3];
+            return res
+        }, this.shortmask = function(network) {
+            if (is.set($$.mask)) return $$.mask;
+            if (network) var type = this.detectClassNetwork();
+            else var type = this.netclass();
+            return "A" == type ? 8 : "B" == type ? 16 : "C" == type ? 24 : 0
+        }, this.netmask = function(network) {
+            var shortmask = this.shortmask(network);
+            return fromBitset(full.substr(0, shortmask) + zero.substr(shortmask, 32 - shortmask), shortmask)
+        }, this.wildcard = function() {
+            var shortmask = this.shortmask();
+            return fromBitset(zero.substr(0, shortmask) + full.substr(0, 32 - shortmask), shortmask)
+        }, this.network = function() {
+            var shortmask = this.shortmask();
+            return fromBitset(toBitset(this).substr(0, shortmask) + zero.substr(0, 32 - shortmask), shortmask)
+        }, this.broadcast = function() {
+            var shortmask = this.shortmask();
+            return fromBitset(toBitset(this).substr(0, shortmask) + full.substr(0, 32 - shortmask), shortmask)
+        }, this.hostmin = function(network) {
+            var shortmask = this.shortmask(network);
+            return fromBitset(toBitset(this).substr(0, shortmask) + zero.substr(0, 31 - shortmask) + "1", shortmask)
+        }, this.hostmax = function() {
+            var shortmask = this.shortmask();
+            return fromBitset(toBitset(this).substr(0, shortmask) + full.substr(0, 31 - shortmask) + "0", shortmask)
+        }, this.count = function() {
+            var shortmask = this.shortmask();
+            return Math.pow(2, 32 - shortmask) - 2
+        }, this.index = function() {
+            return hostToIndex(this.host()) - hostToIndex(this.network().host())
+        }, this.fromRange = function(begin, end) {
+            if (begin = new IPv4(begin, this.shortmask()), end = new IPv4(end, this.shortmask()), begin.subnet().join(".") == end.subnet().join(".") && begin.subnet().join(".") == this.subnet().join(".")) {
+                var serial = this.toSerial();
+                if (serial >= begin.toSerial() && serial <= end.toSerial()) return !0
+            }
+            return !1
+        }, this.inc = function(n) {
+            return is.unset(n) && (n = 1), this.fromSerial(this.toSerial() + n)
+        }, this.dec = function(n) {
+            return is.unset(n) && (n = 1), this.fromSerial(this.toSerial() - n)
+        }, this.toString = function(bitmask) {
+            var ipstr = $$.ip.join(".");
+            return bitmask && (ipstr += "/" + this.shortmask()), ipstr
+        }, this.reserved = function() {
+            var n = this.network().toString(),
+                ip = this.toString();
+            if (n == ip) return "network";
+            switch (n) {
+                case "0.0.0.0":
+                    return "defroute";
+                case "127.0.0.0":
+                    return "loopback";
+                case "169.254.0.0":
+                    return "linklocal";
+                case "240.0.0.0":
+                    return "future";
+                case "192.88.99.0":
+                    return "anycast";
+                case "224.0.0.0":
+                    return "multicast"
+            }
+            return ip == this.broadcast().toString() ? "broadcast" : null
+        }, arguments[0] instanceof IPv4) $$.ip = arguments[0].ip(), $$.mask = arguments[0].shortmask();
+    else if (is.string(arguments[0])) {
+        var temp = arguments[0].split("/", 2);
+        $$.ip = temp[0].split(".", 4), $$.mask = temp[1]
+    }
+    is.number(arguments[1]) ? $$.mask = arguments[1] : is.string(arguments[1]) && ($$.mask = toBitset(arguments[1]).indexOf("0"), $$.mask = -1 == $$.mask ? 32 : $$.mask)
+}

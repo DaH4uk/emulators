@@ -1,0 +1,31 @@
+<table class="list" cellspacing="0" cellpadding="0">
+    <tbody  id="wireless_network">
+        <tr>
+            <td colspan="20" class="sep">
+                <h2><span>Bridge</span></h2></td>
+        </tr>
+    </tbody>
+    <tbody class="">
+        <tr>
+            <td class="label" style="min-width: 163px;"><span>Address Acquisition</span></td>
+            <td class="extra"></td>
+            <td class="value" colspan="18"><span><span class="radio"><input type="radio" name="radio6" id="Static" checked="true">Static</span><span class="radio"><input type="radio" name="radio6" id="Automatic">Automatic</span></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div id="nigga_bridge"></div>
+
+<script>
+    $(nigga_bridge).load("static_bridge.html");
+
+    $(Static).bind('click', function() {
+        $(nigga_bridge).load("static_bridge.html");
+    });
+
+    $(Automatic).bind('click', function() {
+        $(nigga_bridge).load("automatic_bridge.html");
+    });
+
+</script>

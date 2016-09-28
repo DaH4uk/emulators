@@ -1,0 +1,339 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script>
+strHtml='<title>'+wps1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var helpItem 	='wps';
+var menuSection	='WLAN';
+var menuItem	='Wi-Fi Protected Setup';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+	
+function buttonToHidden(form_obj)  // hidden all input buttons, except that have attribute noctl=true
+{
+    for(i=0;i<form_obj.all.length;i++){
+        if(form_obj.all[i].tagName=="INPUT"){
+                if(form_obj.all[i].getAttribute("noctl")!="true"){
+                        form_obj.all[i].disabled=true;
+                }
+        }
+    }
+}
+function buttonToView(form_obj)
+{
+        for(i=0;i<form_obj.all.length;i++){
+        if(form_obj.all[i].tagName=="INPUT"){
+                if(form_obj.all[i].getAttribute("noctl")!="true"){
+                        form_obj.all[i].disabled=false;
+                }
+        }
+    }
+    
+}
+function initWpsPage()
+{
+    var tf=document.forms[0];
+    var wl_mode = '7';
+    dataToVisible(tf);
+    if (tf.h_wls_wps_enabled.value == "1")
+    {
+        if (wl_mode == "0")
+           buttonToHidden(tf);
+        else
+           buttonToView(tf);
+    }
+
+}
+
+function wls_wps_off()
+{
+
+    var tf=document.forms[0];
+    if(tf.wls_wps_enabled.selectedIndex == 0)
+        buttonToView(tf);
+    else
+        buttonToHidden(tf);
+}
+
+function checksum()
+{
+	var cf = document.forms[0];
+	var pin=cf.wps_enrolee_pin.value;
+	var accum= 0;
+
+	accum += 3 * (parseInt(pin.substring(0,1)));
+	accum += 1 * (parseInt(pin.substring(1,2)));
+	accum += 3 * (parseInt(pin.substring(2,3)));
+	accum += 1 * (parseInt(pin.substring(3,4)));
+	accum += 3 * (parseInt(pin.substring(4,5)));
+	accum += 1 * (parseInt(pin.substring(5,6)));
+	accum += 3 * (parseInt(pin.substring(6,7)));
+
+	accum += 1 * (parseInt(pin.substring(7,8)));	
+	
+	if(0 == (accum%10))
+		return true;
+	else
+		return false;
+}
+
+function pin_focus()
+{
+    var cf = document.forms[0];
+    
+    cf.wps_enrolee_pin.select();
+    cf.wps_enrolee_pin.focus();
+}
+
+function checkData()
+{
+ 	var cf = document.forms[0];
+	var pin = cf.wps_enrolee_pin.value;
+	var myRE = /[0-9]{8}/;
+	
+	if((pin.length==0) || (pin.length!=8) || (myRE.test(pin)==false) )
+	{	
+	    window.open("errpin1.html","pbc","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,width=450,height=200,resizable=0");
+		return false;
+	}
+	if(checksum()==false)
+	{
+	    window.open("errpin2.html","pbc","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,width=450,height=200,resizable=0");
+		return false;
+	}
+    return true;
+}
+rnd.today=new Date(); 
+rnd.seed=rnd.today.getTime(); 
+
+function rnd() 
+{ 
+    rnd.seed = (rnd.seed*9301+49297) % 233280; 
+    return rnd.seed/(233280.0); 
+}; 
+
+function generatePinValue()
+{
+    var number;
+    var accum = 0;
+    var valueString = "";
+    var cf = document.forms[0];
+    
+    number = rand(10)-1; 
+    accum += 3 * number ;
+    valueString = valueString + number.toString(10);
+    
+    number = rand(10)-1; 
+    accum += 1 * number ;
+    valueString = valueString + number.toString(10);
+    
+    number = rand(10)-1; 
+    accum += 3 * number ;
+    valueString = valueString + number.toString(10);
+    
+    number = rand(10)-1; 
+    accum += 1 * number ;
+    valueString = valueString + number.toString(10);
+    
+    number = rand(10)-1; 
+    accum += 3 * number ;
+    valueString = valueString + number.toString(10);
+    
+    number = rand(10)-1; 
+    accum += 1 * number ;
+    valueString = valueString + number.toString(10);
+    
+    number = rand(10)-1; 
+    accum += 3 * number ;
+    valueString = valueString + number.toString(10);
+    
+    accum = (accum % 10);
+    accum = (10 - accum) % 10;
+    
+    valueString = valueString + accum.toString(10);
+    
+    cf.h_wps_dev_genpin.value = valueString;
+}
+
+function changToDoValue(buttonType)
+{
+    document.tF.h_wps_action.value = buttonType;
+    if(buttonType == 1)
+        alert(ur5);   
+    else if( buttonType == 2 )  
+        popup_pinok();
+    else if( buttonType == 5 )
+        popup_pbc();
+    dataToHidden(document.forms[0]);    
+    document.tF.submit();    
+    return true;
+}
+
+function rand(number) 
+{ 
+    return Math.ceil(rnd()*number); 
+}; 
+
+var manu_conf = "";
+var wls_mode = '0';
+var wls_enc = 'tkip';
+var wls_wep = '0000000000';
+
+function show_manu_conf()
+{
+    var tmp="";
+
+    if(wls_mode == "0") {
+        // Not configured
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps20);</script></td><td class=body><script language="javascript" type="text/javascript">dw("Belkin_N_Wireless_523106");</script></td></tr>';
+        tmp += '<tr><td align="left" width="40%" class=bold_body><script language="javascript" type="text/javascript">dw(wps31);</script></td><td align="left" width="60%" class=body><script language="javascript" type="text/javascript">dw(wps21);</script></td></tr>';
+        tmp += '<tr><td align="left" width="60%" class=bold_body><script language="javascript" type="text/javascript">dw(wps3);</script></td><td align="left" width="40%" class=body><a href="wls_encr.html"><script language="javascript" type="text/javascript">dw(g45);</script></td></tr>';
+    }
+    else {
+         // SSID
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps20);</script></td><td class=body><script language="javascript" type="text/javascript">dw("Belkin_N_Wireless_523106");</script></td></tr>';
+        tmp += '<tr><td align="left" width="40%" class=bold_body><script language="javascript" type="text/javascript">dw(wps31);</script></td><td align="left" width="60%" class=body><script language="javascript" type="text/javascript">dw(wps19);</script></td></tr>';
+    }
+    if(wls_mode == "psk2_mixed") {
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps22);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wps23);</script></td></tr>';
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps24);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wps25);</script></td></tr>';
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps26);</script></td><td class=body><script language="javascript" type="text/javascript">dw("");</script></td></tr>';
+    }else if(wls_mode == "WPA-PSK" || wls_mode == "WPA2-PSK") {
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps22);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wls_mode.toUpperCase(wls_mode));</script></td></tr>';
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps24);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wls_enc.toUpperCase(wls_enc));</script></td></tr>';
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps26);</script></td><td class=body><script language="javascript" type="text/javascript">dw("");</script></td></tr>';
+    }else if(wls_mode == "wep") {
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps22);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wls_mode.toUpperCase(wls_mode));</script></td></tr>';
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps24);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wps28);</script></td></tr>';
+        tmp += '<tr><td class=bold_body><script language="javascript" type="text/javascript">dw(wps27);</script></td><td class=body><script language="javascript" type="text/javascript">dw(wls_wep);</script></td></tr>';
+    }
+    
+     manu_conf = tmp;
+}
+
+function popup_pbc()
+{
+    pbcwin=window.open("chkpbc.html","pbc","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,width=450,height=200,resizable=0");
+    pbcwin.focus();
+}
+function popup_pinok()
+{
+    window.open("pinok.html","pbc","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,width=450,height=200,resizable=0");
+}
+//-->
+</script>
+
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="initWpsPage();">
+<form action="wls_wps.html" name="tF" method="post" onSubmit="if (checkData())return (changToDoValue(2)); else return false;">
+<script language="JavaScript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+</script>
+<script language="JavaScript">
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+    <br>&nbsp;&nbsp; 
+    <script language="javascript" type="text/javascript">dw(wps2);</script>
+    <br><br>
+<table border=0 class="copy_1">
+<tr>
+<td width=5>&nbsp;</td> 
+<td>
+<table width="550" border="0" cellspacing="10" cellpadding="0" align="center" class="copy_1">
+<tr>
+    <td width="40%" class="bold_body"><script language="javascript" type="text/javascript">dw(wps1);</script></td>
+    <td nowrap><select name="wls_wps_enabled"  onChange="wls_wps_off();"> 
+        <script language="javascript" type="text/javascript">
+	        dw('<option value= "1" >'+Enabled+'</option>');
+	        dw('<option value= "0" >'+Disabled+'</option>');
+        </script>
+        </select>
+    </td>                                    
+</tr>
+<tr>
+    <td colspan="3" class="body"><script>dw(wps4);</script></td>
+</tr>
+<tr> 
+    <td width="36">&nbsp;</td>
+    <td colspan="2" align="right"> 
+     <input type="button" style="{width:160px;}" value="Apply Changes" class="submitBtn" noctl="true" onclick="window.location.href='apply_40.html'">
+    </td>
+</tr><tr>
+    <td colspan="3" class="bold_body"><script language="javascript" type="text/javascript">dw(wps5);</script></td>
+</tr>
+<tr>
+    <td colspan="3" class="body"><script>dw(wps6);</script></td>
+</tr>
+<tr> 
+    <td width="70%" colspan="2" class="body"><script>dw(wps7);</script>&nbsp;&nbsp;
+        <input type="text" name="wps_enrolee_pin" value="" size="12" maxlength="8">
+    </td>
+    <td width="30%" align="right"> 
+        <script>dw('<input type="button" name="itsbutton1"  style="{width:160px;}" value="'+wps8+'" class="submitBtn" onClick="if (checkData())return (changToDoValue(2)); else return false;">');</script>
+    </td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td colspan="3" class="body"><script>dw(wps9);</script>
+    </td>
+</tr>
+
+<tr> 
+    <td width="40%" class="body"><script>dw(wps10);</script>&nbsp;&nbsp;<script>dw('34781333');</script></td>
+    <td width="30%"><script>dw('<input type="button" name="itsbutton2" style="{width:160px;}" value="'+wps11+'" class="submitBtn" onClick="generatePinValue(); changToDoValue(3);">');</script></td>
+    <td width="30%"align="right"> 
+    <script>dw('<input type="button" name="itsbutton3" style="{width:160px;}" value="'+wps12+'" class="submitBtn" onClick="changToDoValue(4)">');</script>
+    </td>
+</tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+<tr>
+    <td colspan="3" class="bold_body"><script language="javascript" type="text/javascript">dw(wps13);</script></td></tr>
+<tr>
+ <td colspan="3" class="body"><script>dw(wps14);</script></td>
+</tr>
+<tr> 
+    <td width="36">&nbsp;</td>
+    <td  colspan="2" align="right"> 
+    <script>dw('<input type="button" name="itsbutton4" style="{width:160px;}" value="'+wps15+'" class="submitBtn" onClick="changToDoValue(5)">');</script>
+    </td>
+</tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+<tr>
+    <td colspan="3" class="bold_body"><script language="javascript" type="text/javascript">dw(wps16);</script></td>
+</tr>
+<tr>
+    <td colspan="3" class="body"><script>dw(wps17);</script></td>
+</tr>
+<tr>
+    <td colspan="3">
+        <table width="80%" class="copy_1">
+            <script language="javascript" type="text/javascript">show_manu_conf();dw(manu_conf)</script>
+        </table>
+     </td>
+</tr></td>
+</tr>
+</table>
+</td>
+<input type="hidden" name="h_wps_dev_genpin"  value="" noctl="true">
+<input type="hidden" name="h_wps_action"      value="" noctl="true">
+<input type="hidden" name="h_wls_wps_enabled" value="1" noctl="true">
+</form>
+<script language="JavaScript">showTail()</script>

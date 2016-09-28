@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="Router_Name"></title><meta http-equiv=content-type content='text/html; charset=UTF-8'>
+<script type="text/javascript"><!--
+var G_RouterName = 'WNR612v3';
+var _node = document.getElementById('Router_Name');
+if(_node!= null)
+{
+_node.innerHTML = 'NETGEAR Router '+G_RouterName;
+}
+--></script>
+<style type="text/css">
+body { font:12px Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif;overflow-x:hidden;}
+</style>
+<script type="text/javascript" src="languages/Russian/page/DNS_ddns_st.js%3F"></script>
+<script type="text/javascript" src="js/boot.js%3Fv=-"></script>
+<script type="text/javascript" src="js/secboot.js%3Fv=-"></script>
+<script type="text/javascript" src="page/DNS_ddns_st.js"></script>
+<script type="text/javascript">
+var G_wanConnction = [];
+var m = 0;
+G_wanConnction[m] = ["InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.", //Path
+"" //ip addr
+];
+++m;
+var G_DDNSEnable = "0"
+var G_DDNSState = "Unconfigure"
+var G_DDNSStateValue ="Unconfigure"
+var G_DDNSProvider = "dyndns.org"
+</script>
+</head>
+<body onload="uiOnload();">
+<div id="displayFail1"><span id="lang_notEnable">Dynamic DNS service is not enabled.</span></div>
+<div id="displayFail2"><span id="lang_upFail">Update failed at </span><span id="time"></span><span id="lang_ispNotuse"> The service provider is not reachable.</span></div>
+<div id="displayFail3"><span id="lang_haveNoup">No update action. There is no IP address on the Internet port.</span></div>
+<div id="displayFail4"><span id="lang_hostError">Update failed.Host name is not correct.</span></div>
+<div id="displayFail5"><span id="lang_userpwdError">Authentication failed.User name or password is not correct.</span></div>
+<div id="displaySuccess"><span id="ispName"></span><span id="lang_Success">update successfully at</span><span id="timeSuccess"></span></div>
+</body>
+</html>

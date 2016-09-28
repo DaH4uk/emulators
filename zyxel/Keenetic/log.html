@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="System log" />
+<meta name="ndm.abbr" lang="RU" content="Журнал" xml:lang="RU" />
+
+<title>ZyXEL Keenetic - 
+				Журнал сообщений</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+function LogPane(e) {
+//private:
+	var lines = 0;
+//public:
+	this.clear = function() {
+		e.innerHTML = "";
+		lines = 0;
+	}
+	this.load = function(node) {
+		if( node.nodeName == "log") {
+			var div = document.createElement("div"); 
+			div.className = "entry";
+			div.appendChild(document.createTextNode("[" + getNodeValue(node, "timestamp") + "] "));
+			var ident = document.createElement("span");
+			ident.className = "ident";
+			ident.appendChild(document.createTextNode("[" + getNodeValue(node, "ident") + "] "));
+			div.appendChild(ident);
+			var messages = node.getElementsByTagName("message");
+			if( messages.length && messages[0].firstChild ) {
+				var el = document.createElement("div");
+				el.className = messages[0].getAttribute("level");
+				el.appendChild(document.createTextNode(messages[0].firstChild.nodeValue));
+				div.appendChild(el);
+			}
+
+			e.appendChild(div);
+
+			if( lines > _MAX_LINES ) {
+				e.removeChild(e.firstChild);
+			} else {
+				++lines;
+			}
+			e.scrollTop = e.scrollHeight;
+		}
+	}
+}
+LogPane.prototype = new ParameterSet();
+
+var logPane;
+
+function doShowLog() {
+	logPane.clear();
+var p = new Packet();   
+	p.Command("show log", null, logPane);
+	p.proceed();
+}
+function triggerUpdate(c) {
+	logPane.allowContinue(c.checked);
+	if( c.checked ) doShowLog();
+}
+function init() {
+	logPane = new LogPane(document.getElementById("log_pane"));
+	doShowLog();
+}
+-->
+</script>
+</head>
+
+<body onload="init()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools.png');" class="selected"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Система<div id="subtitle"></div></div><ul class="tabs"><li><a class="current" href="log.html"><span>Журнал</span></a></li><li><a href="ping.html"><span>Ping</span></a></li><li><a href="files.html"><span>Файлы</span></a></li><li><a href="reboot.html"><span>Перезагрузка</span></a></li><li><a href="clock.html"><span>Дата и время</span></a></li><li><a href="users.html"><span>Пользователи</span></a></li><li><a href="components.html"><span>Компоненты</span></a></li></ul><div class="block green">
+	<form action="" name="log" onsubmit="return false" id="log">
+		<fieldset>
+		<legend>Журнал сообщений системы</legend>
+		<div class="rounded">
+		<p>Ведение журнала позволяет просматривать сообщения об ошибках системы при диагностике неполадок.</p>
+		</div>
+		<label for="update">Обновлять в реальном времени:</label>
+			<input type="checkbox" name="update" checked="checked" onclick="triggerUpdate(this);" /><br />
+		<!-- label for="nothing"></label><input class="apply" type="submit" value="Show System log"/ -->
+		</fieldset>
+	</form>
+	<div id="log_pane"></div><br />
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

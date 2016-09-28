@@ -1,0 +1,102 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<style type="text/css">
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+a { text-decoration:none;}
+.do { margin-top:8px;}
+.bk_black_black {padding:8px 0px 0px 0px; font-weight:bold; color:#000000; letter-spacing:1px; font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif; font-size:12px;}
+.page_title{ width: 100%; height: 20px; font: bold 17px arial; color: #9d98ff; position: absolute; top: 0px; left: 0px;}
+.title_line{border-top:2px solid #9966FF; margin-top:5px; padding:8px 0 0;}
+.apply_bt, .cancel_bt, .common_bt{ height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
+.apply_bt{width: 130px; background-image: url(skin/image/button/apply.gif);}
+.cancel_bt{width: 133px; background-image: url(skin/image/button/cancel.gif);}
+.common_bt{width:147px; background-image: url(skin/image/button/button.gif);}
+.fix_button{width: 100%; height: 30px; position: absolute; top: 20px; left: 0px; background: url(skin/image/top_button_background.gif) left bottom repeat-x;}
+#bas_top { width: 100%; height: 85px; background-color: #ffffff; position: absolute; top: 50px; left: 0px; }
+.prgbar { font-family:Arial; padding:0px; height: 20px; width: 200px; font-weight: bolder; font-size: 10pt; border: 1px solid; border-color: #09c; color: #0000FF}
+H1 {
+FONT-WEIGHT: bold; FONT-SIZE: 16px; BACKGROUND: white; COLOR: #9d98ff; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+</style>
+<script type="text/javascript" src="languages/Russian/page/BAS_basictop.js"></script>
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript">
+function language_translate()
+{
+if (window.data_language != undefined)
+{
+chg_language(data_language);
+}
+}
+window.onload = function (){
+var language = Cookie.Get('language');
+language_translate();
+self.document.body.style.visibility = 'visible';
+}
+function loadhelp(anchname)
+{
+var tmp = "../html/help.htm";
+//tmp+="&var:language=en_us";
+var node = parent.basicbuttom.document.getElementById("helpframe");
+var helpdiv = parent.basicbuttom.document.getElementById("help");
+if("none" != helpdiv.style.display)
+node.src=tmp+"#"+ anchname;
+return;
+}
+-->
+</script>
+</head>
+<body style="visibility:hidden ">
+<table style="background:white;width:98% !important; width:101%; display:none;" id="table2">
+<tr>
+<td nowrap align="left">
+<h1 id="lang_updateSetting">Updating Settings</h1>
+</td>
+<td nowrap align="left">&nbsp; </td>
+<td nowrap><input type="text" name="progress" id="progress" class="prgbar" value=""></td>
+<td nowrap align="left">&nbsp; </td>
+</tr>
+<tr>
+<td colspan="4" height="12"><div class="title_line">&nbsp;</div></td>
+</tr>
+</table>
+<div id="top">
+<div class="page_title" id="langWan">Basic Settings</div>
+<div class="fix_button">
+<table width="100%" border="0" cellpadding="0" cellspacing="2">
+<tr>
+<td nowrap colspan="2" align="center">
+<input type="button" name="button" id="Test" class="common_bt" value="Test" /> &nbsp;&nbsp;
+<input type="button" name="Cancel" id="Cancel" class="cancel_bt" value="Cancel"/> &nbsp;&nbsp;
+<input type="button" name="Apply" id="Apply" class="apply_bt" value="Apply" />
+</td>
+</tr>
+</table>
+</div>
+<div id="bas_top">
+<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+<TR><TD nowrap>
+<a href="javascript:loadhelp('question')"><p id="idLoginContext" class="do bk_black_black" style="margin-right:10px ">Does your Internet Connection Required A Login?</p></a>
+</TD></TR>
+<TR>
+<TD nowrap>
+<div><input type="radio" id="idRequiredLoginYes" name="loginreq" value="pppoe" onClick="parent.basicbuttom.uiDisplayZone();" /><span id="idLoginYesContext">Yes</span></div>
+</TD>
+</TR>
+<TR>
+<TD nowrap>
+<div><input type="radio" id="idRequiredLoginNo" name="loginreq" value="dhcp" onClick="parent.basicbuttom.uiDisplayZone();"/><span id="idLoginNoContext">No</span></div>
+</TD>
+</TR>
+<TR><TD colspan=2><div class="title_line">&nbsp;</div></TD></TR>
+</TABLE>
+</div> <!-- bas_top -->
+</div>
+</body>
+</html>

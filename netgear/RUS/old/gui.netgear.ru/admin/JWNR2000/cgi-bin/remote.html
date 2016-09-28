@@ -1,0 +1,163 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../remote.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_FW_remote');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#remote.html" target=formframe>
+<input type=hidden name=submit_flag value="remote">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(remote_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var forward_array_num= 0;
+var trigger_array_num= 0;
+var upnp_array_num=0;
+</script>
+<script>
+var endis_ntp="1";
+var endis_upnp="1";
+var lan_ip="192.168.1.1"
+var lan_subnet="255.255.255.0"
+var info_get_wanproto="pppoe"
+function loadvalue()
+{
+var cf = document.forms[0];
+if('0' == '1')
+cf.remote_mg_enable.checked= true;
+else
+cf.remote_mg_enable.checked =false;
+if('2' == '0')
+{
+cf.rm_access[0].checked = true;
+if(''!='')
+var ipaddr = ""; 
+var ip_array=ipaddr.split('.');
+cf.local_ip1.disabled = false;
+cf.local_ip2.disabled = false;
+cf.local_ip3.disabled = false;
+cf.local_ip4.disabled = false;
+cf.local_ip1.value=ip_array[0];
+cf.local_ip2.value=ip_array[1];
+cf.local_ip3.value=ip_array[2];
+cf.local_ip4.value=ip_array[3];
+}
+else if('2' == '2')
+{
+cf.rm_access[2].checked = true;
+clearData1();
+}
+else
+{
+cf.rm_access[1].checked = true;
+if(''!='')
+ var ipaddr = "";
+var ip_array=ipaddr.split('-');
+var start_array=ip_array[0].split('.');
+var end_array=ip_array[1].split('.');
+cf.start_ip_1.value = start_array[0];
+cf.start_ip_2.value = start_array[1];
+cf.start_ip_3.value = start_array[2];
+cf.start_ip_4.value = start_array[3];
+cf.fin_ip_1.value = end_array[0];
+cf.fin_ip_2.value = end_array[1];
+cf.fin_ip_3.value = end_array[2];
+cf.fin_ip_4.value = end_array[3];
+clearData3();
+}
+//if(''=='1')
+//cf.enable_telnet.checked=true;
+//else
+//cf.enable_telnet.checked=false;
+}
+</script>
+<input type="hidden" name="http_rmenable">
+<input type="hidden" name="local_ip">
+<input type=hidden name=endis_telnet>
+ <tr>
+<script>document.write(hd2);</script>
+<input type="checkbox" name="remote_mg_enable" value="0"><a tabindex=-1 href="javascript:loadhelp('_FW_remote','turnon')"><b><script>document.write(enable_remote);</script><script>document.write(ba);</script> 
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_FW_remote','address')"> <b><script>document.write(remote_addr);</script></b></td>
+<script>document.write(hd);</script> 
+<script>
+var remote_manage_ip="10.64.64.64";
+var wan_detect="0";
+var remote_port="8080";
+if(remote_manage_ip!="" && remote_manage_ip!="0.0.0.0" && wan_detect!="0")
+document.write("http://"+remote_manage_ip+":"+remote_port);
+else
+//document.write(remote_nowan);
+document.write("../../0.0.0.0:/"+remote_port);
+</script>
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_FW_remote','access')"><b><script>document.write(allow_remote_access_by);</script> <script>document.write(ba);</script></td>
+ </tr>
+ <tr>
+ <script>document.write(hd);</script> <input type="radio" name="rm_access" value="0" onClick="clearData2();" ><script>document.write(remote_this_computer);</script></td>
+<script>document.write(hd_right);</script> 
+ <input type="text" name="local_ip1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+ <input type="text" name="local_ip2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="local_ip3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="local_ip4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+</td>
+ </tr>
+ <tr>
+<script>document.write(hd);</script> <input type="radio" name="rm_access" value="1" onClick="clearData3();" ><script>document.write(remote_ip_rang);</script></td>
+<td nowrap align="right"><script>document.write(from_mark);</script>
+ <input type="text" size="3" maxlength="3" name="start_ip_1" value="" onKeyPress="return getkey('num',event)">.
+ <input type="text" size="3" maxlength="3" name="start_ip_2" value="" onKeyPress="return getkey('num',event)">.
+ <input type="text" size="3" maxlength="3" name="start_ip_3" value="" onKeyPress="return getkey('num',event)">.
+ <input type="text" size="3" maxlength="3" name="start_ip_4" value="" onKeyPress="return getkey('num',event)">
+</td>
+ </tr>
+ <tr>
+<script>document.write(hd);</script> &nbsp;</td>
+<td nowrap align="right"> <script>document.write(to_mark);</script> 
+ <input type="text" size="3" maxlength="3" name="fin_ip_1" value="" onKeyPress="return getkey('num',event)">.
+ <input type="text" size="3" maxlength="3" name="fin_ip_2" value="" onKeyPress="return getkey('num',event)">.
+ <input type="text" size="3" maxlength="3" name="fin_ip_3" value="" onKeyPress="return getkey('num',event)">.
+ <input type="text" size="3" maxlength="3" name="fin_ip_4" value="" onKeyPress="return getkey('num',event)">
+</td>
+ </tr>
+ <tr>
+<script>document.write(hd2);</script><input type="radio" name="rm_access" value="2" onClick="clearData1()"><script>document.write(remote_everyone);</script></td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_FW_remote','port')"><b><script>document.write(remote_port_num);</script> <script>document.write(ba);</script></td>
+<script>document.write(hd);</script> <input type="text" class="num" name="http_rmport" size=6 maxlength=5 onKeyPress="return getkey('num',event)" value="8080"></td>
+ </tr> 
+<script>document.write(bluebar);</script>
+<!--
+ <tr>
+<script>document.write(hd2);</script> <input type=checkbox name=enable_telnet value=1>Enable utelnetd feature
+ </tr>
+<script>document.write(bluebar);</script>
+-->
+ <tr>
+<script>document.write(hd2_center);</script>
+<script>document.write("<input type='submit' name='cmd' value='"+apply_mark+"' onClick='return check_remote();'>");</script>
+<script>document.write("<input type='reset' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"remote.html\";'>");</script>
+</td>
+ </tr>
+</TABLE>
+</FORM>
+</body>
+</html>

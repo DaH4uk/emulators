@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - WAN Status</title>
+
+<script type="text/javascript">
+//<![CDATA[
+var update;
+function DHCPAction(F,I) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = I;
+apply(F);
+}
+function connect(F,I) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = I;
+apply(F);
+}
+function ttraff_remove_submit(F) {
+if(!confirm(status_inet.delete_confirm)) {
+return false;
+}
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "delete_ttraffdata";
+apply(F);
+}
+var d = new Date();
+var count = d.getFullYear() * 12 + d.getMonth();
+function get_month(count) {
+return count % 12 + 1;
+}
+function get_year(count) {
+return parseInt (count / 12);
+}
+function load_file(count) {
+return "/ttgraph.cgi?" + get_month(count) + "-" + get_year(count);
+}
+function do_show_prev() {
+count--;
+do_refresh()
+}
+function do_refresh() {
+var f = document.getElementById('graph');
+f.src = load_file(count);
+}
+function do_show_next() {
+count++;
+do_refresh()
+}
+function reloadIt() {
+do_refresh();
+setTimeout("reloadIt()", 30000);
+}
+addEvent(window, "load", function() {
+setElementVisible("wan_show", "ap" != "wet" && "ap" != "apstawet");
+setElementVisible("wan_showtraff", "1" == "1" && ("ap" != "wet" && "ap" != "apstawet" && "pptp" != "disabled" || "" != "") );
+setElementVisible("wan_showdisabled", "ap" == "wet" || "ap" == "apstawet");
+setElementVisible("wan_info", "pptp" != "disabled");
+setElementVisible("wan_dhcp", "pptp" == "dhcp");
+setElementVisible("wan_connection", "pptp" != "dhcp" && "pptp" != "static");
+setElementVisible("wan_signal", "pptp" == "3g");
+update = new StatusUpdate("Status_Internet.live.asp", 3);
+update.onUpdate("wan_shortproto", function(u) {
+setElementVisible("wan_info", u.wan_shortproto != "disabled");
+setElementVisible("wan_dhcp", u.wan_shortproto == "dhcp");
+setElementVisible("wan_connection", u.wan_shortproto != "dhcp" && u.wan_shortproto != "static");
+});
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui" onload="reloadIt()">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuRouter)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.statuInet)</script></strong></span></li>
+      <li><a href="Status_Lan.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuLAN)</script></strong></a></li>
+      <li><a href="Status_Wireless.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuWLAN)</script></strong></a></li>
+      <li><a href="Status_Bandwidth.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuBand)</script></strong></a></li>
+      <li><a href="Info.htm"><strong><script type="text/javascript">Capture(bmenu.statuSysInfo)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="status" action="#" method="post">
+<input type="hidden" name="submit_button" value="Status_Internet" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+
+<h2><script type="text/javascript">Capture(status_inet.h11)</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(status_inet.conft)</script></legend>
+<div class="setting" id="wan_showdisabled">
+<div class="label"><script type="text/javascript">Capture(idx.conn_type)</script></div>
+<script type="text/javascript">Capture(share.disabled)</script>
+</div>
+<div id="wan_show" style="display:none">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.conn_type)</script></div>
+
+
+
+PPTP
+
+
+
+&nbsp;
+</div>
+<div id="wan_info" style="display:none">
+<div class="setting" id="wan_connection">
+<div class="label"><script type="text/javascript">Capture(status_inet.www_loginstatus)</script></div>
+<span id="wan_status">Disconnected&nbsp;<input type="button" value="Connect" onclick="connect(this.form, 'Connect_pptp');" /></span>
+</div>
+<div class="setting" id="wan_signal">
+<div class="label">Signal Status</div>
+<span id="wan_3g_signal">-40 DBm</span>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(status_inet.wanuptime)</script></div>
+<span id="wan_uptime">Not available</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<span id="wan_ipaddr">10.88.193.137</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<span id="wan_netmask">0.0.0.0</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.gateway)</script></div>
+<span id="wan_gateway">195.227.105.178</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label">DNS 1</div>
+<span id="wan_dns0">10.88.193.1</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label">DNS 2</div>
+<span id="wan_dns1"></span>&nbsp;
+</div>
+<div class="setting">
+<div class="label">DNS 3</div>
+<span id="wan_dns2"></span>&nbsp;
+</div>
+<div id="wan_dhcp">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(status_inet.leasetime)</script></div>
+<span id="dhcp_remaining"></span>&nbsp;
+</div>
+<div class="center">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.dhcprel + "\" onclick=\"DHCPAction(this.form,'release');\">");
+document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.dhcpren + "\" onclick=\"DHCPAction(this.form,'renew');\">");
+//]]>
+</script>
+</div>
+</div>
+</div>
+</div>
+</fieldset><br />
+
+<div id="wan_showtraff" style="display:none">
+<h2><script type="text/javascript">Capture(status_inet.traff)</script> </h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(status_inet.traff_tot)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(status_inet.traffin)</script>&nbsp;(MBytes)</div>
+<span id="ttraff_in">0</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(status_inet.traffout)</script>&nbsp;(MBytes)</div>
+<span id="ttraff_out">0</span>&nbsp;
+</div>
+</fieldset><br />
+<fieldset>
+<legend><script type="text/javascript">Capture(status_inet.traff_mon)</script></legend>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<iframe id=\"graph\" src=\"" + load_file(count) + "\" width=\"555\" height=\"350\" frameborder=\"0\" type=\"text/html\"></iframe>");
+//]]>
+</script>
+<div class="center">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" value=\"" + status_inet.previous + "\" onclick=\"do_show_prev();\">");
+document.write("<input class=\"button\" type=\"button\" value=\"" + status_inet.next + "\" onclick=\"do_show_next();\">");
+//]]>
+</script>
+</div>
+</fieldset><br />
+<fieldset>
+<legend><script type="text/javascript">Capture(status_inet.dataadmin)</script></legend>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"backup_button\" value=\"" + sbutton.backup + "\" onclick=\"window.location.href='traffdata.bak';\" />");
+document.write("<input class=\"button\" type=\"button\" name=\"restore_button\" value=\"" + sbutton.restore + "\" onclick=\"openWindow('Traff_admin.asp', 500, 180);\" />");
+document.write("<input class=\"button\" type=\"button\" name=\"delete_button\" value=\"" + sbutton.del + "\" onclick=\"ttraff_remove_submit(this.form);\" />");
+//]]>
+</script>
+</fieldset><br />
+</div>
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+var autoref = sbutton.autorefresh;
+submitFooterButton(0,0,0,autoref);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(status_inet.conft)</script>: </dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_inet.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(status_inet.traff_tot)</script>: </dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_inet.right4)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(status_inet.traff_mon)</script>: </dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_inet.right6)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HStatus.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:17 up 24 min, load average: 0.14, 0.03, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

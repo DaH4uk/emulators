@@ -1,0 +1,240 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="Microsoft FrontPage 6.0">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script language="JavaScript" src="Generaljs.js"></script>
+<script language="JavaScript">
+<!--
+<!-- RpUseIdentifier RpIdentifier=doLoadFunc RpItemType=ItemGroup -->
+    function doLoad()
+    {
+        top.buttom.location="buttom.html";
+    }
+
+    function doSubmit()
+
+    {
+        top.buttom.location="ack.html"
+        parent.ReNameTitle(document.forms[0].TitleName, document.forms[0].sysSystemName);
+    }
+
+
+  var ns, ie;
+    var Vmajor = parseInt(navigator.appVersion);
+  if(navigator.appName == "Netscape") {
+    ns = true; ie = false;
+  } else if(navigator.appName == "Microsoft Internet Explorer") {
+    ie = true; ns = false;
+  } else {
+     ns = false; ie = false;
+  }
+
+  function chkChar(event) {
+    if(ns)
+      val = event.which;
+    else
+      val = event.keyCode;
+    if(val == 0 || val == 8)
+      return true;
+
+      if((val > 47 && val < 58) || (val > 64 && val < 91) || (val > 96 && val < 123) || (val == 45) || (val == 46) || (val == 64) || (val == 95))
+        return true;
+      else
+        return false;
+  }
+
+  function chkChar2(event) {
+    if(ns)
+      val = event.which;
+    else
+      val = event.keyCode;
+    if(val == 0 || val == 8)
+      return true;
+
+      if((val > 47 && val < 58) || (val > 64 && val < 91) || (val > 96 && val < 123) || (val == 45) || (val == 46) )
+        return true;
+      else
+        return false;
+  }
+
+  top.header.szHelp="h_Sys_General.html";
+
+// -->
+</script>
+
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/General_1" target="main">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>       	<table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+          	<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+General			</b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="TimeZone.html" target="main" class="sub"><b><FONT class=NaviText>
+Time Setting            </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+              	<td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+              	<td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+System Setup                </td>
+</tr>
+<tr>
+              	<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+              <tr>
+              	<td width="40%">
+System Name                </td>
+<td><input type="text" name="sysSystemName" size="30" maxlength="30" value="NBG334W" onKeyPress="return chkChar(event);" />
+                </td>
+</tr>
+<tr>
+              	<td>Domain Name                </td>
+<td><input type="text" name="sysDomainName" size="30" maxlength="38" value="" onKeyPress="return chkChar2(event);" />
+                </td>
+</tr>
+<tr>
+              	<td>Administrator Inactivity Timer				</td>
+<td><input type="text" name="StdioTimout" size="4" maxlength="4" value="5" />
+
+(minutes, 0 means no timeout)<input type="hidden" name="TitleName" value="ZyXEL NBG334W" />
+                </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+              	<td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+              	<td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Password Setup                </td>
+</tr>
+<tr>
+              	<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+              <tr>
+              	<td width="40%">
+Old Password                </td>
+<td>
+<input type="password" name="sysOldPasswd" size="20" maxlength="30" value="****" />
+				</td>
+</tr>
+<tr>
+              	<td>New Password				</td>
+<td>
+<input type="password" name="sysNewPasswd" size="20" maxlength="30" value="****" />
+				</td>
+</tr>
+<tr>
+              	<td>Retype to Confirm				</td>
+<td>
+<input type="password" name="sysConfirmPasswd" size="20" maxlength="30" value="****" />
+				</td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+<input type="submit" name="sysSubmit" value="Apply" onClick="doSubmit(); document.forms[0].target='buttom';" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">					</td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+                      
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+ 
+</form>
+<p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Maintenance > System > General');
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

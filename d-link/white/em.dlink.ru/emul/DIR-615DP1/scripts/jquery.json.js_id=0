@@ -1,0 +1,57 @@
+! function($) {
+    var escapeable = /["\\\x00-\x1f\x7f-\x9f]/g,
+        meta = {
+            "\b": "\\b",
+            "	": "\\t",
+            "\n": "\\n",
+            "\f": "\\f",
+            "\r": "\\r",
+            '"': '\\"',
+            "\\": "\\\\"
+        };
+    $.toJSON = "object" == typeof JSON && JSON.stringify ? JSON.stringify : function(o) {
+        if (null === o) return "null";
+        var type = typeof o;
+        if ("undefined" === type) return void 0;
+        if ("number" === type || "boolean" === type) return "" + o;
+        if ("string" === type) return $.quoteString(o);
+        if ("object" === type) {
+            if ("function" == typeof o.toJSON) return $.toJSON(o.toJSON());
+            if (o.constructor === Date) {
+                var month = o.getUTCMonth() + 1,
+                    day = o.getUTCDate(),
+                    year = o.getUTCFullYear(),
+                    hours = o.getUTCHours(),
+                    minutes = o.getUTCMinutes(),
+                    seconds = o.getUTCSeconds(),
+                    milli = o.getUTCMilliseconds();
+                return 10 > month && (month = "0" + month), 10 > day && (day = "0" + day), 10 > hours && (hours = "0" + hours), 10 > minutes && (minutes = "0" + minutes), 10 > seconds && (seconds = "0" + seconds), 100 > milli && (milli = "0" + milli), 10 > milli && (milli = "0" + milli), '"' + year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds + "." + milli + 'Z"'
+            }
+            if (o.constructor === Array) {
+                for (var ret = [], i = 0; i < o.length; i++) ret.push($.toJSON(o[i]) || "null");
+                return "[" + ret.join(",") + "]"
+            }
+            var name, val, pairs = [];
+            for (var k in o) {
+                if (type = typeof k, "number" === type) name = '"' + k + '"';
+                else {
+                    if ("string" !== type) continue;
+                    name = $.quoteString(k)
+                }
+                type = typeof o[k], "function" !== type && "undefined" !== type && (val = $.toJSON(o[k]), pairs.push(name + ":" + val))
+            }
+            return "{" + pairs.join(",") + "}"
+        }
+    }, $.evalJSON = "object" == typeof JSON && JSON.parse ? JSON.parse : function(src) {
+        return eval("(" + src + ")")
+    }, $.secureEvalJSON = "object" == typeof JSON && JSON.parse ? JSON.parse : function(src) {
+        var filtered = src.replace(/\\["\\\/bfnrtu]/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, "");
+        if (/^[\],:{}\s]*$/.test(filtered)) return eval("(" + src + ")");
+        throw new SyntaxError("Error parsing JSON, source is not valid.")
+    }, $.quoteString = function(string) {
+        return string.match(escapeable) ? '"' + string.replace(escapeable, function(a) {
+            var c = meta[a];
+            return "string" == typeof c ? c : (c = a.charCodeAt(), "\\u00" + Math.floor(c / 16).toString(16) + (c % 16).toString(16))
+        }) + '"' : '"' + string + '"'
+    }
+}(jQuery);

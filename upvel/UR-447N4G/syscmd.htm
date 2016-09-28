@@ -1,0 +1,75 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<SCRIPT language=Javascript src="syscmd.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Системные команды</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script>
+function saveClick(){
+        field = document.formSysCmd.sysCmd ;
+        if(field.value.indexOf("ping")==0 && field.value.indexOf("-c") < 0){
+                alert(syscmd_alert1);
+                return false;
+        }
+        if(field.value == ""){
+                alert(syscmd_alert2);
+                field.value = field.defaultValue;
+                field.focus();
+                return false ;
+        }
+        return true;
+}
+</script>
+</head>
+
+<body>
+<blockquote>
+<h2><script>dw(syscmd_header)</script></h2>
+
+
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http:///%22http://192.168.10.1/boafrm/formSysCmd%22%22" method=POST name="formSysCmd">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td>
+<script>dw(syscmd_explain)</script>
+  </td></tr>
+</table>
+<br>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td><script>dw(syscmd_command)</script>&nbsp;&nbsp;&nbsp;
+	<input type="text" name="sysCmd" value="" size="30" maxlength="50">&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="submit"  name="apply" onClick='return saveClick()'></td>
+	<script>document.formSysCmd.apply.value=sycmd_apply;</script>
+  </tr>
+</table>
+  <input type="hidden" value="/syscmd.htm" name="submit-url">
+</form>
+  <script language="JavaScript">
+  <!--
+    document.formSysCmd.sysCmd.focus();
+  //-->
+  </script>
+
+  <textarea rows="30" name="msg" cols="90" wrap="virtual"></textarea>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td>  
+  <input type="button"  name="refresh" onClick="javascript: window.location.reload()">
+  <script>document.formSysCmd.refresh.value=syscmd_refresh;</script>
+  <!-- <input type="button" value="Close" name="close" onClick="javascript: window.close()"> -->
+  </td></tr>
+</table>  
+  
+</blockquote>
+
+</body>
+
+</html>
+
+

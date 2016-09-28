@@ -1,0 +1,207 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wds1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='DNS';
+var menuSection	='WAN';
+var menuItem	='DNS';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+function initData()
+{
+  var dns1='';
+  var dns2='';
+  if(dns1!='')
+  {
+   t1=dns1.indexOf('.');
+   if(t1!=-1)document.tF0.wan_dns1_1.value=dns1.substring(0,t1);
+   t2=dns1.indexOf('.',(t1+1));
+   if(t2!=-1)document.tF0.wan_dns1_2.value=dns1.substring((t1+1),t2);
+   t1=dns1.indexOf('.',(t2+1));
+   if(t1!=-1)document.tF0.wan_dns1_3.value=dns1.substring((t2+1),t1);
+   document.tF0.wan_dns1_4.value=dns1.substring(t1+1);
+  }
+  if(dns2!='')
+  {
+   t1=dns2.indexOf('.');
+   if(t1!=-1)document.tF0.wan_dns2_1.value=dns2.substring(0,t1);
+   t2=dns2.indexOf('.',(t1+1));
+   if(t2!=-1)document.tF0.wan_dns2_2.value=dns2.substring((t1+1),t2);
+   t1=dns2.indexOf('.',(t2+1));
+   if(t1!=-1)document.tF0.wan_dns2_3.value=dns2.substring((t2+1),t1);
+   document.tF0.wan_dns2_4.value=dns2.substring(t1+1);
+   }
+   AutoFromISP();
+}
+
+function storeData()
+{
+    if(document.tF0.auto_from_isp.checked)
+    {
+        document.tF0.m_autodns.value='1';
+        document.tF0.pppoe_autodns.value='1';
+        document.tF0.dhcp_autodns.value='1';
+        document.tF0.m_wan_dns0.value='';
+        document.tF0.m_wan_dns1.value='';
+    }
+    else
+    {
+        document.tF0.m_wan_dns0.value=document.tF0.wan_dns1_1.value+'.'+document.tF0.wan_dns1_2.value+'.'+document.tF0.wan_dns1_3.value+'.'+document.tF0.wan_dns1_4.value;
+        document.tF0.m_wan_dns1.value=document.tF0.wan_dns2_1.value+'.'+document.tF0.wan_dns2_2.value+'.'+document.tF0.wan_dns2_3.value+'.'+document.tF0.wan_dns2_4.value;
+        
+        if(document.tF0.m_wan_dns0.value!='...')
+        {
+            if(!validateWanIp(document.tF0.m_wan_dns0.value))
+                return false; 
+        }
+        else
+        { 
+            alert(wds7);
+            return false;
+        }
+        
+        if(document.tF0.m_wan_dns1.value!='...')
+        { 
+            if(!validateWanIp(document.tF0.m_wan_dns1.value))
+                return false;
+        }
+        else
+        { 
+            document.tF0.m_wan_dns1.value='';   
+        }
+        
+        document.tF0.pppoe_dns0.value=document.tF0.m_wan_dns0.value;
+        document.tF0.pppoe_dns1.value=document.tF0.m_wan_dns1.value;
+        document.tF0.dhcp_dns0.value=document.tF0.m_wan_dns0.value;
+        document.tF0.dhcp_dns1.value=document.tF0.m_wan_dns1.value;
+        document.tF0.m_autodns.value='0';
+        document.tF0.pppoe_autodns.value='0';
+        document.tF0.dhcp_autodns.value='0';
+    }
+    
+    return true;
+}
+
+function submitF() 
+{
+	if(storeData()==false)
+		return false;
+	alert(ur5);
+	document.tF0.action.value="apply";
+	return true;
+}
+
+
+function AutoFromISP()
+{
+   if(document.tF0.auto_from_isp.checked)
+   {
+     document.tF0.wan_dns1_1.disabled=true;
+     document.tF0.wan_dns1_2.disabled=true;
+     document.tF0.wan_dns1_3.disabled=true;
+     document.tF0.wan_dns1_4.disabled=true;
+     document.tF0.wan_dns2_1.disabled=true;
+     document.tF0.wan_dns2_2.disabled=true;
+     document.tF0.wan_dns2_3.disabled=true;
+     document.tF0.wan_dns2_4.disabled=true;
+   }
+   else
+   {
+     document.tF0.wan_dns1_1.disabled=false;
+     document.tF0.wan_dns1_2.disabled=false;
+     document.tF0.wan_dns1_3.disabled=false;
+     document.tF0.wan_dns1_4.disabled=false;
+     document.tF0.wan_dns2_1.disabled=false;
+     document.tF0.wan_dns2_2.disabled=false;
+     document.tF0.wan_dns2_3.disabled=false;
+     document.tF0.wan_dns2_4.disabled=false;
+     
+     if('vlan1'=='static')
+      document.tF0.auto_from_isp.disabled=true;
+   }
+}
+
+function logoutF()
+{
+	document.tF0.logout.value=1;
+	document.tF0.submit();
+	return true;
+}
+
+function clrChg()
+{
+    document.tF0.action.value="clear";
+    return true;
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="initData();" >
+<form name="tF0" action="http://www.belkin.com/PYRAMID/AdvancedInfo/F5D8236-4ver3000/Interfaces/3.00.02/En/apply_40.html" method="post">
+<input type=hidden name=webpage value=wan_dns.html>
+<input type=hidden name="action" value="">
+<input type=hidden name="wan_access" value="">
+<input type=hidden name="wan_proto" value="">
+<input type="hidden" name="pppoe_autodns" value="">
+<input type="hidden" name="dhcp_autodns" value="">
+<input type="hidden" name="m_autodns" value="">
+<input type=hidden name="m_wan_dns" value="">
+<input type=hidden name="m_wan_dns0" value="">
+<input type=hidden name="m_wan_dns1" value="">
+<input type=hidden name="pppoe_dns" value="">
+<input type=hidden name="pppoe_dns0" value="">
+<input type=hidden name="pppoe_dns1" value="">
+<input type=hidden name="dhcp_dns" value="">
+<input type=hidden name="dhcp_dns0" value="">
+<input type=hidden name="dhcp_dns1" value="">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(wds1);</script><br><br>
+<table border=0 class="copy_1"><tr><td width=5>&nbsp;</td><td>
+<table width=550 border="0" cellspacing="0" cellpadding="0" align=left class="copy_1">
+<tr align=left><td colspan=3 align=left class="body"><script language="javascript" type="text/javascript">dw(wds2);</script><br><br></td>
+</tr>
+	<tr><td width="36">&nbsp;</td>
+	<td colspan=2 nowrap=1 width=500 class="bold_body">
+	<input type="checkbox"  checked name="auto_from_isp" value="" onClick="AutoFromISP()">
+	<script language="javascript" type="text/javascript">dw(wds3);</script><br><br></td>
+	</tr><tr><td width="36">&nbsp;</td><td width="185" class="bold_body"><script language="javascript" type="text/javascript">dw(wds4);</script> &gt;<br><br></td>
+	<td width="335" >
+	<input type="text" name="wan_dns1_1" size="4" disabled maxlength="3" value="">.
+	<input type="text" name="wan_dns1_2" size="4" disabled maxlength="3" value="">.
+	<input type="text" name="wan_dns1_3" size="4" disabled maxlength="3" value="">.
+	<input type="text" name="wan_dns1_4" size="4" disabled maxlength="3" value="">
+	<br><br></td></tr><tr><td width="36">&nbsp;</td><td width="185" nowrap=1 valign=bottom class="bold_body"><script language="javascript" type="text/javascript">dw(wds5);</script> &gt;<br><br></td>
+	<td width="335">
+	<input type="text" name="wan_dns2_1" size="4" disabled maxlength="3" value="">.
+	<input type="text" name="wan_dns2_2" size="4" disabled maxlength="3" value="">.
+	<input type="text" name="wan_dns2_3" size="4" disabled maxlength="3" value="">.
+	<input type="text" name="wan_dns2_4" size="4" disabled maxlength="3" value="">
+	<br><br></td>
+	</tr><tr>
+	<td width="36">&nbsp;</td><td colspan="2" class="body"><script language="javascript" type="text/javascript">dw(wds6);</script> 
+	<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#dns','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+	<script language="javascript" type="text/javascript">dw(sm1);</script></a><br><br></td>
+	</tr><tr>
+	<td width="36">&nbsp;</td><td colspan="2" align=center>
+	<script language="javascript" type="text/javascript">dw('<input type="submit" name="cancel" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onClick="GURL(\'lan_dhcp.html\')" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;" onClick="return clrChg()">&nbsp;&nbsp;');
+	dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="');dw(btn2);dw('" onClick="return submitF();" class="submitBtn">');</script>
+	</td></tr></table></td></tr></table></td>                     
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

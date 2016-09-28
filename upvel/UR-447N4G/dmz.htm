@@ -1,0 +1,83 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<SCRIPT language=Javascript src="dmz.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>DMZ</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script>
+function saveClick()
+{
+  if (!document.formDMZ.enabled.checked)
+  	return true;
+
+  if (document.formDMZ.ip.value=="")
+	return true;
+
+  if ( checkIpAddr(document.formDMZ.ip, firewall_ipaddr_invalid) == false )
+	    return false;
+
+  return true;
+}
+
+function updateState()
+{
+  if (document.formDMZ.enabled.checked) {
+ 	enableTextField(document.formDMZ.ip);
+  }
+  else {
+ 	disableTextField(document.formDMZ.ip);
+  }
+}
+
+function Load_Setting()
+{
+	if ( 0 )
+		document.formDMZ.enabled.checked = true;
+	updateState();
+}
+</script>
+</head>
+
+<body onload="Load_Setting();">
+<blockquote>
+<h2><script>dw(dmz_header)</script></h2>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td>
+
+<script>dw(dmz_header_explain)</script>
+
+</td></tr>
+</table>
+<br>
+
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http:///%22http://192.168.10.1/boafrm/formDMZ%22%22" method=POST name="formDMZ">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+	<tr><td class="item_td">
+	   	<input type="checkbox" name="enabled" value="ON" ONCLICK=updateState()>&nbsp;<script>dw(dmz_enable)</script>
+    </td></tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+	<tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(dmz_host_ipaddr)</script></td>
+     <td width ="70%" class="item_td"><input type="text" name="ip" size="15" maxlength="15" value= >
+</td></tr>
+<tr><td>
+     <input type="submit"  name="save" onClick="return saveClick()">&nbsp;&nbsp;
+     <script>document.formDMZ.save.value=firewall_apply;</script>
+        <!--<input type="reset" value="Reset" name="reset">-->
+        <input type="hidden" value="/dmz.htm" name="submit-url">
+</td></tr>
+</table>
+     <script> updateState(); </script>
+</form>
+
+</blockquote>
+</body>
+</html>

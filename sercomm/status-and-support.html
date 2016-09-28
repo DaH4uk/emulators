@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html class="product16" style="display: block;">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<!--[if lt IE 9]>
+	<script src="js/html5.js"></script>
+	<![endif]-->
+	<link href="./img/entry-level.png" type="image/png" rel="icon">
+	<link rel="stylesheet" href="./css/reset.css" type="text/css">
+	<link rel="stylesheet" href="./css/style.css" type="text/css">
+	<link rel="stylesheet" href="./css/content.css" type="text/css">
+	<!--[if lt IE 9]><style type="text/css">article .button-cancel, article .button-apply, article .button-blank, #progress-bar-buttons .button-apply, #progress-bar-buttons .button-cancel { padding-bottom: 3px; }</style><![endif]-->
+	<script src="./js/jquery-1.7.1.min.js" type="text/javascript"></script>
+	<style type="text/css">
+		:root .banner_box,
+		:root .adv,
+		:root #header+#content>#left>#rlblock_left,
+		:root #content>#center>.dose>.dosesingle,
+		:root #content>#right>.dose>.dosesingle {
+			display: none !important;
+		}
+	</style>
+	<script src="./js/jquery.easing.1.3.js" type="text/javascript"></script>
+	<script src="./js/jquery.hashchange.js" type="text/javascript"></script>
+	<!-- justin add -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie8content.css" type="text/css" />
+	<![endif]-->
+	<script src="./js/mainFunctions.js" type="text/javascript"></script>
+	<script src="./js/mainFrame.js" type="text/javascript"></script>
+	<script src="./js/pageLoadFunctions.js" type="text/javascript"></script>
+	<script src="./js/multi_lang.js" type="text/javascript"></script>
+
+	<script src="./js/status-and-support.js" type="text/javascript"></script>
+
+	<!-- justin add end -->
+	<link rel="stylesheet" href="./css/status-and-support.css" type="text/css">
+	<script src="./js/functionsNotOverview.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var category = 'status-and-support';
+		var defaultSub = '1';
+		// get submenu and subsubmenu
+		var gets = getHashVars();
+		sub = gets['sub'];
+		var subSub = gets['subSub'];
+		var load = ''; // content to load
+		var oldCat = 'value';
+		var task = false;
+		var messagesCat = false;
+	</script>
+
+	<title>Статус</title>
+</head>
+
+<body class="en expert status-and-support">
+
+	<div id="wrap">
+		<header id="header">
+			<div id="head-wrap" class="clearfix">
+				<a href="./overview.html" class="logos"><img src="./img/entry-level.png" alt="Sercomm Logo"></a><a href="./index.html" id="logout">&nbsp;</a>
+				<div id="dropDownBasExp" class="admin" style="display: none;">
+					<div href="" id="selectBasic" class="selectBasic"><span id="lang700056">Базовый режим</span></div>
+					<div href="" id="selectExpert" class="selectExpert"><span id="lang700057">Эксперт-режим</span></div>
+				</div>
+			</div>
+			<nav>
+				<ul class="clearfix five status-and-supportMenu ">
+					<li id="overview"><a href="./overview.html"><span id="lang700031">Обзор</span></a></li>
+					<li id="internet"><a href="./internet.html"><span id="lang700033">Интернет</span></a></li>
+					<li id="wifi"><a href="./wifi.html"><span id="lang700034">Wi-Fi</span></a></li>
+					<li id="settings"><a href="./settings.html"><span id="lang700035">Параметры</span></a></li>
+					<li id="status-and-support" class="active"><a href="./status-and-support.html"><span id="lang700036">Статус и поддержка</span></a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<section id="inner-wrap" class="clearfix notOverview">
+			<script>
+				document.write('<div id="indicator"><img src="img/indicator.png" alt="Indicator" /></div>');
+			</script>
+			<div id="indicator" style="display: none;"><img src="./img/indicator.png" alt="Indicator"></div>
+			<div id="navigation">
+				<ul>
+					<li id="1" class="menuItem sub active"><a href="./status-and-support.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906001">Статус</span></a>
+						<div class="subMenu border subMenu4" style="overflow: hidden; height: 159px;">
+							<ul>
+								<li id="82" class="subMenuItem sub"><a href="./status_eth_wan.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang907003">Статус Ethernet WAN</span></a></li>
+								<li id="67" class="subMenuItem sub"><a href="./status-wan.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906013">Статус WAN</span></a></li>
+								<li id="70" class="subMenuItem sub"><a href="./status-lan.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906014">Cтатус LAN</span></a></li>
+								<li id="71" class="subMenuItem sub"><a href="./routing.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906015">Маршрутизация</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li id="28" class="menuItem"><a href="./NAPT.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang903007">Соединения NAPT</span></a></li>
+					<li id="4" class="menuItem"><a href="./diagnostic.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906004">Диагностическая утилита</span></a></li>
+					<li id="41" class="menuItem"><a href="./reboot.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906007">Перезагрузка</span></a></li>
+					<li id="6" class="menuItem"><a href="./log.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906006">Журнал событий</span></a></li>
+					<li id="98" class="menuItem"><a href="./port_mirroring.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906019">Port mirroring</span></a></li>
+					<li id="42" class="menuItem"><a href="./about.html" onclick="page_data_load(&#39;status-and-support&#39;);"><span id="lang906008">Об устройстве</span></a></li>
+				</ul>
+			</div>
+
+			<article id="status-and-support">
+				<div id="content" class="sub1">
+
+
+
+
+
+
+
+					<h1><span id="lang601001">Статус</span></h1>
+					<h2><span id="lang601002">Обзор настроек вашего маршрутизатора.</span></h2>
+
+					<h3><span id="lang601017">Система</span></h3>
+					<div class="h3-content">
+						<div class="row">
+							<div class="left">
+								<span id="lang601018">Серийный номер</span> </div>
+							<div class="left" id="sys_serial_number">SR1511004209</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601019">Версия прошивки</span> </div>
+							<div class="left" id="sys_firmware_version">S1010-v2.0.08</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601020">Версия загрузчика</span> </div>
+							<div class="left" id="sys_bootloader_version">1.0.20</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601021">Модель</span> </div>
+							<div class="left" id="sys_hardware_version">S1010v1</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601022">Время работы</span> </div>
+							<div class="left">
+								<span id="sys_uptime" style="display: inline;">0 дн., 21 ч., 09 мин.</span> </div>
+						</div>
+
+						<div class="row">
+							<div class="left">
+								<span id="lang601048">Причина перезагрузки</span> </div>
+							<div class="left" id="sys_reboot_cause">Unknow</div>
+						</div>
+
+						<div class="row">
+							<div class="left">
+								<span id="lang601023">Загрузка ЦП</span> </div>
+							<div class="left" id="sys_cpu_usage"> 0.00%</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601024">Загрузка памяти</span> </div>
+							<div class="left" id="sys_memory_usage">54.89%</div>
+						</div>
+
+						<div class="row">
+							<div class="left">
+								<span id="lang601038">Версия  драйвера WiFi</span> </div>
+							<div class="left" id="sys_wireless_driver_version">1.6</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601039">Дата и время</span> </div>
+							<div class="left" id="sys_date_time">2016-09-08 17:12:20</div>
+						</div>
+					</div>
+
+
+					<h3><span id="lang601003">Интернет</span></h3>
+					<div class="h3-content">
+						<div class="row">
+							<div class="left">
+								<span id="lang601004">IP-адрес</span> </div>
+							<div class="left" id="inter_ip_address">37.112.41.52</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601029">Шлюз</span> </div>
+							<div class="left" id="inter_gateway">10.74.255.254</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601011">MAC-адрес</span> </div>
+							<div class="left" id="inter_mac_address">00:11:22:33:44:55</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601005">IP-адрес основного DNS</span> </div>
+							<div class="left" id="inter_primary_dns">109.194.0.1</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601006">IP-адрес альтернативного DNS</span> </div>
+							<div class="left" id="inter_secondary_dns">109.194.1.1</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601007">Firewall</span> </div>
+							<div class="left">
+								<span id="inter_firewall">Вкл.</span> </div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601047">IP-адрес WAN</span> </div>
+							<div class="left" id="inter_wan_ip_address">37.112.41.52</div>
+						</div>
+						<!-- -->
+						<div class="ipv6_status">
+							<div class="row">
+								<div class="left">
+									<span id="lang601052">IPv6 Link-Local адрес</span> </div>
+								<div class="left" id="inter_ipv6_link_local_address">N/A</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601053">IPv6 шлюз </span> </div>
+								<div class="left" id="inter_ipv6_gateway">N/A</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601054">IPv6 префикс</span> </div>
+								<div class="left" id="inter_ipv6_prefix_delegation">N/A</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601055">IPv6 DNS</span> </div>
+								<div class="left" id="inter_ipv6_dns_address1">N/A</div>
+							</div>
+							<div class="row">
+								<div class="left">&nbsp;</div>
+								<div class="left" id="inter_ipv6_dns_address2"></div>
+							</div>
+						</div>
+						<!-- -->
+					</div>
+
+
+					<h3><span id="lang601008">Локальная сеть</span></h3>
+					<div class="h3-content">
+						<div class="row">
+							<div class="left">
+								<span id="lang601009">IP-сеть</span> </div>
+							<div class="left" id="lan_ip_network">255.255.255.0/24</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601010">Шлюз по умолчанию</span> </div>
+							<div class="left" id="lan_default_gateway">192.168.0.1</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601011">MAC-адрес</span> </div>
+							<div class="left" id="lan_mac_address">00:11:22:33:44:55</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601012">DHCP-сервер</span> </div>
+							<div class="left">
+								<span id="lan_dhcp_server">Вкл.</span> </div>
+						</div>
+						<!-- -->
+						<div class="ipv6_status">
+							<div class="row">
+								<div class="left">
+									<span id="lang601056">Сервер DHCPv6</span> </div>
+								<div class="left" id="lan_dhcpv6_server">Вкл.</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601057">Router Advertisement</span> </div>
+								<div class="left" id="lan_router_advertisement">Вкл.</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601058">IPv6 шлюз по умолчанию</span> </div>
+								<div class="left" id="lan_ipv6_default_gateway">fe80::f04a:50ff:fe2e:f2c1</div>
+							</div>
+						</div>
+						<!-- -->
+						<div class="row">
+							<div class="left">
+								<span id="lang601040">Порт LAN 1</span> </div>
+							<div class="left">
+								<img alt="" src="./img/online.png" id="lan_port1_img"> <span id="lan_port1_text">Активен</span>
+							</div>
+							<div class="right link-speed" id="lan_port1_speed">100 Mbps</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601041">Порт LAN 2</span> </div>
+							<div class="left">
+								<img alt="" src="./img/offline.png" id="lan_port2_img"> <span id="lan_port2_text">Неактивен</span>
+							</div>
+							<div class="right link-speed" id="lan_port2_speed">0 Mbps</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601042">Порт LAN 3</span> </div>
+							<div class="left">
+								<img alt="" src="./img/offline.png" id="lan_port3_img"> <span id="lan_port3_text">Неактивен</span>
+							</div>
+							<div class="right link-speed" id="lan_port3_speed">0 Mbps</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601044">Порт LAN 4</span> </div>
+							<div class="left">
+								<img alt="" src="./img/offline.png" id="lan_port4_img"> <span id="lan_port4_text">Неактивен</span>
+							</div>
+							<div class="right link-speed" id="lan_port4_speed">0 Mbps</div>
+						</div>
+					</div>
+
+
+
+					<h3><span id="lang601013">Wi-Fi</span> (<span id="lang406012">2.4 ГГц</span>)</h3>
+					<div class="h3-content">
+						<div class="row">
+							<div class="left">
+								<span id="lang601014">Статус</span> </div>
+							<div class="left">
+								<span id="wifi_status">Вкл.</span> </div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601015">SSID</span> </div>
+							<div class="left" id="wifi_name">WiFi-DOM.ru-1234</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601011">MAC-адрес</span> </div>
+							<div class="left" id="wifi_mac_address">00:11:22:33:44:55</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601028">Безопасность</span> </div>
+							<div class="left" id="wifi_security">WPA + WPA2</div>
+						</div>
+
+						<div class="row">
+							<div class="left">
+								<span id="lang601050">Канал</span> </div>
+							<div class="left" id="wifi_channel">1 + 5</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601051">Пропускная способность</span> </div>
+							<div class="left" id="wifi_bandwidth">300.0 Mbps</div>
+						</div>
+
+						<div class="fon_status" style="display:none;">
+							<div class="row">
+								<div class="left">
+									<span id="lang601059">Статус сети VF WiFi</span> </div>
+								<div class="left" id="vf_wifi_network_status">
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601062">Статус ключа VF WiFi</span> </div>
+								<div class="left" id="vf_wifi_key_status">
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601061">Макс.полоса</span> </div>
+								<div class="left" id="vf_wifi_max_bw">
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<h3><span id="lang601013">Wi-Fi</span> (<span id="lang406013">5 ГГц</span>)</h3>
+					<div class="h3-content">
+						<div class="row">
+							<div class="left">
+								<span id="lang601014">Статус</span> </div>
+							<div class="left">
+								<span id="wifi_status_5g">Вкл.</span> </div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601015">SSID</span> </div>
+							<div class="left" id="wifi_name_5g">WiFi-DOM.ru-1234-5G</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601011">MAC-адрес</span> </div>
+							<div class="left" id="wifi_mac_address_5g">00:11:22:33:44:55</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601028">Безопасность</span> </div>
+							<div class="left" id="wifi_security_5g">WPA + WPA2</div>
+						</div>
+
+						<div class="row">
+							<div class="left">
+								<span id="lang601050">Канал</span> </div>
+							<div class="left" id="wifi_channel_5g">44 + 48</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang601051">Пропускная способность</span> </div>
+							<div class="left" id="wifi_bandwidth_5g">300.0 Mbps</div>
+						</div>
+
+						<div class="fon_status" style="display:none;">
+							<div class="row">
+								<div class="left">
+									<span id="lang601059">Статус сети VF WiFi</span> </div>
+								<div class="left" id="vf_wifi_network_status_5g">
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601062">Статус ключа VF WiFi</span> </div>
+								<div class="left" id="vf_wifi_key_status_5g">
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									<span id="lang601061">Макс.полоса</span> </div>
+								<div class="left" id="vf_wifi_max_bw_5g">
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+
+					<style>
+						.row .left:first-of-type {
+							width: 220px;
+						}
+						
+						.h3-content .row {
+							height: 16px;
+							padding: 10px 0;
+						}
+						
+						.right.link-speed {
+							margin-right: 180px;
+						}
+					</style>
+
+					<!--[if lt IE 9]>
+<style>
+.row .left {
+	width: 220px;
+}
+.row .left + div {
+	width: auto;
+}
+</style>
+<![endif]-->
+				</div>
+			</article>
+		</section>
+	</div>
+	<div id="langAndFirmware" class="clearfix">
+		<div class="left" id="langSelector"><a href="javascript:lang_change(&#39;en&#39;);" class="language-links line">English</a><a href="javascript:lang_change(&#39;ru&#39;);" class="language-links">Русский</a></div>
+		<div class="right firmwareVersion">
+		</div>
+	</div>
+
+
+
+</body>
+
+</html>

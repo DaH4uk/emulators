@@ -1,0 +1,74 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../upgrade.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_upgrade');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#upgrade.html" target=formframe>
+<input type=hidden name=submit_flag value="auto_upgrade_check">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(upgrade_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+function loadvalue()
+{
+var cf=document.forms[0];
+ if('1' == '0')
+ cf.check_upon.checked = false;
+ else
+ cf.check_upon.checked = true;
+ menu_change();
+}
+var netgear_module="JWNR2000";
+var netgear_region="RU";
+var netgear_ver="V1.0.0.7_1.0.6"
+var wds_endis_fun='0';
+var wds_repeater_basic='0';
+var endis_wl_radio='1';
+var vender_model_name='';
+function menu_change() {
+if ( '0' == '1' && '0' == '0' && '1' == '1' )
+{
+ if(top.contents.location.pathname != "menu_wds.html")
+ top.contents.location.href="menu_wds.html";
+}
+else
+{
+ if(top.contents.location.pathname != "menu.html")
+top.contents.location.href="menu.html";
+}
+}
+</script>
+<input type="hidden" name="auto_check_for_upgrade">
+ <tr>
+<script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_upgrade','check')"><b><script>document.write(upgrade_new_version);</script><script>document.write(ba);</script></td>
+<script>document.write(hd);document.write('<input type="button" name="check" value="'+check_mark+'" /></td>');</script>
+ </tr>
+ <tr>
+<script>document.write(hd2);</script><input type="checkbox" name="check_upon" value=1 onClick="check_if_show();"><script>document.write(upgrade_upon);</script></td>
+ </tr>
+<script>document.write(bluebar);</script>
+</form>
+<form method="post" action="http://gui.netgear.ru/cgi-bin/webupgrade.cgi?/cgi-bin/upgrade_ver.html" target=formframe enctype="multipart/form-data"> 
+<TR><script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_upgrade','locate')"><b><script>document.write(upgrade_select_disk);</script><script>document.write(ba);</script></TD></TR>
+<TR><script>document.write(hd);</script> <input name="filename" type="file" size="32" onKeyDown="return false;"></TD></TR>
+<script>document.write(bluebar);</script>
+<TR>
+ <script>document.write(hd2_center);</script>
+<script>document.write("<input type=submit value="+upgrade_mark+" onClick='return clickUpgrade(document.forms[1])'>&nbsp;&nbsp;");</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"upgrade.html\";'>");</script>
+ </TR>
+</TABLE>
+</FORM>
+</body>
+</html>

@@ -1,0 +1,262 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script language="JavaScript">
+<!-- //
+
+    function doLoad() {
+        top.buttom.location="buttom.html";
+    }
+
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+
+    var szHelp="h_UPnP.html";
+
+    function doHelp() {
+        window.open(szHelp, 'HELP', 'width=450,height=250,scrollbars=yes,resizable=yes');
+    }
+// -->
+</script>
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+
+    function checkAndSetWeekdays()
+    {
+    	if ( document.forms[0].cfSchedule_Everyday.checked )
+    	{
+            document.forms[0].cfSchedule_Sun.checked=true;
+    	    document.forms[0].cfSchedule_Mon.checked=true;
+    	    document.forms[0].cfSchedule_Tue.checked=true;
+    	    document.forms[0].cfSchedule_Wed.checked=true;
+    	    document.forms[0].cfSchedule_Thu.checked=true;
+    	    document.forms[0].cfSchedule_Fri.checked=true;
+    	    document.forms[0].cfSchedule_Sat.checked=true;
+    	    return;
+    	}
+    	
+    	if ( !document.forms[0].cfSchedule_Sun.checked )
+    	    return; 	    
+      	if ( !document.forms[0].cfSchedule_Mon.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Tue.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Wed.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Thu.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Fri.checked )
+    	    return;
+    	if ( !document.forms[0].cfSchedule_Sat.checked )
+    	    return;
+	
+	document.forms[0].cfSchedule_Everyday.checked = true;
+    }
+
+    function checkAndSetDaytime(form, str)
+    {  
+        if (str == 'all')
+        {
+            //form.cfSchedule_Allday[0].checked	= true
+	    form.cfSchedule_StartHour.disabled = true;
+	    form.cfSchedule_StartMinute.disabled = true;
+	    form.cfSchedule_EndHour.disabled = true;
+	    form.cfSchedule_EndMinute.disabled = true;
+	    return;
+        }else{
+            //form.cfSchedule_Allday[1].checked	= true    
+	    form.cfSchedule_StartHour.disabled = false;
+	    form.cfSchedule_StartMinute.disabled = false;
+	    form.cfSchedule_EndHour.disabled = false;
+	    form.cfSchedule_EndMinute.disabled = false;
+	    return;
+        }
+    }
+</script>
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+
+<form method="post" action="http://www.zyxeltech.de/Forms/SCFilterSchedule_1" target="buttom">
+
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>
+               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="SCFilter.html" target="main" class="sub"><b><FONT class=NaviText>
+Filter                    </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+Schedule                   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+Schedule to Block                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td>Day to Block                         </td>
+</tr>
+<tr>
+                         <td><input type="checkbox" name="cfSchedule_Everyday" checked onClick="checkAndSetWeekdays();" />
+Everyday                         </td>
+</tr>
+<tr>
+                         <td><input type="checkbox" name="cfSchedule_Sun" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Sun&nbsp;
+<input type="checkbox" name="cfSchedule_Mon" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Mon&nbsp;
+<input type="checkbox" name="cfSchedule_Tue" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Tue&nbsp;
+<input type="checkbox" name="cfSchedule_Wed" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Wed&nbsp;
+<input type="checkbox" name="cfSchedule_Thu" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Thu&nbsp;
+<input type="checkbox" name="cfSchedule_Fri" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Fri&nbsp;
+<input type="checkbox" name="cfSchedule_Sat" checked onclick="if (!this.checked){document.forms[0].cfSchedule_Everyday.checked=false;} checkAndSetWeekdays();" />
+Sat                         </td>
+</tr>
+<tr>
+                         <td>&nbsp;</td>
+</tr>
+<tr>
+                         <td>Time of Day to Block                    <span class="hint">
+(24-Hour Format)                  </span> </td>
+</tr>
+<tr>
+                         <td><input type="radio" name="cfSchedule_Allday" value="0" checked onClick="checkAndSetDaytime(form,'all');" />
+All day                         </td>
+</tr>
+<tr>
+                         <td><input type="radio" name="cfSchedule_Allday" value="1" onClick="checkAndSetDaytime(form,'selected');" />
+
+From :                  &nbsp;
+Start&nbsp;
+<input type="text" name="cfSchedule_StartHour" size="2" maxlength="2" value="0" onkeypress="chk_num(event)" onFocus="if (this.form.cfSchedule_Allday[0].checked) this.form.cfSchedule_Allday[0].focus();" />
+                  <span class="hint">
+(hour)                  </span> &nbsp;
+<input type="text" name="cfSchedule_StartMinute" size="2" maxlength="2" value="0" onkeypress="chk_num(event)" onFocus="if (this.form.cfSchedule_Allday[0].checked) this.form.cfSchedule_Allday[0].focus();" />
+                  <span class="hint">
+(min)                  </span> &nbsp;&nbsp;&nbsp;&nbsp;
+End&nbsp;&nbsp;&nbsp;
+<input type="text" name="cfSchedule_EndHour" size="2" maxlength="2" value="0" onkeypress="chk_num(event)" onFocus="if (this.form.cfSchedule_Allday[0].checked) this.form.cfSchedule_Allday[0].focus();" />
+                  <span class="hint">
+(hour)                  </span> &nbsp;
+<input type="text" name="cfSchedule_EndMinute" size="2" maxlength="2" value="0" onkeypress="chk_num(event)" onFocus="if (this.form.cfSchedule_Allday[0].checked) this.form.cfSchedule_Allday[0].focus();" />
+                  <span class="hint">
+(min)                </span> </td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+<input type="submit" name="sysSubmit" value="Apply" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">                    </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+
+</form>
+<!-- WaterMark Begin -->
+<!-- WaterMark End -->
+ <p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Security > Content Filter > Schedule');
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

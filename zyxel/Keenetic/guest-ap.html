@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="Guest Access Point" />
+<meta name="ndm.abbr" lang="RU" content="Гостевая сеть" xml:lang="RU" />
+
+<title>ZyXEL Keenetic - 
+				Гостевая точка доступа</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script src="js/ndm-extras.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+var ap = new Interface(_AP1);
+var pool = new DhcpPool(_WEBADMIN + "_GUEST_AP");
+var wpa = 0;
+var loaded = false;
+var frm, encTrigger, wpaTrigger, wpa2Trigger, keys;
+
+function onWpaChange(trigger) {
+	wpa += trigger.checked ? 1 : -1;
+	if( (wpa > 0) && loaded ) document.ap.encryption.checked = true;
+	document.ap.key1.disabled =
+		document.ap.key2.disabled =
+		document.ap.key3.disabled =
+		document.ap.key4.disabled =
+		document.ap.defaultKey.disabled = (wpa > 0);
+}
+function submitAp() {
+	ap.Command("interface ssid", {"ssid": ""}, frm);
+	encTrigger.save(ap, "interface encryption enable");
+	wpaTrigger.save(ap, "interface encryption wpa");
+	wpa2Trigger.save(ap, "interface encryption wpa2");
+	if( frm.getParameter("psk") ) {
+		ap.Command("interface authentication wpa-psk", {"psk": ""}, frm);
+	} else {
+		ap.No("interface authentication wpa-psk", null, frm);
+	}
+	for( var i = 0; i < 4; ++i ) {
+		var args = keys[i].getParameters();
+		args["id"] = i+1;
+		ap.Command("interface encryption key", args, keys[i]);
+	}
+	ap.saveState();
+	ap.saveIp();
+	pool.saveRange();
+	pool.flushTo(ap);
+	ap.ConfigSave();
+	ap.proceed(document.getElementById("ap_logger"));
+
+	return false;
+}
+function loadValues() {
+	enableProgressIndicator();
+	frm = new Form(document.ap);
+	encTrigger = new Trigger(document.ap.encryption);
+	wpaTrigger = new Trigger(document.ap.wpa);
+	wpa2Trigger = new Trigger(document.ap.wpa2);
+	keys = [
+		new EncryptionKey(document.ap.key1, document.getElementById("default1")),
+		new EncryptionKey(document.ap.key2, document.getElementById("default2")),
+		new EncryptionKey(document.ap.key3, document.getElementById("default3")),
+		new EncryptionKey(document.ap.key4, document.getElementById("default4"))
+	];
+
+	ap.Config("interface ssid", null, frm);
+	ap.Config("interface encryption enable", null, encTrigger);
+	ap.Config("interface encryption wpa", null, wpaTrigger);
+	ap.Config("interface encryption wpa2", null, wpa2Trigger);
+	ap.Config("interface authentication wpa-psk", null, frm);
+	for( var i = 0; i < 4; ++i ) ap.Config("interface encryption key", {"id": i+1}, keys[i]);
+	ap.loadState(document.ap.enabled);
+	ap.loadIp(document.ap.address, document.ap.mask);
+	ap.onLoad = function() { loaded = true; };
+	pool.create();
+	pool.bind(_AP1);
+	pool.loadRange(document.ap.begin, document.ap.size);
+	pool.flushTo(ap);
+	ap.proceed(document.getElementById("ap_logger"));
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless.png');" class="selected"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Wi-Fi<div id="subtitle"></div></div><ul class="tabs"><li><a href="wireless.html"><span>Режим работы</span></a></li><li><a href="ap.html"><span>Точка доступа</span></a></li><li><a class="current" href="guest-ap.html"><span>Гостевая сеть</span></a></li><li><a href="wireless-acl.html"><span>Список доступа</span></a></li><li><a href="associations.html"><span>Соединения</span></a></li><li><a href="station.html"><span>Станция</span></a></li></ul><div class="block pink">
+	<form action="" name="ap" onsubmit="return false;" id="ap">
+			<fieldset>
+			<legend>Гостевая сеть Wi-Fi</legend>
+			<div class="rounded">
+			<p>Гостевая сеть предоставляет безопасный для домашней сети доступ в Интернет. Пользователи гостевой сети смогут выходить в Интернет и общаться друг с другом, но не смогут подключиться к вашей домашней сети.</p>
+			</div>
+			<label for="enabled">Разрешить гостевой доступ:</label>
+				<input type="checkbox" name="enabled" /><br />
+			<label for="ssid">Имя гостевой сети (SSID):</label><input type="text" name="ssid" /><br />			
+			<label for="encryption">Использовать защиту соединений:</label><input type="checkbox" name="encryption" /><br />
+			</fieldset>
+
+			<fieldset>
+			<legend>Рекомендуемая защита WPA/WPA2</legend>
+			<label for="encryption">Достаточный уровень (WPA):</label>
+				<input type="checkbox" name="wpa" onchange="onWpaChange(this)" /><br />
+			<label for="encryption">Рекомендуемый уровень (WPA2):</label>
+				<input type="checkbox" name="wpa2" onchange="onWpaChange(this)" /><br />
+			<label for="psk">Ключ:</label><input type="text" name="psk" /><br />
+			</fieldset>
+
+			<fieldset>
+			<legend>Базовая защита WEP</legend>
+			<label for="key1">Ключ №1:</label><input type="text" name="key1" /><br />
+			<label for="key2">Ключ №2:</label><input type="text" name="key2" /><br />
+			<label for="key3">Ключ №3:</label><input type="text" name="key3" /><br />
+			<label for="key4">Ключ №4:</label><input type="text" name="key4" /><br />
+			<label for="defaultKey">Ключ по умолчанию:</label>
+				<select name="defaultKey">
+					<option id="default1">1</option>
+					<option id="default2">2</option>
+					<option id="default3">3</option>
+					<option id="default4">4</option>
+				</select><br />
+			</fieldset>
+
+			<fieldset>
+			<legend>Параметры IP для гостевого доступа</legend>
+			<label for="address">IP-адрес устройства:</label><input type="text" name="address" /><br />
+			<label for="mask">Маска подсети:</label><input type="text" name="mask" /><br />
+			<label for="begin">Начальный адрес пула DHCP:</label><input type="text" name="begin" /><br />
+			<label for="size">Размер пула адресов DHCP:</label><input type="text" name="size" /><br />
+			<label for="nothing"></label><button class="apply" type="submit" name="apply" onclick="submitAp()">Применить</button>
+			</fieldset>
+		</form>
+	<div class="logger" id="ap_logger"><div id="logger_close"><a href="#" onclick="document.getElementById('ap_logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

@@ -1,0 +1,1894 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "status";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "-";
+var G_Menu = "status";
+var G_Page = "RU_welcome";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+// dummy data
+var data_language =
+{
+innerHTML : {},
+value : {}
+}
+var G_WanConns = [];
+G_WanConns['IdleDisconnectTime']=300;
+G_WanConns['Path'] = ":InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.";//Path
+G_WanConns['ExternalIPAddress'] = "";
+G_WanConns['SubnetMask'] = "";
+G_WanConns['DefaultGateway'] = "";
+G_WanConns['DNSOverrideAllowed'] = "0";
+G_WanConns['DNSServers'] = "";
+G_WanConns['X_TWSZ-COM_UsrDNSServers'] = "";
+G_WanConns['AddressingType'] = "DHCP";
+G_WanConns['MaxMTUSize'] = "1500";
+G_WanConns['X_TWSZ-COM_VendorId'] = "";
+G_WanConns['X_TWSZ-COM_Hostname'] = "WNR612v3";
+G_WanConns['RouteProtocolRx'] = "Off";
+G_WanConns['X_TWSZ-COM_Domainname'] = "";
+/*use for russia, begin*/
+//var G_DualAccess_Enable = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessEnable?>';
+//var G_DualAccess_IPAddress = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessIPAddress?>';
+//var G_DualAccess_SubnetMask = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessSubnetMask?>';
+//var G_DualAccess_AddressType = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessAddressType?>';
+var G_language = 'Russian';
+var G_ApplyLanguage = 'Russian';
+/*use for russia, end*/
+function isValidChar(each_char)
+{
+if( each_char < 33 || each_char > 126)
+return false;
+}
+function RU_pppoe_user_info()
+{
+var jumppage;
+// check user name
+if($('pppoe_username').value=="")
+{
+return false;
+}
+for(var i=0; i<$('pppoe_username').value.length; i++)
+{
+if(isValidChar($('pppoe_username').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check password
+for(var i=0; i<$('pppoe_passwd').value.length; i++)
+{
+if(isValidChar($('pppoe_passwd').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check server ip address
+for (var i=0; i<$('pppoe_servername').value.length; i++)
+{
+if(isValidChar($('pppoe_servername').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+parent.pppoe_username = $('pppoe_username').value;
+parent.pppoe_password = $('pppoe_passwd').value;
+parent.pppoe_server = $('pppoe_servername').value;
+parent.welcome_wan_type=3;
+if(parent.isp_type=="8")
+{
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1=parent.static_dns1;
+parent.pppoe_dns2=parent.static_dns2;
+if(parent.pppoe_dns1 != "" || parent.pppoe_dns1!= "")
+parent.pppoe_dns_assign="1";
+else
+parent.pppoe_dns_assign="0";
+parent.pppoe_eth_ip="";
+parent.pppoe_eth_netmask="";
+parent.pppoe_eth_gateway="";
+parent.pppoe_dual_assign="0";
+parent.dual_access="1";
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="18")
+{
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns_assign="0";
+parent.pppoe_eth_ip="";
+parent.pppoe_eth_netmask="";
+parent.pppoe_eth_gateway="";
+parent.pppoe_dual_assign="0";
+parent.dual_access="0";
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="7" || parent.isp_type=="17")
+{
+jumppage="RU_isp_spoof";
+}
+else if(parent.isp_type=="5" || parent.isp_type=="6")
+{
+jumppage="RU_isp_pppoe_static";
+}
+else if(parent.isp_type=="88")
+{
+jumppage="RU_isp_pppoe_static";
+}
+else
+jumppage="RU_manual_pppoe2";
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function RU_pptp_user_info()
+{
+var jumppage;
+// check user name
+if($('pptp_username').value=="")
+{
+return false;
+}
+for(var i=0; i<$('pptp_username').value.length; i++)
+{
+if(isValidChar($('pptp_username').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check password
+for(var i=0; i<$('pptp_passwd').value.length; i++)
+{
+if(isValidChar($('pptp_passwd').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check server ip address
+if ($('pptp_serv_ip').value=="")
+{
+return false;
+}
+for (var i=0; i<$('pptp_serv_ip').value.length; i++)
+{
+if(isValidChar($('pptp_serv_ip').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+var server_addr_array = $('pptp_serv_ip').value.split('.');
+for (var i=0; i<server_addr_array.length; i++ )
+{
+if (server_addr_array[i].length > 63)
+{
+return false;
+}
+}
+parent.pptp_username = $('pptp_username').value;
+parent.pptp_password = $('pptp_passwd').value;
+parent.pptp_server_ipaddr = $('pptp_serv_ip').value;
+parent.welcome_wan_type = 4;
+if (parent.isp_type == "12" )
+{
+parent.pptp_dns1 = parent.static_dns1;
+parent.pptp_dns2 = parent.static_dns2;
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="11")
+{
+jumppage="RU_isp_spoof";
+}
+else if(parent.isp_type=="9" || parent.isp_type=="10")
+{
+jumppage="RU_isp_pptp_static";
+}
+else
+jumppage="RU_manual_pptp_dual";
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function RU_l2tp_user_info()
+{
+var jumppage;
+// check user name
+if($('l2tp_username').value=="")
+{
+return false;
+}
+for(var i=0; i<$('l2tp_username').value.length; i++)
+{
+if(isValidChar($('l2tp_username').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check password
+for(var i=0; i<$('l2tp_passwd').value.length; i++)
+{
+if(isValidChar($('l2tp_passwd').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check server ip address
+if ($('l2tp_serv_ip').value=="")
+{
+return false;
+}
+for (var i=0; i<$('l2tp_serv_ip').value.length; i++)
+{
+if(isValidChar($('l2tp_serv_ip').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+var server_addr_array = $('l2tp_serv_ip').value.split('.');
+for (var i=0; i<server_addr_array.length; i++ )
+{
+if (server_addr_array[i].length > 63)
+{
+return false;
+}
+}
+parent.l2tp_username = $('l2tp_username').value;
+parent.l2tp_password = $('l2tp_passwd').value;
+parent.l2tp_server_ipaddr = $('l2tp_serv_ip').value;
+parent.welcome_wan_type = 5;
+if (parent.isp_type == "16" )
+{
+parent.l2tp_dns1 = parent.static_dns1;
+parent.l2tp_dns2 = parent.static_dns2;
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="15")
+{
+jumppage="RU_isp_spoof";
+}
+else if(parent.isp_type=="13" || parent.isp_type=="14")
+{
+jumppage="RU_isp_l2tp_static";
+}
+else
+jumppage="RU_manual_l2tp_dual";
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function RU_welcome_static()
+{
+var tmpIPAddress = $('WPethr1').value+'.'+ $('WPethr2').value +'.'+ $('WPethr3').value +'.'+ $('WPethr4').value;
+var tmpGateway = $('WGateway1').value+'.'+ $('WGateway2').value +'.'+ $('WGateway3').value +'.'+ $('WGateway4').value;
+var tmpSubNet=$('WMask1').value+'.'+ $('WMask2').value +'.'+ $('WMask3').value +'.'+ $('WMask4').value;
+var tmpPriorityDNS=$('DAddr1').value+'.'+$('DAddr2').value+'.'+$('DAddr3').value+'.'+$('DAddr4').value;
+var tmpSecondaryDNS=$('PDAddr1').value+'.'+$('PDAddr2').value+'.'+$('PDAddr3').value+'.'+$('PDAddr4').value;
+// Check DNS
+if(tmpPriorityDNS=='...') tmpPriorityDNS="";
+if(tmpSecondaryDNS=='...')tmpSecondaryDNS="";
+if((tmpPriorityDNS=='')&&(tmpSecondaryDNS=='')){
+alertError('InvDNSServerBlank');
+return false;
+}
+if ((tmpPriorityDNS!='') && !checkDNS(tmpPriorityDNS)) {
+alertError('InvPriDNSServer');
+return false;
+}
+if ((tmpSecondaryDNS!='') && !checkDNS(tmpSecondaryDNS)){
+alertError('InvSecDNSServer');
+return false;
+}
+// check gateway
+if((tmpGateway == '...')||(tmpGateway == '0.0.0.0')){
+alertError('BlankGateway',1);
+return false;
+}
+if(tmpPriorityDNS == tmpIPAddress || tmpPriorityDNS == G_LanIPAddress){
+alertError('InvPriDNSServer');
+return false;
+}
+if( tmpSecondaryDNS == tmpIPAddress || tmpSecondaryDNS == G_LanIPAddress){
+alertError('InvSecDNSServer');
+return false;
+}
+parent.welcome_wan_type = 1;
+parent.static_ip = tmpIPAddress;
+parent.static_subnet = tmpSubNet;
+parent.static_gateway = tmpGateway;
+parent.static_dns1 = tmpPriorityDNS;
+parent.static_dns2 = tmpSecondaryDNS;
+//parent.conflict_wanlan=cf.conflict_wanlan.value;
+if(parent.isp_type=="3" || parent.isp_type=="9" || parent.isp_type=="13")
+{
+$G('../html/RU_isp_spoof.htm',{
+'var:page' : 'RU_isp_spoof',
+'getpage' : '../html/RU_isp_spoof.htm'
+});
+}
+else if(parent.isp_type=="4")
+{
+parent.welcome_wan_type = 1;
+uiWanApply();
+}
+else if(parent.isp_type=="6")
+{
+parent.pppoe_eth_ip = tmpIPAddress;
+parent.pppoe_eth_netmask = tmpSubNet;
+parent.pppoe_eth_gateway = '';
+parent.welcome_wan_type = 3;
+uiWanApply();
+}
+else if(parent.isp_type=="14")
+{
+parent.l2tp_local_ipaddr = tmpIPAddress;
+parent.l2tp_local_netmask = tmpSubNet;
+parent.l2tp_local_gateway = tmpGateway;
+parent.l2tp_dns1 = tmpPriorityDNS;
+parent.l2tp_dns2 = tmpSecondaryDNS;
+parent.l2tp_wan_assign = 1;
+parent.welcome_wan_type = 5;
+uiWanApply();
+}
+else if(parent.isp_type=="10")
+{
+parent.pptp_local_ipaddr = tmpIPAddress;
+parent.pptp_local_netmask = tmpSubNet;
+parent.pptp_local_gateway = tmpGateway;
+parent.pptp_dns1 = tmpPriorityDNS;
+parent.pptp_dns2 = tmpSecondaryDNS;
+parent.pptp_wan_assign = 1;
+parent.welcome_wan_type = 4;
+uiWanApply();
+}
+}
+function RU_check_spoof()
+{
+// check mac format
+var clonmac = $('Spoofmac').value;
+if(clonmac.indexOf(':') == -1)
+{
+if (!clonmac.match(/^[0-9a-fA-F]{12}$/)){
+alertError('CheckMac');
+return false;
+} else {
+clonmac = clonmac.slice(0,2) + ":" + clonmac.slice(2,4) + ":" + clonmac.slice(4,6) + ":" + clonmac.slice(6,8) + ":" + clonmac.slice(8,10) + ":" + clonmac.slice(10,12);
+}
+}
+parent.Spoofmac = $(Spoofmac).value;
+if (Form.Radio('MACAssign')=='0')
+parent.mac_spoof = "0";
+else if (Form.Radio('MACAssign')=='1')
+parent.mac_spoof="1";
+else if (Form.Radio('MACAssign')=='2')
+parent.mac_spoof="2";
+switch (parent.isp_type)
+{
+case 1://dhcp
+parent.wan_assign="0";
+parent.welcome_wan_type=2;
+uiWanApply();
+break;
+case 3://static
+parent.welcome_wan_type=1;
+uiWanApply();
+break;
+case 5://pppoe+static
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1 = parent.static_dns1;
+parent.pppoe_dns2 = parent.static_dns2;
+parent.pppoe_eth_ip = parent.static_ip;
+parent.pppoe_eth_netmask = parent.static_subnet;
+parent.pppoe_eth_gateway = "";
+parent.pppoe_dual_assign = "1";
+parent.dual_access = "1";
+if(parent.pppoe_dns1 != "" || parent.pppoe_dns1 != "")
+parent.pppoe_dns_assign = "1";
+else
+parent.pppoe_dns_assign = "0";
+parent.welcome_wan_type = 3;
+uiWanApply();
+break;
+case 7://pppoe+dynamic
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1 = parent.static_dns1;
+parent.pppoe_dns2 = parent.static_dns2;
+parent.pppoe_dual_assign = "0";
+parent.dual_access = "1";
+if(parent.pppoe_dns1 != "" || parent.pppoe_dns1 != "")
+parent.pppoe_dns_assign = "1";
+else
+parent.pppoe_dns_assign = "0";
+parent.welcome_wan_type = 3;
+uiWanApply();
+break;
+case 9://pptp+static
+parent.pptp_local_ipaddr = parent.static_ip;
+parent.pptp_local_netmask = parent.static_subnet;
+parent.pptp_local_gateway = parent.static_gateway;
+parent.pptp_dns1 = parent.static_dns1;
+parent.pptp_dns2 = parent.static_dns2;
+parent.pptp_wan_assign = 1;
+parent.welcome_wan_type = 4;
+uiWanApply();
+break;
+case 11://pptp+dynamic
+parent.pptp_dns1 = parent.static_dns1;
+parent.pptp_dns2 = parent.static_dns2;
+parent.pptp_wan_assign = 0;
+parent.welcome_wan_type = 4;
+uiWanApply();
+break;
+case 13://l2tp+static
+parent.l2tp_local_ipaddr = parent.static_ip;
+parent.l2tp_local_netmask = parent.static_subnet;
+parent.l2tp_local_gateway = parent.static_gateway;
+parent.l2tp_dns1 = parent.static_dns1;
+parent.l2tp_dns2 = parent.static_dns2;
+parent.l2tp_wan_assign = 1;
+parent.welcome_wan_type = 5;
+uiWanApply();
+break;
+case 15://l2tp+dynamic
+parent.l2tp_dns1 = parent.static_dns1;
+parent.l2tp_dns2 = parent.static_dns2;
+parent.l2tp_wan_assign = 0;
+parent.welcome_wan_type = 5;
+uiWanApply();
+break;
+case 17://pppoe
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1 = "";
+parent.pppoe_dns2 = "";
+parent.pppoe_eth_ip = "";
+parent.pppoe_eth_netmask = "";
+parent.pppoe_eth_gateway = "";
+parent.pppoe_dual_assign = "0";
+parent.dual_access = "0";
+parent.pppoe_dns_assign = "0";
+parent.welcome_wan_type = 3;
+uiWanApply();
+break;
+default:
+$G('../html/RU_finish_manual.htm',{
+'var:page' : 'RU_finish_manual',
+'getpage' : '../html/RU_finish_manual.htm'
+});
+break;
+}
+}
+function searchProtocol()
+{
+if(G_WanConns['Path'].indexOf('IP') > 0)
+{
+return G_WanConns['AddressingType'];
+}
+else
+{
+return G_WanConns['ConnectionType'] == 'L2TP_Relay' ? 'L2TP' :
+G_WanConns['ConnectionType'] == 'PPTP_Relay' ? 'PPTP' :
+G_WanConns['ConnectionType'] == 'PPPoU' ? 'PPPoU': 'PPPoE';
+}
+}
+function getConnectionType()
+{
+var value_protocol='';
+switch (parent.welcome_wan_type)
+{
+case 1:
+value_protocol='Static';
+break;
+case 2:
+value_protocol='DHCP';
+break;
+case 3:
+value_protocol='PPPoE';
+break;
+case 4:
+value_protocol='PPTP';
+break;
+case 5:
+value_protocol='L2TP';
+break;
+default:
+value_protocol='';
+break;
+}
+return value_protocol;
+}
+function getProtocol()
+{
+var value_protocol=getConnectionType();
+switch(value_protocol){
+case 'DHCP' : {
+return ['DHCP','IP'];
+}
+case 'Static' : {
+return ['Static','IP'];
+}
+case 'PPPoE' : {
+return ['PPPoE','PPP'];
+}
+case 'PPTP' : {
+return ['PPTP','PPP'];
+}
+case 'L2TP' : {
+return ['L2TP','PPP'];
+}
+case 'PPPoU' : {
+return ['PPPoU','PPP'];
+}
+}
+}
+function uiWanApply()
+{
+var _protocol = getProtocol();
+var _path = G_WanConns['Path']; //唯一的WAN Connection
+if(_path.indexOf(_protocol[1]) < 0)
+{ // -> webproxy
+_path = G_WanConns['Path'].replace(_protocol[1] == 'IP' ? 'PPP' : 'IP', _protocol[1]);
+$F('mid','0438');
+$F(_path + 'X_TWSZ-COM_ProtocolType', _protocol[1]);
+//为配合模块检查，将IP/PPP的前的实例号改为0.
+_path = _path.substr(0, _path.length - 2) + '0.'; // -> InternetGatewayDevice.WANDevice.1.WANConnectionDevice.0.WANIPConnection.0.
+}
+else
+{ // -> cmm
+}
+//公共节点属性
+$F(_path + 'Enable', '1');
+//$F(_path + 'NATEnabled', '1');
+//Name
+$F(_path + 'Name', _protocol[0] + '_1');
+//Mac
+$F(':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_CloneMACAddress', parent.Spoofmac);
+$F(':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_CloneMACState', parent.mac_spoof);
+/* ? */
+$F(_path + 'RouteProtocolRx', G_WanConns['RouteProtocolRx'] || 'Off');
+if(searchProtocol()!=_protocol[0])
+{//alert("a");
+if(_protocol[0]=='PPPoE'||_protocol[0]=='PPTP'||_protocol[0]=='PPPoE')
+$F(_path + 'X_TWSZ-COM_AlwaysConnectionAction', 'Connect');
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCnterAct', 1);
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnnAct', "Connect");
+}
+switch(_protocol[0])
+{
+case 'DHCP' : {
+$F(_path + 'X_TWSZ-COM_Hostname',G_WanConns['X_TWSZ-COM_Hostname'] || '');
+$F(_path + 'X_TWSZ-COM_Domainname',G_WanConns['X_TWSZ-COM_Domainname'] || '');
+$F(_path + 'AddressingType', 'DHCP');
+$F(_path + 'ConnectionType', 'IP_Routed');
+if(parent.static_dns1 == "" && parent.static_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.static_dns1 + ',' + parent.static_dns2).delcomma());
+}
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmRndUpVlmPreCnn', '0');
+<!--use for russia, begin-->
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'DHCP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', 'DHCP');
+}
+<!--use for russia, end-->
+break;
+}
+case 'Static' : {
+$F(_path + 'X_TWSZ-COM_Hostname',G_WanConns['X_TWSZ-COM_Hostname'] || '');
+$F(_path + 'X_TWSZ-COM_Domainname',G_WanConns['X_TWSZ-COM_Domainname'] || '');
+$F(_path + 'ExternalIPAddress',parent.static_ip);
+$F(_path + 'SubnetMask',parent.static_subnet);
+$F(_path + 'DefaultGateway',parent.static_gateway);
+//$F(_path + 'MaxMTUSize', $('INPUT_MTU_Static').value);
+$F(_path + 'AddressingType','Static');
+$F(_path + 'ConnectionType','IP_Routed');
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.static_dns1 + ',' + parent.static_dns2).delcomma());
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmRndUpVlmPreCnn', '0');
+<!--use for russia, begin-->
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'DHCP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', 'DHCP');
+}
+<!--use for russia, end-->
+break;
+}
+case 'PPPoE' :
+// use for russia, begin
+if(G_language==G_ApplyLanguage)
+{
+var dhcp_static = 'dhcp';
+var dual_access_ip = parent.pppoe_eth_ip;
+var dual_access_mask = parent.pppoe_eth_netmask;
+if (parent.dual_access == '1')
+{
+if (dual_access_ip=='...')
+dual_access_ip = '';
+if (dual_access_mask=='...')
+dual_access_mask = '';
+if (dual_access_ip=='' && dual_access_mask=='')
+dhcp_static = 'dhcp';
+else
+dhcp_static = 'static';
+}
+else
+{
+dual_access_ip = '';
+dual_access_mask = '';
+}
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', parent.dual_access == '1' ? '1' : '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'PPPOE');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', (dhcp_static == 'dhcp') ? 'DHCP' : 'Static');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessIPAddress', dual_access_ip);
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessSubnetMask', dual_access_mask);
+}
+// use for russia, end
+$F(_path + 'Username', parent.pppoe_username);
+if (parent.pppoe_password != '**********')
+{
+$F(_path + 'Password', parent.pppoe_password);
+}
+$F(_path + 'PPPoEServiceName', parent.pppoe_server);
+$F(_path + 'PPPAuthenticationProtocol', G_WanConns['PPPAuthenticationProtocol'] || 'Auto');
+//$F(_path + 'MaxMTUSize', $('INPUT_MTU_PPPoE').value);
+//$F(_path + 'IdleDisconnectTime', '300');
+$F(_path + 'ConnectionTrigger', 'AlwaysOn');
+$F(_path + 'ConnectionType', 'IP_Routed');
+if(parent.pppoe_wan_assign == "0")
+{
+$F(_path + 'X_TWSZ-COM_StaticIPAddress', '');
+}
+else
+{
+if(!checkIpAddr(parent.pppoe_static_ip))
+{
+return false;
+}
+$F(_path + 'X_TWSZ-COM_StaticIPAddress', parent.pppoe_static_ip);
+}
+if(parent.pppoe_dns1 == "" && parent.pppoe_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.pppoe_dns1 + ',' + parent.pppoe_dns2).delcomma());
+}
+/*原来非PPPoE，则表示现在切换到PPPoE，要使用默认MTU*/
+if(searchProtocol()!='PPPoE')
+{
+$F(_path + 'MaxMTUSize', '1492');
+$F(_path + 'MaxMRUSize', '1492');
+}
+break;
+case 'PPTP' : {
+if(parent.pptp_local_ipaddr == parent.pptp_server_ipaddr)
+{
+alertError('MyIpSameAsServerIp');
+return false;
+}
+var pptp_vpnClient = (parent.pptp_local_ipaddr == '...') ? '' : parent.pptp_local_ipaddr;
+var pptp_vpnNetmask = (parent.pptp_local_netmask == '...') ? '' : parent.pptp_local_netmask;
+var pptp_vpnGateway = (parent.pptp_local_gateway == '...') ? '' : parent.pptp_local_gateway;
+// use for russia, begin
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'PPTP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', (pptp_vpnClient == '') ? '1' : '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', (pptp_vpnClient == '') ? 'DHCP' : 'Static');
+if (pptp_vpnClient != '')
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', pptp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',pptp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',pptp_vpnGateway);
+}
+}
+else
+// use for russia, end
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', pptp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',pptp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',pptp_vpnGateway);
+}
+$F(_path + 'X_TWSZ-COM_VPN_SERVER', parent.pptp_server_ipaddr);
+$F(_path + 'Username', parent.pptp_username);
+if (parent.pptp_password != '**********')
+{
+$F(_path + 'Password', parent.pptp_password);
+}
+$F(_path + 'ConnectionType', 'PPTP_Relay');
+//$F(_path + 'IdleDisconnectTime','300');
+//$F(_path + 'X_TWSZ-COM_VPN_CONN_ID_NAME',G_WanConns['X_TWSZ-COM_VPN_CONN_ID_NAME']); /*hejianghua*/
+$F(_path + 'ConnectionTrigger','AlwaysOn');
+$F(_path + 'PPPAuthenticationProtocol',G_WanConns['PPPAuthenticationProtocol'] || 'Auto');
+if(parent.pptp_dns1 == "" && parent.pptp_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.pptp_dns1 + ',' + parent.pptp_dns2).delcomma());
+}
+/*原来非PPTP则表示现在切换到PPTP，要使用默认MTU*/
+if(searchProtocol()!='PPTP')
+{
+$F(_path + 'MaxMTUSize', '1436');
+$F(_path + 'MaxMRUSize', '1436');
+}
+break;
+}
+case 'L2TP' : {
+if(parent.l2tp_local_ipaddr == parent.l2tp_server_ipaddr)
+{
+alertError('MyIpSameAsServerIp');
+return false;
+}
+var l2tp_vpnClient = (parent.l2tp_local_ipaddr == '...') ? '' : parent.l2tp_local_ipaddr;
+var l2tp_vpnNetmask = (parent.l2tp_local_netmask == '...') ? '' : parent.l2tp_local_netmask;
+var l2tp_vpnGateway = (parent.l2tp_local_gateway == '...') ? '' : parent.l2tp_local_gateway;
+// use for russia, begin
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'L2TP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', (l2tp_vpnClient == '') ? '1' : '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', (l2tp_vpnClient == '') ? 'DHCP' : 'Static');
+if (l2tp_vpnClient != '')
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', l2tp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',l2tp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',l2tp_vpnGateway);
+}
+}
+else
+// use for russia, end
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', l2tp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',l2tp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',l2tp_vpnGateway);
+}
+$F(_path + 'X_TWSZ-COM_VPN_SERVER', parent.l2tp_server_ipaddr);
+$F(_path + 'Username', parent.l2tp_username);
+if (parent.l2tp_password != '**********')
+{
+$F(_path + 'Password', parent.l2tp_password);
+}
+$F(_path + 'ConnectionType', 'L2TP_Relay');
+//$F(_path + 'IdleDisconnectTime','300');
+$F(_path + 'ConnectionTrigger','AlwaysOn');
+$F(_path + 'PPPAuthenticationProtocol', G_WanConns['PPPAuthenticationProtocol'] || 'Auto');
+if(parent.l2tp_dns1 == "" && parent.l2tp_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.l2tp_dns1 + ',' + parent.l2tp_dns2).delcomma());
+}
+/*原来非L2TP则表示现在切换到L2TP，要使用默认MTU*/
+if(searchProtocol()!='L2TP')
+{
+//modify by zhengmingming the L2TP's MTU is 1428 for netgear
+$F(_path + 'MaxMTUSize', '1428');
+$F(_path + 'MaxMRUSize', '1428');
+}
+break;
+}
+}
+$H({
+'obj-action' : 'set',
+'var:page' : 'RU_wait',
+'var:errorpage': G_Page,
+'getpage' : '../html/RU_wait.htm',
+'errorpage' : '../html/RU_wait.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function gotoSearch()
+{
+$G('../html/RU_wait.htm',{
+'var:page': 'RU_wait',
+'var:errorpage': 'RU_wait',
+'getpage': '../html/RU_wait.htm',
+'errorpage': '../html/RU_wait.htm'
+});
+}
+function nullError(responseText){
+return;
+}
+var ts='32179714'
+var str_isp=new Array();
+var final_isp="0";
+var city="0";
+var isp_type="0";
+/*for all the following procedure*/
+function uiOnload()
+{
+parent.isp_type="0";
+document.getElementById("view").innerHTML=document.getElementById("isp0").innerHTML;
+for(var i=0;i<=100;i++)
+{
+var tmp='isp'+i;
+str_isp[i]=document.getElementById(tmp).innerHTML;
+document.getElementById(tmp).innerHTML="";
+}
+//check_city();
+}
+function adv_user()
+{
+$G('../html/WIZ_sel.htm',{
+'var:page' : 'WIZ_sel',
+'getpage' : '../html/WIZ_sel.htm'
+});
+}
+function check_ISP()
+{
+//reset
+parent.vpn_server="";
+parent.connection_id="";
+parent.static_ip="";
+parent.static_subnet="";
+parent.static_gateway="";
+parent.static_dns1="";
+parent.static_dns2="";
+city=$(RU_city).value;
+final_isp=$(RU_isp).value;
+//alert("city:"+city+"isp:"+final_isp);
+work_work(city,final_isp);
+isp_type=parent.isp_type;
+var jumppage;
+switch (isp_type)
+{
+case 1:
+jumppage="RU_isp_spoof";
+break;
+case 2: //dyn,no spoof (no this case atm)
+parent.welcome_wan_type = 1;
+uiWanApply();
+break;
+case 3:
+case 4:
+jumppage='RU_isp_static';
+break;
+case 5:
+case 6:
+case 7:
+case 8:
+case 17:
+case 18:
+jumppage="RU_isp_pppoe";
+break;
+case 9:
+case 10:
+case 11:
+case 12:
+jumppage="RU_isp_pptp";
+break;
+case 13:
+case 14:
+case 15:
+case 16:
+jumppage="RU_isp_l2tp";
+break;
+default:
+alert("Выберите город и имя вашего провайдера");
+return false;
+}
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function check_city()
+{
+for (var i=0; i< arguments[0].options.length; i++)
+{
+if (arguments[0].options[i].selected == true)
+{
+$("view").innerHTML = str_isp[i];
+break;
+}
+}
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+uiRefresh();
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<form id="uiPostForm" method="post" action="RU_welcome.htm"></form>
+﻿
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+.title_line {border-top:2px solid #9966FF; margin-top:5px; padding:8px 0 0;}
+.RU_sel {
+width:200px;
+margin:5px;
+background:white;
+color:black;
+border: 2px groove #aaaaaa;
+}
+-->
+</style>
+<script language=javascript type=text/javascript src="js/RU_isp_list.js"></script>
+<!--form method="POST" action="/apply.cgi?/RU_isp_fail.htm timestamp=32179714"-->
+<div class="page_title" id="lang_config">Мастер настройки</div>
+<div class="fix_button"></div>
+<div id="main" class="main">
+<table class="content" style="background:white; width:98%; margin:5px;" >
+<tr><td><br></td></tr>
+<tr>
+<td><b>Выберите город и имя вашего провайдера:</b></td>
+</tr>
+<tr><td><br></td></tr>
+<TR>
+<TD>
+<select class=RU_sel name="RU_city" id="RU_city" size="1" onChange="check_city(this);">
+<option value="0">Город</option>
+<option value="1">Альметьевск</option>
+<option value="2">Архангельск</option>
+<option value="3">Астрахань</option>
+<option value="4">Балаково</option>
+<option value="5">Балашиха</option>
+<option value="6">Барнаул</option>
+<option value="7">Батайск</option>
+<option value="8">Брянск</option>
+<option value="9">Владивосток</option>
+<option value="10">Волгоград</option>
+<option value="11">Волгодонск</option>
+<option value="12">Волжский</option>
+<option value="13">Воронеж</option>
+<option value="14">Всеволожск</option>
+<option value="15">Десногорск</option>
+<option value="16">Дзержинск</option>
+<option value="17">Димитровград</option>
+<option value="18">Долгопрудный</option>
+<option value="19">Домодедово</option>
+<option value="20">Екатеринбург</option>
+<option value="21">Железноводск</option>
+<option value="22">Железногорск</option>
+<option value="23">Зеленоград</option>
+<option value="24">Иваново</option>
+<option value="25">Ижевск</option>
+<option value="26">Иркутск</option>
+<option value="27">Йошкар-Ола</option>
+<option value="28">Казань</option>
+<option value="29">Калининград</option>
+<option value="30">Калуга</option>
+<option value="31">Каменск-Уральский</option>
+<option value="32">Кашира</option>
+<option value="33">Кемерово</option>
+<option value="34">Киров</option>
+<option value="35">Кисловодск</option>
+<option value="36">Колпино</option>
+<option value="37">Кострома</option>
+<option value="38">Кохма</option>
+<option value="39">Краснодар</option>
+<option value="40">Красноярск</option>
+<option value="41">Курск</option>
+<option value="42">Липецк</option>
+<option value="43">Люберцы</option>
+<option value="44">Махачкала</option>
+<option value="45">Менделеево</option>
+<option value="46">Менделеевск</option>
+<option value="47">Минеральные Воды</option>
+<option value="48">Можайск</option>
+<option value="49">Москва</option>
+<option value="50">Набережные Челны</option>
+<option value="51">Нефтекамск</option>
+<option value="52">Нижнекамск</option>
+<option value="53">Нижний Новгород</option>
+<option value="54">Нижний Тагил</option>
+<option value="55">Новокузнецк</option>
+<option value="56">Новомосковск</option>
+<option value="57">Новосибирск</option>
+<option value="58">Ногинск</option>
+<option value="59">Обнинск</option>
+<option value="60">Одинцово</option>
+<option value="61">Октябрьский</option>
+<option value="62">Омск</option>
+<option value="63">Орел</option>
+<option value="64">Оренбург</option>
+<option value="65">Павловский Посад</option>
+<option value="66">Пенза</option>
+<option value="67">Пермь</option>
+<option value="68">Пятигорск</option>
+<option value="69">Ростов-на-Дону</option>
+<option value="70">Рыбинск</option>
+<option value="71">Рязань</option>
+<option value="72">Самара</option>
+<option value="73">Санкт-Петербург</option>
+<option value="74">Саратов</option>
+<option value="75">Саров</option>
+<option value="76">Северодвинск</option>
+<option value="77">Смоленск</option>
+<option value="78">Сочи</option>
+<option value="79">Таганрог</option>
+<option value="80">Тверь</option>
+<option value="81">Тольятти</option>
+<option value="82">Томск</option>
+<option value="83">Тула</option>
+<option value="84">Тутаев</option>
+<option value="85">Тюмень</option>
+<option value="86">Узловая</option>
+<option value="87">Ульяновск</option>
+<option value="88">Уфа</option>
+<option value="89">Хабаровск</option>
+<option value="90">Химки</option>
+<option value="91">Химки-Куркино</option>
+<option value="92">Челябинск</option>
+<option value="93">Череповец</option>
+<option value="94">Шатура</option>
+<option value="95">Шуя</option>
+<option value="96">Щекино</option>
+<option value="97">Электросталь</option>
+<option value="98">Энгельс</option>
+<option value="99">Южно-Сахалинск</option>
+<option value="100">Ярославль</option>
+</select>
+</TD>
+</TR>
+<tr><td><br></td></tr>
+<TR>
+<td nowrap="" colspan="2">
+<div id="view" ></div>
+<div align="center" ID="isp0" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Имя провайдера</option>
+</select>
+</div>
+<div align="center" ID="isp1" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Таттелеком</option>
+<option value="1">ТВТ</option>
+</select>
+</div>
+<div align="center" ID="isp2" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp3" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp4" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp5" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp6" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Enter</option>
+<option value="1">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp7" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp8" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp9" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp10" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp11" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp12" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">PowerNet</option>
+<option value="1">Билайн</option>
+<option value="2">Билайн (PPTP)</option>
+<option value="3">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp13" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+<option value="3">Интеркон</option>
+<option value="4">Сумма Телеком</option>
+<option value="5">ЦентраЛинк</option>
+</select>
+</div>
+<div align="center" ID="isp14" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp15" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp16" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp17" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp18" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp19" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp20" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">АКАДО (L2TP)</option>
+<!--option value="1">АКАДО (PPTP)</option-->
+<option value="1">Билайн</option>
+<option value="2">Билайн (PPTP)</option>
+<option value="3">ВИК Мастер</option>
+<option value="4">Инсис</option>
+<option value="5">Инсис (Безлимитный тариф)</option>
+<option value="6">КАБiNET</option>
+<option value="7">Мизар Проект</option>
+<option value="8">Планета</option>
+<option value="9">РусКом</option>
+<option value="10">РусКом (Прямой IP)</option>
+<option value="11">Скайнет</option>
+</select>
+</div>
+<div align="center" ID="isp21" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp22" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp23" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp24" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp25" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+<option value="1">Лайнер Телеком</option>
+<option value="2">Марк</option>
+</select>
+</div>
+<div align="center" ID="isp26" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp27" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp28" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+<option value="3">Таттелеком</option>
+</select>
+</div>
+<div align="center" ID="isp29" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp30" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp31" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Инсис</option>
+<option value="1">Инсис (Безлимитный тариф)</option>
+</select>
+</div>
+<div align="center" ID="isp32" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp33" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp34" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp35" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp36" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp37" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp38" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp39" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp40" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">CityTelecom.ru</option>
+<option value="1">Билайн</option>
+<option value="2">Билайн (PPTP)</option>
+<option value="3">Дом.ru</option>
+<option value="4">Игра-Сервис</option>
+<option value="5">Игра-Сервис (VPN)</option>
+<option value="6">Мультима</option>
+</select>
+</div>
+<div align="center" ID="isp41" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp42" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+<option value="3">Сумма Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp43" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp44" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Сумма Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp45" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp46" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">ТВТ</option>
+</select>
+</div>
+<div align="center" ID="isp47" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp48" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Бородино-Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp49" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">2КОМ (DHCP)</option>
+<option value="1">2КОМ (PPTP)</option>
+<option value="2">AkademNet</option>
+<option value="3">BirulevoNET</option>
+<option value="4">Butovo.com</option>
+<option value="5">ButovoNet</option>
+<option value="6">CityTelecom.ru</option>
+<option value="7">Complat </option>
+<option value="8">Compot</option>
+<option value="9">Degunino.net</option>
+<option value="10">DNlab</option>
+<option value="11">Gelios.net</option>
+<option value="12">GP Internet</option>
+<option value="13">GP Internet (Реальный IP)</option>
+<option value="14">Imsys</option>
+<option value="15">InterLAN (СВАО)</option>
+<option value="16">InterLAN (ЮАО, ЮВАО)</option>
+<option value="17">Konkovo.Net</option>
+<option value="18">Kurkino.Net.Ru</option>
+<option value="19">Lanport</option>
+<option value="20">LinkLine</option>
+<option value="21">Masterlink (PPPoE)</option>
+<option value="22">Masterlink (PPTP)</option>
+<option value="23">NetByNet (PPPoE)</option>
+<option value="24">NetByNet (PPTP)</option>
+<option value="25">NorthNet</option>
+<option value="26">Onlime</option>
+<option value="27">PROV.RU</option>
+<option value="28">PSK-net</option>
+<option value="29">QWERTY</option>
+<option value="30">UCA Networks</option>
+<option value="31">UltraNet</option>
+<option value="32">АБН (Albeon)</option>
+<option value="33">Авакс-телеком </option>
+<option value="34">АКАДО (Ethernet кабель)</option>
+<option value="35">АКАДО (ТВ кабель)</option>
+<option value="36">Астэйс-Телеком</option>
+<option value="37">Астэйс-Телеком (VPN)</option>
+<option value="38">Билайн</option>
+<option value="39">Билайн (PPTP)</option>
+<option value="40">Бородино-Телеком</option>
+<option value="41">Велнет Телеком</option>
+<option value="42">Волина</option>
+<option value="43">ВПК-Телеком</option>
+<option value="44">ГорКом (DHCP)</option>
+<option value="45">Инет Ком</option>
+<option value="46">Интернет-Космос</option>
+<option value="47">Искрателеком</option>
+<option value="48">Камсан</option>
+<option value="49">Квидекс Телеком</option>
+<option value="50">Консул.ком</option>
+<option value="51">КоптевоНет</option>
+<option value="52">Лантек</option>
+<option value="53">Локал Телеком</option>
+<option value="54">Марьино.net</option>
+<option value="55">МневникиОнлайн </option>
+<option value="56">Мосинтер</option>
+<option value="57">Нетлайн</option>
+<option value="58">Неторн</option>
+<option value="59">Неторн (подсеть 13, gerdan)</option>
+<option value="60">ОСТ НЕТ</option>
+<option value="61">Проф Телеком</option>
+<option value="62">Русцентросвязь</option>
+<option value="63">Свиблово Он-Лайн (PPPoE )</option>
+<option value="64">Свиблово Он-Лайн (PPTP )</option>
+<option value="65">Сити онлайн (CLN)</option>
+<option value="66">Смайл (Инфолайн)</option>
+<option value="67">Старлинк Телеком (DHCP)</option>
+<option value="68">Старлинк Телеком (PPPoE)</option>
+<option value="69">ТелекомПрофит</option>
+<option value="70">Техмаркет-Сеть</option>
+<option value="71">Тушино Телеком (DHCP)</option>
+<option value="72">Тушино Телеком (PPPoE)</option>
+<option value="73">Хованка.Ру</option>
+<option value="74">ЮМОС</option>
+<option value="75">Юнионлайн</option>
+<option value="76">Ясенево Онлайн</option>
+<option value="77">Яуза Телеком</option>
+<option value="78">Яуза Телеком (Реальный IP)</option>
+</select>
+</div>
+<div align="center" ID="isp50" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+<option value="1">Таттелеком</option>
+<option value="2">ТВТ</option>
+</select>
+</div>
+<div align="center" ID="isp51" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp52" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+<option value="1">Таттелеком</option>
+<option value="2">ТВТ</option>
+</select>
+</div>
+<div align="center" ID="isp53" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Imsys</option>
+<option value="1">АБВ-Интернет</option>
+<option value="2">Билайн</option>
+<option value="3">Билайн (PPTP)</option>
+<option value="4">Бородино-Телеком</option>
+<option value="5">Дом.ru</option>
+<option value="6">Сумма Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp54" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Инсис</option>
+</select>
+</div>
+<div align="center" ID="isp55" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Enter</option>
+</select>
+</div>
+<div align="center" ID="isp56" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp57" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Academ.org</option>
+<option value="1">HomeNet</option>
+<option value="2">Real-Net</option>
+<option value="3">Дом.ru</option>
+<option value="4">Комгейт</option>
+<option value="5">НИР-Телеком</option>
+<option value="6">Сибирские Сети</option>
+<option value="7">Электронный город</option>
+</select>
+</div>
+<div align="center" ID="isp58" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp59" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp60" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp61" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp62" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+<option value="3">Сибинтерком</option>
+</select>
+</div>
+<div align="center" ID="isp63" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Сумма Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp64" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp65" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp66" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp67" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp68" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp69" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Спарк</option>
+<option value="3">Сумма Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp70" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp71" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp72" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Аист</option>
+<option value="1">Билайн</option>
+<option value="2">Билайн (PPTP)</option>
+<option value="3">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp73" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Arbital</option>
+<option value="1">BigFish</option>
+<option value="2">CityTelecom.ru</option>
+<option value="3">Cubio </option>
+<option value="4">CyberNet</option>
+<option value="5">Diamond Network</option>
+<option value="6">Hitnet</option>
+<option value="7">HomeUser</option>
+<option value="8">iLAN</option>
+<option value="9">InterZet</option>
+<option value="10">IntraStar</option>
+<option value="11">KolpinoNet</option>
+<option value="12">Lentel (IPN)</option>
+<option value="13">Lentel (VPN)</option>
+<option value="14">LuxTelecom</option>
+<option value="15">MNS</option>
+<option value="16">MNS (Безлимитный тариф)</option>
+<option value="17">NEMIYA</option>
+<option value="18">Polustrovo.net</option>
+<option value="19">SkyNet</option>
+<option value="20">SmartHome</option>
+<option value="21">Teyla</option>
+<option value="22">TiERA</option>
+<option value="23">Unis</option>
+<option value="24">UniWeb</option>
+<option value="25">Well-Com</option>
+<option value="26">WKT Networks</option>
+<option value="27">Автово.нет</option>
+<option value="28">Антхил</option>
+<option value="29">Билайн</option>
+<option value="30">Билайн (PPTP)</option>
+<option value="31">ВестКолл</option>
+<option value="32">Виартком</option>
+<option value="33">Город ОнЛайн</option>
+<option value="34">ГТК</option>
+<option value="35">Демос Датаком</option>
+<option value="36">Доминанта</option>
+<option value="37">Невалинк</option>
+<option value="38">Ниеншанц-Хоум</option>
+<option value="39">Нью Линк Телеком</option>
+<option value="40">ПетерСтар</option>
+<option value="41">Прайм-Телеком</option>
+<option value="42">Пулнет</option>
+<option value="43">Пушкин-Net</option>
+<option value="44">Реалнет</option>
+<option value="45">Связь-Инвест Северо-Запад</option>
+<option value="46">Сумма Телеком</option>
+<option value="47">Телепорт</option>
+<option value="48">ТКТ</option>
+<option value="49">ТТК Северо-Запад</option>
+<option value="50">Хохлома</option>
+<option value="51">Цифра</option>
+<option value="52">Электрон Телеком</option>
+<option value="53">Эленет </option>
+<option value="54">Элтел</option>
+<option value="55">Юго-Западные сети</option>
+</select>
+</div>
+<div align="center" ID="isp74" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Дом.ru</option>
+<option value="3">Фаннет Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp75" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp76" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp77" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp78" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp79" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Спарк</option>
+</select>
+</div>
+<div align="center" ID="isp80" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp81" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Аист</option>
+<option value="1">Айдо Телеком</option>
+<option value="2">Билайн</option>
+<option value="3">Билайн (PPTP)</option>
+<option value="4">Тольятти Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp82" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp83" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Спарк</option>
+<option value="3">Сумма Телеком</option>
+</select>
+</div>
+<div align="center" ID="isp84" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp85" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Enter</option>
+<option value="1">Билайн</option>
+<option value="2">Билайн (PPTP)</option>
+<option value="3">Дом.ru</option>
+</select>
+</div>
+<div align="center" ID="isp86" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp87" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp88" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+<option value="2">Телесеть-Уфа</option>
+</select>
+</div>
+<div align="center" ID="isp89" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp90" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp91" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp92" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Дом.ru</option>
+<option value="1">Инсис</option>
+<option value="2">Инсис (Безлимитный тариф)</option>
+<option value="3">Интерсвязь (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp93" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp94" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp95" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp96" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp97" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp98" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp99" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Билайн</option>
+<option value="1">Билайн (PPTP)</option>
+</select>
+</div>
+<div align="center" ID="isp100" style="position:absolute;top:0;left:0;visibility:hidden">
+<select class=RU_sel name="RU_isp" id="RU_isp" size="1">
+<option value="0">Enter</option>
+<option value="1">Билайн</option>
+<option value="2">Билайн (PPTP)</option>
+</select>
+</div>
+</td>
+</tr>
+<tr><td><br></td></tr>
+<TR>
+<TD>
+<div class="do bk_black3_black">
+<input type="button" onClick="adv_user();" value="Прекратить" name="quit" id="quit" class="short_common_bt">
+<input type="button" onClick="check_ISP();" value="Далее " name="next" id="next" class="short_common_bt" style="position: relative; left: 50px;">
+</div>
+</TD>
+</TR>
+<td class="td_help">
+<div class="help" id="lang_help">
+</div>
+</td>
+</TABLE>
+</div>
+</div>
+</body>

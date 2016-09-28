@@ -1,0 +1,225 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wmpe1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Connection Type';
+var menuSection	='WAN';
+var menuItem	='Connection Type';
+var isRouter	='1';
+var	isPS		='0';
+var isAPmode;
+ var slave_session='1';
+
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+            
+function init()
+{
+    toggleAutoDLS();
+    
+}
+
+function checkVaild(value)
+{
+	var localname=value.toLowerCase();
+	for(i=0;i<localname.length;i++)
+	{
+		var token=localname.charAt(i);
+		if(token=='<' || token=='>' || token=='&')
+		{
+			alert(wpe10);
+			return false;
+		}
+	}
+	return true;
+}
+
+function evaltF() 
+{
+    if(isBlank(document.wan_form.ac2_username.value))
+    {
+        document.wan_form.ac2_username.focus();
+	 	document.wan_form.ac2_username.select();
+        alert(wpe12);
+        return false;
+    }
+    if(!validVisibleStr(document.wan_form.ac2_username.value))
+    {
+        document.wan_form.ac2_username.focus();
+	 	document.wan_form.ac2_username.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+    if(isBlank(document.wan_form.ac2_password.value))
+    {
+        document.wan_form.ac2_password.focus();
+	 	document.wan_form.ac2_password.select();
+        alert(wpp15);
+        return false;
+    }
+    if(!validVisibleStr(document.wan_form.ac2_password.value))
+    {
+        document.wan_form.ac2_password.focus();
+	 	document.wan_form.ac2_password.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+    if(document.wan_form.ac2_passwordV.value != document.wan_form.ac2_password.value) 
+    { 
+        document.wan_form.ac2_passwordV.focus();
+	 	document.wan_form.ac2_passwordV.select();
+        alert(vjs17); 
+        return false; 
+    }
+    if(!validVisibleStr(document.wan_form.Multi_PppoeService2.value))
+    {
+        document.wan_form.Multi_PppoeService2.focus();
+	 	document.wan_form.Multi_PppoeService2.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+    if(document.wan_form.Multi_pppoeDODC2.checked == true)
+    {
+        if( (isBlank(document.wan_form.ac2_idle.value))
+            || (isNaN(document.wan_form.ac2_idle.value))
+            || (document.wan_form.ac2_idle.value < 1 || document.wan_form.ac2_idle.value > 99))
+        {
+            document.wan_form.ac2_idle.focus();
+            document.wan_form.ac2_idle.select();
+            alert(idlerangerro); 
+            return false;
+        }
+    }
+    if(isInteger(document.wan_form.ac2_mtu.value, 1440, 1454, false) == false)
+	{
+	    alert(wmpe7_1);
+	    document.wan_form.ac2_mtu.focus();
+	    document.wan_form.ac2_mtu.select();
+	    return false;
+	}
+    
+    alert(ur5);
+	return true;
+}
+
+function submitF() 
+{
+    if(slave_session == '3')
+    {
+        document.wan_form.click_next.value = '1';    
+    }
+ 
+    return evaltF();
+}
+
+function toggleAutoDLS() 
+{
+    if(document.wan_form.Multi_pppoeDODC2.checked) 
+     	document.wan_form.ac2_idle.disabled = false;  
+    else 
+    	document.wan_form.ac2_idle.disabled = true;
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="init()">
+<form id="wan_form" name="wan_form" method=post action="apply_40.html" >
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(wmpe1);</script><br><br>
+<table border=0 class="copy_1">
+<tr>
+<td width=5>&nbsp;</td>
+<td>
+<table width="550" border="0" cellspacing="0" cellpadding="0" align=left class="copy_1">
+<tr align=left>
+<td colspan=3 align=left class="body"><script language="javascript" type="text/javascript">dw(wmpe2);</script>&nbsp; <a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#multi_pppoe','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"><script language="javascript" type="text/javascript">dw(sm1);</script></a><br><br>
+</td>
+</tr>
+
+<tr>
+<td width="175" class="body"><b><script language="javascript" type="text/javascript">dw(wmpe4);</script> &gt;</b><br><br>
+</td>
+<td width="326" align=left><input type="text" name="ac2_username" size="20" maxlength="63" value="guest@flets"><br><br>
+</td>
+</tr>
+
+<tr>
+<td width="175"><b><script language="javascript" type="text/javascript">dw(pwd);</script> &gt;</b><br><br>
+</td>
+<td class="plaintext_bold" width="226">
+<input type="password" name="ac2_password" size="25" maxlength="63" value="guest" ><br><br>
+</td>
+</tr>
+
+<tr>
+<td width="175" class="body"><b><script language="javascript" type="text/javascript">dw(wmpe5);</script> &gt;</b><br><br>
+</td>
+<td width="326" align=left>
+<input type="password" name="ac2_passwordV" size="25" maxlength="63" value="guest" ><br><br>
+</td>
+</tr>
+
+<tr>
+<td width="175" nowrap=1 class="body"><b><script language="javascript" type="text/javascript">dw(wmpe6);</script> &gt;</b><br><br>
+</td>
+<td width="326" align=left><input type="text" name="Multi_PppoeService2" size="20" maxlength="60" value="" ><br><br>
+</td>
+</tr>
+
+<tr>
+<td width="175" class="body"><b><script language="javascript" type="text/javascript">dw(wmpe7);</script> &gt;</b><br><br>
+</td>
+<td width="326">
+<input type="text" name="ac2_mtu" size="5" maxlength="4" value="1454"><br><br>
+</td>
+</tr>
+
+<tr>
+<td colspan="2" class="body"><script language="javascript" type="text/javascript">dw(wpe7);</script>&nbsp;&nbsp;<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#mtu','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"><script language="javascript" type="text/javascript">dw(sm1);</script></a><br><br></td>
+</tr>
+<tr>
+<td colspan="2" class="body"><input type="checkbox" name="Multi_pppoeDODC2" value="idletime" onClick="toggleAutoDLS();"><script language="javascript" type="text/javascript">dw(wpe8);</script>
+
+<input type="text" name="ac2_idle" size="10" maxlength="2" value="5"><script language="javascript" type="text/javascript">dw(wpe9);</script><br><br>
+</td></tr>
+    
+<tr>
+<td colspan="2" align=center>
+<script language="javascript" type="text/javascript">
+dw('<input type="button" name="return" value="');dw(btn5);dw('" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;" onClick="location.href=\'multi_pppoe_master.html\'; return true;">&nbsp;&nbsp;');
+dw('<input type="button" name="cancel" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;" onClick="location.href=\'multi_pppoe_master_E_Japan.html\'; return true;">&nbsp;&nbsp;');
+if(slave_session == '3')
+{
+dw('<input type="submit" name="itsbutton0" style="{width:160px;}" value="');dw(btn6);dw('" onClick="return submitF();" class="submitBtn">');
+}
+else
+{
+dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="');dw(btn2);dw('" onClick="return submitF();" class="submitBtn">');
+}
+
+</script>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>    
+<input type="hidden" name="click_next" value="0"> 
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

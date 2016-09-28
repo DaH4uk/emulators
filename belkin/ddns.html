@@ -1,0 +1,212 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wdd1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='DDNS';
+var menuSection	='Fire';
+var menuItem	='DDNS';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+var x=new Array(
+"aa",
+"bb",
+"cc",
+"dd",
+"ee",
+"11"
+);
+
+
+function storeData()
+{
+   
+   document.wan_form.et1macaddr.value=document.wan_form.macaddr1.value+':'+document.wan_form.macaddr2.value+':'+document.wan_form.macaddr3.value+':'+document.wan_form.macaddr4.value+':'+document.wan_form.macaddr5.value+':'+document.wan_form.macaddr6.value;
+   document.wan_form.et1macaddr_copy.value=document.wan_form.et1macaddr.value;
+   return true;
+}
+
+function evaltF() 
+{
+	 var cf = document.forms[0];
+
+	if(cf.ddns.selectedIndex > 0)
+	{
+	    if(isBlank(cf.ddns_name.value))
+		{
+		    cf.ddns_name.focus();
+		    cf.ddns_name.select();
+		    alert(msg_ddns1);
+		    return false;
+		}
+	    if(!validVisibleStr(cf.ddns_name.value))
+        {
+            cf.ddns_name.focus();
+		    cf.ddns_name.select();
+            alert(msg_invalid_char);
+            return false;
+        }
+        if(isBlank(cf.ddns_pwd.value))
+		{
+		    cf.ddns_pwd.focus();
+		    cf.ddns_pwd.select();
+		    alert(msg_ddns2);
+		    return false;
+		}
+	    if(!validVisibleStr(cf.ddns_pwd.value))
+        {
+            cf.ddns_pwd.focus();
+		    cf.ddns_pwd.select();
+            alert(msg_invalid_char);
+            return false;
+        }
+        if(isBlank(cf.ddns_host.value))
+        {
+            cf.ddns_host.focus();
+		    cf.ddns_host.select();
+		    alert(msg_ddns3);
+		    return false;
+        }
+        if(!validVisibleStr(cf.ddns_host.value))
+        {
+            cf.ddns_host.focus();
+		    cf.ddns_host.select();
+            alert(msg_invalid_char);
+            return false;
+        }
+	}
+	else
+	{
+	    if(!isBlank(cf.ddns_name.value) || !isBlank(cf.ddns_host.value))
+	    {
+	        if(!confirm(wdd10))
+	            return false;
+	    }
+	}
+
+    dataToHidden(document.forms[0]);
+
+	return true;	
+}
+
+  function submitF() {
+   return evaltF();
+  }
+
+function logoutF()
+{
+	document.wan_form.logout.value=1;
+	document.wan_form.submit();
+	return true;
+} 
+
+function connDDNS()
+{
+	var siteA = new Array("","http://www.dyndns.org","http://www.dtdns.com");
+	var selSite = siteA[document.forms[0].ddns.selectedIndex];
+	
+	if(selSite.length > 2)
+		window.open(selSite,"_blank");
+	else alert(wdd9);
+}
+
+function init()
+{
+    dataToVisible(document.forms[0]);    
+}
+
+//-->
+</script>  
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="init();">
+<form id="wan_form" name="wan_form" method=post action="/belkin/3.00.02/En/apply_10_ddns.html" >
+
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+<br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(wdd1);</script><br>
+
+<table border=0 class="copy_1">
+<tr>
+
+<td width=5>&nbsp;</td>
+<td valign="top">
+<table width=600 border="0" cellspacing="0" cellpadding="0" align=left class="copy_1">
+<tr>
+ <td colspan=3 valign="top" height="45" class="body"><script language="javascript" type="text/javascript">dw(wdd2);</script> 
+ <a href="javascript:void(0);" class="more" onClick="window.open('glossary.html#ddns','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script language="javascript" type="text/javascript">dw(sm1);</script></a>
+ <BR> &nbsp; 
+</td>
+</tr>
+
+<tr>
+<td width="30">&nbsp;</td>
+<td width="150" class="bold_body"><script language="javascript" type="text/javascript">dw(wdd3);</script> &gt;<br><br></td>
+<td width="420" nowrap=1 align=left> 
+ <select name="ddns">
+ <script language="javascript" type="text/javascript">
+ dw('<option value="0">'+DDNSDisable+'</option>');
+ dw('<option value="1">'+DynDNS+'</option>');
+ </script>
+ </select>  
+ <script language="javascript" type="text/javascript">dw('<input type="button" style="{width:80px;}" class="submitBtn" name="connect_ddns" value="');dw(wdd5);dw('" onClick="connDDNS();"><br><br></td>');</script>
+	<br><br></td>
+	</tr>
+<tr>
+ <td width="30">&nbsp;</td>
+ <td width="300" class="bold_body"><script language="javascript" type="text/javascript">dw(wdd4);</script> &gt;
+ <br><br></td>
+ <td nowrap align=left class="body"><script>dw(Disable);</script> </td>
+</tr>
+<tr>
+ <td width="30">&nbsp;</td>
+ <td width="300" class="bold_body"><script language="javascript" type="text/javascript">dw(wdd6);</script> &gt;
+ <br><br></td>
+ <td nowrap align=left><INPUT type="text" name="ddns_name" value="" size="15" maxlength="15"></td>
+</tr>
+<tr>
+ <td width="30">&nbsp;</td>
+ <td width="300" class="bold_body"><script language="javascript" type="text/javascript">dw(wdd7);</script> &gt;
+ <br><br></td>
+ <td nowrap align=left><INPUT type="password" name="ddns_pwd" value="" size="15" maxlength="15"></td>
+</tr>
+<tr>
+ <td width="30">&nbsp;</td>
+ <td width="300" class="bold_body"><script language="javascript" type="text/javascript">dw(wdd8);</script> &gt;
+ <br><br></td>
+ <td nowrap align=left>
+ <INPUT type="text" class="num" name="ddns_host" value="" size="30" maxlength="46"></td>
+</tr>
+<tr>
+	<td width="3">&nbsp;</td>
+	<td colspan="2" align=center>
+	<br><br>
+	<script language="javascript" type="text/javascript">dw('<input type="button" name="cancel" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onclick="document.wan_form.reset();" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');
+	dw('<input type="submit" style="{width:160px;}" name="save" value="');dw(msg_ddns4);dw('" onClick="return submitF();" class="submitBtn">');</script>
+	</td>
+</tr>
+</table>
+</td></tr>
+</table>
+</td>
+<input type="hidden" name="h_ddns" value="0">
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

@@ -1,0 +1,611 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Dynamic DNS</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function ddns_check(F,T) {
+if(F.ddns_enable.value == 0) {
+return true;
+} else if(F.ddns_enable.value == 1) {
+username = eval("F.ddns_username");
+passwd = eval("F.ddns_passwd");
+hostname = eval("F.ddns_hostname");
+dyndnstype = eval("F.ddns_dyndnstype");
+wildcard = eval("F.ddns_wildcard");
+} else if(F.ddns_enable.value == 2) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 3) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 4) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 6) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+dyndnstype = eval("F.ddns_dyndnstype_"+F.ddns_enable.value);
+wildcard = eval("F.ddns_wildcard_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 7) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+wildcard = eval("F.ddns_wildcard_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 8) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 5) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+} else if(F.ddns_enable.value == 9) {
+username = eval("F.ddns_username_"+F.ddns_enable.value);
+passwd = eval("F.ddns_passwd_"+F.ddns_enable.value);
+hostname = eval("F.ddns_hostname_"+F.ddns_enable.value);
+}
+if(username.value == "") {
+alert(errmsg.err0);
+username.focus();
+return false;
+}
+if(passwd.value == "") {
+alert(errmsg.err6);
+passwd.focus();
+return false;
+}
+if(hostname.value == "") {
+alert(errmsg.err7);
+hostname.focus();
+return false;
+}
+return true;
+}
+function submitcheck(F) {
+if(!ddns_check(F,"save"))
+return;
+
+F.change_action.value = "";
+F.save_button.value = sbutton.saving;
+update.stop();
+}
+function to_submit(F) {
+submitcheck(F);
+apply(F);
+}
+function to_apply(F) {
+submitcheck(F);
+applytake(F);
+}
+function SelDDNS(num,F) {
+F.change_action.value="gozila_cgi";
+F.ddns_enable.value=F.ddns_enable.options[num].value;
+update.stop();
+F.submit();
+}
+var update;
+addEvent(window, "load", function() {
+update = new StatusUpdate("DDNS.live.asp", 3);
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupbasic)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.setupddns)</script></strong></span></li>
+      <li><a href="WanMAC.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupmacclone)</script></strong></a></li>
+      <li><a href="Routing.asp.html"><strong><script type="text/javascript">Capture(bmenu.setuprouting)</script></strong></a></li>
+      <li><a href="Networking.asp.html"><strong><script type="text/javascript">Capture(bmenu.networking)</script></strong></a></li>
+      <li><a href="eop-tunnel.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupeop)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="dyndns" action="#" method="post">
+<input type="hidden" name="submit_button" value="DDNS" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action"/>
+<input type="hidden" name="submit_type" />
+
+<h2><script type="text/javascript">Capture(ddns.h2)</script></h2>
+
+<fieldset>
+<legend><script type="text/javascript">Capture(ddns.legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.srv)</script></div>
+<select name="ddns_enable" onchange="SelDDNS(this.form.ddns_enable.selectedIndex,this.form)">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\" selected >" + share.disable + "</option>");
+//]]>
+</script>
+<option value="1"  >DynDNS.org</option>
+<option value="2"  >freedns.afraid.org</option>
+<option value="3"  >ZoneEdit.com</option>
+<option value="4"  >No-IP.com</option>
+<option value="6"  >3322.org</option>
+<option value="7"  >easyDNS.com</option>
+<option value="8"  >TZO.com</option>
+<option value="9"  >DynSIP.org</option>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"5\"  >" + ddns.custom + "</option>");
+//]]>
+</script>
+</select>
+</div>
+<!--
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+							<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd" name="ddns_passwd" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>			
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.typ)</script></div>
+<select name="ddns_dyndnstype">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"1\"  >" + ddns.dynamic + "</option>");
+document.write("<option value=\"2\"  >" + share.sttic + "</option>");
+document.write("<option value=\"3\"  >" + ddns.custom + "</option>");
+//]]>
+</script>
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wildcard)</script></div>
+<input type="checkbox" value="1" name="ddns_wildcard"  />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_2" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_2" name="ddns_passwd_2" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_2', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_2" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_3" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_3" name="ddns_passwd_3" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_3', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_3" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_4" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_4" name="ddns_passwd_4" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_4', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_4" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_6" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_6" name="ddns_passwd_6" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_6', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_6" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.typ)</script></div>
+<select name="ddns_dyndnstype_6">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"1\"  >" + ddns.dynamic + "</option>");
+//]]>
+</script>
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wildcard)</script></div>
+<input type="checkbox" value="1" name="ddns_wildcard_6"  />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_7" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_7" name="ddns_passwd_7" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_7', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_7" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wildcard)</script></div>
+<input type="checkbox" value="1" name="ddns_wildcard_7"  />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_8" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_8" name="ddns_passwd_8" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_8', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_8" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_9" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_9" name="ddns_passwd_9" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_9', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_9" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.system)</script></div>
+<input name="ddns_custom_5" size="30" maxlength="32" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+<input name="ddns_username_5" size="30" maxlength="64" onblur="valid_name(this,share.usrname)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+<input type="password" id="ddns_passwd_5" name="ddns_passwd_5" size="30" maxlength="32" onblur="valid_name(this,share.passwd)" value="" />&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="ddns_passwd_unmask" value="0" onclick="setElementMask('ddns_passwd_5', this.checked)" >&nbsp;<script type="text/javascript">Capture(share.unmask)</script></input>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.hostname)</script></div>
+<input name="ddns_hostname_5" size="42" onblur="valid_name(this,share.hostname)" value="" />
+</div>
+<div class="setting">
+<div class="label">URL</div>
+<textarea cols="60" rows="2" id="ddns_url" name="ddns_url"></textarea>
+<script type="text/javascript">
+//<![CDATA[
+var ddns_url = fix_cr( '' );
+document.getElementById("ddns_url").value = ddns_url;						
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.options)</script></div>
+<textarea cols="60" rows="4" id="ddns_conf" name="ddns_conf"></textarea>
+<script type="text/javascript">
+//<![CDATA[
+var ddns_conf = fix_cr( '' );
+document.getElementById("ddns_conf").value = ddns_conf;
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.wanip)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ddns_wan_ip" checked="checked" /><script type="text/javascript">Capture(share.yes)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ddns_wan_ip"  /><script type="text/javascript">Capture(share.no)</script>
+</div>
+
+
+
+
+
+
+
+
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(share.option)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(ddns.forceupd)</script></div>
+<input type="text" size="4" class="num" name="ddns_force" onblur="valid_range(this,1,60,ddns.forceupd)" value="10" />
+<span class="default">
+<script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 10 " + share.days_genetive + ", " + share.range + ": 1 - 60)");
+//]]>
+</script></span>
+</div>
+</fieldset><br />
+<fieldset>
+<legend><script type="text/javascript">Capture(ddns.statu)</script></legend>
+<div class="setting">
+<span id="ddns_status">DDNS function is disabled</span>&nbsp;
+</div>
+-->
+</fieldset><br />
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+var autoref = sbutton.autorefresh;
+submitFooterButton(1,1,0,autoref);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(ddns.srv)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hddns.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(ddns.forceupd)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hddns.right4)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HDDNS.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:06 up 24 min, load average: 0.08, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

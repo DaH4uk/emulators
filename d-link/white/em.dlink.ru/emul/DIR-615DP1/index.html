@@ -1,0 +1,990 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>DIR-615</title>
+		<meta name="copyright" content="Copyright (C) 2012 D-Link Russia" />
+		<meta name="keywords" content="DIR-615" />
+		<meta name="description" content="DIR-615" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="pragma" content="no-cache" />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta http-equiv="content-style-type" content="text/css" />
+		<meta http-equiv="content-script-type" content="text/javascript" />
+		<link type="image/x-icon" rel="shortcut icon" href="favicon.ico" />
+		<link type="text/css" rel="stylesheet" href="css/init.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/general.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/fashion.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/services.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/widenetwork.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/widenetwork.part.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/localnetwork.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/logic.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/logic.part.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/common.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/misc.css%3Fid=0.css" />
+		<link type="text/css" rel="stylesheet" href="css/workbench.css%3Fid=0.css" />		
+		<!--[if lt IE 9]>
+				<link type="text/css" rel="stylesheet" href="css/general_ielt9.css?id=0" />
+		<![endif]-->
+		<script type="text/javascript" src="scripts/jquery.js"></script>
+		<script type="text/javascript" src="scripts/jquery.mousewheel.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/jquery.json.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/jquery.caret.js%3Fid=0"></script>                
+		<script type="text/javascript" src="scripts/jquery.effects.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/override_functions.js"></script>
+		<script type="text/javascript" src="scripts/raphael.js%3Fid=0"></script>
+		
+		<script type="text/javascript" src="scripts/eng.lng.js%3Fid=0"></script>
+		<script>var baselang = new Object(lang);</script>
+		<script type="text/javascript" src="scripts/eng.lng.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/config.lng.js%3Fid=0"></script>		
+		<script type="text/javascript">
+			window.curlang = "eng";
+			window.menu_postfix = "";
+		</script>
+		<script type="text/javascript" src="scripts/init.js"></script>
+		<script type="text/javascript" src="scripts/device.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/ipv4.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/devinfo.js%3Fid=0"></script>
+		<!--<script type="text/javascript" src="scripts/langmenu.js"></script>-->
+		<!--<script type="text/javascript" src="scripts/sysmenu.js"></script>-->
+		<script type="text/javascript" src="scripts/fix.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/jhmvc.js"></script>
+		<script type="text/javascript" src="scripts/jhmvc.patch.js%3Fid=0"></script>		
+		<script type="text/javascript" src="scripts/common1.js"></script>
+		<script type="text/javascript" src="scripts/common2.js%3Fid=0"></script>         
+		<script type="text/javascript" src="scripts/general.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/menu/list.js"></script>
+		<script type="text/javascript" src="scripts/menu/logic.js"></script>
+		<script type="text/javascript" src="scripts/test/lang.common.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/test/menu.common.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/fashion.js%3Fid=0"></script>                
+		<script type="text/javascript" src="scripts/saveme.js%3Fid=0"></script>
+
+		<script type="text/javascript" src="scripts/port.list.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/localnetwork.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/localnetwork.ex.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/widenetwork.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/widenetwork.ex.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/notify.js%3Fid=0"></script>
+
+		<script type="text/javascript" src="scripts/hashchange.event.js%3Fid=0"></script>
+		<script type="text/javascript" src="scripts/logic.js"></script>
+		<script type="text/javascript" src="mobile/scripts/ismobile.js"></script>
+		
+		<script>
+			//if(window.httpIntercept) httpIntercept();
+		</script>
+	</head>
+	<body>
+		<div id='sky' class='unselectable'></div>
+		<div id='grass' class='unselectable'></div>
+
+		<div id='hatbox'>
+		
+			<div id='creator' class='unselectable'>
+				<div class='vendor'>
+					<div class='desc' langkey='airVendor'></div>
+					<div class='value'>D-Link Russia</div>
+				</div>
+				<div class='support'>
+					<div class='desc' langkey='airSupport'></div>
+					<div class='phone'></div>
+					<div class='value'><br/><a href='mailto:<support@dlink.ru>'  onclick='return delMailto(this.href);'><support@dlink.ru></a></div>
+				</div>
+			</div>
+
+
+			<div id='switcher' class='unselectable'>
+				<div class='item SETTINGS' style="display: none;">
+					<div class='caption' langkey='airSettings'></div>
+					<div class='desc' langkey='airSettingsDesc'></div>
+				</div>				
+				<!--						<div class='item MONITORING'>
+											<div class='caption' langkey='airMonitoring'></div>
+											<div class='desc' langkey='airMonitoringDesc'></div>
+										</div>-->
+				<div class='clear'></div>
+			</div>
+			<div id='savewarningBox' class='unselectable'>
+				<div id="savewarning">
+					<div class='title'>
+						<span></span>
+						<div class='down'></div>
+						<div class='up'></div>
+					</div>
+					<div class='img'></div>
+					<div class='notifyboxM'>
+						<div id='notifyboxM'>
+							<div class='item save'>
+								<div class='title' langkey='airSave'></div>
+								<div class='desc' langkey='airSaveDesc'></div>
+								<div class='overlay'></div>
+							</div>
+							<div class='item reboot'>
+								<div class='title' langkey='button_save_reboot'></div>
+								<div class='desc' langkey='airRebootDesc'></div>
+								<div class='overlay'></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id='windowbox'>
+			<div class='overlay unselectable' unselectable='on'></div>
+
+			<div class='window' id='winFirmware'>
+				<div class='header'>
+					<div class='caption' langkey='airFWUpgrade'></div>
+					<div class='close' tip='' langkey='airWinClose'></div>
+					<div class='clear'></div>
+				</div>
+				<div class='body'>
+					<div class='content'>
+						<div class='current'>
+							<div class='version'>emulator</div>
+							<div class='buildtime'>Today</div>
+							<div class='revision'></div>
+							<div class='clear'></div>
+						</div>
+						<div class='info' langkey='airFWInfo'></div>
+						<div class='board'>
+							<input type='button' value='Browse' class='browse' langkey='airBtnBrowse' />
+<!--							<div class='progress'></div>-->
+							<form action='http://em.dlink.ru/emul/DIR-615DP1/fwupdate.cgi?proxy=y' enctype='multipart/form-data' target='fwiframe' method='post'>
+								<input type='file' name='firmware' />
+								<input type='reset' />
+							</form>
+							<iframe frameborder='0' width='0' scrolling='no' height='0' name='fwiframe'></iframe>
+						</div>
+						<div class='status'>
+							<div><span langkey='airFWUploading'></span>: <b></b> - <a href='index.html#' class="btnCancel" langkey='airBtnCancel'></a>
+								<br/> <br/> 
+								<input type="button" href='#' class="btnUpdate" langkey='button_upload' />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='window' id='winSafemode'>
+				<div class='header'>
+					<div class='caption' langkey='airSafemode'></div>
+					<div class='clear'></div>
+				</div>
+				<div class='body'>
+					<div class='desk' langkey='airSafemodeDesc'></div>
+					<div class='content'>
+						<div class="item reboot">
+							<div class="caption" langkey='airSafemodeReboot'></div>
+							<div class="message" langkey='airSafemodeRebootDesc'></div>
+						</div>						
+						<div class="item recover">
+							<div class="caption" langkey='airSafemodeRecover'></div>
+							<div class="message" langkey='airSafemodeRecoverDesc'></div>
+						</div>
+						<div class="item config">
+							<div class="caption" langkey='airSafemodeConfig'></div>
+							<div class="message" langkey='airSafemodeConfigDesc'></div>
+						</div>												
+						<div class="item continue">
+							<div class="caption" langkey='airSafemodeContinue'></div>
+							<div class="message" langkey='airSafemodeContinueDesc'></div>
+						</div>
+					</div>
+				</div>
+			</div>	
+			
+			<div class='window' id='winRecovery'>
+				<div class='header'>
+					<div class='caption' langkey='airRecovery'></div>
+					<div class='close' tip='' langkey='airWinClose'></div>
+					<div class='clear'></div>
+				</div>
+				<div class='body'>
+					<div class='content'>
+						<div class='info' langkey='airRCInfo'></div>
+						<div class='board'>
+							<input type='button' value='Browse' class='browse' langkey='airBtnBrowse' />
+							<!--<div class='progress'></div>-->
+							<form action='http://em.dlink.ru/emul/DIR-615DP1/index.cgi?proxy=y' enctype='multipart/form-data' target='rciframe' method='post'>
+								<input type='file' name='file_config' />
+								<input type='reset' />
+							</form>
+							<iframe frameborder='0' width='0' scrolling='no' height='0' name='rciframe'></iframe>
+						</div>
+						<div class='status'>
+							<div>
+								<span langkey='airFWUploading'></span>: <b></b> - <a href='index.html#' class="btnCancel" langkey='airBtnCancel'></a>
+								<br/> <br/> 
+								<input type="button" href='#' class="btnUpdate" langkey='button_revert' />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class='window' id='winDefPass'>
+				<div class='body'>
+					<div class='content'>
+						<div class='dialcaptionPass' style='display: none' langkey='airPasswdDesc'></div>
+						<div class='clear'></div>
+						<div class='controls'>
+							<div class='field' style='display: none'><div class="label" langkey='passw'></div><input type='password' class='passwd'/></div>
+							<div class='field' style='display: none'><div class="label" langkey='passwConfirm'></div><input type='password' class='confirm'/></div>
+							<div class="errorPass"></div>
+						</div>
+						<div class='dialcaptionSsid' style='display: none' langkey='airSsidDesc'></div>
+						<div class='clear'></div>
+						<div class='controls'>
+							<div class='field' style='display: none'><div class="label" langkey='ssid'></div><input type='text' class='ssid'/></div>
+							<div class='field' style='display: none'><div class="label" langkey='ssid5'></div><input type='text' class='ssid5'/></div>
+							<div class="errorSsid"></div>
+							<div class='action'>
+								<input type="button" href='#' class="apply" langkey='airBtnApply' />
+							</div>
+							<div class='overlay'></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class='window' id='winStatClient'>
+				<div class='header'>
+					<div class='caption' langkey='airStatCli'></div>
+					<div class='close' tip='' langkey='airWinClose'></div>
+					<div class='clear'></div>
+				</div>
+				<div class='body'>
+					<div class='content'></div>
+				</div>
+				<div class='footer'>
+					<div class='toolbar'></div>
+					<div class='clear'></div>
+				</div>
+			</div>
+
+			<div class='window' id='winMiscSettings'>
+				<div class='header'>
+					<div class='caption'></div>
+					<div class='close' tip='' langkey='airWinClose'></div>
+					<div class='clear'></div>
+				</div>
+				<div class='body'>
+					<div class='content'></div>
+				</div>
+				<div class='footer'>
+					<div class='toolbar'></div>
+					<div class='clear'></div>
+				</div>
+			</div>
+
+			<div class='window' id='winPage'>
+
+				<div class='header'>
+					<div class='caption'></div>
+					<div class='close' tip='' langkey='airWinClose'></div>
+					<div class='clear'></div>
+				</div>
+				<div class='body'>
+					<div class='content' id='pageGeneral'><div></div></div>
+					<div class='content' id='helpGeneral'><div></div></div>
+					<div class='smooth top unselectable'></div>
+					<div class='smooth bottom unselectable'></div>
+				</div>
+				<div class='footer'>
+					<div class='toolbar' id='winPageToolbarButtons'></div>
+					<div class='clear'></div>
+				</div>
+			</div>
+		</div>
+
+
+		<div id='gwrapper'>                                       
+			<div id='header'>
+				<div class='wrapper'>
+					<div id='logo' class='unselectable'>
+						<div class='separator'></div>
+						<div class='info'>
+							<div class='version'><a href='index.html#'>emulator</a></div>
+							<div class='model'>DIR-615</div>
+							<div id='fastmenu'>
+								<div class='system' id="fastbutton">
+									<div class='text' langkey='menu_system'></div>
+									<div class='clear'></div>
+									<div class='fastaccess'>
+										<div class="trDown"></div>
+										<div class="trUp"></div>
+									</div>
+								</div>
+								<div class='lang'>
+									<div class='icon'>
+										<div class='tip' direct='bottom'><ul></ul></div>
+									</div>
+									<div class='text'></div>
+									<div class='clear'></div>
+								</div>
+								<div class="messYourLang">&nbsp;-&nbsp;<span langkey="maybe_lang"></span><span class="guess"></span><span>?</span></div>
+								<div class='clear'></div>
+							</div>
+						</div>
+						<div class='clear'></div>
+					</div>
+
+				</div>                                    
+			</div>
+			<div id='content'>
+
+				<div id='pageMonitor'>
+					<div id='monitor'>
+						<div id='wideNetwork' class='disconnected wifi_off'>
+							<div class='join'>
+								<div class='rel line0'></div>
+								<div class='rel line1'></div>
+								<div class='rel line2'></div>
+								<div class='rel line3'></div>
+								<div class='rel line4'></div>
+								<div class='rel line5'></div>
+								<div class='rel line6'></div>
+							</div>
+							<div class='service internet'>
+								<div class='icon'></div>
+								<div class='caption green unselectable' unselectable='on' langkey='airInternet'></div>
+								<div class='tiplayer'>
+									<div class='tip' direct='right'>
+										<ul></ul>
+										<div class='add'>
+											<a href='index.html#' langkey='airAddNew'></a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class='service voip'>
+								<div class='icon' tip='' langkey='airVoipSettings'></div>
+								<div class='caption green unselectable' unselectable='on' langkey='airVoip'></div>
+								<div class='linestate'>
+									<div class='count off' unselectable='on'>
+										<span class='line' langkey='airVoipLine1'></span>
+										<div class='info'>
+											<div class='status'></div>
+											<div class='telefon'></div>
+										</div>
+									</div>
+									<div class='count  off' unselectable='on'>
+										<span class='line' langkey='airVoipLine2'></span>
+										<div class='info'>
+											<div class='status'></div>
+											<div class='telefon'></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class='service v4 connector off'>
+								<div class='statbar info'>
+									<div class='name unselectable'></div>
+									<div class='ip unselectable'></div>
+									<div class='error unselectable' unselectable='on'></div>
+									<div class='mac'>
+										<div class='clone'>
+											<div class='tip' direct='right'>
+												<ul></ul>
+												<div class='ex'>
+													<a href='index.html#'>Reset</a>
+												</div>
+											</div>
+										</div>
+										<div class='value'>
+											<input type='text' value='' maxlength='17' fastedit='true' />
+										</div>
+										<div class='clear'></div>
+									</div>
+								</div>
+								<div class='statbar error unselectable'></div>
+								<div class='loading'></div>
+							</div>
+							<div class='service v6 connector off'>
+								<div class='statbar info'>
+									<div class='name unselectable'></div>
+									<div class='ip unselectable'></div>
+									<div class='error unselectable' unselectable='on'></div>
+									<div class='mac'>
+										<div class='clone'>
+											<div class='tip' direct='right'>
+												<ul></ul>
+												<div class='ex'>
+													<a href='index.html#'>Reset</a>
+												</div>
+											</div>
+										</div>
+										<div class='value'>
+											<input type='text' value='' maxlength='17' fastedit='true' />
+										</div>
+										<div class='clear'></div>
+									</div>
+								</div>
+								<div class='statbar error unselectable'></div>
+								<div class='loading'></div>
+							</div>
+							<div class='service rate'>
+								<div class='ratebar v4 unselectable'>
+									<div class='sspeed'>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='tx'>
+										<span>&uarr;</span>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='dspeed'>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='rx'>
+										<span>&darr;</span>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+								</div>
+								<div class='ratebar common unselectable'>
+									<div class='sspeed'>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='tx'>
+										<span>&uarr;</span>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='dspeed'>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='rx'>
+										<span>&darr;</span>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+								</div>
+								<div class='ratebar v6 unselectable'>
+									<div class='sspeed'>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='tx'>
+										<span>&uarr;</span>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='dspeed'>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+									<div class='rx'>
+										<span>&darr;</span>
+										<span class='value'></span><span class='metric'></span>
+									</div>
+								</div>
+							</div>
+							<div class='service firewall empty'>
+								<div class='icon'></div>
+								<div class='caption unselectable' unselectable='on' langkey='airFirewall'></div>
+								<div class='statbar unselectable'>
+									<div class='count' unselectable='on'>
+										<span class='n'>0</span>
+										<span langkey='airRules'></span>
+									</div>
+									<div langkey='airActivated' class="status"></div>
+									<div class='clear'></div>
+								</div>
+								<div class='tiplayer'>
+									<div class='tip' direct='right'>
+										<ul></ul>
+										<div class='add'>
+											<a href='index.html#' langkey='airAddNew'></a>
+										</div>
+									</div>
+								</div>
+								<div class='loading opacity'></div>
+							</div>
+							<div class='service control off'>
+								<div class='icon'></div>
+								<div class='caption unselectable' unselectable='on' langkey='airControl'></div>
+								<div class='statbar unselectable'>
+									<div class='count' unselectable='on'>0</div>
+									<div>
+										<div class='desc text' langkey='airURLs'></div>
+										<div class='desc type'>
+											<select>
+												<option value='exclude' langkey='airBanned'></option>
+												<option value='include' langkey='airAllowed'></option>
+											</select>
+										</div>
+									</div>
+									<div class='clear'></div>
+									<div class='state'></div>
+									<div class='clear'></div>
+								</div>
+								<div class='tiplayer'>
+									<div class='tip' direct='left'>
+										<ul></ul>
+										<div class='add'>
+											<a href='index.html#' langkey='airAddNew'></a>
+										</div>
+									</div>
+								</div>
+								<div class='loading opacity'></div>
+							</div>
+							<div class='service device'>
+								<div class='icon'></div>
+								<div class='system'>
+									<div class='tip'>
+										<ul>
+											<li><a href='index.html#' class='reboot' langkey='airMenuSaveReboot'></a></li>
+											<li><a href='index.html#' class='backup' langkey='airMenuBackup'></a></li>
+											<li><a href='index.html#' class='restore' langkey='airMenuRestore'></a></li>
+											<li><a href='index.html#' class='factory' langkey='airMenuFactory'></a></li>
+											<li><a href='index.html#' class='firmware' langkey='airMenuFirmware'></a></li>
+										</ul>
+										<ul class='logout'>
+											<li><a href='index.html#' class='logout' langkey='airMenuLogout'></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class='processing'></div>
+							</div>
+							<div class='service wifilter off'>
+								<div class='icon'></div>
+								<div class='caption unselectable' unselectable='on' langkey='airWiFiFilter'></div>
+								<div class='statbar unselectable'>
+									<div class='count' unselectable='on'>0</div>
+									<div>
+										<div class='desc text' langkey='airClients'></div>
+										<div class='desc type'>
+											<select>
+												<option value='access' langkey='airAllowed'></option>
+												<option value='deny' langkey='airBanned'></option>
+											</select>
+										</div>
+									</div>
+									<div class='clear'></div>
+									<div class='state'></div>
+									<div class='clear'></div>
+								</div>
+								<div class='tiplayer'>
+									<div class='tip' direct='left'>
+										<ul></ul>
+										<div class='add'>
+											<a href='index.html#' langkey='airAddNew'></a>
+										</div>
+									</div>
+								</div>
+								<div class='loading opacity'></div>
+							</div>
+							<div class='service wireless'>
+								<div class='icon'></div>
+								<div class='statbar ghz'>
+									<span class="ghz_switch">2.4GHz</span>
+								</div>		
+								<div class='caption green unselectable' unselectable='on' langkey='airWireless'></div>
+								<div class='statbar basic'>
+									<div class='visible' tip='' langkey='airTipWiFiHide'></div>
+									<div class='ssid'>
+										<input type='text' value='' fastedit='true' />
+									</div>
+									<div class='clear'></div>
+									<div class='state'></div>
+									<div class='clear'></div>
+								</div>
+								<div class='statbar security'>
+									<div class='mode'>
+										<select></select>
+									</div>
+									<div class='protect' tip='' langkey='airTipWiFiPasswd'></div>
+									<div class='passwd'>
+										<input type='text' value='' fastedit='true' />
+										<input type='password' value='' />
+										<div class='state open unselectable' langkey='airWiFiNoPasswd'></div>
+										<div class='state radius unselectable' langkey='airWiFiRadius'></div>
+									</div>
+									<div class='clear'></div>
+								</div>
+								<div class='loading opacity'></div>
+							</div>
+							<div class='service apcli'>
+								<div class='join'>
+									<div class='rel line_uno'>
+										<div class='desc unselectable' unselectable='on' langkey='airApcliMode'></div>
+										<div class='enable'></div>
+									</div>
+								</div>
+								<div class='icon'></div>
+								<div class='statbar info unselectable'>
+									<div class="ssid" unselectable='on'></div>
+									<div class="bssid" unselectable='on'></div>
+								</div>
+								<div class='loading'></div>
+							</div>
+						</div>
+						<div id='localNetwork'>
+							<div id='trim' class='unselectable'>
+								<div class='text top' unselectable='on' langkey='airTrimDynamic'></div>
+								<div class='text center' unselectable='on' langkey='airTrimLocal'></div>
+								<div class='text bottom' unselectable='on' langkey='airTrimStatic'></div>
+							</div>
+							<div id='clientarea'>
+								<div class='canvas'></div>
+								<div class='WRAPPER'>
+									<div class='clients'>
+										<!-- <div class='overlay'></div> -->
+									</div>
+								</div>
+								<div class='addcli unselectable'>
+									<div><div class='plus'>+</div></div>
+									<div class='desc' unselectable='on' langkey='airAddCli'></div>
+								</div>
+								<!-- Smooths -->
+								<div class='smooth left unselectable' unselectable='on'></div>
+								<div class='smooth right unselectable' unselectable='on'></div>
+								<!-- Scrolls -->
+								<div class='scroll top left'></div>
+								<div class='scroll top right'></div>
+								<div class='scroll bottom left'></div>
+								<div class='scroll bottom right'></div>
+								<!-- Loadings -->
+								<div class='loading top'></div>
+								<div class='loading bottom'></div>
+							</div>
+							<div id='splitter'>
+								<div class='join'>
+									<div class='rel line1'></div>
+									<div class='rel line2'></div>
+									<div class='rel line3'></div>
+									<div class='rel line4'></div>
+									<div class='rel line5'></div>
+								</div>
+								<div class='service macfilter empty'>
+									<div class='icon'></div>
+									<div class='caption unselectable' unselectable='on' langkey='airMACFilter'></div>
+									<div class='statbar unselectable'>
+										<div class='count' unselectable='on'><span>0<sup>/0</sup></span></div>
+										<div unselectable='on' langkey='airBanCount'></div>
+										<div class='clear'></div>
+									</div>
+									<div class='tiplayer'>
+										<div class='tip' direct='right'>
+											<ul></ul>
+											<div class='add'>
+												<a href='index.html#' langkey='airAddNew'></a>
+											</div>
+										</div>
+									</div>
+									<div class='loading opacity'></div>
+								</div>
+								<div class='service virtserv empty'>
+									<div class='icon'></div>
+									<div class='join'>
+										<div class='rel line1'></div>
+										<div class='rel line2'>
+											<div class='point'></div>
+										</div>
+									</div>
+									<div class='caption green unselectable' unselectable='on' langkey='airVirtServ'></div>
+									<div class='statbar unselectable'>
+										<div class='count' unselectable='on'>
+											<span class='n' unselectable='on'><span>0<sup>/0</sup></span></span>
+											<span class='desc' unselectable='on' langkey='airPorts'></span>
+										</div>
+										<div unselectable='on' langkey='airRedirected'></div>
+									</div>
+									<div class='tiplayer'>
+										<div class='tip'>
+											<ul></ul>
+											<div class='add'>
+												<a href='index.html#' langkey='airAddNew'></a>
+											</div>
+										</div>
+									</div>
+									<div class='loading opacity'></div>
+								</div>
+							</div>
+							<div id='dhcp'>
+								<div class='join'>
+									<div class='rel slideline'>
+										<div class='rel line1'></div>
+										<div class='rel line2'></div>
+									</div>
+								</div>
+								<div class='status' tip='' langkey='airTipDHCPD'></div>
+								<div class='bar unselectable'>
+									<div class='range from' unselectable='on'></div>
+									<div class='range to' unselectable='on'></div>
+								</div>
+								<div class='full'>
+									<div class='counter'>
+										<div class='side left'></div>
+										<div class='side right'></div>
+										<div class='center'>
+											<span class='value unselectable' unselectable='on'></span>
+										</div>
+									</div>
+								</div>
+								<div class='toddler begin'>
+									<div class='addr'>
+										<div class='label unselectable' unselectable='on'></div>
+										<div class='edit'>
+											<input type='text' maxlength='15' value='' class='ip flow' />
+											<div class='cancel' tip='' langkey='airBtnCancel'></div>
+											<div class='apply' tip='' langkey='airBtnApply'></div>
+											<div class='errordhcp' langkey='outOfRange'></div>
+											<div class='clear'></div>
+										</div>
+									</div>
+								</div>
+								<div class='toddler end'>
+									<div class='addr'>
+										<div class='label unselectable' unselectable='on'></div>
+										<div class='edit'>
+											<input type='text' maxlength='15' value='' class='ip flow' />
+											<div class='cancel' tip='' langkey='airBtnCancel'></div>
+											<div class='apply' tip='' langkey='airBtnApply'></div>
+											<div class='errordhcp'  langkey='outOfRange'></div>
+											<div class='clear'></div>
+										</div>
+									</div>
+								</div>
+								<div class='toddler device'>
+									<div class='addr'>
+										<div class='label unselectable' unselectable='on'></div>
+										<div class='edit more'>
+											<input type='text' maxlength='15' value='' class='devip flow' />
+											<div class='flow'>&nbsp;&nbsp;/&nbsp;&nbsp;</div>
+											<input type='text' maxlength='2' value='' class='netmask flow' />
+											<div class='cancel' tip='' langkey='airBtnCancel'></div>
+											<div class='apply' tip='' langkey='airBtnApply'></div>
+											<div class='clear'></div>
+											<div class='info unselectable' unselectable='on'></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div id='pageSetting' class='wrapper'>
+					<div id='menu'>
+						<div class="monitor"></div>
+						<div class="spisok"></div>
+					</div>
+					<div id='page'>
+						<div id='searchbar'>
+							<div class='field'>
+								<input type='text' id='SEARCH' maxlength='70' value="" />
+								<label for='SEARCH' class='hint unselectable' unselectable='on' langkey='airSearch'></label>
+								<div class='icon'></div>
+							</div>
+							<div id="ledNotify">	
+								<div class="ledTip">										
+									<div class="trDown"></div>
+									<div class="trUp"></div>
+									<span></span>
+								</div>
+								<div class="ledCount"></div>
+								<div class="ledClose">X</div>
+							</div>
+							<div class='clear'></div>
+						</div>
+						<div id='searchbox'>
+							<div class='caption'>
+								<div class='str'>
+									<span langkey='search_results'></span>
+									<span class='copy'>&laquo;&raquo;</span>
+								</div>
+								<div class='match'>
+									<span class='count'>0</span>
+									<span langkey='airMatches'></span>
+								</div>
+								<div class='clear'></div>
+							</div>
+							<div class='result'></div>
+						</div>
+						<div class='cover'>
+							<div class='header'>
+								<h2></h2>
+								<div id='preloader'></div>
+								<div id='prerror'></div>
+							</div>
+							<div class='content'></div>
+							<div class='footer'>
+								<div id='pageToolbarModeSwitch' class='unselectable'  unselectable="on">									
+									<span class="modeswitcher-lebel"></span>
+									<div id='modeswitcher' class='modeswitcher'>
+										<!--<span></span>-->
+										<span id='off'></span>
+										<span id='on'></span>
+										<span id='slideMS'></span>
+									</div>
+								</div>
+								<div id='pageToolbarMisc' onclick="window.rootCtrl.event('modeswitchsetrq', true);"></div>                                                                
+								<div class='toolbar' id='pageToolbarButtons'></div>                                                                								
+								<div class='buttonbar'></div>
+								<div class='clear'></div>
+							</div>
+						</div>
+						<div class='notifybox'>
+
+							<div id='notifybox'>
+								<div class='item welcome'>
+									<div class='title' langkey='airHelp'></div>
+									<div class='desc' langkey='airHelpDesc'></div>
+									<div class='controls'>
+										<div class='action'>
+											<a href='index.html#' class='start' langkey='airBtnStart'></a>
+											<a href='index.html#' class='cancel' langkey='airBtnCancel'></a>
+										</div>
+									</div>
+								</div>
+								<div class='item language'>
+									<div class='title' langkey='airLang'></div>
+									<div class='desc'>
+										<span langkey='maybe_lang'></span><span class='guess'></span><span>?</span>
+									</div>
+								</div>
+								<div class='item reboot'>
+									<div class='title' langkey='button_save_reboot'></div>
+									<div class='desc' langkey='airRebootDesc'></div>
+									<div class='overlay'></div>
+								</div>					
+								<div class='item reset'>
+									<div class='title' langkey='airReset'></div>
+									<div class='desc' langkey='airResetDesc'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item save'>
+									<div class='title' langkey='airSave'></div>
+									<div class='desc' langkey='airSaveDesc'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item defpass'>
+									<div class='title' langkey='airPasswd'></div>
+									<div class='desc' langkey='airPasswdDesc'></div>
+									<div class='controls'>
+										<div class='field'><input type='password' class='passwd' /></div>
+										<div class='field'><input type='password' class='confirm' /></div>
+										<div class='error'></div>
+										<div class='action'>
+											<a href='index.html#' class='apply' langkey='airBtnApply'></a>
+											<a href='index.html#' class='cancel' langkey='airBtnCancel'></a>
+										</div>
+									</div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item defssid'>
+									<div class='desc' langkey='airSsidDesc'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item defssid5'>
+									<div class='desc' langkey='airSsidDesc'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item defssidpass'>
+									<div class='desc' langkey='airSsidDescPass'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item ntp'>
+									<div class='title' langkey='airNTP'></div>
+									<div class='desc' langkey='airNTPInfo'></div>
+									<div class='controls'>
+										<div class='datetime'>
+											<span class='time'></span>
+											<span class='date'></span>
+										</div>
+										<div class='action'>
+											<a href='index.html#' class='enable' langkey='airNTPEnable'></a>
+											<a href='index.html#' class='cancel' langkey='airBtnCancel'></a>
+										</div>
+									</div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item SIM'>
+									<div class='title' langkey='airSIM'></div>
+									<div class='desc'>
+										<span langkey='airSIMDesc'></span>
+										<span class='Xcode'></span>
+										<span class='Ncode'></span>
+									</div>
+									<div class='controls'>
+										<div class='field'>
+											<input type='password' class='code' maxlength='8' />
+											<span class='left'></span><span class='total'></span>
+										</div>
+										<div class='field'>
+											<input type='password' class='ncode' maxlength='4' />
+										</div>
+										<div class='action'>
+											<a href='index.html#' class='apply' langkey='airBtnApply'></a>
+											<a href='index.html#' class='cancel' langkey='airBtnCancel'></a>
+										</div>
+									</div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item SMS'>
+									<div class='title' langkey='SMS'></div>
+									<div class='desc' langkey='g3_sms_have_new'></div>
+								</div>
+								<div class='item warning2'>
+									<div class='title' langkey='airWarning'></div>
+									<div class='desc' langkey='airNotAvail'></div>
+								</div>
+								<div class='item idle'>
+									<div class='title' langkey='airIdle'></div>
+									<div class='desc' langkey='airIdleDesc'></div>
+								</div>
+								<div class='item autoupdate'>
+									<div class='title' langkey='airFWUpgrade'></div>
+									<div class='desc' langkey='autoupdNewVersion'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item wifiopen' priority="-1">
+									<div class='title' langkey='airWiFi'></div>
+									<div class='desc' langkey='airWiFiDesc'></div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item ltestatus'>
+									<div class='title' langkey='airLTE'></div>
+									<div class='desc'>
+										<span langkey='airLTEDesc'></span><span class='ltesubnet'></span><span>. </span><span style="color: #00a8ec;" langkey='airLTEDesc2'></span>
+									</div>
+									<div class='overlay'></div>
+								</div>
+								<div class='item hotwifi' priority="-2">
+									<div class='title' langkey='airHotWiFiEnable'></div>
+									<div class='desc'><span langkey='airHotWiFiEnableDesc'></span></div>
+									<div class='overlay'></div>
+								</div>
+							</div>
+
+
+
+						</div>
+					</div>
+				</div>
+				<div class='clear'></div>
+			</div>
+			<div id='footer'>
+				<div class='wrapper'>
+
+				</div>
+			</div>
+			<div id='overlaybox' class='unselectable' unselectable='on'>
+				<div class='bg'></div>
+				<div class="div-loading">
+					<div class='loading unselectable'>
+						<img src='image/preload/b32.gif' />
+						<div class='msg' langkey='airMsgLoading'>Loading...</div>
+						<div class='timer'></div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='overlayboxIP'>
+				<div class='loading'>
+					<div class='msg' langkey='airRedirectIp'></div>
+					<a></a>
+				</div>
+			</div>
+			
+		</div>		
+	</body>
+</html>

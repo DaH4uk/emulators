@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - USB</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function to_submit(F) {
+F.save_button.value = sbutton.saving;
+apply(F);
+}
+function to_apply(F) {
+F.save_button.value = sbutton.saving;
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+show_layer_ext(document.setup.usb_enable, 'idusb', 0 == 1);
+show_layer_ext(document.setup.usb_storage, 'idusbstor', 0 == 1);
+show_layer_ext(document.setup.usb_automnt, 'idusbmnt', 0 == 1);
+
+update = new StatusUpdate("USB.live.asp", 3);
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesServices)</script></strong></a></li>
+      <li><a href="FreeRadius.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesRadius)</script></strong></a></li>
+      <li><a href="PPPoE_Server.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPppoesrv)</script></strong></a></li>
+      <li><a href="PPTP.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPptp)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.servicesUSB)</script></strong></span></li>
+      <li><a href="NAS.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesNAS)</script></strong></a></li>
+      <li><a href="Hotspot.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesHotspot)</script></strong></a></li>
+      <li><a href="Milkfish.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesMilkfish)</script></strong></a></li>
+      <li><a href="AnchorFree.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesAnchorFree)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="setup" action="#" method="post">
+<input type="hidden" name="submit_button" value="USB" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="commit" value="1"/>
+
+<h2><script type="text/javascript">Capture(usb.usb_legend)</script></h2>
+<fieldset>
+	<legend><script type="text/javascript">Capture(usb.usb_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(usb.usb_core)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="usb_enable"  onclick="show_layer_ext(this, 'idusb', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="usb_enable" checked="checked" onclick="show_layer_ext(this, 'idusb', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idusb">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(usb.usb_printer)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="usb_printer"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="usb_printer" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(usb.usb_storage)</script></div>
+			<input class="spaceradio" type="radio" value="1" name="usb_storage"  onclick="show_layer_ext(this, 'idusbstor', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" value="0" name="usb_storage" checked="checked" onclick="show_layer_ext(this, 'idusbstor', false)" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+			<div id="idusbstor">
+				<div class="setting">					
+					<div class="label"><script type="text/javascript">Capture(usb.usb_automnt)</script></div>
+					<input class="spaceradio" type="radio" value="1" name="usb_automnt"  onclick="show_layer_ext(this, 'idusbmnt', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+					<input class="spaceradio" type="radio" value="0" name="usb_automnt" checked="checked" onclick="show_layer_ext(this, 'idusbmnt', false)" /><script type="text/javascript">Capture(share.disable)</script>
+				</div>
+			<div id="idusbmnt">
+				<div class="setting">
+					<div class="label"><script type="text/javascript">Capture(usb.usb_runonmount)</script></div>
+					<input maxlength="79" size="35" name="usb_runonmount" value="" />
+				</div>
+				<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(usb.usb_mntpoint)</script></div>
+					<select name="usb_mntpoint">
+					<option value="mnt" selected="selected" >/mnt</option>
+					<option value="opt"  >/opt</option>
+					<option value="jffs"  >/jffs</option>
+					</select>
+				</div>
+				<fieldset>
+				<legend><script type="text/javascript">Capture(usb.usb_diskinfo)</script></legend>
+					<div class="setting">
+					<span id="disk_status"></span>&nbsp;
+					</div>
+				</fieldset><br />
+			</div>	
+			</div>
+	</div>
+</fieldset><br/>
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+var autoref = sbutton.autorefresh;
+submitFooterButton(1,1,0,autoref);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div><br />
+<a href="javascript:openHelpWindow('HUSB.asp')"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:15 up 24 min, load average: 0.14, 0.03, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

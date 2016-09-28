@@ -1,0 +1,406 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/FW_email.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "FW_email";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//MAIL
+var G_Enable = "0";
+var G_SenderMail = "";
+var G_SmtpUsername = "";
+var G_SmtpPassword = "";
+var G_SmtpHost = "";
+var G_TosendMail = "";
+var G_Fullenable = "0";
+var G_Hourenable = "0";
+var G_Dayenable = "0";
+var G_Weekenable = "0";
+var G_Weektime = "0";
+var G_Clocktime = "0";
+var G_Authrq= "0";
+var G_Alertsend= "0";
+function uiOnload(){
+setJSONValue({
+'email_notify' : G_Enable,
+'auth_user' : G_SmtpUsername,
+'auth_pwd' : G_SmtpPassword,
+'email_smtp' : G_SmtpHost,
+'email_addr' : G_TosendMail,
+'cfAlert_Select' : G_Fullenable == '1' ? '1' : (G_Hourenable == '1' ? '2' : (G_Dayenable == '1' ? '3' : (G_Weekenable == '1' ? '4' : '0'))),
+'cfAlert_Day' : G_Weektime,
+'cfAlert_Hour' : G_Clocktime > 11 ? (G_Clocktime-12) : G_Clocktime,
+'smtp_auth' : G_Authrq,
+'block_site' : G_Alertsend
+});
+Form.Radio('cfAlert_am',G_Clocktime > 11 ? 'pm' : 'am');
+enableShow();
+}
+function disableid(id,flag){
+if(flag==1)
+$(id).disabled=false;
+else if(flag==0)
+$(id).disabled=true;
+}
+function disableid2(id,flag){
+if(flag==1)
+id.disabled=false;
+else if(flag==0)
+id.disabled=true;
+}
+function enableChange(){
+var _input= $('email_smtp','email_addr','smtp_auth','auth_user','auth_pwd','block_site','cfAlert_am','cfAlert_pm');
+var _input2= $('auth_user','auth_pwd');
+var _select= $('cfAlert_Select','cfAlert_Day','cfAlert_Hour');
+for(_i=0; _i < _input.length; _i++){
+disableid2(_input[_i],Form.Checkbox('email_notify'));
+}
+for(_i=0; _i < _select.length; _i++){
+disableid2(_select[_i],Form.Checkbox('email_notify'));
+}
+if(Form.Checkbox('email_notify')=='1'){
+for(_i=0; _i < _input2.length; _i++){
+disableid2(_input2[_i],Form.Checkbox('smtp_auth'));
+}
+}
+if(Form.Checkbox('email_notify')=='1'){
+scheduleChange($('cfAlert_Select').value);
+}
+}
+function enableShow(){
+var _input= $('email_smtp','email_addr','smtp_auth','auth_user','auth_pwd','block_site','cfAlert_am','cfAlert_pm');
+var _input2= $('auth_user','auth_pwd');
+var _select= $('cfAlert_Select','cfAlert_Day','cfAlert_Hour');
+if(G_Enable=='1'){
+for(_i=0; _i < _input.length; _i++){
+disableid2(_input[_i],G_Enable);
+}
+for(_i=0; _i < _select.length; _i++){
+disableid2(_select[_i],G_Enable);
+}
+for(_i=0; _i < _input2.length; _i++){
+disableid2(_input2[_i],G_Authrq);
+}
+scheduleChange($('cfAlert_Select').value);
+}
+else if(G_Enable=='0'){
+for(_i=0; _i < _input2.length; _i++){
+disableid2(_input2[_i],G_Enable);
+}
+for(_i=0; _i < _input.length; _i++){
+disableid2(_input[_i],G_Enable);
+}
+for(_i=0; _i < _select.length; _i++){
+disableid2(_select[_i],G_Enable);
+}
+}
+}
+function scheduleChange(_op){
+if('3'==_op){
+disableid('cfAlert_Day', 0);
+disableid('cfAlert_Hour', 1);
+disableid('cfAlert_am', 1);
+disableid('cfAlert_pm', 1);
+}
+else if('4'==_op){
+disableid('cfAlert_Day', 1);
+disableid('cfAlert_Hour', 1);
+disableid('cfAlert_am', 1);
+disableid('cfAlert_pm', 1);
+}
+else{
+disableid('cfAlert_Day', 0);
+disableid('cfAlert_Hour', 0);
+disableid('cfAlert_am', 0);
+disableid('cfAlert_pm', 0);
+}
+}
+function checkData()
+{
+if($(email_notify).checked)
+{
+var tmp=$(email_smtp).value.split(".");
+if(tmp.length < 3)
+{
+alertError('EmailMailServe');
+return false;
+}
+if($(email_addr).value.indexOf("@", 0) == -1 ||
+$(email_addr).value.indexOf(".", 0) == -1)
+{
+alertError('EmailSendToEmailAddress');
+return false;
+}
+}
+return true;
+}
+function uiSubmit(){
+var node_mail= $('email_notify','INPUT_SenderMail','auth_user','auth_pwd','email_smtp','email_addr','cfAlert_Select','cfAlert_Day','cfAlert_Hour','smtp_auth','block_site');
+if(checkData() == false)
+{return false;}
+if(node_mail[9].checked=='1')
+{
+if(''==$('auth_user').value)
+{
+alertError('EmailUserName',1);
+return;
+}
+else if(''==$('auth_pwd').value)
+{
+alertError('EmailPassword',1);
+return;
+}
+}
+$H({
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Enable" : (node_mail[0].checked ? 1 : 0),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.SmtpUsername" : (node_mail[9].checked ? node_mail[2].value : ""),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.SmtpPassword" : (node_mail[9].checked ? node_mail[3].value: ""),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.SmtpHost" : (node_mail[4].value),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.TosendMail" : (node_mail[5].value),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Fullenable" : node_mail[6].value == '1' ? '1' : '0',
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Hourenable" : node_mail[6].value == '2' ? '1' : '0',
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Dayenable" : node_mail[6].value == '3' ? '1' : '0',
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Weekenable" : node_mail[6].value == '4' ? '1' : '0',
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Weektime" : node_mail[7].value,
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Clocktime" : Form.Radio('cfAlert_am') == 'am' ? parseInt(node_mail[8].value) : (parseInt(node_mail[8].value)+12),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Authrq" : (node_mail[9].checked ? 1 : 0),
+":InternetGatewayDevice.X_TWSZ-COM_Mail.Alertsend" : (node_mail[10].checked ? 1 : 0),
+'obj-action' : 'set',
+'var:menu' : G_Menu,
+'var:page' : 'FW_email',
+'var:errorpage': 'FW_email',
+'getpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){ return false;}
+var arrayHint = [];
+arrayHint['Enable'] = 'email_notify';
+arrayHint['SmtpUsername'] = 'auth_user';
+arrayHint['SmtpPassword'] = 'auth_pwd';
+arrayHint['SmtpHost'] = 'email_smtp';
+arrayHint['TosendMail'] = 'email_addr';
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload,dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="FW_email.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+input[type=text] {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+letter-spacing:1px;
+}
+-->
+</style>
+<div class="page_title" id="lang_Email">E-mail</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type='button' value="Cancel" id="Cancel" name="Cancel">
+<input class="apply_bt" type="button" id="Apply" name="Apply" value="Apply" onClick="uiSubmit()" >
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" colspan="2" style="font-weight:bold "><input type="checkbox" id="email_notify" name="email_notify" onClick="enableChange();" class="ForSelect"><a tabindex=-1 href="javascript:loadhelp('receive')"><label for=INPUT_Enable id="lang_switch_email">&nbsp;Turn E-mail Notification On</label></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a tabindex=-1 href="javascript:loadhelp('receive')"><p class="do bk_black3_black" id="lang_send_alerts">Send Alerts and Logs Via E-mail </p></a></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_mail_server">Your Outgoing Mail Server:</td>
+<td nowrap="" align="right"><input type="text" maxlength="50" size="24" id="email_smtp" name="email_smtp" style="width:178px" onKeyPress="return getkey('ssid', event)"/></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_send_address">Send To This E-mail Address:</td>
+<td nowrap="" align="right"><input type="text" maxlength="50" size="24" id="email_addr" name="email_addr" style="width:178px" onKeyPress="return getkey('ssid', event)"/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><input type="checkbox" id="smtp_auth" name="smtp_auth" onClick="enableChange();" class="ForSelect"><a tabindex=-1 href="javascript:loadhelp('receive')"><label for=INPUT_Smtp_Auth id="lang_mail_authentication" style="font-weight:bold ">&nbsp;My Mail Server requires authentication</label></a></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_user_name">User Name</td>
+<td nowrap="" align="right"><input type="text" id="auth_user" name="auth_user" maxlength="50" size="24" style="width:178px" class="ForInput" onKeyPress="return getkey('ssid', event)"/></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_password">Password</td>
+<td nowrap="" align="right"><input type="password" id="auth_pwd" name="auth_pwd" maxlength="50" size="24" style="width:178px" class="ForInput" onKeyPress="return getkey('ssid', event)"/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><p class="do bk_black3_black"><input type="checkbox" id="block_site" name="block_site" onClick="" class="ForSelect"><a tabindex=-1 href="javascript:loadhelp('alert')"><label for="INPUT_SendAlert" id="lang_send_alert">&nbsp;Send Alert Immediately</label></p></a></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_show" colspan="2">When Someone Attempts To Visit A Blocked Site.</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a tabindex=-1 href="javascript:loadhelp('schedule')"><p class="do bk_black3_black" id="lang_send_schedule">Send Logs According to this Schedule</p></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<select onChange="scheduleChange(this.value);" size="1" name="cfAlert_Select" id="cfAlert_Select">
+<option selected="" value=1 id="lang_full">When Log is Full</option>
+<option value=2 id="lang_hourly">Hourly</option>
+<option value=3 id="lang_daily">Daily</option>
+<option value=4 id="lang_weekly">Weekly</option>
+<option value=0 id="lang_none">None</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap="" id="schedule_day_eb" colspan="2">
+<label for="cfAlert_Day" id="lang_cfAlert_Day">Day</label>
+<select onFocus="" tabindex="8" size="1" name="cfAlert_Day" id="cfAlert_Day" style="margin-left:7px;">
+<option selected="" value="0" id="lang_sunday">Sunday</option>
+<option value="1" id="lang_monday">Monday</option>
+<option value="2" id="lang_tuesday">Tuesday</option>
+<option value="3" id="lang_wednesday">Wednesday</option>
+<option value="4" id="lang_thursday">Thursday</option>
+<option value="5" id="lang_friday">Friday</option>
+<option value="6" id="lang_saturday">Saturday</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap="" id="schedule_time_eb">
+<label for="cfAlert_Hour" id="lang_cfAlert_Hour">Time</label>
+<select onFocus="" tabindex="9" size="1" name="cfAlert_Hour" id="cfAlert_Hour" style="margin-left:1px;">
+<option selected="" value="0">12:00</option>
+<option value="1">1:00</option>
+<option value="2">2:00</option>
+<option value="3">3:00</option>
+<option value="4">4:00</option>
+<option value="5">5:00</option>
+<option value="6">6:00</option>
+<option value="7">7:00</option>
+<option value="8">8:00</option>
+<option value="9">9:00</option>
+<option value="10">10:00</option>
+<option value="11">11:00</option>
+</select>
+<input type="radio" value="am" name="cfAlert_am" id="cfAlert_am"><span>a.m.</span>
+<input type="radio" value="pm" name="cfAlert_am" id="cfAlert_pm"><span>p.m.</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+</tbody>
+</table>
+</div><!--end of config3-->
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("FW_email")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

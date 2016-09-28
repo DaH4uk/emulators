@@ -1,0 +1,516 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language="javascript" src="tc2func.js" tppabs="http://192.168.1.1/basic/tc2func.js"></script>
+<script>
+function doCheckmacAddr(){
+var macstr = document.uiViewLanForm.ST_MACAddr.value;
+var maclen = macstr.length;
+if(maclen != 0){
+var findpos = macstr.search("^([0-9A-Fa-f]{2})(:[0-9A-Fa-f]{2}){5}$");
+if( findpos != 0 )
+{
+alert();
+}
+return;
+}
+}
+function doMACChange(){
+document.uiViewLanForm.ST_MACChangeFlag.value = 1;
+location.reload();
+return;
+}
+function uiMgmtIpDoValidate() {
+var message,value,count=0;
+if(!doValidateIP(document.uiViewLanForm.uiViewIPAddr.value,0,1,0))
+{
+return false;
+}
+value = document.uiViewLanForm.uiViewNetMask.value;
+if(unValidMask(value,0))
+{
+return false;
+}
+var frm=document.uiViewLanForm;
+if(isBroadcastIP(frm.uiViewIPAddr.value, frm.uiViewNetMask.value))
+{
+alert("ip address can't be broadcast ip");return false;
+}
+return true;
+}
+function isBroadcastIP(ip, mask)
+{
+var tempIP=ip.split(".");
+var tempMask=mask.split(".");
+var temp=new Array(4);
+temp[0]=tempMask[0]^255;
+temp[1]=tempMask[1]^255;
+temp[2]=tempMask[2]^255;
+temp[3]=tempMask[3]^255;
+if(((tempIP[0] & temp[0]) == temp[0]) &&
+((tempIP[1] & temp[1]) == temp[1]) &&
+((tempIP[2] & temp[2]) == temp[2]) &&
+((tempIP[3] & temp[3]) == temp[3]))
+{
+return true;
+}
+return false;
+}
+function doReload() {
+document.uiViewLanForm.dhcpFlag.value = 1;
+location.reload();
+return;
+}
+function doValidateServer() {
+var form = document.uiViewLanForm;
+if(form.sysPoolCount.value.match("[^0-9]") != null) {
+alert("IP Pool Count needs to be an positive integer");return true;
+}
+if(form.dhcp_LeaseTime.value.match("[^0-9]") != null) {
+alert("Lease Time needs to be an positive integer");return true;
+}
+if(doValidateIP(form.dhcp_StartIP.value,0,1,0)!=true) return true;
+return false;
+}
+function doValidateIPmod()
+{
+var form = document.uiViewLanForm;
+var Element;
+Element = form.dhcp_RelayIP;
+var Address = Element.value;
+var address = Address.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits;
+var i;
+if(address == null) {
+alert("Invalid Host IP address: " + Address);return false;
+}
+digits = address[0].split(".");
+if(digits.length != 4) {
+alert("Invalid Host IP address: " + Address);return false;
+}
+for(i=0; i < 4; i++) {
+if(Number(digits[0]) == 127||Number(digits[3])==255 || Number(digits[i]) > 255 || (Number(digits[i]) < 0 )||Number(digits[3])==0 ||Number(digits[0])==0|| (Number(digits[0]) > 223)){
+alert("Invalid Host IP address: " + Address);return false;
+}
+}
+return true;
+}
+function dnsCheck() {
+var mask1 = document.forms[0].uiViewDns1Mark.value;
+var mask2 = document.forms[0].uiViewDns2Mark.value;
+if (document.forms[0].uiViewDNSRelay.selectedIndex == 0)
+{
+return false;
+}
+else
+{
+if (mask1 == '0.0.0.0')
+{
+if (mask2 == '0.0.0.0')
+{
+alert("Input one DNS IP at least!");return true;
+}
+else
+{
+if (!doValidateIP(mask2,0,1,0))
+return true;
+else
+{
+mask1=mask2;
+return false;
+}
+}
+}
+else
+{
+if (!doValidateIP(mask1,0,1,0))
+return true;
+else
+{
+if (mask2 == '0.0.0.0')
+{
+mask2=mask1;
+return false;
+}
+else
+{
+if (!doValidateIP(mask2,0,1,0))
+return true;
+else
+return false;
+}
+}
+}
+}
+return false;
+}
+function poolcheck(startip, mask, poolsize)
+{
+var digits1 = startip[0].split(".");
+var stIP = parseInt(digits1[0])<<24 | parseInt(digits1[1])<<16 | parseInt(digits1[2])<<8 | parseInt(digits1[3]);
+var digits2 = mask[0].split(".");
+var mask = parseInt(digits2[0])<<24 | parseInt(digits2[1])<<16 | parseInt(digits2[2])<<8 | parseInt(digits2[3]);
+var poolsizemax = 0;
+poolsizemax = (~mask) - stIP&(~mask);
+if(poolsize > poolsizemax)
+{
+return false;
+}
+else
+{
+return true;
+}
+}
+function isBlank(s) {
+for(i=0;i<s.length;i++) {
+c = s.charAt(i);
+if( (c!=' ')&&(c!='\n')&&(c!='\t') )
+return false;
+}return true;
+}
+// There is bug in this function
+function isValidIPString(s) {
+tempstr = s;
+if (isBlank(s))
+return false;
+else
+{
+var IParray = s.split(".");
+if ((IParray.length>4)||(IParray.length<2))
+return false;
+for (i=0;i<IParray.length;i++)
+{
+st = IParray[i];
+if (isNaN(st)||(st=="")){
+return false;
+}
+if ((st<0)||(st>255))
+return false;
+if ( (i == 3) && ((st == 0) || (st==255)) )
+return false;
+}
+}
+return true;
+}
+function doIPVersionsChange() {
+if(!isValidIPString(document.uiViewLanForm.uiViewIPAddr.value))
+document.uiViewLanForm.uiViewIPAddr.value="192.168.1.1";
+document.uiViewLanForm.lanIPVersionsFlag.value = 1;
+location.reload();
+return;
+}
+function maskcheck(mask,modemip,stip){
+for(i=0;i<4;i++)
+{
+if((mask[i] & modemip[i]) != (mask[i] & stip[i])){
+return false;
+}
+}
+return true;
+}
+var redirect = 0;
+function doNewLocation()
+{
+if(redirect==1)
+{
+top.location.href="http:///"+document.uiViewLanForm.uiViewIPAddr.value;
+}
+}
+function uiSave() {
+if(null != document.forms[0].lan_PPPGetIPVersions)
+{
+if(document.forms[0].lan_PPPGetIPVersions[1].checked)
+return;
+}
+if (!uiMgmtIpDoValidate())
+return;
+var lanip = document.uiViewLanForm.uiViewIPAddr.value.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits3 = lanip[0].split(".");
+var mainip = document.uiViewLanForm.ipAddrMain.value.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits4 = mainip[0].split(".");
+var temp = true;
+if((digits3[0] != digits4[0]) || (digits3[1] != digits4[1]) || (digits3[2] != digits4[2]))
+{
+temp=confirm("Main ip changed! make sure you change the pc's ip or you can't connect any more!");
+if(temp == false)
+{
+document.uiViewLanForm.uiViewIPAddr.value = document.uiViewLanForm.ipAddrMain.value;
+return false;
+}
+}
+else
+{
+if(digits3[3] != digits4[3])
+redirect = 1;
+}
+<!-- Conditional Pool Check Start -->
+<!-- Conditional Pool Check End -->
+if (doValidateServer() || dnsCheck())
+return;
+var sIP = document.uiViewLanForm.dhcp_StartIP.value.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits = sIP[0].split(".");
+var num = document.uiViewLanForm.sysPoolCount.value.match("^[0-9]{1,3}$");
+var mask = document.uiViewLanForm.uiViewNetMask.value.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits2 = mask[0].split(".");
+var stIP = parseInt(digits[3]);
+var Pool_num = parseInt(num);
+var Mask = parseInt(digits2[3]);
+if(document.uiViewLanForm.uiViewIPAddr.value == document.uiViewLanForm.dhcp_StartIP.value)
+{
+alert("DHCP Start IP and Router Local IP are not allowed to be the same");return false;
+}
+for(i=0;i<4;i++)
+{
+if((digits2[i] & digits3[i]) != (digits2[i] & digits[i]))
+{
+alert("DHCP Start IP and Router Local IP are not in the same subnet");return false;
+}
+}
+if(Pool_num > 254 || !poolcheck(sIP,mask,Pool_num))
+{
+alert("DHCP IP Pool Range Exceed Limit!!");return false;
+}
+<!-- Conditional Pool Check Start -->
+<!-- Conditional Pool Check End -->
+if(IPAddrMaskCheck())
+{
+return;
+}
+doNewLocation();
+window.setTimeout(dosubmit,500);
+}
+function dosubmit()
+{
+location.reload();
+}
+function doDNSType(index)
+{
+var viewmask1 = document.forms[0].uiViewDns1Mark;
+var viewmask2 = document.forms[0].uiViewDns2Mark;
+if(index==0){
+viewmask1.value = "N/A";
+viewmask2.value = "N/A";
+viewmask1.disabled = true;
+viewmask2.disabled = true;
+}
+else{
+if( viewmask1.value == "N/A" )
+{
+viewmask1.value = "0.0.0.0";
+viewmask2.value = "0.0.0.0";
+}
+viewmask1.disabled = false;
+viewmask2.disabled = false;
+}
+}
+function jslDoToggleRadio(id,index,maxId)
+{
+var radiobox,i;
+var ids;
+if(maxId==1)
+{
+// Toggle only one radio
+radiobox = document.getElementById(id+index);
+if(radiobox == null) return;
+if(radiobox.value=="on")
+{
+radiobox.value="off";
+radiobox.checked=false;
+}
+else
+{
+radiobox.value="on";
+radiobox.checked=true;
+}
+}
+else
+{
+radiobox = document.getElementById(id+index);
+if(radiobox == null) return;
+// Set the current one to "checked" and the rest to "unchecked"
+radiobox.value="on";
+radiobox.checked=true;
+for(i=0;i<maxId; i++)
+{
+if(i==index) continue;
+radiobox = document.getElementById(id+i);
+if(radiobox == null) return;
+radiobox.value="off";
+radiobox.checked=false;
+}
+}
+return false;
+}
+function onClickIPPoolSummary() {
+window.open("../basic/home_dhcplist.htm","PVC_List","toolbar=no,menubar=no,scrollbars=yes,height=305, width=620,location=0,left=200,top=200");
+return false;
+}
+<!-- Conditional Pool Function Start -->
+<!-- Conditional Pool Function End -->
+function PageLoad()
+{
+}
+function IPAddrMaskCheck()
+{
+var tempIP;
+var tempMask;
+if((null != document.uiViewLanForm.uiViewIPAddr) && (null != document.uiViewLanForm.uiViewNetMask))
+{
+tempIP=document.uiViewLanForm.uiViewIPAddr.value.split(".");
+tempMask=document.uiViewLanForm.uiViewNetMask.value.split(".");
+if( (tempIP[0] == (tempMask[0]&tempIP[0]) ) &&
+(tempIP[1] == (tempMask[1]&tempIP[1]) ) &&
+(tempIP[2] == (tempMask[2]&tempIP[2]) ) &&
+(tempIP[3] == (tempMask[3]&tempIP[3]) )
+)
+{
+alert("Invalid subnet mask!");return true;
+}
+else
+{
+tempMask[0]=GetMaskMergeNum(tempMask[0]);
+if(0 == (tempMask[0]&tempIP[0]) )
+{
+alert("Invalid subnet mask!");return true;
+}
+}
+}
+if((null != document.uiViewLanForm.uiViewIPAddr2) && (null != document.uiViewLanForm.uiViewNetMask2))
+{
+tempIP=document.uiViewLanForm.uiViewIPAddr2.value.split(".");
+tempMask=document.uiViewLanForm.uiViewNetMask2.value.split(".");
+if( (tempIP[0] == (tempMask[0]&tempIP[0]) ) &&
+(tempIP[1] == (tempMask[1]&tempIP[1]) ) &&
+(tempIP[2] == (tempMask[2]&tempIP[2]) ) &&
+(tempIP[3] == (tempMask[3]&tempIP[3]) )
+)
+{
+if ((document.uiViewLanForm.uiViewIPAddr2.value=="0.0.0.0")&&(document.uiViewLanForm.uiViewNetMask2.value=="0.0.0.0"))
+{
+return false;
+}
+alert("Invalid subnet mask!");return true;
+}
+else
+{
+tempMask[0]=GetMaskMergeNum(tempMask[0]);
+if(0 == (tempMask[0]&tempIP[0]) )
+{
+alert("Invalid subnet mask!");return true;
+}
+}
+}
+return false;
+}
+function GetMaskMergeNum(maskUnit)
+{
+var i;
+var num=128;
+var result=0;
+for(i=0; i<8; i++)
+{
+if( maskUnit&num )
+{
+result = result+num;
+num = num/2;
+}
+else
+{
+break;
+}
+}
+return result;
+}
+</script>
+</head><body onLoad="PageLoad()">
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/home_lan_1" name="uiViewLanForm"><div align=center>
+<table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Router Local IP</font></td><td width="10" class="black"></td><td width="150"></td><td width="10" ></td><td width="440"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="uiViewIPAddr" SIZE="15" MAXLENGTH="15" VALUE="192.168.1.1"><INPUT TYPE="HIDDEN" NAME="dhcpFlag" VALUE="0"><INPUT TYPE="HIDDEN" NAME="ipAddrMain" VALUE="192.168.1.1"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"> <div align=right>
+<font color="#000000">IP Subnet Mask</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="uiViewNetMask" SIZE="15" MAXLENGTH="15" VALUE="255.255.255.0"></td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" class="light-orange" ></td><td class="light-orange" width="10">&nbsp; </td><td class="tabdata" width="150"><div align=right>
+<font color="#000000">Dynamic Route</font></div></td><td class="tabdata" width="10"><div align=center>:</div></td><td class="tabdata" width="60">
+<SELECT NAME="lan_RIPVersion" SIZE="1"><OPTION>RIP1
+<OPTION SELECTED>RIP2-B
+<OPTION>RIP2-M
+</SELECT></td><td class="tabdata" width="60"> <div align=right>
+<font color="#000000">Direction</font></div></td><td class="tabdata" width="10"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="lan_RIPDirection" SIZE="1"><OPTION SELECTED>None
+<OPTION>Both
+<OPTION>IN Only
+<OPTION>OUT Only
+</SELECT></td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td></td><td></td><td></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Multicast</font></div></td><td class="tabdata" width="10"><div align=center>:</div></td><td class="tabdata" width="60">
+<SELECT NAME="lan_IGMP" SIZE="1"><OPTION>Disabled
+<OPTION>IGMP v1
+<OPTION SELECTED>IGMP v2
+</SELECT></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">IGMP Snoop</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan=4>
+<INPUT TYPE="RADIO" NAME="igmp_snoop_act" VALUE="0"><font color="#000000">Disabled</font><INPUT TYPE="RADIO" NAME="igmp_snoop_act" VALUE="1" CHECKED><font color="#000000">Enabled</font></td></tr></table><!-- Conditional Pool Start -->
+<!-- Conditional Pool End -->
+<table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">DHCP</font></td><td width="10" class="black">&nbsp;</td><td width="150"><hr noshade></td><td width= "10"><hr noshade></td><td width="440"><hr noshade> </td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">DHCP</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="dhcpTypeRadio" VALUE="0" onClick="doReload()"><font color="#000000">Disabled</font><INPUT TYPE="RADIO" NAME="dhcpTypeRadio" VALUE="1" CHECKED onClick="doReload()"><font color="#000000">Enabled</font><INPUT TYPE="RADIO" NAME="dhcpTypeRadio" VALUE="2" onClick="doReload()"><font color="#000000">Relay</font></td></tr><tr>
+<td class="title-sub">
+<font color="#000000">DHCP Server</font></td><td class="light-orange">&nbsp;</td><td><hr noshade class="light-orange-line"></td><td><hr noshade class="light-orange-line"></td><td><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Starting IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="dhcp_StartIP" SIZE="16" MAXLENGTH="15" VALUE="192.168.1.6"><INPUT TYPE="BUTTON" NAME="IPPool_Summary" VALUE="Current Pool Summary" onClick="onClickIPPoolSummary();"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">IP Pool Count</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="sysPoolCount" SIZE="3" MAXLENGTH="3" VALUE="32"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">Lease Time</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="dhcp_LeaseTime" SIZE="6" MAXLENGTH="6" VALUE="259200"><font color="#000000">seconds&nbsp;&nbsp;&nbsp;(0 sets to default value of 259200)</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">Physical Ports</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata"><table border="1" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td class="tabdata">
+<INPUT TYPE="CHECKBOX" NAME="VlanDHCP_Ethernet_Port_1" CHECKED></td><td class="tabdata">
+<INPUT TYPE="CHECKBOX" NAME="VlanDHCP_Ethernet_Port_2" CHECKED></td><td class="tabdata">
+<INPUT TYPE="CHECKBOX" NAME="VlanDHCP_Ethernet_Port_3" CHECKED></td><td class="tabdata">
+<INPUT TYPE="CHECKBOX" NAME="VlanDHCP_Ethernet_Port_4"></td></tr><tr>
+<td class="tabdata"><div align=center>1</div></td><td class="tabdata"><div align=center>2</div></td><td class="tabdata"><div align=center>3</div></td><td class="tabdata"><div align=center>4</div></td></tr></table></td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" height="22" class="title-sub">
+<font color="#000000">DNS</font></td><td width="10" class="light-orange">&nbsp;</td><td width="150"><hr noshade class="light-orange-line"></td><td width="10" ><hr noshade class="light-orange-line"></td><td width="440"><hr noshade class="light-orange-line"></td></tr><tr>
+<td width="150" class="light-orange">&nbsp;</td><td width="10" class="light-orange"></td><td width="150" class="tabdata"><div align=right>
+<font color="#000000">DNS Relay</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="uiViewDNSRelay" SIZE="1" onChange="doDNSType(this.selectedIndex)"><OPTION SELECTED>Use Auto Discovered DNS Server Only
+<OPTION>Use User Discovered DNS Server Only
+</SELECT></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Primary DNS Server</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="uiViewDns1Mark" SIZE="15" MAXLENGTH="15" VALUE="N/A"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Secondary DNS Server</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="uiViewDns2Mark" SIZE="15" MAXLENGTH="15" VALUE="N/A"></td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" class="light-orange">&nbsp;</td><td width="10"  class="light-orange"></td><td width="150">&nbsp;</td><td width="10" >&nbsp;</td><td width="440">&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr height="42" >
+<td width="160" class="black">&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="BUTTON" NAME="SaveBtn" VALUE="SAVE" onClick="uiSave()"><INPUT TYPE="BUTTON" NAME="lan_cancel" VALUE="CANCEL" onClick="javascript:window.location='home_lan.htm'/*tpa=http://192.168.1.1/basic/home_lan.htm*/"></td></tr></table></div></form></body><script>
+if (document.uiViewLanForm.uiViewDNSRelay != null)
+doDNSType(document.uiViewLanForm.uiViewDNSRelay.selectedIndex);
+</script>
+</html>

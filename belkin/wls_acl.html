@@ -1,0 +1,266 @@
+<html>
+<head>
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<SCRIPT language=JavaScript src="validate.js"></SCRIPT>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wlmc1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='MAC Address Control';
+var menuSection	='WLAN';
+var menuItem	='MAC Address Control';
+var isRouter	='1';
+var	isPS		='';
+var isAPmode;
+if('vlan1' =='')
+	isAPmode='1';
+else	
+    isAPmode = '0';
+
+var max_entry_num  = 32;
+var mac_address = new Array(32);
+var ignore_index = -1;
+var count = 0;
+
+function initData()
+{
+	var mac_list = '';
+	var mac_mode='disable';
+	
+	while(mac_list.indexOf(' ')>=0)
+		mac_list=mac_list.replace(' ','\n');
+
+	document.tF.mac_list_area.value=mac_list;
+	if(mac_mode=='allow')
+		document.tF.mac_mode_radio[0].checked=true;
+	else if(mac_mode== 'deny')
+		document.tF.mac_mode_radio[1].checked=true;
+	else
+		document.tF.mac_mode_radio[2].checked=true;
+}
+
+function add_or_remove_wlan_login_pc()
+{
+    var wlan_login_mac = '';
+    var j = -1;
+    var i = 0
+    
+    if((wlan_login_mac.length < 1) || document.tF.mac_mode_radio[2].checked)
+        return;
+        
+	for(i = 0; i < count; i++)
+    {
+        if(mac_address[i].toLowerCase() == wlan_login_mac.toLowerCase())
+        {
+            j = i;
+            break;
+        }
+    }
+
+    if(document.tF.mac_mode_radio[0].checked) //allow
+    {
+        if(j != -1)
+            return;
+        
+        if(count >= max_entry_num)
+            count = max_entry_num - 1;
+            
+        mac_address[count] = wlan_login_mac;
+        count++;                    
+    }
+    else //deny
+    {
+        ignore_index = j;
+    }         
+}
+
+function submitF()
+{
+  	var mac_list = document.tF.mac_list_area.value;
+  	
+  	count = 0;
+  	
+  	while(mac_list.indexOf('\n') >= 0)
+  		mac_list = mac_list.replace('\n', ' ');
+  	while(mac_list.indexOf('\r') >= 0)
+  		mac_list = mac_list.replace('\r', ' ');
+  	while(mac_list.indexOf('\t') >= 0)
+  		mac_list = mac_list.replace('\t', ' ');
+  	while(mac_list.indexOf('-') >= 0)
+  		mac_list = mac_list.replace('-', ':');	
+  
+ 	if((mac_list != '') 
+ 	    && (document.tF.mac_mode_radio[0].checked == false) 
+ 	    && (document.tF.mac_mode_radio[1].checked == false) 
+ 	    && (document.tF.mac_mode_radio[2].checked == false))
+ 	{
+  		alert(wlmc7);
+  		return false;
+  	}
+  	
+  	var temp_str = mac_list;
+  	var t1, t2;
+  	var out_loop = 0;
+  	
+  	while(true)
+  	{
+  		if((temp_str == '') || (temp_str.length <= 0))
+			break;
+				
+  		t1 = temp_str.indexOf(' ');
+  		if(t1 >= 0)
+  		{
+  			t2 = temp_str.substring(0, t1);
+  			if((t2 != '') && (t2 != ' '))
+  			{
+  				mac_address[count] = t2;
+  				count++;
+  			}
+  			temp_str = temp_str.substring(t1 + 1);
+  		}
+  		else
+  		{
+  			if((temp_str != '') && (temp_str != ' '))
+  			{
+  				mac_address[count] = temp_str;
+  				count++;
+  			}
+  			out_loop = 1;
+  		}
+  		
+  		if(count > max_entry_num)
+  		{
+  			alert(wlmc6);
+  			return false;
+  		}
+  		
+  		for(var i = 0; i < count; i++)
+  	    {
+      	    for(var j = i + 1; j < count; j++)
+      	    {
+      	        if(mac_address[i].toLowerCase() == mac_address[j].toLowerCase())
+      	        {
+      	            alert(wlmc8);
+      	            return false;
+      	        }
+      	    }    
+  	    }
+  	    
+  	    if(out_loop)
+  	        break;
+  	}
+  	
+  	document.tF.wl0_maclist.value = '';
+    for(var j = 0; j < count; j++)
+    {
+       	if(validateMac(mac_address[j]) != true)
+  		{
+  			alert(wlmc3+mac_address[j]+'\n'+wlmc4+'!\n'+wlmc5);
+  			getFocus(document.tF.mac_list_area);
+  			return false;
+  		}
+    }
+    
+    add_or_remove_wlan_login_pc();
+    
+    for(var j = 0; j < count; j++)
+    {
+       	if((j != ignore_index) && (mac_address[j].length == 17))
+       	{
+       		document.tF.wl0_maclist.value += mac_address[j];
+       		document.tF.wl0_maclist.value += ' ';
+       	}
+    }
+
+  	//store wl0_macmode 	
+  	if(document.tF.mac_mode_radio[0].checked == true)
+  		document.tF.wl0_macmode.value = 'allow';
+  	else if(document.tF.mac_mode_radio[1].checked == true)
+  		document.tF.wl0_macmode.value = 'deny';
+  	else
+  		document.tF.wl0_macmode.value = 'disable';
+  			
+  	return true;
+}
+
+function getFocus(elm)
+{
+	elm.focus();
+	elm.select();
+}
+
+function mayApply(e)
+{
+    if(filter_enter(e))
+        return submitF();
+}
+
+//-->
+</script>
+
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="initData();">
+<form action="/belkin/3.00.02/En/apply_10_wls_acl.html" name="tF" method="post">
+<input type=hidden name=webpage value=wireless_mac_ctrl.html>
+<input type=hidden name="action" value="">
+<input type=hidden name="wl0_maclist" value="">
+<input type=hidden name="wl0_macmode" value="">
+
+<script language="JavaScript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+</script>
+<script language="JavaScript">
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+
+<td valign="top" width="99%" height="100%" class="head_bold">
+<br>&nbsp;&nbsp; <script>dw(wlmc1);</script><br><br>     
+<table border=0 class="copy_1">
+<tr>
+	<td width=5>&nbsp;</td> 
+	<td>
+		<table width=580 border="0" cellspacing="10" cellpadding="0" align=left class="copy_1">
+		<tr> 
+			<td width="36">&nbsp;</td>
+			<td  colspan="2" class="body"><script>dw(wlmc2);</script>
+			<a class="more" onclick="window.open('glossary.html#mac','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');" href="javascript:void(0);">
+			<b><script language="javascript" type="text/javascript">dw(sm1);</script></b></a>
+			</td>
+		</tr>
+		<tr>
+			<td width="36">&nbsp;</td>
+			<td class="body">
+				<input type="radio" name="mac_mode_radio" value="allow"><b><script>dw(Allow);</script></b>
+				<input type="radio" name="mac_mode_radio" value="deny"><b><script>dw(Deny);</script></b>
+				<input type="radio" name="mac_mode_radio" value="disable"><b><script>dw(Disable);</script></b>
+			</td><td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="36">&nbsp;</td>
+			<td><textarea name="mac_list_area" cols =19 rows=32 onkeydown="return mayApply(event)"></textarea>
+			</td><td valign=top><script>dw(wlmc5);</script></td>
+		</tr>              
+		<tr> 
+			<td width="36">&nbsp;</td>
+			<td width="274">&nbsp;</td>
+			<td width="235">&nbsp;</td>
+		</tr>
+		<tr> 
+			<td width="36">&nbsp;</td>
+			<td colspan="2" align=center> 
+				<script>dw('<input type="button" name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onclick="initData();" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');
+                            	dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="'+btn2+'" class="submitBtn" onclick="return submitF();">');</script>
+			</td>
+		</tr>
+		</table>
+	</form>
+	</td>
+</tr>
+</table>     				
+</td>                     
+<script language="JavaScript">
+showTail()
+</script>     

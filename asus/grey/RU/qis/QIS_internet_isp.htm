@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!-- Mirrored from 192.168.1.1/qis/QIS_internet_isp.htm by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:40:57 GMT -->
+<head>                                     
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="stylesheet" type="text/css" href="../form_style.css">
+<link rel="stylesheet" type="text/css" href="qis_style.css">
+
+<script type="text/JavaScript" src="../state.js"></script>
+<script type="text/javascript" src="../alttxt.js"></script>
+<script type="text/javascript" src="../general.js"></script>
+<script type="text/JavaScript" src="../help.js"></script>
+<script type="text/javascript">
+//var client_ip = parent.login_ip_str_now();
+//var client_mac = parent.login_mac_str();
+
+var now_flag = '';
+
+
+function QKISP_load_body(){
+//	load_alttxt_enviroment();
+	//parent.document.title = "ASUS Wireless Router RT-AC66U - ISP 資料設定";
+	//parent.set_step("t2");
+	hideLinkTag();
+	flash_button();
+	get_value_from_parent();
+	show_next_button();
+	
+	document.getElementById("nextButton").focus();
+}
+
+function get_value_from_parent(){
+	//document.form.wan_hostname.value = parent.document.QKform.wan_hostname.value;
+	//document.form.wan_hwaddr_x.value = parent.document.QKform.wan_hwaddr_x.value;
+	
+	if(now_flag == "auto_way_static"
+			|| now_flag == "auto_way"){
+		document.form.flag.value = now_flag;
+		document.form.prev_page.value = parent.document.QKform.prev_page.value;
+		
+		document.form.wan_proto.value = parent.document.QKform.wan_proto.value;
+		
+		document.form.wan_dhcpenable_x.value = parent.document.QKform.wan_dhcpenable_x.value;
+		document.form.wan_ipaddr_x.value = parent.document.QKform.wan_ipaddr_x.value;
+		document.form.wan_netmask_x.value = parent.document.QKform.wan_netmask_x.value;
+		document.form.wan_gateway_x.value = parent.document.QKform.wan_gateway_x.value;
+		
+		document.form.wan_dnsenable_x.value = parent.document.QKform.wan_dnsenable_x.value;
+		document.form.wan_dns1_x.value = parent.document.QKform.wan_dns1_x.value;
+		document.form.wan_dns2_x.value = parent.document.QKform.wan_dns2_x.value;
+		
+		document.form.wan_heartbeat_x.value = parent.document.QKform.wan_heartbeat_x.value;
+		document.form.x_Setting.value = '1';
+	}
+	else
+		document.form.prev_page.value = "QIS_internet_type.htm";
+}
+
+function show_next_button(){
+	if(now_flag == "auto_way_static"
+			|| now_flag == "auto_way")
+		$("nextButton").value = 'Применить все настройки';
+	else
+		$("nextButton").value = 'Далее';
+}
+
+function showMAC(){
+	var tempMAC = "";
+	document.form.wan_hwaddr_x.value = this.client_mac;
+	document.form.wan_hwaddr_x.focus();
+}
+
+function validForm(){
+	if(!validate_string(document.form.wan_hostname)){
+		document.form.wan_hostname.select();
+		document.form.wan_hostname.focus();
+		return false;
+	}
+	
+	if(!check_macaddr(document.form.wan_hwaddr_x,check_hwaddr_flag(document.form.wan_hwaddr_x))){
+		document.form.wan_hwaddr_x.select();
+		document.form.wan_hwaddr_x.focus();
+		return false;
+	}
+	
+	return true;
+}
+
+function submitForm(){
+	if(validForm() == true){
+		
+		if(now_flag == "auto_way_static" || now_flag == "auto_way"){
+				//parent.showLoading();
+		
+				document.form.wan_proto.disabled = false;
+		
+				document.form.wan_dhcpenable_x.disabled = false;
+				document.form.wan_ipaddr_x.disabled = false;
+				document.form.wan_netmask_x.disabled = false;
+				document.form.wan_gateway_x.disabled = false;
+		
+				document.form.wan_dnsenable_x.disabled = false;
+				document.form.wan_dns1_x.disabled = false;
+				document.form.wan_dns2_x.disabled = false;
+		
+				document.form.wan_heartbeat_x.disabled = false;
+				document.form.x_Setting.disabled = false;
+		
+				document.form.flag.value = "verify_detect";
+				document.form.next_page.value = "../QIS_wizard.htm";
+				document.form.submit();
+		}
+	
+		//parent.document.QKform.wan_hostname.value = document.form.wan_hostname.value;
+		//parent.document.QKform.wan_hwaddr_x.value = document.form.wan_hwaddr_x.value;
+	
+		document.form.action = document.form.next_page.value;
+		location.href = document.form.next_page.value;
+		return true;
+	}
+	else
+		return false;
+}
+
+function check_macaddr(obj,flag){ //control hint of input mac address
+	if(flag == 1){
+		var childsel=document.createElement("div");
+		childsel.setAttribute("id","check_mac");
+		childsel.style.color="#FFCC00";
+		obj.parentNode.appendChild(childsel);
+		$("check_mac").innerHTML="Формат МАС-адрес состоит из шести групп по две шестнадцатеричных цифры, разделенных двоеточием (:) (например 12:34:56:aa:bc:ef)";		
+		return false;
+	}else if(flag == 2){
+		var childsel=document.createElement("div");
+		childsel.setAttribute("id","check_mac");
+		childsel.style.color="#FFCC00";
+		obj.parentNode.appendChild(childsel);
+		$("check_mac").innerHTML="Недопустимый MAC-адрес.";
+		return false;
+	}else{
+		$("check_mac") ? $("check_mac").style.display="none" : true;
+		return true;
+	}
+}
+
+function submitenter(myfield,e)
+{	
+	var keycode;
+	if (window.event) keycode = window.event.keyCode;
+	else if (e) keycode = e.which;
+	else return true;
+
+	if (keycode == 13){
+		submitForm();
+   	return false;
+  }
+	else
+   	return true;
+}
+</script>
+</head>
+
+<body onLoad="QKISP_load_body();" onunload="" onKeyPress="submitenter(this,event)">
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0"></iframe>	
+<div id="navtxt" class="navtext" style="position:absolute; top:50px; left:-100px; visibility:hidden; font-family:Arial, Verdana"></div>
+<form method="post" name="form" onsubmit="return submitForm();">
+<input type="hidden" name="flag" value="">
+<input type="hidden" name="action_mode" value="apply">
+<input type="hidden" name="action_script" value="restart_wan_if">
+<input type="hidden" name="action_wait" value="5">
+<input type="hidden" name="current_page" value="QIS_internet_isp.htm">
+<input type="hidden" name="next_page" value="QIS_internet_ip.htm">
+<input type="hidden" name="prev_page" value="">
+
+<input type="hidden" name="wan_proto" value="" disabled>
+
+<input type="hidden" name="wan_dhcpenable_x" value="" disabled>
+<input type="hidden" name="wan_ipaddr_x" value="" disabled>
+<input type="hidden" name="wan_netmask_x" value="" disabled>
+<input type="hidden" name="wan_gateway_x" value="" disabled>
+<input type="hidden" name="wan_dnsenable_x" value="" disabled>
+<input type="hidden" name="wan_dns1_x" value="" disabled>
+<input type="hidden" name="wan_dns2_x" value="" disabled>
+<input type="hidden" name="wan_heartbeat_x" value="" disabled>
+<input type="hidden" name="wan_unit" value="0">
+
+<input type="hidden" name="x_Setting" id="x_Setting" value="" disabled>
+<div class="QISmain">
+
+		<div>
+			<table width="730px">
+				<tr>
+					<td align="left">
+						<span class="description_down">Настройка подключения с автоматическим IP</span>
+					</td>
+					<td align="right">
+						<img onclick="parent.location.href = '../index.html';" style="cursor:pointer;" align="right" title="Go to Home" src="../images/backtohome.png" onMouseOver="this.src='../images/backtohomeclick.png'" onMouseOut="this.src='../images/backtohome.png'">
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div style="margin:5px;"><img style="width: 720px; *width: 710px; height: 2px;" src="../images/New_ui/export/line_export.png"></div>
+
+<table id="tblsetting_1" class="QISform" width="400" border=0 align="center" cellpadding="5" cellspacing="0">
+	<tr>
+	  <th width="185">
+			<span onmouseout="return nd();" onclick="overlib('В этом поле указывается имя хоста для RT-AC66U. Его обычно требует указывать поставщик услуг Интернета.');" style="cursor:help;">Имя хоста:<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="../images/New_ui/helpicon.png"></span>
+		</th>
+	  <td class="QISformtd">
+		<input type="text" name="wan_hostname" onkeypress="return is_string(this, event);" class="input_32_table"  maxlength="32" value=""/>
+	  </td>
+	</tr>
+	
+	<tr>
+	  <th width="185">
+			<span onmouseout="return nd();" onclick="overlib('MAC (Media Access Control) уникальный идентификатор, который идентифицирует ваш компьютер или устройство в локальной сети. Провайдеры контролируют MAC-адреса устройств, подключенных к их оборудованию, и могут запретить подключение к Интернет устройств с новыми адресами MAC. Чтобы устранить эту проблему, вы можете сделать одно из следующих: <p>* Обратитесь к вашему провайдеру и запросите обновление МАС-адреса. <p>* Клонируйте или измените МАС-адрес нового устройства в соответствии с МАС-адресом оригинального устройства.', FIXX, 270, FIXY, 30);" style="cursor:help;">
+				MAC-адрес<img align="right" style="cursor:pointer;margin-top:-14px\9;" src="../images/New_ui/helpicon.png">
+			</span>
+		</th>
+	  <td class="QISformtd">
+		<input type="text" name="wan_hwaddr_x" onkeypress="return is_hwaddr(this,event);" class="input_20_table" maxlength="17" value=""/>
+		&nbsp&nbsp&nbsp <input type="button" class="button_gen_long" onclick="showMAC();" value="Клонировать MAC">		
+	  </td>
+	</tr>
+</table>
+<br/>
+<ul class="QISGeneralFont">MAC (Media Access Control) адрес уникальный идентификатор, идентифицирующий Ваш компьютер или устройство в сети. Провайдеры проверяют MAC адреса подключенных устройств и запрещают подключение устройств с новыми MAC адресами. Для устранения этой проблемы можно сделать следующее:<br><br>
+	<li>Обратитесь к Вашему провайдеру и попросите обновить МАС адрес. После этого можно запустить мастер установки снова</li>
+	<li>Склонируйте или измените МАС адрес нового устройства в соответствии с МАС адресом оригинального устройства. Если Вы просто заменили старый роутер, Вы можете найти MAC адрес старого роутера на его этикетке. Если Вы ранее подключали компьютер к модему, Вам нужно ввести MAC адрес Вашего компьютера или нажать "Клонировать MAC" для клонирования MAC адреса Вашего компьютера</li>
+</ul>	
+	<div class="apply_gen" style="margin-top:30px">
+  	<input type="button" id="prevButton" class="button_gen" value="Назад" onclick="gotoprev(document.form);" align="center">
+  	<input type="submit" id="nextButton" class="button_gen" value="Далее" align="center">
+	</div>
+</div>
+</form>
+
+</body>
+
+<!-- Mirrored from 192.168.1.1/qis/QIS_internet_isp.htm by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 23 Sep 2012 08:40:57 GMT -->
+</html>

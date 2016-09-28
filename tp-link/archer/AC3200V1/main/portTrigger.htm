@@ -1,0 +1,1350 @@
+<script language="javascript" type="text/javascript">
+var index = 0;
+var selAll;
+var allStk;
+var allStkType;
+var portTrig_stack;
+var portTrig_stackType;
+var portTrig_stackIndex;
+var param;
+var ptAttrs = {};
+var editFlag = 0;
+var curStk = [];
+var curType = " ";
+var serviceArray = [
+    ["Battle.net", 6112, 6112],
+    ["Dialpad", 7175, "51200-51201,51210"],
+    ["ICU II", 2019, "2000-2038,2050-2051,2069,2085,3010-3030"],
+    ["MSN Gaming Zone", 47624, "2300-2400,28800-29000"],
+    ["PC-to-Phone", 12053, "12120,12122,24150-24220"],
+    ["Quick Time 4", 554, "6970-6999"],
+    ["AOE II Client", 47624, "2300-2400,28800-29000"],
+    ["Sudden Strike", 47624, "2300-2400"],
+    ["Baldurs Gate II", 47624, "2300-2400"]
+];
+$("#t_view").click(function() {
+    if ($("#mask").length == 0) {
+        $("body").append("<div id=\"mask\" class=\"mask\"></div>");
+    }
+
+    $("#accessDevList").fadeIn(200, function() {
+        $("#accessDevList").removeClass("nd").addClass("on-mask msg-container");
+        $.setFixedCentral($("#accessDevList"));
+    });
+
+    $("#mask").show();
+});
+$("#closeDeviceList").click(function() {
+    $("#accessDevList").fadeOut(200, function() {
+        $("#accessDevList").removeClass("on-mask msg-container").addClass("nd");
+    });
+
+    $("#mask").hide();
+
+});
+
+function initTable() {
+    selAll = 0;
+    index = 0;
+    param = [];
+    allStk = [];
+    allStkType = [];
+    portTrig_param = [];
+    portTrig_stack = [];
+    portTrig_stackType = [];
+    portTrig_stackIndex = 0;
+
+    var array = [];
+    var portTrigList_IP = $.act(ACT_GL, IP_CONN_PORTTRIGGERING, null, null);
+    var portTrigList_PPP = $.act(ACT_GL, PPP_CONN_PORTTRIGGERING, null, null);
+    if (INCLUDE_USB_3G_DONGLE) {
+        var wan3glnkcfgList = $.act(ACT_GL, WAN_USB_3G_LINK_CFG, null, null, ["enable", "backupEnable"]);
+    }
+    if (INCLUDE_L2TP) {
+        var portTrigList_L2TP = $.act(ACT_GL, L2TP_CONN_PORTTRIGGERING, null, null);
+    }
+    if (INCLUDE_PPTP) {
+        var portTrigList_PPTP = $.act(ACT_GL, PPTP_CONN_PORTTRIGGERING, null, null);
+    }
+    if (!$.exe()) {
+        var usb3gBackup = 0;
+        if (INCLUDE_USB_3G_DONGLE) {
+            $.each(wan3glnkcfgList, function() {
+                if (this.enable == 1) {
+                    usb3gBackup = this.backupEnable;
+                    return false;
+                }
+            });
+        }
+
+        $.each(portTrigList_IP, function() {
+            if (INCLUDE_WAN_MODE) {
+                var sysMode = $.act(ACT_GET, SYS_MODE, null, null, ["mode"]);
+                var wanCommIntfCfgList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+                if (!$.exe()) {
+                    var notShow = 0;
+                    var mode = (sysMode.mode == "ETH") ? "Ethernet" : sysMode.mode;
+                    var tmpStk = $.stkPop(this.__stack, 3);
+                    $.each(wanCommIntfCfgList, function() {
+                        if (tmpStk == this.__stack && this.WANAccessType != mode) {
+                            notShow = 1;
+                            return;
+                        }
+                    });
+                    if (notShow == 1) {
+                        return;
+                    }
+                }
+            }
+            index++;
+            var thisStk = "[" + this.__stack + "]";
+
+            if (this.enable == 1) {
+                array.push([{
+                    "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                    "width": "5%"
+                }, {
+                    "text": index,
+                    "width": "10%"
+                }, {
+                    "text": this.applicationName,
+                    "width": "20%"
+                }, {
+                    "text": this.triggerPort,
+                    "width": "15%"
+                }, {
+                    "text": this.triggerProtocol,
+                    "width": "10%"
+                }, {
+                    "text": this.openPort.replace(/,/g, ',</br>'),
+                    "width": "10%"
+                }, {
+                    "text": this.openProtocol,
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon enable-icon' id='en_" + index + "' onclick='doEnable(\"ip\", " + thisStk + ", " + index + ");'></span>",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"ip\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"ip\", " + thisStk + ");'></span>",
+                    "width": "10%"
+                }]);
+            } else {
+                array.push([{
+                    "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                    "width": "5%"
+                }, {
+                    "text": index,
+                    "width": "10%"
+                }, {
+                    "text": this.applicationName,
+                    "width": "20%"
+                }, {
+                    "text": this.triggerPort,
+                    "width": "15%"
+                }, {
+                    "text": this.triggerProtocol,
+                    "width": "10%"
+                }, {
+                    "text": this.openPort,
+                    "width": "10%"
+                }, {
+                    "text": this.openProtocol,
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon disable-icon' id='en_" + index + "' onclick='doEnable(\"ip\", " + thisStk + ", " + index + ");'></span>",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"ip\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"ip\", " + thisStk + ");'></span>",
+                    "width": "10%"
+                }]);
+            }
+            allStk[index - 1] = this.__stack;
+            allStkType[index - 1] = "ip";
+        });
+        $.each(portTrigList_PPP, function() {
+            var notShow = 0;
+            if (INCLUDE_WAN_MODE) {
+
+                var sysMode = $.act(ACT_GET, SYS_MODE, null, null, ["mode"]);
+                var wanCommIntfCfgList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+                if (!$.exe()) {
+                    var mode = (sysMode.mode == "ETH") ? "Ethernet" : sysMode.mode;
+                    var tmpStk = $.stkPop(this.__stack, 3);
+                    $.each(wanCommIntfCfgList, function() {
+                        if (tmpStk == this.__stack && this.WANAccessType != mode && (this.WANAccessType != "USB_3G" || usb3gBackup != 1)) {
+                            notShow = 1;
+                            return;
+                        }
+                    });
+                } else {
+                    $.each(wanCommIntfCfgList, function() {
+                        if (tmpStk == this.__stack && this.WANAccessType == "USB_3G" && usb3gBackup != 1) {
+                            notShow = 1;
+                            return;
+                        }
+                    });
+                }
+
+            }
+            if (notShow == 1) {
+                return;
+            }
+            index++;
+            var thisStk = "[" + this.__stack + "]";
+            if (this.enable == 1) {
+                array.push([{
+                    "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                    "width": "5%"
+                }, {
+                    "text": index,
+                    "width": "10%"
+                }, {
+                    "text": this.applicationName,
+                    "width": "20%"
+                }, {
+                    "text": this.triggerPort,
+                    "width": "15%"
+                }, {
+                    "text": this.triggerProtocol,
+                    "width": "10%"
+                }, {
+                    "text": this.openPort,
+                    "width": "10%"
+                }, {
+                    "text": this.openProtocol,
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon enable-icon' id='en_" + index + "' onclick='doEnable(\"ppp\", " + thisStk + ", " + index + ");'></span>",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"ppp\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"ppp\", " + thisStk + ");'></span>",
+                    "width": "10%"
+                }]);
+            } else {
+                array.push([{
+                    "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                    "width": "5%"
+                }, {
+                    "text": index,
+                    "width": "10%"
+                }, {
+                    "text": this.applicationName,
+                    "width": "20%"
+                }, {
+                    "text": this.triggerPort,
+                    "width": "15%"
+                }, {
+                    "text": this.triggerProtocol,
+                    "width": "10%"
+                }, {
+                    "text": this.openPort,
+                    "width": "10%"
+                }, {
+                    "text": this.openProtocol,
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon disable-icon' id='en_" + index + "' onclick='doEnable(\"ppp\", " + thisStk + ", " + index + ");'></span>",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"ppp\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"ppp\", " + thisStk + ");'></span>",
+                    "width": "10%"
+                }]);
+            }
+            allStk[index - 1] = this.__stack;
+            allStkType[index - 1] = "ppp";
+        });
+        if (INCLUDE_L2TP) {
+            $.each(portTrigList_L2TP, function() {
+                index++;
+                var thisStk = "[" + this.__stack + "]";
+                if (this.enable == 1) {
+                    array.push([{
+                        "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                        "width": "5%"
+                    }, {
+                        "text": index,
+                        "width": "10%"
+                    }, {
+                        "text": this.applicationName,
+                        "width": "20%"
+                    }, {
+                        "text": this.triggerPort,
+                        "width": "15%"
+                    }, {
+                        "text": this.triggerProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": this.openPort,
+                        "width": "10%"
+                    }, {
+                        "text": this.openProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon enable-icon' id='en_" + index + "' onclick='doEnable(\"l2tp\", " + thisStk + ", " + index + ");'></span>",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"l2tp\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"l2tp\", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }]);
+                } else {
+                    array.push([{
+                        "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                        "width": "5%"
+                    }, {
+                        "text": index,
+                        "width": "10%"
+                    }, {
+                        "text": this.applicationName,
+                        "width": "20%"
+                    }, {
+                        "text": this.triggerPort,
+                        "width": "15%"
+                    }, {
+                        "text": this.triggerProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": this.openPort,
+                        "width": "10%"
+                    }, {
+                        "text": this.openProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon disable-icon' id='en_" + index + "' onclick='doEnable(\"l2tp\", " + thisStk + ", " + index + ");'></span>",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"l2tp\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"l2tp\", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }]);
+                }
+                allStk[index - 1] = this.__stack;
+                allStkType[index - 1] = "l2tp";
+            });
+        }
+        if (INCLUDE_PPTP) {
+            $.each(portTrigList_PPTP, function() {
+                index++;
+                var thisStk = "[" + this.__stack + "]";
+                if (this.enable == 1) {
+                    array.push([{
+                        "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                        "width": "5%"
+                    }, {
+                        "text": index,
+                        "width": "10%"
+                    }, {
+                        "text": this.applicationName,
+                        "width": "20%"
+                    }, {
+                        "text": this.triggerPort,
+                        "width": "15%"
+                    }, {
+                        "text": this.triggerProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": this.openPort,
+                        "width": "10%"
+                    }, {
+                        "text": this.openProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon enable-icon' id='en_" + index + "' onclick='doEnable(\"pptp\", " + thisStk + ", " + index + ");'></span>",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"pptp\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"pptp\", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }]);
+                } else {
+                    array.push([{
+                        "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                        "width": "5%"
+                    }, {
+                        "text": index,
+                        "width": "10%"
+                    }, {
+                        "text": this.applicationName,
+                        "width": "20%"
+                    }, {
+                        "text": this.triggerPort,
+                        "width": "15%"
+                    }, {
+                        "text": this.triggerProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": this.openPort,
+                        "width": "10%"
+                    }, {
+                        "text": this.openProtocol,
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon disable-icon' id='en_" + index + "' onclick='doEnable(\"pptp\", " + thisStk + ", " + index + ");'></span>",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"pptp\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"pptp\", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }]);
+                }
+                allStk[index - 1] = this.__stack;
+                allStkType[index - 1] = "pptp";
+            });
+        }
+    }
+    $.initTableBody($("#table-triggering"), array);
+    return array;
+}
+
+function initIntf() {
+    var aliasName = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+    if (INCLUDE_WAN_MODE) {
+        var sysMode = $.act(ACT_GET, SYS_MODE, null, null, ["mode"]);
+    }
+    if (INCLUDE_USB_3G_DONGLE) {
+        var wan3glnkcfgList = $.act(ACT_GL, WAN_USB_3G_LINK_CFG, null, null, ["enable", "backupEnable"]);
+    }
+
+    if (INCLUDE_IPV6) {
+        var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "name", "NATEnabled", "connectionType", "X_TP_IPv4Enabled"]);
+        var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "name", "NATEnabled", "X_TP_IPv4Enabled", "transportType"]);
+        if (INCLUDE_L2TP) {
+            var wanL2TPList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+        if (INCLUDE_PPTP) {
+            var wanPPTPList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+    } else {
+        var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "name", "NATEnabled", "connectionType"]);
+        var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "name", "NATEnabled", "transportType"]);
+        if (INCLUDE_L2TP) {
+            var wanL2TPList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+        if (INCLUDE_PPTP) {
+            var wanPPTPList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+    }
+
+    if (!$.exe()) {
+        wanInfName = aliasName.__ifAliasName;
+        var mode;
+        if (INCLUDE_WAN_MODE) {
+            mode = sysMode.mode;
+        }
+        var usb3gBackup = 0;
+        if (INCLUDE_USB_3G_DONGLE) {
+            $.each(wan3glnkcfgList, function() {
+                if (this.enable == 1) {
+                    usb3gBackup = this.backupEnable;
+                    return false;
+                }
+            });
+        }
+        var index = 0;
+        var flag = 0;
+        for (var i = 0; i < wanIPList.length; i++) {
+            if ((wanIPList[i].NATEnabled == 1) && (wanIPList[i].connectionType == "IP_Routed") && (wanIPList[i].enable == 1) && (!INCLUDE_IPV6 || wanIPList[i].X_TP_IPv4Enabled == 1)) {
+                var optText = wanIPList[i].name;
+                var optVal = "ip:" + wanIPList[i].__stack;
+                $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                flag = 1;
+            }
+        }
+        for (var j = 0; j < wanPPPList.length; j++) {
+            if ((wanPPPList[j].NATEnabled == 1) && ((wanPPPList[j].enable == 1) || (wanPPPList[j].transportType == "PPP3G" && (mode == "USB_3G" || usb3gBackup == 1))) && (!INCLUDE_IPV6 || wanPPPList[j].X_TP_IPv4Enabled == 1)) {
+                var optText = wanPPPList[j].name;
+                var optVal = "ppp:" + wanPPPList[j].__stack;
+                $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                flag = 1;
+            }
+        }
+        if (INCLUDE_L2TP) {
+            for (var j = 0; j < wanL2TPList.length; j++) {
+                if (wanL2TPList[j].enable == 1) {
+                    var optText = wanL2TPList[j].name;
+                    var optVal = "l2tp:" + wanL2TPList[j].__stack;
+                    $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                    flag = 1;
+                }
+            }
+        }
+        if (INCLUDE_PPTP) {
+            for (var j = 0; j < wanPPTPList.length; j++) {
+                if (wanPPTPList[j].enable == 1) {
+                    var optText = wanPPTPList[j].name;
+                    var optVal = "pptp:" + wanPPTPList[j].__stack;
+                    $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                    flag = 1;
+                }
+            }
+        }
+        if (flag == 0) {
+            var optText = s_str.nointf;
+            var optVal = "";
+            $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+            $("#ok").prop("disabled", true);
+        }
+        $("#wanInf").find("option[text=" + wanInfName + "]").prop("selected", "selected");
+        var options = {
+            refresh: 1
+        };
+        $("#wanInf").tpSelect(options);
+    }
+}
+
+function doEdit(type, stack) {
+    editFlag = 1;
+    curType = type;
+    curStk = stack;
+
+    var aliasName = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+    if (INCLUDE_WAN_MODE) {
+        var sysMode = $.act(ACT_GET, SYS_MODE, null, null, ["mode"]);
+    }
+    if (INCLUDE_USB_3G_DONGLE) {
+        var wan3glnkcfgList = $.act(ACT_GL, WAN_USB_3G_LINK_CFG, null, null, ["enable", "backupEnable"]);
+    }
+
+    if (INCLUDE_IPV6) {
+        var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "name", "NATEnabled", "connectionType", "X_TP_IPv4Enabled"]);
+        var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "name", "NATEnabled", "X_TP_IPv4Enabled", "transportType"]);
+        if (INCLUDE_L2TP) {
+            var wanL2TPList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+        if (INCLUDE_PPTP) {
+            var wanPPTPList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+    } else {
+        var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "name", "NATEnabled", "connectionType"]);
+        var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "name", "NATEnabled", "transportType"]);
+        if (INCLUDE_L2TP) {
+            var wanL2TPList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+        if (INCLUDE_PPTP) {
+            var wanPPTPList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name", "NATEnabled"]);
+        }
+    }
+
+    if (!$.exe()) {
+        pStk = stack[0] + "," + stack[1] + "," + stack[2] + ",0,0,0";
+        if (type == "ip") {
+            portTrigCfg = $.act(ACT_GET, IP_CONN_PORTTRIGGERING, stack, null, ["triggerPort", "triggerProtocol", "openPort", "openProtocol", "enable", "applicationName"]);
+            wanInf = $.act(ACT_GET, WAN_IP_CONN, pStk, null, ["name"]);
+        } else if (type == "ppp") {
+            portTrigCfg = $.act(ACT_GET, PPP_CONN_PORTTRIGGERING, stack, null, ["triggerPort", "triggerProtocol", "openPort", "openProtocol", "enable", "applicationName"]);
+            wanInf = $.act(ACT_GET, WAN_PPP_CONN, pStk, null, ["name"]);
+        } else if (type == "l2tp") {
+            pStk = stack[0] + "," + stack[1] + ",0,0,0,0";
+            portTrigCfg = $.act(ACT_GET, L2TP_CONN_PORTTRIGGERING, stack, null, ["triggerPort", "triggerProtocol", "openPort", "openProtocol", "enable", "applicationName"]);
+            wanInf = $.act(ACT_GET, WAN_L2TP_CONN, pStk, null, ["name"]);
+        } else if (type == "pptp") {
+            pStk = stack[0] + "," + stack[1] + ",0,0,0,0";
+            portTrigCfg = $.act(ACT_GET, PPTP_CONN_PORTTRIGGERING, stack, null, ["triggerPort", "triggerProtocol", "openPort", "openProtocol", "enable", "applicationName"]);
+            wanInf = $.act(ACT_GET, WAN_PPTP_CONN, pStk, null, ["name"]);
+        }
+        if (!$.exe()) {
+            wanInfName = wanInf.name;
+
+            $("#t_apply").prop('value', portTrigCfg.applicationName);
+            $("#triggerPort").prop('value', portTrigCfg.triggerPort);
+            if (portTrigCfg.triggerProtocol == "TCP") {
+                $("#trigger_protol option[value='TCP']").prop("selected", "selected");
+            } else if (portTrigCfg.triggerProtocol == "UDP") {
+                $("#trigger_protol option[value='UDP']").prop("selected", "selected");
+            } else {
+                $("#trigger_protol option[value='TCP or UDP']").prop("selected", "selected");
+            }
+            var options = {
+                refresh: 1
+            };
+            $("#trigger_protol").tpSelect(options);
+
+            $("#openPort").prop('value', portTrigCfg.openPort);
+            if (portTrigCfg.openProtocol == "TCP") {
+                $("#external_protol option[value='TCP']").prop("selected", "selected");
+            } else if (portTrigCfg.openProtocol == "UDP") {
+                $("#external_protol option[value='UDP']").prop("selected", "selected");
+            } else {
+                $("#external_protol option[value='TCP or UDP']").prop("selected", "selected");
+            }
+            var options = {
+                refresh: 1
+            };
+            $("#external_protol").tpSelect(options);
+
+            if (portTrigCfg.enable == 1) {
+                $("#portTrig_en").prop('checked', 'checked');
+            } else {
+                $("#portTrig_en").prop('checked', false);
+            }
+            $("#portTrig_en").tpCheckbox();
+        }
+
+        var mode;
+        if (INCLUDE_WAN_MODE) {
+            mode = sysMode.mode;
+        }
+        var usb3gBackup = 0;
+        if (INCLUDE_USB_3G_DONGLE) {
+            $.each(wan3glnkcfgList, function() {
+                if (this.enable == 1) {
+                    usb3gBackup = this.backupEnable;
+                    return false;
+                }
+            });
+        }
+
+        var index = 0;
+        var flag = 0;
+        for (var i = 0; i < wanIPList.length; i++) {
+            if ((wanIPList[i].NATEnabled == 1) && (wanIPList[i].connectionType == "IP_Routed") && (wanIPList[i].enable == 1) && (!INCLUDE_IPV6 || wanIPList[i].X_TP_IPv4Enabled == 1)) {
+                var optText = wanIPList[i].name;
+                var optVal = "ip:" + wanIPList[i].__stack;
+                $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                flag = 1;
+            }
+        }
+        for (var j = 0; j < wanPPPList.length; j++) {
+            if ((wanPPPList[j].NATEnabled == 1) && ((wanPPPList[j].enable == 1) || (wanPPPList[j].transportType == "PPP3G" && (mode == "USB_3G" || usb3gBackup == 1))) && (!INCLUDE_IPV6 || wanPPPList[j].X_TP_IPv4Enabled == 1)) {
+                var optText = wanPPPList[j].name;
+                var optVal = "ppp:" + wanPPPList[j].__stack;
+                $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                flag = 1;
+            }
+        }
+        if (INCLUDE_L2TP) {
+            for (var j = 0; j < wanL2TPList.length; j++) {
+                if (wanL2TPList[j].enable == 1) {
+                    var optText = wanL2TPList[j].name;
+                    var optVal = "l2tp:" + wanL2TPList[j].__stack;
+                    $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                    flag = 1;
+                }
+            }
+        }
+        if (INCLUDE_PPTP) {
+            for (var j = 0; j < wanPPTPList.length; j++) {
+                if (wanPPTPList[j].enable == 1) {
+                    var optText = wanPPTPList[j].name;
+                    var optVal = "pptp:" + wanPPTPList[j].__stack;
+                    $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+                    flag = 1;
+                }
+            }
+        }
+        if (flag == 0) {
+            var optText = n_str.portTrigger.t_noavailintf;
+            var optVal = "";
+            $("#wanInf").append("<option value='" + optVal + "' text='" + optText + "' >" + optText + "</option>");
+            $("#ok").prop("disabled", true);
+        }
+        $("#wanInf").find("option[text=" + wanInfName + "]").prop("selected", "selected");
+        var options = {
+            refresh: 1
+        };
+        $("#wanInf").tpSelect(options);
+    }
+}
+
+function doEnable(type, stack, index) {
+    var isConflict = false;
+    if (type == "ip") {
+            var ptEntry = $.act(ACT_GET, IP_CONN_PORTTRIGGERING, stack, null, null);
+            $.exe();
+        if (INCLUDE_USB_FTP_SERVER) {
+            if ((checkConflictFtpPort(ptEntry.triggerPort) && (ptEntry.triggerProtocol != "UDP")) || (checkConflictFtpPort(ptEntry.openPort) && (ptEntry.openProtocol != "UDP"))) {
+                isConflict = true;
+            }
+        }
+    } else if (type == "ppp") {
+            var ptEntry = $.act(ACT_GET, PPP_CONN_PORTTRIGGERING, stack, null, null);
+            $.exe();
+        if (INCLUDE_USB_FTP_SERVER) {
+            if ((checkConflictFtpPort(ptEntry.triggerPort) && (ptEntry.triggerProtocol != "UDP")) || (checkConflictFtpPort(ptEntry.openPort) && (ptEntry.openProtocol != "UDP"))) {
+                isConflict = true;
+            }
+        }
+    } else if (type == "l2tp") {
+            var ptEntry = $.act(ACT_GET, L2TP_CONN_PORTTRIGGERING, stack, null, null);
+            $.exe();
+        if (INCLUDE_USB_FTP_SERVER) {
+            if ((checkConflictFtpPort(ptEntry.triggerPort) && (ptEntry.triggerProtocol != "UDP")) || (checkConflictFtpPort(ptEntry.openPort) && (ptEntry.openProtocol != "UDP"))) {
+                isConflict = true;
+            }
+        }
+    } else if (type == "pptp") {
+            var ptEntry = $.act(ACT_GET, PPTP_CONN_PORTTRIGGERING, stack, null, null);
+            $.exe();
+        if (INCLUDE_USB_FTP_SERVER) {
+            if ((checkConflictFtpPort(ptEntry.triggerPort) && (ptEntry.triggerProtocol != "UDP")) || (checkConflictFtpPort(ptEntry.openPort) && (ptEntry.openProtocol != "UDP"))) {
+                isConflict = true;
+            }
+        }
+    }
+
+    if (isConflict) {
+        $.confirm(c_str.forwarding_ftp_conflict, function() {
+            $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+            $.exe();
+            if (type == "ip") {
+                if (ptEntry.enable == 1) {
+                    $.act(ACT_SET, IP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+                } else {
+                    $.act(ACT_SET, IP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+                }
+            } else if (type == "ppp") {
+                if (ptEntry.enable == 1) {
+                    $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+                } else {
+                    $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+                }
+            } else if (type == "l2tp") {
+                if (ptEntry.enable == 1) {
+                    $.act(ACT_SET, L2TP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+                } else {
+                    $.act(ACT_SET, L2TP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+                }
+            } else if (type == "pptp") {
+                if (ptEntry.enable == 1) {
+                    $.act(ACT_SET, PPTP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+                } else {
+                    $.act(ACT_SET, PPTP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+                }
+            }
+            $.exe(function() {
+                if (ptEntry.enable == 0)
+                    $('#en_' + index).removeClass('disable-icon').addClass('enable-icon');
+                else
+                    $('#en_' + index).addClass('disable-icon').removeClass('enable-icon');
+            });
+        }, function() {
+            if (ptEntry.enable == 1)
+                $('#en_' + index).removeClass('disable-icon').addClass('enable-icon');
+            else
+                $('#en_' + index).addClass('disable-icon').removeClass('enable-icon');
+        })
+    } else {
+        if (type == "ip") {
+            if (ptEntry.enable == 1) {
+                $.act(ACT_SET, IP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+            } else {
+                $.act(ACT_SET, IP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+            }
+        } else if (type == "ppp") {
+            if (ptEntry.enable == 1) {
+                $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+            } else {
+                $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+            }
+        } else if (type == "l2tp") {
+            if (ptEntry.enable == 1) {
+                $.act(ACT_SET, L2TP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+            } else {
+                $.act(ACT_SET, L2TP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+            }
+        } else if (type == "pptp") {
+            if (ptEntry.enable == 1) {
+                $.act(ACT_SET, PPTP_CONN_PORTTRIGGERING, stack, null, ["enable=0"]);
+            } else {
+                $.act(ACT_SET, PPTP_CONN_PORTTRIGGERING, stack, null, ["enable=1"]);
+            }
+        }
+        $.exe(function() {
+            if (ptEntry.enable == 0)
+                $('#en_' + index).removeClass('disable-icon').addClass('enable-icon');
+            else
+                $('#en_' + index).addClass('disable-icon').removeClass('enable-icon');
+        });
+    }
+}
+
+function checkConflictFtpDataPort(port) {
+    var conflict = false;
+    var port = port.toString();
+    var ports = port.split(",");
+    for (var index = 0; index < ports.length; index++) {
+        var c = ports[index].split("-");
+        if (c.length == 1) {
+            if ((59990 <= c[0]) && (c[0] <= 59999)) {
+                conflict = true;
+                break;
+            }
+        } else if (c.length == 2) {
+            if (!((59999 < c[0]) || (c[1] < 59990))) {
+                conflict = true;
+                break;
+            }
+        }
+    }
+
+    if (conflict) {
+        return true;
+    }
+
+    return false;
+}
+
+function checkConflictFtpPort(port) {
+    var ftpServer = $.act(ACT_GET, FTP_SERVER, null, null, null);
+    if ($.exe()) {
+        return;
+    }
+
+    port = port.toString();
+    if ((ftpServer.enable == 1) && (ftpServer.accessFromInternet == 1)) {
+        var ports = port.split(",");
+        for (var index = 0; index < ports.length; index++) {
+            var c = ports[index].split("-");
+            if (c.length == 1) {
+                if (parseInt(c[0]) == parseInt(ftpServer.portNumber))
+                    return true;
+            } else if (c.length == 2) {
+                if (parseInt(c[0]) <= parseInt(ftpServer.portNumber) && parseInt(c[1]) >= parseInt(ftpServer.portNumber))
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function doDel(type, stack) {
+    if (type == "ip") {
+        $.act(ACT_DEL, IP_CONN_PORTTRIGGERING, stack, null);
+    } else if (type == "ppp") {
+        $.act(ACT_DEL, PPP_CONN_PORTTRIGGERING, stack, null);
+    } else if (type == "l2tp") {
+        $.act(ACT_DEL, L2TP_CONN_PORTTRIGGERING, stack, null);
+    } else if (type == "pptp") {
+        $.act(ACT_DEL, PPTP_CONN_PORTTRIGGERING, stack, null);
+    }
+
+    $.exe(function(ret) {
+        if (!ret) $.loadMain("portTrigger.htm");
+    });
+}
+
+/*add to check port num(xx or xx-xx or xx,xx-xx,xx-xx) between 1-65535*/
+function checkPortValid(element)
+{
+	var valueStr = element.prop('value');
+	var minValue = 65536;
+	var maxValue = 0;
+	var value = 0;
+	//alert("valueStr: "+valueStr);
+	for (var i = 0; i < valueStr.split(",").length; i++)
+	{
+		if (valueStr.split(",")[i].split("-").length == 1)
+		{
+			value = parseInt(valueStr.split(",")[i].split("-")[0],10);
+			minValue = value < minValue? value:minValue;
+			maxValue = value > maxValue? value:maxValue;
+		}
+		else
+		{
+			value = parseInt(valueStr.split(",")[i].split("-")[0],10);
+			minValue = value < minValue? value:minValue;
+			maxValue = value > maxValue? value:maxValue;
+			
+			value = parseInt(valueStr.split(",")[i].split("-")[1],10);
+			minValue = value < minValue? value:minValue;
+			maxValue = value > maxValue? value:maxValue;
+		}
+    }
+	//alert("minValue: "+minValue+" maxValue: "+maxValue);
+	if (minValue < 1 || maxValue >65535)
+	{
+		$.alert(ERR_PORT_NUM_INVAD);
+        if (element) 
+		{
+            element.focus();
+            element.select();
+        }
+        return false;
+	}
+	return true;
+}
+/*end add*/
+function isPortStr(val) {
+    var c;
+    var ch = "0123456789-,";
+    for (var i = 0; i < val.length; i++) {
+        c = val.charAt(i);
+        if (ch.indexOf(c) == -1)
+            return false;
+    }
+    for (var i = 0; i < val.split(",").length; i++) {
+        if (val.split(",")[i] == "")
+            return false;
+        if ((val.split(",")[i].split("-").length != 1) && (val.split(",")[i].split("-").length != 2))
+            return false;
+        if ((val.split(",")[i].split("-").length == 2) && (val.split(",")[i].split("-")[0] == ""))
+            return false;
+        if ((val.split(",")[i].split("-").length == 2) && (val.split(",")[i].split("-")[1] == ""))
+            return false;
+    }
+    return true;
+}
+$("#cancel").click(function() {
+    editFlag = 0;
+    curType = " ";
+    for (var i = 0; i < curStk.length; i++) {
+        curStk[i] = -1;
+    }
+    $.loadMain("portTrigger.htm");
+});
+$("#add").click(function() {
+    initIntf();
+    editFlag = 2;
+});
+$("#delAll").click(function() {
+    portTrig_stack = [];
+    portTrig_stackType = [];
+    portTrig_stackIndex = index;
+    for (var j = 0; j < portTrig_stackIndex; j++) {
+        portTrig_stack[j] = allStk[j];
+        portTrig_stackType[j] = allStkType[j];
+    }
+    for (var i = 0; i < portTrig_stackIndex; i++) {
+        if ($("#" + (i + 1)).prop('data-checked')) {
+            if (portTrig_stackType[i] == "ip") {
+                $.act(ACT_DEL, IP_CONN_PORTTRIGGERING, portTrig_stack[i], null);
+            } else if (portTrig_stackType[i] == "ppp") {
+                $.act(ACT_DEL, PPP_CONN_PORTTRIGGERING, portTrig_stack[i], null);
+            } else if (portTrig_stackType[i] == "l2tp") {
+                $.act(ACT_DEL, L2TP_CONN_PORTTRIGGERING, portTrig_stack[i], null);
+            } else if (portTrig_stackType[i] == "pptp") {
+                $.act(ACT_DEL, PPTP_CONN_PORTTRIGGERING, portTrig_stack[i], null);
+            }
+        }
+    }
+    if (portTrig_stackIndex > 0) {
+        $.exe(function(ret) {
+            if (!ret) $.loadMain("portTrigger.htm");
+        });
+    }
+});
+$("#ok").click(function() {
+    var tmpWanInfType = ($("#wanInf").data('value')).split(":")[0];
+    var tmpWanInfStk = ($("#wanInf").data('value')).split(":")[1];
+    var isConflict = false;
+
+	if ($.asc($("#t_apply").prop('value'))) {
+        $.alert(ERR_APPLY_NAME_NOT_ASCII);
+         var element = $("#t_apply");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return false;
+    }
+	
+    if (($("#triggerPort").prop('value') == "") || ($.num($("#triggerPort").prop('value'), true))) {
+        $.alert(ERR_PT_TRIG_PORT_INVAD);
+        var element = $("#triggerPort");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return false;
+    }
+	/* check port between 1-65535*/
+	if (checkPortValid($("#triggerPort")) == false)
+	{
+		return false;
+	}
+	/*end */
+    ptAttrs.applicationName = $("#t_apply").prop('value');
+    ptAttrs.triggerPort = parseInt($("#triggerPort").prop('value'), 10);
+    ptAttrs.triggerProtocol = $("#trigger_protol").data('value');
+    ptAttrs.openProtocol = $("#external_protol").data('value');
+    ptAttrs.enable = ($("#portTrig_en").prop("data-checked")) ? 1 : 0;
+    if (($("#openPort").prop('value') == "") || (!isPortStr($("#openPort").prop('value')))) {
+        $.alert(ERR_PT_EXTERN_PORT_INVAD);
+        var element = $("#openPort");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return false;
+    }
+	/* check port between 1-65535*/
+	if (checkPortValid($("#openPort")) == false)
+	{
+		return false;
+	}
+	/*end */
+    ptAttrs.openPort = $("#openPort").prop('value');
+    if (INCLUDE_USB_FTP_SERVER) {
+        if (checkConflictFtpDataPort(ptAttrs.triggerPort) && (ptAttrs.triggerProtocol != "UDP")) {
+            $.alert(ERR_FTP_DATA_PORT_CONFLICT);
+            var element = $("#triggerPort");
+            if (element) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        } else if (ptAttrs.enable && (ptAttrs.triggerProtocol != "UDP") && checkConflictFtpPort(ptAttrs.triggerPort)) {
+            isConflict = true;
+        }
+        if (checkConflictFtpDataPort(ptAttrs.openPort) && (ptAttrs.openProtocol != "UDP")) {
+            $.alert(ERR_FTP_DATA_PORT_CONFLICT);
+            var element = $("#openPort");
+            if (element) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        } else if (ptAttrs.enable && (ptAttrs.openProtocol != "UDP") && checkConflictFtpPort(ptAttrs.openPort)) {
+            isConflict = true;
+        }
+    }
+
+    if (isConflict) {
+        $.confirm(c_str.forwarding_ftp_conflict, function() {
+            $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+            $.exe();
+            if (editFlag == 2) {
+                if (tmpWanInfType == "ip") {
+                    $.act(ACT_ADD, IP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                } else if (tmpWanInfType == "ppp") {
+                    $.act(ACT_ADD, PPP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                } else if (tmpWanInfType == "l2tp") {
+                    $.act(ACT_ADD, L2TP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                } else if (tmpWanInfType == "pptp") {
+                    $.act(ACT_ADD, PPTP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                }
+                $.exe(function(ret) {
+                    if (!ret) $.loadMain("portTrigger.htm");
+                });
+            } else if (editFlag == 1) {
+                var type = curType;
+                if (wanInfName == $("#wanInf").data('text')) {
+                    if (type == "ip")
+                        $.act(ACT_SET, IP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+                    else if (type == "ppp")
+                        $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+                    else if (type == "l2tp")
+                        $.act(ACT_SET, L2TP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+                    else if (type == "pptp")
+                        $.act(ACT_SET, PPTP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+
+                    $.exe(function(ret) {
+                        if (!ret) $.loadMain("portTrigger.htm");
+                    });
+                } else {
+                    if (type == "ip") {
+                        $.act(ACT_DEL, IP_CONN_PORTTRIGGERING, curStk, null);
+                    } else if (type == "ppp") {
+                        $.act(ACT_DEL, PPP_CONN_PORTTRIGGERING, curStk, null);
+                    } else if (type == "l2tp") {
+                        $.act(ACT_DEL, L2TP_CONN_PORTTRIGGERING, curStk, null);
+                    } else if (type == "pptp") {
+                        $.act(ACT_DEL, PPTP_CONN_PORTTRIGGERING, curStk, null);
+                    }
+                    $.exe(function(ret) {
+                        if (!ret) {
+                            if (tmpWanInfType == "ip") {
+                                $.act(ACT_ADD, IP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                            } else if (tmpWanInfType == "ppp") {
+                                $.act(ACT_ADD, PPP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                            } else if (tmpWanInfType == "l2tp") {
+                                $.act(ACT_ADD, L2TP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                            } else if (tmpWanInfType == "pptp") {
+                                $.act(ACT_ADD, PPTP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                            }
+                            $.exe(function(ret) {
+                                if (!ret) {
+                                    $.loadMain("portTrigger.htm");
+                                } else {
+                                    ptAttrs.triggerPort = portTrigCfg.triggerPort;
+                                    ptAttrs.openPort = portTrigCfg.openPort;
+                                    ptAttrs.openProtocol = portTrigCfg.openProtocol;
+                                    ptAttrs.enable = portTrigCfg.enable;
+
+                                    if (type == "ip") {
+                                        $.act(ACT_ADD, IP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                    } else if (type == "ppp") {
+                                        $.act(ACT_ADD, PPP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                    } else if (type == "l2tp") {
+                                        $.act(ACT_ADD, L2TP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                    } else if (type == "pptp") {
+                                        $.act(ACT_ADD, PPTP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                    }
+                                    $.exe(function(ret) {
+                                        if (!ret) $.loadMain("portTrigger.htm");
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        })
+    } else {
+        if (editFlag == 2) {
+            if (tmpWanInfType == "ip") {
+                $.act(ACT_ADD, IP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+            } else if (tmpWanInfType == "ppp") {
+                $.act(ACT_ADD, PPP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+            } else if (tmpWanInfType == "l2tp") {
+                $.act(ACT_ADD, L2TP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+            } else if (tmpWanInfType == "pptp") {
+                $.act(ACT_ADD, PPTP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+            }
+            $.exe(function(ret) {
+                if (!ret) $.loadMain("portTrigger.htm");
+            });
+        } else if (editFlag == 1) {
+            var type = curType;
+            if (wanInfName == $("#wanInf").data('text')) {
+                if (type == "ip")
+                    $.act(ACT_SET, IP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+                else if (type == "ppp")
+                    $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+                else if (type == "l2tp")
+                    $.act(ACT_SET, L2TP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+                else if (type == "pptp")
+                    $.act(ACT_SET, PPTP_CONN_PORTTRIGGERING, curStk, null, ptAttrs);
+
+                $.exe(function(ret) {
+                    if (!ret) $.loadMain("portTrigger.htm");
+                });
+            } else {
+                if (type == "ip") {
+                    $.act(ACT_DEL, IP_CONN_PORTTRIGGERING, curStk, null);
+                } else if (type == "ppp") {
+                    $.act(ACT_DEL, PPP_CONN_PORTTRIGGERING, curStk, null);
+                } else if (type == "l2tp") {
+                    $.act(ACT_DEL, L2TP_CONN_PORTTRIGGERING, curStk, null);
+                } else if (type == "pptp") {
+                    $.act(ACT_DEL, PPTP_CONN_PORTTRIGGERING, curStk, null);
+                }
+                $.exe(function(ret) {
+                    if (!ret) {
+                        if (tmpWanInfType == "ip") {
+                            $.act(ACT_ADD, IP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                        } else if (tmpWanInfType == "ppp") {
+                            $.act(ACT_ADD, PPP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                        } else if (tmpWanInfType == "l2tp") {
+                            $.act(ACT_ADD, L2TP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                        } else if (tmpWanInfType == "pptp") {
+                            $.act(ACT_ADD, PPTP_CONN_PORTTRIGGERING, null, tmpWanInfStk, ptAttrs);
+                        }
+                        $.exe(function(ret) {
+                            if (!ret) {
+                                $.loadMain("portTrigger.htm");
+                            } else {
+                                ptAttrs.triggerPort = portTrigCfg.triggerPort;
+                                ptAttrs.openPort = portTrigCfg.openPort;
+                                ptAttrs.openProtocol = portTrigCfg.openProtocol;
+                                ptAttrs.enable = portTrigCfg.enable;
+
+                                if (type == "ip") {
+                                    $.act(ACT_ADD, IP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                } else if (type == "ppp") {
+                                    $.act(ACT_ADD, PPP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                } else if (type == "l2tp") {
+                                    $.act(ACT_ADD, L2TP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                } else if (type == "pptp") {
+                                    $.act(ACT_ADD, PPTP_CONN_PORTTRIGGERING, null, pStk, ptAttrs);
+                                }
+                                $.exe(function(ret) {
+                                    if (!ret) $.loadMain("portTrigger.htm");
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+});
+
+function initServiceTable() {
+    var array = [];
+    var text = s_str.choose;
+    for (var i = 0; i < serviceArray.length; i++) {
+        var id = i + 1;
+        array.push([{
+            "text": id,
+            "width": "30%"
+        }, {
+            "text": serviceArray[i][0],
+            "width": "40%"
+        }, {
+            "text": "<span class='choose'>" + text + "</span>",
+            "width": "30%"
+        }]);
+    }
+
+    $.initTableBody($("#table-apply"), array);
+    $('span.choose').click(function() {
+        var serType = $(this).parents("tr").find("td:eq(1)").text();
+        var serId = $(this).parents("tr").find("td:eq(0)").text();
+        if (serId > 0) {
+            if (serType == serviceArray[serId - 1][0]) {
+                $("#t_apply").prop('value', serviceArray[serId - 1][0]);
+                $("#triggerPort").prop('value', serviceArray[serId - 1][1]);
+                $("#openPort").prop('value', serviceArray[serId - 1][2]);
+                $("#accessDevList").fadeOut(200, function() {
+                    $("#accessDevList").removeClass("on-mask msg-container").addClass("nd");
+                });
+                $("#mask").hide();
+            }
+        }
+    });
+}
+
+function selectAll() {
+    var i;
+    for (i = 0; i < allStk.length; i++) {
+        if ($('#checkbox_st').prop('data-checked'))
+            $("#" + (i + 1)).prop('checked', true);
+        else
+            $("#" + (i + 1)).prop('checked', false);
+    }
+    $('#checkbox_st').prop('checked', $('#checkbox_st').prop('data-checked'));
+
+    $.each($('input.checkbox-checkbox'), function() {
+        $(this).data('tpCheckbox').refresh();
+    });
+}
+</script>
+
+<h3 id="et">Port Triggering</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op" id="addItem">
+            <div class="table-btn">
+                <span id="add" class="add-icon"></span>
+                <label class="T_add">Add</label>
+                <span id="delAll" class="delete-all-icon"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+        <table id="table-triggering">
+            <thead></thead>
+            <tbody id="body-triggering">
+                <tr id="edit-container-triggering" class="nd">
+                    <td colspan="9">
+                        <div  class="nd">
+                            <b class="T_intfname">Interface Name: </b>
+                            <select class="xl" id="wanInf">
+                            </select>
+                        </div>
+                        <div>
+                            <b class="T_app">Application: </b>
+                            <input class="xl" type="text" id="t_apply" maxlength="15"/>
+                            <button type="submit" class="blue T_viewserv xxl" id="t_view">View Existing Applications</button>
+                        </div>
+                        <div>
+                            <b class="T_c_triggerport">Trigger Port: </b>
+                            <input class="xl" type="text" id="triggerPort" />
+                            <span id="t_exrange">(XX)</span>
+                        </div>
+                        <div>
+                            <b class="T_c_triggerproto">Trigger Protocol: </b>
+                            <select class="xl" id="trigger_protol">
+                                <option id="trigTCP" value="TCP">TCP</option>
+                                <option id="trigUDP" value="UDP">UDP</option>
+                                <option id="trigALL" class="T_all" value="TCP or UDP">ALL</option>
+                            </select>
+                        </div>
+                        <div>
+                            <b class="T_exterport">External Port: </b>
+                            <input class="xl" type="text" id="openPort" />
+                            <div class="textbox-tips">
+                            <span id="t_oprange">(XX or XX-XX or XX,XX-XX)</span>
+                        </div>
+                        </div>
+                        <div>
+                            <b class="T_c_exterproto">External Protocol: </b>
+                            <select class="xl" id="external_protol">
+                                <option id="openTCP" value="TCP">TCP</option>
+                                <option id="openUDP" value="UDP">UDP</option>
+                                <option id="openALL" class="T_all" value="TCP or UDP">ALL</option>
+                            </select>
+                        </div>
+                        <div>
+                            <b></b>
+                            <input type="checkbox" id="portTrig_en" checked />
+                            <label class="T_enthisentry">Enable this Entry</label>
+                        </div>
+                        <div class="inline-btn-right">
+                            <button type="submit" class="green T_cancel" id="cancel">Cancel</button>
+                            <button type="submit" class="green T_ok" id="ok">OK</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div>
+    <form class="pure-form pure-form-aligned">
+        <div id="accessDevList" class="nd">
+            <div id="closeDeviceList" class="table-op">
+                <div class="table-btn">
+                    <span class="close-icon table-icon"></span>
+                    <label class="T_close">Close</label>
+                </div>
+            </div>
+
+            <table id="table-apply">
+                <thead></thead>
+                <tbody id="bodyAccessDevicesList">
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+<script language="javascript" type="text/javascript">
+var headArray = [{
+    "text": '<div><input type="checkbox" id="checkbox_st" /><label></label></div>',
+    "width": "5%"
+}, {
+    "text": table_str.id,
+    "width": "5%"
+}, {
+    "text": table_str.application,
+    "width": "15%"
+}, {
+    "text": table_str.triggerport,
+    "width": "15%"
+}, {
+    "text": table_str.triggerproto,
+    "width": "10%"
+}, {
+    "text": table_str.exterport,
+    "width": "20%"
+}, {
+    "text": table_str.exterproto,
+    "width": "10%"
+}, {
+    "text": table_str.status,
+    "width": "10%"
+}, {
+    "text": table_str.modify,
+    "width": "10%"
+}];
+var AccessDevicesListHeadArray = [{
+    "text": table_str.id,
+    "width": "30%"
+}, {
+    "text": table_str.appname,
+    "width": "40%"
+}, {
+    "text": table_str.operation,
+    "width": "30%"
+}];
+
+
+$.initTableHead($("#table-triggering"), headArray);
+$("#table-triggering").tpTable(initTable);
+$.initTableHead($("#table-apply"), AccessDevicesListHeadArray);
+$("#table-apply").tpTable(initServiceTable);
+
+$("#checkbox_st").on('click', function(e) {
+    selectAll();
+});
+
+$.tpInit();
+</script>

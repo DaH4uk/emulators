@@ -1,0 +1,403 @@
+﻿<script language="javascript" type="text/javascript">
+var CLIENT_CONNING = 1;
+var CLIENT_CONNED = 2;
+
+var stateArray = new Array(5);
+stateArray[0] = m_str.disconnected;
+stateArray[1] = m_str.connecting;
+stateArray[2] = m_str.success;
+stateArray[3] = s_str.auth_fail;
+stateArray[4] = s_str.wrong_domain;
+
+var dynCfg;
+var noipCfg;
+var ddnsType = "";
+
+function setDdnsType(type) {
+    ddnsType = type;
+    $('#' + ddnsType).prop('checked', true);
+}
+
+function init(initType) {
+    var stateIndex = 0;
+    var sevTypeIndex = 0;
+
+    dynCfg = $.act(ACT_GET, DYN_DNS_CFG, null, null);
+    noipCfg = $.act(ACT_GET, NOIP_DNS_CFG, null, null);
+
+    if (!$.exe()) {
+        if (initType == undefined) {
+            if (dynCfg.enable == 1) {
+                setDdnsType("dyndns")
+            } else if (noipCfg.enable == 1) {
+                setDdnsType("noip")
+            } else {
+                setDdnsType('dyndns');
+            }
+        } else
+            setDdnsType(initType)
+
+            showParams();
+    }
+
+}
+
+function getRtafter5s(state) {
+    if (state == CLIENT_CONNING)
+        $.timeout(function() {
+            getStatus();
+        }, 5000);
+}
+
+function getStatus() {
+    dynCfg = $.act(ACT_GET, DYN_DNS_CFG, null, null);
+    noipCfg = $.act(ACT_GET, NOIP_DNS_CFG, null, null);
+
+    if (!$.exe()) {
+        if (ddnsType == 'dyndns') {
+            var stateIndex = dynCfg.state;
+
+            if ((stateIndex >= 0) && (stateIndex < stateArray.length)) {
+                $("#dyndns_status").prop('value', stateArray[stateIndex]);
+            } else {
+                $("#dyndns_status").prop('value', stateArray[0]);
+            }
+
+            if ((dynCfg.enable == 1) && (stateIndex == CLIENT_CONNING)) {
+                getRtafter5s(stateIndex);
+                $("#login_dyndns").prop("disabled", true);
+                $("#logout_dyndns").prop("disabled", true);
+            } else if ((dynCfg.enable == 1) && (stateIndex == CLIENT_CONNED)) {
+                $("#login_dyndns").prop("disabled", true);
+                $("#logout_dyndns").prop("disabled", false);
+            } else {
+                $("#login_dyndns").prop("disabled", false);
+                $("#logout_dyndns").prop("disabled", true);
+            }
+        } else if (ddnsType == 'noip') {
+            var nstateIndex = noipCfg.state;
+
+            if (((nstateIndex - 3) >= 0) && ((nstateIndex - 3) < stateArray.length)) {
+                $("#noip_status").prop('value', stateArray[(nstateIndex - 3)]);
+            } else {
+                $("#noip_status").prop('value', stateArray[0]);
+            }
+
+            if ((noipCfg.enable == 1) && ((nstateIndex - 3) == CLIENT_CONNING)) {
+                getRtafter5s((nstateIndex - 3));
+                $("#login_noip").prop("disabled", true);
+                $("#logout_noip").prop("disabled", true);
+            } else if ((noipCfg.enable == 1) && ((nstateIndex - 3) == CLIENT_CONNED)) {
+                $("#login_noip").prop("disabled", true);
+                $("#logout_noip").prop("disabled", false);
+            } else {
+                $("#login_noip").prop("disabled", false);
+                $("#logout_noip").prop("disabled", true);
+            }
+        }
+    }
+}
+
+function showParams() {
+    if (ddnsType == 'dyndns') {
+        $("#dyndns_domain").prop('value', dynCfg.userDomain);
+        $("#dyndns_usr").prop('value', dynCfg.userName);
+        $("#dyndns_pwd").prop('value', dynCfg.password);
+        var stateIndex = dynCfg.state;
+
+        if ((stateIndex >= 0) && (stateIndex < stateArray.length)) {
+            $("#dyndns_status").prop('value', stateArray[stateIndex]);
+        } else {
+            $("#dyndns_status").prop('value', stateArray[0]);
+        }
+
+        if ((dynCfg.enable == 1) && (stateIndex == CLIENT_CONNING)) {
+            getRtafter5s(stateIndex);
+            $("#login_dyndns").prop("disabled", true);
+            $("#logout_dyndns").prop("disabled", true);
+        } else if ((dynCfg.enable == 1) && (stateIndex == CLIENT_CONNED)) {
+            $("#login_dyndns").prop("disabled", true);
+            $("#logout_dyndns").prop("disabled", false);
+        } else {
+            $("#login_dyndns").prop("disabled", false);
+            $("#logout_dyndns").prop("disabled", true);
+        }
+    } else if (ddnsType == 'noip') {
+        $("#noip_domain").prop('value', noipCfg.userDomain);
+        $("#noip_usr").prop('value', noipCfg.userName);
+        $("#noip_pwd").prop('value', noipCfg.password);
+
+        var nstateIndex = noipCfg.state;
+
+        if (((nstateIndex - 3) >= 0) && ((nstateIndex - 3) < stateArray.length)) {
+            $("#noip_status").prop('value', stateArray[(nstateIndex - 3)]);
+        } else {
+            $("#noip_status").prop('value', stateArray[0]);
+        }
+
+        if ((noipCfg.enable == 1) && ((nstateIndex - 3) == CLIENT_CONNING)) {
+            getRtafter5s((nstateIndex - 3));
+            $("#login_noip").prop("disabled", true);
+            $("#logout_noip").prop("disabled", true);
+        } else if ((noipCfg.enable == 1) && ((nstateIndex - 3) == CLIENT_CONNED)) {
+            $("#login_noip").prop("disabled", true);
+            $("#logout_noip").prop("disabled", false);
+        } else {
+            $("#login_noip").prop("disabled", false);
+            $("#logout_noip").prop("disabled", true);
+        }
+    }
+}
+
+function doInputCheck() {
+    var element;
+
+    if (ddnsType == "dyndns") {
+
+        if ($("#dyndns_usr").prop('value') == "") {
+            $.alert(ERR_DDNS_USERNAME_EMPTY);
+            element = $("#dyndns_usr");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+        if ($("#dyndns_pwd").prop('value') == "") {
+            $.alert(ERR_DDNS_PWD_EMPTY);
+            element = $("#dyndns_pwd");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+
+        if ($("#dyndns_domain").prop('value') == "") {
+            $.alert(ERR_DDNS_DOMAIN_EMPTY);
+            element = $("#dyndns_domain");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+        if ($.isdomain($("#dyndns_domain").prop('value')) == false) {
+
+            $.alert(ERR_DDNS_DOMAIN_INVAD);
+            element = $("#dyndns_domain");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+    }
+    if (ddnsType == "noip") {
+
+        if ($("#noip_usr").prop('value') == "") {
+            $.alert(ERR_DDNS_USERNAME_EMPTY);
+            element = $("#noip_usr");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+        if ($("#noip_pwd").prop('value') == "") {
+            $.alert(ERR_DDNS_PWD_EMPTY);
+            element = $("#noip_usr");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+
+        if ($("#noip_domain").prop('value') == "") {
+            $.alert(ERR_DDNS_DOMAIN_EMPTY);
+            element = $("#noip_domain");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+
+        if ($.isdomain($("#noip_domain").prop('value')) == false) {
+            $.alert(ERR_DDNS_DOMAIN_INVAD);
+            element = $("#noip_domain");
+            if (element.length > 0) {
+                element.focus();
+                element.select();
+            }
+            return false;
+        }
+    }
+
+
+    return true;
+}
+
+function ResetStatus() {
+    window.status = " ";
+    return true;
+}
+
+function clickSave() {
+    if (doInputCheck() == false) {
+        return false;
+    }
+    doSave();
+}
+
+function doSave() {
+    var usr;
+    var pwd;
+    var domain;
+    if (ddnsType == "dyndns") {
+        usr = $('#dyndns_usr').prop('value');
+        pwd = $('#dyndns_pwd').prop('value');
+        domain = $('#dyndns_domain').prop('value');
+
+        $.act(ACT_SET, DYN_DNS_CFG, dynCfg.__stack, null, ["enable=1",
+            "userName=" + usr,
+            "password=" + pwd,
+            "userDomain=" + domain,
+            "login=1"
+        ]);
+        if (noipCfg.enable == 1)
+            $.act(ACT_SET, NOIP_DNS_CFG, noipCfg.__stack, null, ["enable=0"]);
+    } else if (ddnsType == "noip") {
+        usr = $('#noip_usr').prop('value')
+        pwd = $('#noip_pwd').prop('value')
+        domain = $('#noip_domain').prop('value')
+
+        $.act(ACT_SET, NOIP_DNS_CFG, noipCfg.__stack, null, ["enable=1",
+            "userName=" + usr,
+            "password=" + pwd,
+            "userDomain=" + domain,
+            "login=1"
+        ]);
+        if (dynCfg.enable == 1)
+            $.act(ACT_SET, DYN_DNS_CFG, dynCfg.__stack, null, ["enable=0"]);
+    }
+    if (!$.exe()) {
+        $.removeLoading();
+        init();
+    }
+}
+
+function doLogout() {
+    if (ddnsType == "dyndns") {
+        $.act(ACT_SET, DYN_DNS_CFG, dynCfg.__stack, null, ["login=0"]);
+    } else if (ddnsType == "noip") {
+        $.act(ACT_SET, NOIP_DNS_CFG, noipCfg.__stack, null, ["login=0"]);
+    }
+
+    if (!$.exe()) {
+        init();
+    }
+}
+
+$('#dyndns').on('click.ddns', function(e) {
+    $("a#btn_go_register").attr("href", "http://dyn.com/dns/");
+    $("div#hidedyndns").show();
+    $("div#hidenoipdns").hide();
+    init('dyndns');
+});
+
+$('#noip').on('click.ddns', function(e) {
+    $("a#btn_go_register").attr("href", "http://www.noip.com");
+    $("div#hidedyndns").hide();
+    $("div#hidenoipdns").show();
+    init('noip');
+});
+
+$('#save_dyndns').on('click.ddns', function(e) {
+    e.preventDefault();
+    $.addLoading($(this));
+    clickSave();
+});
+
+$('#save_noip').on('click.ddns', function(e) {
+    e.preventDefault();
+    $.addLoading($(this));
+    clickSave();
+});
+
+$('#login_dyndns').on('click.ddns', function(e) {
+    e.preventDefault();
+    clickSave();
+});
+
+$('#login_noip').on('click.ddns', function(e) {
+    e.preventDefault();
+    clickSave();
+});
+
+$('#logout_dyndns').on('click.ddns', function(e) {
+    e.preventDefault();
+    doLogout();
+});
+
+$('#logout_noip').on('click.ddns', function(e) {
+    e.preventDefault();
+    doLogout();
+});
+</script>
+
+<h3 id="et">Dynamic DNS Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b id="t_servprov">Service Provider:</b>
+            <input type="radio" name="ddns_provider" id="dyndns" />
+            <label id="t_dns_dyndns">Dyndns</label>
+            <input type="radio" name="ddns_provider" id="noip" />
+            <label id="t_dns_noip">NO-IP</label>
+            <a id="btn_go_register" target="_window" class="link" href="javascript:void(0)">Go to register..</a>
+        </div>
+
+        <div class="nd" id="hidedyndns">
+            <div class="pure-control-group">
+                <b class="T_c_user">Username:</b>
+                <input type="text" maxlength="64" class="tp-input-text" id="dyndns_usr" />
+            </div>
+            <div class="pure-control-group">
+                <b class="T_c_pwd">Password:</b>
+                <input type="password" maxlength="64" class="tp-input-text" id="dyndns_pwd" />
+            </div>
+            <div class="pure-control-group">
+                <b class="T_c_domain">Domain Name:</b>
+                <input type="text" maxlength="64" class="tp-input-text" id="dyndns_domain" />
+            </div>
+            <button type="submit" class="blue inline block T_login" id="login_dyndns">Login</button>
+            <button type="submit" class="blue inline block T_logout2" id="logout_dyndns">Logout</button>
+            <input type="text" readonly="ture" class="tp-input-text l" id="dyndns_status" />
+            <button type="submit" class="green T_save" id="save_dyndns">Save</button>
+        </div>
+        <div class="nd" id="hidenoipdns">
+            <div class="pure-control-group">
+                <b class="T_c_user">Username:</b>
+                <input type="text" maxlength="64" class="tp-input-text" id="noip_usr" />
+            </div>
+            <div class="pure-control-group">
+                <b class="T_c_pwd">Password:</b>
+                <input type="password" maxlength="64" class="tp-input-text" id="noip_pwd" />
+            </div>
+            <div class="pure-control-group">
+                <b class="T_c_domain">Domain Name:</b>
+                <input type="text" maxlength="64" class="tp-input-text" id="noip_domain" />
+            </div>
+            <button type="submit" class="blue inline block T_login" id="login_noip">Login</button>
+            <button type="submit" class="blue inline block T_logout2" id="logout_noip">Logout</button>
+            <input type="text" readonly="ture" class="tp-input-text l" id="noip_status" />
+            <button type="submit" class="green T_save" id="save_noip">Save</button>
+        </div>
+    </form>
+</div>
+
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>

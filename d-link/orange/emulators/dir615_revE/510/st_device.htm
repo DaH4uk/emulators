@@ -1,0 +1,687 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script>
+
+
+	var connection_status;
+	function set_mac_info(){
+		var temp_dhcp_list = get_by_id("dhcp_list").value.split(",");
+		
+		for (var i = 0; i < temp_dhcp_list.length; i++){	
+			var temp_data = temp_dhcp_list[i].split("/");
+			if(temp_data.length != 0){		
+				if(temp_data.length > 1){
+					document.write("<tr><td>" + temp_data[1] + "</td><td>" + temp_data[0] + "</td><td>" + temp_data[2] + "</td></tr>")
+				}
+			}
+		}
+	}
+	
+	function set_igmp_info(){
+		var temp_igmp = get_by_id("igmp_list").value.split(",");
+		
+		for (var i = 0; i < temp_igmp.length; i++){	
+			if(temp_igmp.length > 1){
+				document.write("<tr><td>" + temp_igmp[i] + "</td></tr>")
+			}
+		}
+	}
+	
+	var nNow;
+	function get_time(){
+		if (gTime){
+			return;
+		}
+		var gTime = "2009/12/15/1/53/11";
+		var time = gTime.split("/");
+		gTime = month[time[1]-1] + " " + time[2] + ", " + time[0] + " " + time[3] + ":" + time[4] + ":" + time[5];		
+		nNow = new Date(gTime);
+	}
+
+	function STime(){
+		nNow.setTime(nNow.getTime() + 1000);
+		get_by_id("show_time").innerHTML = nNow.toLocaleString();
+		setTimeout('STime()', 1000);
+	}
+	function padout(number)
+		{
+			return (number < 10) ? '0' + number : number;
+		}
+
+
+	var wTimesec = 0, wan_time = 0;	
+	var temp, days = 0, hours = 0, mins = 0, secs = 0;
+	function caculate_time(){
+	
+		var wTime = wTimesec;
+		var days = Math.floor(wTime / 86400);
+			wTime %= 86400;
+			var hours = Math.floor(wTime / 3600);
+			wTime %= 3600;
+			var mins = Math.floor(wTime / 60);
+			wTime %= 60;
+
+			wan_time = days + " " + 
+				((days <= 1) 
+					? "Day"
+					: "Days")
+				+ ", ";
+			wan_time += hours + ":" + padout(mins) + ":" + padout(wTime);
+		
+	}
+	
+	function get_wan_time(){
+		wTimesec = 2840;
+		if(wTimesec == 0){
+			wan_time = _na;
+		}else{
+			caculate_time();
+		}
+	}
+	
+	function WTime(){
+		/* synchronize "uptime" with "cable status" */
+		if(get_by_id("cable_status").value == DISCONNECTED || get_by_id("cable_status").value == _na){
+			get_by_id("show_uptime").innerHTML = _na;
+		}else{
+			get_by_id("show_uptime").innerHTML = wan_time;
+		}	
+		if(wTimesec != 0){
+			wTimesec++;
+			caculate_time();
+		}
+		setTimeout('WTime()', 1000);
+	}
+
+	var show_once_flag = 0;
+	function xmldoc(){ 
+		var d;
+		var dns1,dns2;
+		var fixed_ip ="";
+
+		get_by_id("net_status").style.display ="";		
+		//show wan status
+		d = document.getElementById("connection_type");	
+		if(get_by_id("wan_proto").value == "static"){
+			d.innerHTML = _sdi_staticip;
+			get_by_id("net_status").style.display ="none";
+		}else if(get_by_id("wan_proto").value == "dhcpc"){
+			d.innerHTML = _sdi_dhcpclient;
+			get_by_id("btnConn").value=sd_Renew;
+			get_by_id("btnConn").onclick=function(){send_submit("form_conn","dhcp_renew.cgi");};
+			get_by_id("btnDisconn").value=sd_Release;
+			get_by_id("btnDisconn").onclick=function(){send_submit("form_disconn","dhcp_release.cgi");};
+		}else if(get_by_id("wan_proto").value == "pppoe"){			
+			if(get_by_id("wan_pppoe_dynamic_00").value == "0")
+				fixed_ip = _sdi_staticip;
+			d.innerHTML = _PPPoE+" "+ fixed_ip;
+			get_by_id("btnConn").value=LS314;
+            get_by_id("btnConn").onclick=function(){send_submit("form_conn","pppoe_00_connect.cgi");};
+            get_by_id("btnDisconn").value=sd_Disconnect;
+            get_by_id("btnDisconn").onclick=function(){send_submit("form_disconn","pppoe_00_disconnect.cgi");};
+		}else if(get_by_id("wan_proto").value == "pptp"){			
+			if(get_by_id("wan_pptp_dynamic").value == "0")
+				fixed_ip = _sdi_staticip;
+			d.innerHTML = _PPTP+" "+ fixed_ip;
+			get_by_id("btnConn").value=LS314;
+            get_by_id("btnConn").onclick=function(){send_submit("form_conn","pptp_connect.cgi");};
+            get_by_id("btnDisconn").value=sd_Disconnect;
+            get_by_id("btnDisconn").onclick=function(){send_submit("form_disconn","pptp_disconnect.cgi");};
+		}else if(get_by_id("wan_proto").value == "l2tp"){			
+			if(get_by_id("wan_l2tp_dynamic").value == "0")
+				fixed_ip = _sdi_staticip;
+			d.innerHTML = _L2TP+" "+ fixed_ip;
+			get_by_id("btnConn").value=LS314;
+            get_by_id("btnConn").onclick=function(){send_submit("form_conn","l2tp_connect.cgi");};
+            get_by_id("btnDisconn").value=sd_Disconnect;
+            get_by_id("btnDisconn").onclick=function(){send_submit("form_disconn","l2tp_disconnect.cgi");};
+		}else if(get_by_id("wan_proto").value == "bigpond"){
+			d.innerHTML = _sdi_bpc;
+			get_by_id("btnConn").value=sd_bp_login;
+            get_by_id("btnConn").onclick=function(){send_submit("form_conn","bigpond_connect.cgi");};
+            get_by_id("btnDisconn").value=sd_bp_logout;
+            get_by_id("btnDisconn").onclick=function(){send_submit("form_disconn","bigpond_disconnect.cgi");};
+		}else{
+			alert("connect type none");
+		}
+		
+		var cable_status = get_by_id("cable_status");		
+		var network_status = get_by_id("network_status");		
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) { 								
+			try{
+				connection_status = xmlhttp.responseXML.getElementsByTagName("wan_connection_status")[0].firstChild.nodeValue;
+				if(connection_status == "Connected")
+                    connection_status = CONNECTED;
+                else if(connection_status == "Connecting")
+                    connection_status = ddns_connecting;
+                else
+                    connection_status = DISCONNECTED;
+			}catch(error){
+				connection_status = DISCONNECTED;
+			}
+			var temp_wlan_status = xmlhttp.responseXML.getElementsByTagName("wlan_status")[0].firstChild.nodeValue;
+			get_by_id("wlan_status").innerHTML = (temp_wlan_status== "1") ? _enabled : _off;  
+			//show cable status ;show network status
+			if(xmlhttp.responseXML.getElementsByTagName("wan_cable_status")[0]){
+				wan_port_status = xmlhttp.responseXML.getElementsByTagName("wan_cable_status")[0].firstChild.nodeValue;
+					if(wan_port_status == "connect"){
+						cable_status.innerHTML = CONNECTED;
+						network_status.innerHTML = connection_status;
+					}else{
+						cable_status.innerHTML = DISCONNECTED;
+						network_status.innerHTML = DISCONNECTED;
+					}
+			}else{
+				cable_status.innerHTML = DISCONNECTED;
+				network_status.innerHTML = DISCONNECTED;
+			}  
+			d = get_by_id("wan_ip");
+			if(xmlhttp.responseXML.getElementsByTagName("wan_ip")[0]){
+				d.innerHTML = xmlhttp.responseXML.getElementsByTagName("wan_ip")[0].firstChild.nodeValue; 	
+			}else{    
+				d.innerHTML = "0.0.0.0";
+			}
+		
+			d = get_by_id("wan_netmask");
+			if(xmlhttp.responseXML.getElementsByTagName("wan_netmask")[0]){
+				d.innerHTML = xmlhttp.responseXML.getElementsByTagName("wan_netmask")[0].firstChild.nodeValue;		
+			}else{
+				d.innerHTML = "0.0.0.0";
+			}	
+			
+			d = get_by_id("wan_gateway");
+			if(xmlhttp.responseXML.getElementsByTagName("wan_default_gateway")[0]){
+				d.innerHTML = xmlhttp.responseXML.getElementsByTagName("wan_default_gateway")[0].firstChild.nodeValue;
+			}else{
+				d.innerHTML = "0.0.0.0";
+			}	
+			
+			//show dns
+			dns1 = get_by_id("wan_dns1");
+			if(xmlhttp.responseXML.getElementsByTagName("wan_primary_dns")[0]){
+				dns1_value =xmlhttp.responseXML.getElementsByTagName("wan_primary_dns")[0].firstChild.nodeValue;
+			}else{
+				dns1_value = "0.0.0.0";
+			}	
+			dns2 = get_by_id("wan_dns2");
+			if(xmlhttp.responseXML.getElementsByTagName("wan_secondary_dns")[0]){
+				dns2_value = xmlhttp.responseXML.getElementsByTagName("wan_secondary_dns")[0].firstChild.nodeValue;
+			}else{
+				dns2_value = "0.0.0.0";
+			}	
+		
+			dns1.innerHTML = dns1_value;
+			dns2.innerHTML = dns2_value;
+			
+			if(dns1_value !="(null)" && dns1_value !="0.0.0.0" ){
+				dns1.innerHTML = dns1_value;
+			}else{
+				dns1.innerHTML = "0.0.0.0";
+			}
+			
+			if(dns2_value !="(null)" && dns2_value !="0.0.0.0" ){	
+				dns2.innerHTML = dns2_value;
+			}else{				
+				dns2.innerHTML = "0.0.0.0";
+			}		
+			//wlan status
+			d = get_by_id("wlan_channel");
+			if(xmlhttp.responseXML.getElementsByTagName("wlan_channel")[0]){
+				channel = xmlhttp.responseXML.getElementsByTagName("wlan_channel")[0].firstChild.nodeValue;
+			}else{
+				channel = _na;
+			}		
+			if(channel !="(null)" )
+				d.innerHTML = channel;
+			else
+				d.innerHTML = _na;
+				
+			//show wan_up time
+			if(xmlhttp.responseXML.getElementsByTagName("wan_uptime")[0]){
+				wTimesec = xmlhttp.responseXML.getElementsByTagName("wan_uptime")[0].firstChild.nodeValue;
+			}	
+			if(wTimesec == 0){
+				wan_time = _na;
+			}else{
+				caculate_time();
+			}
+
+			if(cable_status.innerHTML == DISCONNECTED){
+				get_by_id("opendns_enable").innerHTML = _na;
+				get_by_id("btnDisconn").disabled = true;
+				get_by_id("btnConn").disabled = true;
+			}else{
+				get_by_id("opendns_enable").innerHTML = ("0"=="1")?_enabled : _disabled;
+				if(get_current_user=="admin"){
+					get_by_id("btnDisconn").disabled = false;
+					get_by_id("btnConn").disabled = (network_status.innerHTML == CONNECTED) ?true:false;
+				}
+			}
+		}else{
+			/* default value, only display once.Once the local network established, */
+			/* it should be replaced with default value above, or it would be "N/A" */
+			if(show_once_flag == 0){
+				get_by_id("cable_status").innerHTML = _na;
+				get_by_id("network_status").innerHTML = _na;
+				get_by_id("wan_ip").innerHTML = _na;
+				get_by_id("wan_netmask").innerHTML = _na;
+				get_by_id("wan_gateway").innerHTML = _na;
+				get_by_id("wan_dns1").innerHTML = _na;
+				get_by_id("wan_dns2").innerHTML = _na;
+				get_by_id("wlan_channel").innerHTML = _na;
+				get_by_id("show_uptime").innerHTML = _na;
+				get_by_id("opendns_enable").innerHTML = _na;
+				show_once_flag = 1;
+			}  
+		}
+	}
+
+	function get_File() {
+		xmlhttp = createRequest(); 
+		if(xmlhttp){
+		var url;
+		var lan_ip="192.168.0.1";
+		var temp_cURL = document.URL.split("/");
+		var mURL = temp_cURL[2];
+		if(mURL == lan_ip){
+					url="http://"+lan_ip+"/device.xml=device_status";
+			}else{
+					url="http://"+mURL+"/device.xml=device_status";
+			}
+			
+		xmlhttp.onreadystatechange = xmldoc; 
+		xmlhttp.open("GET", url, true); 
+		xmlhttp.send(null); 
+		}
+		setTimeout("get_File()",3000);
+	}
+	
+	
+	function createRequest() {
+		var XMLhttpObject = null;
+		try {
+			XMLhttpObject = new XMLHttpRequest();
+		} catch (e) {
+		try {
+			XMLhttpObject = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+		try {
+			XMLhttpObject = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (e) {
+			return null;
+		}
+		}
+	}
+		return XMLhttpObject;
+	}
+
+</script>
+<style type="text/css">
+<!--
+.style3 {font-size: 12px}
+.style4 {
+	font-size: 11px;
+	font-weight: bold;
+}
+.style5 {font-size: 11px}
+-->
+</style>
+<!--input type="hidden" id="dhcp_list" name="dhcp_list" value=""-->
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575"><input id="dhcp_list" name="dhcp_list" 
+value="End User/192.168.0.100/00:04:23:2c:44:9f/Tue Dec 22 
+01:06:04 2009," type="hidden">
+<input id="igmp_list" name="igmp_list" value="" type="hidden">
+<form id="form1" name="form1" method="post" action="http://www.support.dlink.com/emulators/dir615_revE/510/st_device.cgi">
+<input id="html_response_page" name="html_response_page" 
+value="back.htm" type="hidden">
+<input id="html_response_return_page" name="html_response_return_page" 
+value="st_device.htm" type="hidden">
+
+<input id="wan_current_ipaddr" name="wan_current_ipaddr" 
+value="192.168.1.125/255.255.255.0/192.168.1.1/68.94.156.1/68.94.157.1" 
+type="hidden">
+<input id="wan_proto" name="wan_proto" value="dhcpc" type="hidden">
+<input id="wan_pppoe_dynamic_00" name="wan_pppoe_dynamic_00" value="1" 
+type="hidden">
+<input id="wan_pptp_dynamic" name="wan_pptp_dynamic" value="1" 
+type="hidden">
+<input id="wan_l2tp_dynamic" name="wan_l2tp_dynamic" value="1" 
+type="hidden">
+<input id="dhcpd_enable" name="dhcpd_enable" value="1" type="hidden">
+<input id="dhcpc_connection_status" name="dhcpc_connection_status" 
+value="Connected" type="hidden">
+<input id="pppoe_00_connection_status" name="pppoe_00_connection_status"
+ value="Disconnected" type="hidden">
+<input id="pptp_connection_status" name="pptp_connection_status" 
+value="Disconnected" type="hidden">
+<input id="l2tp_connection_status" name="l2tp_connection_status" 
+value="Disconnected" type="hidden">
+<input id="bigpond_connection_status" name="bigpond_connection_status" 
+value="" type="hidden">
+
+
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td 
+id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavoff" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavon" height="29"><a
+ href="st_device.htm" onClick="return jump_if();">Status</a></td><td
+ id="topnavoff" height="29"><a href="support_men.htm"
+ onclick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td id="sidenav_container">
+							<div id="sidenav"><ul><li><div id="sidenavoff">Device Info</div></li><li><div><a
+ href="st_log.htm" onClick="return jump_if();">Logs</a></div></li><li><div><a
+ href="st_stats.htm" onClick="return jump_if();">Statistics</a></div></li><li><div><a
+ href="internet_sessions.htm" onClick="return 
+jump_if();">Internet Sessions</a></div></li><li><div><a 
+href="st_routing.htm" onClick="return jump_if();">Routing
+ Table</a></div></li><li><div><a 
+href="st_wireless.htm" onClick="return jump_if();">Wireless</a></div></li><li><div><a
+ href="st_ipv6.htm" onClick="return jump_if();">IPv6</a></div></li></ul></div>
+							<div id="m17n_div" align="center"></div>
+						</td>			
+					</tr>
+				</tbody></table>			
+			</td>
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">
+				  	<div id="box_header"> 
+						<h1>Device 
+Information</h1>
+						All of your Internet and 
+network connection details are displayed on this page. The firmware 
+version is also displayed here.
+						<br><br>
+				  	</div>
+				  	<div class="box">
+						<h2>General</h2>
+						<table border="0" cellpadding="1" cellspacing="1" width="525">
+							<tbody><tr>
+								<td class="duple">Time :</td>
+								<td width="340">&nbsp;&nbsp;<span id="show_time">Friday, February 26, 2010 2:51:15 AM</span></td>
+							</tr>
+							<tr>
+								<td class="duple">Firmware 
+Version :</td>
+								<td width="340">&nbsp;&nbsp;<strong>5.10 , Fri, 26 Feb 2010</strong></td>
+							</tr>
+						</tbody></table>
+				  	</div>
+					<div class="box" id="f_WAN">
+						<h2>WAN</h2>
+							<table border="0" cellpadding="1" cellspacing="1" width="525">
+							  	<tbody><tr>
+                                  <td class="duple">Connection
+ Type :</td>
+                                  <td width="340">&nbsp; 
+								  <span id="connection_type">DHCP Client</span>
+								  </td>
+							  	</tr>
+								<tr>
+                                  <td class="duple">Cable
+ Status :</td>
+                                  <td width="340">&nbsp;
+								  <span id="cable_status">Connected</span>
+								   </td>
+							    </tr>
+								<tr>
+                                  <td class="duple">Network
+ Status :</td>
+                                  <td width="340">&nbsp;
+								  <span id="network_status">Connected</span>
+								   </td>
+							    </tr>
+								<tr>
+                                  <td class="duple">Connection
+ Up Time :</td>
+                                  <td width="340">&nbsp;&nbsp;<span 
+id="show_uptime">0 Day, 0:47:31</span></td>
+							    </tr>
+								<tr id="net_status" style="">
+                                  <td class="duple">&nbsp;</td>
+                                  <td width="340">&nbsp;&nbsp;
+									<input disabled="disabled" value="DHCP Renew" id="btnConn" 
+name="btnConn" type="button">
+									<input onClick="emulator()" value="DHCP Release" id="btnDisconn" name="btnDisconn" 
+type="button">
+								  </td>
+							    </tr>
+								<tr>
+                                  <td class="duple">MAC
+ Address :</td>
+                                  <td width="340">&nbsp;
+                                   00:26:5a:f3:7e:de
+								   </td>
+							    </tr>
+								<tr>
+                                  <td class="duple">IP
+ Address :</td>
+                                  <td width="340">&nbsp; 
+								  <span id="wan_ip">192.168.1.125</span>
+								  </td>
+							  	</tr>
+								<tr>
+                                  <td class="duple">Subnet
+ Mask :</td>
+                                  <td width="340">&nbsp;  
+								  <span id="wan_netmask">255.255.255.0</span>
+								  </td>
+							  	</tr>
+								<tr>
+                                  <td class="duple">Default
+ Gateway :</td>
+                                  <td width="340">&nbsp;
+								  <span id="wan_gateway">192.168.1.1</span>
+								  </td>
+							  	</tr>
+								<tr>
+                                  <td class="duple">Primary
+ DNS Server :</td>
+                                  <td width="340">&nbsp;
+								  <span id="wan_dns1">68.94.156.1</span>
+								  </td>
+							  	</tr>
+								<tr>
+                                  <td class="duple">Secondary
+ DNS Server :</td>
+                                  <td width="340">&nbsp;
+								  <span id="wan_dns2">68.94.157.1</span>
+								  </td>
+
+								</tr><tr>
+								  <td class="duple">Advanced
+ DNS :</td>
+								  <td width="340">&nbsp;
+								  <span id="opendns_enable">Disabled</span>
+								</td></tr>
+
+							  	
+							</tbody></table>
+					</div>
+					<div class="box"> 
+						<h2>LAN</h2>
+							<table border="0" cellpadding="1" cellspacing="1" width="525">
+								<tbody><tr>
+                                  <td class="duple">MAC
+ Address :</td>
+                                  <td width="340">&nbsp;
+								  00:26:5a:f3:7e:dd
+								  </td>
+							  </tr>
+								<tr>
+                                  <td class="duple">IP
+ Address :</td>
+                                  <td width="340">&nbsp;
+								  192.168.0.1
+								  </td>
+							  </tr>
+								<tr>
+                                  <td class="duple">Subnet
+ Mask :</td>
+                                  <td width="340">&nbsp;
+								  255.255.255.0
+								  </td>
+							  </tr>
+								<tr>
+                                  <td class="duple">DHCP
+ Server :</td>
+                                  <td width="340">&nbsp;
+								  Enabled
+								  
+								  </td>
+							  </tr>
+							</tbody></table>
+					</div>
+					<div class="box"> 
+						<h2>Wireless LAN</h2>
+							<table border="0" cellpadding="1" cellspacing="1" width="525">
+								<tbody><tr>
+									<td class="duple">Wireless
+ Radio :</td>
+									<td width="340">&nbsp;
+									<span id="wlan_status">Enabled</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="duple">MAC 
+Address :</td>
+									<td width="340">&nbsp;
+									00:26:5a:f3:7e:dd
+									</td>
+								</tr>
+								<tr>
+									<td class="duple">Network
+ Name (SSID) :</td>
+									<td width="340">&nbsp;
+									Dlink_Dir615E3
+									</td>
+								</tr>
+								<tr>
+									<td class="duple">Channel
+ :</td>
+									<td width="340">&nbsp;
+									<span id="wlan_channel">6</span>
+									</td>
+								</tr>
+								<tr>
+								  	<td class="duple">Security
+ Mode :</td>
+									<td width="340">&nbsp;
+									  AUTO (WPA or WPA2) - PSK
+									</td>
+								</tr>
+							</tbody></table>
+				  </div>
+				  <div class="box" id="f_LANcomputers">
+					  <h2>LAN Computers</h2>
+						  <table bgcolor="#dfdfdf" border="1" bordercolor="#ffffff" 
+cellpadding="2" cellspacing="1" width="525">
+						  	<tbody><tr>
+								<td>IP Address</td>
+								<td>Name (if any)</td>
+								<td>MAC</td>
+							</tr>
+							<tr><td>192.168.0.100</td><td>End User</td><td>00:04:23:2c:44:9f</td></tr>
+						  </tbody></table>
+				  </div>
+				  <div class="box" id="f_IGMPmemberships">
+					  <h2>IGMP 
+Multicast memberships</h2>
+						  <table bgcolor="#dfdfdf" border="1" bordercolor="#ffffff" 
+cellpadding="2" cellspacing="1" width="525">
+						  	<tbody><tr>
+								<td>Multicast Group Address</td>
+							</tr>
+							
+						  </tbody></table>
+				  </div>
+				  
+				  <div id="renew_result" name="renew_result" style="display: none;">
+						  <table bgcolor="#ffffff" border="1" bordercolor="#ffffff" 
+cellpadding="2" cellspacing="1" width="525">
+						  	<tbody><tr><td>
+									<iframe id="iframe_result" name="iframe_result" border="0" 
+marginwidth="0" marginheight="0" src="st_device.htm" align="middle" frameborder="0" 
+height="0" scrolling="no" width="100%"></iframe>
+								</td></tr>
+						  </tbody></table>
+				  </div>
+				</div>				
+			</td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bgcolor="#ffffff" border="0" cellpadding="2" cellspacing="0">
+					<tbody><tr>
+					  <td id="help_text">
+					  	<strong>Helpful Hints…</strong>
+					  	<p>All of your WAN and 
+LAN connection details are displayed here.</p>
+						<p><a href="support_status.htm#Device_Info">More…</a></p>
+					  </td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table></form>
+<form id="form_conn" name="form_conn" method="post">
+<input id="html_response_page" name="html_response_page" 
+value="back.htm" type="hidden"><input id="html_response_return_page" 
+name="html_response_return_page" value="st_device.htm" type="hidden"><input
+ id="html_response_message" name="html_response_message" value="WAN is 
+connecting. " type="hidden">
+</form>
+<form id="form_disconn" name="form_disconn" method="post">
+<input id="html_response_page" name="html_response_page" 
+value="st_device.htm" type="hidden"><input 
+id="html_response_return_page" name="html_response_return_page" 
+value="st_device.htm" type="hidden">
+</form>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+</body></html>

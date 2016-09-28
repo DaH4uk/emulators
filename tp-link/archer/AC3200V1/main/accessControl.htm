@@ -1,0 +1,1072 @@
+<script language="javascript" type="text/javascript">
+var deviceStack;
+var fwState;
+var aclMode;
+var blackHostStk;
+var blackRuleStk;
+var whiteHostStk;
+var whiteRuleStk;
+var whiteMacList;
+var fwList;
+var isEdit;
+var editStackIndex;
+
+/*add by wuzeyu 2014.12.25   for different part can use the same entry name*/
+var usePosfix = 0; /*把后缀放在后面添加删除*/
+var posfixBlack;
+var posfixWhite;
+var posfixLen;
+var enableThisEntry;
+/*end add*/
+
+
+function init() {
+
+    deviceStack = [];
+    blackHostStk = [];
+    blackRuleStk = [];
+    whiteHostStk = [];
+    whiteRuleStk = [];
+    whiteMacList = [];
+    isEdit = 0;
+   enableThisEntry = 0;
+	/*add by wuzeyu 2014.12.25   */
+	if (usePosfix == 1)
+	{
+		posfixBlack = "-B";
+		posfixWhite = "-W";
+		posfixLen = 2;
+	}
+	else
+	{
+		posfixBlack = "";
+		posfixWhite = "";
+		posfixLen = 0;		
+	}
+	/*end add */
+    var devicesOnlineHeadArray = [{
+        "text": '<div><input type="checkbox" id="checkbox_devicesOnline"/><label></label></div>',
+        "width": "5%"
+    }, {
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.devname,
+        "width": "10%"
+    }, {
+        "text": table_str.ip,
+        "width": "10%"
+    }, {
+        "text": table_str.mac,
+        "width": "15%"
+    }, {
+        "text": table_str.conntype,
+        "width": "10%"
+    }];
+
+    var devicesInBlackListHeadArray = [{
+        "text": '<div><input type="checkbox" id="checkbox_devicesInBlackList"/><label></label></div>',
+        "width": "5%"
+    }, {
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.devname,
+        "width": "10%"
+    }, {
+        "text": table_str.mac,
+        "width": "13%"
+    }, {
+        "text": table_str.status,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+
+    var devicesInWhiteListHeadArray = [{
+        "text": '<div><input type="checkbox" id="checkbox_devicesInWhiteList"/><label></label></div>',
+        "width": "5%"
+    }, {
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.devname,
+        "width": "10%"
+    }, {
+        "text": table_str.mac,
+        "width": "15%"
+    }, {
+        "text": table_str.status,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+
+    $.initTableHead($("#tableDevicesOnline"), devicesOnlineHeadArray);
+    $("#tableDevicesOnline").tpTable(initDeviceOnlineTable);
+
+    $.initTableHead($("#tableDevicesInBlackList"), devicesInBlackListHeadArray);
+    $("#tableDevicesInBlackList").tpTable(initDeviceInBlackListTable);
+
+    $.initTableHead($("#tableDevicesInWhiteList"), devicesInWhiteListHeadArray);
+    $("#tableDevicesInWhiteList").tpTable(initDeviceInWhiteListTable);
+
+    var fwCfg = $.act(ACT_GET, FIREWALL, null, null, ["enable", "firewallMode", "defaultAction"]);
+    fwList = $.act(ACT_GL, RULE, null, null);
+
+    if (!$.exe()) {
+        if (fwCfg.enable == 1) {
+            $("#ACLOn").addClass("selected");
+            fwState = 1;
+        } else if (fwCfg.enable == 0) {
+            $("#ACLOff").addClass("selected");
+            fwState = 0;
+        }
+        initRadioShow(fwCfg.firewallMode);
+    }
+
+    $("#checkbox_devicesOnline").click(function() {
+        var td = $("#tableDevicesOnline").find("tbody tr td");
+        if ($("#checkbox_devicesOnline").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', true);
+                $(this).next("label").find('.text').addClass("span-click");
+                $(this).next("label").find('.icon').addClass("checkbox-click");
+            });
+        } else if ($("#checkbox_devicesOnline").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', false);
+                $(this).next("label").find('.text').removeClass("span-click");
+                $(this).next("label").find('.icon').removeClass("checkbox-click");
+            });
+        }
+    });
+
+    $("#checkbox_devicesInBlackList").click(function() {
+        var td = $("#tableDevicesInBlackList").find("tbody tr td");
+        if ($("#checkbox_devicesInBlackList").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', true);
+                $(this).next("label").find('.text').addClass("span-click");
+                $(this).next("label").find('.icon').addClass("checkbox-click");
+            });
+        } else if ($("#checkbox_devicesInBlackList").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', false);
+                $(this).next("label").find('.text').removeClass("span-click");
+                $(this).next("label").find('.icon').removeClass("checkbox-click");
+            });
+        }
+    });
+
+    $("#checkbox_devicesInWhiteList").click(function() {
+        var td = $("#tableDevicesInWhiteList").find("tbody tr td");
+        if ($("#checkbox_devicesInWhiteList").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', true);
+                $(this).next("label").find('.text').addClass("span-click");
+                $(this).next("label").find('.icon').addClass("checkbox-click");
+            });
+        } else if ($("#checkbox_devicesInWhiteList").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+            td.find("input[type='checkbox']").each(function(index) {
+                $(this).next("label").siblings('.checkbox-checkbox').prop('data-checked', false);
+                $(this).next("label").find('.text').removeClass("span-click");
+                $(this).next("label").find('.icon').removeClass("checkbox-click");
+            });
+        }
+    });
+
+}
+
+function initRadioShow(firewallMode) {
+
+    if (firewallMode == 1) {
+        $("#radioBlackList").prop("checked", "checked");
+        aclMode = 1;
+    } else if (firewallMode == 0) {
+        $("#radioWhiteList").prop("checked", "checked");
+        aclMode = 0;
+    }
+}
+
+$("#ACLOn").click(function() {
+    $.act(ACT_SET, FIREWALL, null, null, ["enable=1"]);
+    $.exe(function(err) {
+        if (!err) {
+            fwState = 1;
+        }
+    })
+});
+
+$("#ACLOff").click(function() {
+    $.act(ACT_SET, FIREWALL, null, null, ["enable=0"]);
+    $.exe(function(err) {
+        if (!err) {
+            fwState = 0;
+        }
+    })
+});
+
+$("#radioBlackList").click(function() {
+    $("#deviceInBlackList").removeClass("nd");
+    $("#deviceInWhiteList").addClass("nd");
+
+
+    $.act(ACT_SET, FIREWALL, null, null, ["firewallMode=1"]);
+    $.exe(function(err) {
+
+    })
+    aclMode = 1;
+
+});
+
+$("#radioWhiteList").click(function() {
+    $("#deviceInWhiteList").removeClass("nd");
+    $("#deviceInBlackList").addClass("nd");
+
+    $.act(ACT_SET, FIREWALL, null, null, ["firewallMode=0"]);
+    $.exe(function(err) {
+
+    })
+    aclMode = 0;
+
+});
+
+/*add by wuzeyu 2015.1.4*for enable click*****************************/
+$("#addBlackListIcon").click(function() {
+    $("#enableThisEntryBlack").prop("checked", true);
+    $("#enableThisEntryBlack").data('tpCheckbox').refresh();
+});
+
+$("#addWhiteListIcon").click(function() {
+    $("#enableThisEntryWhite").prop("checked", true);
+    $("#enableThisEntryWhite").data('tpCheckbox').refresh();
+});
+/*end add **********************************************/
+
+
+$("#blackListEditOK").click(function() {
+    $.addLoading($(this));
+    doSaveBlackList();
+});
+
+$("#blackListEditCancel").click(function() {
+    $("#editContainerDevicesInBlackList").addClass("nd");
+    $("#editContainerDevicesInBlackList").removeClass("editor-container");
+    $("#tableDevicesInBlackList").unmask();
+/*add by wuzeyu*/
+    isEdit = 0;
+/* add end*/
+    $.reload();
+});
+
+$("#whiteListEditOk").click(function() {
+    $.addLoading($(this));
+    doSaveWhiteList();
+});
+
+$("#whiteListEditCancel").click(function() {
+    $("#editContainerDevicesInWhiteList").addClass("nd");
+    $("#editContainerDevicesInWhiteList").removeClass("editor-container");
+    $("#tableDevicesInWhiteList").unmask();
+	/*add by wuzeyu 2014.12.25*/
+	 isEdit = 0;
+	/*end add*/
+    $.reload();
+});
+
+$("#delBlackListIcon").click(function() {
+    $.confirm(c_str.del_choosed, deleteBlackList, null);
+});
+
+function deleteBlackList() {
+    var td = $("#tableDevicesInBlackList").find("tbody tr td");
+    var tr = td.find("span.checkbox-click").parents("tr");
+    td.find("span.checkbox-click").each(function() {
+        var blackStackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+        var blackDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfixBlack; /*add + posfixBlack by wuzeyu 2014.12.26*/
+        if (blackStackIndex < 0) return true;
+        $.each(fwList, function() {
+            if (this.isParentCtrl == 0 && this.action == 1 && this.internalHostRef == blackDeviceName) {
+                $.act(ACT_DEL, RULE, this.__stack, null);
+            }
+        });
+
+        $.act(ACT_DEL, INTERNAL_HOST, blackHostStk[blackStackIndex], null);
+    });
+    tr.remove();
+    var grid = 0;
+    $("#tableDevicesInBlackList").find("thead tr th").each(function() {
+        grid++;
+    });
+    $.addEmptyBody($("#tableDevicesInBlackList"), grid);
+    $.exe(function(err) {
+        if (!err) {
+            $.reload();
+        }
+    });
+}
+
+$("#delWhiteListIcon").click(function() {
+    $.confirm(c_str.del_choosed, deleteWhiteList, null);
+});
+
+function deleteWhiteList() {
+    var td = $("#tableDevicesInWhiteList").find("tbody tr td");
+    var tr = td.find("span.checkbox-click").parents("tr");
+    td.find("span.checkbox-click").each(function() {
+        var whiteStackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+        var whiteDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfixWhite;  /*add + posfixWhite by wuzeyu 2014.12.26*/
+        if (whiteStackIndex < 0) return true;
+        $.each(fwList, function() {
+            if (this.isParentCtrl == 0 && this.action == 0 && this.internalHostRef == whiteDeviceName) {
+                $.act(ACT_DEL, RULE, this.__stack, null);
+            }
+        });
+
+        $.act(ACT_DEL, INTERNAL_HOST, whiteHostStk[whiteStackIndex], null);
+    });
+    tr.remove();
+    var grid = 0;
+    $("#tableDevicesInWhiteList").find("thead tr th").each(function() {
+        grid++;
+    });
+    $.addEmptyBody($("#tableDevicesInWhiteList"), grid);
+    $.exe(function(err) {
+        if (!err) {
+            $.reload();
+        }
+    });
+}
+
+function initDeviceOnlineTable() {
+    var array = new Array();
+    var deviceOnline = $.act(ACT_GL, LAN_HOST_ENTRY, null, null);
+
+    $.exe(function(err) {
+        if (err) return;
+        var index = 1;
+        $.each(deviceOnline, function() {
+			if (this.active != 1)
+				return;
+		
+            array.push([{
+                "text": '<div><input type="checkbox" id="' + index + '"/><label></label></div>',
+                "width": "5%"
+            }, {
+                "text": index,
+                "width": "5%"
+            }, {
+                "text": this.hostName,
+                "width": "10%"
+            }, {
+                "text": this.IPAddress,
+                "width": "10%"
+            }, {
+                "text": this.MACAddress.toUpperCase(),
+                "width": "15%"
+            }, {
+                "text": (this.X_TP_ConnType == 0) ? table_str.wired : table_str.wireless,
+                "width": "10%"
+            }]);
+
+            index++;
+            deviceStack[index - 1] = this.__stack;
+        });
+
+        $.initTableBody($("#tableDevicesOnline"), array);
+        $.tablePages($("#tableDevicesOnline"), 5);
+    });
+
+    $("#blockDev").click(function() {
+        doBlock();
+    });
+}
+
+function initDeviceInBlackListTable() {
+    var array = new Array();
+    var hostList = $.act(ACT_GL, INTERNAL_HOST, null, null);
+    var ruleList = $.act(ACT_GL, RULE, null, null);
+
+    $.exe(function(err) {
+        if (err) return;
+        var index = 1;
+        $.each(ruleList, function() {
+
+            if (this.isParentCtrl == 0 && this.action == 1) {
+                var hostName = this.internalHostRef;
+                var ruleStk = this.__stack;
+		  var enable =  this.enable;
+                $.each(hostList, function() {
+			 if (this.isParentCtrl == 0 && this.accessMode == 1)
+			 {
+			 var entryNameLen = (this.entryName).length;
+			if (entryNameLen <= posfixLen)
+			{
+				entryNameLen += posfixLen;
+			}
+
+                    if (this.entryName == hostName) {
+                        array.push([{
+                            "text": '<div><input type="checkbox" id="checkbox_black_' + index + '"/><label></label></div>',
+                            "width": "5%"
+                        }, {
+                            "text": index,
+                            "width": "5%"
+                        }, {
+                            //"text": this.entryName,/*change by wuzeyu 2014.12.25 for posfix name*/
+				 "text": (this.entryName).substring(0, entryNameLen - posfixLen),
+				"width": "12%"
+                        }, {
+                            "text": this.mac.toUpperCase(),
+                            "width": "13%"
+                        }, {
+                             "text": (enable == 1) ? "<span class='table-grid-icon enable-icon'></span>" : "<span class='table-grid-icon disable-icon'></span>",
+                   		  "width": "6%"
+                        }, {
+                            "text": "<span class='table-grid-icon edit-modify-icon'></span><span class='table-grid-icon edit-trash-icon'></span>",
+                            "width": "10%"
+                        }]);
+                        blackHostStk[index - 1] = this.__stack;
+                        blackRuleStk[index - 1] = ruleStk;
+                        index++;
+                    }
+			 }
+                });
+            }
+        });
+        $.initTableBody($("#tableDevicesInBlackList"), array);
+        $.tablePages($("#tableDevicesInBlackList"), 8);
+
+	/*add by wuzeyu 2014.12.31.*/
+	   $("span.enable-icon").click(function() {
+	   	var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+           	 if (aclMode == 1) {
+                	$.act(ACT_SET, RULE, blackRuleStk[stackIndex - 1], null, ["enable=0"]);
+           	 }
+	   /*
+          var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfixBlack; 
+          $.each(ruleList, function() {
+                if (this.isParentCtrl == 0 && this.action == 1 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_SET, RULE, this.__stack, null, ["enable=0"]);
+                }
+            });
+	*/
+            $.exe(function() {
+                $.reload();
+            });
+        });
+
+        $("span.disable-icon").click(function() {
+		 var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+           	 if (aclMode == 1) {
+                	$.act(ACT_SET, RULE, blackRuleStk[stackIndex - 1], null, ["enable=1"]);
+           	 }
+	/*
+            var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfixBlack; //add +posfix by wuzeyu 2014.12.26
+            $.each(ruleList, function() {
+                if (this.isParentCtrl == 0 && this.action == 1 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_SET, RULE, this.__stack, null, ["enable=1"]);
+                }
+            });
+ 	*/
+            $.exe(function() {
+                $.reload();
+            });
+        });
+	/*end add*************************************************/
+
+
+        $("span.edit-modify-icon").click(function() {
+            isEdit = 1;
+            editStackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+            var deviceName = $(this).parents("tr").find("td:eq(2)").text();
+            var macAddress = $(this).parents("tr").find("td:eq(3)").text();
+
+            $("#blackDevName").val(deviceName);
+            $("#blackMacAddr").val(macAddress);
+			
+		/* add by wuzeyu for enable click**************************************/
+	       $.each(ruleList, function() {
+			  if (this.isParentCtrl == 0 && this.action == 1 && this.internalHostRef == (deviceName + posfixBlack)) 
+			  {
+				  if (this.enable == 1) {
+				  	    enableThisEntry = 1;
+		                        $("#enableThisEntryBlack").prop("checked", true);
+		    			    $("#enableThisEntryBlack").data('tpCheckbox').refresh();
+		                } else {
+		                	    enableThisEntry = 0;
+		                        $("#enableThisEntryBlack").prop("checked", false);
+					    $("#enableThisEntryBlack").data('tpCheckbox').refresh();
+		                }
+			  }
+	       });
+		/*end add ******************************/
+		
+        });
+
+        $("span.edit-trash-icon").click(function() {
+            var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+
+            if (aclMode == 1) {
+                $.act(ACT_DEL, RULE, blackRuleStk[stackIndex - 1], null);
+                $.act(ACT_DEL, INTERNAL_HOST, blackHostStk[stackIndex - 1], null);
+                $.exe(function(err) {
+                    if (!err) $.reload();
+                });
+            }
+
+        });
+
+    });
+}
+
+function initDeviceInWhiteListTable() {
+    var array = new Array();
+    var lanList = $.act(ACT_GL, INTERNAL_HOST, null, null);
+    var fwList = $.act(ACT_GL, RULE, null, null);
+
+    $.exe(function(err) {
+        if (err) return;
+        var index = 1;
+        $.each(fwList, function() {
+
+            if (this.isParentCtrl == 0 && this.action == 0) {
+                var hostName = this.internalHostRef;
+                var ruleStk = this.__stack;
+		   var enable =  this.enable;
+
+                $.each(lanList, function() {
+			 if (this.isParentCtrl == 0 && this.accessMode == 0)
+			 {
+			var entryNameLen = (this.entryName).length;
+			if (entryNameLen <= posfixLen)
+			{
+				entryNameLen += posfixLen;
+			}
+
+                    if (this.entryName == hostName) {
+                        array.push([{
+                            "text": '<div><input type="checkbox" id="checkbox_white_' + index + '"/><label></label></div>',
+                            "width": "5%"
+                        }, {
+                            "text": index,
+                            "width": "5%"
+                        }, {
+                           // "text": this.entryName,
+				"text": (this.entryName).substring(0, entryNameLen - posfixLen),/* change by wuzeyu 2014.12.25*/
+				"width": "15%"
+                        }, {
+                            "text": this.mac.toUpperCase(),
+                            "width": "15%"
+                        }, {
+                             "text": (enable == 1) ? "<span class='table-grid-icon enable-icon'></span>" : "<span class='table-grid-icon disable-icon'></span>",
+                   		  "width": "10%"
+                        }, { 
+                            "text": "<span class='table-grid-icon edit-modify-icon'></span><span class='table-grid-icon edit-trash-icon'></span>",
+                            "width": "10%"
+                        }]);
+                        whiteHostStk[index - 1] = this.__stack;
+                        whiteRuleStk[index - 1] = ruleStk;
+                        whiteMacList[index - 1] = this.mac;
+                        index++;
+                    }
+			 }
+                });
+            }
+        });
+        $.initTableBody($("#tableDevicesInWhiteList"), array);
+        $.tablePages($("#tableDevicesInWhiteList"), 8);
+
+	/*add by wuzeyu 2014.12.31 for enable click.*/
+	   $("span.enable-icon").click(function() {
+	   
+		    var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+	            if (aclMode == 0) {
+	                $.act(ACT_SET, RULE, whiteRuleStk[stackIndex - 1], null, ["enable=0"]);
+	            	}
+	  /*
+          var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfixWhite;
+          $.each(fwList, function() {
+                if (this.isParentCtrl == 0 && this.action == 0 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_SET, RULE, this.__stack, null, ["enable=0"]);
+                }
+            });
+	*/
+            $.exe(function() {
+                $.reload();
+            });
+        });
+
+        $("span.disable-icon").click(function() {
+		var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+	        if (aclMode == 0) {
+	               $.act(ACT_SET, RULE, whiteRuleStk[stackIndex - 1], null, ["enable=1"]);
+	        }
+	/*
+            var childDeviceName = $(this).parents("tr").find("td:eq(2)").text() + posfixWhite; //add +posfix by wuzeyu 2014.12.26
+            $.each(fwList, function() {
+                if (this.isParentCtrl == 0 && this.action == 0 && this.internalHostRef == childDeviceName) {
+                    $.act(ACT_SET, RULE, this.__stack, null, ["enable=1"]);
+                }
+            });
+	*/
+            $.exe(function() {
+                $.reload();
+            });
+        });
+	/*end add*************************************************/
+
+        $("span.edit-modify-icon").click(function() {
+            isEdit = 1;
+            editStackIndex = $(this).parents("tr").find("td:eq(1)").text() - 1;
+            var deviceName = $(this).parents("tr").find("td:eq(2)").text();
+            var macAddress = $(this).parents("tr").find("td:eq(3)").text();
+
+            $("#whiteDevName").val(deviceName);
+            $("#whiteMacAddr").val(macAddress);
+
+
+		/* add by wuzeyu for enable click**************************************/
+	       $.each(fwList, function() {
+			  if (this.isParentCtrl == 0 && this.action == 0 && this.internalHostRef == (deviceName + posfixWhite)) 
+			  {
+				  if (this.enable == 1) {
+				  		  enableThisEntry = 1;
+		                        $("#enableThisEntryWhite").prop("checked", true);
+		    			    $("#enableThisEntryWhite").data('tpCheckbox').refresh();
+		                } else {
+		                		  enableThisEntry = 0;
+		                        $("#enableThisEntryWhite").prop("checked", false);
+					    $("#enableThisEntryWhite").data('tpCheckbox').refresh();
+		                }
+			  }
+	       });
+		/*end add ******************************/	
+        });
+
+        $("span.edit-trash-icon").click(function() {
+            var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+
+            if (aclMode == 0) {
+                $.act(ACT_DEL, RULE, whiteRuleStk[stackIndex - 1], null);
+                $.act(ACT_DEL, INTERNAL_HOST, whiteHostStk[stackIndex - 1], null);
+                $.exe(function(err) {
+                    if (!err) $.reload();
+                });
+            }
+
+        });
+
+    });
+}
+
+function doBlock() {
+    var td = $("#tableDevicesOnline").find("tbody tr td");
+
+    td.find("span.checkbox-click").each(function() {
+        var stackIndex = $(this).parents("tr").find("td:eq(1)").text();
+        var deviceName = $(this).parents("tr").find("td:eq(2)").text().substring(0, 32);
+        var macAddress = $(this).parents("tr").find("td:eq(4)").text();
+
+        if (aclMode == 1) {
+	      $("#enableThisEntryBlack").prop("checked", true);
+	      $("#enableThisEntryBlack").data('tpCheckbox').refresh();
+            doSaveBlackList(deviceName, macAddress);
+        } else if (aclMode == 0) {
+
+            for (var index = 0; index < whiteMacList.length; index++) {
+                if (macAddress == whiteMacList[index])
+                    break;
+            }
+
+            if (index >= whiteMacList.length) {
+                return;
+            }
+
+            stackIndex = index;
+
+            $.act(ACT_DEL, RULE, whiteRuleStk[stackIndex], null);
+            $.act(ACT_DEL, INTERNAL_HOST, whiteHostStk[stackIndex], null);
+            $.exe(function(err) {
+                if (!err) {
+                    $.reload();
+                }
+            });
+
+        } 
+    });
+}
+
+function doSaveBlackList(deviceName, macAddress) {
+    //var editRuleStack;
+    var hostAttrs = {};
+    var ruleAttrs = {};
+
+    var deviceName = (deviceName == null) ? $("#blackDevName").val() : deviceName;
+    var macAddress = (macAddress == null) ? $("#blackMacAddr").val() : macAddress;
+
+	/*add by wuzeyu 2014.12.25 check input value and confilt*/
+	  if ((macAddress== "") || ($.mac(macAddress, true)))
+	 {
+       	 $.alert(ERR_MAC_FORMAT);
+        	return false;
+    	}
+
+   	 if (!($.isname(deviceName))) 
+	{
+        	$.alert(ERR_FW_ENTRYNAME_INVAD);
+       	 return false;
+    	}
+	
+	var isDevNameDuplicate = 0;
+	var isMacDuplicate = 0;
+	var editNoChange = 0;
+       ruleAttrs.enable = $("#enableThisEntryBlack").prop("data-checked") ? 1 : 0;
+	var tr = $("#tableDevicesInBlackList").find("tbody tr");
+	 tr.each(function()
+	 {
+		var devIndex = $(this).find("td:eq(1)").text() - 1;
+		var devNameDes = $(this).find("td:eq(2)").text();
+		var macDes = $(this).find("td:eq(3)").text();
+		if (isEdit == 1 && devIndex == editStackIndex)
+		{
+			if (devNameDes == deviceName && macDes == macAddress &&
+			  enableThisEntry == ruleAttrs.enable) 
+			{
+				editNoChange = 1;
+			}
+		}
+		else
+		{
+			if (devNameDes == deviceName) 
+			{
+	                	isDevNameDuplicate = 1;
+	               	 return false;
+	           	 }
+				
+			if (macDes == macAddress) 
+			{
+	               	 isMacDuplicate = 1;
+	               	 return false;
+	           	 }
+            }
+        });
+
+	 if (editNoChange == 1)
+	 {
+      //   console.log("INFO_EDIT_NO_CHANGE");
+	  $.removeLoading();
+	  
+         $("#editContainerDevicesInBlackList").addClass("nd");
+	  $("#editContainerDevicesInBlackList").removeClass("editor-container");
+	  $("#tableDevicesInBlackList").unmask();
+	  isEdit = 0;
+  	  $.reload();  
+           return true;	
+    }
+
+	 if (isMacDuplicate == 1) 
+	{
+            $.alert(ERR_FW_MAC_CONFILIC);
+            return false;
+        }
+	    if (isDevNameDuplicate == 1)
+	{
+            $.alert(ERR_FW_DEV_NAME_CONFILIC);
+            return false;
+        }
+        /*end add ******************************/
+
+    hostAttrs.type = 1;
+    hostAttrs.entryName = deviceName + posfixBlack;
+    hostAttrs.mac = macAddress;
+    hostAttrs.isParentCtrl = 0;
+    hostAttrs.accessMode = 1; /*FW_MODE_BLACK_LIST*/
+
+    ruleAttrs.isParentCtrl = 0;
+    ruleAttrs.ruleName = deviceName + posfixBlack;
+    ruleAttrs.internalHostRef = deviceName + posfixBlack;
+    ruleAttrs.externalHostRef = "";
+    ruleAttrs.scheduleRef = "";
+    ruleAttrs.action = 1;
+
+
+    if (isEdit == 0) {
+        $.act(ACT_ADD, INTERNAL_HOST, null, null, hostAttrs);
+        $.act(ACT_ADD, RULE, null, null, ruleAttrs);
+    } else if (isEdit == 1) {
+        $.act(ACT_SET, INTERNAL_HOST, blackHostStk[editStackIndex], null, hostAttrs);
+        $.act(ACT_SET, RULE, blackRuleStk[editStackIndex], null, ruleAttrs);
+        isEdit = 0;
+    }
+
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            $.reload();
+        }
+    });
+
+}
+
+function doSaveWhiteList() {
+   // var editRuleStack;
+    var hostAttrs = {};
+    var ruleAttrs = {};
+    var deviceName = $("#whiteDevName").val();
+    var macAddress = $("#whiteMacAddr").val();
+
+   /*add by wuzeyu 2014.12.25 check inputValue and confilt*/
+	  if ((macAddress== "") || ($.mac(macAddress, true)))
+	 {
+       	 $.alert(ERR_MAC_FORMAT);
+        	return false;
+    	}
+
+   	 if (!($.isname(deviceName))) 
+	{
+        	$.alert(ERR_FW_ENTRYNAME_INVAD);
+       	 return false;
+    	}
+	
+	var isDevNameDuplicate = 0;
+	var isMacDuplicate = 0;
+	var editNoChange = 0;
+       ruleAttrs.enable = $("#enableThisEntryWhite").prop("data-checked") ? 1 : 0;
+	var tr = $("#tableDevicesInWhiteList").find("tbody tr");
+	 tr.each(function()
+	 {
+		var devIndex = $(this).find("td:eq(1)").text() - 1;
+		var devNameDes = $(this).find("td:eq(2)").text();
+		var macDes = $(this).find("td:eq(3)").text();
+		if (isEdit == 1 && devIndex == editStackIndex)
+		{
+			if (devNameDes == deviceName && macDes == macAddress &&
+			    enableThisEntry == ruleAttrs.enable) 
+			{
+				editNoChange = 1;
+			}
+		}
+		else
+		{
+			if (devNameDes == deviceName) 
+			{
+	                	isDevNameDuplicate = 1;
+	               	 return false;
+	           	 }
+				
+			if (macDes == macAddress) 
+			{
+	               	 isMacDuplicate = 1;
+	               	 return false;
+	           	 }
+            }
+        });
+
+	 if (editNoChange == 1)
+	 {
+	   $.removeLoading();
+	   $("#editContainerDevicesInWhiteList").addClass("nd");
+	   $("#editContainerDevicesInWhiteList").removeClass("editor-container");
+	   $("#tableDevicesInWhiteList").unmask();
+	    isEdit = 0;
+  	    $.reload();
+           return true;	
+    }
+	 if (isMacDuplicate == 1) 
+	{
+            $.alert(ERR_FW_MAC_CONFILIC);
+            return false;
+    }
+	    if (isDevNameDuplicate == 1)
+	{
+            $.alert(ERR_FW_DEV_NAME_CONFILIC);
+            return false;
+    }
+        /*end add ******************************/
+
+    hostAttrs.type = 1;
+    hostAttrs.entryName = deviceName + posfixWhite;
+    hostAttrs.mac = macAddress;
+    hostAttrs.accessMode = 0; /*FW_MODE_WHITE_LIST*/
+
+    ruleAttrs.isParentCtrl = 0;
+    ruleAttrs.ruleName = deviceName + posfixWhite;
+    ruleAttrs.internalHostRef = deviceName + posfixWhite;
+    ruleAttrs.externalHostRef = "";
+    ruleAttrs.scheduleRef = "";
+    ruleAttrs.action = 0;
+
+    if (isEdit == 0) {
+        $.act(ACT_ADD, INTERNAL_HOST, null, null, hostAttrs);
+        $.act(ACT_ADD, RULE, null, null, ruleAttrs);
+    } else if (isEdit == 1) {
+        $.act(ACT_SET, INTERNAL_HOST, whiteHostStk[editStackIndex], null, hostAttrs);
+        $.act(ACT_SET, RULE, whiteRuleStk[editStackIndex], null, ruleAttrs);
+        isEdit = 0;
+    }
+
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            $.reload();
+        }
+    });
+
+}
+</script>
+
+<h3 id="t_title1">Access Control</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b id="t_en">Access Control: </b>
+            <ul>
+                <li>
+                    <button id="ACLOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="ACLOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<div class="part-separate"></div>
+
+<h3 id="t_title2">Access Mode</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div id="accessMode">
+            <div>
+                <b id="t_defmode">Access Mode: </b>
+                <input type="radio" name="radioAccessControl" id="radioBlackList" />
+                <label class="T_blacklist">Blacklist</label>
+            </div>
+            <div>
+                <b></b>
+                <input type="radio" name="radioAccessControl" id="radioWhiteList" />
+                <label class="T_white">Whitelist</label>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="part-separate"></div>
+
+<div class="content-container nd" id="deviceInBlackList">
+    <form class="pure-form pure-form-aligned">
+        <h3 id="t_devblack">Devices in Blacklist</h3>
+        <div class="table-op" id="addBlackList">
+            <div class="table-btn">
+                <span id="addBlackListIcon" class="add-icon"></span>
+                <label class="T_add">Add</label>
+                <span id="delBlackListIcon" class="delete-icon"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+
+        <table id="tableDevicesInBlackList">
+            <thead></thead>
+            <tbody id="bodyDevicesInBlackList">
+                <tr id="editContainerDevicesInBlackList" class="nd">
+                    <td colspan="8">
+                        <div>
+                            <b class="T_c_devname">Device Name: </b>
+                            <input type="text" id="blackDevName" maxlength="32" required/>
+                        </div>
+                        <div>
+                            <b class="T_c_macaddr">MAC Address: </b>
+                            <input type="text" id="blackMacAddr" maxlength="17" required/>
+                        </div>
+                        
+                          <div>
+                                <b></b>
+                                <input type="checkbox" id="enableThisEntryBlack" maxlength="10" required/>
+                                <label id="t_enentry">Enable</label>
+                            </div>
+                            
+                        <div class="inline-btn-right">
+                            <button type="submit" class="green T_cancel" id="blackListEditCancel">Cancel</button>
+                            <button type="submit" class="green T_ok" id="blackListEditOK">OK</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div class="content-container nd" id="deviceInWhiteList">
+    <form class="pure-form pure-form-aligned">
+        <h3 id="t_devwhite">Devices in Whitelist</h3>
+        <div class="table-op" id="addWhiteList">
+            <div class="table-btn">
+                <span id="addWhiteListIcon" class="add-icon"></span>
+                <label class="T_add">Add</label>
+                <span id="delWhiteListIcon" class="delete-icon"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+
+        <table id="tableDevicesInWhiteList">
+            <thead></thead>
+            <tbody id="bodyDevicesInWhiteList">
+                <tr id="editContainerDevicesInWhiteList" class="nd">
+                    <td colspan="8">
+                        <div>
+                            <b class="T_c_devname">Device Name: </b>
+                            <input type="text" id="whiteDevName" maxlength="32" required/>
+                        </div>
+                        <div>
+                            <b class="T_c_macaddr">MAC Address: </b>
+                            <input type="text" id="whiteMacAddr" maxlength="17" required/>
+                        </div>
+                        
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="enableThisEntryWhite" maxlength="10" required/>
+                                <label id="t_enentry">Enable</label>
+                            </div>
+                        
+                        <div class="inline-btn-right">
+                            <button type="submit" class="green T_cancel" id="whiteListEditCancel">Cancel</button>
+                            <button type="submit" class="green T_ok" id="whiteListEditOk">OK</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div class="part-separate"></div>
+
+<h3 id="t_title3">Devices Online</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op" id="refreshDeviceOnline">
+            <div class="table-btn">
+                <span class="refresh-icon"></span>
+                <label class="T_refresh">Refresh</label>
+                <span id="blockDev" class="block-icon"></span>
+                <label class="T_block">Block</label>
+            </div>
+        </div>
+
+        <table id="tableDevicesOnline">
+            <thead></thead>
+            <tbody id="bodyDevicesOnline">
+
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+$.tpInit(init);
+</script>

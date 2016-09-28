@@ -1,0 +1,422 @@
+<script type="text/javascript" language="javascript">
+function initRegionList() {
+    var countryIndex1, countryIndex2, basicList;
+    var regions = $("#region");
+    basicList = 'US ';
+    if ($.local) {
+        basicList[0] = [{
+            regulatoryDomain: "GB ",
+            __stack: "1,1,0,0,0,0"
+        }];
+    }
+
+    for (var i = 0; i < regionCodeInfo.length; i++)
+        regions.append("<option value='" + i + "'>" + regionCodeInfo[i][4] + "</option>");
+
+}
+
+function addRegion() {
+    $.addLoading($("#next"));
+    var region = $("#region").data("value");
+    var tz = $("#timezone").data("value");
+
+    $.qd.country = $("#region").data("text");
+    $.qd.regionIndex = $("#region").data("value");
+    $.qd.timezone = $("#timezone").data("value");
+    $.qd.timezoneName = $("#timezone").data("text");
+
+    for (var i = 0; i < regionCodeInfo.length; i++) {
+        if ($.qd.country == regionCodeInfo[i][4]) {
+            $.qd.region = regionCodeInfo[i][1];
+            break;
+        }
+    }
+
+    /* Set WLAN region */
+    if (i >= regionCodeInfo.length) {
+        $.qd.region = $.qd.dmRegion;
+    }
+
+        $.removeLoading();
+        return true;
+    }
+
+function saveInfo()
+{
+		var warnStr1PwdNotMatch = "<div class='pure-control-group'><span style='color: red;'>" + n_str["quicksetup"].t_noteCfmPwd + "</span></div>";
+		var warnStrEmptyUsrName = "<div class='pure-control-group'><span style='color: red;'>" + n_str["quicksetup"].t_noteUserName + "</span></div>";
+		var warnStrEmptyPwd = "<div class='pure-control-group'><span style='color: red;'>" + n_str["quicksetup"].t_noteEmptyPwd + "</span></div>";
+	var warnStrNotASCIIUsrName = "<div class='pure-control-group'><span style='color: red;'>" + n_str["quicksetup"].t_noteNotAsciiUserName + "</span></div>";
+	var warnStrNotASCIIUPwd = "<div class='pure-control-group'><span style='color: red;'>" + n_str["quicksetup"].t_noteNotAsciiPwd + "</span></div>";
+		var userCfg = {};
+		var auth = "";
+	var arg;
+	var asciiWithoutSpace = /^(?=[^ ]+$)[\x21-\x7f]+$/;
+
+		/* check validation */
+    arg = $("#usr").prop('value');
+	if (arg == "" || $.asc(arg, true) || asciiWithoutSpace.test(arg) == false) 
+	{
+		if (arg == "")
+		$("#errorInput").html(warnStrEmptyUsrName);
+		else
+			$("#errorInput").html(warnStrNotASCIIUsrName);
+		
+			$("#usr").focus();
+			$("#usr").select();
+		return false;
+		}
+	userCfg.name = arg;
+
+	arg = $("#newPwd").prop('value');
+	if (arg == "" || $.asc(arg, true) || asciiWithoutSpace.test(arg) == false) 
+	{
+		if (arg == "")
+		$("#errorInput").html(warnStrEmptyPwd);
+		else
+			$("#errorInput").html(warnStrNotASCIIUPwd);
+		
+			$("#newPwd").focus();
+			$("#newPwd").select();
+		return false;
+		}
+	userCfg.pwd = arg;
+	
+	if (arg != $("#cfmPwd").prop('value')) {
+		$("#errorInput").html(warnStr1PwdNotMatch);
+			$("#cfmPwd").focus();
+			$("#cfmPwd").select();
+		return false;
+		}
+
+	var oldUsrCfg = $.act(ACT_GET, USER_CFG, null, null, ["adminPwd"]);
+	if ($.exe())
+	{
+       return false;
+	}
+	userCfg.oldPwd = oldUsrCfg.adminPwd;
+	
+	$.isFD = 2;
+	$.act(ACT_SET, IGD_DEV_INFO, null, null, ["X_TP_IsFD=2"]);
+	if ($.exe())
+	{
+       	       return false;
+	}
+	
+	
+	 if (userCfg.oldPwd)
+	 {
+		$.act(ACT_CGI, "/cgi/auth", null, null, userCfg);
+		if ($.exe())
+		{
+			return false;
+			}
+		else
+		{	
+	return true;
+}
+	 }
+	 else
+	 	 return false;
+}
+
+function showNewUserBox() {
+	var box = $("div.quicksetup-newUserMsgBox"),
+		closeTag = $("div.quicksetup-userBoxClosetag"),
+		cfmButton = $("span.quicksetup-cfmBtn");
+	$.isFD = 3;
+	//alert("t_newUsrName isFDtyyt:" + $.isFD);
+	setTimeout(function(){
+		try{
+			$("#usr").focus();
+			$("#usr").select();
+		}catch(e){}
+	}, 200);
+		
+	closeTag.hover(
+		function() {
+			$(this).css("background-position", "-25px -482px");
+		},
+		function() {
+			$(this).css("background-position", "-1px -482px");
+		}
+	);
+	closeTag.click(function() {
+		qsHideOverlay();
+		box.fadeOut(200, function() {
+			$(this).css("display", "none");});
+			});
+	cfmButton.hover(
+		function() {
+			$(this).css("background-color", "#7EB73D");
+		},
+		function() {
+			$(this).css("background-color", "#96CC56");
+			}
+	);
+	
+	cfmButton.click(function() {
+		var saveOk = saveInfo();
+		if (saveOk == true)
+		{
+			qsHideOverlay();
+			box.fadeOut(200, function() {
+			$(this).css("display", "none");
+			});
+			$.deleteCookie("Authorization");
+			window.location.reload();
+		}
+	});
+
+	$("input#newPwd").keyup(function() {
+		$.pwdIntensityCheck($("#qsLoginPwd"), $(this).val());
+	});
+	qsShowOverlay();
+	//$.setCentralPosition(box);
+	setBoxPosition(box);
+	box.fadeIn(200, function() {
+		$(this).css("display", "block");
+	});
+}
+
+function setBoxPosition(me) {
+	var me = me || this;
+	var posX = parseInt(($(window).width() - me.width()) / 2, 10);
+	var posY = parseInt(($(window).height() - me.height()) / 2, 10);
+	posY = (posY - 200) > 200?(posY - 200):200;
+	me.css({
+	     left: posX,
+	     top: posY
+	  });
+}
+
+function pressEnter(e)
+   {
+	var keyNum = 0;
+	var box = $("div.quicksetup-newUserMsgBox");
+
+	e = e||event;
+	if (e.which)
+	{
+		keyNum = e.which;
+		//alert("e.which is " +keyNum);
+	}
+	else
+	{
+		keyNum = e.keyCode;
+		//alert("e.keyCode is " +keyNum);
+	}
+	
+	 if (keyNum == 13)
+	{
+            var saveOk = saveInfo();
+		if (saveOk == true)
+		{
+			qsHideOverlay();
+			box.fadeOut(200, function() {
+			$(this).css("display", "none");
+			});
+			$.deleteCookie("Authorization");
+			window.location.reload();
+		}
+        }
+    }
+	
+function doExit() {
+	$("#basic").click();
+}
+
+function goNext() {
+    if (false == addRegion())
+        return;
+    $.qf.next();
+}
+
+</script>
+<div id="quicksetup-region-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b class="T_region">Region:</b>
+            <select id="region" class="xxxl">
+            </select>
+        </div>
+        <div id="timezoneParent">
+            <b class="T_timezone">Time Zone:</b>
+            <select id="timezone" class="xxxl">
+                <option value="-12:00" class="T_city1">(GMT-12:00) Enewetak, Kwajalein</option>
+                <option value="-11:00" class="T_city2">(GMT-11:00) Midway Island, Samoa</option>
+                <option value="-10:00" class="T_city3">(GMT-10:00) Hawaii</option>
+                <option value="-09:00" class="T_city4">(GMT-09:00) Alaska</option>
+                <option value="-08:00" class="T_city5">(GMT-08:00) Pacific Time (US & Canada); Tijuana</option>
+                <option value="-07:00" class="T_city6">(GMT-07:00) Mountain Time (US & Canada); Arizona</option>
+                <option value="-06:00" class="T_city7">(GMT-06:00) Central Time (US & Canada); Central America, Mexico City</option>
+                <option value="-05:00" class="T_city8">(GMT-05:00) Eastern Time (US & Canada); Bogota, Lima</option>
+                <option value="-04:30" class="T_city9">(GMT-04:30) Caracas</option>
+                <option value="-04:00" class="T_city10">(GMT-04:00) Atlantic Time (Canada); Santiago, Asuncion</option>
+                <option value="-03:30" class="T_city11">(GMT-03:30) Newfoundland</option>
+                <option value="-03:00" class="T_city12">(GMT-03:00) Brasilia, Buenos Aires, Georgetown, Greenland</option>
+                <option value="-02:00" class="T_city13">(GMT-02:00) Mid-Atlantic</option>
+                <option value="-01:00" class="T_city14">(GMT-01:00) Azores, Cape Verde Is.</option>
+                <option value="+00:00" class="T_city15">(GMT) Greenwich Mean Time: Dublin, Edinburgh, London, Lisbon</option>
+                <option value="+01:00" class="T_city16">(GMT+01:00) Amsterdam, Berlin, Rome, Stockholm, Paris, Prague, Bratislava</option>
+                <option value="+02:00" class="T_city17">(GMT+02:00) Cairo, Athens, Istanbul, Minsk, Jerusalem, Kiev, Chisinau</option>
+                <option value="+03:00" class="T_city18">(GMT+03:00) Baghdad, Kuwait, Riyadh</option>
+                <option value="+03:30" class="T_city19">(GMT+03:30) Tehran</option>
+                <option value="+04:00" class="T_city20">(GMT+04:00) Abu Dhabi, Muscat, Baku, Tbilisi, Yerevan, Moscow, St.Petersburg</option>
+                <option value="+04:30" class="T_city21">(GMT+04:30) Kabul</option>
+                <option value="+05:00" class="T_city22">(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+                <option value="+05:30" class="T_city23">(GMT+05:30) Madras, Kolkata, Mumbai, New Delhi</option>
+                <option value="+05:45" class="T_city24">(GMT+05:45) Katmandu</option>
+                <option value="+06:00" class="T_city25">(GMT+06:00) Almaty, Astana, Dhaka, Ekaterinburg, Bishkek</option>
+                <option value="+06:30" class="T_city26">(GMT+06:30) Rangoon</option>
+                <option value="+07:00" class="T_city27">(GMT+07:00) Bangkok, Jakarta, Hanoi, Novosibirsk</option>
+                <option value="+08:00" class="T_city28">(GMT+08:00) Beijing, Chongqing, Urumchi, Hong Kong, Taipei, Kuala Lumpur, Perth</option>
+                <option value="+09:00" class="T_city29">(GMT+09:00) Tokyo, Osaka, Sapporo, Seoul</option>
+                <option value="+09:30" class="T_city30">(GMT+09:30) Darwin, Adelaide</option>
+                <option value="+10:00" class="T_city31">(GMT+10:00) Brisbane, Guam, Canberra, Melbourne, Sydney, Yakutsk</option>
+                <option value="+11:00" class="T_city32">(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
+                <option value="+12:00" class="T_city33">(GMT+12:00) Fuji, Kamchatka Peninsula, Marshall Is., Wellington</option>
+                <option value="+13:00" class="T_city34">(GMT+13:00) Nukualofa</option>
+            </select>
+        </div>
+        <div class="pure-control-group">
+            <label class="label-title">&nbsp;</label>
+            <span class="region-note"></span>
+        </div>
+    </form>
+</div>
+
+<div class="inline-btn-right quicksetup-button-container">
+    <div class="inline">
+        <button type="submit" class="green T_exit" id="exit" onclick="doExit()">Exit</button>
+    </div>
+    <div class="inline">
+        <button type="submit" class="green T_next" id="next" onclick="goNext()">Next</button>
+    </div>
+</div>
+
+<!--<div class="quicksetup-loading"></div>-->
+<div class="quicksetup-newUserMsgBox" onkeydown="pressEnter(event)" >
+	<div class="quicksetup-userBoxClosetag"></div>
+	<div class="quicksetup-userContainer">
+		<p class="newUserTip" id="t_newUserTip">Set up a new username and password</p>
+		<form id="usrPwdForm" class="pure-form pure-form-aligned">
+			<div>
+				<label class='label-title' id="t_newUsrName">New Username:</label>
+				<input type="text" id="usr" maxLength="15"/>
+			</div>
+			<div>
+				<label class='label-title' id="t_newPwd">New Password:</label>
+				<input type="password" id="newPwd" maxLength="15"/>
+			</div>
+			<div class="secLevel nd" id="qsLoginPwd" style="padding-left: 196px;">
+				<span class="level1" >Low</span>
+				<span class="level2" >Middle</span>
+				<span class="level3" >High</span>
+			</div>
+			<div>
+				<label class='label-title' id="t_cfmPwd">Confirm New Password:</label>
+				<input type="password" id="cfmPwd" maxLength="15"/>
+			</div>
+		</form>
+		<p class="errorTip" id="errorInput"> </p>
+		<div class="quicksetup-userConfirm" style="padding-bottom: 20px;">
+			<span class="quicksetup-cfmBtn T_confirm">Confirm</span>
+		</div>
+	</div>	
+</div>
+<script type="text/javascript" language="javascript">
+
+$(document).ready(function() {
+    $.tpInit(initRegionList);
+
+	//add by zhuyu@2015.0319 For UN/US version.
+	if (1)
+	{
+    	$('#region').prop('disabled', true);
+    }
+    //end add
+	//$.isFD = 1;
+	/*isFD == 1 mean have not changed password ever, do showNewUserBox 
+	 *isFD == 2 mean have changed password, after changed login first time,
+	 * do not showNewUserBox, but should come to quickSetup when refresh
+	 *isFD == 3 mean do not need to come to quickSetup
+	 */
+   if ($.isFD == 1)
+   {
+	showNewUserBox();
+   }
+   /*set is fd = 3*/
+   if ($.isFD == 2)
+   {
+		$.isFD = 3;
+		$.act(ACT_SET, IGD_DEV_INFO, null, null, ["X_TP_IsFD=3"]);
+		if ($.exe())
+		{
+			//alert("set X_TP_IsFD=3 failed");
+		}
+   }
+   
+    /* get Region and time zone */
+    $.qd.wlanList = $.act(ACT_GL, LAN_WLAN, null, null, ["Enable", "SSID", "X_TP_Band", "X_TP_PreSharedKey", "beaconType", "WPAAuthenticationMode", "IEEE11iAuthenticationMode", "RegulatoryDomain", "Standard"]);
+    timeObj = $.act(ACT_GET, TIME, null, null, ["LocalTimeZone"]);
+    if ($.exe())
+        return;
+    $.qd.dmRegion = $.qd.wlanList[0].regulatoryDomain;
+    $.qd.dmTimezone = timeObj.localTimeZone;
+
+
+	if (!$.qd.region) $.qd.region = "";
+	if (!$.qd.timezone) $.qd.timezone = "";
+ 	if ($.qd.region == "")
+ 	{
+		if ($.qd.dmRegion != "")
+		$.qd.region = $.qd.dmRegion;
+		else
+		{
+			$.qd.country == "United States";
+           		$.qd.region = "US";
+		}
+ 	}
+        if ($.qd.timezone == "")
+        {
+		if ($.qd.dmTimezone != "")
+		$.qd.timezone =  $.qd.dmTimezone;
+		else
+		{
+			$.qd.timezone =  "-08:00";
+		}
+        }
+	
+
+    /* load timezone and region */
+    for (var i = 0; i < regionCodeInfo.length; i++) {
+        if ($.qd.region == regionCodeInfo[i][1]) {
+            $("#region option[value='" + i + "']").prop("selected", "selected");
+            break;
+        }
+    }
+    $("#timezone option[value='" + $.qd.timezone + "']").prop("selected", "selected");
+
+    /* flush select */
+    if ($("#region").data('tpSelect')) {
+        $("#region").tpSelect({
+            refresh: 1
+        });
+    } else {
+        $("#region").tpSelect({
+            refresh: 0
+        });
+    }
+
+    if ($("#timezone").data('tpSelect')) {
+        $("#timezone").tpSelect({
+            refresh: 1
+        });
+    } else {
+        $("#timezone").tpSelect({
+            refresh: 0
+        });
+    }
+});
+</script>

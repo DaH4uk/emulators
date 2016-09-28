@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Port Range Forwarding</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function forward_add_submit(F) {
+F.change_action.value = "gozila_cgi";
+F.submit_type.value = "add_forward";
+apply(F);
+}
+function forward_remove_submit(F) {
+F.change_action.value = "gozila_cgi";
+F.submit_type.value = "remove_forward";
+apply(F);
+}
+function to_submit(F) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+apply(F);
+}
+function to_apply(F) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+applytake(F);
+}
+
+var update;
+addEvent(window, "load", function() {
+
+update = new StatusbarUpdate();
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationspforwarding)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.applicationsprforwarding)</script></strong></span></li>
+      <li><a href="Triggering.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsptriggering)</script></strong></a></li>
+      <li><a href="UPnP.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsUpnp)</script></strong></a></li>
+      <li><a href="DMZ.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsDMZ)</script></strong></a></li>
+      <li><a href="QoS.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsQoS)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="portRange" action="#" method="post">
+<input type="hidden" name="submit_button" value="Forward" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+
+<input type="hidden" name="forward_port" value="13" />
+<h2><script type="text/javascript">Capture(prforward.h2)</script></h2>
+
+<fieldset>
+<legend><script type="text/javascript">Capture(prforward.legend)</script></legend>
+<table class="table center" cellspacing="5" summary="port forwarding table">
+<tr>
+<th><script type="text/javascript">Capture(prforward.app)</script></th>
+<th><script type="text/javascript">Capture(share.start)</script></th>
+<th><script type="text/javascript">Capture(share.end)</script></th>
+<th><script type="text/javascript">Capture(share.proto)</script></th>
+<th><script type="text/javascript">Capture(share.ip)</script></th>
+<th><script type="text/javascript">Capture(share.enable)</script></th>
+</tr>
+<tr>
+<td colspan="6" align="center" valign="middle">- <script type="text/javascript">Capture(share.none)</script> -</td>
+</tr>
+
+</table><br />
+<div class="center">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"add_button\" value=\"" + sbutton.add + "\" onclick=\"forward_add_submit(this.form);\" />");
+document.write("<input class=\"button\" type=\"button\" name=\"del_button\" value=\"" + sbutton.remove + "\" onclick=\"forward_remove_submit(this.form);\" />");
+//]]>
+</script>
+</div>
+</fieldset><br />
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(prforward.h2)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hprforward.right2)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HForward.asp')"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:03 up 24 min, load average: 0.00, 0.00, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

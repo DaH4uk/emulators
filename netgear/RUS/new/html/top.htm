@@ -1,0 +1,167 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="skin/top.css">
+<script type="text/javascript" src="js/top.js"></script>
+<script type="text/javascript" src="js/boot.js"></script>
+<title>NETGEAR Router WNR612v3 </title><meta http-equiv=content-type content='text/html; charset=UTF-8'>
+<meta http-equiv=content-type content='text/html; charset=ks_c_5601'>
+</head>
+<body onload="loadvalue();">
+<form name="uiPostForm" id="uiPostForm" method="post" action="top.htm">
+<script type="text/javascript">
+var G_ModemFirmwareVersion = '1.0.0.14';
+var G_RouterName = 'WNR612v3'
+//var language_oriArray = "English German Chinese Korean Russian Spanish Polish French Italian Swedish Danish Dutch Greek Norwegian Czech Slovenian Portuguese Hungarian Romanian Finnish Slovak".split(" ");
+//var language_showArray="English Deutsch ??? ܧڧ Espa?ol Polski Fran?ais Italiano Svenska Dansk Nederlands ˦˦Ǧͦɦ? Norsk ?e?tina Sloven??ina Portugus Magyar Roman? Suomi Sloven?ina".split(" ");
+var language_valueArray = "en_us zh_cn German Korean Russian Spanish Polish French Italian Swedish Danish Dutch Greek Norwegian Czech Slovenian Portuguese Hungarian Romanian Finnish Slovak Arabic Turkish".split(" ");
+var language_lang_Array = "lang_en_us lang_zh_cn lang_de_de lang_ko_kr lang_ru_ru lang_es_es lang_pl_pl lang_fr_fr lang_it_it lang_sv_se lang_da_dk lang_nl_nl lang_pt_br lang_nb_no lang_cs_cz lang_sl_sl lang_pt_pt lang_hu_hu lang_ro_ro lang_fi_fi lang_sk_sk lang_ara lang_tur".split(" ");
+var language_showArray= "English 中文 Deutsch 한국어 Русский Español Polski Français Italiano Svenska Dansk Nederlands Ελληνικά Norsk Čeština Slovenščina Português Magyar Română Suomi Slovenčina العربية Türk".split(" ");
+var gui_region = "English";
+var gui_region = "English";
+var browser_lang = "English";
+var lang_select = "English";
+var menu_Type = parent.menu_Type;
+var config_status = 1;
+//var updateFirmware = 1;
+var G_wanConnction = [];
+var m = 0;
+G_wanConnction[m] = ["InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.", //Path
+"Disconnected" //ConnectionStatus
+];
+++m;
+var wan_status = (G_wanConnction[0][1] == "Disconnected" ? 0 : 1 );
+var updateFirmware = ("2" == "262" ? 1 :0 );
+var updateLanguage = 0;
+//var level_menu = 'var:menu';
+//var menu_Type = "";
+var language_select;
+var language_cgi = "Russian";
+var sysLanguage=navigator.systemLanguage?navigator.systemLanguage:navigator.language;
+function loadvalue()
+{
+load_top_value();
+var select_one = document.getElementById("SELECT_language");
+var FirmwareVersion = document.getElementById("FirmwareVersionId");
+//var select_web = Cookie.Get("language");
+var select_web = "Russian";
+if(select_web ==null){
+Cookie.Set("language",language_cgi);
+select_one.value = "Auto";
+change_auto();
+}else{
+document.all?document.all.SELECT_language.value=select_web:document.getElementById("SELECT_language").value=select_web;
+}
+FirmwareVersion.innerHTML=G_ModemFirmwareVersion;
+document.getElementById("router_name").innerHTML = G_RouterName;
+}
+window.onresize = function(){
+load_top_value();
+}
+function change_auto()
+{ 
+var frameObject= top.document.getElementById("formframe");
+if(sysLanguage.indexOf('zh') > -1){
+language_select='zh_cn'; 
+}
+else if(sysLanguage.indexOf('de') > -1){
+language_select='German';
+}
+else if(sysLanguage.indexOf('ko') > -1){
+language_selecte='Korean';
+}
+else if(sysLanguage.indexOf('ru') > -1){
+language_select='Russian';
+}
+else if(sysLanguage.indexOf('es') > -1){
+language_select='Spanish';
+}
+else if(sysLanguage.indexOf('pl') > -1){
+language_select='Polish';
+}
+else if(sysLanguage.indexOf('fr') > -1){
+language_select='French';
+}
+else if(sysLanguage.indexOf('it') > -1){
+language_select='Italian';
+}
+else if(sysLanguage.indexOf('sv') > -1){
+language_select='Swedish';
+}
+else if(sysLanguage.indexOf('da') > -1){
+language_select='Danish';
+}
+else if(sysLanguage.indexOf('nl') > -1){
+language_select='Dutch ';
+}
+else if(sysLanguage.indexOf('pt') > -1){
+language_select='Greek ';
+}
+else if(sysLanguage.indexOf('nb') > -1){
+language_select='Norwegian';
+}
+else if(sysLanguage.indexOf('cs') > -1){
+language_select='Czech';
+}
+else if(sysLanguage.indexOf('sl') > -1){
+language_select='Slovenian';
+}
+else if(sysLanguage.indexOf('pt') > -1){
+language_select='Portuguese';
+}
+else if(sysLanguage.indexOf('hu') > -1){
+language_select='Hungarian';
+}
+else if(sysLanguage.indexOf('ro') > -1){
+language_select='Romanian';
+}
+else if(sysLanguage.indexOf('fi') > -1){
+language_select='Finnish';
+}
+else if(sysLanguage.indexOf('sk') > -1){
+language_select='Slovak';
+}
+else//如果操作系统语言没有找到匹配的，默认为en-us
+{ 
+language_select='Russian'; 
+}
+if(language_select!='Russian')
+{
+}
+}
+function change_select()
+{}
+</script>
+<input type=hidden name=hidden_lang_avi>
+<div id="logo"></div>
+<div id="logout" class="logout_bt" onclick="top.uiLogout('7be4af4d');return false;"><b><span id="lang_logout">Logout</span></b></div>
+<div id="router_name"></div>
+<div id="labels">
+<div id="basic_label" class="label_click" onclick="goto_top('index_basic.htm','basic')"><b ><span id="lang_basic_label" ></span></b></div>
+<div id="space_label"></div>
+<div id="advanced_label" class="label_unclick" onclick="goto_top('adv_index.htm','adv');"><b><span id="lang_advanced_label"></span></b></div>
+<div id="update_info" class="update_info_down" onclick="firmwareUpgrade();">
+<div id="update_info_left"></div>
+<div id="update_info_middle"><i><span id="lang_update_info">A new firmware upgrade is available. Click here to get it.</span></i></div>
+<div id="update_info_right"></div>
+</div>
+</div>
+<div id="firm_version"><span id="lang_firm_version">Router Firmware Version</span><br /><span id="FirmwareVersionId" >V1.0.0.14</span></div>
+<!--div id="update_info" class="update_info_down" onclick="firmwareUpgrade();">
+<div id="update_info_left"></div>
+<div id="update_info_middle"><i><span id="lang_update_info">A new firmware upgrade is available. Click here to get it.</span></i></div>
+<div id="update_info_right"></div>
+</div-->
+<div id="select_language" align=right>
+<select name="lang_avi" id="SELECT_language" size=1>
+<script language="javascript" type="text/javascript">
+languageShowlist();
+</script>
+</select>
+</div>
+</form>
+</body>
+</html>

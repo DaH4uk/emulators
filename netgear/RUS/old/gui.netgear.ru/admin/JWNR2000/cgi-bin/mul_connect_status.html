@@ -1,0 +1,236 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+<meta http-equiv="refresh" content="10; URL=mul_connect_status.html">
+<body bgcolor=#ffffff>
+<form method="post" action="#" >
+<input type=hidden name=submit_flag value="connect_status">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(constatus_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<input type="hidden" name="endis_connect">
+<script>
+function AddDays(newdate,DaysToAdd,sec_time) 
+{
+/*
+obtain=newdate.split(' ');
+obtain_date=obtain[0]+' '+obtain[1];
+if( obtain[2] != '' )
+obtain_date+=' '+obtain[2]+' '+obtain[3]+' '+obtain[5];
+else
+obtain_date+=' '+obtain[3]+' '+obtain[4]+' '+obtain[6];
+var newdate=new Date(obtain_date);
+*/
+var newdate=new Date(newdate);
+DaysToAdd=DaysToAdd/24;
+var newtimems=newdate.getTime()+(sec_time*1000);
+newdate.setTime(newtimems);
+newday=newdate.toString();
+day_array=newday.split(' ');
+if(isIE())
+{
+newday=day_array[0]+' '+day_array[1]+' '+day_array[2]+' '+day_array[3]+' '+day_array[5];
+}
+else
+{
+newday=day_array[0]+' '+day_array[1]+' '+day_array[2]+' '+day_array[4]+' '+day_array[3];
+}
+return newday;
+}
+function connect_stop(check)
+{
+cf=document.forms[0];
+}
+function connect_start(check)
+{
+cf=document.forms[0];
+}
+</script>
+</table>
+<script>document.write(table_bolder);</script>
+<script>
+if( "PPPoE" == "DHCP")
+{
+document.write('<tr>'+hd+' <B>'+info_mark_ip+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_subnet+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_defgtw+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_dhcpser+'</B></td>'+hd+' 0.0.0.0 </td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_dnsser+'</B></td>'+hd+' 0.0.0.0<br></td></tr>');
+if("0.0.0.0" != "0.0.0.0")
+{
+ if("" !="" )
+  document.write('<tr>'+hd+' <B>'+constatus_obt+'</B></td>'+hd+' </td></tr>');
+  else
+ document.write('<tr>'+hd+' <B>'+constatus_obt+'</B></td>'+hd+' ----</td></tr>');
+if("" == "infinity lease" )
+document.write('<tr>'+hd+' <B>'+constatus_exp+'</B></td>'+hd+' infinity lease</td></tr>');
+else
+{
+var uptime="";
+var new_time=change_sec_to_time(uptime);
+if(uptime!="")
+{
+var time_array=new_time.split(':');
+now_time=time_array[0];
+new_time=AddDays("",now_time,uptime);
+//if(isIE())
+document.write('<tr><td nowrap> <B>Lease Expires</B></td><td nowrap> '+new_time+'</td></tr>');
+/*else
+{
+var data_array=new_time.split(' ');
+
+var new_data=data_array[0]+' '+data_array[1]+' '+data_array[2]+' '+""+' '+data_array[3];
+document.write('<tr><td nowrap> <B>Lease Expires</B></td><td nowrap> '+new_data+'</td></tr>');
+}*/
+}
+else
+document.write('<tr>'+hd+' <B>'+constatus_exp+'</B></td>'+hd+' ----</td></tr>');
+}
+}
+else
+{
+document.write('<tr>'+hd+' <B>'+constatus_obt+'</B></td>'+hd+' ----</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_exp+'</B></td>'+hd+' ----</td></tr>');
+}
+}
+
+if( "PPPoE" == "PPPoE" )
+{
+if("0.0.0.0" !="0.0.0.0")
+{
+var uptime="0";
+var new_time=change_sec_to_time(uptime);
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' '+new_time+'</td></tr>');
+document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Connected </td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' Success</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' Success</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+}
+else if("0" == "1")
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' 00:00:00</td></tr><tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Trying </td></tr><tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+else
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' 00:00:00</td></tr><tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Disconnected </td></tr><tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+}
+if ("PPPoE" == "mulpppoe1")
+{
+if("0.0.0.0" !="0.0.0.0")
+{
+var uptime="";
+var new_time=change_sec_to_time(uptime);
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' '+new_time+'</td></tr>')
+document.write('<tr>'+hd+' <b>'+constatus_con_ser+'</b></td>'+hd+' ON </td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' Success</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' Success</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+
+}
+else
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' 00:00:00</td></tr><tr>'+hd+' <b>'+constatus_con_ser+'</b></td>'+hd+' idle </td></tr><tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+}
+if( "PPPoE" == "PPTP")
+{
+if( "0.0.0.0" !="0.0.0.0" )
+{
+var uptime="";
+var new_time=change_sec_to_time(uptime);
+document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Connected </td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+ 
+}else if("0" == "1")
+document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Trying </td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>');
+else
+ document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Disconnected </td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>');
+}
+if( "PPPoE" == "L2TP")
+{
+if( "0.0.0.0" !="0.0.0.0" )
+{
+var uptime="";
+var new_time=change_sec_to_time(uptime);
+document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Connected </td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+ 
+}else if("0" == "1")
+document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Trying </td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>');
+else
+ document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Disconnected </td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>');
+}
+if("PPPoE" == "Telstra Bigpond")
+{
+if( "0.0.0.0" !="0.0.0.0" && "" == "up")
+{
+var uptime="";
+var new_time=change_sec_to_time(uptime);
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' '+new_time+' </td></tr>')
+document.write('<tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Logged in </td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+document.write('<tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+}
+else
+{
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' 00:00:00</td></tr><tr>'+hd+' <b>'+constatus_head+'</b></td>'+hd+' Logged Out </td></tr><tr>'+hd+' <B>'+constatus_con_ip+'</B></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <B>'+constatus_con_sub+'</B></td>'+hd+' 0.0.0.0</td></tr>');
+}
+}
+</script> 
+</table>
+<script>document.write(table_bolder0);</script>
+<tr>
+ <script>document.write(hd_center);</script>
+<BR>
+<script>
+if ( "PPPoE" == "Static" )
+{}
+else if( "PPPoE" == "DHCP" )
+document.write('<input type="button" name="connect" value='+release_mark+' onclick="connect_stop(0);" ><input type="button" name="connect" value='+renew_mark+' onclick="connect_start(3);" >');
+else if ( "PPPoE" == "mulpppoe1") 
+document.write('<input type="button" name="connect" value='+connect_mark+' onclick="connect_start(4);" ><input type="button" name="connect" value='+disconnect_mark+' onclick="connect_stop(1);" >');
+else{
+if("0" == "1" && ("PPPoE" == "PPTP" || "PPPoE" == "PPPoE" || "PPPoE" == "L2TP"))
+document.write('<input type="button" name="connect" disabled value='+connect_mark+' onclick="connect_start(3);" ><input type="button" name="connect" value='+disconnect_mark+' onclick="connect_stop(0);" >');
+else
+ document.write('<input type="button" name="connect" value='+connect_mark+' onclick="connect_start(3);" ><input type="button" name="connect" value='+disconnect_mark+' onclick="connect_stop(0);" >');
+}
+</script>
+</TD>
+</tr>
+</table>
+<script>
+if( "PPPoE" == "mulpppoe1")
+{
+document.write(bluebar+table_bolder+'<tr>'+hd+' <b>'+info_mark_ip+'</b></td>'+hd+' 0.0.0.0</td></tr><tr>'+hd+' <b>'+constatus_subnet+'</b></td>'+hd+' </td></tr><tr>'+hd+' <b>'+constatus_dhcpser+'</b></td>'+hd+' '+constatus_sess2+'</td></tr><tr>'+hd+' <b>'+constatus_dnsser+'</b></td>'+hd+' </td></tr>');
+
+if("0.0.0.0"!="0.0.0.0")
+{
+document.write('<tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' Success</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' Success</td></tr>');
+var uptime="";
+var new_time=change_sec_to_time(uptime);
+document.write('<tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' '+new_time+'</td></tr>')
+}
+else
+document.write('<tr>'+hd+' <B>'+constatus_neg+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+constatus_auth+'</B></td>'+hd+' ----</td></tr><tr>'+hd+' <B>'+traffic_connect_time+'</B></td>'+hd+' 00:00:00</td></tr>');
+document.write('</table>'+table_bolder0+'<tr>'+hd_center+'<br><input type="button" name="connect" value='+connect_mark+' onclick="connect_start(5);" ><input type="button" name="connect" value='+disconnect_mark+' onclick="connect_stop(2);" ></td></tr></table>');
+}
+</script>
+<script>document.write(table_bolder0);</script>
+<script>document.write(bluebar);</script>
+</table>
+<script>document.write(table_bolder0);</script>
+ <TR>
+ <script>document.write(hd_center+'<input type=button name="close" value="'+close_win_mark+'" onclick="self.close();"></TD>');</script>
+</TR>
+</table>
+</form>
+</html>

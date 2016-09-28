@@ -1,0 +1,281 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../bas_pppoe.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+<body onLoad="loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#" target=formframe>
+<input type=hidden name=submit_flag value="pppoe">
+<script>
+var run_test="no";
+var lan_ip="192.168.1.1";
+var lan_subnet="255.255.255.0";
+var old_wan_type="pppoe";
+var old_wan_ip="0.0.0.0";
+var old_pppoe_wan_assign="0";
+var ether_get_ip="";
+var ether_get_subnet="";
+var easy_setup="0";
+function loadvalue()
+{
+var form=document.forms[0];
+form.pppoe_username.value="guest";
+form.pppoe_password.value="";
+form.pppoe_servicename.value="";
+form.pppoe_demand.value = "1";
+show_idleout(form,form.pppoe_demand.value);
+if('0' == '0')
+ form.WANAssign[0].checked = true;
+ else
+ form.WANAssign[1].checked = true;
+setIP(form);
+var pppoe_get_ip="0.0.0.0";
+if(pppoe_get_ip!="")
+{
+var ip_array=pppoe_get_ip.split('.');
+form.pppoe_ip1.value=ip_array[0];
+form.pppoe_ip2.value=ip_array[1];
+form.pppoe_ip3.value=ip_array[2];
+form.pppoe_ip4.value=ip_array[3];
+}
+/*var pppoe_get_wanmask="0.0.0.0";
+if(pppoe_get_wanmask!="")
+{
+var nm_array=pppoe_get_wanmask.split('.');
+form.pppoe_nm1.value=nm_array[0];
+form.pppoe_nm2.value=nm_array[1];
+form.pppoe_nm3.value=nm_array[2];
+form.pppoe_nm4.value=nm_array[3];
+}*/
+var pppoe_dual_access="0";
+if(pppoe_dual_access == '1')
+form.enable_pppoe_dual.checked = true;
+else
+form.enable_pppoe_dual.checked = false;
+ReleasePeriodClick(form);
+
+var wan_pppoe_dual_assign="";
+if(wan_pppoe_dual_assign=='0')
+{
+form.Duethr1.value=form.Duethr2.value=form.Duethr3.value=form.Duethr4.value="";
+form.DuMask1.value=form.DuMask2.value=form.DuMask3.value=form.DuMask4.value="";
+}
+else if(ether_get_ip!="")
+{
+var dip_array=ether_get_ip.split('.');
+form.Duethr1.value=dip_array[0];
+form.Duethr2.value=dip_array[1];
+form.Duethr3.value=dip_array[2];
+form.Duethr4.value=dip_array[3];
+if(ether_get_subnet!="")
+{
+var mask_array=ether_get_subnet.split('.');
+form.DuMask1.value=mask_array[0];
+form.DuMask2.value=mask_array[1];
+form.DuMask3.value=mask_array[2];
+form.DuMask4.value=mask_array[3]; 
+}
+}
+
+if('0' == '0')
+ form.DNSAssign[0].checked = true;
+else
+ form.DNSAssign[1].checked = true;
+setDNS(form);
+var pppoe_get_dns1="0.0.0.0";
+if(pppoe_get_dns1!="")
+{
+var dns1_array=pppoe_get_dns1.split('.');
+form.pppoe_dnsp1.value=dns1_array[0];
+form.pppoe_dnsp2.value=dns1_array[1];
+form.pppoe_dnsp3.value=dns1_array[2];
+form.pppoe_dnsp4.value=dns1_array[3];
+ }
+var pppoe_get_dns2="0.0.0.0";
+ if(pppoe_get_dns2!="")
+{
+var dns2_array=pppoe_get_dns2.split('.');
+ form.pppoe_dnss1.value=dns2_array[0];
+ form.pppoe_dnss2.value=dns2_array[1];
+ form.pppoe_dnss3.value=dns2_array[2];
+ form.pppoe_dnss4.value=dns2_array[3];
+}
+if('0' == '0')
+{
+ form.MACAssign[0].checked = true;
+setMAC(form,'00:00:00:00:00:00');
+}
+else if('0' == '1')
+{
+ form.MACAssign[1].checked = true;
+setMAC(form,'');
+}
+else
+{
+form.MACAssign[2].checked = true;
+setMAC(form,'00:00:00:00:00:00');
+}
+form.login_type.selectedIndex=1;
+goTestApply();
+}
+function show_idleout(form,time)
+{
+if( time == 1 )
+form.pppoe_idle_time.disabled = false;
+else
+form.pppoe_idle_time.disabled = true;
+}
+</script>
+<input type="hidden" name="conflict_wanlan">
+<input type="hidden" name="change_wan_type">
+<input type="hidden" name="run_test" value="">
+<input type="hidden" name="pppoe_ipaddr">
+<!--input type="hidden" name="pppoe_netmask"-->
+<input type="hidden" name="pppoe_dual_ipaddr">
+<input type="hidden" name="pppoe_dual_subnet">
+<input type="hidden" name="pppoe_dnsaddr1">
+<input type="hidden" name="pppoe_dnsaddr2">
+<input type="hidden" name="hidden_pppoe_idle_time">
+<input type="hidden" name="is_easy_setup">
+<input type="hidden" name="dual_access">
+<input type="hidden" name="pppoe_dual_assign">
+<script>document.write(table_bolder0);</script>
+<tr>
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','isp')"><b><script>document.write(basic_intserv_provider);</script><script>document.write(ba);</script></td>
+<script>document.write(hd_r);</script>
+<SELECT name="login_type" onChange="change_serv(document.forms[0])">
+<OPTION value="1" ><script>document.write(basic_intserv_pptp);</script></OPTION>
+<OPTION value="0" ><script>document.write(basic_intserv_pppoe);</script></OPTION>
+<OPTION value="2" ><script>document.write(basic_intserv_l2tp);</script></OPTION>
+<script>
+if ( parent.gui_region == "Japanese" )
+document.write("<OPTION value=3>"+basic_intserv_mulpppoe+"</OPTION>");</script>
+</SELECT>
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+<TR>
+ <script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','login')"><B><script>document.write(basic_pppoe_login);</script><script>document.write(ba);</script></TD>
+ <script>document.write(hd_r);</script><INPUT type="text" name="pppoe_username" maxLength="64" size="16" onKeyPress="return getkey('ssid', event)" value=""></TD>
+</TR>
+<tr>
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','password')"><b><script>document.write(basic_pppoe_passwd);</script><script>document.write(ba);</script></td>
+<script>document.write(hd_r);</script><input type="password" name="pppoe_password" size="16" maxlength="64" onFocus="this.select();" onKeyPress="return getkey('ssid', event)" value="">
+</tr>
+<TR>
+<TD><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','serv_name')"><B><script>document.write(basic_pppoe_serv_name);</script><script>document.write(ba);</script></TD>
+<script>document.write(hd_r);</script><INPUT type="text" name="pppoe_servicename" maxLength="50" size="16" onKeyPress="return getkey('ssid', event)" value=""></TD>
+</TR>
+<tr> 
+ <TD><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','conn_mode')"><b><script>document.write(basic_int_connection_mode);</script><script>document.write(ba);</script></td> 
+ <TD align=right> 
+ <SELECT name="pppoe_demand" onchange="show_idleout(document.forms[0],this.value)"> 
+ <option value="0"><script>document.write(basic_mode_always);</script></option>
+ <option value="1"><script>document.write(basic_mode_dial);</script></option> 
+ <option value="2"><script>document.write(basic_mode_manual);</script></option> 
+</SELECT>
+ </td> 
+</tr> 
+<TR>
+<TD><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','pppoe_idletime')"><B><script>document.write(basic_pppoe_idle);</script><script>document.write(ba);</script></TD>
+<script>document.write(hd_r);</script><INPUT type="text" name="pppoe_idle_time" maxLength="5" size="16" value="5" onKeyPress="return getkey('num', event)"></TD>
+</TR>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','InternetIP')"><b><script>document.write(basic_int_intip);</script><script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="WANAssign" value="0" onClick="setIP(document.forms[0])"><script>document.write(basic_int_autoip);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="WANAssign" value="1" onClick="setIP(document.forms[0])"><script>document.write(basic_int_static_ip);</script></td></tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(spacebar);</script><script>document.write(lan_mark_ip);</script></td>
+<script>document.write(hd_r);</script>
+ <input type="text" name="pppoe_ip1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+ <input type="text" name="pppoe_ip2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_ip3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_ip4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+ </TD>
+</tr>
+<!--tr>
+<script>document.write(hd);</script><script>document.write(spacebar);</script><script>document.write(sta_routes_ipsubnet);</script></td>
+<script>document.write(hd_r);</script>
+ <input type="text" name="pppoe_nm1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+ <input type="text" name="pppoe_nm2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_nm3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_nm4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+ </TD>
+</tr-->
+<TR>
+<TD nowrap colspan=2>
+<input type="checkbox" name="enable_pppoe_dual" onclick="ReleasePeriodClick(document.forms[0])"; value=1><b><script>document.write(basic_pppoe_dual_access);</script><script>document.write(ba);</script>
+</TD>
+</TR>
+<TR>
+<script>document.write(hd);</script><script>document.write(spacebar);</script><script>document.write(lan_mark_ip);</script></td>
+<script>document.write(hd_r);</script>
+<input type="text" name="Duethr1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+<input type="text" name="Duethr2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+<input type="text" name="Duethr3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+<input type="text" name="Duethr4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+</TD>
+</TR>
+<TR>
+<script>document.write(hd);</script><script>document.write(spacebar);</script><script>document.write(lan_mark_subnet);</script></td>
+<script>document.write(hd_r);</script>
+<input type="text" name="DuMask1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+<input type="text" name="DuMask2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+<input type="text" name="DuMask3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+<input type="text" name="DuMask4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+</TD> 
+</TR>
+<script>document.write(bluebar);</script> 
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','DNSaddress')"><b><script>document.write(basic_int_dns);</script><script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="DNSAssign" value="0" onClick="setDNS(document.forms[0])"><script>document.write(basic_int_autodns);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="DNSAssign" value="1" onClick="setDNS(document.forms[0])"><script>document.write(basic_int_these);</script></td></tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(spacebar);</script><script>document.write(basic_int_primary_dns);</script></td>
+<script>document.write(hd_r);</script>
+ <input type="text" name="pppoe_dnsp1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+ <input type="text" name="pppoe_dnsp2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_dnsp3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_dnsp4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+ </TD>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(spacebar);</script><script>document.write(basic_int_second_dns);</script></td>
+<script>document.write(hd_r);</script>
+ <input type="text" name="pppoe_dnss1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+ <input type="text" name="pppoe_dnss2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_dnss3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="pppoe_dnss4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+ </TD>
+</tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','localaddress')"><b><script>document.write(basic_int_mac);</script><script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="MACAssign" value="0" onClick="setMAC(document.forms[0],'00:00:00:00:00:00')"><script>document.write(basic_int_default_mac);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="MACAssign" value="1" onClick="setMAC(document.forms[0],'')"><script>document.write(basic_int_computer_mac);</script></td></tr>
+<tr>
+<script>document.write(hd);</script><input type="radio" name="MACAssign" value="2" onClick="setMAC(document.forms[0],'00:00:00:00:00:00')"><script>document.write(basic_int_this_mac);</script></td>
+<script>document.write(hd_r);</script>
+<input type="text" value="" name="this_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<TR>
+ <script>document.write(hd2_center);</script>
+ <script>document.write('<input type="submit" value="'+apply_mark+'" onClick="return check_pppoe(document.forms[0],0)">&nbsp;&nbsp;');</script>
+ <script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"bas_pppoe.html\";'>&nbsp;&nbsp;")
+ document.write('<input type="submit" value="'+test_mark+'" onClick="return check_pppoe(document.forms[0],1)">');</script>
+ </td>
+ </TR>
+</TABLE>
+</FORM>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Services</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function verify_unique_static_ip(F){
+static_leasenum = 0;
+
+
+var static_leases=' ';
+for(i=0;i < static_leasenum;i++){
+	var elem = F.elements["lease"+i+"_ip"];
+	if (static_leases.indexOf(" " + elem.value + " ") == -1){
+		static_leases += elem.value + " ";
+	} else {
+		alert(elem.value + errmsg.err62);
+		elem.focus();
+		
+		return false;
+	}
+}
+return true;
+}
+function checked(F) {
+
+if (F._dhcpd_usejffs) {
+(F._dhcpd_usejffs.checked == true) ? F.dhcpd_usejffs.value = 1 : F.dhcpd_usejffs.value = 0;
+}
+if (F._dhcpd_usenvram) {
+(F._dhcpd_usenvram.checked == true) ? F.dhcpd_usenvram.value = 1 : F.dhcpd_usenvram.value = 0;
+}
+
+if (F._nstx_log) {
+(F._nstx_log.checked == true) ? F.nstx_log.value = 1 : F.nstx_log.value = 0;
+}
+
+}
+function lease_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_lease";
+checked(F);
+F.submit();
+}
+function lease_remove_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "remove_lease";
+checked(F);
+F.submit();
+}
+function to_reboot(F) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.action.value = "Reboot";
+apply(F);
+}
+function to_submit(F) {
+if(!verify_unique_static_ip(F)) {
+return false;
+}
+
+if(F.rstats_enable) {
+F.rstats_path.value = (F.rstats_select.value == '*user') ? F.u_path.value : F.rstats_select.value;
+}
+
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+checked(F);
+apply(F);
+return true;
+}
+function to_apply(F) {
+if(!verify_unique_static_ip(F)) {
+return false;
+}
+
+if(F.rstats_enable) {
+F.rstats_path.value = (F.rstats_select.value == '*user') ? F.u_path.value : F.rstats_select.value;
+}
+
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+checked(F);
+applytake(F);
+return true;
+}
+var update;
+addEvent(window, "load", function() {
+show_layer_ext(document.setup.sshd_enable, 'idssh', 0 == 1);
+show_layer_ext(document.setup.dnsmasq_enable, 'iddnsmasq', 1 == 1);
+show_layer_ext(document.setup.kaid_enable, 'idkaid', 0 == 1);
+show_layer_ext(document.setup.snmpd_enable, 'idsnmp', 0 == 1);
+show_layer_ext(document.setup.rflow_enable, 'idrflow', 0 == 1);
+show_layer_ext(document.setup.macupd_enable, 'idMACupd', 0 == 1);
+show_layer_ext(document.setup.pptpd_enable, 'idpptp', 0 == 1);
+show_layer_ext(document.setup.pptpd_client_enable, 'idpptpcli', 0 == 1);
+show_layer_ext(document.setup.syslogd_enable, 'idsyslog', 0 == 1);
+show_layer_ext(document.setup.nstx_ipenable, 'idnstxip', 0 == 1);
+show_layer_ext(document.setup.nstxd_enable, 'idnstx', 0 == 1);
+show_layer_ext(document.setup.oet1_en, 'idoet', 0 == 1);
+show_layer_ext(document.setup.radiooff_button, 'idradiooff', 0 == 1);
+show_layer_ext(document.setup.usb_enable, 'idusb', 0 == 1);
+show_layer_ext(document.setup.usb_storage, 'idusbstor', 0 == 1);
+
+if(document.setup.rstats_enable) {
+rstats_select = '*user';
+path_input = '';
+switch (path_input) {
+case '':
+case '*nvram':
+case 'jffs/default.htm':
+case 'tmp/smbshare/default.htm':
+rstats_select = path_input;
+break;
+}
+document.setup.rstats_select.value=rstats_select;
+(rstats_select == '*user') ? document.setup.u_path.value=path_input : document.setup.u_path.value='';
+
+setRstatsVal(document.setup);
+show_layer_ext(document.setup.rstats_enable, 'idrstats', 0 == 1);
+}
+
+update = new StatusbarUpdate();
+update.start();
+
+});
+
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><span><strong><script type="text/javascript">Capture(bmenu.servicesServices)</script></strong></span></li>
+      <li><a href="FreeRadius.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesRadius)</script></strong></a></li>
+      <li><a href="PPPoE_Server.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPppoesrv)</script></strong></a></li>
+      <li><a href="PPTP.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPptp)</script></strong></a></li>
+      <li><a href="USB.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesUSB)</script></strong></a></li>
+      <li><a href="NAS.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesNAS)</script></strong></a></li>
+      <li><a href="Hotspot.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesHotspot)</script></strong></a></li>
+      <li><a href="Milkfish.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesMilkfish)</script></strong></a></li>
+      <li><a href="AnchorFree.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesAnchorFree)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="setup" action="#" method="post">
+<input type="hidden" name="submit_button" value="Services" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="commit" value="1" />
+
+<input type="hidden" name="static_leases" value="13" />
+<input type="hidden" name="openvpn_certtype" />
+<input type="hidden" name="dhcpd_usejffs" />
+<input type="hidden" name="dhcpd_usenvram" />
+<input type="hidden" name="nstx_log" />
+
+<h2><script type="text/javascript">Capture(service.h2)</script></h2>
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.dhcp_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_vendor)</script></div>
+		<input maxlength="79" size="20" name="dhcpc_vendorclass" value="" />
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_reqip)</script></div>
+		<input maxlength="79" size="20" name="dhcpc_requestip" value="" />
+	</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.dhcp_legend2)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_jffs2)</script></div>
+		<script type="text/javascript">
+		//<![CDATA[
+		if (0 == 1 )
+			document.write('<input type="checkbox" value="1" name="_dhcpd_usejffs"  />');
+		else
+			document.write('<span style="color:#999999;"><em>(' + share.nmounted + ')</em></span>');
+		//]]>
+		</script>
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_nvramlease)</script></div>
+		<input type="checkbox" value="1" name="_dhcpd_usenvram"  />
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_domain)</script></div>
+		<select name="dhcp_domain">
+			<option value="wan" selected="selected" >WAN</option>
+			<option value="lan"  >LAN &amp; WLAN</option>
+		</select>
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_landomain)</script></div>
+		<input maxlength="79" size="20" name="lan_domain" onblur="valid_name(this,service.dhcp_landomain,SPACE_NO)" value="" />
+	</div>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.dhcp_option)</script></div>
+		<textarea cols="60" rows="4" id="dhcpd_options" name="dhcpd_options"></textarea>
+		<script type="text/javascript">
+		//<![CDATA[
+			var dhcpd_options = fix_cr( '' );
+			document.getElementById("dhcpd_options").value = dhcpd_options;
+		//]]>
+		</script>
+	</div>
+	<table class="table center" summary="static lease table">
+		<tr>
+			<th colspan="4"><script type="text/javascript">Capture(share.static_lease)</script></th>
+		</tr>
+		<tr>
+			<th width="25%"><script type="text/javascript">Capture(share.mac)</script></th>
+			<th width="25%"><script type="text/javascript">Capture(share.hostname)</script></th>
+			<th width="25%"><script type="text/javascript">Capture(share.ip)</script></th>
+			<th width="25%"><script type="text/javascript">Capture(idx.dhcp_lease)</script></th>
+		</tr>
+			
+	</table><br />
+	<div class="center">
+		<script type="text/javascript">
+		//<![CDATA[
+		document.write("<input class=\"button\" type=\"button\" name=\"add_button\" value=\"" + sbutton.add + "\" onclick=\"lease_add_submit(this.form);\" />");
+		document.write("<input class=\"button\" type=\"button\" name=\"del_button\" value=\"" + sbutton.remove + "\" onclick=\"lease_remove_submit(this.form);\" />");
+		//]]>
+		</script>
+	</div>
+</fieldset><br/>
+
+<fieldset>
+		<legend><script type="text/javascript">Capture(service.dnsmasq_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.dnsmasq_srv)</script></div>
+			<input class="spaceradio" type="radio" name="dnsmasq_enable" value="1" checked="checked" onclick="show_layer_ext(this, 'iddnsmasq', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="dnsmasq_enable" value="0"  onclick="show_layer_ext(this, 'iddnsmasq', false)" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div id="iddnsmasq">
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(service.dnsmasq_loc)</script></div>
+				<input class="spaceradio" type="radio" name="local_dns" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+				<input class="spaceradio" type="radio" name="local_dns" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+			</div>
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(service.dnsmasq_no_dns_rebind)</script></div>
+				<input class="spaceradio" type="radio" name="dnsmasq_no_dns_rebind" value="1" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+				<input class="spaceradio" type="radio" name="dnsmasq_no_dns_rebind" value="0"  /><script type="text/javascript">Capture(share.disable)</script>
+			</div>
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(service.dnsmasq_opt)</script></div>
+					<textarea cols="60" rows="4" id="dnsmasq_options" name="dnsmasq_options"></textarea>
+					<script type="text/javascript">
+					//<![CDATA[
+						var dnsmasq_options = fix_cr( '' );
+						document.getElementById("dnsmasq_options").value = dnsmasq_options;
+					//]]>
+					</script>
+			</div>
+		</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.hwmon_legend)</script></legend>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.hwmon_critemp)</script></div>
+			<input class="num" maxlength="3" size="3" name="hwmon_temp_max" value="60" />
+			<span class="default"><script type="text/javascript">document.write("(" + share.deflt + ": 60 &#176;C)")</script></span>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.hwmon_hystemp)</script></div>
+			<input class="num" maxlength="3" size="3" name="hwmon_temp_hyst" value="50" />
+			<span class="default"><script type="text/javascript">document.write("(" + share.deflt + ": 50 &#176;C)")</script></span>
+		</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.kaid_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.kaid_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="kaid_enable"  onclick="show_layer_ext(this, 'idkaid', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="kaid_enable" checked="checked" onclick="show_layer_ext(this, 'idkaid', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idkaid">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.kaid_locdevnum)</script></div>
+			<input class="num" value="1" name="kaid_devs" size="3" maxlength="3" onblur="valid_range(this,0,99,service.kaid_locdevnum)" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.usrname)</script></div>
+			<input value="" name="kaid_user" size="20" maxlength="20" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.passwd)</script></div>
+			<input type="password" id="kaid_pass" value="" name="kaid_pass" size="20" maxlength="20" />&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="_kaid_pass_unmask" value="0" onclick="setElementMask('kaid_pass', this.checked)" />&nbsp;<script type="text/javascript">Capture(share.unmask)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.kaid_uibind)</script></div>
+			<input size="5" maxlength="5" class="num" name="kaid_uibind" onblur="valid_range(this,1,65535,service.kaid_uibind)" value="34522" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": 34522, " + share.range + ": 1 - 65535)");
+			//]]>
+			</script>
+			</span>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.kaid_orbport)</script></div>
+			<input size="5" maxlength="5" class="num" name="kaid_orbport" onblur="valid_range(this,1,65535,service.kaid_orbport)" value="34525" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": 34525, " + share.range + ": 1 - 65535)");
+			//]]>
+			</script>
+			</span>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.kaid_orbdeepport)</script></div>
+			<input size="5" maxlength="5" class="num" name="kaid_orbdeepport" onblur="valid_range(this,1,65535,service.kaid_orbdeepport)" value="34523" />
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": 34523, " + share.range + ": 1 - 65535)");
+			//]]>
+			</script>
+			</span>
+		</div>
+	</div>
+</fieldset><br/>
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.nstx_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.nstx_srv)</script></div>
+		<input class="spaceradio" type="radio" name="nstxd_enable" value="1"  onclick="show_layer_ext(this, 'idnstx', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="nstxd_enable" value="0" checked="checked" onclick="show_layer_ext(this, 'idnstx', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idnstx">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.nstx_ipenable)</script></div>
+			<input class="spaceradio" type="radio" name="nstx_ipenable" value="1"  onclick="show_layer_ext(this, 'idnstxip', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="nstx_ipenable" value="0" checked="checked" onclick="show_layer_ext(this, 'idnstxip', false)" /><script type="text/javascript">Capture(share.disable)</script>
+			<span class="default"><script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": " + share.disable + ")");
+			//]]>
+			</script></span>
+		</div>
+		<div id="idnstxip">
+			<div class="setting">
+				<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+				<input class="num" maxlength="15" size="24" name="nstx_ip" onblur="valid_ip_str(this, share.ip)" value="0.0.0.0" />
+			</div>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.nstx_log)</script></div>
+			<input type="checkbox" value="1" name="_nstx_log"  />
+		</div>
+	</div>	
+</fieldset><br/>
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.pppoe_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.pppoe_srv)</script></div>
+		<input class="spaceradio" type="radio" name="pppoerelay_enable" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="pppoerelay_enable" value="0" checked /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+</fieldset><br />
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.radiooff_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.radiooff_srv)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="radiooff_button"  onclick="show_layer_ext(this, 'idradiooff', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="radiooff_button" checked="checked" onclick="show_layer_ext(this, 'idradiooff', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+  <div id="idradiooff">
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.radiooff_bootoff)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="radiooff_boot_off"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="radiooff_boot_off" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+  </div>		
+</fieldset><br/>
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.snmp_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.snmp_srv)</script></div>
+		<input class="spaceradio" type="radio" name="snmpd_enable" value="1"  onclick="show_layer_ext(this, 'idsnmp', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="snmpd_enable" value="0" checked="checked" onclick="show_layer_ext(this, 'idsnmp', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idsnmp">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.snmp_loc)</script></div>
+			<input maxlength="100" size="25" name="snmpd_syslocation" value="Unknown" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.snmp_contact)</script></div>
+			<input maxlength="100" size="25" name="snmpd_syscontact" value="root" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.snmp_name)</script></div>
+			<input maxlength="100" size="25" name="snmpd_sysname" value="dd-wrt" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.snmp_read)</script></div>
+			<input maxlength="100" size="25" name="snmpd_rocommunity" value="public" />
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.snmp_write)</script></div>
+			<input maxlength="100" size="25" name="snmpd_rwcommunity" value="private" />
+		</div>
+	</div>
+</fieldset><br />
+
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.ssh_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.ssh_srv)</script></div>
+		<input class="spaceradio" type="radio" name="sshd_enable" value="1"  onclick="show_layer_ext(this, 'idssh', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="sshd_enable" value="0" checked="checked" onclick="show_layer_ext(this, 'idssh', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div id="idssh">
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.ssh_forwarding)</script></div>
+			<input class="spaceradio" type="radio" name="sshd_forwarding" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="sshd_forwarding" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.ssh_password)</script></div>
+			<input class="spaceradio" type="radio" name="sshd_passwd_auth" value="1" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+			<input class="spaceradio" type="radio" name="sshd_passwd_auth" value="0"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(share.port)</script></div>
+			<input class="num" maxlength="5" size="5" name="sshd_port" onblur="valid_range(this,1,65535,'SHHd Port')" value="22" />
+			<span class="default">
+			<script type="text/javascript">
+			//<![CDATA[
+			document.write("(" + share.deflt + ": 22)");
+			//]]>
+			</script></span>
+		</div>
+		<div class="setting">
+			<div class="label"><script type="text/javascript">Capture(service.ssh_key)</script></div>
+			<textarea id="sshd_authorized_keys" name="sshd_authorized_keys" cols="60" rows="2">&nbsp;</textarea>
+			<script type="text/javascript">
+			//<![CDATA[
+				var var_authorized_keys = fix_cr( '' );
+				document.getElementById("sshd_authorized_keys").value = var_authorized_keys;
+			//]]>
+			</script>
+		</div>
+	</div>
+</fieldset><br />
+<fieldset>	
+	<legend><script type="text/javascript">Capture(service.syslog_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.syslog_srv)</script></div>
+		<input class="spaceradio" type="radio" name="syslogd_enable" value="1"  onclick="show_layer_ext(this, 'idsyslog', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="syslogd_enable" value="0" checked="checked" onclick="show_layer_ext(this, 'idsyslog', false)" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+	<div class="setting" id="idsyslog">
+		<div class="label"><script type="text/javascript">Capture(service.syslog_ip)</script></div>
+		<input maxlength="64" size="25" name="syslogd_rem_ip" value="" />
+	</div>
+</fieldset><br/>
+
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.telnet_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.telnet_srv)</script></div>
+		<input class="spaceradio" type="radio" name="telnetd_enable" value="1" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="telnetd_enable" value="0"  /><script type="text/javascript">Capture(share.disable)</script>
+		</div>
+</fieldset><br />
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.ttraff_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.ttraff_daemon)</script></div>
+		<input class="spaceradio" type="radio" value="1" name="ttraff_enable" checked="checked" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" value="0" name="ttraff_enable"  /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+</fieldset><br/>
+<fieldset>
+	<legend><script type="text/javascript">Capture(service.vncrepeater_legend)</script></legend>
+	<div class="setting">
+		<div class="label"><script type="text/javascript">Capture(service.vncrepeater)</script></div>
+		<input class="spaceradio" type="radio" name="vncr_enable" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+		<input class="spaceradio" type="radio" name="vncr_enable" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+	</div>
+</fieldset><br />
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<br/>
+<a href="javascript:openHelpWindow('HServices.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:33:59 up 23 min, load average: 0.00, 0.00, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

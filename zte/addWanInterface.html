@@ -1,0 +1,1823 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/wanadsl.js"></script>
+    <script type="text/javascript" src="./js/boot.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "1";
+        var G_Menu = "setup";
+        var G_Page = "connected";
+        var G_SubPage = "wanadsl";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = '' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = './lang_connected.html';
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('0' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+        /* ------------Wan Config1-----------*/
+        var G_WanConns = [];
+        //This is important! Default Path
+        G_WanConns['Path'] = ":InternetGatewayDevice.WANDevice.1.WANConnectionDevice.0.WANIPConnection.0.";
+
+        //ipv6 info for ip connection
+
+
+        //ipv6 info for ppp connection
+
+
+        var G_Broadband = [];
+        var t = 0;
+
+        G_Broadband[t] = [":InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.", //path
+            "", //X_TWSZ-COM_LanInterface
+            "1_TR069_INTERNET_R" //Name
+        ];
+        t++;
+
+
+        G_Broadband[t] = [":InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANIPConnection.1.", //path
+            "", //X_TWSZ-COM_LanInterface
+            "2_TR069_R" //Name
+        ];
+        t++;
+
+
+
+
+
+        var LanHosts = [];
+        var m = 0;
+        LanHosts[m] = ["b8:78:2e:b0:82:d5", "192.168.0.4"];
+        m++;
+        LanHosts[m] = ["0c:ee:e6:9e:e9:20", "192.168.0.8"];
+        m++;
+        LanHosts[m] = ["e0:2c:b2:5f:a0:7a", "192.168.0.5"];
+        m++;
+        LanHosts[m] = ["cc:25:ef:a2:13:18", "192.168.0.7"];
+        m++;
+        LanHosts[m] = ["90:8d:78:cf:d3:27", "192.168.0.3"];
+        m++;
+
+
+
+
+        var G_PPPoERelayEnable = '' || '0';
+        var G_VlanId = '' || '0';
+        var G_VlanStag = '' || '0';
+        var G_Priority = '';
+        //802.11x
+        var G_SuppEnable = G_SuppUsername = G_SuppPass = '';
+
+
+
+        var m = 0;
+        var G_wanConnction = [];
+
+        G_wanConnction[m] = [];
+        G_wanConnction[m][0] = "InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1."; //Path
+        G_wanConnction[m][1] = "1_TR069_INTERNET_R";
+        G_wanConnction[m][2] = "IPv4_6";
+        G_wanConnction[m][3] = "0";
+        ++m;
+
+
+        G_wanConnction[m] = [];
+        G_wanConnction[m][0] = "InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANIPConnection.1."; //Path
+        G_wanConnction[m][1] = "2_TR069_R";
+        G_wanConnction[m][2] = "IPv4";
+        G_wanConnction[m][3] = "0";
+        ++m;
+
+
+
+
+
+        // Multi ssid
+        var G_Multi_ssid = [];
+        var m = 0;
+        G_Multi_ssid[m] = [];
+        G_Multi_ssid[m][0] = "1";
+        G_Multi_ssid[m][1] = "WiFi-DOM.ru-1870";
+        m++;
+        G_Multi_ssid[m] = [];
+        G_Multi_ssid[m][0] = "2";
+        G_Multi_ssid[m][1] = "WiFi-DOM.ru-1870-Help";
+        m++;
+        G_Multi_ssid[m] = [];
+        G_Multi_ssid[m][0] = "3";
+        G_Multi_ssid[m][1] = "GUEST02";
+        m++;
+        G_Multi_ssid[m] = [];
+        G_Multi_ssid[m][0] = "4";
+        G_Multi_ssid[m][1] = "GUEST03";
+        m++;
+
+        var G_Wireless_Enable = "1";
+
+        //only support one ipv6 connection
+        function checkIpv6ConnectionNum() {
+            var i = 0;
+            for (var i = 0; i < G_wanConnction.length; i++) {
+                if (G_wanConnction[i][1] != G_WanConns['Name']) {
+                    if (G_wanConnction[i][2].indexOf('6') > 0) {
+                        if ($('SELECT_Protocol_R').value.indexOf('6') > 0) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        //only support bind one wan device
+        function CheckPPPoERelay() {
+            for (var i = 0; i < G_wanConnction.length; i++) {
+                if (G_wanConnction[i][1] != G_WanConns['Name']) {
+                    if (G_wanConnction[i][3] == '1') {
+                        $('INPUT_EnablePPPoERelay').checked = false;
+                        $('INPUT_EnablePPPoERelay').disabled = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function onChangeDuidConfigType() {
+            var _ConfigType = $('SELECT_DUIDConfigType').value;
+
+            $('div_duid').style.display = _ConfigType == 'Auto' ? 'none' : 'block';
+        }
+
+        function onclkVlanEnable() {
+            $('vlan_id').style.display = Form.Checkbox('INPUT_VlanEnable') ? 'block' : 'none';
+        }
+
+        function onCliShowIpaddr() {
+            if (!$('INPUT_Ussipaddr').checked) {
+                disCtrl('ipaddr', false);
+            }
+            else {
+                disCtrl('ipaddr', true);
+            }
+        }
+
+        function onclkInnerTagEnable() {
+            $('inner_tag_id').style.display = Form.Checkbox('INPUT_InnerTagEnable') ? 'block' : 'none';
+        }
+
+        function onclkDnsEnable() { //pxm
+            disCtrl('div_dns', Form.Radio('INPUT_ServerAsg') == '1');
+        }
+
+        function onclkDnsv6Enable() { //pxm
+            disCtrl('IPv6_DNSs', Form.Radio('INPUT_DNSv6Server') == '1');
+        }
+
+        function searchProtocol() {
+            if ('-' == '-') {
+                return 'PPPoE';
+            }
+            else if (G_WanConns['Path'].indexOf('IP') > 0) {
+                return G_WanConns['ConnectionType'] == 'IP_Routed' && G_WanConns['AddressingType'] || 'IP_Bridged'; // -> IP_Bridged
+            }
+            else {
+                return G_WanConns['ConnectionType'] == 'L2TP_Relay' ? 'L2TP' : G_WanConns['ConnectionType'] == 'PPTP_Relay' ? 'PPTP' : 'PPPoE';
+            }
+        }
+
+        function createServiceType() {
+            var _text = [],
+                _value = [];
+            var value_mode = $('SELECT_ConnType').value;
+
+            if (value_mode == 'IP_Bridged') {
+                _text = ['INTERNET', 'IPTV'];
+                _value = ['INTERNET', 'OTHER'];
+            }
+            else if (value_mode == 'PPTP' || value_mode == 'L2TP') {
+                _text = ['INTERNET'];
+                _value = ['INTERNET'];
+            }
+            else {
+                _text = ['INTERNET', 'TR069', 'TR069_INTERNET'];
+                _value = ['INTERNET', 'TR069', 'TR069,INTERNET'];
+            }
+
+            $S('SELECT_ServiceType', _text, _value);
+        }
+
+        function uiOnload() {
+            //vlan
+            $('INPUT_VlanId').value = G_VlanId || ''; // INPUT_VlanId0 -> INPUT_VlanId
+            $('INPUT_InnerVlanId').value = G_VlanStag || ''; // Vlan Stag
+            $('INPUT_Priority').value = G_Priority || '0'; // INPUT_Priority0 -> INPUT_Priority
+            if (G_WanConns['X_TWSZ-COM_StaticIPAddress'] == undefined) {
+                G_WanConns['X_TWSZ-COM_StaticIPAddress'] = '';
+            }
+
+            //service type
+            createServiceType();
+            $('SELECT_ServiceType').value = G_WanConns['X_TWSZ-COM_ServiceList'] || 'INTERNET';
+
+            $('SELECT_ConnType').value = searchProtocol();
+
+            //DNS
+            if ($('SELECT_ConnType').value == "Static") {
+                Form.Radio('INPUT_ServerAsg', (G_WanConns['DNSOverrideAllowed'] * 1 || G_WanConns['IPv6DNSOverrideAllowed'] * 1));
+                Form.Radio('INPUT_DNSv6Server', (G_WanConns['DNSOverrideAllowed'] * 1 || G_WanConns['IPv6DNSOverrideAllowed'] * 1));
+            }
+            else {
+                Form.Radio('INPUT_ServerAsg', G_WanConns['DNSOverrideAllowed'] * 1);
+                Form.Radio('INPUT_DNSv6Server', G_WanConns['IPv6DNSOverrideAllowed'] * 1);
+            }
+            onchgConnType();
+            //DNS/MAC/VLAN
+            setJSONValue({
+                'INPUT_Enable': G_WanConns['Enable'] || '1',
+                'INPUT_EnablePPPoERelay': G_PPPoERelayEnable || '0',
+                //Service Type
+                'SELECT_ServiceType': G_WanConns['X_TWSZ-COM_ServiceList'] || 'INTERNET',
+
+                //DNS
+                'INPUT_ServerPry': G_WanConns['DNSOverrideAllowed'] && (G_WanConns['DNSOverrideAllowed'] == '0' ? (G_WanConns['DNSServers'].split(',')[0] || '') : (G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',') && G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',')[0] || '')) || '',
+                'INPUT_ServerSec': G_WanConns['DNSOverrideAllowed'] && (G_WanConns['DNSOverrideAllowed'] == '0' ? (G_WanConns['DNSServers'].split(',')[1] || '') : (G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',') && G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',')[1] || '')) || '',
+                //vlan
+                'INPUT_VlanEnable': (G_VlanId == 0 || G_VlanId == -1) ? 0 : 1,
+                'INPUT_InnerTagEnable': (G_VlanId == '0' || G_VlanStag == '0') ? 0 : 1,
+                //Lan
+                'INPUT_LanPort1': schLanInf('LANEthernetInterfaceConfig.1'),
+                'INPUT_LanPort2': schLanInf('LANEthernetInterfaceConfig.2'),
+                'INPUT_LanPort3': schLanInf('LANEthernetInterfaceConfig.3'),
+                'INPUT_LanPort4': schLanInf('LANEthernetInterfaceConfig.4'),
+                //Wlan
+                'INPUT_WlanSsid1': G_Wireless_Enable == "0" ? "0" : schLanInf('WLANConfiguration.1'),
+                'INPUT_WlanSsid2': G_Wireless_Enable == "0" ? "0" : schLanInf('WLANConfiguration.2'),
+                'INPUT_WlanSsid3': G_Wireless_Enable == "0" ? "0" : schLanInf('WLANConfiguration.3'),
+                'INPUT_WlanSsid4': G_Wireless_Enable == "0" ? "0" : schLanInf('WLANConfiguration.4')
+            });
+            //vlan
+            onclkVlanEnable();
+            onclkInnerTagEnable();
+            checkSSIDPort();
+            CheckPPPoERelay();
+            onChangeDuidConfigType();
+            OnIPVersionChange();
+
+            if ($('SELECT_ServiceType').value == 'TR069') {
+                $('port_bind').style.display = 'none';
+            }
+
+            if ($('SELECT_Protocol_R').value.indexOf('6') > 0 && $('INPUT_VlanId').value > 0) {
+                $('INPUT_VlanId').disabled = true;
+            }
+
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "lan") {
+                if ('-' != '-') {
+                    $('INPUT_Enable').disabled = true;
+                    $('SELECT_ServiceType').disabled = true;
+                    $('SELECT_Protocol_R').disabled = true;
+                    $('SELECT_ConnType').disabled = true;
+                    $('INPUT_EnablePPPoERelay').disabled = true;
+                    $('INPUT_Ussipaddr').disabled = true;
+                    $N('INPUT_ServerAsg')[0].disabled = true;
+                    $N('INPUT_ServerAsg')[1].disabled = true;
+                    $N('INPUT_DNSv6Server')[0].disabled = true;
+                    $N('INPUT_DNSv6Server')[1].disabled = true;
+                    $('INPUT_ServerPry').readOnly = true;
+                    $('INPUT_ServerSec').readOnly = true;
+                    $('INPUT_Idletime').readOnly = true;
+                    $('INPUT_MTU_Static').disabled = true;
+                    $('INPUT_MTU_DHCP').disabled = true;
+
+                    $('INPUT_IPv6_Dns1').readOnly = true;
+                    $('INPUT_IPv6_Dns2').readOnly = true;
+                    $('INPUT_IPv6_IpAddress').readOnly = true;
+                    $('INPUT_DUID').readOnly = true;
+                    $('INPUT_DUID_Pre').readOnly = true;
+                    $('INPUT_IPv6_DefGateway').readOnly = true;
+                    $('INPUT_IPv6_Mark').readOnly = true;
+                    $('INPUT_Ipaddr_PS').readOnly = true;
+                    $('SELECT_DUIDConfigType').disabled = true;
+                    $('INPUT_IPv6PrefixDelegationEnabled').disabled = true;
+
+                    if ('PPP' == '-') {
+                        $('div_nat').style.display = 'none';
+                        $('block_dns').disabled = true;
+                        $('block_dnsv6').disabled = true;
+                        $('IPv6_DNSs').disabled = true;
+                        $('DIV_UdidV6only').style.display = 'none';
+                        $('port_bind').style.display = 'none';
+                        $('div_vlan').style.display = 'none';
+                        $('block_ppp').style.display = 'none';
+                        $('static_ipaddr').style.display = 'none';
+                        $('ipaddr').style.display = 'none';
+                        $('SELECT_Dial').disabled = true;
+                        $('INPUT_MTU_PPPoE').disabled = true;
+                        $('INPUT_AcName').disabled = true;
+                    }
+                }
+            }
+        }
+
+        function OnIPVersionChange() {
+            var conn_type = $('SELECT_ConnType').value;
+            var ip_proto_type = $('SELECT_Protocol_R').value;
+
+            //ipv6 static info
+            if ((ip_proto_type.indexOf('6') >= 0) && (conn_type == 'Static')) {
+                $('IPv6_Static').style.display = 'block';
+                $("div_ipv6Prefix").style.display = "none";
+
+                if ('-' != '-') {
+                    var dns = G_WanConns['UsrIPv6DNSServers'].split(',');
+                    var dns1 = dns[0];
+                    var dns2 = dns.length > 1 ? dns[1] : "";
+
+                    $("INPUT_IPv6_IpAddress").value = G_WanConns['IPv6Address'];
+                    $("INPUT_IPv6_Mark").value = G_WanConns['PrefixLength'] > 64 ? '64' : G_WanConns['PrefixLength'];
+                    $("INPUT_IPv6_DefGateway").value = G_WanConns['DefaultRouter'];
+                    $("INPUT_IPv6_Dns1").value = dns1;
+                    $("INPUT_IPv6_Dns2").value = dns2;
+                    $("INPUT_ServerPry").value = G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',')[0];
+                    $("INPUT_ServerSec").value = G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',')[1] || "";
+                }
+
+                if (ip_proto_type == "IPv6") {
+                    $("static").style.display = "none";
+                }
+                else {
+                    $("static").style.display = "block";
+                }
+                $("static_8021x").style.display = "none";
+            }
+            else {
+                $('IPv6_Static').style.display = 'none';
+                $("div_ipv6Prefix").style.display = "block";
+
+                if ('-' != '-') {
+                    var dns;
+                    if (ip_proto_type.indexOf('6') >= 0) {
+                        //v6 dns
+                        var dnsv6;
+                        if (Form.Radio('INPUT_DNSv6Server') == '1')
+                            dnsv6 = G_WanConns['UsrIPv6DNSServers'].split(',');
+                        else
+                            dnsv6 = ["", ""];
+                        var dnsv6_1 = dnsv6[0];
+                        var dnsv6_2 = dnsv6.length > 1 ? dnsv6[1] : "";
+                        $('INPUT_IPv6_Dns1').value = dnsv6_1;
+                        $('INPUT_IPv6_Dns2').value = dnsv6_2;
+
+                        //v4 dns
+                        if (Form.Radio('INPUT_ServerAsg') == '1')
+                            dns = G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',');
+                        else
+                            dns = G_WanConns['DNSServers'].split(',');
+                    }
+                    else if (conn_type == 'Static') {
+                        dns = G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',');
+                    }
+                    else {
+                        dns = G_WanConns['DNSServers'].split(',');
+                    }
+
+                    if (ip_proto_type.indexOf('4') >= 0) //has ipv4
+                    {
+                        var dns1 = dns[0];
+                        var dns2 = dns.length > 1 ? dns[1] : "";
+
+                        $("INPUT_ServerPry").value = dns1;
+                        $("INPUT_ServerSec").value = dns2;
+                    }
+                }
+            }
+            //common ipv6 info
+            if (ip_proto_type.indexOf('6') >= 0) {
+                if (conn_type == 'IP_Bridged') {
+                    $("DIV_UdidV6only").style.display = "none";
+                }
+                else {
+                    if ('-' != '-') {
+                        $("SELECT_DUIDConfigType").value = G_WanConns['DUIDConfigType'];
+                        Form.Checkbox('INPUT_IPv6PrefixDelegationEnabled', G_WanConns['IPv6PrefixDelegationEnabled'] == "" ? 1 : G_WanConns['IPv6PrefixDelegationEnabled']);
+                    }
+                    //display duid info
+                    $("DIV_UdidV6only").style.display = "block";
+                }
+
+                //zhouxc add
+                $("static").style.display = "none";
+
+                /*add by wuyouhui to hide 802.1X while wan connection is ipv6 of PPPOE mode, at 2011-11-24 */
+                $("static_8021x").style.display = "none";
+
+                /*add by wuyouhui to correct the range of MTU while in PPPoE ipv6 mode(min>=1280) at 2011-11-25*/
+                if (conn_type == "PPPoE") {
+                    $("MTU_LABLE").innerHTML = "(1280-1492)";
+                }
+            }
+
+            if (ip_proto_type == "IPv6") {
+                //hide ipv4 only info
+                $("static").style.display = "none";
+
+                //hide while IPv6 only
+                $("div_nat").style.display = "none";
+                if (conn_type == 'Static') {
+                    $("block_dns").style.display = "none";
+                }
+
+                /*add by wuyouhui, hide static ip while used ipv6 in pppoe mode at 2011-11-23*/
+                if (conn_type == 'PPPoE') {
+                    $("static_ipaddr").style.display = "none";
+                    $("ipaddr").style.display = "none";
+                }
+
+                /*add by wuyouhui start at 2011-11-24*/
+                if (conn_type == 'DHCP') {
+                    $("optioninfo").style.display = "none";
+                }
+                /*add by wuyouhui end*/
+            }
+            else if (conn_type != 'IP_Bridged') //modify by wuyouhui 2011-11-15, bridge mode do not have dns&nat
+            {
+                //display while not IPv6 only
+                /*add by wuyouhui to support ipv4&ipv6 at the same time while wan connection in static mode, 2011-11-14*/
+                if ((conn_type == 'Static')) {
+                    $("static").style.display = "block";
+                }
+                /*add by wuyouhui end*/
+
+                $("block_dns").style.display = "block";
+                $("div_nat").style.display = "block";
+
+                /*add by wuyouhui start at 2011-11-24*/
+                if (conn_type == 'DHCP') {
+                    $("optioninfo").style.display = "block";
+                }
+                /*add by wuyouhui end*/
+            }
+
+            if (ip_proto_type == "IPv4") {
+                if ((conn_type == 'PPPoE') || (conn_type == 'DHCP') || (conn_type == 'PPTP') || (conn_type == 'L2TP')) //pxm2
+                {
+                    if ('-' != '-') {
+                        $("INPUT_ServerPry").value = G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',')[0];
+                        $("INPUT_ServerSec").value = G_WanConns['X_TWSZ-COM_UsrDNSServers'].split(',')[1] || "";
+                    }
+
+                }
+                //hide ipv6 info
+                $("DIV_UdidV6only").style.display = "none";
+
+                /*add by wuyouhui to set back the range of MTU while in PPPOE ipv4 mode at 2011-11-25*/
+                if (conn_type == 'PPPoE') {
+                    $("MTU_LABLE").innerHTML = "(616-1492)";
+                }
+
+                if ((conn_type == 'Static')) {
+                    $("static").style.display = "block";
+                }
+
+                /*add by wuyouhui, hide static ip while used ipv6 in pppoe mode at 2011-11-23*/
+                if (conn_type == 'PPPoE') {
+                    $("static_ipaddr").style.display = "block";
+                    $("ipaddr").style.display = "block";
+                }
+            }
+            if ((conn_type == 'DHCP') || (conn_type == 'PPPoE')) {
+                if (ip_proto_type.indexOf('6') >= 0) //has IPv6
+                {
+                    if (Form.Radio("INPUT_DNSv6Server") == '0') {
+                        $("INPUT_IPv6_Dns1").value = '';
+                        $("INPUT_IPv6_Dns2").value = '';
+                    }
+                }
+                if (ip_proto_type.indexOf('4') >= 0) //has IPv4
+                {
+                    if (Form.Radio("INPUT_ServerAsg") == '0') {
+                        $("INPUT_ServerPry").value = '';
+                        $("INPUT_ServerSec").value = '';
+                    }
+                }
+            }
+            else {
+                document.getElementsByName('INPUT_ServerAsg')[1].disabled = false;
+                //document.getElementsByName('INPUT_ServerAsg')[0].disabled = false;
+                if (Form.Radio('INPUT_ServerAsg') == 1) {
+                    document.getElementById('INPUT_ServerPry').disabled = false;
+                    document.getElementById('INPUT_ServerSec').disabled = false;
+                }
+            }
+
+            $("IPv6_DNSs").style.display = "none";
+            $("block_dns").style.display = "none";
+            $("block_dnsv6").style.display = "none";
+            if (conn_type != "IP_Bridged") //zp add if 20120421  no dns for Bridge
+            {
+                if (ip_proto_type.indexOf('4') >= 0) {
+                    $("block_dns").style.display = "block";
+                }
+                if (ip_proto_type.indexOf('6') >= 0) {
+                    $("IPv6_DNSs").style.display = "block";
+                    if (conn_type != "Static")
+                        $("block_dnsv6").style.display = "block";
+                }
+            }
+
+            onclkDnsEnable();
+            onclkDnsv6Enable();
+        }
+
+        //管理不同协议类型的页面显示
+        function onchgConnType() {
+            var conn_type = $('SELECT_ConnType').value;
+            var node_type = $('dhcp', 'static', 'pppoe', 'pptp');
+            var _dhcp = _static = _pppoe = _pptp = _pppoerelay = 'none';
+            var _nat = _dns = _vlan = 'block';
+
+            switch (conn_type) {
+                case 'DHCP':
+                    _dhcp = 'block';
+                    break;
+                case 'Static':
+                    _static = 'block';
+                    break;
+                case 'PPPoE':
+                    _pppoe = _pppoerelay = 'block';
+                    break;
+                case 'PPTP':
+                    $('span_pptp').innerHTML = "PPTP";
+                    _pptp = 'block';
+                    //input=text
+                    $('SPAN_PPTPServer').innerHTML = "PPTP Server :";
+                    $('SPAN_PPTPId').innerHTML = "PPTP ID :";
+                    $('SPAN_PPTPPsd').innerHTML = "PPTP Password :";
+                    break;
+                case 'L2TP':
+                    $('span_pptp').innerHTML = "L2TP";
+                    //input=text
+                    $('SPAN_PPTPServer').innerHTML = "L2TP Server :";
+                    $('SPAN_PPTPId').innerHTML = "L2TP ID :";
+                    $('SPAN_PPTPPsd').innerHTML = "L2TP Password :";
+                    _pptp = 'block';
+                    break;
+                case 'IP_Bridged':
+                    _nat = _dns = 'none';
+                    break;
+            }
+
+            //_pppoerelay = 'none';
+            if (conn_type == 'IP_Bridged') {
+                $('servicetype').style.display = 'none';
+                $('ipversion').style.display = 'none';
+            }
+            else {
+                $('servicetype').style.display = 'block';
+                $('ipversion').style.display = 'block';
+            }
+
+            //Static -> DNS checked
+            if (conn_type == 'Static') {
+                $N('INPUT_ServerAsg')[1].checked = true;
+                $N('INPUT_ServerAsg')[0].disabled = true;
+                $N('INPUT_DNSv6Server')[1].checked = true;
+                $N('INPUT_DNSv6Server')[0].disabled = true;
+            }
+            else {
+                if (Form.Radio('INPUT_ServerAsg') == 1) {
+                    $N('INPUT_ServerAsg')[1].checked = true;
+                    $N('INPUT_ServerAsg')[0].disabled = false;
+                }
+                else {
+                    $N('INPUT_ServerAsg')[0].checked = true;
+                    $N('INPUT_ServerAsg')[0].disabled = false;
+                }
+
+                if (Form.Radio('INPUT_DNSv6Server') == 1) {
+                    $N('INPUT_DNSv6Server')[1].checked = true;
+                    $N('INPUT_DNSv6Server')[0].disabled = false;
+                }
+                else {
+                    $N('INPUT_DNSv6Server')[0].checked = true;
+                    $N('INPUT_DNSv6Server')[0].disabled = false;
+                }
+            }
+            $('dhcp').style.display = _dhcp;
+            $('static').style.display = _static;
+            $('pppoe').style.display = _pppoe;
+            $('pptp').style.display = _pptp;
+            $('div_nat').style.display = _nat;
+            $('block_dns').style.display = _dns;
+            $('div_vlan').style.display = _vlan;
+            $('pppoerelay').style.display = _pppoerelay;
+
+            //DNS
+            onclkDnsEnable();
+            //给不同的protocol类型赋值
+            branchSupplyValue(conn_type);
+
+            OnIPVersionChange();
+            onCliShowIpaddr();
+            onchgDial();
+            //service type
+            createServiceType();
+            //802_1x
+            uiEnable802_1x(0);
+            uiEnable802_1x(1);
+            uiEnable802_1x(2);
+
+            uiEnableNat();
+            //vlan
+            onclkVlanEnable();
+            onclkInnerTagEnable();
+            checkLanPort();
+            //端口绑定
+            ctrlPortBinding();
+        }
+
+        //赋值处理
+        var G_ACName_C = "";
+
+        function branchSupplyValue(_type) {
+
+            if ('-' != '-') {
+                G_ACName_C = "";
+            }
+            else {
+                G_ACName_C = "DOM.RU";
+            }
+
+            switch (_type) {
+                case 'DHCP':
+                    {
+                        setJSONValue({
+                            'INPUT_MTU_DHCP': G_WanConns['AddressingType'] == 'DHCP' && G_WanConns['MaxMTUSize'] || '1500',
+                            'INPUT_VendorClassId': G_WanConns['X_TWSZ-COM_VendorId'] || '',
+                            'INPUT_Hostname': G_WanConns['X_TWSZ-COM_Hostname'] || '',
+                            'INPUT_Enable8021xSupplicant2': G_SuppEnable,
+                            'INPUT_SuppName2': G_SuppUsername,
+                            'INPUT_SuppPassword2': G_SuppPass,
+                            'INPUT_NatEnable': G_WanConns['NATEnabled'] || 1,
+                            'INPUT_NatType': G_WanConns['X_TWSZ-COM_NATType'] || 'SymmetricNat',
+                            'SELECT_Protocol_R': G_WanConns['X_TWSZ-COM_ProtocolType'] || 'IPv4',
+                            'INPUT_IPv6PrefixDelegationEnabled': G_WanConns['INPUT_IPv6PrefixDelegationEnabled'] || 1
+                        });
+                        break;
+                    }
+                case 'Static':
+                    {
+                        setJSONValue({
+                            'INPUT_IpAddr': G_WanConns['ExternalIPAddress'] || '',
+                            'INPUT_SubMask': G_WanConns['SubnetMask'] || '',
+                            'INPUT_DefGyIp': G_WanConns['DefaultGateway'] || '',
+                            'INPUT_MTU_Static': G_WanConns['AddressingType'] == 'Static' && G_WanConns['MaxMTUSize'] || '1500',
+                            'INPUT_Enable8021xSupplicant1': G_SuppEnable,
+                            'INPUT_SuppName1': G_SuppUsername,
+                            'INPUT_SuppPassword1': G_SuppPass,
+                            'INPUT_NatEnable': G_WanConns['NATEnabled'] || 1,
+                            'INPUT_NatType': G_WanConns['X_TWSZ-COM_NATType'] || 'SymmetricNat',
+                            'SELECT_Protocol_R': G_WanConns['X_TWSZ-COM_ProtocolType'] || 'IPv4',
+                            'INPUT_IPv6PrefixDelegationEnabled': G_WanConns['INPUT_IPv6PrefixDelegationEnabled'] || 1
+                        });
+                        break;
+                    }
+                case 'PPPoE':
+                    {
+                        setJSONValue({
+                            'INPUT_PppoeAct': G_WanConns['Username'] || '',
+                            'INPUT_PppoePsd': G_WanConns['Password'] || '',
+                            'INPUT_MTU_PPPoE': (G_WanConns['MaxMTUSize'] && Number(G_WanConns['MaxMTUSize']) > 1492) ? '1492' : (G_WanConns['ConnectionType'] == 'IP_Routed' && G_WanConns['PPPAuthenticationProtocol'] && G_WanConns['MaxMTUSize'] || '1492'),
+                            'SELECT_AuthMethod_PPPoE': G_WanConns['PPPAuthenticationProtocol'] || 'Auto',
+                            'INPUT_NatEnable': G_WanConns['NATEnabled'] || 1,
+                            'SELECT_Dial': G_WanConns['ConnectionTrigger'] || 'AlwaysOn',
+                            'INPUT_Ussipaddr': G_WanConns['X_TWSZ-COM_StaticIPAddress'] == '' ? 0 : 1,
+                            'INPUT_Ipaddr_PS': G_WanConns['X_TWSZ-COM_StaticIPAddress'],
+                            'INPUT_NatType': G_WanConns['X_TWSZ-COM_NATType'] || 'SymmetricNat',
+                            'SELECT_Protocol_R': G_WanConns['X_TWSZ-COM_ProtocolType'] || 'IPv4',
+                            'INPUT_AcName': G_WanConns['PPPoEACName'] || G_ACName_C,
+                            'INPUT_IPv6PrefixDelegationEnabled': G_WanConns['INPUT_IPv6PrefixDelegationEnabled'] || 1
+                        });
+                        break;
+                    }
+                case 'L2TP':
+                case 'PPTP':
+                    {
+                        setJSONValue({
+                            'INPUT_IpAddr_PPTP': G_WanConns['X_TWSZ-COM_VPN_CLIENT'] || '',
+                            'INPUT_SubMask_PPTP': G_WanConns['X_TWSZ-COM_VPN_NETMASK'] || '',
+                            'INPUT_DefGwIP_PPTP': G_WanConns['X_TWSZ-COM_VPN_GATEWAY'] || '',
+                            'INPUT_NatEnable': G_WanConns['NATEnabled'] || 1,
+                            'INPUT_PPTPServer': G_WanConns['X_TWSZ-COM_VPN_SERVER'] || '',
+                            'INPUT_PPTPID': G_WanConns['Username'] || '',
+                            'INPUT_PPTPPsd': G_WanConns['Password'] || '',
+                            'INPUT_PPTPCfmPsd': G_WanConns['Password'] || '',
+                            'INPUT_MTU_PPTP': (G_WanConns['MaxMTUSize'] && Number(G_WanConns['MaxMTUSize']) > 1436) ? '1436' : ((G_WanConns['ConnectionType'] == 'PPTP_Relay' || G_WanConns['ConnectionType'] == 'L2TP_Relay') && G_WanConns['MaxMTUSize'] || '1436'),
+                            'SELECT_AuthMethod_PPTP': G_WanConns['PPPAuthenticationProtocol'] || 'Auto'
+                        });
+                        break;
+                    }
+            }
+        }
+
+        //LAN Port Binding
+        function schLanInf(lanPort) { //判断端口是否被绑定
+            return (G_WanConns['X_TWSZ-COM_LanInterface'] || '').indexOf(lanPort) > -1 ? 1 : 0;
+        }
+
+        function ctrlPortBinding() {
+            $('port_bind').style.display = $('SELECT_ServiceType').value == 'TR069' ? 'none' : 'block';
+        }
+
+        //防止LAN PORT重复绑定
+        function checkLanPort() {
+            var node_lanports = ['INPUT_LanPort1', 'INPUT_LanPort2', 'INPUT_LanPort3', 'INPUT_LanPort4', 'INPUT_WlanSsid1', 'INPUT_WlanSsid2', 'INPUT_WlanSsid3', 'INPUT_WlanSsid4'];
+            var used_lanport;
+            var used_node = [];
+            //Path
+            var _path = G_WanConns['Path'] || '';
+
+            //把被使用的LAN端口保存到数组中，自身的除外
+            for (var i = 0, _len = G_Broadband.length; i < _len; i++) {
+                if (G_Broadband[i][0] != _path) {
+                    used_lanport = G_Broadband[i][1].split(',');
+                    //disabled
+                    for (var j = 0; j < used_lanport.length; j++) {
+                        if (used_lanport[j].indexOf('LANEthernetInterfaceConfig') > 0) {
+                            used_node.push('INPUT_LanPort' + used_lanport[j].substr(used_lanport[j].length - 1, 1));
+                        }
+                        else if (used_lanport[j].indexOf('WLANConfiguration') > 0) {
+                            used_node.push('INPUT_WlanSsid' + used_lanport[j].substr(used_lanport[j].length - 1, 1));
+                        }
+                    }
+                }
+            }
+            //灰显已被使用的LAN端口
+            for (var k = 0; k < node_lanports.length; k++) {
+                if (used_node.indexOf(node_lanports[k]) > -1) {
+                    $(node_lanports[k]).disabled = true;
+                    $(node_lanports[k]).checked = false;
+                }
+                else {
+                    $(node_lanports[k]).disabled = false;
+                }
+            }
+            checkSSIDPort();
+        }
+        //灰显不存在的SSID
+        function checkSSIDPort() {
+            if (G_Wireless_Enable == '1') {
+                var str_ssid = "";
+                for (var t = 0; t < G_Multi_ssid.length; t++) {
+                    str_ssid += G_Multi_ssid[t][0];
+                }
+                for (var u = 1; u < 5; u++) {
+                    if (str_ssid.indexOf(u) == -1) {
+                        $('INPUT_WlanSsid' + u).disabled = true;
+                        $('INPUT_WlanSsid' + u).checked = false;
+                    }
+                }
+            }
+            else { //无线关闭，全部灰显
+                for (var q = 1; q < 5; q++) {
+                    $('INPUT_WlanSsid' + q).disabled = true;
+                }
+            }
+        }
+
+        function cltLanPort() { //收集选中的lanPort和SSID
+            var port_lan = '';
+
+            //LAN
+            for (var i = 1; i < 5; i++) {
+                if ($('INPUT_LanPort' + i) && $('INPUT_LanPort' + i).checked) {
+                    port_lan += 'InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.' + i + ',';
+                }
+            }
+
+            //SSID
+            for (var j = 1; j < 5; j++) {
+                if ($('INPUT_WlanSsid' + j) && $('INPUT_WlanSsid' + j).checked) {
+                    port_lan += 'InternetGatewayDevice.LANDevice.1.WLANConfiguration.' + j + ',';
+                }
+            }
+
+            return port_lan.delcomma();
+        }
+
+        function getProtocol() {
+            switch ($('SELECT_ConnType').value) {
+                case 'DHCP':
+                    {
+                        return ['DHCP', 'IP'];
+                    }
+                case 'Static':
+                    {
+                        return ['Static', 'IP'];
+                    }
+                case 'PPPoE':
+                    {
+                        return ['PPPoE', 'PPP'];
+                    }
+                case 'PPTP':
+                    {
+                        return ['PPTP', 'PPP'];
+                    }
+                case 'L2TP':
+                    {
+                        return ['L2TP', 'PPP'];
+                    }
+                case 'IP_Bridged':
+                    {
+                        return ['IP_Bridged', 'IP'];
+                    }
+            }
+        }
+
+        function getConnName(_protocol) {
+            var _pro = '',
+                _max = 0,
+                _min = 0;
+            var vid = '';
+            var service_type = $('SELECT_ServiceType').value;
+            //转换逗号为_
+            service_type = service_type.replace(/,/g, '_');
+
+            if (_protocol) {
+                _pro = _protocol[0] == 'IP_Bridged' ? 'B' : 'R';
+            }
+            //对于已经存在的用户，其实例号不改变
+            if (G_WanConns['Name']) {
+                _max = G_WanConns['Name'].substring(0, G_WanConns['Name'].indexOf('_'));
+            }
+            else {
+                //找出最大的实例号
+                for (var i = 0, _len = G_Broadband.length; i < _len; i++) {
+                    _min = G_Broadband[i][2].substring(0, G_Broadband[i][2].indexOf('_'));
+                    if (_max < _min) {
+                        _max = _min;
+                    }
+                }
+                _max++;
+            }
+
+            if (Form.Checkbox('INPUT_VlanEnable')) {
+                vid = 'VID_' + $('INPUT_VlanId').value + '_';
+            }
+
+            return _max + '_' + service_type + '_' + vid + _pro;
+        }
+
+        function uiEnable802_1x(idx) { //0 static 1 dhcp
+            var enable_check = $('INPUT_Enable8021xSupplicant1', 'INPUT_Enable8021xSupplicant2', 'INPUT_Enable8021xSupplicant3');
+            if (idx == 0) //static
+            {
+                $('INPUT_SuppName1').disabled = !enable_check[0].checked;
+                $('INPUT_SuppPassword1').disabled = !enable_check[0].checked;
+            }
+            else if (idx == 1) { //dhcp
+                $('INPUT_SuppName2').disabled = !enable_check[1].checked;
+                $('INPUT_SuppPassword2').disabled = !enable_check[1].checked;
+            }
+            else if (idx == 2) //statc ipv6
+            {
+                $('INPUT_SuppName3').disabled = !enable_check[2].checked;
+                $('INPUT_SuppPassword3').disabled = !enable_check[2].checked;
+            }
+        }
+
+        function uiEnableNat() {
+            var _num = Form.Checkbox('INPUT_NatEnable');
+            if (_num == 1) {
+                $('INPUT_NatType').disabled = false;
+            }
+            else {
+                $('INPUT_NatType').disabled = true;
+            }
+        }
+
+        //Dial控制函数
+        function onchgDial() {
+            var _dial = $('SELECT_Dial').value;
+            switch (_dial) {
+                case "OnDemand":
+                    {
+                        $('idletime').style.display = "block";
+                        $('manual').style.display = "none";
+                        //将秒转换为分钟
+                        var g_IdleDisconnectTime = ((parseInt(G_WanConns['IdleDisconnectTime'] || 0) - parseInt(G_WanConns['IdleDisconnectTime'] || 0) % 60) / 60);
+                        $('INPUT_Idletime').value = g_IdleDisconnectTime.toString();
+                        break;
+                    }
+                case "Manual":
+                    {
+                        $('manual').style.display = "block";
+                        $('idletime').style.display = "none";
+                        $('INPUT_ManualConn').checked = G_WanConns['X_TWSZ-COM_ConnectionAction'] == "Connect" ? true : false;
+                        break;
+                    }
+                default:
+                    {
+                        $('idletime').style.display = "none";
+                        $('manual').style.display = "none";
+                        break;
+                    }
+            }
+        }
+
+        function uiSubmit() {
+            if (uiCheckInput() == false) {
+                return false;
+            }
+
+            $H({
+                'obj-action': 'set',
+                'var:menu': G_Menu,
+                'var:page': G_Page,
+                //'var:menu'      : 'status',
+                //'var:page'      : 'connection_status',
+                'var:errorpage': G_ErrorPage == '-' ? G_SubPage : G_ErrorPage,
+                'getpage': 'html/index.html',
+                'errorpage': 'html/index.html',
+                'var:SecIndex': '-',
+                'var:ThdIndex': '-',
+                'var:WanType': '-',
+                'var:CacheLastData': ViewState.Save()
+            }, true);
+
+            var _path = G_WanConns['Path'];
+
+            //VLAN ID
+            $F(_path.replace(/[a-zA-Z]+\.[0-9]+\.$/, '') + 'X_TWSZ-COM_VLANID', Form.Checkbox('INPUT_VlanEnable') ? $('INPUT_VlanId').value : '0');
+            //inner VLAN ID
+            $F(_path.replace(/[a-zA-Z]+\.[0-9]+\.$/, '') + 'X_TWSZ-COM_STAG', Form.Checkbox('INPUT_VlanEnable') && Form.Checkbox('INPUT_InnerTagEnable') ? $('INPUT_InnerVlanId').value : '0');
+            //X_TWSZ-COM_VLANPriority
+            $F(_path.replace(/[a-zA-Z]+\.[0-9]+\.$/, '') + 'X_TWSZ-COM_VLANPriority', Form.Checkbox('INPUT_VlanEnable') ? $('INPUT_Priority').value : '0');
+            $F(_path.replace(/[a-zA-Z]+\.[0-9]+\.$/, '') + 'X_TWSZ-COM_PPPoERelay', Form.Checkbox('INPUT_EnablePPPoERelay'));
+
+            //分两种情况：1、当协议类型发生改变时, 交由webproxy处理; 2、如果协议类型不变, 则直接交由CMM处理
+            var _protocol = getProtocol();
+            if ('-' == '-') { // -> new & webproxy
+                _path = G_WanConns['Path'].replace('IP', _protocol[1]);
+                $F('mid', '0438');
+            }
+            else if (_path.indexOf(_protocol[1]) < 0) { // -> webproxy
+                _path = G_WanConns['Path'].replace(_protocol[1] == 'IP' ? 'PPP' : 'IP', _protocol[1]);
+                $F('mid', '0438');
+                $F(_path + 'X_TWSZ-COM_ConnectionMode', _protocol[1]);
+                //$F(_path + 'X_TWSZ-COM_ProtocolType', _protocol[1]);
+                //为配合模块检查，将IP/PPP的前的实例号改为0.
+                _path = _path.substr(0, _path.length - 2) + '0.'; // -> InternetGatewayDevice.WANDevice.1.WANConnectionDevice.0.WANIPConnection.0.
+            }
+            else { // -> cmm
+            }
+
+            //Enable
+            $F(_path + 'Enable', $('INPUT_Enable').checked ? '1' : '0');
+
+            //Name
+            $F(_path + 'Name', getConnName(_protocol));
+
+            //Port Binding
+            if ($('SELECT_ServiceType').value == 'TR069' || $('SELECT_ServiceType').value == 'VOIP') {
+                $F(_path + 'X_TWSZ-COM_LanInterface', '');
+                $F(_path + 'NATEnabled', '0');
+            }
+            else {
+                $F(_path + 'X_TWSZ-COM_LanInterface', cltLanPort());
+                $F(_path + 'NATEnabled', '1');
+            }
+
+            //Service Type
+            $F(_path + 'X_TWSZ-COM_ServiceList', $('SELECT_ServiceType').value);
+
+            //check ConfirmPassword
+            var _ConfirmPassword = String();
+            if ($("INPUT_PPTPPsd").value != $("INPUT_PPTPCfmPsd").value) {
+                alert(SEcode[1010]);
+                return false;
+            }
+
+            switch (_protocol[0]) {
+                case 'DHCP':
+                    {
+                        var ip_proto_type = $('SELECT_Protocol_R').value;
+                        $F(_path + 'AddressingType', 'DHCP');
+                        $F(_path + 'ConnectionType', 'IP_Routed');
+                        $F(_path + 'MaxMTUSize', $('INPUT_MTU_DHCP').value);
+                        $F(_path + 'X_TWSZ-COM_VendorId', $('INPUT_VendorClassId').value);
+                        $F(_path + 'X_TWSZ-COM_Hostname', $('INPUT_Hostname').value);
+                        $F(_path + 'SuppEnable', Form.Checkbox('INPUT_Enable8021xSupplicant2'));
+                        $F(_path + 'SuppUsername', $('INPUT_SuppName2').value);
+                        $F(_path + 'SuppPass', $('INPUT_SuppPassword2').value);
+                        $F(_path + 'NATEnabled', Form.Checkbox('INPUT_NatEnable'));
+                        $F(_path + 'X_TWSZ-COM_NATType', $('INPUT_NatType').value);
+                        $F(_path + 'X_TWSZ-COM_ProtocolType', ip_proto_type);
+                        if (ip_proto_type.indexOf('6') >= 0) {
+                            var v6path = _path + "X_TWSZ-COM_IPv6Config.";
+                            $F(v6path + 'IPv6DefaultRouterList.1.ConfigType', 'OTHER');
+                            $F(v6path + 'IPv6AddressList.1.AddressingType', 'DHCP');
+                            $F(v6path + 'IPv6PrefixDelegationEnabled', Form.Checkbox('INPUT_IPv6PrefixDelegationEnabled'));
+                            $F(v6path + 'IPv6DNSEnabled', '1');
+                            $F(v6path + 'IPv6DNSOverrideAllowed', Form.Radio('INPUT_DNSv6Server'));
+                            $F(v6path + 'GetIPv6NTPServers', '0');
+                            if (Form.Radio('INPUT_DNSv6Server') == '1') {
+                                $F(v6path + 'UsrIPv6DNSServers', ($('INPUT_IPv6_Dns1').value.toLowerCase() + ',' + $('INPUT_IPv6_Dns2').value.toLowerCase()).delcomma());
+                            }
+                            //duid -> Auto/Static
+                            if ($('SELECT_DUIDConfigType').value == 'Static') {
+                                $F(v6path + 'DUIDConfigType', 'Static');
+                                $F(v6path + 'DUID', $("INPUT_DUID_Pre").value + ":" + $("INPUT_DUID").value);
+                            }
+                            else {
+                                $F(v6path + 'DUIDConfigType', 'Auto');
+                            }
+                        }
+                        if (ip_proto_type.indexOf('4') >= 0) {
+                            $F(_path + 'DNSOverrideAllowed', Form.Radio('INPUT_ServerAsg'));
+                            if (Form.Radio('INPUT_ServerAsg') == '1') {
+                                $F(_path + 'X_TWSZ-COM_UsrDNSServers', ($('INPUT_ServerPry').value + ',' + $('INPUT_ServerSec').value).delcomma());
+                            }
+                        }
+                        break;
+                    }
+                case 'Static':
+                    {
+                        var ip_proto_type = $('SELECT_Protocol_R').value;
+                        $F(_path + 'AddressingType', 'Static');
+                        $F(_path + 'ConnectionType', 'IP_Routed');
+                        $F(_path + 'MaxMTUSize', $('INPUT_MTU_Static').value);
+                        $F(_path + 'X_TWSZ-COM_NATType', $('INPUT_NatType').value);
+                        $F(_path + 'X_TWSZ-COM_ProtocolType', ip_proto_type);
+                        if (ip_proto_type != "IPv6") {
+                            $F(_path + 'ExternalIPAddress', $('INPUT_IpAddr').value);
+                            $F(_path + 'SubnetMask', $('INPUT_SubMask').value);
+                            $F(_path + 'DefaultGateway', $('INPUT_DefGyIp').value);
+                            $F(_path + 'SuppEnable', Form.Checkbox('INPUT_Enable8021xSupplicant1'));
+                            $F(_path + 'SuppUsername', $('INPUT_SuppName1').value);
+                            $F(_path + 'SuppPass', $('INPUT_SuppPassword1').value);
+                            $F(_path + 'NATEnabled', Form.Checkbox('INPUT_NatEnable'));
+                        }
+                        else {
+                            $F(_path + 'SuppEnable', Form.Checkbox('INPUT_Enable8021xSupplicant3'));
+                            $F(_path + 'SuppUsername', $('INPUT_SuppName3').value);
+                            $F(_path + 'SuppPass', $('INPUT_SuppPassword3').value);
+                        }
+
+                        if (ip_proto_type.indexOf('6') >= 0) {
+                            var v6path = _path + "X_TWSZ-COM_IPv6Config.";
+                            $F(v6path + 'IPv6AddressList.1.IPv6Address', $('INPUT_IPv6_IpAddress').value.toLowerCase());
+                            $F(v6path + 'IPv6AddressList.1.PrefixLength', $('INPUT_IPv6_Mark').value);
+                            $F(v6path + 'IPv6DefaultRouterList.1.ConfigType', "Static");
+                            $F(v6path + 'IPv6DefaultRouterList.1.DefaultRouter', $('INPUT_IPv6_DefGateway').value.toLowerCase());
+                            $F(v6path + 'UsrIPv6DNSServers', ($('INPUT_IPv6_Dns1').value.toLowerCase() + ',' + $('INPUT_IPv6_Dns2').value.toLowerCase()).delcomma());
+                            $F(v6path + 'IPv6AddressList.1.AddressingType', "Static");
+                            $F(v6path + 'IPv6PrefixDelegationEnabled', Form.Checkbox('INPUT_IPv6PrefixDelegationEnabled'));
+                            $F(v6path + 'IPv6DNSEnabled', '1');
+                            $F(v6path + 'IPv6DNSOverrideAllowed', '1');
+                            $F(v6path + 'GetIPv6NTPServers', '0');
+                            //duid -> Auto/Static
+                            if ($('SELECT_DUIDConfigType').value == 'Static') {
+                                $F(v6path + 'DUIDConfigType', 'Static');
+                                $F(v6path + 'DUID', $("INPUT_DUID_Pre").value + ":" + $("INPUT_DUID").value);
+                            }
+                            else {
+                                $F(v6path + 'DUIDConfigType', 'Auto');
+                            }
+                        }
+                        if (ip_proto_type.indexOf('4') >= 0) {
+                            $F(_path + 'DNSOverrideAllowed', "1");
+                            $F(_path + 'X_TWSZ-COM_UsrDNSServers', ($('INPUT_ServerPry').value + ',' + $('INPUT_ServerSec').value).delcomma());
+                        }
+                        break;
+                    }
+                case 'PPPoE':
+                    {
+                        var ip_proto_type = $('SELECT_Protocol_R').value;
+                        $F(_path + 'Username', $('INPUT_PppoeAct').value);
+                        if ($('INPUT_PppoePsd').value != '**********') {
+                            $F(_path + 'Password', $('INPUT_PppoePsd').value);
+                        }
+                        $F(_path + 'PPPAuthenticationProtocol', $('SELECT_AuthMethod_PPPoE').value);
+                        $F(_path + 'MaxMTUSize', $('INPUT_MTU_PPPoE').value);
+                        $F(_path + 'ConnectionType', 'IP_Routed');
+                        $F(_path + 'ConnectionTrigger', Form.Select('SELECT_Dial'));
+                        if (Form.Select('SELECT_Dial') == 'OnDemand') {
+                            if ($('INPUT_Idletime').value == "") {
+                                DealWith.Wrong('INPUT_Idletime', "invalid Idletime");
+                                return false;
+                            }
+                            $F(_path + 'IdleDisconnectTime', String(parseInt($('INPUT_Idletime').value) * 60));
+                        }
+                        else if (Form.Select('SELECT_Dial') == 'Manual') {
+                            $F(_path + 'X_TWSZ-COM_ConnectionAction', $('INPUT_ManualConn').checked == true ? "Connect" : "Disconnect");
+                        }
+                        if ($('INPUT_Ussipaddr').checked) {
+                            $F(_path + 'X_TWSZ-COM_StaticIPAddress', $('INPUT_Ipaddr_PS').value);
+                        }
+                        else {
+                            $F(_path + 'X_TWSZ-COM_StaticIPAddress', '');
+                        }
+                        $F(_path + 'NATEnabled', Form.Checkbox('INPUT_NatEnable'));
+                        $F(_path + 'X_TWSZ-COM_NATType', $('INPUT_NatType').value);
+                        $F(_path + 'X_TWSZ-COM_ProtocolType', ip_proto_type);
+                        $F(_path + 'PPPoEACName', $('INPUT_AcName').value);
+                        if (ip_proto_type.indexOf('6') >= 0) {
+                            var v6path = _path + "X_TWSZ-COM_IPv6Config.";
+                            $F(v6path + 'IPv6PrefixDelegationEnabled', Form.Checkbox('INPUT_IPv6PrefixDelegationEnabled'));
+                            $F(v6path + 'IPv6DNSOverrideAllowed', Form.Radio('INPUT_DNSv6Server'));
+                            if (Form.Radio('INPUT_DNSv6Server') == '1') {
+                                $F(v6path + 'UsrIPv6DNSServers', ($('INPUT_IPv6_Dns1').value.toLowerCase() + ',' + $('INPUT_IPv6_Dns2').value.toLowerCase()).delcomma());
+                            }
+                            //duid -> Auto/Static
+                            if ($('SELECT_DUIDConfigType').value == 'Static') {
+                                $F(v6path + 'DUIDConfigType', 'Static');
+                                $F(v6path + 'DUID', $("INPUT_DUID_Pre").value + ":" + $("INPUT_DUID").value);
+                            }
+                            else {
+                                $F(v6path + 'DUIDConfigType', 'Auto');
+                            }
+
+                            if (parseInt($('INPUT_MTU_PPPoE').value) < 1280) {
+                                DealWith.Wrong('INPUT_MTU_PPPoE', "Invalid MTU Value");
+                                return false;
+                            }
+                        }
+                        if (ip_proto_type.indexOf('4') >= 0) {
+                            $F(_path + 'DNSOverrideAllowed', Form.Radio('INPUT_ServerAsg'));
+                            if (Form.Radio('INPUT_ServerAsg') == '1') {
+                                $F(_path + 'X_TWSZ-COM_UsrDNSServers', ($('INPUT_ServerPry').value + ',' + $('INPUT_ServerSec').value).delcomma());
+                            }
+                        }
+                        break;
+                    }
+                case 'PPTP':
+                    {
+                        $F(_path + 'X_TWSZ-COM_VPN_CLIENT', $('INPUT_IpAddr_PPTP').value);
+                        $F(_path + 'X_TWSZ-COM_VPN_NETMASK', $('INPUT_SubMask_PPTP').value);
+                        $F(_path + 'X_TWSZ-COM_VPN_GATEWAY', $('INPUT_DefGwIP_PPTP').value);
+                        $F(_path + 'X_TWSZ-COM_VPN_SERVER', $('INPUT_PPTPServer').value);
+                        $F(_path + 'Username', $('INPUT_PPTPID').value);
+                        if ($('INPUT_PPTPPsd').value != '**********') {
+                            $F(_path + 'Password', $('INPUT_PPTPPsd').value);
+                        }
+                        $F(_path + 'ConnectionType', 'PPTP_Relay');
+                        $F(_path + 'PPPAuthenticationProtocol', $('SELECT_AuthMethod_PPTP').value);
+                        $F(_path + 'MaxMTUSize', $('INPUT_MTU_PPTP').value);
+                        $F(_path + 'DNSOverrideAllowed', Form.Radio('INPUT_ServerAsg')); //pxm1
+                        $F(_path + 'X_TWSZ-COM_UsrDNSServers', ($('INPUT_ServerPry').value + ',' + $('INPUT_ServerSec').value).delcomma()); //pxm1
+                        $F(_path + 'X_TWSZ-COM_NATType', $('INPUT_NatType').value); //zhouxc
+                        break;
+                    }
+                case 'L2TP':
+                    {
+                        $F(_path + 'X_TWSZ-COM_VPN_CLIENT', $('INPUT_IpAddr_PPTP').value);
+                        $F(_path + 'X_TWSZ-COM_VPN_NETMASK', $('INPUT_SubMask_PPTP').value);
+                        $F(_path + 'X_TWSZ-COM_VPN_GATEWAY', $('INPUT_DefGwIP_PPTP').value);
+                        $F(_path + 'X_TWSZ-COM_VPN_SERVER', $('INPUT_PPTPServer').value);
+                        $F(_path + 'Username', $('INPUT_PPTPID').value);
+                        if ($('INPUT_PPTPPsd').value != '**********') {
+                            $F(_path + 'Password', $('INPUT_PPTPPsd').value);
+                        }
+                        $F(_path + 'ConnectionType', 'L2TP_Relay');
+                        $F(_path + 'PPPAuthenticationProtocol', $('SELECT_AuthMethod_PPTP').value);
+                        $F(_path + 'MaxMTUSize', $('INPUT_MTU_PPTP').value);
+                        $F(_path + 'DNSOverrideAllowed', Form.Radio('INPUT_ServerAsg')); //pxm1
+                        $F(_path + 'X_TWSZ-COM_UsrDNSServers', ($('INPUT_ServerPry').value + ',' + $('INPUT_ServerSec').value).delcomma());
+                        $F(_path + 'X_TWSZ-COM_NATType', $('INPUT_NatType').value);
+
+                        break;
+                    }
+                case 'IP_Bridged':
+                    {
+                        $F(_path + 'ConnectionType', 'IP_Bridged');
+                        $F(_path + 'NATEnabled', 0);
+                        $F(_path + 'DNSOverrideAllowed', "0");
+                        $F(_path + 'X_TWSZ-COM_UsrDNSServers', "");
+                        break;
+                    }
+            }
+
+            if (G_IsLanOrWan == "wan") {
+                if (_protocol[0] == 'DHCP' || _protocol[0] == 'Static') {
+                    setTimeout("uiGeTProgress()", 20000);
+                }
+                else {
+                    setTimeout("uiGeTProgress()", 30000);
+                }
+            }
+
+            Cookie.Set_sec('Ui_wanSeting12', 'wanSeting12', 120);
+            $('uiPostForm').submit();
+        }
+
+        function uiPageRefresh() {
+            document.location.href = './lang_connected.html';
+        }
+
+        function uiGeTProgress() {
+            location.href = "./lang_connected.html";
+        }
+
+        function uicheckGatewayAddr() {
+            if ($('SELECT_Protocol_R').value == 'IPv6') return true;
+
+            if (Form.Select('SELECT_ConnType') == 'Static') {
+                if (validateKey($('INPUT_DefGyIp').value) == 0) {
+                    DealWith.Wrong('INPUT_DefGyIp', 'It should be a [0-9] number.');
+                    return false;
+                }
+                if (!checkDigitRange($('INPUT_DefGyIp').value, 1, 1, 223)) {
+                    DealWith.Wrong('INPUT_DefGyIp', 'Gateway address format is error. Please enter the digits between 1 and 223.');
+                    return false;
+                }
+                if (getDigit($('INPUT_DefGyIp').value, 1) == 127) {
+                    DealWith.Wrong('INPUT_DefGyIp', 'Gateway adress format error:The first digit numbers can\'t be 127.');
+                    return false;
+                }
+                if (!checkDigitRange($('INPUT_DefGyIp').value, 2, 0, 255)) {
+                    DealWith.Wrong('INPUT_DefGyIp', 'Gateway adress format error:It should be filled with 4 digit numbers as (xxx.xxx.xxx.xxx).');
+                    return false;
+                }
+
+                if (!checkDigitRange($('INPUT_DefGyIp').value, 3, 0, 255)) {
+                    DealWith.Wrong('INPUT_DefGyIp', 'Gateway adress format error:It should be filled with 4 digit numbers as (xxx.xxx.xxx.xxx).');
+                    return false;
+                }
+
+                if (!checkDigitRange($('INPUT_DefGyIp').value, 4, 1, 254)) {
+                    DealWith.Wrong('INPUT_DefGyIp', 'Gateway adress format error:Please fill the last digit numbers between (1-254).');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function uiCheckInput() {
+            if (Form.Select('SELECT_ConnType') == 'Static') {
+                if ($('SELECT_Protocol_R').value != 'IPv6') {
+                    if ($('INPUT_IpAddr').value == "") {
+                        DealWith.Wrong('INPUT_IpAddr', 'can\'t be empty');
+                        return false;
+                    }
+                    if ($('INPUT_SubMask').value == "") {
+                        DealWith.Wrong('INPUT_SubMask', 'can\'t be empty');
+                        return false;
+                    }
+                    if ($('INPUT_DefGyIp').value == "") {
+                        DealWith.Wrong('INPUT_DefGyIp', 'can\'t be empty');
+                        return false;
+                    }
+                }
+            }
+            else if (Form.Select('SELECT_ConnType') == 'PPPoE') {
+                if ($('INPUT_PppoeAct').value == "") {
+                    DealWith.Wrong('INPUT_PppoeAct', 'can\'t be empty');
+                    return false;
+                }
+                if ($('INPUT_PppoePsd').value == "") {
+                    DealWith.Wrong('INPUT_PppoePsd', 'can\'t be empty');
+                    return false;
+                }
+            }
+
+            if (!$('INPUT_VlanId').value.match(/^[0-9]{1,4}$/) || parseInt($('INPUT_VlanId').value) > 4094) {
+                DealWith.Wrong('INPUT_VlanId', 'Invalid Vlan ID');
+                return false;
+            }
+
+            //inner vlan id check
+            if (!($('INPUT_InnerVlanId').value.match(/^[0-9]{1,4}$/))) {
+                DealWith.Wrong('INPUT_InnerVlanId', 'Invalid Inner VLAN ID');
+                return false;
+            }
+
+            if (!$('INPUT_Priority').value.match(/^[0-9]{1}$/)) {
+                DealWith.Wrong('INPUT_Priority', "Invalid Vlan priority");
+                return false;
+            }
+
+            if (Form.Select('SELECT_ConnType') == 'IP_Bridged') {
+                return true;
+            }
+
+            if (checkIpv6ConnectionNum() == true) {
+                DealWith.Wrong('SELECT_Protocol_R', 'Only one wan connection of IPv6 is valid here! Please check!');
+                return false;
+            }
+
+            if (($N('INPUT_ServerAsg')[1].checked == true)) {
+                //DNS check, add by wuyouhui stat at 2011-11-29
+                if (($('SELECT_Protocol_R').value == 'IPv6') || ($('SELECT_Protocol_R').value == 'IPv4_6')) {
+                    if (($('INPUT_ServerPry').value == '')) {
+                        if (($('SELECT_Protocol_R').value != 'IPv6') && ($('SELECT_ConnType').value == 'Static')) {
+                            DealWith.Wrong('INPUT_ServerPry', 'Invalid Input value');
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (!checkPrimaryDNS('INPUT_ServerPry', $('INPUT_ServerPry').value)) {
+                        return false;
+                    }
+                    else if (!checkPrimaryDNS('INPUT_ServerSec', $('INPUT_ServerSec').value, 'Empty')) {
+                        return false;
+                    }
+                }
+            }
+
+            if (uicheckGatewayAddr() == false) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function dealWithError() {
+            if (G_Error != 1) {
+                return false;
+            }
+            var arrayHint = [];
+            dealErrorMsg(arrayHint, G_Error_Msg);
+        }
+
+        addListeners(uiOnload, dealWithError);
+
+        //]]>
+        //���������Ҽ�
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+                <li class="on"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('0' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "./lang_connected.html";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_setup" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+
+
+            <!-- setup -->
+            <div class="M1">
+                <p id="down" class="lan"><a href="./lang_setup.html" id="lang_lan">LAN Basic</a></p>
+                <p id="up" class="wan"><a href="./lang_connected.html" id="lang_connected">WAN</a></p>
+                <p id=""><a href="./lang_lan_advanced.html" id="lang_lan_advanced">WAN Advanced</a></p>
+                <p id=""><a href="./lang_lanIPV6.html" id="lang_lanIPV6">IPV6 LAN</a></p>
+                <p id="" style="display:none;"><a href="./lang_wanIPV6.html" id="lang_wanIPV6">IPV6 WAN</a></p>
+                <!-- <p id="" style="display:none" class="dialing"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=setup&var:page=dialing" id="dialing">Dialing</a><p> -->
+                <!--zp delete 20120425-->
+
+            </div>
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+
+            <!-- management -->
+
+        </div>
+
+        <!--  content -->
+
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go"><img id="pointTo" src="./img/helpBook.gif" alt="Help" /></a> <span id="lang_title">WAN Connection</span></div>
+            <div class="Embody">
+                <div class="SmallTittle" id="">WAN</div>
+                <div class="div_left" style="width:180px"><input type="checkbox" id="INPUT_Enable"></div>
+                <div class="div_right">Enable Wan</div>
+                <div class="div_left" style="width:180px">Connection Type :</div>
+                <div class="div_right">
+                    <select id="SELECT_ConnType" onChange="onchgConnType()">
+					<option value="DHCP">DHCP</option>
+					<option value="Static">Static IP</option> 
+					<option value="PPPoE">PPPoE</option>
+				<!--<option value="PPTP">PPTP</option>
+					<option value="L2TP">L2TP</option> -->
+				<!--option value="IP_Bridged">Bridge</option -->
+				</select>
+                </div>
+                <!-- Service Type -->
+                <div id="servicetype">
+                    <div class="div_left" style="width:180px">Service Type :</div>
+                    <div class="div_right"><select id="SELECT_ServiceType" onChange="ctrlPortBinding()"></select></div>
+                </div>
+                <!-- IP Version -->
+                <div id="ipversion">
+                    <div class="div_left" style="width:180px" id="lang_IPVersion_Type">IP Version:</div>
+                    <div class="div_middle"><select id="SELECT_Protocol_R" onChange="OnIPVersionChange()">
+					<option value="IPv4">IPv4</option>
+					<option value="IPv6">IPv6</option>
+					<option value="IPv4_6">IPv4&6</option>
+				</select></div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <!-- PPPoE Relay -->
+                <div id="pppoerelay">
+                    <div class="div_left" style="width:180px">PPPoE Relay:</div>
+                    <div class="div_middle"><input type="checkbox" id="INPUT_EnablePPPoERelay"></div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+
+                <!-- Static IP -->
+                <div id="static">
+                    <div class="SmallTittle" id="">Static IP</div>
+                    <div class="div_left" style="width:180px">IP address :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_IpAddr" onChange="this.value = IPtoNumber(this.value)" /></div>
+
+                    <div class="div_left" style="width:180px">Subnet mask :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_SubMask" /></div>
+
+                    <div class="div_left" style="width:180px">Default Gateway IP :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_DefGyIp" onChange="this.value = IPtoNumber(this.value)"></div>
+
+                    <div class="div_left" style="width:180px">MTU :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_MTU_Static" value="1500" maxlength="4" /> (616-1500)</div>
+                    <!-- 802.1X -->
+                    <div class="SmallTittle">802.1X auth</div>
+                    <div class="div_left" style="width:180px"><input type="checkbox" name="INPUT_Enable8021xSupplicant1" id="INPUT_Enable8021xSupplicant1" value="" onClick="uiEnable802_1x(0)" /></div>
+                    <div class="div_right" id="">Enable 802.1X auth</div>
+
+                    <div class="div_left" style="width:180px" id="">User Name :</div>
+                    <div class="div_right">&nbsp;<input type="text" maxlength='64' name="INPUT_SuppName1" id="INPUT_SuppName1" value="1234567890abcdefffffff" /></div>
+
+                    <div class="div_left" style="width:180px" id="">Password :</div>
+                    <div class="div_right">&nbsp;<input type="password" maxlength='64' name="INPUT_SuppPassword1" id="INPUT_SuppPassword1" value="" /></div>
+                </div>
+
+                <!-- DHCP -->
+                <div id="dhcp">
+                    <div id="optioninfo">
+                        <div class="SmallTittle" id="">DHCP</div>
+
+                        <div class="div_left" style="width:180px">Hostname :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_Hostname" /></div>
+                        <div class="div_left" style="width:180px">Vendor Class ID :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_VendorClassId" /></div>
+                        <div class="div_left" style="width:180px">MTU :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_MTU_DHCP" value="1500" maxlength="4" /> (616-1500)</div>
+                    </div>
+                    <!-- 802.1X -->
+                    <div class="SmallTittle" id="">802.1X auth</div>
+                    <div class="div_left" style="width:180px"><input type="checkbox" name="INPUT_Enable8021xSupplicant2" id="INPUT_Enable8021xSupplicant2" value="" onClick="uiEnable802_1x(1)" /></div>
+                    <div class="div_right" id="">Enable 802.1X auth</div>
+                    <div class="div_left" style="width:180px" id="">User Name :</div>
+                    <div class="div_right">&nbsp;<input type="text" maxlength='64' name="INPUT_SuppName2" id="INPUT_SuppName2" value="1234567890abcdefffffff" /></div>
+                    <div class="div_left" style="width:180px" id="">Password :</div>
+                    <div class="div_right">&nbsp;<input type="password" maxlength='64' name="INPUT_SuppPassword2" id="INPUT_SuppPassword2" value="" /></div>
+                </div>
+
+                <!-- PPPoE -->
+                <div id="pppoe">
+                    <div class="SmallTittle" id="">PPPoE</div>
+                    <div class="div_left" style="width:180px">PPPoE Account :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_PppoeAct" /></div>
+                    <div class="div_left" style="width:180px">PPPoE Password :</div>
+                    <div class="div_right">&nbsp;<input type="password" id="INPUT_PppoePsd" /></div>
+                    <div id="block_ppp">
+                        <div class="div_left" style="width:180px">Authentication Method :</div>
+                        <div class="div_right">&nbsp;
+                            <select id="SELECT_AuthMethod_PPPoE">
+							<option value="Auto">AUTO</option>
+							<option value="PAP">PAP</option>
+							<option value="CHAP">CHAP</option>
+							<option value="MS-CHAP">MS-CHAP</option>
+						</select>
+                        </div>
+                    </div>
+                    <div class="div_left" style="width:180px">PPPoE AC Name :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_AcName" value="" /></div>
+                    <div class="div_left" style="width:180px">MTU :</div>
+                    <div class="div_right">&nbsp;<input type="text" id="INPUT_MTU_PPPoE" value="1492" maxlength="4" /><label id="MTU_LABLE">(616-1492)</label></div>
+                    <div class="div_left" style="width:180px">Dial Type :</div>
+                    <div class="div_right">&nbsp;
+                        <select id="SELECT_Dial" onChange="onchgDial()">
+							<option value="AlwaysOn">AlwaysOn</option>
+							<option value="OnDemand">OnDemand</option>
+							<option value="Manual">Manual </option>
+						</select>
+                    </div>
+                    <div id="idletime">
+                        <div class="div_left" style="width:180px">IdleDisconnectTime :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_Idletime" value="0" /> (0-1440 min)</div>
+                    </div>
+                    <div id="manual">
+                        <div class="div_left" style="width:180px">Current Status :</div>
+                        <div class="div_right"><input type="radio" name="Manual" id="INPUT_ManualConn" value="Connect" /><span id="lang_connect">Connect</span>&nbsp;
+                            <input type="radio" name="Manual" id="INPUT_ManualDisConn" value="Disconnect" checked/><span id="lang_disconnect">Disconnect</span>
+                        </div>
+                    </div>
+                    <div id="static_ipaddr">
+                        <div class="div_left" style="width:180px">Use Static IP Address :</div>
+                        <div class="div_right">&nbsp;<input type="checkbox" id="INPUT_Ussipaddr" onClick="onCliShowIpaddr();"></div>
+                    </div>
+
+                    <div id="ipaddr">
+                        <div class="div_left" style="width:180px">IP Address :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_Ipaddr_PS" name="INPUT_Ipaddr" maxlength="15"></div>
+                    </div>
+                </div>
+
+                <div id="div_nat">
+                    <div class="SmallTittle" id="">NAT</div>
+                    <div class="div_left" style="width:180px"><input type="checkbox" id="INPUT_NatEnable" name="INPUT_NatEnable" value="" onClick="uiEnableNat()" /></div>
+                    <div class="div_right">Enable Nat</div>
+                    <div class="div_left" style="width:180px" id="">Nat Type :</div>
+                    <div class="div_right">&nbsp;
+                        <select name="INPUT_NatType" id="INPUT_NatType">
+							<option value="SymmetricNat">SymmetricNat</option>
+							<option value="ConeNat">ConeNat</option>
+						</select>
+                    </div>
+                </div>
+
+                <!-- PPTP/L2TP -->
+                <div id="pptp">
+                    <div class="SmallTittle" id=""><span id="span_pptp">PPTP</span></div>
+                    <div class="div_left" style="width:180px">IP address :</div>
+                    <div class="div_right"><input type="text" id="INPUT_IpAddr_PPTP" /></div>
+
+                    <div class="div_left" style="width:180px">Subnet mask :</div>
+                    <div class="div_right"><input type="text" id="INPUT_SubMask_PPTP" /></div>
+
+                    <div class="div_left" style="width:180px">Default Gateway IP :</div>
+                    <div class="div_right"><input type="text" id="INPUT_DefGwIP_PPTP" /> (Optional)</div>
+
+                    <div class="div_left" style="width:180px" id="SPAN_PPTPServer">PPTP Server :</div>
+                    <div class="div_right"><input type="text" id="INPUT_PPTPServer" /></div>
+
+                    <div class="div_left" style="width:180px" id="SPAN_PPTPId">PPTP ID :</div>
+                    <div class="div_right"><input type="text" id="INPUT_PPTPID" /></div>
+
+                    <div class="div_left" style="width:180px" id="SPAN_PPTPPsd">PPTP Password :</div>
+                    <div class="div_right"><input type="password" id="INPUT_PPTPPsd" /></div>
+
+                    <div class="div_left" style="width:180px">Confirm Password :</div>
+                    <div class="div_right"><input type="password" id="INPUT_PPTPCfmPsd" /></div>
+
+                    <div class="div_left" style="width:180px">Authentication Method :</div>
+                    <div class="div_right">
+                        <select id="SELECT_AuthMethod_PPTP">
+							<option value="Auto">AUTO</option>
+							<option value="PAP">PAP</option>
+							<option value="CHAP">CHAP</option>
+							<option value="MS-CHAP">MS-CHAP</option>
+						</select>
+                    </div>
+
+                    <div class="div_left" style="width:180px">MTU</div>
+                    <div class="div_right"><input type="text" id="INPUT_MTU_PPTP" value="1492" maxlength="4" /> (616-1436)</div>
+                </div>
+                <!-- DNS -->
+                <div id="block_dns">
+                    <div class="SmallTittle" id="">DNS</div>
+                    <div class="div_left" style="width:180px">Domain Name Server Assignment :</div>
+                    <div class="div_right"><input type="radio" name="INPUT_ServerAsg" value="0" onClick="onclkDnsEnable()" /> Auto&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="INPUT_ServerAsg" value="1" onClick="onclkDnsEnable()" /> Manual&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><br
+                    />
+                    <!-- DNS -->
+                    <div id="div_dns">
+                        <div class="div_left" style="width:180px">Domain Name Server (Primary) IP :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_ServerPry" onChange="this.value = IPtoNumber(this.value)" /></div>
+
+                        <div class="div_left" style="width:180px">Domain Name Server (Secondary ) IP :</div>
+                        <div class="div_right">&nbsp;<input type="text" id="INPUT_ServerSec" onChange="this.value = IPtoNumber(this.value)" /></div>
+                    </div>
+                </div>
+
+                <!-- IPV6 Static -->
+                <div id="IPv6_Static">
+                    <div class="SmallTittle" id="">Static IPv6</div>
+                    <div class="div_left" style="width:180px" id="lang_ipAddressV6">IPv6 Address</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_IPv6_IpAddress" maxlength="40"></div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left" style="width:180px" id="lang_ipPrefixLen">Prefix length</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_IPv6_Mark" maxlength="15"></div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left" style="width:180px" id="lang_defaultGatewayV6">IPv6 Default Gateway</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_IPv6_DefGateway" maxlength="40"></div>
+                    <div class="div_right">&nbsp;</div>
+                    <!-- 802.1X -->
+                    <div id="static_8021x">
+                        <div class="SmallTittle">802.1X auth</div>
+                        <div class="div_left" style="width:180px"><input type="checkbox" name="INPUT_Enable8021xSupplicant3" id="INPUT_Enable8021xSupplicant3" value="" onClick="uiEnable802_1x(2)" /></div>
+                        <div class="div_right" id="">Enable 802.1X auth</div>
+
+                        <div class="div_left" style="width:180px" id="">User Name :</div>
+                        <div class="div_right">&nbsp;<input type="text" maxlength='64' name="INPUT_SuppName1" id="INPUT_SuppName3" value="" /></div>
+                        <div class="div_left" style="width:180px" id="">Password :</div>
+                        <div class="div_right">&nbsp;<input type="password" maxlength='64' name="INPUT_SuppPassword3" id="INPUT_SuppPassword3" value="" /></div>
+                    </div>
+                </div>
+
+                <div id="block_dnsv6">
+                    <div class="SmallTittle" id="">IPv6 DNS</div>
+                    <div class="div_left" style="width:180px">Domain Name Server Assignment :</div>
+                    <div class="div_right"><input type="radio" name="INPUT_DNSv6Server" value="0" onClick="onclkDnsv6Enable()" /> Auto&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="INPUT_DNSv6Server" value="1" onClick="onclkDnsv6Enable()" id="maual2" /> Manual&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><br
+                    />
+                </div>
+
+                <div id="IPv6_DNSs">
+                    <div class="div_left" style="width:180px" id="lang_masterDnsV6">IPv6 Primary DNS</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_IPv6_Dns1" maxlength="40"></div>
+                    <div class="div_right">&nbsp;</div>
+                    <div class="div_left" style="width:180px" id="lang_slaveDnsV6">IPv6 Second DNS</div>
+                    <div class="div_middle">&nbsp;<input type="text" id="INPUT_IPv6_Dns2" maxlength="40"></div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+
+                <div id="DIV_UdidV6only">
+                    <div class="div_left" id="lang_DUIDConfType" style="width:180px">DUID Config type : </div>
+                    <div class="div_middle">&nbsp;<select id="SELECT_DUIDConfigType" onChange="onChangeDuidConfigType()">
+					<option value="Auto" id="lang_DUIDConfAuto">Auto</option>
+					<option value="Static" id="lang_DUIDConfManual">Manul</option>
+				</select></div>
+                    <div class="div_right">&nbsp;</div>
+                    <!-- Auto/Static  -->
+                    <div id="div_duid">
+                        <div class="div_left" style="width:180px">DUID</div>
+                        <div class="div_middle">&nbsp;<input type="text" id="INPUT_DUID_Pre" value="00:01:00:01" size=8 readonly>:<input type="text" id="INPUT_DUID" value="00:00:00:01:00:00:00:00:00:01"></div>
+                        <div class="div_right">&nbsp;</div>
+                    </div>
+                    <div id="div_ipv6Prefix">
+                        <div class="div_left" style="width:180px" id="lang_EnablePrefixDispatch">Enable DHCP-PD</div>
+                        <div class="div_middle">&nbsp;<input type="checkbox" id="INPUT_IPv6PrefixDelegationEnabled"></div>
+                        <div class="div_right">&nbsp;</div>
+                    </div>
+                </div>
+
+
+                <!-- LAN Port Binding -->
+                <div id="port_bind">
+                    <div class="SmallTittle" id="">Port Binding</div>
+                    <div class="div_left" style="width:180px">LAN Port :</div>
+                    <div class="div_right">
+                        <input type="checkbox" id="INPUT_LanPort1"> LAN1&nbsp;
+                        <input type="checkbox" id="INPUT_LanPort2"> LAN2&nbsp;
+                        <input type="checkbox" id="INPUT_LanPort3"> LAN3&nbsp;
+                        <input type="checkbox" id="INPUT_LanPort4"> LAN4&nbsp;
+                    </div>
+                    <div class="div_left" style="width:180px">WLAN Port :</div>
+                    <input type="checkbox" id="INPUT_WlanSsid1"> <span style="color:#FF9966"><b>SSID</b></span>
+                    <div class="div_right" style="display:none">
+                        <input type="checkbox" id="INPUT_WlanSsid2"> SSID2
+                        <input type="checkbox" id="INPUT_WlanSsid3"> SSID3
+                        <input type="checkbox" id="INPUT_WlanSsid4"> SSID4
+                    </div>
+                </div>
+
+                <!-- VLAN -->
+                <div id="div_vlan">
+                    <div class="SmallTittle" id="">VLAN</div>
+                    <!-- VLAN ID -->
+                    <div class="div_left" style="width:180px"><input type="checkbox" id="INPUT_VlanEnable" onClick="onclkVlanEnable()" /></div>
+                    <div class="div_right"><span id="INPUT_VlanEnable">Enable VLAN Tagging</span></div>
+                    <div id="vlan_id">
+                        <div class="div_left" style="width:180px">VLAN ID :</div>
+                        <div class="div_right"><input type="text" id="INPUT_VlanId"> (1 - 4094)</div>
+
+                        <div class="div_left" style="width:180px">Priority :</div>
+                        <div class="div_right"><input type="text" id="INPUT_Priority"> (0 - 7)</div>
+                        <div class="div_right" style="display:none">
+                            <div class="div_left" style="width:180px"><input type="checkbox" id="INPUT_InnerTagEnable" onClick="onclkInnerTagEnable()" /></div>
+                            <div class="div_right"><span id="SPAN_VlanEnable">Enable Inner VLAN Tagging</span></div>
+                            <div id="inner_tag_id">
+                                <div class="div_left" style="width:180px">Inner VLAN ID :</div>
+                                <div class="div_right"><input type="text" id="INPUT_InnerVlanId"> (1 - 4094)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="div_left" style="width:180px">&nbsp;</div>
+                <div class="div_button">
+                    <input id="submit" type="button" value="Apply" onClick="uiSubmit()" />
+                    <input id="refresh" type="button" value="Cancel" onClick="uiPageRefresh()"/>
+                </div>
+            </div>
+            <!--end Embody-->
+            <form name="uiPostForm" id="uiPostForm" method="post" action=""></form>
+        </div>
+        <!--end Content-->
+
+        <!-- if loading and content will not display-->
+        <div id="Loading">
+        </div>
+    </div>
+</body>
+
+</html>

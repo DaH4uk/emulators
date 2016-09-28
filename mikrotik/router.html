@@ -1,0 +1,36 @@
+<table id="rtable" border="0" cellspacing="0" cellpadding="0">
+    <tbody id="wireless_network">
+        <tr>
+            <td colspan="20" class="sep">
+                <h2><span>Wireless Network</span></h2></td>
+        </tr>
+    </tbody>
+
+
+    <tbody>
+        <tr>
+            <td class="label" style="min-width: 163px;"><span>Address Acquisition</span></td>
+            <td class="extra"></td>
+            <td class="value" colspan="18"><span><span class="radio"><input type="radio" name="radio47" id="Static">Static</span><span class="radio"><input type="radio" name="radio47" id="Automatic">Automatic</span>
+                <span class="radio"><input type="radio" name="radio47" checked="true" id="PPPoE">PPPoE</span>
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="nigga_router"></div>
+
+<script>
+    $(nigga_router).load("pppoe.html");
+
+    $(Static).bind('click', function() {
+        $(nigga_router).load("static.html");
+    });
+
+    $(Automatic).bind('click', function() {
+        $(nigga_router).load("automatic.html");
+    });
+    $(PPPoE).bind('click', function() {
+        $(nigga_router).load("pppoe.html");
+    });
+</script>

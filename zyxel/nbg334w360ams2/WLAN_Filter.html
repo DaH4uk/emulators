@@ -1,0 +1,524 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+<!--
+
+<!-- RpUseIdentifier RpIdentifier=doLoadFunc RpItemType=ItemGroup -->
+    function doLoad()
+    {
+        top.buttom.location="buttom.html";
+    }
+
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+
+    top.header.szHelp="h_WLAN_Filter.html";
+
+// -->
+</script>
+ <style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/WLAN_Filter_1" target="buttom">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="WLAN.html" target="main" class="sub"><b><FONT class=NaviText>
+	General				   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+                   <td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+	MAC Filter				   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="WLAN_Adv.html" target="main" class="sub"><b><FONT class=NaviText>
+	Advanced				   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			  <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_QoS.html" target="main" class="sub"><b><FONT class=NaviText>
+QoS			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			  <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_WPS.html" target="main" class="sub"><b><FONT class=NaviText>
+WPS			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+			  <div align=center><a href="WLAN_WPS_Station.html" target="main" class="sub"><b><FONT class=NaviText>
+WPS Station			  </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+                 </tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	MAC Address Filter                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td colspan="2">
+	<input type="checkbox" name="WLAN_FltActive" />
+    Active                         </td>
+</tr>
+<tr>
+                         <td width="13%" >
+    Filter Action                         </td>
+<td width="87%">
+	<input type="radio" name="WLAN_FltAction" value="0" />
+    Allow						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="WLAN_FltAction" value="1" checked />
+    Deny                         </td>
+</tr>
+<tr>
+                         <td colspan="2" >&nbsp;</td>
+</tr>
+<tr>
+                         <td colspan="2" ><table width="100%"  border="1" align=center cellpadding="1" cellspacing="0" bordercolor="#FFFFFF">
+                           <tr height="30">
+                             <td class="tableTitle"><div align=center>
+    Set                             </div>
+</td>
+<td class="tableTitle"><div align=center>
+    MAC Address                             </div>
+</td>
+<td class="tableTitle"><div align=center>
+    Set                             </div>
+</td>
+<td class="tableTitle"><div align=center>
+    MAC Address                             </div>
+</td>
+</tr>
+                           <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    1							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    17							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    2							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    18							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    3							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    19							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    4							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    20							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    5							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    21							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    6							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    22							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    7							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    23							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    8							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    24							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    9							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    25							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    10							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    26							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    11							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    27							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    12							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    28							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    13							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    29							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    14							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    30							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor2"> 
+                             <td align=center >
+							 <strong>
+    15							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    31							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                               <tr class="tabcolor1"> 
+                             <td align=center >
+							 <strong>
+    16							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressL" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+<td align=center >
+								 <strong>
+    32							 </strong>
+    
+                             </td>
+<td align=center>
+	    <input type="text" name="WLAN_FltAddressR" size="26" maxlength="17" value="00:00:00:00:00:00" onChange="doMACcheck(this);" />
+    
+                             </td>
+</tr>
+                             </table>
+</td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+	<input type="submit" name="sysSubmit" value="Apply" />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">						 </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+ 
+</form>
+<p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Network > Wireless LAN > MAC Filter');
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>
