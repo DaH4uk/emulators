@@ -1,55 +1,25 @@
-Список прошивок 
-    
-    1. D-link, белая прошивка, меню слева (RUS/ENG) - в разработке
-
-    2. D-link, Gray (RUS/ENG) - доработать
-
-    3. оранжевая прошивка Tenda (Eng), где меню вверху - возможно привезу
-
-    4. Tenda, где меню слева (ENG)
-
-    5. Apple AirPort - big ASS
-    
-    6. Mikrotik - в разработке
-    
-    7. Xiaomi
-    
-    8. SNR-CPE
-
-    9. Open-WRT - можно открыть в virtualBox
-    
-    10. Sercomm S1010 - готов
-    
-    11. Sagemcom f@st 2408
-    
-    12. Netis - готов
-
-    13.netgear jwnr2000 - готова
-    
-    14. zte n118 -в разработке 
-
-    
-    
-    
-    
-wget -r -k -l 0 -p -E -nc -np http://www.tp-linkru.com/resources/simulator/TL-WR941ND_ru/
-
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/network.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/wifi.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/firewall.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/status.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/light_off.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/extra.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/iptv.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/control.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_eng.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/system.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/icons/torrent.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_rus.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_ukr.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_fas.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_fra.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_tur.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/flags/lang_ara.png
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/closer.gif
-wget -r -k -l 0 -p -E -nc -np http://em.dlink.ru/emul/DIR-615DP1_gray/image/helpme.png
+﻿№	Название прошивки	Статус	Режим мануала
+1	D-Link оранжевая прошивка - ENG	Готов	Готов
+2	D-Link серая прошивка (ENG)	Готов	В очереди
+3	D-Link белая прошивка	Готов	В очереди
+4	TP-Link зеленая прошивка (ENG)	Готов	В очереди
+5	TP-Link зеленая прошивка (RUS)	Готов	В очереди
+6	TP-Link Archer (ENG)	Готов	В очереди
+7	Asus Синяя (Eng)	Готов	В очереди
+8	Asus серая прошивка (EN/RUS)	Готов	В очереди
+9	Zyxel синяя прошивка (Eng)	Готов	В очереди
+10	Zyxel Keenetic	Готов	В очереди
+11	Netgear (RUS) старая	Готов	В очереди
+12	Netgear (RUS) новая	Готов	В очереди
+13	Upvel UR-314AWN	Готов	В очереди
+14	Upvel UR-447N4G	Готов	В очереди
+15	Linksys	Готов	В очереди
+16	DD-WRT	Готов	В очереди
+17	Belkin	Готов	В очереди
+18	Mikrotik	В разработке	В очереди
+19	Sercomm S1010	Готов	В очереди
+20	Netis	Готов	В очереди
+21	Zte	В разработке	В очереди
+22	Sagemcom f@st 2408	Нужно найти	
+23	SNR-CPE	Нужно найти	
+24	Xiaomi	Нужно найти	
