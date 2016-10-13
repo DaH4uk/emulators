@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0027)http://192.168.1.1/Ping.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>Ping Test</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252"><LINK 
+href="Ping_files/style.css" type=text/css rel=stylesheet>
+<SCRIPT src="Ping_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="Ping_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Ping_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Ping_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Ping_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Ping_files/capadmin.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Ping_files/layout.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript>
+function valid(F,I)
+{
+	if(I == "start" && F.ping_ip.value == ""){
+//              alert("You must input an IP Address or Domain Name!");
+                alert(errmsg.err8);
+		F.ping_ip.focus();
+		return false;
+	}
+	return true;
+}
+var value=0;
+function Refresh()
+{
+	refresh_time = 5000;
+	if (value>=1)
+	{
+		window.location.replace("Ping.htm");
+	}
+	value++;
+	timerID=setTimeout("Refresh()",refresh_time);
+}
+function init()
+{
+	window.location.href = "#";
+	
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY text=#000000 bgColor=#ffffff >
+<FORM name=ping action="http://ui.linksys.com/WRT54GL/4.30.0/apply.cgi" method=post><INPUT type=hidden value=Ping 
+name=submit_button> <INPUT type=hidden value=start name=submit_type> <INPUT 
+type=hidden value=Apply name=action> <INPUT type=hidden value=gozila_cgi 
+name=change_action> 
+<DIV align=center>
+<CENTER>
+<TABLE id=AutoNumber1 
+style="BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-COLLAPSE: collapse; BORDER-RIGHT-WIDTH: 0px" 
+borderColor=#111111 height=322 cellSpacing=0 cellPadding=0 width=458 border=0>
+  <TBODY>
+  <TR>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    width=459 colSpan=3 height=19><B><FONT face=Arial color=#0000ff><SPAN 
+      style="FONT-SIZE: 14pt">
+      <SCRIPT>Capture(adleftmenu.ping)</SCRIPT>
+      </SPAN></FONT></B></TD><!-- td style="border-style: none; border-width: medium" width="224" height="19">&nbsp;</td --><!-- td style="border-style: none; border-width: medium" height="19" align="right" width="41">&nbsp;</td --></TR>
+  <TR>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    width=194 height=39><B><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(ping.ipdomain)</SCRIPT>
+      :</SPAN></FONT></B></TD>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    align=left width=224 height=39><INPUT onblur='valid_name(this,"IP")' 
+      maxLength=31 size=31 name=ping_ip></TD>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    align=right width=41 height=39>
+      <SCRIPT>document.write("<INPUT  type=button name=ping_button value=\"" + adbutton.ping + "\">");</SCRIPT>
+    </TD></TR>
+  <TR>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    width=194 height=22><B><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(ping.times)</SCRIPT>
+      &nbsp;:&nbsp;</SPAN></FONT> <FONT face=Arial size=1>&nbsp;&nbsp; 
+      </FONT></B></TD>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    width=224 height=22><B><FONT face=Arial size=1><SELECT name=ping_times> 
+        <OPTION value=5 selected>5</OPTION> <OPTION value=10>10</OPTION> <OPTION 
+        value=0>
+        <SCRIPT>Capture(ping.unlimited)</SCRIPT>
+        </OPTION></SELECT></FONT></B></TD>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    align=right width=41 height=22>&nbsp;</TD></TR>
+  <TR>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    width=194 height=18></TD>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    width=224 height=18></TD>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    align=right width=41 height=18></TD></TR>
+  <TR>
+    <TD 
+    style="BORDER-RIGHT: 3px double; BORDER-TOP: 3px double; BORDER-LEFT: 3px double; BORDER-BOTTOM: 3px double" 
+    vAlign=top borderColor=#808080 width=453 colSpan=3 height=293>
+      <SCRIPT language=javascript>
+var table = new Array(
+
+);
+   var i = 0;
+   for(;;){
+	if(!table[i])	break;
+	document.write(table[i]+"<br>");
+	i = i + 1;
+   }
+</SCRIPT>
+    </TD></TR>
+  <TR>
+    <TD 
+    style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+    align=right width=459 colSpan=3 height=45>
+      <P align=right>&nbsp;
+      <SCRIPT>document.write("<INPUT  type=button name=stop_button value=\"" + adbutton.stop + "\">");</SCRIPT>
+       &nbsp;
+      <SCRIPT>document.write("<INPUT  type=button name=clog_button value=\"" + adbutton.clearlog + "\">");</SCRIPT>
+       &nbsp;
+      <INPUT onclick=self.close() type=button value=Close name=cancel> 
+
+       </P></TD><A name=#></A></TR></TBODY></TABLE></CENTER></DIV>
+<CENTER>
+<P><WINDWEB_URL></P></CENTER></FORM></BODY></HTML>

@@ -1,0 +1,166 @@
+<SCRIPT language="javascript" type="text/javascript">
+var wzdFinishInf = new Array(
+0,
+1,
+0,
+0,
+0,
+0,
+0,
+3,
+1,
+0,0 );
+</SCRIPT>
+<SCRIPT language="javascript" type="text/javascript">
+var wzdForShowStepInfo = new Array(
+0,1,3,0,0,0,0 );
+</SCRIPT>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<HTML>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico"><TITLE>TL-WR740N/TL-WR741ND</TITLE>
+<META http-equiv=Pragma content=no-cache>
+<META http-equiv=Expires content="wed, 26 Feb 1997 08:21:57 GMT">
+<LINK href="../dynaform/css_main.css" rel=stylesheet type="text/css">
+<SCRIPT language="javascript" src="../dynaform/common.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="javascript" type="text/javascript"><!--
+//--></SCRIPT>
+
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<SCRIPT type="text/javascript">
+<!--
+function Click(){ window.event.returnValue=false;}
+document.oncontextmenu=Click;
+//-->
+</SCRIPT>
+
+<SCRIPT type="text/javascript">
+<!--//
+function bindNext(obj)
+
+{
+    //var button = document.getElementById("Submit");
+
+    var button = document.forms[0].Complete;
+
+    if ((wzdFinishInf[5] == 1))
+    {
+        button = document.forms[0].Reboot;
+    }
+
+    if (obj.keyCode == 13)
+    {
+        button.click();
+        obj.returnValue = false;
+    }
+}
+function doBack()
+{
+	location.href="../userRpm/WzdWlanRpm.htm";
+}
+
+function doFinish()
+{
+    location.href="../userRpm/StatusRpm.htm";
+} 
+
+function doReboot()
+{
+    if(confirm(str_pages.wzd_end.js_sure_reboot))
+    {
+        location.href = "../userRpm/SysRebootRpm.htm?Reboot=Reboot";
+        return true;
+    }
+    else 
+    {
+        return false;
+    }
+}
+
+//-->
+
+</SCRIPT>
+
+</HEAD>
+
+<BODY onLoad="setTagStr(document,'wzd_end');LoadHelp('WzdFinishHelpRpm.htm'); resize(this);" onResize="resize(this);">
+<CENTER>
+  <FORM action="WzdEndRpm.htm" enctype=multipart/form-data method="get">
+    <TABLE id=autoWidth>
+      <TBODY>
+        <TR>
+          <TD class=h1 colspan=2 id="t_wzdEndT">Quick Setup - Finish</TD>
+        </TR>
+        <TR>
+          <TD class=blue colspan=2></TD>
+        </TR>
+		
+        <TR>
+			<TD class=h2><B class="info2" id="t_wzdend_context1">Congratulations!</B></TD>
+		</TR>
+		<TR>
+			<TD class="info" ><span id="t_wzdend_context2" name="t_wzdend_context2">&nbsp; &nbsp; The basic internet and wireless settings are finished, please click </span><B id="t_wzdend_finish">Finish</B><span id="t_wzdend_context4" name="t_wzdend_context4"> button and test your internet connection.</span></TD>
+		</TR>
+        <TR>
+			<TD class="info" id="t_wzdend_context3">&nbsp; &nbsp; If it is failed, please reboot your modem and wait 2 minutes or run the Quick Setup again.</TD>
+        </TR>
+        <SCRIPT type="text/javascript">
+    if(wzdFinishInf[5] == 1)
+    {
+		document.write('<TR><TD style = "padding-left: 5%"><SPAN class="info2" style="color:#FF0000" id="t_chg_warn">The change of working mode config will not take effect until this device reboot.</SPAN> </TD></TR>'); 
+	}
+</SCRIPT>
+        <TR>
+          <TD class=blue></TD>
+        </TR>
+        <TR>
+          <TD class=mbtn><INPUT class=buttonBig id=Return type=button value="Back" name="Return" onClick="doBack();">
+            &nbsp; 
+            &nbsp;
+            <SCRIPT type="text/javascript">
+<!--//
+if(wzdFinishInf[0])
+{
+	document.write('<input name="SecWzd" type="button" class="buttonBig" id="button" value="FireWall Cfg" >&nbsp; &nbsp;');
+}
+
+     if ((wzdFinishInf[5] == 1))
+     {
+     	document.write('<INPUT class=buttonBig id=Submit type=button value=Reboot name="Reboot" onClick="doReboot();">');
+     }
+     else
+     {
+   	  document.write('<INPUT class=buttonBig id=Submit type=button value=Finish name="Finish" onClick="doFinish();"> ');     
+    }
+      
+//-->
+</SCRIPT>
+            <INPUT type=hidden name=ClientId></TD>
+        </TR>
+        <SCRIPT type="text/javascript">
+<!--//
+document.forms[0].ClientId.value = wzdFinishInf[1];
+//-->
+</SCRIPT>
+      </TBODY>
+    </TABLE>
+  </FORM>
+</CENTER>
+</BODY>
+
+    </TABLE>
+
+  </FORM>
+
+</CENTER>
+
+</BODY>
+
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+
+<META http-equiv="pragma" content="no-cache">
+
+</HEAD>
+
+</HTML>

@@ -1,0 +1,522 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+
+    function doLoad() {
+        top.buttom.location="buttom.html";
+    }
+
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+	function doFindCurrentRule(CurrentIndex)
+	{
+		num = parseInt(CurrentIndex);
+		document.forms[0].BW_rtnCurIndex.value = num;
+	}
+	function doEditRule()
+	{
+		document.forms[0].BW_rtnFlag.value = 1;
+	}
+	function doDeleteRule()
+	{
+		document.forms[0].BW_rtnFlag.value = 2;					
+	}
+	function doFindAppRule(CurrentIndex)
+	{
+		num = parseInt(CurrentIndex);
+		document.forms[0].BW_rtnAppIndex.value = num;
+	}
+	function doEditAppRule()
+	{
+		document.forms[0].BW_rtnAppFlag.value = 1;
+	}
+	function chk_wzBWWANBudget(value)
+  	{
+  		if (value == "")
+		{	
+			alert("The value of bandwidth can not accept empty.");
+			document.forms[0].BW_Cfg_WanBudget.value = 30;
+			return;
+		}
+		if (value < 30)
+		{
+			alert( "WAN Budget must be assigned at least 30.");
+			document.forms[0].BW_Cfg_WanBudget.value = 30;
+			return;
+		}
+  	}
+  	function dospeedtest()
+  	{
+  		document.forms[0].BW_Speed_flag.value = 1;
+  	}
+</script>
+
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/BW_Cfg_Adv_1" target="buttom">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="BW_Cfg.html" target="main" class="sub"><b><FONT class=NaviText>
+General				   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+Advanced				   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="BW_monitor.html" target="main" class="sub"><b><FONT class=NaviText>
+Monitor                   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>					 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	Management Bandwidth                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+			<tr>
+                        	<td>Check my upstream bandwidth&nbsp;&nbsp;
+<input type="submit" name="BW_Speed_test" value="Detection" onClick="dospeedtest();doSubmit();" />
+<input type="hidden" name="BW_Speed_flag" value="0" />
+0kbps                  	</td>
+</tr>
+					   <tr>
+                         <td>Upstream Bandwidth&nbsp;&nbsp;
+<input type="text" name="BW_Cfg_WanBudget" size="6" maxlength="6" value="0" onkeypress="chk_num(event)" onblur="chk_wzBWWANBudget(this.value)" />
+&nbsp;
+(kbps)(10 kbps reserved)                  		 </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	Application List                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td><div><table width="100%"  border="1" align=center cellpadding="1" cellspacing="0" bordercolor="#FFFFFF">
+                               <tr>
+                                 <td width="15%"  class="tableTitle"><div align=center>#</div>
+</td>
+<td width="15%" height="23"  class="tableTitle"><div align=center>
+	Enable								 </div>
+</td>
+<td width="25%"  class="tableTitle"><div align=center>
+	Service                                 </div>
+</td>
+<td width="25%"  class="tableTitle"><div align=center>
+	Priority					             </div>
+</td>
+<td width="20%" align=center  class="tableTitle"><div align=center>
+	Advanced Setting							     </div>
+</td>
+</tr>
+							   <tr class="tabcolor2">                                 
+	<td><div align=center><strong>	1</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	XBox Live	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=1>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor1">                                 
+	<td><div align=center><strong>	2</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	VoIP (SIP)	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=2>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor2">                                 
+	<td><div align=center><strong>	3</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	FTP	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=3>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor1">                                 
+	<td><div align=center><strong>	4</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	E-Mail	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=4>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor2">                                 
+	<td><div align=center><strong>	5</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	eMule	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=5>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor1">                                 
+	<td><div align=center><strong>	6</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	BitTorrent	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=6>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor2">                                 
+	<td><div align=center><strong>	7</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	MSN Webcam	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=7>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>							   <tr class="tabcolor1">                                 
+	<td><div align=center><strong>	8</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_App_Active" />
+	</div></td>	<td><div align=center>	WWW	</div></td>	<td><div align=center>	<select name="BW_AdvServiceSel" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_App_x" value="0" />
+	</div></td>	<td><div align=center>                                     <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindAppRule(this.id); doEditAppRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=8>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0">									 </a></font>
+	</div></td>    </tr>	<input type="hidden" name="BW_rtnAppIndex" value="0" />
+	<input type="hidden" name="BW_rtnAppFlag" value="0" />
+   
+                            </table>
+</div>
+</td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	User-defined Service                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td><div><table width="100%"  border="1" align=center cellpadding="1" cellspacing="0" bordercolor="#FFFFFF">
+                               <tr>
+                                 <td width="15%"  class="tableTitle"><div align=center>#</div>
+</td>
+<td width="15%" height="23"  class="tableTitle"><div align=center>
+	Enable								 </div>
+</td>
+<td width="15%" height="23"  class="tableTitle"><div align=center>
+Direction                         		 </div>
+</td>
+<td width="25%"  class="tableTitle"><div align=center>
+	Service Name                                 </div>
+</td>
+<td width="15%"  class="tableTitle"><div align=center>
+	Priority                                 </div>
+</td>
+<td width="15%" align=center  class="tableTitle"><div align=center>
+	Modify                                 </div>
+</td>
+</tr>
+                               <tr class="tabcolor2">
+	<td ><div align='center'><strong>	1	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=1>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=1>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor1">
+	<td ><div align='center'><strong>	2	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=2>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=2>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor2">
+	<td ><div align='center'><strong>	3	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=3>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=3>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor1">
+	<td ><div align='center'><strong>	4	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=4>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=4>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor2">
+	<td ><div align='center'><strong>	5	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=5>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=5>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor1">
+	<td ><div align='center'><strong>	6	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=6>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=6>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor2">
+	<td ><div align='center'><strong>	7	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=7>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=7>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor1">
+	<td ><div align='center'><strong>	8	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=8>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=8>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor2">
+	<td ><div align='center'><strong>	9	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=9>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=9>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                               <tr class="tabcolor1">
+	<td ><div align='center'><strong>	10	</strong></div></td>	<td><div align=center>	<input type="checkbox" name="BW_UserDefined_Active" />
+	</div></td>	<td><div align=center>	<select name="BW_Cfg_Dir" size="1">
+<option value=00000000 selected>To LAN
+<option value=00000001>To WAN
+<option value=00000002>To WLAN
+</select>	</div></td>	<td><div align=center>	<input type="text" name="BW_Adv_Name" size="12" maxlength="19" value="" />
+	</div></td>	<td><div align=center>	<select name="BW_Adv_Priority" size="1">
+<option value=00000000 selected>High
+<option value=00000001>Mid
+<option value=00000002>Low
+</select>	<input type="hidden" name="BW_Cfg_x" value="0" />
+	</div></td>	<td><div align=center>								 <font style= "cursor:hand;cursor:pointer;">
+	<a onClick="doFindCurrentRule(this.id); doEditRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=10>
+	<img src="images/i_edit.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image26','','images/i_edit_on.gif',1)" alt="Edit" title="Edit" name="Image26" width="19" height="14" border="0"></a><a onClick="doFindCurrentRule(this.id); doDeleteRule(); document.forms[0].target='main'; document.forms[0].submit(); " id=10>&nbsp;
+	<img src="images/i_delete.gif" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image29','','images/i_delete_on.gif',1)"  alt="Remove" title="Remove" name="Image29" width="17" height="14" border="0"></a></font>
+	</div></td>	</tr>                            </table>
+</div>
+</td>
+</tr>
+</table>
+<input type="hidden" name="BW_rtnCurIndex" value="0" />
+<input type="hidden" name="BW_rtnFlag" value="0" />
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+<input type="submit" name="BW_CCfg_Apply" value="Apply" onClick="doSubmit();" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">                         </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+ 
+</form>
+<p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Management > Bandwidth MGMT > Advanced');
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

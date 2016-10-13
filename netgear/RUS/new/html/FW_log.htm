@@ -1,0 +1,334 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/FW_log.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "FW_log";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//LOG
+var G_EmailEnable = "0";
+var G_SenderMail = "";
+var G_Logger_site = "1";
+var G_Logger_login_web ="1";
+var G_Logger_operation = "1";
+var G_Logger_dos = "1";
+var G_Logger_wireless = "1";
+var G_Logger_internet_reset = "1";
+var G_Logger_nat_forward ="1";
+/*add by logview*/
+var G_CurrentLocalTime = "1970-01-01T00:00:00"
+/*add by logview*/
+function processResult(responseText)
+{
+$('log_detail').value = responseText;
+}
+function getDayOfWeek(dayValue){
+var day = new Date(Date.parse(dayValue.replace(/-/g, '/')));
+var today = new Array("0","1","2","3","4","5","6"); //??????
+//var today = new Array("???","???","???","???","???","???","???");
+return today[day.getDay()];
+}
+function pushbutton(_Date){
+var cur_day = parseInt(_Date[2],10); //???
+var cur_month = parseInt(_Date[1],10); //???
+var cur_year = parseInt(_Date[0],10); //???
+return getDayOfWeek(cur_year+"-"+cur_month+"-"+cur_day);
+}
+function nullError(responseText){
+return;
+}
+function ajax_GetLogText()
+{}
+function Time_tick(){
+//alert("G_CurrentLocalTime = "+G_CurrentLocalTime+" : "+G_CurrentLocalTime.replace('T',' ')+" : "+G_CurrentLocalTime.replace('T',' ').split(' '));
+var _Temp = [].concat(G_CurrentLocalTime.replace('T',' ').split(' '));
+var _Temp_Date = [].concat(_Temp[0].split('-'));
+var _Temp_Date_Week = pushbutton(_Temp_Date);
+var tmpCurrentTime = lang_current_time[0] + ' ' + lang_schedule_week[_Temp_Date_Week] + ', ' + lang_schedule_month[_Temp_Date[1]-1] + ' ' + _Temp_Date[2] +　', ' + _Temp_Date[0] + ' ' + _Temp[1];
+supplyValue('lang_current_time',tmpCurrentTime);
+}
+function clearLog()
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Logger.LogClearTrigger' : '1',
+'obj-action' : 'set',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:page' : G_Page,
+'var:menu' : G_Menu,
+'var:errorpage' : G_Page
+}, true, 'uiPostForm');
+$('uiPostForm').submit();
+}
+function SendLog()/*add by logview*/
+{
+if(G_EmailEnable == '0')
+{
+alert(G_email);
+return ;
+}
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Mail.SendCMD':'1',
+'obj-action' :'set',
+'var:menu' :'maintenance',
+'var:page' :'FW_log',
+'var:errorpage' :'FW_log',
+'getpage' :'../html/FW_log.htm',
+'errorpage' :'../html/FW_log.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+$('uiPostForm').action = "";
+$('uiPostForm').submit();
+}
+function uiSubmit(){
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Logger.BlockLogEnabled' :Form.Checkbox('log_block'),
+':InternetGatewayDevice.X_TWSZ-COM_Logger.LoginLogEnabled' :Form.Checkbox('log_conn'),
+':InternetGatewayDevice.X_TWSZ-COM_Logger.OperLogEnabled' :Form.Checkbox('log_router'),
+':InternetGatewayDevice.X_TWSZ-COM_Logger.DosLogEnabled' :Form.Checkbox('log_dosport'),
+':InternetGatewayDevice.X_TWSZ-COM_Logger.PortLogEnable' :Form.Checkbox('log_port'),
+':InternetGatewayDevice.X_TWSZ-COM_Logger.WireLogEnabled' :Form.Checkbox('log_wire'),
+':InternetGatewayDevice.X_TWSZ-COM_Logger.InterLogEnabled' :Form.Checkbox('log_conn_reset'),
+'obj-action' :'set',
+'var:menu' :'maintenance',
+'var:page' :'FW_log',
+'var:errorpage' :'FW_log',
+'getpage' :'../html/FW_log.htm',
+'errorpage' :'../html/FW_log.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+$('uiPostForm').action = "";
+$('uiPostForm').submit();
+}
+function uiOnload(){ //logenabdisply(); //logmoddisply();
+ajax_GetLogText();
+Time_tick();
+putout_Value();
+}
+var Array_log_id = ["log_block","log_conn","log_router","log_dosport","log_port","log_wire","log_conn_reset"];
+function putout_Value()
+{
+Form.Checkbox(Array_log_id[0],G_Logger_site);
+Form.Checkbox(Array_log_id[1],G_Logger_login_web);
+Form.Checkbox(Array_log_id[2],G_Logger_operation);
+Form.Checkbox(Array_log_id[3],G_Logger_dos);
+Form.Checkbox(Array_log_id[4],G_Logger_nat_forward);
+Form.Checkbox(Array_log_id[5],G_Logger_wireless);
+Form.Checkbox(Array_log_id[6],G_Logger_internet_reset);
+}
+function dealWithError(){
+if (G_Error != 1){ return false; }
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="FW_log.htm"></form>
+<style type="text/css"><!--
+td {font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif; font-size:12px;}
+.div_left { padding-left:0px; width:155px;}
+.log_refresh, .log_clear, .log_send{ width:147px; background: url(skin/image/button/button.gif) no-repeat; text-align:center;}
+.log_apply{ width:131px; background: url(skin/image/button/apply.gif) no-repeat; text-align:center;}
+.log_apply, .log_refresh, .log_clear, .log_send{height:23px;
+color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 12px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
+.title_line{border-top:2px solid #9966FF; margin-top:0px;}
+--></style>
+<script type="text/javascript" src="js/ajax.js"></script>
+<form id="uiPostForm" method="post" action="FW_log.htm"></form>
+<div class="page_title" id="lang_logs_title">Logs</div>
+<div class="div_button3">
+<input type="button" class="log_refresh" id="action_Refresh" name="action_Refresh" value="Refresh">
+<input type="button" class="log_clear" id="action_Clear" name="action_Clear" value="Clear Log" onClick="clearLog()">
+<input type="submit" class="log_send" id="send_log" name="send_log" value="Send Log">
+<input type="button" class="log_apply" id="INPUT_Apply" name="apply" value="Apply" onClick="uiSubmit()"/>
+</div>
+<div class="title_line"></div>
+<div id="main" class="main">
+<table style="background:white; width:98%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" colspan="2" >&nbsp;</td>
+</tr>
+<!--tr>
+<td nowrap="" colspan="2" style="font-weight:bold "><input type="checkbox" id="INPUT_logEnable" onClick="uiOnLogEnableClick()"/> <span id="lang_Enable">&nbsp;Enable Log</span>
+<p class="do bk_black3_black"></p></td>
+</tr-->
+<tr>
+<td nowrap="" colspan="2" align="center"><b><span id="lang_current_time">Current Time</span></b>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div align="center">
+<table class="td_table" align="center" id="td_modelLogLevel">
+<tr>
+<td style="text-align:left;"><textarea name="log_detail" cols="60" rows="20" readonly WRAP="vitural" tabindex="-1" id="log_detail"></textarea></td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div style=" display:none;">
+<div class="div_left3" id="inputmode">Mode :</div>
+<div class="div_right3">
+<select id="INPUT_logmode" onChange="modechange()">
+<option value="0">Local</option>
+<!--
+<option value="1">Remote</option>
+<option value="2">Both</option>
+-->
+</select>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div>
+<form name="uiShowLog" id="uiShowLog" method="post" action="FW_log.htm">
+<input type="hidden" name="name" value="ShowSysEvtLogFile" />
+</form>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="title_line">&nbsp;&nbsp;</div></td>
+</tr>
+<!--tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_site" id="log_sites" /></div>Attempted access to allowed sites</td>
+</tr-->
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_block" id="log_block" /><label id="lang_log_block">Attempted access to blocked sites and services</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_conn" id="log_conn" /><label id="lang_log_conn">Connections to the Web-based interface of this Router</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_router" id="log_router" /><label id="lang_log_router">Router operation (startup, get time etc)</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_dosport" id="log_dosport" /><label id="lang_log_dosport">Known DoS attacks and Port Scans</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_port" id="log_port" /><label id="lang_log_port">Port Forwarding / Port Triggering</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_wire" id="log_wire" /><label id="lang_log_wire">Wireless access</label></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_conn_reset" id="log_conn_reset" /><label id="lang_log_conn_reset">Automatic Internet connection reset</label></div></td>
+</tr>
+<!--tr>
+<td nowrap="" colspan="2"><div class="log_div_left"><input type="checkbox" name="log_wire_sched" id="log_wire_sched" /><label id="lang_">Turn off wireless signal by schedule</label></div></td>
+</tr-->
+<tr>
+<td nowrap="" colspan="2"><div class="title_line">&nbsp;&nbsp;</div></td>
+</tr>
+</tbody>
+</table>
+</div><!--end of config3-->
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("FW_log")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

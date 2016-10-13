@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - EoIP Tunnel</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function to_submit(F) {
+F.save_button.value = sbutton.saving;
+apply(F);
+}
+function to_apply(F) {
+F.save_button.value = sbutton.saving;
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+show_layer_ext(document.eop.oet1_en, 'idoet1', 0 == 1);
+show_layer_ext(document.eop.oet1_bridged, 'idbridged1', 0 == 1);
+show_layer_ext(document.eop.oet2_en, 'idoet2', 0 == 1);
+show_layer_ext(document.eop.oet2_bridged, 'idbridged2', 0 == 1);
+show_layer_ext(document.eop.oet3_en, 'idoet3', 0 == 1);
+show_layer_ext(document.eop.oet3_bridged, 'idbridged3', 0 == 1);
+show_layer_ext(document.eop.oet4_en, 'idoet4', 0 == 1);
+show_layer_ext(document.eop.oet4_bridged, 'idbridged4', 0 == 1);
+show_layer_ext(document.eop.oet5_en, 'idoet5', 0 == 1);
+show_layer_ext(document.eop.oet5_bridged, 'idbridged5', 0 == 1);
+show_layer_ext(document.eop.oet6_en, 'idoet6', 0 == 1);
+show_layer_ext(document.eop.oet6_bridged, 'idbridged6', 0 == 1);
+show_layer_ext(document.eop.oet7_en, 'idoet7', 0 == 1);
+show_layer_ext(document.eop.oet7_bridged, 'idbridged7', 0 == 1);
+show_layer_ext(document.eop.oet8_en, 'idoet8', 0 == 1);
+show_layer_ext(document.eop.oet8_bridged, 'idbridged8', 0 == 1);
+show_layer_ext(document.eop.oet9_en, 'idoet9', 0 == 1);
+show_layer_ext(document.eop.oet9_bridged, 'idbridged9', 0 == 1);
+show_layer_ext(document.eop.oet10_en, 'idoet10', 0 == 1);
+show_layer_ext(document.eop.oet10_bridged, 'idbridged10', 0 == 1);
+
+update = new StatusbarUpdate();
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupbasic)</script></strong></a></li>
+      <li><a href="DDNS.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupddns)</script></strong></a></li>
+      <li><a href="WanMAC.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupmacclone)</script></strong></a></li>
+      <li><a href="Routing.asp.html"><strong><script type="text/javascript">Capture(bmenu.setuprouting)</script></strong></a></li>
+      <li><a href="Networking.asp.html"><strong><script type="text/javascript">Capture(bmenu.networking)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.setupeop)</script></strong></span></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="eop" action="#" method="post">
+<input type="hidden" name="submit_button" value="eop-tunnel" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+
+<h2><script type="text/javascript">Capture(eoip.legend)</script></h2>
+
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 1</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet1_en"  onclick="show_layer_ext(this, 'idoet1', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet1_en" checked="checked" onclick="show_layer_ext(this, 'idoet1', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet1">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet1_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet1_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet1_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet1_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet1_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet1_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged1', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet1_bridged"  onclick="show_layer_ext(this, 'idbridged1', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged1">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet1_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet1_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet1_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet1_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet1_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet1_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet1_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet1_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet1_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet1_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 2</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet2_en"  onclick="show_layer_ext(this, 'idoet2', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet2_en" checked="checked" onclick="show_layer_ext(this, 'idoet2', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet2">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet2_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet2_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet2_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet2_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet2_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet2_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged2', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet2_bridged"  onclick="show_layer_ext(this, 'idbridged2', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged2">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet2_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet2_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet2_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet2_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet2_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet2_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet2_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet2_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet2_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet2_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 3</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet3_en"  onclick="show_layer_ext(this, 'idoet3', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet3_en" checked="checked" onclick="show_layer_ext(this, 'idoet3', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet3">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet3_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet3_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet3_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet3_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet3_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet3_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged3', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet3_bridged"  onclick="show_layer_ext(this, 'idbridged3', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged3">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet3_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet3_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet3_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet3_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet3_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet3_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet3_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet3_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet3_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet3_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 4</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet4_en"  onclick="show_layer_ext(this, 'idoet4', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet4_en" checked="checked" onclick="show_layer_ext(this, 'idoet4', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet4">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet4_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet4_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet4_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet4_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet4_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet4_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged4', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet4_bridged"  onclick="show_layer_ext(this, 'idbridged4', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged4">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet4_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet4_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet4_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet4_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet4_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet4_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet4_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet4_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet4_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet4_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 5</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet5_en"  onclick="show_layer_ext(this, 'idoet5', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet5_en" checked="checked" onclick="show_layer_ext(this, 'idoet5', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet5">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet5_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet5_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet5_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet5_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet5_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet5_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged5', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet5_bridged"  onclick="show_layer_ext(this, 'idbridged5', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged5">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet5_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet5_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet5_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet5_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet5_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet5_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet5_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet5_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet5_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet5_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 6</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet6_en"  onclick="show_layer_ext(this, 'idoet6', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet6_en" checked="checked" onclick="show_layer_ext(this, 'idoet6', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet6">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet6_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet6_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet6_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet6_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet6_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet6_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged6', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet6_bridged"  onclick="show_layer_ext(this, 'idbridged6', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged6">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet6_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet6_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet6_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet6_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet6_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet6_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet6_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet6_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet6_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet6_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 7</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet7_en"  onclick="show_layer_ext(this, 'idoet7', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet7_en" checked="checked" onclick="show_layer_ext(this, 'idoet7', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet7">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet7_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet7_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet7_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet7_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet7_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet7_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged7', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet7_bridged"  onclick="show_layer_ext(this, 'idbridged7', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged7">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet7_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet7_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet7_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet7_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet7_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet7_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet7_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet7_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet7_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet7_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 8</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet8_en"  onclick="show_layer_ext(this, 'idoet8', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet8_en" checked="checked" onclick="show_layer_ext(this, 'idoet8', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet8">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet8_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet8_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet8_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet8_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet8_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet8_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged8', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet8_bridged"  onclick="show_layer_ext(this, 'idbridged8', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged8">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet8_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet8_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet8_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet8_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet8_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet8_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet8_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet8_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet8_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet8_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 9</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet9_en"  onclick="show_layer_ext(this, 'idoet9', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet9_en" checked="checked" onclick="show_layer_ext(this, 'idoet9', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet9">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet9_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet9_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet9_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet9_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet9_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet9_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged9', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet9_bridged"  onclick="show_layer_ext(this, 'idbridged9', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged9">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet9_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet9_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet9_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet9_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet9_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet9_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet9_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet9_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet9_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet9_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+<fieldset>
+<legend><script type="text/javascript">Capture(eoip.tunnel)</script> 10</legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet10_en"  onclick="show_layer_ext(this, 'idoet10', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="oet10_en" checked="checked" onclick="show_layer_ext(this, 'idoet10', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idoet10">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.remoteIP)</script></div>
+<input type="hidden" name="oet10_rem" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet10_rem_0" onblur="valid_range(this,0,255,eoip.remoteIP)" value="192" />.<input size="3" maxlength="3" class="num" name="oet10_rem_1" onblur="valid_range(this,0,255,eoip.tunnelID)" value="168" />.<input size="3" maxlength="3" class="num" name="oet10_rem_2" onblur="valid_range(this,0,255,eoip.tunnelID)" value="90" />.<input size="3" maxlength="3" class="num" name="oet10_rem_3" onblur="valid_range(this,1,254,eoip.tunnelID)" value="1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(eoip.bridging)</script></div>
+<input class="spaceradio" type="radio" value="1" name="oet10_bridged" checked="checked" onclick="show_layer_ext(this, 'idbridged10', false)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+ <input class="spaceradio" type="radio" value="0" name="oet10_bridged"  onclick="show_layer_ext(this, 'idbridged10', true)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div id="idbridged10">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<input type="hidden" name="oet10_ipaddr" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet10_ipaddr_0" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet10_ipaddr_1" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet10_ipaddr_2" onblur="valid_range(this,0,255,share.ip)" value="0" />.<input size="3" maxlength="3" class="num" name="oet10_ipaddr_3" onblur="valid_range(this,1,254,share.ip)" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="oet10_netmask" value="0.0.0.0"/>
+<input size="3" maxlength="3" class="num" name="oet10_netmask_0" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet10_netmask_1" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet10_netmask_2" onblur="valid_range(this,0,255,share.subnet)" value="255" />.<input size="3" maxlength="3" class="num" name="oet10_netmask_3" onblur="valid_range(this,0,254,share.subnet)" value="0" />
+</div>
+</div>
+</div>
+</fieldset><br/>
+
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+</dl><br />
+<a href="javascript:openHelpWindow('HEoIP.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:06 up 24 min, load average: 0.08, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

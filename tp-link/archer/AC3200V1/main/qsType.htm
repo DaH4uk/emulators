@@ -1,0 +1,284 @@
+<script type="text/javascript" language="javascript">
+
+var initConType = "DynamicIp";
+var detecting = false;
+var detectTime = 0;
+//var maxDetectTime = 5;
+function initType() 
+{
+    var wanTypes = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "addressingType", "X_TP_IPv4Enabled"]);
+    var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "transportType", "X_TP_IPv4Enabled"]);
+    var conStk;
+    if (INCLUDE_L2TP)
+        var wanL2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "addressingType", "transportType"]);
+ 
+    if (INCLUDE_PPTP) 
+        var wanPptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "addressingType", "transportType"]);
+ 
+    if (!$.exe()) 
+   {
+        $.each(wanTypes, function() 
+	{
+            if (this.WANAccessType == "Ethernet")
+                conStk = this.__stack;
+        });
+       // var ethWan = $.act(ACT_GET, WAN_ETH_INTF, conStk, null, ["enable", "X_TP_lastUsedIntf"]);
+        $.each(wanIPList, function() 
+	{
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (conStk == tmpStk && this.X_TP_IPv4Enabled == 1) 
+		{
+	             if (this.addressingType == "Static" && this.enable == 1)
+			{
+	                  initConType = "StaticIp";
+			   // alert("initConType = StaticIp");
+			    return;
+	              }
+	              if (this.addressingType == "DHCP" && this.enable == 1) 
+			{
+	   			initConType = "DynamicIp";
+				//  alert("initConType = DynamicIp");
+				 return;
+	               }
+            }
+         });
+        $.each(wanPPPList, function() {
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (conStk == tmpStk && this.X_TP_IPv4Enabled == 1) {
+                if (this.transportType == "PPPoE" && this.enable == 1) 
+		  {
+                    initConType = "PPPoE";
+			// alert("initConType = PPPoE");
+			 return;
+                }
+            }
+        });
+        if (INCLUDE_L2TP) {
+            $.each(wanL2tpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (conStk == tmpStk) {
+			if (this.enable == 1)
+			{
+                   		initConType = "L2tp";
+				// alert("initConType = L2tp");
+				 return;
+			}
+                }
+            });
+        }
+        if (INCLUDE_PPTP) {
+            $.each(wanPptpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (conStk== tmpStk) {
+                   if (this.enable == 1)
+                   	{
+                	  initConType = "Pptp";
+			// alert("initConType = Pptp");
+			   return;
+                   	}
+                }
+            });
+        }
+        if ($.exe())
+        {
+		 initConType = "DynamicIp";
+		//  alert("initConType = DynamicIp");
+		return;
+	  }
+    }
+}
+
+
+
+function goPrev() {
+    $.qf.prev();
+}
+function goNext() {
+    /* set $.qd.eth.connectionType */
+    var value = $("input[type=radio][name=wanType]:checked").val();
+    if (typeof(value) == "undefined") {
+        return 
+    }
+
+    $.qd.eth.connectionType = value;
+    $.qf.next();
+}
+</script>
+<div id="quicksetup_wan_type_container content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="inline">
+            <button type="submit" class="blue T_detect" id="detect" value="Detect" onclick="doWanDetect()">Auto Detect</button>
+        </div>
+        <div class="inline">
+            <span id="status" class="blue"></span>
+        </div>
+        <div>
+            <input type="radio" name="wanType" id="qsDynIp" value="DynamicIp"/>
+            <label id="c_qsDynIp">Dynamic IP</label>
+        </div>
+        <div>
+            <input type="radio" name="wanType" id="qsStaIp" value="StaticIp" />
+            <label id="c_qsStaIp">Static IP</label>
+        </div>
+        <div>
+            <input type="radio" name="wanType" id="qsPppoe" value="PPPoE" />
+            <label id="c_qsPPPoE">PPPoE</label>
+        </div>
+        <div>
+            <input type="radio" name="wanType" id="qsL2tp" value="L2tp" />
+            <label id="c_qsL2TP">L2TP</label>
+        </div>
+        <div>
+            <input type="radio" name="wanType" id="qsPptp" value="Pptp" />
+            <label id="c_qsPPTP">PPTP</label>
+        </div>
+    </form>
+    <p class="note">
+        <span class="note_title" id="t_note_title">Note:</span>
+        <span id="t_typeNote">If you are not sure which Internet Connection Type you have, use Auto Detect or contact your Internet Service Provider (ISP) for assistance.</span>
+    </p>
+</div>
+
+<div class="inline-btn-right quicksetup-button-container">
+    <div class="inline">
+        <button type="submit" class="green T_back" id="back" onclick="goPrev()">Back</button>
+    </div>
+    <div class="inline">
+        <button type="submit" class="green T_next" id="next" onclick="goNext()">Next</button>
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+if (typeof($.qd.eth) == "undefined") {
+    $.qd.eth = {};
+    initType();
+    $.qd.eth.connectionType = initConType;
+}
+
+/* set radio select */
+$("input[type=radio][name=wanType][value=" + $.qd.eth.connectionType + "]").prop("checked", true);
+
+$.tpInit();
+
+//$("#next").removeClass("green");
+
+function wanDetecting() {
+   // var wanTypeObj = $.act(ACT_GET, WAN_TYPE_DETECT, null, null, ["state", "wanType"]);
+   var wanTypeObj = $.act(ACT_GET,WAN_DETECT,null,null,["searchState", "detectedConnType"]);
+   detectTime++;
+   //console.log("maxTime:"+maxDetectTime+"  detectTime: "+detectTime);
+    if (!$.exe()) {
+      if(wanTypeObj.searchState == 2) /* STATE_SEARCH_OK = 2, in wanDetect.h */
+      	{
+      		var qtype;
+            switch(wanTypeObj.detectedConnType)
+	     	{
+                case "0":
+                    $("#status").html("PPPoE");
+					qtype="PPPoE";
+                    break;
+                case "1":
+                    $("#status").html("Dynamic IP");
+					qtype="DynamicIp";
+                    break;
+                case "2":
+                    $("#status").html("Static IP");
+                    qtype="StaticIp";
+                    break;
+                default: /* detect failed */
+					$("#status").html("Static IP");
+                    qtype="StaticIp";
+                    break;
+            }
+			
+        	if (qtype != undefined)
+        	{
+        		$("input[type=radio][name=wanType][value=" + qtype + "]").prop("checked", true);
+
+				$("#qsDynIp").tpRadio({
+				       refresh: 1
+				});
+				$("#qsPppoe").tpRadio({
+				      refresh: 1
+				});
+				$("#qsStaIp").tpRadio({
+				       refresh: 1
+				});
+				$("#qsL2tp").tpRadio({
+				      refresh: 1
+				});
+				$("#qsPptp").tpRadio({
+				       refresh: 1
+				});
+
+			}
+			$("#detect").prop("disabled", false);
+			detecting = false;
+	    //$("#back").prop("disabled", false);
+	       $("#next").prop("disabled", false);
+        }
+	  else //if(detectTime <= maxDetectTime)
+            $.timeout(function() {wanDetecting();}, 1500);
+	  /*
+	 else
+	 {
+	 	 $("#status").html("Unknown");
+		 $("#detect").prop("disabled", false);
+		  detecting = false;
+	       $("#next").prop("disabled", false);
+	 }
+	 */
+    }
+}
+
+
+function doWanDetect()
+{
+	//internetDiagInit();
+    var pStk;
+    var wanTypes = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);   
+	detectTime = 0;
+    if (!$.exe())
+    {
+        $.each(wanTypes, function()
+        {
+       	//alert(this.WANAccessType);
+		//alert(this.__stack);
+		if (this.WANAccessType == "Ethernet")
+                pStk = this.__stack;
+        });
+    }
+	
+	var wanEthIntfObj = $.act(ACT_GET,WAN_ETH_INTF,pStk,null,["status"]);	
+
+	if(!$.exe())
+	{
+		if(wanEthIntfObj.status == "NoLink")
+		{	
+			//$("#autoDetectStatus").text("Unplugged");
+			 $("#status").html("Unplugged");
+			 $("#detect").prop("disabled", false);
+			 detecting = false;
+			// $("#back").prop("disabled", false);
+	    		 $("#next").prop("disabled", false);
+			 return;
+		}
+		else
+		{
+			$.act(ACT_OP, ACT_OP_DO_WAN_DETECT, null);
+	
+			if(!$.exe())
+			{
+				//$("#autoDetectStatus").text("Detecting...");
+				 $("#status").html("Detecting...");
+				 $("#detect").prop("disabled", true);
+				 detecting = true;
+				// $("#back").prop("disabled", true);
+	    			  $("#next").prop("disabled", true);
+				$.timeout(function(){wanDetecting(); }, 1500);
+			}
+		}
+	}	
+}
+
+</script>

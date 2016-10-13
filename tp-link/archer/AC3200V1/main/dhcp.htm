@@ -1,0 +1,613 @@
+<script type="text/javascript">
+var brLanList;
+var brStackList = "";
+var brNameList = "";
+
+var staticIpList;
+var condPoolList;
+
+var groupEditIndex;
+var condEditIndex;
+var staticEditIndex;
+
+var hasGroup;
+var isEdit;
+
+
+function initDhcpTableEdit() {
+
+    if (!$.exe()) {
+    /*
+        if (brLanList.length == 1) {
+	*/
+            hasGroup = 0;
+            $("#tableDchpUpper").addClass('nd');
+            $("#tableDchp").addClass('nd');
+            $.loadPage("dhcpEditPage", "dhcpEdit.htm", function() {}, function() {
+                $("#dhcpEditPage").removeClass('nd');
+            });
+            return;
+      /*
+      } else {
+            hasGroup = 1;
+            $("dhcpEditPage").addClass('nd');
+            $("tableDchpUpper").removeClass('nd');
+            $("tableDchp").removeClass('nd');
+
+            var array = new Array();
+            var index = 0;
+
+            $.each(brLanList, function() {
+                var dhcpInfo = $.act(ACT_GET, LAN_HOST_CFG, this.__stack, null, null);
+                var ipList = $.act(ACT_GS, LAN_IP_INTF, null, this.__stack, ["IPInterfaceIPAddress", "IPInterfaceSubnetMask", "__ifName"]);
+
+                if (!$.exe()) {
+                    array.push([{
+                        "text": this.bridgeName,
+                        "width": "15%"
+                    }, {
+                        "text": ipList[0].IPInterfaceIPAddress,
+                        "width": "20%"
+                    }, {
+                        "text": ipList[0].IPInterfaceSubnetMask,
+                        "width": "20%"
+                    }, {
+                        "text": dhcpInfo.minAddress + "-<br />" + dhcpInfo.maxAddress,
+                        "width": "25%"
+                    }, {
+                        "text": (dhcpInfo.DHCPServerEnable == 1) ? "<span class='table-grid-icon enable-icon' onClick='disableDHCP(" + index + ")'></span>" : "<span class='table-grid-icon disable-icon' onClick='enableDHCP(" + index + ")'></span>",
+                        "width": "5%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' onClick='doGroupEdit(" + index + ")'></span>",
+                        "width": ""
+                    }]);
+
+                    index++;
+                }
+            });
+            $.initTableBody($("#tableDchp"), array);
+            $.tablePages($("#tableDchp"), 8);
+            return array;
+        }
+     */
+    }
+}
+
+function doGroupEdit(index) {
+    groupEditIndex = index;
+    $.loadPage("dhcpTableEditPage", "dhcpEdit.htm");
+}
+
+
+function initClientListTable() {
+    var array = new Array();
+    var dhcpClientList = $.act(ACT_GL, LAN_HOST_ENTRY, null, null);
+    $.exe(function(err) {
+        if (err) return;
+        var index = 0;
+
+        $.each(dhcpClientList, function() {
+            var hours = 0;
+            var minutes = 0;
+            var seconds = 0;
+            var leaseTime = 0;
+
+            if (this.leaseTimeRemaining == -1) {
+                leaseTime = s_str.permanent;
+            } else {
+                hours = parseInt((this.leaseTimeRemaining) / (60 * 60), 10);
+                hours = hours < 10 ? '0' + hours : hours;
+                minutes = parseInt(((this.leaseTimeRemaining) / 60), 10) % 60;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = (this.leaseTimeRemaining) % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                leaseTime = hours + ":" + minutes + ":" + seconds;
+            }
+
+            if (this.addressSource == "DHCP") {
+                array.push([{
+                    "text": ++index,
+                    "width": "10%"
+                }, {
+                    "text": this.hostName == "" ? "Unknow" : this.hostName,
+                    "width": "20%"
+                }, {
+                    "text": this.MACAddress,
+                    "width": "20%"
+                }, {
+                    "text": this.IPAddress,
+                    "width": "30%"
+                }, {
+                    "text": leaseTime,
+                    "width": ""
+                }]);
+            }
+
+        });
+
+        $.initTableBody($("#tableClientList"), array);
+        $("#clientNum").html(index);
+        $.tablePages($("#tableClientList"), 5);
+        return array;
+    });
+}
+
+function initAddrResvTable() {
+    staticIpList = $.act(ACT_GL, LAN_DHCP_STATIC_ADDR, null, null, ["enable", "chaddr", "yiaddr"]);
+    var array = new Array();
+    var index = 0;
+
+    $.exe(function(err) {
+        if (err) return;
+        $.each(staticIpList, function() {
+
+            var brName;
+            var stackParts = (this.__stack).split(",");
+            var staticIpStack = stackParts[0];
+            var stackIndex = brStackList.split(",");
+            var nameIndex = brNameList.split(",");
+
+            for (var j = 0; j < stackIndex.length; j++) {
+                if (staticIpStack == stackIndex[j]) {
+                    brName = nameIndex[j];
+                }
+            }
+
+            array.push([{
+                "text": '<div><input type="checkbox" id="staticCheckbox' + index + '"/><label></label></div>',
+                "width": "10%"
+            }, {
+                "text": this.chaddr,
+                "width": "30%"
+            }, {
+                "text": this.yiaddr,
+                "width": ""
+            }, {
+                "text": brName,
+                "width": "15%"
+            }, {
+                "text": this.enable == 1 ? "<span class='table-grid-icon enable-icon' onClick='disableStaticIP(" + index + ")'></span>" : "<span class='table-grid-icon disable-icon' onClick='enableStaticIP(" + index + ")'></span>",
+                "width": "10%"
+            }, {
+                "text": "<span class='table-grid-icon edit-modify-icon' onClick='doStaticEdit(" + index + ")'></span><span class='table-grid-icon edit-trash-icon' onclick='doStaticDel(" + index + ");'></span>",
+                "width": "10%"
+            }]);
+
+            index++;
+        });
+
+        $.initTableBody($("#tableAddrResv"), array);
+        $.tablePages($("#tableAddrResv"), 8);
+        return array;
+    });
+}
+
+function doStaticEdit(index) {
+    isEdit = 1;
+    staticEditIndex = index;
+    $.loadPage("dhcpStaticPage", "dhcpStaticEdit.htm");
+}
+
+function initCondPoolTable() {
+    condPoolList = $.act(ACT_GL, LAN_DHCP_COND_SRV_POOL, null, null, null);
+    var array = new Array();
+    var index = 0;
+    var brName;
+
+    $.exe(function(err) {
+        if (err) return;
+
+        $.each(condPoolList, function() {
+            var stk = (this.__stack).split(',')[0];
+
+            $.each(brLanList, function() {
+                if (stk == (this.__stack).split(',')[0]) {
+                    brName = this.bridgeName;
+                }
+            });
+
+            array.push([{
+                "text": '<div><input type="checkbox" id="condCheckbox' + index + '"/><label></label></div>',
+                "width": "10%"
+            }, {
+                "text": this.vendorClassID,
+                "width": "10%"
+            }, {
+                "text": this.minAddress + "/ " + this.maxAddress,
+                "width": ""
+            }, {
+                "text": this.X_TP_DeviceName.replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/ /g, "&nbsp;"),
+                "width": "10%"
+            }, {
+                "text": brName,
+                "width": "10%"
+            }, {
+                "text": this.enable == 1 ? "<span class='table-grid-icon enable-icon' onClick='disableCondPool(" + index + ")'></span>" : "<span class='table-grid-icon disable-icon' onClick='enableCondPool(" + index + ")'></span>",
+                "width": "10%"
+            }, {
+                "text": "<span class='table-grid-icon edit-modify-icon' onClick='doCondEdit(" + index + ")'></span><span class='table-grid-icon edit-trash-icon' onclick='doCondDel(" + index + ");'></span>",
+                "width": "10%"
+            }]);
+
+            index++;
+        });
+
+
+        $.initTableBody($("#tableCondPool"), array);
+        $.tablePages($("#tableCondPool"), 8);
+        return array;
+    });
+}
+
+function doCondEdit(index) {
+    isEdit = 1;
+    condEditIndex = index;
+    $.loadPage("dhcpCondPage", "dhcpCondEdit.htm");
+}
+
+
+function init() {
+    brLanList = $.act(ACT_GL, L2_BRIDGING_ENTRY, null, null, ["bridgeName"]);
+    if (!$.exe()) {
+        $.each(brLanList, function() {
+            var brParts = (this.__stack).split(",");
+            brStackList += brParts[0] + ",";
+            brNameList += this.bridgeName + ",";
+        });
+    }
+
+    var tableDhcpHeadArray = [{
+        "text": table_str.group,
+        "width": "15%"
+    }, {
+        "text": table_str.ip,
+        "width": "20%"
+    }, {
+        "text": table_str.subMask,
+        "width": "20%"
+    }, {
+        "text": table_str.dhcpPool,
+        "width": "25%"
+    }, {
+        "text": table_str.enable,
+        "width": "5%"
+    }, {
+        "text": table_str.modify,
+        "width": "5"
+    }];
+    $.initTableHead($("#tableDchp"), tableDhcpHeadArray);
+
+    var clientListHeadArray = [{
+        "text": table_str.id,
+        "width": "10%"
+    }, {
+        "text": table_str.clientName,
+        "width": "20%"
+    }, {
+        "text": table_str.mac,
+        "width": "30%"
+    }, {
+        "text": table_str.assip,
+        "width": "30%"
+    }, {
+        "text": table_str.leaseTime,
+        "width": ""
+    }];
+    $.initTableHead($("#tableClientList"), clientListHeadArray);
+
+    var addrResvHeadArray = [{
+        "text": '<div><input type="checkbox" id="staticAll" onClick="clickSelStaticAll();"/><label></label></div>',
+        "width": "10%"
+    }, {
+        "text": table_str.mac,
+        "width": "30%"
+    }, {
+        "text": table_str.resip,
+        "width": ""
+    }, {
+        "text": table_str.group,
+        "width": "15%"
+    }, {
+        "text": table_str.enable,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+    $.initTableHead($("#tableAddrResv"), addrResvHeadArray);
+
+    var condPoolHeadArray = [{
+        "text": '<div><input type="checkbox" id="condAll" onClick="clickSelCondAll();"/><label></label></div>',
+        "width": "10%"
+    }, {
+        "text": table_str.vid,
+        "width": "10%"
+    }, {
+        "text": table_str.ipRange,
+        "width": ""
+    }, {
+        "text": table_str.facility,
+        "width": "10%"
+    }, {
+        "text": table_str.group,
+        "width": "10%"
+    }, {
+        "text": table_str.status,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+    $.initTableHead($("#tableCondPool"), condPoolHeadArray);
+
+    $("#tableDchp").tpTable(initDhcpTableEdit);
+    $("#tableClientList").tpTable(initClientListTable);
+    $("#tableAddrResv").tpTable(initAddrResvTable);
+    $("#tableCondPool").tpTable(initCondPoolTable);
+}
+</script>
+
+<h3 id="t_dhcpTitle">DHCP Settings</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="nd" id="dhcpEditPage"></div>
+
+        <div class="table-op" id="tableDchpUpper">
+            <div class="table-btn">
+                <span class="refresh-icon"></span>
+                <label class="T_refresh">Refresh</label>
+            </div>
+        </div>
+
+        <table id="tableDchp">
+            <thead></thead>
+            <tbody id="tableDchpBody">
+                <tr id="editDHCPCfg" class="nd">
+                    <td colspan="6">
+                        <div id="dhcpTableEditPage"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<h3 id="t_clistTitle">Client List</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op">
+            <div class="table-note">
+                <label class="label-title" id="t_clistNum">client number:</label>
+                <span class="text" id="clientNum"></span>
+            </div>
+
+            <div class="table-btn" id="clientListRefresh">
+                <span class="refresh-icon"></span>
+                <label class="T_refresh">Refresh</label>
+            </div>
+        </div>
+
+        <table id="tableClientList">
+            <thead></thead>
+            <tbody id="tableclientListBody">
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<h3 id="t_staticTitle">Address Reservation</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op">
+            <div class="table-btn">
+                <span class="add-icon" id="staticAdd" onClick="clickStaticAdd()"></span>
+                <label class="T_add">Add</label>
+                <span class="delete-icon" id="staticDel"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+
+        <table id="tableAddrResv">
+            <thead></thead>
+            <tbody id="tableAddrResvBody">
+                <tr id="editAddrResv" class="nd">
+                    <td colspan="6">
+                        <div id="dhcpStaticPage"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<h3 id="t_condTitle">Condition Pool</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op">
+            <div class="table-btn">
+                <span class="add-icon" id="condAdd" onClick="clickCondAdd()"></span>
+                <label class="T_add">Add</label>
+                <span class="delete-icon" id="condDel"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+
+        <table id="tableCondPool">
+            <thead></thead>
+            <tbody id="tableCondPoolBody">
+                <tr id="editCondPool" class="nd">
+                    <td colspan="7">
+                        <div id="dhcpCondPage"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+function enableDHCP(index) {
+    $.act(ACT_SET, LAN_HOST_CFG, brLanList[index].__stack, null, ["DHCPServerEnable=1"]);
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function disableDHCP(index) {
+    $.act(ACT_SET, LAN_HOST_CFG, brLanList[index].__stack, null, ["DHCPServerEnable=0"]);
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function clickStaticAdd() {
+    isEdit = 0;
+    $.loadPage("dhcpStaticPage", "dhcpStaticEdit.htm");
+}
+
+function clickStaticDel() {
+    var bDel = 0;
+
+    for (var ix = 0; ix < staticIpList.length; ix++) {
+        var checkboxID = $("#staticCheckbox" + ix);
+        if (checkboxID.prop("data-checked")) {
+            bDel = 1;
+            break;
+        }
+    }
+
+    if (bDel) {
+        $.confirm(c_str.del_choosed, ok);
+    }
+
+    function ok() {
+        for (var ix = 0; ix < staticIpList.length; ix++) {
+            var checkboxID = $("#staticCheckbox" + ix);
+            if (checkboxID.prop("data-checked")) {
+                checkboxID.parents("tr").first().remove();
+                $.act(ACT_DEL, LAN_DHCP_STATIC_ADDR, staticIpList[ix].__stack, null);
+
+                $.exe(function(err) {
+                    if (!err) $.reload();
+                });
+            }
+        }
+    }
+}
+
+function doStaticDel(index) {
+    $.act(ACT_DEL, LAN_DHCP_STATIC_ADDR, staticIpList[index].__stack, null);
+
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function clickSelStaticAll() {
+    var bSelected = $("#staticAll").prop("data-checked");
+    for (var ix = 0; ix < staticIpList.length; ix++) {
+        var checkboxID = $("#staticCheckbox" + ix);
+        if (checkboxID.prop("data-checked") != bSelected) {
+            checkboxID.prop("checked", bSelected);
+            checkboxID.data("tpCheckbox").refresh();
+        }
+    }
+}
+
+function enableStaticIP(index) {
+    $.act(ACT_SET, LAN_DHCP_STATIC_ADDR, staticIpList[index].__stack, null, ["enable=1"]);
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function disableStaticIP(index) {
+    $.act(ACT_SET, LAN_DHCP_STATIC_ADDR, staticIpList[index].__stack, null, ["enable=0"]);
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function clickCondAdd() {
+    isEdit = 0;
+    $.loadPage("dhcpCondPage", "dhcpCondEdit.htm");
+}
+
+function clickCondDel() {
+    var bDel = 0;
+
+    for (var ix = 0; ix < condPoolList.length; ix++) {
+        var checkboxID = $("#condCheckbox" + ix);
+        if (checkboxID.prop("data-checked")) {
+            bDel = 1;
+            break;
+        }
+    }
+
+    if (bDel) {
+        $.confirm(c_str.del_choosed, ok);
+    }
+
+    function ok() {
+        for (var ix = 0; ix < condPoolList.length; ix++) {
+            var checkboxID = $("#condCheckbox" + ix);
+            if (checkboxID.prop("data-checked")) {
+                checkboxID.parents("tr").first().remove();
+                $.act(ACT_DEL, LAN_DHCP_COND_SRV_POOL, condPoolList[ix].__stack, null);
+
+                $.exe(function(err) {
+                    if (!err) $.reload();
+                });
+            }
+        }
+    }
+}
+
+function doCondDel(index) {
+    $.act(ACT_DEL, LAN_DHCP_COND_SRV_POOL, condPoolList[index].__stack, null);
+
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function enableCondPool(index) {
+    $.act(ACT_SET, LAN_DHCP_COND_SRV_POOL, condPoolList[index].__stack, null, ["enable=1"]);
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function disableCondPool(index) {
+    $.act(ACT_SET, LAN_DHCP_COND_SRV_POOL, condPoolList[index].__stack, null, ["enable=0"]);
+
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function clickSelCondAll() {
+    var bSelected = $("#condAll").prop("data-checked");
+    for (var ix = 0; ix < condPoolList.length; ix++) {
+        var checkboxID = $("#condCheckbox" + ix);
+        if (checkboxID.prop("data-checked") != bSelected) {
+            checkboxID.prop("checked", bSelected);
+            checkboxID.data("tpCheckbox").refresh();
+        }
+    }
+}
+
+$("#staticDel").click(function(e) {
+    clickStaticDel();
+});
+
+$("#condDel").on('click', function(e) {
+    clickCondDel();
+});
+
+
+
+$.tpInit(init);
+</script>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="Yota" />
+
+<title>ZyXEL Keenetic - 
+				Yota Интернет 4G</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+#y-main {
+	text-align: right;
+	color: #666666;
+	font-size: 12px;
+}
+#y-head, #y-page {
+	margin: 20px 0;
+	text-align: left;
+}
+#y-phone {
+	font-size: 28px;
+	color: #00aeef;
+}
+#y-phone span {
+	padding-left: 34px;
+}
+#y-mobil {
+	background-image: url(img/mobil.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+#y-tel {
+	background-image: url(img/tel.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+span#y-aster {
+	color: #666666;
+	padding-left: 0px;
+	padding-right: 15px;
+}
+</style>
+<script type="text/javascript">
+<!--
+function Template(e, allowContinue, keepTrack) {
+//private:
+	var id_ = 0;
+	var instances_;
+	ParameterSet.call(this, allowContinue, keepTrack);
+//public:
+	this.init = function() { instances_ = new Array() }
+	this.load = function(node) {
+		if( getNodeValue(node, "type").match(/WiMax|GctWimax|Jingle/) ) {
+			var root = e.cloneNode(true);
+			root.id = e.id + (++id_);
+			root.style.display = "block";
+
+			var v = new Array();
+			var childNode = node.firstChild;
+			do {
+				if( childNode.nodeType == 1 )
+					v[childNode.nodeName] = childNode.firstChild ? childNode.firstChild.nodeValue : "";
+			} while( childNode = childNode.nextSibling );
+
+			var params_ = e.innerHTML.match(/{[^}]+}/g);
+			for( var p = 0; p < params_.length; ++p ) {
+				root.innerHTML = root.innerHTML.replace(
+						params_[p], eval(params_[p].substring(1, params_[p].length - 1)) || "");
+			}
+			var key = node.getAttribute("name");
+			if( defined(instances_[key]) ) {
+				e.parentNode.replaceChild(root, instances_[key]);
+			} else {
+				e.parentNode.insertBefore(root, e.nextSibling);
+			}
+			instances_[key] = root;
+		}
+	}
+}
+Template.prototype = new ParameterSet();
+
+function init() {
+	var p = new Packet();
+	p.Command("show interface", null, new Template(document.getElementById("y-template"), true, true));
+	p.proceed();
+}
+-->
+</script>
+</head>
+
+<body onload="init();">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a href="broadband.html"><span>IPoE</span></a></li><li><a href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a href="3g.html"><span>3G</span></a></li><li><a class="current" href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a href="dyndns.html"><span>DyDNS</span></a></li><li><a href="routes.html"><span>Маршруты</span></a></li></ul><div class="block">
+	<div id="y-main">
+		<div id="y-head">
+			<a href="http://www.yota.ru" target="_blank">
+			<img src="img/ylogo.png" width="44" height="95" alt="Yota" /></a><br />
+		</div>
+		<div id="y-page">
+			<div id="y-template" class="rounded" style="display: none;">
+				<h1>{v.description}</h1>Модем Yota подключен: {v.plugged}<br />Состояние: {v.wimax_state}<br />MAC-адрес: {v.mac}<br />Версия ПО: {v.fw}<br />Уровни сигнала (CINR / RSSI): {new Number(v.cinr).toFixed()} / {v.rssi}<br />Базовая станция (BSID): {v.bssid}<br />IP-адрес: {v.address}<br />Маска подсети: {v.mask}<br />								
+			</div>
+		</div>
+
+		<span id="y-phone"><span id="y-mobil">0970<span id="y-aster">*</span></span><span id="y-tel">8 800 700 55 00</span></span>
+	</div>
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

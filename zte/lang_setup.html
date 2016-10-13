@@ -1,0 +1,550 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/lan.js"></script>
+    <script type="text/javascript" src="./js/boot.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "-";
+        var G_Menu = "setup";
+        var G_Page = "lan";
+        var G_SubPage = "-";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = '' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = uiGetPageUrl();
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('1' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+        var G_EbAddress = "1";
+        var G_IPAddress = "192.168.0.1";
+        var G_SubAddress = "255.255.255.0";
+
+        var G_DomainName = "";
+        var G_DHCPServerEnable = "1";
+        var G_MinAddress = "192.168.0.2";
+        var G_MaxAddress = "192.168.0.254";
+        var G_DHCPLeaseTime = "86400";
+        var G_DHCPRelayEnable = "0";
+        var G_DHCPRelayIP = "192.168.0.200";
+
+
+        var g_DHCPLeaseTime = "";
+
+        function jsonFstMap() {
+            g_DHCPLeaseTime = String((parseInt(G_DHCPLeaseTime || 0) - parseInt(G_DHCPLeaseTime || 0) % 60) / 60);
+            return {
+                'INPUT_DomainName': G_DomainName,
+                'INPUT_IPAddress': G_IPAddress,
+                'INPUT_SubAddress': G_SubAddress,
+                'INPUT_MinAddress': G_MinAddress,
+                'INPUT_MaxAddress': G_MaxAddress,
+                'INPUT_DHCPLeaseTime': g_DHCPLeaseTime,
+                'INPUT_RelayAddress': G_DHCPRelayIP
+            };
+        }
+
+
+        function ipChange(_ipValue) {
+            _ipValue = IPtoNumber(_ipValue);
+            $('INPUT_IPAddress').value = _ipValue;
+            var tmpArr = _ipValue.split('.');
+            var _tempValue = Number(tmpArr[3]);
+
+            if (_tempValue < 128) {
+                $('INPUT_MinAddress').value = tmpArr[0] + '.' + tmpArr[1] + '.' + tmpArr[2] + '.' + (_tempValue + 1);
+                $('INPUT_MaxAddress').value = tmpArr[0] + '.' + tmpArr[1] + '.' + tmpArr[2] + '.' + 254;
+            }
+            else if (_tempValue > 127) {
+                $('INPUT_MinAddress').value = tmpArr[0] + '.' + tmpArr[1] + '.' + tmpArr[2] + '.' + 1;
+                $('INPUT_MaxAddress').value = tmpArr[0] + '.' + tmpArr[1] + '.' + tmpArr[2] + '.' + (_tempValue - 1);
+            }
+        }
+
+        function isValidIpAddressRange() {
+            var ipNode = $('INPUT_IPAddress', 'INPUT_MinAddress', 'INPUT_MaxAddress');
+
+            var tmpIp = ipNode[0].value.split('.');
+            var tmpMinAddress = ipNode[1].value.split('.');
+            var tmpMaxAddress = ipNode[2].value.split('.');
+
+            var tmpIpSlice = tmpIp.slice(0, -1);
+            var tmpMinAddressSlice = tmpMinAddress.slice(0, -1);
+            var tmpMaxAddressSlice = tmpMaxAddress.slice(0, -1);
+            var hostIp = parseInt(tmpIp.slice(-1));
+            var startIp = parseInt(tmpMinAddress.slice(-1));
+            var endIp = parseInt(tmpMaxAddress.slice(-1));
+
+            tmpIp = tmpIpSlice[0] + '.' + tmpIpSlice[1] + '.' + tmpIpSlice[2];
+            tmpMinAddress = tmpMinAddressSlice[0] + '.' + tmpMinAddressSlice[1] + '.' + tmpMinAddressSlice[2];
+            tmpMaxAddress = tmpMaxAddressSlice[0] + '.' + tmpMaxAddressSlice[1] + '.' + tmpMaxAddressSlice[2];
+
+            if (tmpMinAddress != tmpIp || tmpMaxAddress != tmpIp) {
+                return false;
+            }
+
+            if ($('INPUT_DHCPServerEnable').checked == true) {
+                if ((hostIp == startIp) || (hostIp == endIp) || ((hostIp > startIp) && (hostIp < endIp)) || (startIp >= endIp))
+                    return false;
+            }
+            return true;
+
+        }
+
+        function clickChange() {
+            var tmp;
+            var tmpArrIp, tmpArrMin, tmpArrMax;
+            tmpArrIp = ($('INPUT_IPAddress').value).split('.');
+            tmpArrMin = ($('INPUT_MinAddress').value).split('.');
+            tmpArrMax = ($('INPUT_MaxAddress').value).split('.');
+
+
+            tmp = tmpArrIp[0] + '.' + tmpArrIp[1] + '.' + tmpArrIp[2] + '.' + tmpArrMin[3];
+            $('INPUT_MinAddress').value = tmp;
+
+            tmp = tmpArrIp[0] + '.' + tmpArrIp[1] + '.' + tmpArrIp[2] + '.' + tmpArrMax[3];
+            $('INPUT_MaxAddress').value = tmp;
+        }
+
+
+
+        function uiOnload() {
+            //isValidIpAddressRange();
+            var checked_num;
+            if (G_DHCPServerEnable == '1') {
+                $('INPUT_DHCPServerEnable').checked = true;
+                checked_num = 2;
+            }
+            else if (G_DHCPRelayEnable == '1') {
+                $('INPUT_DHCPRelay').checked = true;
+                checked_num = 1;
+            }
+            else {
+                $('INPUT_DHCPBan').checked = true;
+                checked_num = 0;
+            }
+
+            setJSONValue(jsonFstMap());
+            //create table
+            setEnable(checked_num);
+            Form.Action();
+            $('btn').disabled = false;
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "lan") //pxm~~~~
+            {
+                var _inputs = document.getElementsByTagName("INPUT");
+                for (var i = 0; i < _inputs.length; i++) {
+                    _inputs[i].disabled = true;
+                }
+                _inputs = document.getElementsByTagName("SELECT");
+                for (var i = 0; i < _inputs.length; i++) {
+                    _inputs[i].disabled = true;
+                }
+            }
+        }
+
+        function setEnable(_dex) {
+            if (_dex == 0) {
+                disCtrl('dhcprelay', false);
+                disCtrl('dhcpserver', false);
+            }
+            else if (_dex == 1) {
+                disCtrl('dhcpserver', false);
+                disCtrl('dhcprelay', true);
+            }
+            else {
+                disCtrl('dhcprelay', false);
+                disCtrl('dhcpserver', true);
+            }
+        }
+
+        function uiSubmit() {
+            if (!isValidIpAddressRange()) {
+                DealWith.Wrong('INPUT_MaxAddress', 'Address pool to start or end address error.');
+                return false;
+            }
+
+            var ValueArray = $('INPUT_DomainName', 'INPUT_IPAddress', 'INPUT_SubAddress', 'INPUT_MinAddress', 'INPUT_MaxAddress', 'INPUT_DHCPLeaseTime', 'INPUT_RelayAddress', 'btn');
+            var _Checkbox = $('INPUT_DHCPServerEnable', 'INPUT_DHCPRelay');
+
+            if (ValueArray[5].value == "") {
+                alert("invalid DHCP Lease Time!");
+                return false;
+            }
+            IsLanOrWan_russia();
+
+            Cookie.Set('Lan_IPAddress', ValueArray[1].value, 0);
+            var g_DHCPLeaseTime = "";
+            g_DHCPLeaseTime = String(parseInt(ValueArray[5].value) * 60);
+
+            $H({
+                ':InternetGatewayDevice.IPPingDiagnostics.Host': ValueArray[1].value,
+                ':InternetGatewayDevice.TracerouteDiagnostics.Host': ValueArray[1].value,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DomainName': ValueArray[0].value,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.Enable': '1',
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceIPAddress': ValueArray[1].value,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceSubnetMask': ValueArray[2].value,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPServerEnable': Form.Checkbox('INPUT_DHCPServerEnable'),
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_TWSZ-COM_BakupIP': ValueArray[1].value,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.MinAddress': _Checkbox[0].checked ? ValueArray[3].value : undefined,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.MaxAddress': _Checkbox[0].checked ? ValueArray[4].value : undefined,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPLeaseTime': _Checkbox[0].checked ? g_DHCPLeaseTime : undefined,
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPRelay': Form.Checkbox('INPUT_DHCPRelay'),
+                ':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_TWSZ-COM_DHCPRelayAddress': _Checkbox[1].checked ? ValueArray[6].value : undefined,
+
+                'obj-action': 'set',
+                'errorpage': 'html/page/portforwd.ajax.js',
+                'var:page': 'lan',
+                'var:CacheLastData': ViewState.Save()
+            });
+            var _url = "/cgi-bin/webproc?getpage=html/page/portforwd.ajax.js&var:page=*";
+            var ajax = Ajax.getInstance(_url, "", 0, dealwithip, null_errorfunc);
+
+            if (G_IsLanOrWan == "lan") {
+                if (G_IPAddress != ValueArray[1].value) {
+                    $('btn').disabled = true;
+                    setTimeout(doRedirect, 25000);
+                }
+                else
+                    setTimeout(doRedirect, 3000);
+            }
+            else {
+                setTimeout(doWanRedirect, 3000);
+            }
+
+            ajax.post($('uiPostForm'));
+
+        }
+
+
+        function null_errorfunc() {
+            return true;
+        }
+
+        function setTimeToLink() {
+            document.location.href = 'http://' + $('INPUT_IPAddress').value;
+        }
+
+        var flag = 1;
+
+        function doRedirect() {
+
+            if (flag == 1) {
+                if (G_IPAddress != $('INPUT_IPAddress').value) {
+                    setTimeout(setTimeToLink, 5000);
+                }
+                else {
+                    $G('', {
+                        'var:menu': 'setup',
+                        'var:page': 'lan',
+                        'var:errorpage': 'lan',
+                        'getpage': 'html/index.html',
+                        'errorpate': 'html/index.html'
+                    });
+                }
+
+            }
+            else {
+
+            }
+
+        }
+
+        function doWanRedirect() {
+
+            if (flag == 1) {
+                $G('', {
+                    'var:menu': 'setup',
+                    'var:page': 'lan',
+                    'var:errorpage': 'lan',
+                    'getpage': 'html/index.html',
+                    'errorpate': 'html/index.html'
+                });
+
+            }
+            else {
+
+            }
+
+        }
+
+        function dealwithip(_text) {
+            try {
+                eval(_text);
+            }
+            catch (ex) {
+                return false;
+            }
+
+            if (G_Error == '1') {
+                $('btn').disabled = false;
+                flag = 0;
+                dealWithError();
+            }
+            else {
+                flag = 1;
+            }
+        }
+
+        function dealWithError() {
+            if (G_Error != 1) return false;
+
+            var arrayHint = [];
+            arrayHint['DomainName'] = 'INPUT_DomainName';
+            arrayHint['IPInterfaceIPAddress'] = 'INPUT_IPAddress';
+            arrayHint['IPInterfaceSubnetMask'] = 'INPUT_SubAddress';
+            arrayHint['MinAddress'] = 'INPUT_MinAddress';
+            arrayHint['MaxAddress'] = 'INPUT_MaxAddress';
+            arrayHint['DHCPLeaseTime'] = 'INPUT_DHCPLeaseTime';
+            //DHCP RELAY
+            arrayHint['DHCPRelay'] = 'INPUT_DHCPRelay';
+            arrayHint['X_TWSZ-COM_DHCPRelayAddress'] = 'INPUT_RelayAddress';
+
+            dealErrorMsg(arrayHint, G_Error_Msg);
+        }
+
+        addListeners(uiOnload, dealWithError);
+
+        //]]>
+        //???????????
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+                <li class="on"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('1' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "./zte";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_setup" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+
+
+            <!-- setup -->
+            <div class="M1">
+                <p id="up" class="lan"><a href="./lang_setup.html" id="lang_lan">LAN Basic</a></p>
+                <p id="down" class="wan"><a href="./lang_connected.html" id="lang_connected">WAN</a></p>
+                <p id=""><a href="./lang_lan_advanced.html" id="lang_lan_advanced">WAN Advanced</a></p>
+                <p id=""><a href="./lang_lanIPV6.html" id="lang_lanIPV6">IPV6 LAN</a></p>
+                <p id="" style="display:none;"><a href="./lang_wanIPV6.html" id="lang_wanIPV6">IPV6 WAN</a></p>
+                <!-- <p id="" style="display:none" class="dialing"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=setup&var:page=dialing" id="dialing">Dialing</a><p> -->
+                <!--zp delete 20120425-->
+
+            </div>
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+
+            <!-- management -->
+
+        </div>
+
+        <!--  content -->
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go;"><img id="pointTo" src="./img/helpBook.gif" alt="Help" /></a>
+                <span id="lang_title">&nbsp;</span>
+            </div>
+            <div class="Embody">
+                <div class="div_left" id="lang_ipAddress">&nbsp;</div>
+                <div class="div_middle"><input type="text" maxlength=15 name="INPUT_IPAddress" id="INPUT_IPAddress" value="" onChange="ipChange(this.value)" onBlur="clickChange();"></div>
+                <div class="div_right">&nbsp;</div>
+
+                <div class="div_left" id="lang_mask">&nbsp;</div>
+                <div class="div_middle"><input type="text" maxlength=15 name="INPUT_SubAddress" id="INPUT_SubAddress" value=""></div>
+                <div class="div_right">&nbsp;</div>
+
+                <div class="div_left" id="lang_domainName">&nbsp;</div>
+                <div class="div_middle"><input type="text" maxlength=64 name="INPUT_DomainName" id="INPUT_DomainName" value=""></div>
+                <div class="div_right">&nbsp;</div>
+
+                <!--div class="div_left"></div>
+			<div class="div_middle" style="display: none;">
+				<input type="button" name="INPUT_MultiIPSetting" id="INPUT_MultiIPSetting" value="?IP????" onclick="multiIPSetting();"/>
+			</div>
+			<div class="div_right">&nbsp;</div-->
+                <!-- Enable DHCP Relay-->
+                <div class="SmallTittle">
+                    <input type="radio" name="Enable" id="INPUT_DHCPBan" onClick="setEnable(0)" />
+                    <span id="lang_dhcp_no">&nbsp;</span>
+                </div>
+                <div class="SmallTittle">
+                    <input type="radio" name="Enable" id="INPUT_DHCPRelay" onClick="setEnable(1)" />
+                    <span id="lang_dhcpRelay_enable">&nbsp;</span>
+                </div>
+
+                <div id="dhcprelay">
+                    <div class="div_left" id="lang_dhcpRelay">&nbsp;</div>
+                    <div class="div_middle">
+                        <input type="text" maxlength=15 name="INPUT_RelayAddress" class="control" id="INPUT_RelayAddress" onChange="this.value = IPtoNumber(this.value)">
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <!-- Enable DHCP Server -->
+                <div class="SmallTittle">
+                    <input type="radio" name="Enable" id="INPUT_DHCPServerEnable" onClick="setEnable(2)" />
+                    <span id="lang_dhcpServer_enable">&nbsp;</span>
+                </div>
+
+                <!--PC???-->
+                <div id="dhcpserver">
+                    <div class="div_left" id="lang_pcIpStart">&nbsp;</div>
+                    <div class="div_middle">
+                        <input type="text" maxlength=15 name="INPUT_MinAddress" class="control" id="INPUT_MinAddress" value="" onChange="this.value = IPtoNumber(this.value)">
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+
+                    <div class="div_left" id="lang_pcIpEnd">&nbsp;</div>
+                    <div class="div_middle">
+                        <input type="text" maxlength=15 name="INPUT_MaxAddress" class="control" id="INPUT_MaxAddress" value="" onChange="this.value = IPtoNumber(this.value)">
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+
+                    <div class="div_left" id="lang_dhcpLease">&nbsp;</div>
+                    <div class="div_middle">
+                        <input type="text" name="INPUT_DHCPLeaseTime" class="control" id="INPUT_DHCPLeaseTime" maxlength="10" size="10">&nbsp;(60-9600)
+                        <span id="lang_second">Minutes</span>
+                    </div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <!--div class="div_left"></div>
+			<div class="div_middle" style="display: none;">
+				<input type="button" name="INPUT_SetAddrPoll" class="control" id="INPUT_SetAddrPoll" value="??????" onclick="multiIPPollSetting()" />
+			</div>
+			<div class="div_right">&nbsp;</div-->
+
+                <div class="div_button do">
+                    <input type="submit" name="btn" id="btn" onClick="uiSubmit();" />
+                    <input type="button" name="refresh" id="refresh" onClick="uiPageRefresh();" />
+                </div>
+                <!--div class="div_button">
+				<input type="button" name="rtn" id="rtn"  onClick="uiReturn()"> 
+				<input type="button" name="refresh" id="refresh" onClick="uiPageRefresh();"/>
+			</div-->
+            </div>
+            <form name="uiPostForm" id="uiPostForm" method="post" action="webproc">
+                <!--input type="hidden" name="getpage" value="html/index.html" id="uipostGetPage">
+			<input type="hidden" name="errorpage" value="html/index.html" id="uipostErrPage"-->
+            </form>
+        </div>
+
+        <!-- if loading and content will not display-->
+        <div id="Loading">
+        </div>
+    </div>
+</body>
+
+</html>

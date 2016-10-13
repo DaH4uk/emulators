@@ -1,0 +1,152 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>DDNS</title>
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"></script>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+
+<script>
+
+function disableButton (button,val) {
+  if (document.all || document.getElementById)
+    button.disabled = val;
+  else if (button) {
+    button.oldOnClick = button.onclick;
+    button.onclick = null;
+    button.oldValue = button.value;
+    button.value = 'DISABLED';
+  }
+}
+
+function disableDdnsButton(val)
+{
+	disableButton(document.ddns.ddnsType, val);
+	disableButton(document.ddns.ddnsDomainName, val);
+	disableButton(document.ddns.ddnsUser, val);
+	disableButton(document.ddns.ddnsPassword, val);
+
+}
+
+function updateState()
+{
+	if(document.ddns.ddnsEnabled.checked)
+		disableDdnsButton(false);
+	else
+		disableDdnsButton(true);
+}
+
+function ddns_saveChanges()
+{
+	form = document.ddns ;
+	if(form.ddnsEnabled.checked){
+		if(form.ddnsDomainName.value == ""){
+			alert(ddns_domain_name_empty);
+			form.ddnsDomainName.value = form.ddnsDomainName.defaultValue;
+			form.ddnsDomainName.focus();
+			return false ;
+		}
+		if(form.ddnsUser.value == ""){
+			alert(ddns_user_name_empty);
+			form.ddnsUser.value = form.ddnsUser.defaultValue;
+			form.ddnsUser.focus();
+			return false ;
+		}
+		if(form.ddnsPassword.value == ""){
+			alert(ddns_passwd_empty);
+			form.ddnsPassword.value = form.ddnsPassword.defaultValue;
+			form.ddnsPassword.focus();
+			return false ;
+		}
+	}
+	return true;
+}
+
+function init()
+{
+	//var cf = document.forms[0];
+	var cf = document.ddns;
+	var EnableDDNS = 0;
+
+    	if(EnableDDNS == 1) 
+        	cf.ddnsEnabled.checked = true;
+        else
+        	cf.ddnsEnabled.checked = false;
+	cf.ddnsType.selectedIndex = 0;
+	updateState();
+}
+</script>
+</head>
+<body onload="init();">
+<blockquote>
+<h2><script>dw(ddns_header)</script></h2>
+
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td>
+   <script>dw(ddns_header_explain)</script>
+  </td></tr>
+</table>
+<br>
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http:///%22http://192.168.10.1/boafrm/formDdns%22%22" method=POST name="ddns">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+	<tr><td class="item_td">
+		<input type="checkbox" name="ddnsEnabled" 
+		value="ON" ONCLICK=updateState()>&nbsp;&nbsp;<script>dw(ddns_enable)</script>
+	    </td>
+	</tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+	<tr>
+	<td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(ddns_serv_provider)</script></td>
+	<td width ="70%" class="item_td">
+		<select name="ddnsType">
+			<option value=0 >DynDNS </option>
+			<option value=1 >TZO </option>
+		</select>
+	</td></tr>
+	
+	<tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(ddns_domain_name)</script></td>
+	    <td width ="70%" class="item_td">
+ 			<input type="text" name="ddnsDomainName" size="20" maxlength="50" value=host.dyndns.org>
+	    </td>
+	</tr>
+	<tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(ddns_user_name)</script></td>
+	<td width ="70%" class="item_td">
+		<input type="text" name="ddnsUser" size="20" maxlength="50" 
+		value="">
+	</td>
+	</tr>
+	
+	<tr>
+	<td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td">
+	   <script>dw(ddns_passwd)</script>
+	</td>
+	<td width ="70%" class="item_td">
+		<input type="text" name="ddnsPassword" size="20" maxlength="30"
+		value="">
+	</td>
+	</tr>
+
+</table>
+  
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+	<tr><td>  
+  <input type="hidden" value="/ddns.htm" name="submit-url">
+  <input type="submit" value="Apply" name="apply" onClick="return ddns_saveChanges()">
+  <script>document.ddns.apply.value=save_changes;</script>
+&nbsp;&nbsp;
+  <!--<input type="reset" value="Reset" name="set" >-->
+	</td></tr>
+</table>  
+</form>
+</blockquote>
+
+</body>
+
+</html>

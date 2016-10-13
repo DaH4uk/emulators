@@ -1,0 +1,667 @@
+
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script language="JavaScript" src="Generaljs.js"></script>
+
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+
+<script language="JavaScript1.2">
+	var h_interval;
+	
+    h_intervalId = setInterval("doSubmit()", 6000 * 1000)
+ 
+    function setDefaultInterval()
+    {
+        clearInterval(h_intervalId);
+    }
+
+    function resetInterval()
+    {       
+        h_interval = 0;
+        clearInterval(h_intervalId);
+        
+        if(document.forms[0].Sys_RefreshList.value == 1)
+			h_interval = 5;        
+		else if(document.forms[0].Sys_RefreshList.value == 2)
+			h_interval = 10
+		else if(document.forms[0].Sys_RefreshList.value == 3)
+			h_interval = 15;
+		else if(document.forms[0].Sys_RefreshList.value == 4)
+			h_interval = 20;
+		else if(document.forms[0].Sys_RefreshList.value == 5)
+			h_interval = 25;
+		else if(document.forms[0].Sys_RefreshList.value == 6)
+			h_interval = 30;
+		
+        if(h_interval != 0){
+			h_intervalId = setInterval("doSubmit()", h_interval * 1000);
+		}
+        clearInterval(h_intervalId2);        
+    }
+
+
+    function stopInterval()
+    {
+        clearInterval(h_intervalId);
+    }
+
+    function getSysInfoRefreshPage()
+    {
+        myUrl = "home.html"
+        parent.main.location = myUrl
+    }
+
+</script>
+<script language="JavaScript" >
+
+
+    function doLoad() {
+        top.buttom.location="buttom.html";
+    }
+
+	function doSubmit()
+	{
+		parent.panel.location.reload();
+		top.top.frames[0].location.reload();
+		document.forms[0].submit();
+	}
+	
+	function disp()
+	{
+		var str = new Date();
+		document.forms[0].Sys_CurDateTime.value = str;
+	}
+
+	function doOpenWindow(id){
+		switch (id)
+		{
+			case 1:
+				win = window.open('Sum_AnyIP.html', 'Sum_AnyIP', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');				
+				win.window.focus();
+				break;
+			case 2:
+				win = window.open('Sum_BWMonitor.html', 'Sum_BWMonitor', 'width=700,height=600,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 3:
+				win = window.open('Sum_DHCP.html', 'Sum_DHCP', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 4:
+				win = window.open('Sum_SysStatusFrame.html', 'Sum_SysStatusFrame', 'width=700,height=300,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 5:
+				win = window.open('TM_Statistics.html', 'TM_Statistics', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;			
+			case 6:
+				win = window.open('Sum_VPNMonitor.html', 'Sum_VPNMonitor', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 7:
+				win = window.open('Sum_AssocList.html', 'Sum_AssocList', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 8:	
+				win = window.open('Sum_PortIso.html', 'Sum_PortIso', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 9:
+				win = window.open('TM1_1_Statistics.html', 'TM1_1_Statistics', 'width=700,height=600,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+			case 10:
+				win = window.open('Sum_HomePlug.html', 'Sum_HomePlug', 'width=700,height=450,status=yes,scrollbars=yes,resizable=yes');
+				win.window.focus();
+				break;
+		}
+	}
+
+	//setInterval("disp()",1000);
+
+</script>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/home_1" name="Home">
+  <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%"  border="0" cellspacing="0" cellpadding="0">
+          <tr align=right> 
+            <td colspan="2"><table width="380"  border="0" cellspacing="0" cellpadding="0">
+                <tr> 
+                  <td width="65%" height="26" background="images/refresh_bg.gif">&nbsp;&nbsp;<font color="#58586F">
+Refresh Interval: 
+<select name="Sys_RefreshList" size="1" onChange="resetInterval()">
+<option value=00000000 selected>None
+<option value=00000001>5 seconds
+<option value=00000002>10 seconds
+<option value=00000003>15 seconds
+<option value=00000004>20 seconds
+<option value=00000005>25 seconds
+<option value=00000006>30 seconds
+</select>                    </font></td>
+<td align=center background="images/refresh_bg.gif">
+<input type="submit" name="Sys_RefreshBtn" value="Refresh Now" onClick="doSubmit();" />
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr> 
+            <td height="18" colspan="2">&nbsp;</td>
+</tr>
+<tr> 
+            <td width="50%"><table border="0" cellspacing="0" cellpadding="0">
+                <tr> 
+                  <td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub">
+Device Information</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+</td>
+<td><table border="0" cellspacing="0" cellpadding="0">
+                <tr> 
+                  <td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub">
+System Status</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr> 
+            <td valign=top><table width="94%"  border="0" cellspacing="0" cellpadding="2">
+                <tr> 
+                  <td bgcolor="#FFFFFF"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                      <tr class="ds_tab_bg1"> 
+                        <td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td width="3%" height="17">&nbsp;</td>
+<td width="40%">
+System Name:</td>
+<td class="ds_text">
+NBG334W</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>Firmware Version: </td>
+<td class="ds_text">
+V3.60(AMS.2) | 11/05/2007</td>
+</tr>
+                      <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>WAN Information</td>
+<td>&nbsp;</td>
+<tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+MAC Address:</td>
+<td class="ds_text">
+00:19:cb:52:33:1f</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+IP Address: </td>
+<td class="ds_text">
+192.168.2.109</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+IP Subnet Mask:</td>
+<td class="ds_text">
+255.255.255.0</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+DHCP:</td>
+<td class="ds_text">
+Client</td>
+</tr>
+                      <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>LAN Information:</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+MAC Address:</td>
+<td class="ds_text">
+00:19:cb:52:33:1e</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+IP Address:</td>
+<td class="ds_text">
+192.168.1.1</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+IP Subnet Mask:</td>
+<td class="ds_text">
+255.255.255.0</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+DHCP:</td>
+<td class="ds_text">
+Server</td>
+</tr>
+                      <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>WLAN Information:</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+MAC Address:</td>
+<td class="ds_text">
+00:19:cb:52:33:1e</td>
+</tr>
+                      <tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+Name(SSID):</td>
+<td class="ds_text">
+<input type="text" name="Sys_WLANSSID" size="34" maxlength="34" value="NBG-334W_kk" readOnly class="ds_text1" />
+</td>
+</tr>
+					  <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+Channel:</td>
+<td class="ds_text">
+6</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+Operating Channel:</td>
+<td class="ds_text">
+6</td>
+</tr>
+                      <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+Security Mode:</td>
+<td class="ds_text">
+WPA2-PSK</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+802.11 Mode:</td>
+<td class="ds_text">
+802.11b/g</td>
+</tr>
+					  <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+WPS:</td>
+<td class="ds_text"><a href="WLAN_WPS.html" target="main">
+Configured</a></td>
+
+</tr>
+
+                      <tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>Guest WLAN Information:</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;-
+MAC Address:</td>
+<td colspan="2"  class="ds_text">06:19:cb:52:33:1e</td>
+</tr>
+<tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+IP Address:</td>
+<td colspan="2" class="ds_text">192.168.16.1</td>
+</tr>
+<tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+IP Subnet Mask:</td>
+<td colspan="2" class="ds_text">255.255.255.0</td>
+</tr>
+<tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+DHCP:</td>
+<td colspan="2" class="ds_text" >Server</td>
+</tr>
+<tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+Name(SSID):</td>
+<td colspan="2" class="ds_text"><input type="text" name="Sys_GuestWLANSSID" size="34" maxlength="34" value="NBG-334W_Guest" readOnly class="ds_text1" />
+</td>
+</tr>
+<tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;- 
+Security Mode:</td>
+<td colspan="2"class="ds_text"  >WPA2-PSK</td>
+</tr>
+                      <tr class="ds_tab_bg1">
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+<td valign=top><table width="94%"  border="0" cellspacing="0" cellpadding="2">
+                <tr> 
+                  <td bgcolor="#FFFFFF">
+                  <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                      <tr class="ds_tab_bg2"> 
+                        <td  width="5%">&nbsp;</td>
+<td colspan="2">&nbsp;</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td colspan="2">
+System Up Time:</td>
+<td colspan="2" class="ds_text">
+    0:06:26</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td >&nbsp;</td>
+<td colspan="2">
+Current Date/Time:</td>
+<td colspan="2"> 
+<input type="text" name="Sys_CurDateTime" size="36" maxlength="36" value="2007-12-13/8:53:44" readonly class="dispDate" />
+                        </td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td colspan="2">
+System Resource:</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td width="7%">&nbsp;&nbsp;&nbsp;-</td>
+<td width="39%"> 
+CPU Usage:</td>
+<td width="49%">
+                        <table width="100%" border="0" cellpadding="1" cellspacing="0">
+                            <tr> 
+                              <td bgcolor="#000000">
+                              	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                                  <tr> 
+                                    <td background="images/percent_bg.gif">
+                                    <img src="images/percent_bar.gif" width="6" height="13">
+                                    </td>
+</tr>
+</table>
+</td>
+<td width="40%">&nbsp;
+  4.58%
+							  </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;-</td>
+<td>Memory Usage:</td>
+<td><table width="100%"  border="0" cellspacing="0" cellpadding="1">
+                            <tr> 
+                              <td bgcolor="#000000">
+                              	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                                  <tr> 
+                                    <td background="images/percent_bg.gif">
+                                    <img src="images/percent_bar.gif" width=" 74" height="13">
+                                    </td>
+</tr>
+</table>
+</td>
+<td width="40%">&nbsp;
+ 58%
+							  </td>
+</tr>
+</table>
+</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td colspan="2">
+System Setting:</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+					  <tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;-</td>
+<td>Firewall:</td>
+<td colspan="2" class="ds_text">
+Enabled</td>
+</tr>
+					  <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;-</td>
+<td>Bandwidth Management:</td>
+<td colspan="2" class="ds_text">
+Disabled</td>
+</tr>
+					  <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;-</td>
+<td>UPnP:</td>
+<td colspan="2" class="ds_text">
+Enabled</td>
+</tr>
+					  <tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;-</td>
+<td>Configuration Mode:</td>
+<td colspan="2" class="ds_text">
+Advanced</td>
+</tr>
+                      <tr class="ds_tab_bg2"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>&nbsp;</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr> 
+            <td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr> 
+            <td><table border="0" cellspacing="0" cellpadding="0">
+                <tr> 
+                  <td ><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub">
+Interface Status</td>
+<td ><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+</td>
+<td><table border="0" cellspacing="0" cellpadding="0">
+                <tr> 
+                  <td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub">
+Summary</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr> 
+            <td valign=top>
+            	<table width="94%"  border="0" cellspacing="0" cellpadding="2">
+                <tr> 
+                  <td bgcolor="#FFFFFF">
+                  <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                      <tr class="ds_tab_bg1"> 
+                        <td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td width="3%" height="17">&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td><table width="95%"  border="1" align=center cellpadding="5" cellspacing="0" bordercolor="#FFFFFF">
+                            <tr align=center> 
+                              <td width="34%" height="23" class = tableTitle>
+Interface</td>
+<td width="36%" class = tableTitle>
+Status</td>
+<td width="30%" class = tableTitle>
+Rate</td>
+</tr>
+                            <tr align=center class="tabcolor2"> 
+                              <td>WAN</td>
+<td>Up</td>
+<td>100M/Full</td>
+</tr>
+                            <tr align=center class = tabcolor1> 
+                              <td>LAN</td>
+<td>Up</td>
+<td>100M/Full</td>
+</tr>
+                            <tr align=center class="tabcolor2">
+                              <td>WLAN</td>
+<td>Up<br />
+							 </td>
+<td>54M</td>
+</tr>
+                          </table>
+</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="ds_tab_bg1"> 
+                        <td height="17">&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+<td colspan="2" valign=top><table width="94%"  border="0" cellspacing="0" cellpadding="2">
+                <tr> 
+                  <td bgcolor="#FFFFFF">
+                  <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                      <tr class="ds_tab_bg1">  
+                        <td width="1%" height="17">&nbsp;</td>
+<td width="99%">
+</td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td width="1%">&nbsp;</td>
+<td width="99%">
+Any IP Table<span class="ds_text">&nbsp;(<a href="javascript: doOpenWindow(1);">Details...</a>)</span></td>
+</tr>
+                      <tr class="ds_tab_bg1">  
+                        <td width="1%" height="17">&nbsp;</td>
+<td width="99%">
+BW MGMT Monitor<span class="ds_text">&nbsp;(<a href = "javascript: doOpenWindow(2);">Details...</a>)</span></td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td width="1%">&nbsp;</td>
+<td width="99%">
+DHCP Table<span class="ds_text">&nbsp;(<a href="javascript: doOpenWindow(3);">Details...</a>)</span></td>
+</tr>
+                      <tr class="ds_tab_bg1">  
+                        <td width="1%" height="17">&nbsp;</td>
+<td width="99%">
+Packet Statistics<span class="ds_text">&nbsp;(<a href = "javascript: doOpenWindow(4);">Details...</a>)</span></td>
+</tr>
+<tr class="ds_tab_bg2"> 
+                        <td width="1%">&nbsp;</td>
+<td width="99%">
+WLAN Station Status<span class="ds_text">&nbsp;(<a href="javascript: doOpenWindow(7);">Details...</a>)</span></td>
+</tr>
+					  <tr class="ds_tab_bg1"> 
+                        <td width="1%">&nbsp;</td>
+<td width="99%">&nbsp;</td>
+</tr>
+                    </table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr> 
+            <td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr> 
+            <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+</form>
+<p>&nbsp;</p>
+
+<!-- WaterMark Begin -->
+</body>
+<script language="JavaScript">    
+<!--
+showFullPath(
+'Status');
+
+   h_intervalId2 = setInterval("resetInterval()", 20)
+
+//-->
+</script>
+
+<!-- WaterMark End -->
+
+</html>

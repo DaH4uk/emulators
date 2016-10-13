@@ -1,0 +1,265 @@
+<html>
+
+<head>
+	<link rel="shortcut icon" href="./icon/icon.ico">
+	<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+
+
+	<script src="/js/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/intro/themes/introjs-nassim.css">
+	<link rel="stylesheet" type="text/css" href="/intro/introjs.css">
+	<script type="text/javascript" src="/intro/intro.js"></script>
+
+
+	<link rel="STYLESHEET" type="text/css" href="css_router.css">
+	<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+	<script language="JavaScript" src="lingual_EN.js"></script>
+	<script language="JavaScript" src="public.js"></script>
+	<script language="JavaScript">
+		var get_current_user = "admin";
+		is_disable_all_items(false);
+	</script>
+	<script>
+		function disable_wireless() {
+			var wlan0_enable = "0";
+			get_by_id("bt_wz_wlan").disabled = (parseInt(wlan0_enable, 10) == 0) ? true : false;
+			get_by_id("bt_wz_wps").disabled = (parseInt(wlan0_enable, 10) == 0) ? true : false;
+
+		}
+	</script>
+	<style type="text/css">
+		<!-- .style1 {
+			color: #FF0000;
+			font-weight: bold;
+		}
+		
+		-->
+	</style>
+</head>
+
+<body topmargin="1" leftmargin="0" rightmargin="0" bgcolor="#757575">
+
+	<table id="header_container" align="center" border="0" cellpadding="5" cellspacing="0" width="838">
+		<tbody>
+			<tr>
+				<td width="100%">
+					<div>&nbsp;&nbsp;Product Page:&nbsp;<a href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div>
+				</td>
+				<td style="white-space: nowrap;" align="right">Hardware Version:&nbsp;E3&nbsp;&nbsp;
+				</td>
+				<td style="white-space: nowrap;" align="right">Firmware Version: 5.10</td>
+				<td> </td>
+			</tr>
+		</tbody>
+	</table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" cellspacing="0" width="838">
+		<tbody>
+			<tr>
+				<td align="center" valign="middle"><img src="wlan_masthead.gif" height="92" width="836"></td>
+			</tr>
+		</tbody>
+	</table>
+	<table border="0" cellpadding="2" cellspacing="1" width="838" align="center" bgcolor="#FFFFFF">
+		<tr id="topnav">
+			<td height="29" width="125"><img src="short_modnum.gif" height="25" width="125"></td>
+			<td id="topnavon" height="29"><a href="index.htm" onclick="return jump_if();">Setup</a></td>
+			<td id="topnavoff" height="29"><a href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td>
+			<td id="topnavoff" height="29"><a href="tools_admin.htm" onclick="return jump_if();">Tools</a></td>
+			<td id="topnavoff" height="29"><a href="st_device.htm" onClick="return 
+jump_if();">Status</a></td>
+			<td id="topnavoff" height="29"><a href="support_men.htm" onClick="return jump_if();">Support</a></td>
+		</tr>
+
+	</table>
+	<table border="1" cellpadding="2" cellspacing="0" width="838" height="100%" align="center" bgcolor="#FFFFFF" bordercolordark="#FFFFFF">
+		<tr>
+			<td id="sidenav_container" valign="top" width="125" align="right">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td id="sidenav_container">
+							<div id="sidenav">
+								<ul>
+									<li>
+										<div><a href="index.htm" onClick="return jump_if();">Internet</a></div>
+									</li>
+									<li>
+										<div id="sidenavoff">Wireless Settings</div>
+									</li>
+									<li>
+										<div><a href="lan.htm" onClick="return jump_if();">Network Settings</a></div>
+									</li>
+								</ul>
+							</div>
+							<div id="m17n_div" align="center"></div>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td valign="top" id="maincontent_container">
+				<div id=maincontent>
+					<div id=box_header>
+						<h1>
+							<script>
+								show_words(_wirelesst);
+							</script>
+						</h1>
+						<p>
+							<script>
+								show_words(LW39);
+							</script>
+						</p>
+
+						<p>
+							<script>
+								show_words(bwz_note_ConWz);
+							</script>
+						</p>
+					</div>
+					<div class=box>
+						<h2>
+							<script>
+								show_words(wwl_wl_wiz);
+							</script>
+						</h2>
+						<script>
+							show_words(LW41);
+						</script><br><br>
+						<center><input id="bt_wz_wlan" name="bt_wz_wlan" type="button" class="button_submit" value="" onClick='alert("This feature has been disabled on this emulator.")'></center>
+						<script>
+							get_by_id("bt_wz_wlan").value = wwl_wl_wiz;
+						</script>
+
+						<br><br>
+						<strong><script>show_words(help26);</script></strong>
+						<script>
+							show_words(bwz_note_WlsWz);
+						</script>
+					</div>
+					<div class=box>
+						<h2>
+							<script>
+								show_words(wps_LW13);
+							</script>
+						</h2>
+						<script>
+							show_words(LW40);
+						</script><br><br>
+
+						<center><input id="bt_wz_wps" name="bt_wz_wps" type="button" class="button_submit" value="" onClick='alert("This feature has been disabled on this emulator.")'></center>
+						<script>
+							get_by_id("bt_wz_wps").value = LW13;
+						</script>
+					</div>
+					<div class=box>
+						<h2>
+							<script>
+								show_words(LW42);
+							</script>
+						</h2>
+						<script>
+							show_words(LW43 + " " + LW44);
+						</script> <br><br>
+						<center><input id="bt_wlan" name="bt_wlan" type="button" class="button_submit" value="" onClick="window.location.href='wireless.htm'"></center>
+
+						<script>
+							get_by_id("bt_wlan").value = LW42;
+						</script>
+						<br>
+						<!--br>                    
+                    <span class="style1">Note:</span> Some changes made using this Setup Wizard may require you to change some settings on your wireless client adapters so they can still connect to the D-Link Router.-->
+					</div>
+				</div>
+			</td>
+			<td valign="top" width="150" id="sidehelp_container" align="left">
+				<table cellSpacing=0 cellPadding=2 bgColor=#ffffff border=0>
+					<tbody>
+
+						<tr>
+							<td id=help_text><strong><script>show_words(_hints)</script>&hellip;</strong>
+								<!--p>If you already have a wireless network setup with Wi-Fi Protected Setup, click on <strong>Add Wireless Device Wizard</strong> to add new device to your wireless network.</p-->
+								<p>
+									<script>
+										show_words(LW46);
+									</script>
+								</p>
+								<p>
+									<script>
+										show_words(LW47);
+									</script>
+								</p>
+								<p>
+									<a href="support_internet.htm#Wireless">
+										<script>
+											show_words(_more)
+										</script>&hellip;</a>
+								</p>
+							</td>
+
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<table id="footer_container" border="0" cellpadding="0" cellspacing="0" width="838" align="center">
+		<tr>
+			<td width="125" align="center">&nbsp;&nbsp;<img src="wireless_tail.gif" width="114" height="35"></td>
+
+			<td width="10">&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+	<br>
+	<div id="copyright"></div>
+	<br>
+
+
+	<script>
+		$(function() {
+			var introguide = introJs();
+			// var startbtn   = $('#startdemotour');
+			introguide.setOption('doneLabel', 'Следующая страница').start().oncomplete(function() {
+				window.location.href = 'wireless.htm?manual=true';
+			});
+
+			introguide.setOption('nextLabel', 'Далее &rarr;').start();
+			introguide.setOption('prevLabel', '&larr; Назад').start();
+			introguide.setOption('skipLabel', 'Пропустить').start();
+
+			introguide.setOptions({
+				steps: [{
+						element: '#bt_wlan',
+						intro: 'Нажимаем кнопку: <p><b>Manual Wireless Network Setup</b>.',
+						position: 'top'
+					}
+
+				]
+			});
+
+			var getUrlParameter = function getUrlParameter(sParam) {
+				var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+					sURLVariables = sPageURL.split('&'),
+					sParameterName,
+					i;
+
+				for (i = 0; i < sURLVariables.length; i++) {
+					sParameterName = sURLVariables[i].split('=');
+
+					if (sParameterName[0] === sParam) {
+						return sParameterName[1] === undefined ? true : sParameterName[1];
+					}
+				}
+			};
+
+			if (getUrlParameter('manual') == 'true') {
+				introguide.start();
+			};
+
+		});
+	</script>
+
+
+
+</body>
+
+</html>

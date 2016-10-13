@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+
+	<meta http-equiv="Pragma" content="No-cache">
+	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+	<meta http-equiv="Expires" content="-1">
+	<title>Wireless AP</title>
+	<link type="text/css" rel="stylesheet" href="./css/common.css" media="screen">
+	<script type="text/javascript" src="./js/error.js"></script>
+	<script type="text/javascript" src="./js/menu.js"></script>
+	<script type="text/javascript" src="./js/system_msg.js"></script>
+	<script type="text/javascript" src="./js/boot.js"></script>
+	<script type="text/javascript" src="./js/SecBoot.js"></script>
+	<script type="text/javascript" src="./js/comBasicFun.js"></script>
+	<script type="text/javascript" src="./js/ajax.js"></script>
+	<script type="text/javascript" src="./js/wiz_ajax.js"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		/*---- Global variable define -----*/
+		var G_Error = "0";
+		var G_Status = "0";
+		var G_Error_Msg = ""; 
+		var G_ViewState = "-";
+		var userLevel = "-";
+		var G_Menu = "status";
+		var G_Page = "system_msg";
+		var G_SubPage = "-";
+		var G_ErrorPage = "-";
+
+
+		/* Get Current Page Url */
+		function uiGetPageUrl() {
+			IsLanOrWan_russia();
+			var strUrl = '#' +
+				'&var:menu=' + G_Menu +
+				'&var:page=' + G_Page;
+			if (G_SubPage != '0')
+				strUrl += '&var:subpage=' + G_SubPage;
+			if (G_ErrorPage != '0')
+				strUrl += '&var:errorpage=' + G_ErrorPage;
+
+			return strUrl;
+		}
+
+		/* Refresh Current Page */
+		function uiPageRefresh() {
+			document.location.href = uiGetPageUrl();
+		}
+
+
+		var G_IsLanOrWan = "";
+
+		function IsLanOrWan_russia() {
+			if ('1' == '0') {
+				G_IsLanOrWan = "wan";
+				return false;
+			}
+			else {
+				G_IsLanOrWan = "lan";
+				return true;
+			}
+		}
+
+		//SYSTEM MSG
+		var G_Manufacturer = "ZTE";
+		var G_ManufacturerOUI = "34E0CF";
+		var G_ModelName = "ZXHN H118N";
+		var G_Descripstion = "Home Gateway";
+		var G_SerialNumber = "ZTEEH42CAF10039";
+		var G_HarewareVersion = "AZH42V1.0";
+		var G_SoftwareVersion = "ZXHN H118NV2.2.4s_EH4_RU4";
+		var G_ModemFirmwareVersion = "ZXHN H118NV2.2.4a_EH4_RU4";
+		var G_UpTime = "558";
+
+		var G_CurrentLocalTime = "10/09/2016T13:43:28";
+
+		var G_LanMac = "34:e0:cf:7e:11:f9";
+		G_LanMac = G_LanMac.toUpperCase();
+
+		function uiOnload() {
+			setJSONValue({
+				'TD_Manufacturer': G_Manufacturer,
+				'TD_ManufacturerOUI': G_ManufacturerOUI,
+				'TD_ModelName': G_ModelName,
+				'TD_Descripstion': G_Descripstion,
+				'TD_SerialNumber': G_SerialNumber,
+				'TD_MacAddress': G_LanMac.replace('T', ' '),
+				'TD_HarewareVersion': G_HarewareVersion,
+				'TD_SoftwareVersion': G_SoftwareVersion,
+				'TD_ModemFirmwareVersion': G_ModemFirmwareVersion,
+				'TD_CurrentLocalTime': G_CurrentLocalTime.replace('T', ', '),
+				'TD_UpTime': formatTime(G_UpTime || 0)
+			});
+			dealWithError();
+		}
+
+		function formatTime(num) { //对系统运行时间进行格式化处理
+			var Time, Num = Number(num);
+
+			with(data_language.dynamic) {
+				if (Num < 60) { //秒
+					Time = 0 + days + 0 + hours + 0 + minutes + Num + seconds;
+				}
+				else if (Num < 3600) { //分
+					Time = 0 + days + 0 + hours + Math.floor(Num / 60) + minutes + Num % 60 + seconds;
+				}
+				else if (Num < 86400) { //时
+					Time = 0 + days + Math.floor(Num / 3600) + hours + Math.floor(Num % 3600 / 60) + minutes + Num % 3600 % 60 + seconds;
+				}
+				else { //天
+					Time = Math.floor(Num / 86400) + days + Math.floor(Num % 86400 / 3600) + hours + Math.floor(Num % 86400 % 3600 / 60) + minutes + Num % 86400 % 3600 % 60 + seconds;
+				}
+			}
+			return Time;
+		}
+
+		function dealWithError() {
+			if (G_Error != 1) {
+				return false;
+			}
+
+			var arrayHint = [];
+
+			dealErrorMsg(arrayHint, G_Error_Msg);
+		}
+
+		addListeners(uiOnload);
+
+		//]]>
+		//���������Ҽ�
+		document.oncontextmenu = function(e) {
+			return false;
+		}
+	</script>
+</head>
+
+<body style="visibility: visible;">
+	<!--  header -->
+	<div id="Header">
+		<div id="Logo">
+			<p id="Pic"></p>
+			<p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+		</div>
+		<div id="Navigation">
+			<!-- important -->
+			<ul class="M0">
+				<li class="on"><a href="./index.html"><span id="lang_status">Status</span></a></li>
+			    <!--<li class=""><a href="./lang_wizard.html"><span id="lang_wizard"></span></a></li> -->
+				<li class="HidMark"><a href="./lang_setup.html"><span id="lang_setup">Setup</span></a></li>
+				<li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced">Advanced</span></a></li>
+				<li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless">Wireless</span></a></li>
+
+				<li class="HidMark"><a href="./lang_management"><span id="lang_management">Management</span></a></li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+		//zp add 20120419
+		function uiLogout(session) {
+			var form_name = 'uiPostForm';
+			IsLanOrWan_russia();
+			if (G_IsLanOrWan == "wan" || ('1' == '1' && '-' == '1')) {
+				if (document.forms[0]) {
+					document.forms[0].action = "";
+				}
+				else {
+					form_name = 'uiLogoutForm';
+					$('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+				}
+
+				$H({
+					'getpage': 'html/main.html',
+					//'var:login' :'true',
+					':sessionid': session,
+					'obj-action': 'auth',
+					':action': 'logout'
+				}, true);
+				$(form_name).submit();
+			}
+			else {
+				location.href = "./zte";
+			}
+		}
+		//end
+	</script>
+	<!--  main content -->
+	<div id="Main">
+		<!-- left menu -->
+		<div id="Menu">
+			<div class="rbottom">
+				<div class="r1"></div>
+				<div class="r2"></div>
+				<div class="r3"></div>
+				<div class="r4"></div>
+			</div>
+			<div id="MenuTitle">
+				<div id="Word_status" class="Word">Status</div>
+				<a id="ShrinkMark" href="#"><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+			</div>
+			<!-- status -->
+			<div class="M1">
+				<p id="up">
+					<a href="./index.html" id="lang_system_msg">System Information</a>
+				</p>
+
+
+
+				<p id="">
+					<a href="./lang_lan_clients.html" id="lang_lan_clients">LAN Client List</a>
+				</p>
+
+
+				<p id="">
+					<a href="./lang_lan_connection.html" id="lang_lan_connection">LAN Connections Status</a>
+				</p>
+				<p id="">
+					<a href="./lang_lan_status.html" id="lang_lan_status">LAN Statistics</a>
+				</p>
+
+
+				<p id="">
+					<a href="./lang_connection_status.html" id="lang_connection_status">WAN Connections Status</a>
+				</p>
+
+	
+				<p id="">
+					<a href="./lang_wireless_connection.html" id="lang_wireless_connection">Wireless Connections Status</a>
+				</p>
+				<p id="">
+					<a href="./lang_wireless_status.html" id="lang_wireless_status">Wireless Statistics</a>
+				</p>
+
+				<p id="">
+					<a href="./lang_usb_status.html" id="lang_usb_status">USB Information</a>
+				</p>
+			</div>
+
+
+			<!-- setup -->
+
+
+			<!-- advanced -->
+
+
+
+			<!-- IGMP -->
+
+			<!--  wireless  -->
+
+			<!-- management -->
+
+		</div>
+
+		<!--  content -->
+		<div id="Content">
+			<div class="MainTittle">
+				<a href="#" onclick="Help.Go"><img src="./img/helpBook.gif" alt="Help"></a> <span id="lang_title">System Information</span></div>
+			<div id="MainTable">
+				<table class="td_table">
+					<tbody>
+						<tr>
+							<td id="lang_manufacturer">Manufacturer</td>
+							<td id="TD_Manufacturer" title="ZTE">ZTE</td>
+						</tr>
+						<tr>
+							<td id="lang_manufacturerOUI">Manufacturer OUI</td>
+							<td id="TD_ManufacturerOUI" title="34E0CF">34E0CF</td>
+						</tr>
+						<tr>
+							<td id="lang_modelName">Model Name</td>
+							<td id="TD_ModelName" title="ZXHN H118N">ZXHN H118N</td>
+						</tr>
+						<tr>
+							<td id="lang_descripstion">Description</td>
+							<td id="TD_Descripstion" title="Home Gateway">Home Gateway</td>
+						</tr>
+						<tr>
+							<td id="lang_serialNumber">Serial Number</td>
+							<td id="TD_SerialNumber" title="ZTEEH42CAF10039">ZTEEH42CAF10039</td>
+						</tr>
+						<tr>
+							<td id="lang_macAddress">MAC Address</td>
+							<td id="TD_MacAddress" title="34:E0:CF:7E:11:F9">34:E0:CF:7E:11:F9</td>
+						</tr>
+						<tr>
+							<td id="lang_harewareVersion">Hardware Chipset</td>
+							<td id="TD_HarewareVersion" title="AZH42V1.0">AZH42V1.0</td>
+						</tr>
+						<tr>
+							<td id="lang_softwareVersion">Software Version</td>
+							<td id="TD_SoftwareVersion" title="ZXHN H118NV2.2.4s_EH4_RU4">ZXHN H118NV2.2.4s_EH4_RU4</td>
+						</tr>
+						<tr style="display: none;">
+							<td id="lang_modemFirmwareVersion">Modem Firmware Version</td>
+							<td id="TD_ModemFirmwareVersion" title="ZXHN H118NV2.2.4a_EH4_RU4">ZXHN H118NV2.2.4a_EH4_RU4</td>
+						</tr>
+						<tr>
+							<td id="lang_CurrentLocalTime">Current Date &amp; Time</td>
+							<td id="TD_CurrentLocalTime" title="10/09/2016, 13:43:28">10/09/2016, 13:43:28</td>
+						</tr>
+						<tr>
+							<td id="lang_UpTime">Up Time</td>
+							<td id="TD_UpTime" title="0Day 0h 9m 18s">0Day 0h 9m 18s</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<form name="uiPostForm" id="uiPostForm" method="post" action="https://emulators-dah4uk.c9users.io/zte/index.html"></form>
+			<!-- zp add 20120419-->
+		</div>
+
+		<!-- if loading and content will not display-->
+		<div id="Loading">
+		</div>
+	</div>
+
+
+</body>
+
+</html>

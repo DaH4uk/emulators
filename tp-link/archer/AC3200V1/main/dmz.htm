@@ -1,0 +1,83 @@
+<script language="javascript" type="text/javascript">
+function init() {
+    var dmzCfg = $.act(ACT_GET, DMZ_HOST_CFG, null, null);
+    if (!$.exe()) {
+        $("#dmzIp").prop('value', dmzCfg.IPAddress ? dmzCfg.IPAddress : "0.0.0.0");
+
+        if (dmzCfg.enable == 1) {
+            $("#dmz_en").prop('checked', true);
+        } else {
+            $("#dmz_en").prop('checked', false);
+        }
+    }
+}
+
+function saveDMZ() {
+    var tmpIp = $.ip2ip($("#dmzIp").prop('value'));
+    var dmzSta = ($("#dmz_en").prop("data-checked")) ? 1 : 0;
+    $.act(ACT_SET, DMZ_HOST_CFG, null, null, ["enable=" + dmzSta, "IPAddress=" + tmpIp]);
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            $.loadMain("dmz.htm");
+        }
+    });
+}
+
+$("#save").click(function() {
+    $.addLoading($(this));
+    if ($.ifip($("#dmzIp").prop('value'), true)) {
+        $.alert(ERR_IP_FORMAT);
+        var element = $("#dmzIp");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return;
+    }
+
+    var isConflict = false;
+
+    if (INCLUDE_USB_FTP_SERVER) {
+        var ftpServer = $.act(ACT_GET, FTP_SERVER, null, null, null);
+        if ($.exe()) {
+            return;
+        }
+
+        if ((ftpServer.enable == 1) && (ftpServer.accessFromInternet == 1)) {
+            isConflict = true;
+        }
+    }
+
+    if (isConflict && $("#dmz_en").prop("data-checked")) {
+        $.confirm(c_str.forwarding_ftp_conflict, function() {
+            $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+            $.exe();
+            saveDMZ();
+        }, function() {
+            $.removeLoading();
+            $.reload();
+        });
+    } else {
+        saveDMZ();
+    }
+});
+</script>
+<h3>DMZ</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b class="1">DMZ:</b>
+            <input type="checkbox" id="dmz_en" />
+            <label id="t_endmz">Enable DMZ</label>
+        </div>
+        <div class="pure-control-group">
+            <b id="t_hostip">DMZ Host IP Address:</b>
+            <input type="text" class="tp-input-text" id="dmzIp" />
+        </div>
+        <button type="submit" class="green T_save" id="save">Save</button>
+    </form>
+</div>
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>

@@ -1,0 +1,161 @@
+function __wzVServ() {
+    __wzVServ.superclass.constructor.call(this);
+    var $$ = {
+        wID: "#winMiscSettings.window",
+        wizard: null
+    };
+    this.show = function(iftree, lanClients, rule, index, rmaccess, vserver) {
+        DIALOG.caption($$.wID, "vserversMenu").show($$.wID);
+        for (var use_ports = [], i = 0; rmaccess && i < rmaccess.length; i++) use_ports[i] = rmaccess[i].sport;
+        $$.wizard = new ruleVirtServ(iftree, lanClients, rule, index, !0, use_ports), $$.wizard.buttonBar($($$.wID + ">.footer>.toolbar")).deep.updateView($($$.wID + ">.body>.content")).cleanButtonBar().addButton("button_save").getButton("button_save").bind("click.button", callback(this, function() {
+            $$.wizard.deep.updateModel();
+            for (var use_ports_vs = [], use_ports_vs_buf = [], i = 0; i < vserver.length; i++) i != index && ("all" == vserver[i].source_iface || vserver[i].source_iface == $$.wizard.rule.source_iface || "all" == $$.wizard.rule.source_iface) && ("tcp/udp" == vserver[i].proto || vserver[i].proto == $$.wizard.rule.proto || "tcp/udp" == $$.wizard.rule.proto) && ("" == vserver[i].ports_end ? use_ports_vs[use_ports_vs.length] = parseInt(vserver[i].ports_begin) : (use_ports_vs_buf = _.range(parseInt(vserver[i].ports_begin), parseInt(vserver[i].ports_end) + 1), use_ports_vs = _.union(use_ports_vs, use_ports_vs_buf)));
+            if ("" == $$.wizard.rule.ports_end) - 1 != _.indexOf(use_ports_vs, parseInt($$.wizard.rule.ports_begin)) && (alert(lng("PortInUse")), $$.wizard.status.error = !0);
+            else
+                for (var j = parseInt($$.wizard.rule.ports_begin); j < parseInt($$.wizard.rule.ports_end) + 1; j++)
+                    if (-1 != _.indexOf(use_ports_vs, j)) {
+                        alert(lng("PortsInUse")), $$.wizard.status.error = !0;
+                        break
+                    } if ((parseInt($$.wizard.rule.ports_end) < parseInt($$.wizard.rule.ports_begin) || parseInt($$.wizard.rule.portd_end) < parseInt($$.wizard.rule.portd_begin)) && (alert(lng("checkOutRange")), $$.wizard.status.error = !0), "" != $$.wizard.rule.ports_end) {
+                for (var ports_array = [], i = 0; i < parseInt($$.wizard.rule.ports_end) - parseInt($$.wizard.rule.ports_begin); i++) ports_array[i] = parseInt($$.wizard.rule.ports_begin) + i;
+                for (var j = 0; j < use_ports.length; j++)
+                    if (-1 != _.indexOf(ports_array, use_ports[j], !0)) {
+                        alert(lng("MessagePortUsed")), $$.wizard.status.error = !0;
+                        break
+                    }
+            }
+            $$.wizard.status.error || (is.set(index) ? __VSERVERS.edit($$.wizard.rule, index) : __VSERVERS.add($$.wizard.rule), this.hide())
+        })), $$.wizard.$box.find(".edit .error").remove(), $$.wizard.emit("updaterq"), $($$.wID).unbind("close.dialog").bind("close.dialog", callback(this, this.hide))
+    }, this.hide = function() {
+        DIALOG.hide($$.wID, callback(this, function() {
+            $($$.wID + ">.footer>.toolbar, " + $$.wID + ">.body>.content").find("*").unbind().remove()
+        })), delete $$.wizard
+    }
+}
+
+function __StatClientForm() {
+    __StatClientForm.superclass.constructor.call(this);
+    var $$ = {
+            CALLBACK: null,
+            TEMPDATA: null
+        },
+        wID = "#winStatClient.window";
+    this.add(new nodetext("statDhcpHost", "", {
+        mandatory: !1
+    }), "alias").add(new nodeComboMAC("airMACAddr", "", {
+        header: [{
+            index: "ip",
+            name: "IP"
+        }, {
+            index: "mac",
+            name: "MAC"
+        }, {
+            index: "host",
+            name: "Host"
+        }],
+        index: "mac",
+        mandatory: !0
+    }), "mac").add(new nodeip("airIPAddr", "", {
+        mandatory: !0,
+        re: [function(value) {
+            var lan = DHCP.lan();
+            return new IPv4(value, lan.shortmask()).fromRange(lan.hostmin(), lan.hostmax()) ? null : ""
+        }]
+    }), "ip").buttonBar($(wID + ">.footer>.toolbar")).addButton("button_save"), this.deep.updateView($(wID + ">.body>.content")), this.updateModel = function(status) {
+        this.status = status
+    }, this.validHostname = function(str) {
+        var re = new RegExp("^[a-zA-Z0-9-]+$"),
+            result = str.match(re);
+        return result
+    }, this.getButton("button_save").bind("click.button", callback(this, function() {
+        this.deep.updateModel(), this.status.error || (this.validHostname(this.child(0).val()) || "" == this.child(0).val() ? (is.func($$.CALLBACK) && $$.CALLBACK.call(this, {
+            alias: this.child(0).val(),
+            mac: this.child(1).val(),
+            ip: this.child(2).val()
+        }, $$.TEMPDATA), this.hide()) : (this.child(0).setError("dhcpMacWrongHostM"), this.$box.find(".edit .error").addClass("monitoring")))
+    })), this.$box.bind("error.input", function() {}), this.show = function() {
+        var mac = this.child("mac");
+        mac.cleanRows();
+        for (var i = 0; i < DATA.arp.length; i++) {
+            var obj = DATA.arp[i];
+            mac.addRow(obj.ip, obj.mac, obj.hostname)
+        }
+        DIALOG.show(wID, !0), this.child(0).pluginInput.find(":input").focus()
+    }, this.hide = function() {
+        DIALOG.hide(wID)
+    }, this.editClient = function(client, cb) {
+        $$.CALLBACK = cb, $$.TEMPDATA = client, this.child(0).val(client.alias ? client.alias : "").pluginEdit.setError(), this.child(1).val(client.mac ? client.mac : "").pluginEdit.setError(), this.child(2).val(client.ip ? client.ip : "").pluginEdit.setError(), this.show()
+    }, this.addClient = function(client, cb) {
+        $$.CALLBACK = cb, $$.TEMPDATA = null, this.child(0).val(client.alias ? client.alias : "").pluginEdit.setError(), this.child(1).val(client.mac ? client.mac : "").pluginEdit.setError(), this.child(2).val(client.ip ? client.ip : "").pluginEdit.setError(), this.show()
+    }
+}
+
+function __MACFilterForm() {
+    __MACFilterForm.superclass.constructor.call(this);
+    var $$ = {
+        wID: "#winMiscSettings.window",
+        lanClients: []
+    };
+    this.updateModel = function(status) {
+        this.status = status
+    }, this.add(new nodeComboMAC("hwaddr", "", {
+        header: [{
+            index: "ip",
+            name: "IP"
+        }, {
+            index: "mac",
+            name: "MAC"
+        }, {
+            index: "host",
+            name: "Host"
+        }],
+        index: "mac",
+        mandatory: !0
+    }), "mac").add(new nodeSelect("action"), "enable").add(new nodeCheckBox("ipfltActivateNow", !0), "state");
+    var enable = this.child("enable");
+    enable.cleanOptions(), enable.addOption("macfAccept", "ACCEPT"), enable.addOption("macfDrop", "DROP"), this.show = function(lanClients, macList, rule, index) {
+        rule ? (this.child(0).val(rule.mac), this.child(1).val(rule.enable)) : this.child(0).val(""), DIALOG.caption($$.wID, "menu_macfilter").show($$.wID), $$.lanClients = lanClients, this.buttonBar($($$.wID + ">.footer>.toolbar")).deep.updateView($($$.wID + ">.body>.content")).cleanButtonBar().addButton("button_save").getButton("button_save").bind("click.button", callback(this, function() {
+            this.deep.updateModel();
+            var mac = this.child(0).val(),
+                drop = this.child(1).val(),
+                active = this.child(2).val();
+            if (!this.status.error) {
+                for (var i in macList)
+                    if (macList[i].mac && (macList[i].mac == mac.toUpperCase() || macList[i].mac == mac)) {
+                        if (!rule) return void alert(lng("dup"));
+                        if (rule.id != macList[i].id) return void alert(lng("dup"))
+                    }
+                this.hide();
+                var objMaxId = _.max(macList, function(mac) {
+                        return mac.id
+                    }),
+                    id = objMaxId && !_.isUndefined(objMaxId.id) ? objMaxId.id + 1 : 0;
+                _.isUndefined(index) || (rule.id = macList[index].id);
+                var newRule = {
+                    mac: mac,
+                    enable: drop,
+                    state: active,
+                    id: _.isUndefined(index) ? id : rule.id
+                };
+                _.isUndefined(index) ? MACFILTER.add(newRule) : MACFILTER.edit(newRule, index)
+            }
+        })), this.$box.find(".edit .error").remove(), $($$.wID).unbind("close.dialog").bind("close.dialog", callback(this, this.hide))
+    }, this.hide = function() {
+        DIALOG.hide($$.wID, callback(this, function() {
+            $($$.wID + ">.footer>.toolbar, " + $$.wID + ">.body>.content").find("*").unbind().remove()
+        }))
+    }, this.updateView = function(phase) {
+        if (__MACFilterForm.superclass.updateView.apply(this, arguments), "back" == phase)
+            for (var mac = this.child("mac"), i = 0; i < $$.lanClients.length; i++) {
+                var obj = $$.lanClients[i];
+                mac.addRow(obj.ip, obj.mac, obj.hostname)
+            }
+    }
+}
+hideFlag(10) || modeAP() || extend(__wzVServ, pageVirtServ), extend(__StatClientForm, node), extend(__MACFilterForm, node);
+var StatClientForm = null,
+    wzVServ = null,
+    MACFilterForm = null;
+$(document).bind("ready", function() {
+    StatClientForm = new __StatClientForm, hideFlag(10) || modeAP() || (wzVServ = new __wzVServ), MACFilterForm = new __MACFilterForm
+});

@@ -1,0 +1,351 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language='javascript'>
+function doIndexChange() {
+document.forms[0].VIRTUALSVR_IndexFlag.value = 1;
+location.reload();
+}
+function doAppIndexChange(){
+document.forms[0].VIRTUALSVR_IndexFlag.value = 3;
+location.reload();
+}
+function doDelete() {
+document.forms[0].VIRTUALSVR_IndexFlag.value = 2;
+location.reload();
+}
+function chkPortRange()
+{
+port = parseInt(document.forms[0].VIRTUALSVR_startPort.value);
+port2 = parseInt(document.forms[0].VIRTUALSVR_endPort.value);
+port3 = parseInt(document.forms[0].VIRTUALSVR_startPortLocal.value);
+port4= parseInt(document.forms[0].VIRTUALSVR_endPortLocal.value);
+if (port > 65535 || port <= 0 || port2 > 65535 || port2 <= 0)
+{	alert("The Port value must position between 1 to 65535.");return true;
+}
+if (port2 < port)
+{	alert("End port must greater than Start port.");return true;
+}
+if (port3 > 65535 || port3 <= 0 || port4 > 65535 || port4 <= 0)
+{	alert("The Port value must position between 1 to 65535.");return true;
+}
+if (port4 < port3)
+{	alert("End port must greater than Start port.");return true;
+}
+if ((port2 - port) != (port4 - port3))
+{	alert("The number of WAN ports should be equal to the number of local ports.");return true;
+}
+return false;
+}
+function isValidIpAddr(ip1,ip2,ip3,ip4)
+{
+if(ip1==0 || ip4==0 || ip4==255 || ip1==127 )
+return false;
+return true;
+}
+function inValidAddress(Address)
+{
+var address = Address.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits;
+var i;
+if(address == null) {
+alert("IP address is empty or wrong format!");return true;
+}
+else
+{
+digits = address[0].split(".");
+for(i=0; i < 4; i++)
+{
+if((Number(digits[i]) > 255 ) || (Number(digits[i]) < 0 ) || (Number(digits[0]) > 223))
+{
+alert("Invalid IP address: " + Address);return true;
+}
+}
+if(!isValidIpAddr(digits[0],digits[1],digits[2],digits[3],false))	{
+alert("Invalid IP address: " + Address);return true;
+}
+}
+return false;
+}
+function quotationCheck(object, limit_len) {
+var len = object.value.length;
+var c;
+var i, j = 0;
+for (i = 0; i < len; i++)
+{
+var c = object.value.charAt(i);
+if (c == '"')
+{
+j += 6;
+}
+else
+j++;
+}
+if (j > limit_len)
+{
+alert('too many quotation marks!');return true;
+}
+return false;
+}
+function doSave() {
+if (chkPortRange())
+return;
+if (inValidAddress(document.forms[0].VIRTUALSVR_localIP.value))
+return;
+if (quotationCheck(document.forms[0].VIRTUALSVR_Application, 20) )
+return;
+location.reload();
+}
+</script>
+</head><body>
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/adv_nat_virsvr_1" name="VIRTUALSVR_form"><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Virtual Server</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10" ></td><td width="440"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Virtual Server for</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+Single IP Account</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Rule Index</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="VIRTUALSVR_index" SIZE="1" onChange="doIndexChange()"><OPTION SELECTED>1
+<OPTION>2
+<OPTION>3
+<OPTION>4
+<OPTION>5
+<OPTION>6
+<OPTION>7
+<OPTION>8
+<OPTION>9
+<OPTION>10
+<OPTION>11
+<OPTION>12
+<OPTION>13
+<OPTION>14
+<OPTION>15
+<OPTION>16
+</SELECT><INPUT TYPE="HIDDEN" NAME="VIRTUALSVR_IndexFlag" VALUE="0"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Application</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="VIRTUALSVR_Application" SIZE="20" MAXLENGTH="20" VALUE="-"><SELECT NAME="VIRTUALSVR_App_idx" SIZE="1" onChange="doAppIndexChange()"><OPTION SELECTED>-
+<OPTION>FTP
+<OPTION>SSH
+<OPTION>TELNET
+<OPTION>SMTP
+<OPTION>HTTP_Server
+<OPTION>POP3
+<OPTION>HTTPS
+<OPTION>T.120
+<OPTION>H.323
+<OPTION>PPTP
+<OPTION>pcAnywhere
+<OPTION>VNC
+<OPTION>CUSeeMe
+</SELECT></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Protocol</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="VSProtocolIndex" SIZE="1"><OPTION SELECTED>ALL
+<OPTION>TCP
+<OPTION>UDP
+</SELECT></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Start Port Number</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="VIRTUALSVR_startPort" SIZE="5" MAXLENGTH="5" VALUE="0"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">End Port Number</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="VIRTUALSVR_endPort" SIZE="5" MAXLENGTH="5" VALUE="0"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Local IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="VIRTUALSVR_localIP" SIZE="16" MAXLENGTH="15" VALUE="0.0.0.0"></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Start Port Number(Local)</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="VIRTUALSVR_startPortLocal" SIZE="5" MAXLENGTH="5" VALUE="0"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">End Port Number(Local)</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="VIRTUALSVR_endPortLocal" SIZE="5" MAXLENGTH="5" VALUE="0"></td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="30" class="title-sub">
+<font color="#000000">Virtual Server Listing</font></td><td class="light-orange">&nbsp;</td><td><hr noshade class="light-orange-line"></td><td><hr noshade class="light-orange-line"></td><td><hr noshade class="light-orange-line"></td></tr><tr>
+<td width="150" class="light-orange">&nbsp;</td><td width="10" class="light-orange"></td><td width="10">&nbsp;</td><td width="580" align=center>
+<table width="580" border="1" cellpadding="0" cellspacing="0" bordercolor="#CCCCCC" bgcolor="#FFFFFF">
+<tr height="30">
+<td width="50" align=center class="tabdata"><strong>
+<font color="#000000">Rule</font></strong></td><td width="140" align=center class="tabdata"><strong>
+<font color="#000000">Application</font></strong></td><td width="70"  align=center class="tabdata"><strong>
+<font color="#000000">Protocol</font></strong></td><td width="70"  align=center class="tabdata"><strong>
+<font color="#000000">Start Port</font></strong></td><td width="70"  align=center class="tabdata"><strong>
+<font color="#000000">End Port</font></strong> </td><td width="120" align=center class="tabdata"><strong>
+<font color="#000000">Local IP Address</font></strong></td><td width="70" align=center class="tabdata"><strong>
+<font color="#000000">Start Port Local</font></strong></td><td width="70" align=center class="tabdata"><strong>
+<font color="#000000">End Port Local</font></strong></td></tr><tr>
+<td align="center" class="tabdata">1</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">2</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">3</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">4</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">5</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">6</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">7</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">8</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">9</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">10</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">11</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">12</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">13</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">14</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">15</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+<tr>
+<td align="center" class="tabdata">16</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">-</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">0.0.0.0</td>
+<td align="center" class="tabdata">    0</td>
+<td align="center" class="tabdata">    0</td>
+</tr>
+</table></td><td width="10">&nbsp;</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td width="10">&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" height="42" class="black">&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="BUTTON" NAME="SaveBtn" VALUE="SAVE" onClick="doSave();"><INPUT TYPE="BUTTON" NAME="DeleteBtn" VALUE="DELETE" onClick="doDelete();"><INPUT TYPE="BUTTON" NAME="BackBtn" VALUE="BACK" onClick="javascript:window.location='adv_nat_top.htm'/*tpa=http://192.168.1.1/advanced/adv_nat_top.htm*/"><INPUT TYPE="BUTTON" NAME="CancelBtn" VALUE="CANCEL" onClick="javascript:window.location='adv_nat_virsvr.htm'/*tpa=http://192.168.1.1/advanced/adv_nat_virsvr.htm*/"></td></tr></table><p>&nbsp;</p>
+</form>
+</body></html>

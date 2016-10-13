@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="ndm.abbr" content="Routes">
+<meta name="ndm.abbr" content="Маршруты" xml:lang="RU" lang="RU">
+
+<title>ZyXEL Keenetic - 
+				Статические Маршруты</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css">
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+var routes;
+
+function setType(element, type) {
+	(new FieldValue(element.form.type)).set(type);
+	onTypeChange(element.form.type);
+}
+function onTypeChange(select) {
+	var type = select.options[select.selectedIndex].value;
+	var f = select.form;
+
+	f.network.disabled = f.mask.disabled = (type != "network");
+	f.host.disabled = (type != "host");
+	f["default"].checked = (type == "default"); //There's too much unused keywords in js.. :(
+	if( type != "network" ) f.network.value = f.mask.value = "";
+	if( type != "host" ) f.host.value = ""; 
+}
+function onIfChange(select) {
+	var value = select.options[select.selectedIndex].value;
+	select.form.gateway.disabled = (value && value != "");
+	if( value ) select.form.gateway.value = "";
+}
+function submitRoute() {
+	var selected = routes.getSelectedRow();
+	var f = routes.getEditorForm();
+
+	var p = new Packet();
+	if( !selected.__ghost && routes.getFlag(selected) != TBL_ROW_INSERTED ) {
+		p.No("ip route", routes.getRowValues(selected), null);
+		selected.__ghost = true;
+	}
+	p.Command("ip route",
+			{"network":0, "mask":0, "host":0, "default":0, "interface":0, "gateway":0, "metric":0},
+			f, true);
+	p.ConfigSave();
+	p.onLoad = function() { 
+		if( !this.getErrorState() ) routes.setRowValues(selected, f.getParameters(true)); 
+	}
+	p.proceed(document.getElementById("logger"));
+	return false;
+}
+function add() {
+	routes.startEditing(routes.insertRow());
+}
+function drop() {
+	var selected = routes.getSelectedRow();
+	if( routes.getFlag(selected) != TBL_ROW_INSERTED ) {
+		var p = new Packet();
+		if( !selected.__ghost ) {
+			p.No("ip route", routes.getRowValues(selected), null);
+			selected.__ghost = true;
+		}
+		p.ConfigSave();
+		p.onLoad = function() { 
+			if( !this.getErrorState() ) routes.deleteRow(selected); 
+		}
+		p.proceed(document.getElementById("logger"));
+	} else {
+		routes.stopEditing();
+	}
+}
+function loadValues() {
+	enableProgressIndicator();
+	var interfaces = new IfList(document.getElementById("interface"));
+	routes = new Table(document.getElementById("routes"));
+	routes.showColumns("destination", "gateway", "interface", "metric");
+	routes.setEditorForm(new Form(document.editor));
+	routes.onStopEditing = function(element) {
+		if( this.getFlag(element) == TBL_ROW_INSERTED ) this.deleteRow(element);
+	}
+	routes.setRowValues_ = routes.setRowValues;
+	routes.setRowValues = function(element, values) {
+		values["destination"] = 
+			values["network"] ? (values["network"] + " / " + values["mask"]) : (values["host"] || "default"); 
+		return this.setRowValues_(element, values);
+	}
+
+	var p = new Packet();
+	p.Command("show interface", null, interfaces);
+	p.Config("ip route", null, routes);
+	p.proceed(document.getElementById("logger"));
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues();">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0"></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default">English</option><option selected="selected" value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br></div></div><div style="height: 639px;" id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a href="broadband.html"><span>IPoE</span></a></li><li><a href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a href="3g.html"><span>3G</span></a></li><li><a href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a href="dyndns.html"><span>DyDNS</span></a></li><li><a class="current" href="routes.html"><span>Маршруты</span></a></li></ul><div class="block orange" style="border-bottom: none;">
+		<h1>Статические Маршруты</h1>
+		<div class="rounded">
+		<p>Можно добавить маршруты через альтернативные шлюзы (в обход шлюза 
+по умолчанию) к локальным ресурсам провайдера, а также к другим узлам 
+или сетям. Таблицу действующих маршрутов можно просмотреть в <a href="status.html">системном мониторе</a>. Для редактирования созданного маршрута щелкните его запись в списке.</p>
+		</div>
+		<table style="width: 100%;" id="routes" class="styled" cellspacing="0">
+		<thead>
+			<tr>
+			<th>Адрес или сеть назначения</th>
+			<th>Адрес шлюза</th>
+			<th>Подключение</th>
+			<th>Метрика</th>
+			</tr>
+		</thead>
+		<tbody><tr class=" highlight"><td class="col_destination">default</td><td class="col_gateway">&nbsp;</td><td class="col_interface">&nbsp;</td><td class="col_metric">&nbsp;</td></tr><tr><td colspan="4" class="editor"><form action="" name="editor" onsubmit="return false;" onreset="routes.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка статического маршрута</h1><div class="close_button"><a href="routes.html" onclick=""><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите тип маршрута и укажите его параметры.</p>
+			</div>
+			<fieldset>
+			<label for="type">Тип маршрута:</label>
+				<select name="type" onchange="onTypeChange(this);" onkeyup="onTypeChange(this);">
+					<option value="default" selected="selected">маршрут по умолчанию</option>
+					<option value="network">маршрут до сети</option>
+					<option value="host">маршрут до узла</option>
+				</select>
+			<input name="default" checked="checked" disabled="disabled" style="display: none;" type="checkbox"><br>
+
+			<label for="network">Адрес сети назначения:</label>
+				<input disabled="disabled" name="network" onchange="setType(this, 'network');" type="text"><br>
+			<label for="mask">Маска подсети:</label>
+				<input disabled="disabled" name="mask" onchange="setType(this, 'network');" type="text"><br>
+			<label for="network">Адрес узла назначения:</label>
+				<input disabled="disabled" name="host" onchange="setType(this, 'host');" type="text"><br>
+			</fieldset>
+
+			<fieldset>
+			<label for="gateway">Адрес шлюза:</label><input name="gateway" type="text"><br>
+			<label for="interface">Интерфейс:</label>
+				<select name="interface" id="interface" style="width: 280px;" onchange="onIfChange(this);" onkeyup="onIfChange(this);">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option><option value="PPTP0">PPTP0</option><option value="Switch0/VLAN9">Switch0/VLAN9</option><option value="PPTP1">PPTP1</option><option value="L2TP0">L2TP0</option><option value="PPPoE0">PPPoE0</option></select><br>
+			<label for="metric">Метрика:</label><input name="metric" type="text"><br>
+			<label for="nothing"></label><button onclick="" class="apply" type="button" name="apply">Применить</button>
+				<button class="cancel" type="batton" onclick="document.location='routes.html'" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="">Удалить Маршрут</button>
+			</fieldset>
+			</div>
+		</form></td></tr></tbody></table>
+
+		<br>
+		<button name="add_conn" onclick="add()">Добавить Маршрут</button>
+
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return false;" onreset="routes.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка статического маршрута</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Выберите тип маршрута и укажите его параметры.</p>
+			</div>
+			<fieldset>
+			<label for="type">Тип маршрута:</label>
+				<select name="type" onchange="onTypeChange(this);" onkeyup="onTypeChange(this);">
+					<option value="default" selected="selected">маршрут по умолчанию</option>
+					<option value="network">маршрут до сети</option>
+					<option value="host">маршрут до узла</option>
+				</select>
+			<input name="default" checked="checked" disabled="disabled" style="display: none;" type="checkbox"><br>
+
+			<label for="network">Адрес сети назначения:</label>
+				<input name="network" onchange="setType(this, 'network');" disabled="disabled" type="text"><br>
+			<label for="mask">Маска подсети:</label>
+				<input name="mask" onchange="setType(this, 'network');" disabled="disabled" type="text"><br>
+			<label for="network">Адрес узла назначения:</label>
+				<input name="host" onchange="setType(this, 'host');" disabled="disabled" type="text"><br>
+			</fieldset>
+
+			<fieldset>
+			<label for="gateway">Адрес шлюза:</label><input name="gateway" type="text"><br>
+			<label for="interface">Интерфейс:</label>
+				<select name="interface" id="interface" style="width: 280px;" onchange="onIfChange(this);" onkeyup="onIfChange(this);">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option><option value="PPTP0">PPTP0</option><option value="Switch0/VLAN9">Switch0/VLAN9</option><option value="PPTP1">PPTP1</option><option value="L2TP0">L2TP0</option><option value="PPPoE0">PPPoE0</option></select><br>
+			<label for="metric">Метрика:</label><input name="metric" type="text"><br>
+			<label for="nothing"></label><button onclick="submitRoute()" class="apply" type="submit" name="apply">Применить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить Маршрут</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div style="right: -225px; display: none;" class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif"></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+<div style="margin: 0px; padding: 0px; position: absolute; left: 48%; top: 30%; width: auto; display: none;" id="ajaxBusy"><p><img src="img/loading.gif"></p></div></body></html>

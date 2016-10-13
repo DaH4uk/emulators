@@ -1,0 +1,96 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../block_sites.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_BKS_keyword');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#block_sites.html" target=formframe>
+<input type=hidden name=submit_flag value="block_sites">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(block_sites_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var lan_ip="192.168.1.1"
+var lan_subnet="255.255.255.0"
+function loadvalue()
+{
+passForm=document.forms[0];
+var selectnum='0';
+var bs_trustedip=''
+if (parseInt(selectnum)=="")
+selectnum=0;
+show_trustedip();
+passForm.skeyword[selectnum].checked = true;
+if('0'=='0')
+{
+passForm.trustipenble.checked = false;
+passForm.cfTrusted_IPAddress4.disabled=true;
+passForm.cfTrusted_IPAddress4.value="";
+}
+else 
+{
+passForm.trustipenble.checked = true;
+passForm.cfTrusted_IPAddress4.disabled=false;
+var trusted_array=new Array();
+trusted_array=bs_trustedip.split('.');
+passForm.cfTrusted_IPAddress4.value=trusted_array[3];
+}
+tbox=passForm.cfKeyWord_DomainList;
+var list="";
+webfilter = list.split(" ");
+for(i=0;i<webfilter.length;i++)
+tbox.options[i]=new Option(webfilter[i],webfilter[i]);
+}
+</script>
+<input type="hidden" name="Trusted_IP_Enable">
+<input type="hidden" name="cfTrusted_IPAddress">
+<input type="hidden" name="Text">
+<TR>
+<TD colspan=2>
+<script>document.write(block_sites_url);</script>
+</TD>
+</TR>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BKS_keyword','blocking')"><b><script>document.write(content_block_keyword_block);</script><script>document.write(ba);</script></td></tr>
+<script>document.write(hd2+"<input type='radio' name='skeyword' value='0' >"+never_mark+"<tr>"+hd2+"<input type=\"radio\" name=\"skeyword\" value=1 selected>"+per_schedule_mark+"</td></tr><tr>"+hd2+"<input type=\"radio\" name=\"skeyword\" value=2 >"+always_mark+"</td></tr>");</script>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BKS_keyword','toaddword')"><b><script>document.write(content_block_type_keyword);</script><script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="text" name="cfKeyWord_Domain" size="32" maxlength="60" onKeyPress="return getkey('ssid',event)"></td></tr>
+<tr><script>document.write(hd2+'<input type="button" name="cfKeyWord_AddKeyword" value="'+content_block_add+'" onClick="if(!checkKeyWord()) return false;"></td></tr>');</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BKS_keyword','blocklist')"><b><script>document.write(content_block_contain);</script><script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><select name="cfKeyWord_DomainList" size="6" multiple></select></td></tr>
+<tr>
+<script>document.write(hd2+'<input type="button" name="cfKeyWord_DeleteKeyword" onClick="if(!checkKeyWordDomainList(\'delete\')) return false;" value="'+content_block_del+'"><input type="button" name="cfKeyWord_ClearList" onClick="if(!checkKeyWordDomainList(\'clear\')) return false;" value="'+content_block_clear+'">');</script>
+</td>
+</tr>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="trustipenble" value="1" onclick= "checkTrustIP();"><a tabindex=-1 href="javascript:loadhelp('_BKS_keyword','trusted')"><b><script>document.write(content_block_allow_trustedip);</script><script>document.write(ba);</script></td></tr>
+<tr>
+<script>document.write(hd);</script><b><script>document.write(trust_ip);</script></b></a></td>
+<script>document.write(hd_r);</script>
+<input type="text" name="cfTrusted_IPAddress1" size="4" maxlength="3" readonly onKeyPress="return getkey('num',event)">.
+<input type="text" name="cfTrusted_IPAddress2" size="4" maxlength="3" readonly onKeyPress="return getkey('num',event)">.
+<input type="text" name="cfTrusted_IPAddress3" size="4" maxlength="3" readonly onKeyPress="return getkey('num',event)">.
+<input type="text" name="cfTrusted_IPAddress4" size="4" maxlength="3" disabled onKeyPress="return getkey('num',event)">
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd2_center);</script>
+<script>document.write("<input type='submit' name='cmd' value='"+apply_mark+"' onClick='return check_blocksites();'>");</script>
+<script>document.write("<input type='reset' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"block_sites.html\";'>");</script>
+</td>
+</tr>
+</table>
+</FORM>
+</body>
+</html>

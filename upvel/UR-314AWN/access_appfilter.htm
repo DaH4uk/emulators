@@ -1,0 +1,59 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language='javascript'>
+function switchFilterType(object)
+{
+switch(object.selectedIndex)
+{
+case 0:
+window.location='access_ipfilter.htm'/*tpa=http://192.168.1.1/access/access_ipfilter.htm*/;
+break;
+case 2:
+window.location='access_URLfilter.htm'/*tpa=http://192.168.1.1/access/access_URLfilter.htm*/;
+break;
+}
+}
+</script>
+</head><body>
+<FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/access_appfilter_1" name="IPFILTERform"><div align=center>
+<table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Filter</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10"> </td><td width="440"></td></tr><tr>
+<td height="25" class="title-sub">
+<font color="#000000">Filter Type</font></td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Filter Type Selection</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<SELECT NAME="FILTERTYPE_index" SIZE="1" onchange="switchFilterType(this)"><OPTION>IP / MAC Filter
+<OPTION SELECTED>Application Filter
+<OPTION>URL Filter
+</SELECT></td></tr><tr>
+<td height="25" class="title-sub">
+<font color="#000000">Application Filter Editing</font></td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Application Filter</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="APPFilter_status" VALUE="1"><font color="#000000">Activated</font><INPUT TYPE="RADIO" NAME="APPFilter_status" VALUE="0" CHECKED><font color="#000000">Deactivated</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">ICQ</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="ICQ_allowance" VALUE="1" CHECKED><font color="#000000">Allow</font><INPUT TYPE="RADIO" NAME="ICQ_allowance" VALUE="0"><font color="#000000">Deny</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">MSN</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="MSN_allowance" VALUE="1" CHECKED><font color="#000000">Allow</font><INPUT TYPE="RADIO" NAME="MSN_allowance" VALUE="0"><font color="#000000">Deny</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">YMSG</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="YMSG_allowance" VALUE="1" CHECKED><font color="#000000">Allow</font><INPUT TYPE="RADIO" NAME="YMSG_allowance" VALUE="0"><font color="#000000">Deny</font></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Real Audio/Video</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="RADIO" NAME="RA_allowance" VALUE="1" CHECKED><font color="#000000">Allow</font><INPUT TYPE="RADIO" NAME="RA_allowance" VALUE="0"><font color="#000000">Deny</font></td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" height="42" class="black">&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="button" NAME="APPFilterApply" VALUE="SAVE" onClick="location.reload();"><INPUT TYPE="BUTTON" NAME="AppFilterCancel" VALUE="CANCEL" onClick="javascript:window.location='access_appfilter.htm'/*tpa=http://192.168.1.1/access/access_appfilter.htm*/"></td></tr></table></div></form>
+</body></html>

@@ -1,0 +1,337 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/BKS_service.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "BKS_service";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+var G_SchePath = "Never";
+var n = 0;
+var G_Lan_Black = [];
+function createTable(){
+Table.Clear('Table_ip_list');
+var srcShow=0;
+var destShow=0;
+var array_value = [];
+var array_value_tmp = [];
+var k;
+for(var i = 0; i < G_Lan_Black.length; i++){
+switch(G_Lan_Black[i][10]){
+case 'Any' :
+case 'SingleIP' :
+srcShow=G_Lan_Black[i][0];
+break;
+case 'NetworkIP' :
+srcShow=G_Lan_Black[i][0]+'/'+G_Lan_Black[i][1];
+break;
+case 'iprange' :
+srcShow=G_Lan_Black[i][12]+'/'+G_Lan_Black[i][13];
+break;
+}
+switch(G_Lan_Black[i][11]){
+case 'Any' :
+case 'SingleIP' :
+destShow=G_Lan_Black[i][3];
+break;
+case 'NetworkIP' :
+destShow=G_Lan_Black[i][3]+'/'+G_Lan_Black[i][4];
+break;
+case 'iprange' :
+destShow=G_Lan_Black[i][14]+'/'+G_Lan_Black[i][15];
+break;
+}
+k = G_Lan_Black.length-i-1;
+array_value[i] = [];
+array_value[i].push('<input type="radio" id="ruleSelect'+k+'" name="ruleSelect" value="'+k+'">');
+array_value[i].push(i+1); //num
+array_value[i].push(G_Lan_Black[i][7]); //Description
+array_value[i].push(G_Lan_Black[i][16] == 'PortRange' ? (G_Lan_Black[i][5].split(':')[0]+':'+G_Lan_Black[i][5].split(':')[1]):(G_Lan_Black[i][5])); //Dest. Port
+array_value[i].push(srcShow==''?'all':srcShow); //Source IP
+<!--array_value[i].push('<input type="image" src="../html/skin/edit.gif" title="Edit" onclick="uiEdit(' + i + ')"/>');-->
+<!--array_value[i].push('<input type="image" src="../html/skin/del.gif" title="Delete" onclick="uiDelete(' + i + ')"/>');-->
+}
+/*倒序*/
+/*for(var j = 0; j < G_Lan_Black.length; j++){
+array_value_tmp[G_Lan_Black.length-1-j] = array_value[j];
+if((G_Lan_Black.length-1-j)==0)
+array_value_tmp[0][0]='<input type="radio" id="ruleSelect0" name="ruleSelect" value="0" checked="">'
+}*/
+$T('Table_ip_list',array_value);
+}
+function uiOnload(){
+createTable();
+settablecolor("Table_ip_list");
+if(G_SchePath=='Always')
+Form.Radio('skeyword', 'always');
+else if(G_SchePath=='Never')
+Form.Radio('skeyword', 'never');
+else
+Form.Radio('skeyword', 'perschedule');
+}
+function searchPath(path)
+{
+var tmpPath;
+if(path=='always')
+tmpPath='always';
+else if(path == 'never')
+tmpPath='never';
+else
+tmpPath='InternetGatewayDevice.X_TWSZ-COM_SCHEDULES.SchedEntry.1.';
+return tmpPath;
+}
+function uiSubmitEnable()
+{
+var tmpSchPath=searchPath(Form.Radio('skeyword'));
+var tmpEnable='1';
+if(tmpSchPath=='never')
+tmpEnable='0';
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Firewall.IPFilterEnable' : tmpEnable,
+':InternetGatewayDevice.X_TWSZ-COM_Firewall.SchedulePath' : tmpSchPath=='never' ? 'Never' : (tmpSchPath=='always' ? 'Always' : tmpSchPath),
+'obj-action':'set',
+'var:page' :'BKS_service',
+'getpage' :'html/page.htm',
+'errorpage' :'html/page.htm',
+'var:errorpage':'BKS_service'
+});
+$('uiPostForm').submit();
+}
+function uiAdd(){
+$G('../html/BKS_service_edit.htm',{
+'var:page' : 'BKS_service',
+'var:subpage' : 'BKS_service_edit',
+'getpage' : '../html/BKS_service_edit.htm',
+'errorpage' : '../html/BKS_service_edit.htm'
+});
+}
+function uiEdit(){
+var Path;
+if(G_Lan_Black.length=='0')
+{
+alertError('pleasechooseanitemedit',1);
+return false;
+}
+for (var i = 0; i < G_Lan_Black.length; i++) {
+var tmpvar = "ruleSelect" + i;
+if (Form.Checkbox(tmpvar) == 1){
+Path = ':' + G_Lan_Black[G_Lan_Black.length-1-i][9];
+var _split = Path.split('.');
+$G('../html/BKS_service_edit.htm',{
+'var:nodeIndex':_split[_split.length -2],
+'var:menu': 'advanced',
+'var:page': 'BKS_service',
+'var:subpage': 'BKS_service_edit',
+'getpage': '../html/BKS_service_edit.htm',
+'errorpage': '../html/BKS_service_edit.htm'
+});
+return;
+}
+}
+alertError('pleasechooseanitemedit',1);
+return false;
+}
+function uiDelete(){
+if(G_Lan_Black.length=='0')
+{
+alertError('pleasechooseanitemedelete',1);
+return false;
+}
+for (var i = 0; i < G_Lan_Black.length; i++) {
+var tmpvar = "ruleSelect" + i;
+if (Form.Checkbox(tmpvar) == 1) {
+$H({
+'del-obj' :G_Lan_Black[G_Lan_Black.length-1-i][9],
+'obj-action':'del',
+'var:page' :'BKS_service',
+'getpage' :'html/page.htm',
+'errorpage' :'html/page.htm',
+'var:errorpage':'pf_main'
+},true);
+$('uiPostForm').submit();
+return;
+}
+}
+alertError('pleasechooseanitemedelete',1);
+return false;
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="BKS_service.htm"></form>
+<!-- config -->
+<style type="text/css">
+<!--
+.div_left { width: 200px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+-->
+</style>
+<div class="page_title" id="lang_OutcomingIPFiltering">Block Services</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type="reset" id="Cancel" name="Cancel" value="Cancel ">
+<input class="apply_bt" type='submit' id='Apply' name="Apply" onClick='uiSubmitEnable()' value='Apply '>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3" style="margin-top:8px;">
+<a tabindex=-1 href="javascript:loadhelp('block')"><b id="idServicesBlocking" >Services Blocking</b></a>
+<div><input type="radio" name="skeyword" value="never" id="idBlockTimesNever" checked="checked" />&nbsp;<span id="idBlockTimesContextNever">Never</span></div>
+<div><input type="radio" name="skeyword" value="perschedule" id="idBlockTimesPerSchedule" />&nbsp;<span id="idBlockTimesContextPerSchedule">Per Schedule</span></div>
+<div><input type="radio" name="skeyword" value="always" id="idBlockTimesAlways" />&nbsp;<span id="idBlockTimesContextAlways">Always</span></div>
+<div style="font-weight:bold; display:none "><input type="checkbox" id="INPUT_FilterEnable"/> <span id="lang_IpFilteringEnable">Enable IP Filtering</span></div>
+<p class="bk_black3_black">
+<a tabindex=-1 href="javascript:loadhelp('table')"><p style="font-weight:bold;" id="idBlockServiceRulesContext">Block Service Rules Table</p></a>
+<p >&nbsp;</p>
+<p id="idMaxrules" style="display:none;">(32 Rules at most)</p>
+<table id="Table_ip_list" width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="td_table_s3" style="min-width:400px;">
+<tr align='center' class="table_header">
+<th width="37">&nbsp;</th>
+<th>#</th>
+<th id="lang_Name" nowrap="nowrap">Service Name</th>
+<!--<th id="lang_Protocol">Protocol</th>-->
+<th id="lang_SourcePort" nowrap="nowrap">Port</th>
+<th id="lang_SourceAddress" nowrap="nowrap">IP</th>
+<!--<th id="lang_DestAddress">Dest. Address</th>
+<th id="lang_DestPort">Dest. Port</th>
+<th id="lang_ScheduleRule">Schedule Rule</th>-->
+</tr>
+</table>
+</p>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr >
+<td nowrap="" colspan="3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tr>
+<td>
+<div style="text-align:center;">
+<input class="add_bt" type="submit" value="Add" onClick="uiAdd()" id="Add" name="Add" />
+<input class="edit_bt" type="submit" value="Edit" onClick="uiEdit()" id="Edit" name="Edit" />
+<input class="delete_bt" type="submit" value="Delete" onClick="uiDelete()" id="Delete" name="Delete" />
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("BKS_service")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

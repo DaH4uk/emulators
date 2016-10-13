@@ -1,0 +1,312 @@
+<html>
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+
+
+  <script src="/js/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/intro/themes/introjs-nassim.css">
+  <link rel="stylesheet" type="text/css" href="/intro/introjs.css">
+  <script type="text/javascript" src="/intro/intro.js"></script>
+
+
+
+  <link rel="shortcut icon" href="./icon/icon.ico">
+  <script language="JavaScript" src="lingual_EN.js"></script>
+  <link rel="STYLESHEET" type="text/css" href="css_router.css">
+  <title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | LOGIN</title>
+  <script language="Javascript" src="public.js"></script>
+  <script language="JavaScript">
+    var submit_button_flag = true;
+
+    function encode_base64(psstr) {
+      return encode(psstr, psstr.length);
+    }
+
+    function encode(psstrs, iLen) {
+      var map1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      var oDataLen = (iLen * 4 + 2) / 3;
+      var oLen = ((iLen + 2) / 3) * 4;
+      var out = '';
+      var ip = 0;
+      var op = 0;
+      while (ip < iLen) {
+        var xx = psstrs.charCodeAt(ip++);
+        var yy = ip < iLen ? psstrs.charCodeAt(ip++) : 0;
+        var zz = ip < iLen ? psstrs.charCodeAt(ip++) : 0;
+        var aa = xx >>> 2;
+        var bb = ((xx & 3) << 4) | (yy >>> 4);
+        var cc = ((yy & 0xf) << 2) | (zz >>> 6);
+        var dd = zz & 0x3F;
+        out += map1.charAt(aa);
+        op++;
+        out += map1.charAt(bb);
+        op++;
+        out += op < oDataLen ? map1.charAt(cc) : '=';
+        op++;
+        out += op < oDataLen ? map1.charAt(dd) : '=';
+        op++;
+      }
+      return out;
+    }
+
+    function check() {
+      var pwd = get_by_id("log_pass").value;
+
+      if (get_by_id("login_n").selectedIndex == -1)
+        get_by_id("login_n").selectedIndex = 0;
+
+      if (submit_button_flag) {
+        var auth = "0";
+        if ((auth == 1) && (get_by_id("graph_code").value == "")) {
+          alert(li_alert_4);
+          return false;
+        }
+
+        get_by_id("login_name").value = encode_base64(get_by_id("login_n").value);
+        get_by_id("login_pass").value = encode_base64(pwd);
+
+        get_by_id("login_n").value = get_by_id("login_name").value; //set admin field value encode too..
+        get_by_id("log_pass").value = get_by_id("login_pass").value; //set password field value encode too..
+
+        var auth = "0";
+        if (auth == 1) {
+          get_by_id("graph_id").value = encode_base64(get_by_id("graph_id").value);
+          get_by_id("graph_code").value = encode_base64(get_by_id("graph_code").value);
+        }
+
+        submit_button_flag = false;
+      }
+      return true;
+    }
+
+    function chk_KeyValue(e) {
+      var salt = "045edb88"
+      if (browserName == "Netscape") {
+        var pKey = e.which;
+      }
+      if (browserName == "Microsoft Internet Explorer") {
+        var pKey = event.keyCode;
+      }
+      if (pKey == 13) {
+        if (check()) {
+          send_submit("form1");
+        }
+      }
+    }
+
+    function AuthShow() {
+      var auth = "0";
+      if (auth == 1) {
+        get_by_id("show_graph").style.display = "";
+
+      }
+    }
+
+    function onPageLoad() {
+      AuthShow();
+    }
+
+    var browserName = navigator.appName;
+    document.onkeyup = chk_KeyValue;
+  </script>
+</head>
+
+<body topmargin="1" leftmargin="0" rightmargin="0" bgcolor="#757575">
+  <table border=0 cellspacing=0 cellpadding=0 align=center width=30>
+    <tr>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td id='box1'>
+        <div align=left>
+          <table width=836 border=0 cellspacing=0 cellpadding=0 align=center>
+            <tr>
+              <td align="center" valign="baseline" bgcolor="#FFFFFF">
+                <table width="838" cellspacing="0" cellpadding="5" border="0" align="center" id="header_container">
+                  <tbody>
+                    <tr>
+                      <td width="100%">
+                        <div>&nbsp;&nbsp;Product Page:&nbsp;<a onclick="return jump_if();" href="http://support.dlink.com.tw/">DIR-615</a></div>
+                      </td>
+                      <td align="right" style="white-space: nowrap;">Hardware Version:&nbsp;E3&nbsp;&nbsp;
+                      </td>
+                      <td align="right" style="white-space: nowrap;">Firmware Version: 5.10</td>
+                      <td> </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" valign="baseline" bgcolor="#FFFFFF">
+                <div align=center>
+                  <table id="topnav_container" border="0" cellpadding="0" cellspacing="0" width="838" align="center">
+
+                    <tr>
+                      <td align="center" valign="middle"><img src="wlan_masthead.gif" width="836" height="92"></td>
+                    </tr>
+                  </table>
+                  <br><br>
+                  <table width="650" border="0">
+                    <tr>
+                      <td height="10">
+                        <div id=box_header>
+
+                          <H1 align="left">
+                            <script>
+                              show_words(LS316);
+                            </script>
+                          </H1>
+                          <div align="left">
+                            <script>
+                              show_words(li_intro);
+                            </script>:
+                            <p>
+
+                              <input type="hidden" id="html_response_page" name="html_response_page" value="login_fail.htm">
+                              <input type="hidden" id="login_name" name="login_name">
+                              <input type="hidden" id="login_pass" name="login_pass">
+
+                              <input type="hidden" id="graph_id" name="graph_id" value="2527e">
+
+                              <table width="280" border="0" align="center">
+                                <tr>
+                                  <td width="95" nowrap><strong><script>show_words(_username);</script>&nbsp;:</strong></td>
+                                  <td width="252">
+                                    <select id="login_n" name="login_n">
+					<option value="admin" SELECTED><script>show_words(_admin);</script></option>
+
+					<option value="user"><script>show_words(_user);</script></option>
+				</select>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td nowrap><strong><script>show_words(_password);</script>&nbsp;:</strong></td>
+                                  <td><input type="password" name="log_pass" id="log_pass" size="20" maxlength="15">
+                                  </td>
+
+                                </tr>
+                              </table>
+
+                              <table width="280" border="0" align="center" id="show_graph" style="display:none">
+                                <tr>
+                                  <td height="60" colspan="2"><strong><script>show_words(_authword)</script></strong>
+                                    <input type=password name=graph_code id=graph_code size=20 maxlength=15></td>
+                                </tr>
+                                <tr>
+
+                                  <td width="33"><img src="auth.bmp">
+                                    <div align="left"> </div>
+                                  </td>
+                                  <td width="262"><input class="button_submit_padleft" type=button id=Refresh name=Refresh onClick="window.location.reload( true );" style="width:90"></td>
+                                  <script>
+                                    get_by_id("Refresh").value = _regenerate;
+                                  </script>
+                                  <td>&nbsp;</td>
+                                </tr>
+                              </table>
+                              <p></p>
+                              <table width="357" border="0" align="center">
+
+
+                                <tr>
+                                  <td width="10">
+                                    <div align="center">
+                                    </div>
+                                  </td>
+                                  <td width="284" align="center"><input class="button_submit_padleft" type="button" name="login" id="login" style="width:100" onclick="window.location.href='index.htm'"></td>
+                                  <script>
+                                    get_by_id("login").value = li_Login;
+                                  </script>
+                                  <td width="49">
+                                    <div align="center">
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                              </form>
+                          </div>
+
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  <p>&nbsp;</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td bgcolor="#FFFFFF">
+        <table id="footer_container" border="0" cellpadding="0" cellspacing="0" width="836" align="center">
+
+          <tr>
+            <td width="125" align="center">&nbsp;&nbsp;<img src="wireless_tail.gif" width="114" height="35"></td>
+            <td width="10">&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table><br>
+  <div id="copyright"></div>
+  <script>
+    $(function() {
+      var introguide = introJs();
+      // var startbtn   = $('#startdemotour');
+      introguide.setOption('doneLabel', 'Следующая страница').start().oncomplete(function() {
+        window.location.href = 'index.htm?manual=true';
+      });
+
+      introguide.setOption('nextLabel', 'Далее &rarr;').start();
+      introguide.setOption('prevLabel', '&larr; Назад').start();
+      introguide.setOption('skipLabel', 'Пропустить').start();
+
+      introguide.setOptions({
+        steps: [{
+            element: 'box1',
+            intro: 'Заходим на страницу по адресу <b>192.168.0.1</b>',
+            position: 'bottom'
+
+          }, {
+            element: '#box_header',
+            intro: 'Авторизуемся, используя <p>имя пользователя: <b>admin</b>, <p>пароль может быть <b>пустым</b>, либо <b>admin</b>.',
+            position: 'bottom'
+          }
+
+        ]
+      });
+
+      var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+          sURLVariables = sPageURL.split('&'),
+          sParameterName,
+          i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+          sParameterName = sURLVariables[i].split('=');
+
+          if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+          }
+        }
+      };
+
+      if (getUrlParameter('manual') == 'true') {
+        introguide.start();
+      };
+
+    });
+  </script>
+</body>
+<script language="JavaScript" src="frame.js"></script>
+
+
+
+</html>

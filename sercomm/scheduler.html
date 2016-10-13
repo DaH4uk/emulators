@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="product16" style="display: block;">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<!--[if lt IE 9]>
+	<script src="js/html5.js"></script>
+	<![endif]-->
+	<link href="./img/entry-level.png" type="image/png" rel="icon">
+	<link rel="stylesheet" href="./css/reset.css" type="text/css">
+	<link rel="stylesheet" href="./css/style.css" type="text/css">
+	<link rel="stylesheet" href="./css/content.css" type="text/css">
+	<!--[if lt IE 9]><style type="text/css">article .button-cancel, article .button-apply, article .button-blank, #progress-bar-buttons .button-apply, #progress-bar-buttons .button-cancel { padding-bottom: 3px; }</style><![endif]-->
+	<script src="./js/jquery-1.7.1.min.js" type="text/javascript"></script>
+	<style type="text/css">
+		:root .banner_box,
+		:root .adv,
+		:root #header+#content>#left>#rlblock_left {
+			display: none !important;
+		}
+	</style>
+	<script src="./js/jquery.easing.1.3.js" type="text/javascript"></script>
+	<script src="./js/jquery.hashchange.js" type="text/javascript"></script>
+	<!-- justin add -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie8content.css" type="text/css" />
+	<![endif]-->
+	<script src="./js/mainFunctions.js" type="text/javascript"></script>
+	<script src="./js/mainFrame.js" type="text/javascript"></script>
+	<script src="./js/pageLoadFunctions.js" type="text/javascript"></script>
+	<script src="./js/multi_lang.js" type="text/javascript"></script>
+
+	<script src="./js/wifi.js" type="text/javascript"></script>
+
+	<!-- justin add end -->
+	<link rel="stylesheet" href="./css/wifi.css" type="text/css">
+	<script src="./js/functionsNotOverview.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var category = 'wifi';
+		var defaultSub = '35';
+		// get submenu and subsubmenu
+		var gets = getHashVars();
+		sub = gets['sub'];
+		var subSub = gets['subSub'];
+		var load = ''; // content to load
+		var oldCat = 'value';
+		var task = false;
+		var messagesCat = false;
+	</script>
+
+	<title>Планировщик</title>
+	<style type="text/css">
+		:root #content>#right>.dose>.dosesingle,
+		:root #content>#center>.dose>.dosesingle {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body class="en expert wifi">
+
+	<div id="wrap">
+		<header id="header">
+			<div id="head-wrap" class="clearfix">
+				<a href="./overview.html" class="logos"><img src="./img/entry-level.png" alt="Sercomm Logo"></a><a href="./index.html" id="logout">&nbsp;</a>
+				<div id="dropDownBasExp" class="admin" style="display: none;">
+					<div href="" id="selectBasic" class="selectBasic"><span id="lang700056">Базовый режим</span></div>
+					<div href="" id="selectExpert" class="selectExpert"><span id="lang700057">Эксперт-режим</span></div>
+				</div>
+			</div>
+			<nav>
+				<ul class="clearfix five wifiMenu ">
+					<li id="overview"><a href="./overview.html"><span id="lang700031">Обзор</span></a></li>
+					<li id="internet"><a href="./internet.html"><span id="lang700033">Интернет</span></a></li>
+					<li id="wifi" class="active"><a href="./wifi.html"><span id="lang700034">Wi-Fi</span></a></li>
+					<li id="settings"><a href="./settings.html"><span id="lang700035">Параметры</span></a></li>
+					<li id="status-and-support"><a href="./status-and-support.html"><span id="lang700036">Статус и поддержка</span></a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<section id="inner-wrap" class="clearfix notOverview">
+			<script>
+				document.write('<div id="indicator"><img src="img/indicator.png" alt="Indicator" /></div>');
+			</script>
+			<div id="indicator" style="display: none;"><img src="./img/indicator.png" alt="Indicator"></div>
+			<div id="navigation">
+				<ul>
+					<li id="35" class="menuItem"><a href="./wifi.html" onclick="page_data_load(&#39;wifi&#39;);"><span id="lang904001">Общие</span></a></li>
+					<li id="36" class="menuItem active"><a href="./scheduler.html" onclick="page_data_load(&#39;wifi&#39;);"><span id="lang904002">Планировщик</span></a></li>
+					<li id="38" class="menuItem"><a href="./mac_filter.html" onclick="page_data_load(&#39;wifi&#39;);"><span id="lang904004">Фильтр MAC-адресов</span></a></li>
+					<li id="40" class="menuItem"><a href="./wifi_settings.html" onclick="page_data_load(&#39;wifi&#39;);"><span id="lang904006">Параметры</span></a></li>
+				</ul>
+			</div>
+
+			<article id="wifi">
+				<div id="content" class="sub36">
+
+
+
+
+
+
+
+
+					<h1><span id="lang402001">Планировщик</span></h1>
+					<h2><span id="lang402002">Настройка графика включения и выключения WiFi на маршрутизаторе.</span></h2>
+
+					<div class="h3-content no-padding-bottom">
+						<div class="row">
+							<div class="left">
+								<span id="lang402003">Включить планировщик</span> </div>
+							<div class="right">
+								<input value="" id="scheduleOnOff" class="button button-off" type="button">
+							</div>
+						</div>
+					</div>
+					<div class="scheduleOnOff" style="display: none;">
+						<div class="h3-content">
+							<div class="row">
+								<div class="left">
+									<span id="lang402024">В это время WiFi</span> </div>
+								<div class="right ie8radioElement">
+									<input class="button radio radio-unchecked" value="" id="allowNormal" type="button"><span id="lang402020">Включен</span>
+									<input class="button radio radio-checked" value="" id="denyNormal" type="button"><span id="lang402019">Выключен</span> </div>
+							</div>
+						</div>
+						<h3><span id="lang402001">Планировщик</span></h3>
+						<div class="h3-content">
+							<table class="tabbed-table tabbedTableWithHeading singleLineCells" id="schedule-table">
+								<tbody>
+									<tr class="tableHeading">
+										<td width="320"><span id="lang402009">День</span></td>
+										<td width="190"><span id="lang402006">Время</span></td>
+										<td width="20">&nbsp;</td>
+										<td width="30">&nbsp;</td>
+									</tr>
+									<tr>
+										<td colspan="4" class="noEntryTD">
+											<span id="lang402011">Расписание не задано</span> </td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="table-row add-row">
+								<input class="button button-add" id="addSchedule" value="" type="button">
+							</div>
+						</div>
+
+					</div>
+
+					<div class="popup tL" style="display: none;" id="addPopup">
+						<p class="title"><span id="lang402021">Добавить расписание WiFi</span></p>
+						<div class="row">
+							<div class="left">
+								<span id="lang402004">Периодичность</span> </div>
+							<div class="right">
+								<select id="selectDays">
+			<option value="700007">Выбранные дни</option><option value="700008">Каждый день</option><option value="700009">Рабочие дни</option><option value="700010">Выходные дни</option></select>
+							</div>
+						</div>
+						<div id="individualDays" style="display: none;">
+							<div class="row">
+								<div class="left">
+									<span id="lang700013">Выбор дней</span> </div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700019">Суббота</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnSaturday">
+									</div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700014">Понедельник</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnMonday">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+
+								</div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700020">Воскресенье</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnSunday">
+									</div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700015">Вторник</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnTuesday">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									&nbsp;
+								</div>
+								<div class="right">
+									&nbsp;
+								</div>
+								<div class="right">
+									&nbsp;
+								</div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700016">Среда</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnWednesday">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									&nbsp;
+								</div>
+								<div class="right">
+									&nbsp;
+								</div>
+								<div class="right">
+									&nbsp;
+								</div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700017">Четверг</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnThursday">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="left">
+									&nbsp;
+								</div>
+								<div class="right">
+									&nbsp;
+								</div>
+								<div class="right">
+									&nbsp;
+								</div>
+								<div class="right">
+									<div class="row">
+										<span id="lang700018">Пятница</span> </div>
+								</div>
+								<div class="right">
+									<div class="row">
+										<input class="button checkbox checkbox-checked" value="" type="button" id="btnFriday">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="left">
+								<span id="lang402006">Время</span> </div>
+							<div class="right">
+								<span style="padding-right: 4px;"><span id="lang402007">От</span></span>
+								<input value="09:00" class="scm_time" style="width: 50px;" type="text" id="timeForm">
+								<span style="padding-right: 10px; padding-left: 10px;"><span id="lang402008">До</span></span>
+								<input value="15:30" class="scm_time" style="width: 50px;" type="text" id="timeTo">
+							</div>
+						</div>
+						<div class="message message-error" style="display: none;">
+							<span id="lang700046">Введенные пароли не совпадают.</span> </div>
+						<div class="clearfix apply-cancel">
+							<div class="right">
+								<input id="cancelButton11" class="button button-cancel right" value="Отмена" type="button">
+							</div>
+							<div class="right">
+								<input id="saveButton11" class="button button-apply right" value="Сохранить" type="button">
+							</div>
+						</div>
+					</div>
+					<div class="blackBackground" id="blackBackground" style="display: none;">&nbsp;</div>
+
+					<div class="apply-cancel-margin-top">
+
+						<div class="clearfix apply-cancel">
+							<div class="right">
+								<input id="cancelapplyButton" class="button button-cancel right" value="Отмена" type="button">
+							</div>
+							<div class="right">
+								<input id="applyButton" class="button button-apply right" value="Применить" type="button">
+							</div>
+						</div>
+
+						<div class="message-arrowbox" style="display: none;">
+							<div class="message-arrowbox-right">
+								<span id="lang700175">Некоторые параметры были изменены</span>
+							</div>
+						</div>
+						<div class="message-arrowbox-applied" style="display: none;">
+							<div class="message-arrowbox-applied-right">
+								<span id="lang700176">Изменения были применены.</span>
+							</div>
+						</div>
+
+					</div>
+
+
+
+					<style type="text/css">
+						.scheduleOnOff {
+							width: 100%;
+						}
+						
+						#schedule-table {
+							width: 638px;
+						}
+						
+						#schedule-table td {
+							height: 35px;
+							padding-top: 6px;
+							border-bottom: 1px solid #DFDFDF;
+						}
+						
+						.tableHeading {
+							border-bottom: 1px solid #DFDFDF;
+						}
+						
+						.day {
+							padding-bottom: 5px;
+						}
+						
+						#individualDays .right:nth-of-type(2) {
+							width: 69px;
+						}
+						
+						#individualDays .right:nth-of-type(3) {
+							width: 28px;
+						}
+						
+						#individualDays .right:nth-of-type(4) {
+							width: 69px;
+						}
+						
+						#individualDays .right:nth-of-type(5) {
+							width: 28px;
+						}
+						
+						.button-delete {
+							margin-left: 28px;
+						}
+					</style>
+					<!--[if lt IE 9]>
+<style>
+#individualDays .right {
+	width: 69px;
+}
+#individualDays .right + div {
+	width: 28px;
+}
+#individualDays .right + div + div {
+	width: 69px;
+}
+#individualDays .right + div + div + div {
+	width: 28px;
+}
+</style>
+<![endif]-->
+				</div>
+			</article>
+
+		</section>
+	</div>
+
+	<div id="langAndFirmware" class="clearfix">
+		<div class="left" id="langSelector"><a href="javascript:lang_change(&#39;en&#39;);" class="language-links line">English</a><a href="javascript:lang_change(&#39;ru&#39;);" class="language-links">Русский</a></div>
+		<div class="right firmwareVersion">
+		</div>
+	</div>
+
+<script>
+	
+			$('#addSchedule').bind('click', function() {
+			$('#addPopup').css('display', 'block');
+			$('#blackBackground').css('display', 'block');
+			var body = $("body");
+			var top = body.scrollTop(); // Get position of the body
+
+			if (top != 0) {
+				body.animate({
+					scrollTop: 0
+				}, '500');
+			}
+		});
+
+
+		$('#cancelButton11').bind('click', function() {
+			$('#addPopup').css('display', 'none');
+			$('#blackBackground').css('display', 'none');
+		});
+
+		$('#saveButton11').bind('click', function() {
+			$('#addPopup').css('display', 'none');
+			$('#blackBackground').css('display', 'none');
+		});
+</script>
+
+</body>
+
+</html>

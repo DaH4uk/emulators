@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="Wireless Mode" />
+<meta name="ndm.abbr" lang="RU" content="Режим работы" xml:lang="RU" />
+
+<title>ZyXEL Keenetic - 
+				Режим работы Wi-Fi</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script src="js/ndm-extras.js" type="text/javascript"></script>
+<script type="text/javascript">
+<!--
+var notifier;
+var staMode;
+var apMode;
+
+function loadValues() {
+	enableProgressIndicator();
+	staMode = new Trigger(document.getElementById("station"));
+	apMode = new Trigger(document.getElementById("ap"));
+	notifier = new WirelessStateNotifier(_MASTER, document.getElementById("busy"));
+
+	var p = new Packet();
+	notifier.check(p);
+	p.Config("interface up", {"name": _STA}, staMode);
+	p.Config("interface up", {"name": _AP0}, apMode);
+	p.proceed(document.getElementById("wmode_logger"));
+}
+function submitWMode() {
+	var p = new Packet();
+	notifier.check(p);
+	if( !apMode.isEnabled() )
+		for( var i = 0; i <= _MAX_AP; ++i )	p.Command("interface down", {"name": _AP + i});
+	if( !staMode.isEnabled() ) p.Command("interface down", {"name": _STA});
+	if( apMode.isEnabled() ) {
+		p.Command("interface up", {"name": _AP0});
+		p.Command("interface up", {"name": _MASTER});
+	}
+	if( staMode.isEnabled() ) p.Command("interface up", {"name": _STA});
+	p.ConfigSave();
+	p.proceed(document.getElementById("wmode_logger"));
+	return false;
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless.png');" class="selected"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Wi-Fi<div id="subtitle"></div></div><ul class="tabs"><li><a class="current" href="wireless.html"><span>Режим работы</span></a></li><li><a href="ap.html"><span>Точка доступа</span></a></li><li><a href="guest-ap.html"><span>Гостевая сеть</span></a></li><li><a href="wireless-acl.html"><span>Список доступа</span></a></li><li><a href="associations.html"><span>Соединения</span></a></li><li><a href="station.html"><span>Станция</span></a></li></ul><div style="width: 100%; text-align: center;">
+		<div id="busy" style="display: none;">
+			<img src="img/power.gif" alt="[powered off]" style="margin: 20px;" /><br />Беспроводной адаптер<br />выключен или отсутствует.
+		</div>
+	</div><div class="block pink">
+	<form action="" name="wmode" onsubmit="return submitWMode()" id="wmode">
+			<fieldset>
+			<legend>Режим работы встроенного модуля Wi-Fi</legend>
+		<div class="rounded">
+		<p>Выберите режим работы встроенного модуля Wi-Fi</p>
+		</div>
+			<label for="station">Клиент сети:</label><input type="radio" name="mode" id="station" /> (для подключения к беспроводной сети)<br />
+			<label for="ap">Точка доступа:</label><input type="radio" name="mode" id="ap" /> (для создания своей беспроводной сети)<br />
+			<label for="none">Выключен:</label>
+				<input type="radio" name="mode" id="none" checked="checked" /><br />
+			<label for="nothing"></label><button class="apply" type="submit" name="apply">Применить</button>
+			</fieldset>
+		</form>
+	<div class="logger" id="wmode_logger"><div id="logger_close"><a href="#" onclick="document.getElementById('wmode_logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

@@ -1,0 +1,153 @@
+<script type="text/javascript">
+$("#snmp_on").click(function()
+{
+	$("#snmp_cfg_div").removeClass("nd");
+	$.act(ACT_SET, SNMP_CFG, null, null, ["enable=1"]);
+	$.exe(function(ret){ 
+		if (!ret) 
+			$.reload('snmp.htm'); 
+	});
+});
+$("#snmp_off").click(function()
+{
+	$("#snmp_cfg_div").addClass("nd");
+	$.act(ACT_SET, SNMP_CFG, null, null, ["enable=0"]);
+	$.exe(function(ret){ 
+		if (!ret) 
+			$.reload('snmp.htm'); 
+	});
+});
+$("#t_save").click(function()
+{
+	$.addLoading($(this));
+	var element;
+	var snmpEnable = 0;
+
+	if ($("#rCommunity").prop('value') == "")	
+	{
+		$.alert(ERR_SNMP_RCOMMUNITY_EMPTY);
+		element = $("#rCommunity");
+		if(element){
+			element.focus();
+            element.select();
+		}
+		return;
+	}
+	
+	if ($("#sCommunity").prop('value') == "")	
+	{
+		$.alert(ERR_SNMP_SCOMMUNITY_EMPTY);
+		element = $("#sCommunity");
+		if(element){
+			element.focus();
+            element.select();
+		}
+		return;
+	}
+	
+	if (($("#trapIp").prop('value') != "") && ($("#trapIp").prop('value') != "0.0.0.0") && ($.ifip($("#trapIp").prop('value'), true)))
+	{
+		$.alert(ERR_SNMP_TRAP_IP_INVAD);
+		element = $("#trapIp");
+		if(element){
+			element.focus();
+			element.select();
+		}
+		return;
+	}
+
+	$.act(ACT_SET, SNMP_CFG, null, null, [
+								"ROCommunity=" + $("#rCommunity").prop('value'),
+								"RWCommunity=" + $("#sCommunity").prop('value'),
+								"sysName=" + $("#sysName").prop('value'),
+								"sysDescr=" + $("#sysDescr").prop('value'),
+								"sysLocation=" + $("#sysLocation").prop('value'),
+								"sysContact=" + $("#sysContact").prop('value'),
+								"trapIpAddress=" + (($("#trapIp").prop('value') != "") ? $("#trapIp").prop('value') : "0.0.0.0")]);
+	$.exe(function(err)
+	{
+		$.removeLoading();
+		if(!err) $.reload();
+	});
+});
+function init()
+{
+	snmpCfg = $.act(ACT_GET, SNMP_CFG, null, null, null);
+	
+	if (!$.exe())
+	{
+		if (snmpCfg.enable == 0)
+		{
+			$("#snmp_on").removeClass('selected');
+			$("#snmp_off").addClass('selected');
+			$("#snmp_cfg_div").addClass("nd");
+		}	
+		else 
+		{
+			$("#snmp_on").addClass('selected');
+			$("#snmp_off").removeClass('selected');
+			$("#snmp_cfg_div").removeClass("nd");
+		}
+	
+		$("#rCommunity").prop('value', snmpCfg.ROCommunity);
+		$("#sCommunity").prop('value', snmpCfg.RWCommunity);
+		$("#sysName").prop('value', snmpCfg.sysName);
+		$("#sysDescr").prop('value', snmpCfg.sysDescr);
+		$("#sysLocation").prop('value', snmpCfg.sysLocation);
+		$("#sysContact").prop('value', snmpCfg.sysContact);
+		$("#trapIp").prop('value', snmpCfg.trapIpAddress ? snmpCfg.trapIpAddress : "0.0.0.0");
+	}
+}
+</script>
+<h3 id="et">SNMP Settings</h3>
+<div class="content-container">
+	<form class="pure-form pure-form-aligned">
+		<p class="cfg-line" id="t_info">Simple Network Management Protocol (SNMP) allows a management application to retrieve statistics and status from the SNMP agent in this device.</p>
+		<div class="button-group-container">
+			<b id="t_snmp">SNMP Agent: </b>
+			<ul>
+				<li>
+					<button id="snmp_on" class="fst" value="on">On</button>
+				</li>
+				<li>
+					<button id="snmp_off" class="lst" value="off">Off</button>
+				</li>
+			</ul>
+		</div>
+		<div id="snmp_cfg_div" class="part-separate">
+			<div>
+				<b id="t_read">Read Community: </b>
+				<input type="text" id="rCommunity" size="15" value="public" maxlength="63">
+			</div>
+			<div>
+				<b id="t_set">Set Community: </b>
+				<input type="text" id="sCommunity" size="15" value="private" maxlength="63">
+			</div>
+			<div>
+				<b id="t_name">System Name: </b>
+				<input type="text" id="sysName" size="15" maxlength="126">
+			</div>
+			<div>
+				<b id="t_desc">System Description: </b>
+				<input type="text" id="sysDescr" size="15" maxlength="127">
+			</div>
+			<div>
+				<b id="t_locale">System Location: </b>
+				<input type="text" id="sysLocation" size="15" maxlength="127">
+			</div>
+			<div>
+				<b id="t_concat">System Contact: </b>
+				<input type="text" id="sysContact" size="15" maxlength="127">
+			</div>
+			<div>
+				<b id="t_trapip">Trap Manager IP: </b>
+				<input type="text" id="trapIp" value="0.0.0.0" size="15" maxlength="15">
+			</div>
+		<button type="submit" class="green T_save" id="t_save">Save</button> 
+	</div>
+	</form>
+		
+</div>
+<script type="text/javascript">
+$.tpInit(init);
+</script>

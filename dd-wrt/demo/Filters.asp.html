@@ -1,0 +1,935 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Access Restrictions</title>
+
+<script type="text/javascript">
+//<![CDATA[
+
+var summary_win = null;
+var ipmac_win = null;
+function dayall(F) {
+if(F.day_all.checked == false)
+I = 1;
+else
+I = 0;
+
+day_enable_disable(F,I);
+}
+function day_enable_disable(F,I) {
+if(I == 1) {
+choose_enable(F.week0);
+choose_enable(F.week1);
+choose_enable(F.week2);
+choose_enable(F.week3);
+choose_enable(F.week4);
+choose_enable(F.week5);
+choose_enable(F.week6);
+} else if(I == 0) {
+choose_disable(F.week0);
+choose_disable(F.week1);
+choose_disable(F.week2);
+choose_disable(F.week3);
+choose_disable(F.week4);
+choose_disable(F.week5);
+choose_disable(F.week6);
+}
+}
+function timeall(F,I) {
+time_enable_disable(F,I);
+}
+function time_enable_disable(F,I){
+if(I == 1) {
+choose_enable(F.start_hour);
+choose_enable(F.start_min);
+choose_enable(F.end_hour);
+choose_enable(F.end_min);
+} else if(I == 0) {
+choose_disable(F.start_hour);
+choose_disable(F.start_min);
+choose_disable(F.end_hour);
+choose_disable(F.end_min);
+}
+}
+function valid(F) {
+if(
+F.day_all.checked == false &&
+F.week0.checked == false &&
+F.week1.checked == false &&
+F.week2.checked == false &&
+F.week3.checked == false &&
+F.week4.checked == false &&
+F.week5.checked == false &&
+F.week6.checked == false) {
+alert(filter.mess2);
+return false;
+}
+if(F.time_all[1].checked == true){
+start = (parseInt(F.start_hour.value, 10)) * 60 + parseInt(F.start_min.value, 10);
+end = (parseInt(F.end_hour.value, 10)) * 60 + parseInt(F.end_min.value, 10);
+if(end <= start){
+alert(filter.mess3);
+return false;
+}
+}
+if(F.f_status1[1].checked == true) {		
+F.f_status.value = "0";
+} else {									
+if(F.f_status2[1].checked == true) {	
+F.f_status.value = "2";
+} else {								
+F.f_status.value = "1";
+}
+}
+if (F._filter_p2p)
+if (F._filter_p2p.checked == false){
+F.filter_p2p.value = 0;
+}else{
+F.filter_p2p.value = 1;
+}
+return true;
+}
+function service(id, name, port_start, port_end, protocol) {
+this.id = id;
+this.name = name;
+this.start = port_start;
+this.end = port_end;
+this.protocol = protocol;
+this.deleted = false;
+this.modified = false;
+}
+var sorton = function(x,y){
+if(x.name <  y.name) return -1;
+else if (x.name == y.name) return 0;
+else return 1;
+}
+var services=new Array();
+var services_length=0;
+/* Init. services data structure */
+services[0]=new service(0, "100bao", 0, 0, 99);
+services[1]=new service(1, "aim", 0, 0, 99);
+services[2]=new service(2, "aimwebcontent", 0, 0, 99);
+services[3]=new service(3, "applejuice", 0, 0, 100);
+services[4]=new service(4, "ares", 0, 0, 100);
+services[5]=new service(5, "armagetron", 0, 0, 99);
+services[6]=new service(6, "audiogalaxy", 0, 0, 99);
+services[7]=new service(7, "battlefield1942", 0, 0, 99);
+services[8]=new service(8, "battlefield2", 0, 0, 99);
+services[9]=new service(9, "battlefield2142", 0, 0, 99);
+services[10]=new service(10, "bgp", 0, 0, 99);
+services[11]=new service(11, "biff", 0, 0, 99);
+services[12]=new service(12, "bittorrent", 0, 0, 100);
+services[13]=new service(13, "bt", 0, 0, 99);
+services[14]=new service(14, "bt1", 0, 0, 99);
+services[15]=new service(15, "bt2", 0, 0, 99);
+services[16]=new service(16, "bt3", 0, 0, 99);
+services[17]=new service(17, "chikka", 0, 0, 99);
+services[18]=new service(18, "cimd", 0, 0, 99);
+services[19]=new service(19, "ciscovpn", 0, 0, 99);
+services[20]=new service(20, "citrix", 0, 0, 99);
+services[21]=new service(21, "clubbox", 0, 0, 99);
+services[22]=new service(22, "code_red", 0, 0, 99);
+services[23]=new service(23, "counterstrike-source", 0, 0, 99);
+services[24]=new service(24, "cvs", 0, 0, 99);
+services[25]=new service(25, "dayofdefeat-source", 0, 0, 99);
+services[26]=new service(26, "dazhihui", 0, 0, 99);
+services[27]=new service(27, "dhcp", 0, 0, 99);
+services[28]=new service(28, "directconnect", 0, 0, 100);
+services[29]=new service(29, "dns", 0, 0, 99);
+services[30]=new service(30, "doom3", 0, 0, 99);
+services[31]=new service(31, "edonkey", 0, 0, 100);
+services[32]=new service(32, "exe", 0, 0, 99);
+services[33]=new service(33, "fasttrack", 0, 0, 99);
+services[34]=new service(34, "finger", 0, 0, 99);
+services[35]=new service(35, "flash", 0, 0, 99);
+services[36]=new service(36, "freenet", 0, 0, 99);
+services[37]=new service(37, "freegate_dns", 0, 0, 99);
+services[38]=new service(38, "freegate_http", 0, 0, 99);
+services[39]=new service(39, "ftp", 0, 0, 99);
+services[40]=new service(40, "gif", 0, 0, 99);
+services[41]=new service(41, "gkrellm", 0, 0, 99);
+services[42]=new service(42, "gnucleuslan", 0, 0, 99);
+services[43]=new service(43, "gnutella", 0, 0, 100);
+services[44]=new service(44, "goboogy", 0, 0, 99);
+services[45]=new service(45, "gogobox", 0, 0, 99);
+services[46]=new service(46, "gopher", 0, 0, 99);
+services[47]=new service(47, "gtalk", 0, 0, 99);
+services[48]=new service(48, "gtalk1", 0, 0, 99);
+services[49]=new service(49, "gtalk2", 0, 0, 99);
+services[50]=new service(50, "gtalk_file", 0, 0, 99);
+services[51]=new service(51, "gtalk_file_1", 0, 0, 99);
+services[52]=new service(52, "gtalk_vista", 0, 0, 99);
+services[53]=new service(53, "guildwars", 0, 0, 99);
+services[54]=new service(54, "h323", 0, 0, 99);
+services[55]=new service(55, "hamachi1", 0, 0, 99);
+services[56]=new service(56, "halflife2-deathmatch", 0, 0, 99);
+services[57]=new service(57, "hddtemp", 0, 0, 99);
+services[58]=new service(58, "hotline", 0, 0, 99);
+services[59]=new service(59, "hotspot-shield", 0, 0, 99);
+services[60]=new service(60, "html", 0, 0, 99);
+services[61]=new service(61, "http-rtsp", 0, 0, 99);
+services[62]=new service(62, "http", 0, 0, 99);
+services[63]=new service(63, "http-dap", 0, 0, 99);
+services[64]=new service(64, "http-freshdownload", 0, 0, 99);
+services[65]=new service(65, "http-itunes", 0, 0, 99);
+services[66]=new service(66, "httpaudio", 0, 0, 99);
+services[67]=new service(67, "httpcachehit", 0, 0, 99);
+services[68]=new service(68, "httpcachemiss", 0, 0, 99);
+services[69]=new service(69, "httpvideo", 0, 0, 99);
+services[70]=new service(70, "icq_file", 0, 0, 99);
+services[71]=new service(71, "icq_file_1", 0, 0, 99);
+services[72]=new service(72, "icq_file_2", 0, 0, 99);
+services[73]=new service(73, "icq_login", 0, 0, 99);
+services[74]=new service(74, "ident", 0, 0, 99);
+services[75]=new service(75, "imap", 0, 0, 99);
+services[76]=new service(76, "imesh", 0, 0, 99);
+services[77]=new service(77, "ipp", 0, 0, 99);
+services[78]=new service(78, "irc", 0, 0, 99);
+services[79]=new service(79, "jabber", 0, 0, 99);
+services[80]=new service(80, "jpeg", 0, 0, 99);
+services[81]=new service(81, "kugoo", 0, 0, 99);
+services[82]=new service(82, "live365", 0, 0, 99);
+services[83]=new service(83, "liveforspeed", 0, 0, 99);
+services[84]=new service(84, "lpd", 0, 0, 99);
+services[85]=new service(85, "mohaa", 0, 0, 99);
+services[86]=new service(86, "mp3", 0, 0, 99);
+services[87]=new service(87, "msn-filetransfer", 0, 0, 99);
+services[88]=new service(88, "msnmessenger", 0, 0, 99);
+services[89]=new service(89, "mute", 0, 0, 100);
+services[90]=new service(90, "napster", 0, 0, 99);
+services[91]=new service(91, "nbns", 0, 0, 99);
+services[92]=new service(92, "ncp", 0, 0, 99);
+services[93]=new service(93, "netbios", 0, 0, 99);
+services[94]=new service(94, "nimda", 0, 0, 99);
+services[95]=new service(95, "nntp", 0, 0, 99);
+services[96]=new service(96, "ntp", 0, 0, 99);
+services[97]=new service(97, "ogg", 0, 0, 99);
+services[98]=new service(98, "openft", 0, 0, 99);
+services[99]=new service(99, "pcanywhere", 0, 0, 99);
+services[100]=new service(100, "pdf", 0, 0, 99);
+services[101]=new service(101, "perl", 0, 0, 99);
+services[102]=new service(102, "png", 0, 0, 99);
+services[103]=new service(103, "poco", 0, 0, 99);
+services[104]=new service(104, "pop3", 0, 0, 99);
+services[105]=new service(105, "postscript", 0, 0, 99);
+services[106]=new service(106, "pplive", 0, 0, 99);
+services[107]=new service(107, "pre_icq_login", 0, 0, 99);
+services[108]=new service(108, "pre_msn_login", 0, 0, 99);
+services[109]=new service(109, "pre_urlblock", 0, 0, 99);
+services[110]=new service(110, "pre_yahoo_login", 0, 0, 99);
+services[111]=new service(111, "pressplay", 0, 0, 99);
+services[112]=new service(112, "qianlong", 0, 0, 99);
+services[113]=new service(113, "qq", 0, 0, 99);
+services[114]=new service(114, "qq_login", 0, 0, 99);
+services[115]=new service(115, "qq_login_1", 0, 0, 99);
+services[116]=new service(116, "qq_tcp_file", 0, 0, 99);
+services[117]=new service(117, "qq_udp_file", 0, 0, 99);
+services[118]=new service(118, "qqdownload_1", 0, 0, 99);
+services[119]=new service(119, "qqdownload_2", 0, 0, 99);
+services[120]=new service(120, "qqdownload_3", 0, 0, 99);
+services[121]=new service(121, "qqfile", 0, 0, 99);
+services[122]=new service(122, "qqgame", 0, 0, 99);
+services[123]=new service(123, "qqlive", 0, 0, 99);
+services[124]=new service(124, "qqlive2", 0, 0, 99);
+services[125]=new service(125, "quake-halflife", 0, 0, 99);
+services[126]=new service(126, "quake1", 0, 0, 99);
+services[127]=new service(127, "quicktime", 0, 0, 99);
+services[128]=new service(128, "radmin", 0, 0, 99);
+services[129]=new service(129, "rar", 0, 0, 99);
+services[130]=new service(130, "rdp", 0, 0, 99);
+services[131]=new service(131, "replaytv-ivs", 0, 0, 99);
+services[132]=new service(132, "rlogin", 0, 0, 99);
+services[133]=new service(133, "rpm", 0, 0, 99);
+services[134]=new service(134, "rtf", 0, 0, 99);
+services[135]=new service(135, "rtp", 0, 0, 99);
+services[136]=new service(136, "rtsp", 0, 0, 99);
+services[137]=new service(137, "runesofmagic", 0, 0, 99);
+services[138]=new service(138, "shoutcast", 0, 0, 99);
+services[139]=new service(139, "sip", 0, 0, 99);
+services[140]=new service(140, "skypeout", 0, 0, 99);
+services[141]=new service(141, "skypetoskype", 0, 0, 99);
+services[142]=new service(142, "smb", 0, 0, 99);
+services[143]=new service(143, "smtp", 0, 0, 99);
+services[144]=new service(144, "snmp", 0, 0, 99);
+services[145]=new service(145, "snmp-mon", 0, 0, 99);
+services[146]=new service(146, "snmp-trap", 0, 0, 99);
+services[147]=new service(147, "socks", 0, 0, 99);
+services[148]=new service(148, "soribada", 0, 0, 99);
+services[149]=new service(149, "soulseek", 0, 0, 100);
+services[150]=new service(150, "ssdp", 0, 0, 99);
+services[151]=new service(151, "ssh", 0, 0, 99);
+services[152]=new service(152, "ssl", 0, 0, 99);
+services[153]=new service(153, "stun", 0, 0, 99);
+services[154]=new service(154, "subspace", 0, 0, 99);
+services[155]=new service(155, "subversion", 0, 0, 99);
+services[156]=new service(156, "tar", 0, 0, 99);
+services[157]=new service(157, "teamfortress2", 0, 0, 99);
+services[158]=new service(158, "teamspeak", 0, 0, 99);
+services[159]=new service(159, "teamviewer", 0, 0, 99);
+services[160]=new service(160, "teamviewer1", 0, 0, 99);
+services[161]=new service(161, "telnet", 0, 0, 99);
+services[162]=new service(162, "tesla", 0, 0, 99);
+services[163]=new service(163, "tftp", 0, 0, 99);
+services[164]=new service(164, "thecircle", 0, 0, 99);
+services[165]=new service(165, "thunder5_see", 0, 0, 99);
+services[166]=new service(166, "thunder5_tcp", 0, 0, 99);
+services[167]=new service(167, "tonghuashun", 0, 0, 99);
+services[168]=new service(168, "tor", 0, 0, 99);
+services[169]=new service(169, "tsp", 0, 0, 99);
+services[170]=new service(170, "unknown", 0, 0, 99);
+services[171]=new service(171, "uucp", 0, 0, 99);
+services[172]=new service(172, "validcertssl", 0, 0, 99);
+services[173]=new service(173, "ventrilo", 0, 0, 99);
+services[174]=new service(174, "vnc", 0, 0, 99);
+services[175]=new service(175, "webmail_163", 0, 0, 99);
+services[176]=new service(176, "webmail_gmail", 0, 0, 99);
+services[177]=new service(177, "webmail_hinet", 0, 0, 99);
+services[178]=new service(178, "webmail_hotmail", 0, 0, 99);
+services[179]=new service(179, "webmail_pchome", 0, 0, 99);
+services[180]=new service(180, "webmail_qq", 0, 0, 99);
+services[181]=new service(181, "webmail_seednet", 0, 0, 99);
+services[182]=new service(182, "webmail_sina", 0, 0, 99);
+services[183]=new service(183, "webmail_sohu", 0, 0, 99);
+services[184]=new service(184, "webmail_tom", 0, 0, 99);
+services[185]=new service(185, "webmail_url", 0, 0, 99);
+services[186]=new service(186, "webmail_yahoo", 0, 0, 99);
+services[187]=new service(187, "webmail_yam", 0, 0, 99);
+services[188]=new service(188, "whois", 0, 0, 99);
+services[189]=new service(189, "winmx", 0, 0, 100);
+services[190]=new service(190, "worldofwarcraft", 0, 0, 99);
+services[191]=new service(191, "x11", 0, 0, 99);
+services[192]=new service(192, "xboxlive", 0, 0, 99);
+services[193]=new service(193, "xdcc", 0, 0, 100);
+services[194]=new service(194, "xunlei", 0, 0, 99);
+services[195]=new service(195, "yahoo", 0, 0, 99);
+services[196]=new service(196, "yahoo_camera", 0, 0, 99);
+services[197]=new service(197, "yahoo_file", 0, 0, 99);
+services[198]=new service(198, "yahoo_login", 0, 0, 99);
+services[199]=new service(199, "yahoo_voice", 0, 0, 99);
+services[200]=new service(200, "zip", 0, 0, 99);
+services[201]=new service(201, "zmaap", 0, 0, 99);
+services_length = 202;
+
+services.sort(sorton);
+var servport_name0 = "";
+var servport_name1 = "";
+var servport_name2 = "";
+var servport_name3 = "";
+var p2p_value = "";
+function search_service_index(name) {
+for(var i=0; i<services_length ; i++){
+if(name == services[i].name){
+return i;
+}
+}
+return -1;
+}
+function write_service_options(name) {
+var index = search_service_index(name);
+for(var i=0 ; i<services_length ; i++){
+document.write("<option value=\""+services[i].name+"\"");
+if(i==index) {
+document.write(" selected=\"selected\"");
+}
+document.write(">"+services[i].name+"</option>");
+}
+}
+function setBlockedServicesValue() {
+var index;
+if (p2p_value)
+if (p2p_value == "1")
+document.filters._filter_p2p.checked = true;
+else
+document.filters._filter_p2p.checked = false;
+/* for service port 0 */
+index = search_service_index(servport_name0);
+if(index!=-1){
+document.filters.port0_start.value = services[index].start;
+document.filters.port0_end.value = services[index].end;
+document.filters.blocked_service0.selectedIndex = index+1; /* first will be none */
+}
+/* for service port 1 */
+index = search_service_index(servport_name1);
+if(index!=-1){
+document.filters.port1_start.value = services[index].start;
+document.filters.port1_end.value = services[index].end;
+document.filters.blocked_service1.selectedIndex = index+1; /* first will be none */
+}
+/* for service port 2 */
+index = search_service_index(servport_name2);
+if(index!=-1){
+document.filters.port2_start.value = services[index].start;
+document.filters.port2_end.value = services[index].end;
+document.filters.blocked_service2.selectedIndex = index+1; /* first will be none */
+}
+/* for service port 3 */
+index = search_service_index(servport_name3);
+if(index!=-1){
+document.filters.port3_start.value = services[index].start;
+document.filters.port3_end.value = services[index].end;
+document.filters.blocked_service3.selectedIndex = index+1; /* first will be none */
+}
+}
+function onchange_blockedServices(index, start, end) {
+index--
+if(index == -1) {
+start.value = '';
+end.value = '';
+} else {
+start.value = services[index].start;
+end.value = services[index].end;
+}
+}
+function Status(F,I) {
+var start = '';
+var end = '';
+var total = F.elements.length;
+for(var i=0 ; i < total ; i++){
+if(F.elements[i].name == "_filter_p2p")
+start = i;
+if(F.elements[i].name == "url7")
+end = i;
+}
+if(start == '' || end == '') return true;
+if(I == "deny" ) {
+for(i = start; i<=end; i++) {
+choose_disable(F.elements[i]);
+}
+} else {
+for(i = start; i<=end; i++) {
+choose_enable(F.elements[i]);
+}
+choose_disable(document.filters.port0_start);
+choose_disable(document.filters.port0_end);
+choose_disable(document.filters.port1_start);
+choose_disable(document.filters.port1_end);
+choose_disable(document.filters.port2_start);
+choose_disable(document.filters.port2_end);
+choose_disable(document.filters.port3_start);
+choose_disable(document.filters.port3_end);
+}
+return true;
+}
+function SelFilter(num,F) {
+F.change_action.value="gozila_cgi";
+F.f_id.value=F.f_id.options[num].value;
+apply(F);
+}
+function to_delete(F) {
+if(confirm(filter.mess1)) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "delete";
+F.submit();
+}
+}
+function to_submit(F) {
+if(valid(F) == true) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+apply(F);
+}
+}
+function to_apply(F) {
+if(valid(F) == true) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+applytake(F);
+}
+}
+var update;
+addEvent(window, "load", function() {
+
+day_enable_disable(document.filters, "0");
+time_enable_disable(document.filters, "0");
+setBlockedServicesValue();
+Status(document.filters, "allow");
+choose_disable(document.filters.port0_start);
+choose_disable(document.filters.port0_end);
+choose_disable(document.filters.port1_start);
+choose_disable(document.filters.port1_end);
+choose_disable(document.filters.port2_start);
+choose_disable(document.filters.port2_end);
+choose_disable(document.filters.port3_start);
+choose_disable(document.filters.port3_end);
+
+update = new StatusbarUpdate();
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo">
+<h1>DD-WRT Control Panel</h1>
+</div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><span><strong><script type="text/javascript">Capture(bmenu.webaccess)</script></strong></span></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="filters" action="#" method="post" >
+<input type="hidden" name="submit_button" value="Filters" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+
+<input type="hidden" name="blocked_service" />
+<input type="hidden" name="filter_web" />
+<input type="hidden" name="filter_policy" />
+<input type="hidden" name="filter_p2p" />
+<input type="hidden" name="f_status" />
+<h2><script type="text/javascript">Capture(filter.h2)</script></h2>
+
+<fieldset>
+<legend><script type="text/javascript">Capture(filter.legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(filter.pol)</script></div>
+<select name="f_id" onchange="SelFilter(this.form.f_id.selectedIndex,this.form)"><option value=1 selected="selected" >1 (  ) </option>
+<option value=2 >2 (  ) </option>
+<option value=3 >3 (  ) </option>
+<option value=4 >4 (  ) </option>
+<option value=5 >5 (  ) </option>
+<option value=6 >6 (  ) </option>
+<option value=7 >7 (  ) </option>
+<option value=8 >8 (  ) </option>
+<option value=9 >9 (  ) </option>
+<option value=10 >10 (  ) </option>
+</select>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.del + "\" onclick=\"to_delete(this.form);\" />");
+document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.summary + "\" onclick=\"openWindow('FilterSummary.asp', 700, 480);\" />");
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.statu)</script></div>
+<input class="spaceradio" type="radio" value="enable" name="f_status1" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="disable" name="f_status1" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(filter.polname)</script></div>
+<input maxlength="30" size="22" name="f_name" value=""/>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(filter.pcs)</script></div>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.filterIP + "\" onclick=\"openWindow('FilterIPMAC.asp', 590, 730);\" />");
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label">
+<input class="spaceradio" type="radio" name="f_status2" value="deny" onclick="Status(this.form,'deny')"  /><script type="text/javascript">Capture(share.deny)</script>
+</div>
+<script type="text/javascript">Capture(filter.polallow)</script>
+</div>
+<div class="setting">
+<div class="label">
+<input class="spaceradio" type="radio" name="f_status2" value="allow" onclick="Status(this.form,'allow')" checked="checked"  /><script type="text/javascript">Capture(share.filter)</script>
+</div>
+</div>
+<br />
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(filter.legend2)</script></legend>
+<div class="setting">
+<table summary="week days table">
+<tr>
+<td align="center"><script type="text/javascript">Capture(share.everyday)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.sun_s)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.mon_s)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.tue_s)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.wed_s)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.thu_s)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.fri_s)</script></td>
+<td align="center"><script type="text/javascript">Capture(share.sat_s)</script></td>
+</tr>
+<tr>
+<td align="center"><input type="checkbox" value="1" name="day_all" onclick="dayall(this.form)" checked="checked"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week0"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week1"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week2"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week3"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week4"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week5"  /></td>
+<td align="center"><input type="checkbox" value="1" name="week6"  /></td>
+</tr>
+</table>
+</div>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(filter.time)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(filter.h24)</script></div>
+<input class="spaceradio" type="radio" value="1" name="time_all" onclick="timeall(this.form,'0')" checked="checked"  />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.from)</script></div>
+<input type="hidden" name="allday" />
+<input class="spaceradio" type="radio" value="0" name="time_all" onclick="timeall(this.form,'1')"  />
+<select name="start_hour"><option value=0 selected="selected" >0</option>
+<option value=1 >1</option>
+<option value=2 >2</option>
+<option value=3 >3</option>
+<option value=4 >4</option>
+<option value=5 >5</option>
+<option value=6 >6</option>
+<option value=7 >7</option>
+<option value=8 >8</option>
+<option value=9 >9</option>
+<option value=10 >10</option>
+<option value=11 >11</option>
+<option value=12 >12</option>
+<option value=13 >13</option>
+<option value=14 >14</option>
+<option value=15 >15</option>
+<option value=16 >16</option>
+<option value=17 >17</option>
+<option value=18 >18</option>
+<option value=19 >19</option>
+<option value=20 >20</option>
+<option value=21 >21</option>
+<option value=22 >22</option>
+<option value=23 >23</option>
+</select>:<select name="start_min"><option value=00 selected="selected" >00</option>
+<option value=01 >01</option>
+<option value=02 >02</option>
+<option value=03 >03</option>
+<option value=04 >04</option>
+<option value=05 >05</option>
+<option value=06 >06</option>
+<option value=07 >07</option>
+<option value=08 >08</option>
+<option value=09 >09</option>
+<option value=10 >10</option>
+<option value=11 >11</option>
+<option value=12 >12</option>
+<option value=13 >13</option>
+<option value=14 >14</option>
+<option value=15 >15</option>
+<option value=16 >16</option>
+<option value=17 >17</option>
+<option value=18 >18</option>
+<option value=19 >19</option>
+<option value=20 >20</option>
+<option value=21 >21</option>
+<option value=22 >22</option>
+<option value=23 >23</option>
+<option value=24 >24</option>
+<option value=25 >25</option>
+<option value=26 >26</option>
+<option value=27 >27</option>
+<option value=28 >28</option>
+<option value=29 >29</option>
+<option value=30 >30</option>
+<option value=31 >31</option>
+<option value=32 >32</option>
+<option value=33 >33</option>
+<option value=34 >34</option>
+<option value=35 >35</option>
+<option value=36 >36</option>
+<option value=37 >37</option>
+<option value=38 >38</option>
+<option value=39 >39</option>
+<option value=40 >40</option>
+<option value=41 >41</option>
+<option value=42 >42</option>
+<option value=43 >43</option>
+<option value=44 >44</option>
+<option value=45 >45</option>
+<option value=46 >46</option>
+<option value=47 >47</option>
+<option value=48 >48</option>
+<option value=49 >49</option>
+<option value=50 >50</option>
+<option value=51 >51</option>
+<option value=52 >52</option>
+<option value=53 >53</option>
+<option value=54 >54</option>
+<option value=55 >55</option>
+<option value=56 >56</option>
+<option value=57 >57</option>
+<option value=58 >58</option>
+<option value=59 >59</option>
+</select>&nbsp;&nbsp;&nbsp;
+<script type="text/javascript">Capture(share.to)</script>&nbsp;
+<select name="end_hour"><option value=0 selected="selected" >0</option>
+<option value=1 >1</option>
+<option value=2 >2</option>
+<option value=3 >3</option>
+<option value=4 >4</option>
+<option value=5 >5</option>
+<option value=6 >6</option>
+<option value=7 >7</option>
+<option value=8 >8</option>
+<option value=9 >9</option>
+<option value=10 >10</option>
+<option value=11 >11</option>
+<option value=12 >12</option>
+<option value=13 >13</option>
+<option value=14 >14</option>
+<option value=15 >15</option>
+<option value=16 >16</option>
+<option value=17 >17</option>
+<option value=18 >18</option>
+<option value=19 >19</option>
+<option value=20 >20</option>
+<option value=21 >21</option>
+<option value=22 >22</option>
+<option value=23 >23</option>
+</select>:<select name="end_min"><option value=00 selected="selected" >00</option>
+<option value=01 >01</option>
+<option value=02 >02</option>
+<option value=03 >03</option>
+<option value=04 >04</option>
+<option value=05 >05</option>
+<option value=06 >06</option>
+<option value=07 >07</option>
+<option value=08 >08</option>
+<option value=09 >09</option>
+<option value=10 >10</option>
+<option value=11 >11</option>
+<option value=12 >12</option>
+<option value=13 >13</option>
+<option value=14 >14</option>
+<option value=15 >15</option>
+<option value=16 >16</option>
+<option value=17 >17</option>
+<option value=18 >18</option>
+<option value=19 >19</option>
+<option value=20 >20</option>
+<option value=21 >21</option>
+<option value=22 >22</option>
+<option value=23 >23</option>
+<option value=24 >24</option>
+<option value=25 >25</option>
+<option value=26 >26</option>
+<option value=27 >27</option>
+<option value=28 >28</option>
+<option value=29 >29</option>
+<option value=30 >30</option>
+<option value=31 >31</option>
+<option value=32 >32</option>
+<option value=33 >33</option>
+<option value=34 >34</option>
+<option value=35 >35</option>
+<option value=36 >36</option>
+<option value=37 >37</option>
+<option value=38 >38</option>
+<option value=39 >39</option>
+<option value=40 >40</option>
+<option value=41 >41</option>
+<option value=42 >42</option>
+<option value=43 >43</option>
+<option value=44 >44</option>
+<option value=45 >45</option>
+<option value=46 >46</option>
+<option value=47 >47</option>
+<option value=48 >48</option>
+<option value=49 >49</option>
+<option value=50 >50</option>
+<option value=51 >51</option>
+<option value=52 >52</option>
+<option value=53 >53</option>
+<option value=54 >54</option>
+<option value=55 >55</option>
+<option value=56 >56</option>
+<option value=57 >57</option>
+<option value=58 >58</option>
+<option value=59 >59</option>
+</select>
+</div>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(filter.legend3)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(filter.catchall)</script></div>
+<input class="spaceradio" type="checkbox" name="_filter_p2p" value="1"  />
+</div>
+<div class="setting">
+<select size="1" name="blocked_service0" onchange="onchange_blockedServices(blocked_service0.selectedIndex, port0_start, port0_end)">
+<option value="None" selected="selected">None</option>
+<script type="text/javascript">
+//<![CDATA[
+write_service_options(servport_name0);
+//]]>
+</script>
+</select>
+<input maxLength="5" size="5" name="port0_start" class="num" readonly="readonly" /> ~ <input maxLength="5" size="5" name="port0_end" class="num" readonly="readonly" />
+</div>
+<div class="setting">
+<select size="1" name="blocked_service1" onchange="onchange_blockedServices(blocked_service1.selectedIndex, port1_start, port1_end)">
+<option value="None" selected="selected">None</option>
+<script type="text/javascript">
+//<![CDATA[
+write_service_options(servport_name1);
+//]]>
+</script>
+</select>
+<input maxLength="5" size="5" name="port1_start" class="num" readonly="readonly" /> ~ <input maxLength="5" size="5" name="port1_end" class="num" readonly="readonly" />
+</div>
+<div class="setting">
+<select size="1" name="blocked_service2" onchange="onchange_blockedServices(blocked_service2.selectedIndex, port2_start, port2_end)">
+<option value="None" selected="selected">None</option>
+<script type="text/javascript">
+//<![CDATA[
+write_service_options(servport_name2);
+//]]>
+</script>
+</select>
+<input maxLength="5" size="5" name="port2_start" class="num" readonly="readonly" /> ~ <input maxLength="5" size="5" name="port2_end" class="num" readonly="readonly" />
+</div>
+<div class="setting">
+<select size="1" name="blocked_service3" onchange="onchange_blockedServices(blocked_service3.selectedIndex, port3_start, port3_end)">
+<option value="None" selected="selected">None</option>
+<script type="text/javascript">
+//<![CDATA[
+write_service_options(servport_name3);
+//]]>
+</script>
+</select>
+<input maxLength="5" size="5" name="port3_start" class="num" readonly="readonly" /> ~ <input maxLength="5" size="5" name="port3_end" class="num" readonly="readonly" />
+</div>
+<div class="setting">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" value=\"" + sbutton.filterSer + "\" onclick=\"openWindow('Port_Services.asp', 640, 430);\" />");
+//]]>
+</script>
+</div>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(filter.legend4)</script></legend>
+<div class="setting center">
+<input size="30" maxlength="79" name="host0" onblur="valid_name(this,'URL')" value="" class="three_column" />
+<input size="30" maxlength="79" name="host1" onblur="valid_name(this,'URL')" value="" class="three_column" />
+<input size="30" maxlength="79" name="host2" onblur="valid_name(this,'URL')" value="" class="three_column three_column_last" />
+</div>
+<div class="setting center">
+<input size="30" maxlength="79" name="host3" onblur="valid_name(this,'URL')" value="" class="three_column" />
+<input size="30" maxlength="79" name="host4" onblur="valid_name(this,'URL')" value="" class="three_column" />
+<input size="30" maxlength="79" name="host5" onblur="valid_name(this,'URL')" value="" class="three_column three_column_last" />
+</div>
+<div class="setting center">
+<input size="30" maxlength="79" name="host6" onblur="valid_name(this,'URL')" value="" class="three_column" />
+<input size="30" maxlength="79" name="host7" onblur="valid_name(this,'URL')" value="" class="three_column" />
+<input size="30" maxlength="79" name="host8" onblur="valid_name(this,'URL')" value="" class="three_column three_column_last" />
+</div>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(filter.legend5)</script></legend>
+<div class="setting center">
+<input size="21" maxlength="79" name="url0" onblur="valid_name(this,'Keyword')" value="" class="four_column" />
+<input size="21" maxlength="79" name="url1" onblur="valid_name(this,'Keyword')" value="" class="four_column" />
+<input size="21" maxlength="79" name="url2" onblur="valid_name(this,'Keyword')" value="" class="four_column" />
+<input size="21" maxlength="79" name="url3" onblur="valid_name(this,'Keyword')" value="" class="four_column four_column_last" />
+</div>
+<div class="setting center">
+<input size="21" maxlength="79" name="url4" onblur="valid_name(this,'Keyword')" value="" class="four_column" />
+<input size="21" maxlength="79" name="url5" onblur="valid_name(this,'Keyword')" value="" class="four_column" />
+<input size="21" maxlength="79" name="url6" onblur="valid_name(this,'Keyword')" value="" class="four_column" />
+<input size="21" maxlength="79" name="url7" onblur="valid_name(this,'Keyword')" value="" class="four_column four_column_last" />
+</div>
+</fieldset><br />
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(filter.legend)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.statu)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right4)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(filter.polname)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right6)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(filter.legend2)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right8)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(filter.time)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right10)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(filter.legend3)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right12)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(filter.legend4)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right14)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(filter.legend5)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hfilter.right16)</script></dd>
+</dl>
+<br />
+<a href="javascript:openHelpWindow('HFilters.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:33:58 up 23 min, load average: 0.00, 0.00, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

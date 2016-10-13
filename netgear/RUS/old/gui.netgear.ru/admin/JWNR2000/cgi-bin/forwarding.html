@@ -1,0 +1,125 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../forwarding.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+<body onLoad="loadhelp('_FW_forward');" bgcolor=#ffffff>
+<form method="post" action="http://gui.netgear.ru/cgi-bin/setobject.cgi?/cgi-bin/forwarding.html" >
+<input type=hidden name=submit_flag value="forwarding">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(port_forward_trigger_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var forward_array_realnum=0;
+var trigger_array_num=0;
+var upnp_array_num=0;
+</script>
+<script>
+var lan_ip="192.168.1.1"
+var lan_subnet="255.255.255.0"
+var remote_port="8080"
+</script>
+<input type="hidden" name="select_edit">
+<input type="hidden" name="select_del">
+<input type="hidden" name="hidden_service_name">
+<input type="hidden" name="hidden_protocol">
+<input type="hidden" name="hidden_portstart">
+<input type="hidden" name="hidden_portend">
+<input type="hidden" name="service_ip">
+<input type="hidden" name="serflag">
+<input type="hidden" name="real_select">
+<TR><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_FW_forward','select')"><B><script>document.write(select_service_type);</script> <script>document.write(ba);</script></TD></TR>
+<TR><script>document.write(hd2);</script><INPUT type=radio name=loginreq checked value=0><script>document.write(port_forward);</script></TD></TR>
+<TR><script>document.write(hd2);</script><INPUT type=radio name=loginreq value=1 onclick=doPortChange(1)><script>document.write(port_trigger);</script></TD></TR>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_FW_forward','setup')"><b><script>document.write(forward_service_name);</script><script>document.write(ba);</script></td>
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_FW_forward','setup')"><b><script>document.write(forward_server_ip);</script><script>document.write(ba);</script></td>
+</tr>
+<tr>
+<script>document.write(hd);</script>
+ <select name="svs_gm" size="1">
+<option value="FTP"><script>document.write(block_ser_setup_ftp);</script></option>
+<option value="HTTP"><script>document.write(block_ser_setup_http);</script></option>
+<option value="ICUII"><script>document.write(block_ser_setup_icu);</script></option>
+<option value="IP_Phone"><script>document.write(block_ser_setup_ipphone);</script></option>
+<option value="NetMeeting"><script>document.write(block_ser_setup_netmeet);</script></option>
+<option value="News"><script>document.write(block_ser_setup_news);</script></option>
+<option value="PPTP"><script>document.write(block_ser_setup_pptp);</script></option>
+<option value="QuakeII/III"><script>document.write(block_ser_setup_quake);</script></option>
+<option value="Real-Audio"><script>document.write(block_ser_setup_real);</script></option>
+<option value="Telnet"><script>document.write(block_ser_setup_telnet);</script></option>
+ </SELECT>
+</td>
+ <script>document.write(hd);</script>
+ <input type="text" name="SV_IP1" size="3" maxlength="3" readonly onFocus="this.select();" onKeyPress="return getkey('num', event)">.
+ <input type="text" name="SV_IP2" size="3" maxlength="3" readonly onFocus="this.select();" onKeyPress="return getkey('num', event)">.
+ <input type="text" name="SV_IP3" size="3" maxlength="3" readonly onFocus="this.select();" onKeyPress="return getkey('num', event)">.
+ <input type="text" name="SV_IP4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num', event)">
+<script>document.write('<input type="submit" name="svAdd" value="'+add_mark+'" onClick="return Check_add(document.forms[0]);">');</script>
+</td>
+</tr>
+<script>document.write(bluebar);</script> 
+<tr>
+<script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+<tr>
+<td nowrap align=center width="6%">&nbsp; </td>
+<td nowrap align=center width="6%"><span class="subhead"># </span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(forward_server_name);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(forward_start_port);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(forward_end_port);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(forward_server_ip);</script></span></td>
+</tr> 
+<script>
+realflag=0;
+if( forward_array_realnum > 0 )
+{
+j=1;
+for(i=1;i<=forward_array_realnum;i++)
+{
+var str = eval ( 'forwardingArray' + i );
+var each_info=str.split(' ');
+if(each_info[5]!='1')
+{
+document.write('<tr>'+hd_center+'<input type="radio" name="select_forwarding" value="'+i+'"></td>');
+document.write(hd_center+'<span class="subhead">'+j+'</span></td>');
+each_service_name=each_info[0].replace(/&harr;/g," ");
+each_service_name=each_service_name.replace(/ /g,"&nbsp;");
+document.write(hd_center+each_service_name+'</td>');
+document.write(hd_center+each_info[2]+'</td>');
+document.write(hd_center+each_info[3]+'</td>');
+document.write(hd_center+each_info[4]+'</td></tr>');
+j++;
+}
+else
+realflag=1;
+}
+}
+if(realflag == 1)
+forward_array_num=forward_array_realnum-1;
+else
+forward_array_num=forward_array_realnum;
+</script>
+</table>
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd2_center+'<input type="submit" name="edit" value="'+forward_edit_service+'" onClick="return check_forwarding_edit(document.forms[0]);"><input type="submit" name="delete" value="'+forward_del_service+'" onClick="return check_forwarding_del(document.forms[0]);"><br><br><input type="button" name="add" value="'+forward_add_service+'" onClick="check_maxNumAdd(document.forms[0],forward_array_num,20,forward_length_20,\'forwarding_add.html\');"></td>');</script>
+ </tr> 
+</TABLE>
+</FORM>
+<script>show_servip();</script>
+</body>
+</html>

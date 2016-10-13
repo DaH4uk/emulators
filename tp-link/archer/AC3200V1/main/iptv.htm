@@ -1,0 +1,861 @@
+﻿<script language="javascript" type="text/javascript">
+$.iptv = {};
+
+var iptvWl = {};
+var ssidList = {};
+var basicList = $.act(ACT_GL, LAN_WLAN, null, null, ["name", "Standard", "SSID", "RegulatoryDomain", "PossibleChannels", "RegulatoryDomain", "AutoChannelEnable", "Channel", "X_TP_Bandwidth", "Enable", "SSIDAdvertisementEnabled", "BeaconType", "BasicEncryptionModes", "WPAEncryptionModes", "IEEE11iEncryptionModes", "X_TP_Configuration_Modified", "WMMEnable", "X_TP_FragmentThreshold"]);
+var wlanObj;
+var guestObj;
+var iptvobj;
+var sysMode;
+
+var staticStk;
+var type = "";
+var wan_iplist_sta = {};
+var wan_iplist_dyn = {};
+var wan_pppoelist = {};
+var wan_l2tp_list = {};
+var wan_pptp_list = {};
+
+
+if (INCLUDE_LAN_WLAN_DUALBAND) {
+    var ssidList5g = {};
+    var wlan5gObj;
+    var guest5gObj;
+}
+
+function initWan() {
+    var wanTypes = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "addressingType", "X_TP_IPv4Enabled"]);
+    var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "transportType", "X_TP_IPv4Enabled"]);
+    if (INCLUDE_L2TP) {
+        var wanL2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "addressingType", "transportType"]);
+    }
+    if (INCLUDE_PPTP) {
+        var wanPptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "addressingType", "transportType"]);
+    }
+
+    if (!$.exe()) {
+        $.each(wanTypes, function() {
+            if (this.WANAccessType == "Ethernet")
+                pStk = this.__stack;
+        });
+        ethWan = $.act(ACT_GET, WAN_ETH_INTF, pStk, null, ["enable", "X_TP_lastUsedIntf"]);
+        $.each(wanIPList, function() {
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (pStk == tmpStk && this.X_TP_IPv4Enabled == 1) {
+                if (this.addressingType == "Static") {
+                    staticStk = this.__stack;
+                    staticEnable = this.enable;
+                    if (this.enable == 1) type = "staticIp";
+                    wan_iplist_sta = $.act(ACT_GET, WAN_IP_CONN, this.__stack, null, null);
+                }
+                if (this.addressingType == "DHCP") {
+                    dynStk = this.__stack;
+                    dynEnable = this.enable;
+                    if (this.enable == 1) type = "dynamicIp";
+                    wan_iplist_dyn = $.act(ACT_GET, WAN_IP_CONN, this.__stack, null, null);
+                }
+            }
+        });
+        $.each(wanPPPList, function() {
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (pStk == tmpStk && this.X_TP_IPv4Enabled == 1) {
+                if (this.transportType == "PPPoE") {
+                    PPPoEStk = this.__stack;
+                    PPPoEEnable = this.enable;
+                    if (this.enable == 1) type = "pppoe";
+                    wan_pppoelist = $.act(ACT_GET, WAN_PPP_CONN, this.__stack, null, null);
+                }
+            }
+        });
+        if (INCLUDE_L2TP) {
+            $.each(wanL2tpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (pStk == tmpStk) {
+                    l2tpStk = this.__stack;
+                    l2tpEnable = this.enable;
+                    wan_l2tp_list = $.act(ACT_GET, WAN_L2TP_CONN, this.__stack, null, null);
+                    if (this.enable == 1) type = "l2tp";
+                }
+            });
+        }
+        if (INCLUDE_PPTP) {
+            $.each(wanPptpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (pStk == tmpStk) {
+                    pptpStk = this.__stack;
+                    pptpEnable = this.enable;
+                    wan_pptp_list = $.act(ACT_GET, WAN_PPTP_CONN, this.__stack, null, null);
+                    if (this.enable == 1) type = "pptp";
+                }
+            });
+        }
+        if (!$.exe()) {
+             ;
+        }
+    }
+}
+
+function disconnectWan()
+{
+	if (type == "staticIp"){
+		$.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0", "X_TP_IPv4Enabled=0"]);
+	}else if (type == "dynamicIp"){
+		$.act(ACT_OP, ACT_OP_DHCP_RELEASE, wan_iplist_dyn.__stack);
+	}else if (type == "pppoe"){
+		$.act(ACT_OP, ACT_OP_PPP_DISCONN, wan_pppoelist.__stack);
+	}else if (type == "pptp"){
+		$.act(ACT_OP, ACT_OP_PPTP_DISCONN, wan_pptp_list.__stack);
+	}else if (type == "l2tp"){
+		$.act(ACT_OP, ACT_OP_L2TP_DISCONN, wan_l2tp_list.__stack);
+	}else {
+		
+	}
+	
+	if (!$.exe())
+	{	
+		;
+	}
+
+}
+
+function connectWan()
+{
+	if (type == "staticIp"){
+		$.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=1", "X_TP_IPv4Enabled=1"]);
+	}else if (type == "dynamicIp"){
+		$.act(ACT_OP, ACT_OP_DHCP_RENEW, wan_iplist_dyn.__stack);
+	}else if (type == "pppoe"){
+		$.act(ACT_OP, ACT_OP_PPP_CONN, wan_pppoelist.__stack);
+	}else if (type == "pptp"){
+		$.act(ACT_OP, ACT_OP_PPTP_CONN, wan_pptp_list.__stack);
+	}else if (type == "l2tp"){
+		$.act(ACT_OP, ACT_OP_L2TP_CONN, wan_l2tp_list.__stack);
+	}else {
+		
+	}
+	
+	if (!$.exe())
+	{
+        ;
+	}
+    
+}
+
+function init() {
+
+	if (INCLUDE_WAN_MODE) {
+		sysMode = $.act(ACT_GET, SYS_MODE, null, null, ["mode"]);
+		$.exe()
+	} else sysMode = {
+		mode: "ETH"
+	};
+
+	initWan();
+	var tmp = {};
+	if (doGet(tmp)) return;
+	doFill(tmp);
+	
+    $("#bSave").removeClass("nd");
+
+}
+
+$("#b_save").on("click", function(e) {
+    $.addLoading($(this));
+    doSave();
+});
+
+function doGet(obj) {
+    
+    iptvobj = $.act(ACT_GET, ETH_IPTV_CFG);
+    var ret = $.exe();
+    if (!ret) {
+        obj.en = iptvobj.enable;
+        obj.mode = iptvobj.mode;
+		obj.IGMPVer = iptvobj.IGMPVer;
+		obj.internetVID = iptvobj.internetVID;
+		obj.internetVlanPrio = iptvobj.internetVlanPrio;
+		obj.QTagEnable = iptvobj.QTagEnable;
+		obj.IPPhoneVID = iptvobj.IPPhoneVID;
+		obj.IPPhoneVlanPrio = iptvobj.IPPhoneVlanPrio;
+		obj.IPTVVID = iptvobj.IPTVVID;
+		obj.IPTVVlanPrio = iptvobj.IPTVVlanPrio;
+		obj.IPTVMultiEnable = iptvobj.IPTVMultiEnable;
+		obj.IPTVMultiVID = iptvobj.IPTVMultiVID;
+		obj.IPTVMultiPrio = iptvobj.IPTVMultiPrio;
+		obj.LAN1CONF = iptvobj.LAN1CONF;
+        obj.LAN2CONF = iptvobj.LAN2CONF;
+        obj.LAN3CONF = iptvobj.LAN3CONF;
+        obj.LAN4CONF = iptvobj.LAN4CONF;
+    }
+    return ret;
+}
+
+function doFill(obj) {
+
+    if (obj.en == true) {
+        $("#iptven").prop("checked", true);
+    } else if (obj.en == false) {
+        $("#iptven").prop("checked", false);
+    }
+    $("#iptven").data("tpCheckbox").refresh();
+    
+	$("#iptvMode option[value='"+ obj.mode +"']").prop('selected', 'selected');
+	$('#iptvMode').tpSelect({refresh:1});
+	
+    $("#iptvIgmpVer option[value="+ obj.IGMPVer +"]").prop('selected', 'selected');
+	$('#iptvIgmpVer').tpSelect({refresh:1});
+
+    
+	if (obj.mode == "Bridge" || obj.mode == "Custom")
+	{
+		$("#portSelectLAN1 option[value="+ obj.LAN1CONF +"]").prop('selected', 'selected');
+		$("#portSelectLAN2 option[value="+ obj.LAN2CONF +"]").prop('selected', 'selected');
+		$("#portSelectLAN3 option[value="+ obj.LAN3CONF +"]").prop('selected', 'selected');
+		$("#portSelectLAN4 option[value="+ obj.LAN4CONF +"]").prop('selected', 'selected');
+		LANOptionRefresh();
+	}
+	if (obj.mode == "Russia" || obj.mode == "Custom")
+	{
+		if (obj.IPTVMultiEnable == true) {
+			$("#iptvMultiVIDEn").prop("checked", true);
+		} else if (obj.IPTVMultiEnable == false) {
+			$("#iptvMultiVIDEn").prop("checked", false);
+    	}
+		$("#iptvMultiVIDEn").data("tpCheckbox").refresh();
+		
+		$('#iptvMultiVID').prop("value", obj.IPTVMultiVID);
+		$('#iptvMultiVPri').prop("value", obj.IPTVMultiPrio);
+		onIptvMultiVIDEnClick();
+	}
+	if (obj.mode == "Maxis" || obj.mode == "Custom")
+	{
+		$("#internetVPri option[value='"+obj.internetVlanPrio+"']").prop('selected', 'selected');
+		$("#ipphoneVPri option[value='"+obj.IPPhoneVlanPrio+"']").prop('selected', 'selected');
+		$("#iptvVPri option[value='"+obj.IPTVVlanPrio+"']").prop('selected', 'selected');
+
+		$('#internetVPri').tpSelect({refresh:1});
+		$('#ipphoneVPri').tpSelect({refresh:1});
+		$('#iptvVPri').tpSelect({refresh:1});
+	}
+
+	if (obj.mode == "Custom")
+	{
+		$('#internetVID').prop("value", obj.internetVID);
+		if (obj.QTagEnable == true) {
+			$("#iptvQtagEn").prop("checked", true);
+		} else if (obj.QTagEnable == false) {
+			$("#iptvQtagEn").prop("checked", false);
+    	}
+		$("#iptvQtagEn").data("tpCheckbox").refresh();
+		$('#ipphoneVID').prop("value", obj.IPPhoneVID);
+		$('#iptvVID').prop("value", obj.IPTVVID);
+	}
+}
+
+function doCheck(obj) {
+	if (obj.mode == "Russia")
+	{
+		if (obj.IPTVMultiEnable == true)
+		{
+			if ($.num(obj.IPTVMultiVID, [1, 4094], true)) {
+				$.alert(CMM_IPTV_INVALIED_VLAN_ID);
+				return false;
+			}
+			if ((obj.IPTVMultiVID == 1257) || (obj.IPTVMultiVID == 263) || (obj.IPTVMultiVID == 4000))
+			{
+				$.alert(CMM_IPTV_VLAN_ID_SAME);
+				return false;
+			}
+		}
+		return true;
+	}
+	else if (obj.mode != "Custom")
+	{
+		return true;
+	}
+	
+	if ($.num(obj.internetVID, [1, 4094], true)) {
+		$.alert(CMM_IPTV_INVALIED_VLAN_ID);
+		return false;
+	}
+	if ($.num(obj.IPPhoneVID, [1, 4094], true)) {
+		$.alert(CMM_IPTV_INVALIED_VLAN_ID);
+		return false;
+	}
+	if ($.num(obj.IPTVVID, [1, 4094], true)) {
+		$.alert(CMM_IPTV_INVALIED_VLAN_ID);
+		return false;
+	}
+	if (obj.IPTVMultiEnable == true) {
+		if ($.num(obj.IPTVMultiVID, [1, 4094], true)) {
+			$.alert(CMM_IPTV_INVALIED_VLAN_ID);
+			return false;
+		}
+		if ((obj.IPTVMultiVID == obj.IPPhoneVID) || (obj.IPTVVID == obj.IPTVMultiVID) || (obj.internetVID == obj.IPTVMultiVID))
+		{
+			$.alert(CMM_IPTV_VLAN_ID_SAME);
+			return false;
+		}
+	}
+
+	if ((obj.internetVID == obj.IPPhoneVID) || (obj.IPTVVID == obj.IPPhoneVID) || (obj.internetVID == obj.IPTVVID))
+	{
+		$.alert(CMM_IPTV_VLAN_ID_SAME);
+		return false;
+	}
+	
+    return true;
+}
+
+function doCollect(obj) {  
+    obj.enable = $("#iptven").prop("data-checked") ? 1 : 0;
+	obj.mode = $('#iptvMode').data("value");
+	obj.IGMPVer = $('#iptvIgmpVer').data("value");
+
+	if (obj.mode == "Bridge" || obj.mode == "Custom")
+	{
+		obj.LAN1CONF = $('#portSelectLAN1').data("value");
+		obj.LAN2CONF = $('#portSelectLAN2').data("value");
+		obj.LAN3CONF = $('#portSelectLAN3').data("value");
+		obj.LAN4CONF = $('#portSelectLAN4').data("value");
+	}
+	if (obj.mode == "Russia" || obj.mode == "Custom")
+	{
+		obj.IPTVMultiEnable = $("#iptvMultiVIDEn").prop("data-checked") ? 1 : 0;
+		obj.IPTVMultiVID = $('#iptvMultiVID').val();
+		obj.IPTVMultiPrio = $('#iptvMultiVPri').data("value");
+	}
+	if (obj.mode == "Maxis" || obj.mode == "Custom")
+	{
+		obj.internetVlanPrio = $('#internetVPri').data("value");
+		obj.IPPhoneVlanPrio = $('#ipphoneVPri').data("value");
+		obj.IPTVVlanPrio = $('#iptvVPri').data("value");
+	}
+
+	if (obj.mode == "Custom")
+	{
+		obj.internetVID = $('#internetVID').val();
+		obj.QTagEnable = $("#iptvQtagEn").prop("data-checked") ? 1 : 0;
+		obj.IPPhoneVID = $('#ipphoneVID').val();
+		obj.IPTVVID = $('#iptvVID').val();
+	}
+
+}
+
+function LANOptionEmpty()
+{
+	$("#portSelectLAN1").empty();
+	$("#portSelectLAN2").empty();
+	$("#portSelectLAN3").empty();
+	$("#portSelectLAN4").empty();
+}
+
+function LANOptionProp(option, val)
+{
+	$("#portSelectLAN1").prop(option, val);
+	$("#portSelectLAN2").prop(option, val);
+	$("#portSelectLAN3").prop(option, val);
+	$("#portSelectLAN4").prop(option, val);
+}
+
+
+function LANOptionRefresh()
+{
+    $('#portSelectLAN1').tpSelect({refresh:1});
+	$('#portSelectLAN2').tpSelect({refresh:1});
+	$('#portSelectLAN3').tpSelect({refresh:1});
+	$('#portSelectLAN4').tpSelect({refresh:1});
+}
+
+
+function appendLANOption(option)
+{
+	var val;
+	if (option=="Internet")
+	{
+		val = 0;
+	}
+	else if (option=="IPTV")
+	{
+		val = 1;
+	}
+	else if (option=="IP-Phone")
+	{
+		val = 2;
+	}
+	$("#portSelectLAN1").append("<option value="+val+">"+option+"</option>");
+	$("#portSelectLAN2").append("<option value="+val+">"+option+"</option>");
+	$("#portSelectLAN3").append("<option value="+val+">"+option+"</option>");
+	$("#portSelectLAN4").append("<option value="+val+">"+option+"</option>");
+}
+
+function handleBridgeMode()
+{
+	$("#internetVIDSetup").addClass("nd");
+	$("#IPPhoneVIDSetup").addClass("nd");
+	$("#IPTVVIDSetup").addClass("nd");
+	$("#IPTVMultiVIDSetup").addClass("nd");
+	
+	LANOptionEmpty();
+	appendLANOption("Internet");
+	appendLANOption("IPTV");
+
+	LANOptionProp("disabled", false);
+}
+
+function handleRussiaMode()
+{
+
+	$("#internetVIDSetup").removeClass("nd");
+	$("#IPPhoneVIDSetup").removeClass("nd");
+	$("#IPTVVIDSetup").removeClass("nd");
+	$("#IPTVMultiVIDSetup").removeClass("nd");
+
+	LANOptionEmpty();
+	$("#portSelectLAN1").append("<option value=2>IP-Phone</option>");
+	$("#portSelectLAN2").append("<option value=0>Internet</option>");
+	$("#portSelectLAN3").append("<option value=0>Internet</option>");
+	$("#portSelectLAN4").append("<option value=1>IPTV</option>");
+
+	LANOptionProp("disabled", true);
+
+	$('#internetVID').prop("value", 1257);
+	$("#internetVPri option[value='0']").prop('selected', 'selected');
+	$("#iptvQtagEn").prop("checked", true);
+	$('#ipphoneVID').prop("value", 263);
+	$("#ipphoneVPri option[value='0']").prop('selected', 'selected');
+	$('#iptvVID').prop("value", 4000);
+	$("#iptvVPri option[value='4']").prop('selected', 'selected');
+	$('#iptvMultiVID').prop("value", 1110);
+	$("#iptvMultiVPri option[value='4']").prop('selected', 'selected');
+
+	$('#internetVID').prop("disabled", true);
+	$('#internetVPri').prop("disabled", true);
+	$('#iptvQtagEn').prop("disabled", true);
+	$('#ipphoneVID').prop("disabled", true);
+	$('#ipphoneVPri').prop("disabled", true);
+	$('#iptvVID').prop("disabled", true);
+	$('#iptvVPri').prop("disabled", true);
+
+	$("#iptvQtagEn").data("tpCheckbox").refresh();
+	$('#internetVPri').tpSelect({refresh:1});
+	$('#ipphoneVPri').tpSelect({refresh:1});
+	$('#iptvVPri').tpSelect({refresh:1});
+	$('#iptvMultiVPri').tpSelect({refresh:1});
+
+}
+
+function handleSingaMode()
+{
+	$("#internetVIDSetup").removeClass("nd");
+	$("#IPPhoneVIDSetup").addClass("nd");
+	$("#IPTVVIDSetup").removeClass("nd");
+	$("#IPTVMultiVIDSetup").addClass("nd");
+
+	LANOptionEmpty();
+	$("#portSelectLAN1").append("<option value=0>Internet</option>");
+	$("#portSelectLAN2").append("<option value=0>Internet</option>");
+	$("#portSelectLAN3").append("<option value=0>Internet</option>");
+	$("#portSelectLAN4").append("<option value=1>IPTV</option>");
+
+	LANOptionProp("disabled", true);
+
+	$('#internetVID').prop("value", 10);
+	$("#internetVPri option[value='0']").prop('selected', 'selected');
+	$("#iptvQtagEn").prop("checked", true);
+	$('#iptvVID').prop("value", 20);
+	$("#iptvVPri option[value='4']").prop('selected', 'selected');
+
+	$('#internetVID').prop("disabled", true);
+	$('#internetVPri').prop("disabled", true);
+	$('#iptvVID').prop("disabled", true);
+	$('#iptvVPri').prop("disabled", true);
+
+	$("#iptvQtagEn").data("tpCheckbox").refresh();
+	$('#internetVPri').tpSelect({refresh:1});
+	$('#iptvVPri').tpSelect({refresh:1});
+
+
+}
+
+function handleMalayUMode()
+{
+	$("#internetVIDSetup").removeClass("nd");
+	$("#IPPhoneVIDSetup").addClass("nd");
+	$("#IPTVVIDSetup").removeClass("nd");
+	$("#IPTVMultiVIDSetup").addClass("nd");
+	
+	LANOptionEmpty();
+	$("#portSelectLAN1").append("<option value=1>IPTV</option>");
+	$("#portSelectLAN2").append("<option value=0>Internet</option>");
+	$("#portSelectLAN3").append("<option value=0>Internet</option>");
+	$("#portSelectLAN4").append("<option value=0>Internet</option>");
+
+	LANOptionProp("disabled", true);
+	
+	$('#internetVID').prop("value", 500);
+	$("#internetVPri option[value='0']").prop('selected', 'selected');
+	$("#iptvQtagEn").prop("checked", true);
+	$('#iptvVID').prop("value", 600);
+	$("#iptvVPri option[value='0']").prop('selected', 'selected');
+
+	$('#internetVID').prop("disabled", true);
+	$('#internetVPri').prop("disabled", true);
+	$('#iptvVID').prop("disabled", true);
+	$('#iptvVPri').prop("disabled", true);
+
+	$("#iptvQtagEn").data("tpCheckbox").refresh();
+	$('#internetVPri').tpSelect({refresh:1});
+	$('#iptvVPri').tpSelect({refresh:1});
+
+
+}
+
+function handleMalayMMode()
+{
+	$("#internetVIDSetup").removeClass("nd");
+	$("#IPPhoneVIDSetup").removeClass("nd");
+	$("#IPTVVIDSetup").removeClass("nd");
+	$("#IPTVMultiVIDSetup").addClass("nd");
+
+	LANOptionEmpty();
+	$("#portSelectLAN1").append("<option value=1>IPTV</option>");
+	$("#portSelectLAN2").append("<option value=0>Internet</option>");
+	$("#portSelectLAN3").append("<option value=0>Internet</option>");
+	$("#portSelectLAN4").append("<option value=2>IP-Phone</option>");
+
+	LANOptionProp("disabled", true);
+
+	$('#internetVID').prop("value", 621);
+	$("#internetVPri option[value='0']").prop('selected', 'selected');
+	$("#iptvQtagEn").prop("checked", true);
+	$('#ipphoneVID').prop("value", 821);
+	$("#ipphoneVPri option[value='0']").prop('selected', 'selected');
+	$('#iptvVID').prop("value", 823);
+	$("#iptvVPri option[value='0']").prop('selected', 'selected');
+
+	$('#internetVID').prop("disabled", true);
+	$('#internetVPri').prop("disabled", false);
+	$('#iptvQtagEn').prop("disabled", true);
+	$('#ipphoneVID').prop("disabled", true);
+	$('#ipphoneVPri').prop("disabled", false);
+	$('#iptvVID').prop("disabled", true);
+	$('#iptvVPri').prop("disabled", false);
+
+	$("#iptvQtagEn").data("tpCheckbox").refresh();
+	$('#internetVPri').tpSelect({refresh:1});
+	$('#ipphoneVPri').tpSelect({refresh:1});
+	$('#iptvVPri').tpSelect({refresh:1});
+
+}
+
+function handleCustomMode()
+{
+	$("#internetVIDSetup").removeClass("nd");
+	$("#IPPhoneVIDSetup").removeClass("nd");
+	$("#IPTVVIDSetup").removeClass("nd");
+	$("#IPTVMultiVIDSetup").removeClass("nd");
+
+	LANOptionEmpty();
+	appendLANOption("Internet");
+	appendLANOption("IPTV");
+	appendLANOption("IP-Phone");
+
+	LANOptionProp("disabled", false);
+	
+	$('#internetVID').prop("value", 0);
+	$("#internetVPri option[value='0']").prop('selected', 'selected');
+	$("#iptvQtagEn").prop("checked", true);
+	$('#ipphoneVID').prop("value", 0);
+	$("#ipphoneVPri option[value='0']").prop('selected', 'selected');
+	$('#iptvVID').prop("value", 0);
+	$("#iptvVPri option[value='0']").prop('selected', 'selected');
+	$('#iptvMultiVID').prop("value", 0);
+	$("#iptvMultiVPri option[value='0']").prop('selected', 'selected');
+
+	$('#internetVID').prop("disabled", false);
+	$('#internetVPri').prop("disabled", false);
+	$('#iptvQtagEn').prop("disabled", false);
+	$('#ipphoneVID').prop("disabled", false);
+	$('#ipphoneVPri').prop("disabled", false);
+	$('#iptvVID').prop("disabled", false);
+	$('#iptvVPri').prop("disabled", false);
+
+	$("#iptvQtagEn").data("tpCheckbox").refresh();
+	$('#internetVPri').tpSelect({refresh:1});
+	$('#ipphoneVPri').tpSelect({refresh:1});
+	$('#iptvVPri').tpSelect({refresh:1});
+	$('#iptvMultiVPri').tpSelect({refresh:1});
+}
+
+$("#iptvMode").click(function() {
+	if ($("#iptvMode").data("value") == "Bridge")
+	{
+		handleBridgeMode();
+	}
+	else if ($("#iptvMode").data("value") == "Russia")
+	{
+		handleRussiaMode();
+	}
+	else if ($("#iptvMode").data("value") == "ExStream")
+	{
+		handleSingaMode();
+	}
+	else if ($("#iptvMode").data("value") == "Unifi")
+	{
+		handleMalayUMode();
+	}
+	else if ($("#iptvMode").data("value") == "Maxis")
+	{
+		handleMalayMMode();
+	}
+	else if ($("#iptvMode").data("value") == "Custom")
+	{
+		handleCustomMode();
+	}
+	
+	LANOptionRefresh();
+});
+
+function onIptvMultiVIDEnClick()
+{
+	if ($("#iptvMultiVIDEn").prop("data-checked"))
+	{
+		$('#iptvMultiVID').prop("disabled", false);
+		$('#iptvMultiVPri').prop("disabled", false);
+	}
+	else
+	{
+		$('#iptvMultiVID').prop("disabled", true);
+		$('#iptvMultiVPri').prop("disabled", true);
+	}
+
+	$('#iptvMultiVPri').tpSelect({refresh:1});
+	
+}
+
+function disconnectWan()
+{
+	if (type == "staticIp"){
+		/* do nothing */
+	}else if (type == "dynamicIp"){
+		$.act(ACT_OP, ACT_OP_DHCP_RELEASE, wan_iplist_dyn.__stack);
+	}else if (type == "pppoe"){
+		$.act(ACT_OP, ACT_OP_PPP_DISCONN, wan_pppoelist.__stack);
+	}else if (type == "pptp"){
+		$.act(ACT_OP, ACT_OP_PPTP_DISCONN, wan_pptp_list.__stack);
+	}else if (type == "l2tp"){
+		$.act(ACT_OP, ACT_OP_L2TP_DISCONN, wan_l2tp_list.__stack);
+	}else {
+		
+	}
+	
+	if (!$.exe())
+	{	
+		;
+	}
+
+}
+
+function connectWan()
+{
+	if (type == "staticIp"){
+		/* do nothing */
+	}else if (type == "dynamicIp"){
+		$.act(ACT_OP, ACT_OP_DHCP_RENEW, wan_iplist_dyn.__stack);
+	}else if (type == "pppoe"){
+		$.act(ACT_OP, ACT_OP_PPP_CONN, wan_pppoelist.__stack);
+	}else if (type == "pptp"){
+		$.act(ACT_OP, ACT_OP_PPTP_CONN, wan_pptp_list.__stack);
+	}else if (type == "l2tp"){
+		$.act(ACT_OP, ACT_OP_L2TP_CONN, wan_l2tp_list.__stack);
+	}else {
+		
+	}
+	
+	if (!$.exe())
+	{
+        ;
+	}
+    
+}
+
+function doSave() {
+    var tmp = {};
+    doCollect(tmp);
+    if (doCheck(tmp) === false) return;	
+	
+    disconnectWan();
+	
+	/* set ETH_IPTV_CFG_OBJ after 1.5s */	
+	
+	$.timeout(function() {
+			$.act(ACT_SET, ETH_IPTV_CFG, null, null, tmp);
+			$.exe(function(ret) {
+				/* connect wan after 3s */
+        		$.removeLoading();
+        		connectWan();
+        		if (!ret) {
+          			$.reload();
+        		}
+   			 });
+		}, 3000);
+}
+</script>
+
+<body>
+    <h3 id="t_title_itv">IPTV Settings</h3>
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+            <div>
+            	<b id="t_iptv">IPTV:</b>
+                <input type="checkbox" id="iptven" />
+                <label id="t_iptv_tip_enable">Enable</label>
+            </div>
+            
+			<div>
+				<b id="iptvModeCon">Mode:</b>
+                <select id="iptvMode" class="l">
+					<option value='Bridge'>Bridge</option>
+					<option value='Russia'>Russia</option>
+					<option value='ExStream'>Singapore-ExStream</option>
+					<option value='Unifi'>Malaysia-Unifi</option>
+					<option value='Maxis'>Malaysia-Maxis</option>
+					<option value='Custom'>Custom</option>
+                </select>
+			</div>
+			<div>
+				<b id="iptvIgmpVerCon">IGMP Proxy:</b>
+                <select id="iptvIgmpVer" class="s">
+					<option value=2>V2</option>
+					<option value=3>V3</option>
+                </select>
+			</div>
+			<div class = "part-separate">
+			</div>
+			<div id="internetVIDSetup" >
+				<div class="inline">
+					<b id="internetVIDCon">Internet Vlan ID(1-4094):</b>
+					<input type="text" id="internetVID" class="s" value="0" />
+				</div>
+				<div class="inline" style="margin-left: 20px;">
+					<label id="internetVPriCon"  class="inline">Internet Vlan Priority:</label>
+					<div style="margin-left: 20px;" class="inline">
+						<select id="internetVPri"  class="xs">
+							<option value='0'>0</option>
+							<option value='1'>1</option>
+							<option value='2'>2</option>
+							<option value='3'>3</option>
+							<option value='4'>4</option>
+							<option value='5'>5</option>
+							<option value='6'>6</option>
+							<option value='7'>7</option>
+	                	</select>
+	                </div>
+				</div>
+				<div class="inline" style="margin-left: 20px;">
+					<input type="checkbox" id="iptvQtagEn" />
+                	<label id="t_iptv_qtag_enable">802.1Q Tag</label>
+                </div>
+			</div>
+			<div id="IPPhoneVIDSetup" >
+				<div class="inline">
+					<b id="ipphoneVIDCon">IP-Phone Vlan ID(1-4094):</b>
+					<input type="text" id="ipphoneVID" class="s" value="0" />
+				</div>
+				<div class="inline" style="margin-left: 20px;">
+					<label id="ipphoneVPriCon"  class="inline">IP-Phone Vlan Priority:</label>
+					<div style="margin-left: 14px;" class="inline">
+						<select id="ipphoneVPri"  class="xs">
+							<option value='0'>0</option>
+							<option value='1'>1</option>
+							<option value='2'>2</option>
+							<option value='3'>3</option>
+							<option value='4'>4</option>
+							<option value='5'>5</option>
+							<option value='6'>6</option>
+							<option value='7'>7</option>
+	                	</select>
+	                </div>
+				</div>
+			</div>
+			<div id="IPTVVIDSetup" >
+				<div class="inline">
+					<b id="iptvVIDCon">IPTV Vlan ID(1-4094):</b>
+					<input type="text" id="iptvVID" class="s" value="0" />
+				</div>
+				<div class="inline" style="margin-left: 20px;">
+					<label id="iptvVPriCon"  class="inline">IPTV Vlan Priority:</label>
+					<div style="margin-left: 44px;" class="inline">
+						<select id="iptvVPri"  class="xs">
+							<option value='0'>0</option>
+							<option value='1'>1</option>
+							<option value='2'>2</option>
+							<option value='3'>3</option>
+							<option value='4'>4</option>
+							<option value='5'>5</option>
+							<option value='6'>6</option>
+							<option value='7'>7</option>
+	                	</select>
+	                </div>
+				</div>
+			</div>
+			<div id="IPTVMultiVIDSetup">
+				<div class="inline">
+					<b id="iptvMultiVIDCon">IPTV Multicast Vlan ID(1-4094):</b>
+					<input type="text" id="iptvMultiVID"  class="s" value="0" />
+				</div>
+				<div class="inline" style="margin-left: 20px;">
+					<label id="iptvMultiVPriCon"  class="inline">IPTV Multicast Vlan Priority:</label>
+					<div style="margin-left: 20px;" class="inline">
+						<select id="iptvMultiVPri"  class="xs"  disabled="disabled">
+							<option value='0'>0</option>
+							<option value='1'>1</option>
+							<option value='2'>2</option>
+							<option value='3'>3</option>
+							<option value='4'>4</option>
+							<option value='5'>5</option>
+							<option value='6'>6</option>
+							<option value='7'>7</option>
+	                	</select>
+	                </div>
+				</div>
+				<div class="inline" style="margin-left: 20px;">
+					<input type="checkbox" id="iptvMultiVIDEn" onclick="onIptvMultiVIDEnClick();"/>
+                	<label id="t_iptv_MultiVID_enable">Enable</label>
+                </div>
+			</div>
+			
+			<div class = "part-separate">
+				<b id="portSelectLAN1Con">LAN1:</b>
+                <select id="portSelectLAN1" class="l">
+                </select>
+			</div>
+			<div>
+				<b id="portSelectLAN2Con">LAN2:</b>
+                <select id="portSelectLAN2" class="l">
+                </select>
+			</div>
+			<div>
+				<b id="portSelectLAN3Con">LAN3:</b>
+                <select id="portSelectLAN3" class="l">
+                </select>
+			</div>
+			<div>
+				<b id="portSelectLAN4Con">LAN4:</b>
+                <select id="portSelectLAN4" class="l">
+                </select>
+			</div>
+            <div id="bSave" class="">
+                <button type="submit" class="green T_save" id="b_save">Save</button>
+            </div>
+
+        </form>
+    </div>
+</body>
+
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>

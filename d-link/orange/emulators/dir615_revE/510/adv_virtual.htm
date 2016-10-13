@@ -1,0 +1,1885 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">	
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script language="JavaScript">
+	var submit_button_flag = 0;
+	var rule_max_num = 24;
+	var inbound_used = 0;
+	
+	function onPageLoad(){
+		for (var i = 0; i < rule_max_num; i++){
+			var temp_vs;
+			if (i > 9){
+				temp_vs = get_by_id("vs_rule_" + i).value;
+			}else{
+				temp_vs = get_by_id("vs_rule_0" + i).value;				
+			}
+			
+			if(temp_vs ==""){
+				if (i > 9){
+					 get_by_id("vs_rule_" + i).value = "0//6/0/0/0.0.0.0/Always/Allow_All";
+					 									
+				}else{
+					get_by_id("vs_rule_0" + i).value = "0//6/0/0/0.0.0.0/Always/Allow_All";				
+				}
+			}
+			protocol_change(i);
+		}
+	
+		set_port_forwarding();
+		set_form_default_values("form1");
+	}
+
+	function set_port_forwarding(){
+		for (var i = 0; i < rule_max_num; i++){
+			var temp_vs;
+			
+			if (i > 9){
+				temp_vs = (get_by_id("vs_rule_" + i).value).split("/");
+			}else{
+				temp_vs = (get_by_id("vs_rule_0" + i).value).split("/");				
+			}
+			
+			if (temp_vs.length > 1){
+				set_checked(temp_vs[0], get_by_id("enable" + i));
+				get_by_id("name" + i).value = temp_vs[1];
+				set_vs_protocol(i, temp_vs[2], get_by_id("protocol_select"+i));
+				get_by_id("public_portS" + i).value = temp_vs[3];
+				get_by_id("private_portS" + i).value = temp_vs[4];
+				get_by_id("ip" + i).value = temp_vs[5];
+				set_selectIndex(temp_vs[6], get_by_id("schedule" + i));
+				set_selectIndex(temp_vs[7], get_by_id("inbound_filter" + i));
+				
+				if(get_by_id("enable"+ i).checked){
+					 detect_protocol_change_port(get_by_id("protocol_select"+i).selectedIndex,i);
+				}
+			}
+			}
+		}
+	
+	function set_vs_protocol(i, which_value, obj){
+		set_selectIndex(which_value,obj);
+		get_by_id("protocol"+i).disabled=true;
+		if(which_value != obj.options[obj.selectedIndex].value){
+			get_by_id("protocol"+i).disabled=false;
+			get_by_id("protocol_select"+i).selectedIndex = 3;
+			
+		}
+		
+			get_by_id("protocol"+i).value=which_value;
+	}
+	
+    function protocol_change(i){
+		var obj_name = get_by_id("protocol_select"+i);
+		if(obj_name.selectedIndex < 3){ //TCP, UDP, Both, Other
+			get_by_id("protocol"+i).disabled =true;
+			get_by_id("public_portS"+i).disabled =false;
+			get_by_id("private_portS"+i).disabled =false;
+			get_by_id("protocol"+i).value=obj_name.options[obj_name.selectedIndex].value;
+		}else if(get_by_id("protocol_select"+i).selectedIndex == 3){ // Other
+			get_by_id("public_portS"+i).value = 0;
+			get_by_id("private_portS"+i).value = 0;
+			get_by_id("protocol"+i).disabled=false;
+			get_by_id("protocol"+i).value="";
+		}
+	}
+
+	function detect_protocol_change_port(proto,i){
+		if((proto == 0)||(proto == 1)||(proto == 2)){
+			get_by_id("protocol"+i).disabled=true;
+			get_by_id("public_portS"+i).disabled =false;
+			get_by_id("private_portS"+i).disabled =false;					
+		}else{
+			get_by_id("public_portS"+i).disabled=true;
+			get_by_id("private_portS"+i).disabled=true;
+			
+		}
+	}
+		
+function check_forward_port(potocol,chk_port, obj_word){
+	var chk_port_array = chk_port.split(",");				 
+	var checkTimes = chk_port_array.length;	
+	if(potocol == 0){
+		 proto_type = "6";
+	}else if(potocol == 1){
+		 proto_type = "17";
+	}else if(potocol == 2){
+		 proto_type = "256";
+	}
+			  			  
+	for (var i = 0; i < checkTimes; i++){  // get chk_port_arry data
+		var port = chk_port_array[i].split("-");
+		var port1 = "";
+		var port2 = "";	
+		port1 = port[0];
+												
+		if (port.length > 1){
+			port2 = port[1];
+		}
+				
+		for(j=0;j<rule_max_num;j++){  // get application rule value
+			var rule_value;
+			if (j > 9){
+				rule_value = (get_by_id("port_forward_both_" + j).value);
+			}else{
+				rule_value = (get_by_id("port_forward_both_0" + j).value);				
+			}					  
+						
+			if (rule_value == ""){
+				continue;
+			}
+						
+			temp_pf = rule_value.split("/");
+			var chk_tcpport_array = temp_pf[3].split(","); //pf tcp port
+			var chk_udpport_array = temp_pf[4].split(","); //pf udp port
+			var check_tTimes = chk_tcpport_array.length;
+			var check_uTimes = chk_udpport_array.length;	
+			for (var m = 0; m < check_tTimes; m++){ // split the port forward TCP port range
+				var Aport = chk_tcpport_array[m].split("-");
+				var Aport1 = "";
+				var Aport2 = "";	
+				Aport1 = Aport[0];
+										
+				if (Aport.length > 1){
+					Aport2 = Aport[1];
+				}
+				if(temp_pf[0]== "1"){	
+				  	if(proto_type == "6" || proto_type == "256"){
+				  		if (port2 == "" || Aport2 == ""){	//when PF is sigle port or vs is sigle port
+					  		if(port1 == Aport1){
+								alert(TEXT054.replace("obj_word +",obj_word));
+								return false;	
+							}else if (port2 == ""){ //when PF is sogle port, vs is range port	
+								if(parseInt(port1) >= parseInt(Aport1) && parseInt(port1) <= parseInt(Aport2)||parseInt(port2) >= parseInt(Aport1) && parseInt(port2) <= parseInt(Aport2)){
+									alert(TEXT054.replace("obj_word +",obj_word));
+									return false;							
+								}											
+							}else if (Aport2 == ""){ //when vs is sigle port, PF is range port
+								if(parseInt(Aport1) >= parseInt(port1) && parseInt(Aport1) <= parseInt(port2)||parseInt(Aport2) >= parseInt(port1) && parseInt(Aport2) <= parseInt(port2)){
+									alert(TEXT054.replace("obj_word +",obj_word));
+									return false;							
+								}											
+							}									
+						}else{//PF is range port, vs is sigle port
+							if(parseInt(port1) <= parseInt(Aport1) && parseInt(port2) >= parseInt(Aport1)){
+							 	alert(TEXT055.replace("obj_word +",obj_word));
+								return false;							
+							}									
+						}
+					}	
+				}
+			  }
+					  
+			  for (var n = 0; n < check_uTimes; n++){ // split the port forward UDP port range
+					var Aport = chk_udpport_array[n].split("-");
+					var Aport1 = "";
+					var Aport2 = "";	
+					Aport1 = Aport[0];
+											
+					if (Aport.length > 1){
+						Aport2 = Aport[1];
+					}
+					if(temp_pf[0]== "1"){	
+					  	if(proto_type == "17" || proto_type == "256"){
+					 		if (port2 == "" || Aport2 == ""){	//when PF is single port or vs is sigle port
+							  	if(port1 == Aport1){
+							  		alert(TEXT054.replace("obj_word +",obj_word));
+									return false;	
+								}else if (port2 == ""){ //when PF is sigle port,  vs is range port	
+									if(parseInt(port1) >= parseInt(Aport1) && parseInt(port1) <= parseInt(Aport2)||parseInt(port2) >= parseInt(Aport1) && parseInt(port2) <= parseInt(Aport2)){
+										alert(TEXT054.replace("obj_word +",obj_word));
+										return false;							
+									}											
+								}else if (Aport2 == ""){ //when vs is sigle port, PF is range port	
+									if(parseInt(Aport1) >= parseInt(port1) && parseInt(Aport1) <= parseInt(port2)||parseInt(Aport2) >= parseInt(port1) && parseInt(Aport2) <= parseInt(port2)){
+										alert(TEXT054.replace("obj_word +",obj_word));
+										return false;							
+									}											
+								}				
+							}else{//PF is range port, vs is sigle port
+								if(parseInt(port1) <= parseInt(Aport1) && parseInt(port2) >= parseInt(Aport1)){
+									alert(TEXT055.replace("obj_word +",obj_word));
+									return false;							
+								}									
+							}
+						}	
+					}
+				}
+			}
+		}	
+		return true;
+}
+	
+	function check_app_port(potocol,chk_port, obj_word){
+			var chk_port_array = chk_port.split(",");				 
+			var checkTimes = chk_port_array.length;	
+
+		for (var i = 0; i < checkTimes; i++){  // get chk_port_arry data
+				var port = chk_port_array[i].split("-");
+				var port1 = "";
+				var port2 = "";	
+				port1 = port[0];
+												
+				if (port.length > 1){
+					port2 = port[1];
+				}
+				for(j=0;j<rule_max_num;j++){  // get application rule value
+					  var rule_value;
+						if (j > 9){
+								rule_value = (get_by_id("application_" + j).value);
+						}else{
+								rule_value = (get_by_id("application_0" + j).value);				
+						}					  
+						
+						if (rule_value == ""){
+							continue;
+						}
+						
+						temp_app = rule_value.split("/");
+						var chk_appport_array = temp_app[5].split(",");
+						var checkAppTimes = chk_appport_array.length;	
+						for (var m = 0; m < checkAppTimes; m++){ // split the application port range
+							var Aport = chk_appport_array[m].split("-");
+							var Aport1 = "";
+							var Aport2 = "";	
+							Aport1 = Aport[0];
+											
+							if (Aport.length > 1){
+							Aport2 = Aport[1];
+							}
+
+						if(temp_app[0]== "1"){
+					  	if(potocol == 0 && temp_app[4]== "TCP" || potocol == 1 && temp_app[4]== "UDP" ||temp_app[4]== "Any"){
+					  			if (port2 == "" || Aport2 == ""){	//when vs is sigle port or APP is sigle port		  	
+							  		if(port1 == Aport1){
+										alert(TEXT055.replace("obj_word +",obj_word));
+												return false;	
+										}else if (port2 == ""){ //when vs sigle port, APP is range port	
+												if(parseInt(port1) >= parseInt(Aport1) && parseInt(port1) <= parseInt(Aport2)||parseInt(port2) >= parseInt(Aport1) && parseInt(port2) <= parseInt(Aport2)){
+												alert(TEXT055.replace("obj_word +",obj_word));
+												return false;							
+												}											
+										}else if (Aport2 == ""){ //when APPis sigle port, vs is range port	
+												if(parseInt(Aport1) >= parseInt(port1) && parseInt(Aport1) <= parseInt(port2)||parseInt(Aport2) >= parseInt(port1) && parseInt(Aport2) <= parseInt(port2)){
+												alert(TEXT055.replace("obj_word +",obj_word));
+												return false;							
+												}											
+										}
+										
+									}else{//vs is range port, APP is sigle port
+										if(parseInt(port1) <= parseInt(Aport1) && parseInt(port2) >= parseInt(Aport1)){
+									 	    alert(TEXT055.replace("obj_word +",obj_word));
+									 	    return false;							
+										}									
+								  }
+							}	
+						}
+					}
+				}
+		}	
+		return true;
+	}
+	
+	
+	
+	function check_virtual_port(index, chk_port, chk_ip, obj_word){
+		var protocol = get_by_id("protocol_select" +i).selectedIndex;
+		for(ii=(index+1); ii<rule_max_num; ii++){
+			if(get_by_id("enable" + ii).checked == true){
+				if(get_by_id("public_portS" + ii).value == chk_port){
+					alert(TEXT009.replace("obj_word +",obj_word));
+					return false;
+				}
+				if(get_by_id("ip" + ii).value == chk_ip){	//check IP address is different or not?
+				if(get_by_id("private_portS" + ii).value == chk_port){
+					alert(TEXT010.replace("obj_word +",obj_word));
+					return false;
+				}
+			}
+		}
+		}
+		return true;
+	}
+	
+	function send_request(){
+		if (!is_form_modified("form1") && !confirm(_ask_nochange)) {
+			return false;
+		}
+		var count = 0;
+		for (var i = 0; i < rule_max_num; i++){
+			var temp_port_name = get_by_id("name" + i).value;			
+			if (temp_port_name != ""){
+				for (var j = i+1; j < rule_max_num; j++){
+					if (temp_port_name == get_by_id("name" + j).value){
+						alert(av_alert_16.replace("+ data.virtual_servers[j].entry_name +",temp_port_name));
+						return false;
+					}
+				}
+			}
+		}
+		
+		for (var i = 0; i < rule_max_num; i++){		
+			var ip = get_by_id("ip" + i).value;
+			var protocol = get_by_id("protocol_select" +i).selectedIndex;
+			var other = get_by_id("protocol"+i).value;
+			var check_name = get_by_id("name" + i).value;
+			var lan_ip = "192.168.0.1";
+			
+			var ip_addr_msg = replace_msg(all_ip_addr_msg,"IP address");
+			var temp_ip_obj = new addr_obj(ip.split("."), ip_addr_msg, false, false);
+			var temp_lan_ip_obj = new addr_obj(lan_ip.split("."), ip_addr_msg, false, false);
+			var temp_vs;
+			
+			if (parseInt(i,10) >= 10){
+				get_by_id("vs_rule_" + i).value = "";
+			}else{
+				get_by_id("vs_rule_0" + i).value = "";
+			}
+			
+				
+			if (get_by_id("name" + i).value != ""){
+				if(Find_word(check_name,"'") || Find_word(check_name,'"') || Find_word(check_name,"/")){
+					alert(TEXT007.replace("+ i +",i));
+					return false;
+				}
+								
+								
+				//check dhcp ip range equal to lan-ip or not?
+				if(!check_LAN_ip(temp_lan_ip_obj.addr, temp_ip_obj.addr, help256)){
+					return false;
+				}
+				
+				if (!check_address(temp_ip_obj,null,null,BROADCAST_IP_IGNORE))
+		           	return false;
+       
+				//check virtual server public port and remote management port conflict problem
+				var remote_port = "8080";
+				var remote_port_enable = "0";
+				if(get_by_id("enable" + i).checked == true){
+					if(remote_port_enable == "1"){
+						if (get_by_id("public_portS" + i).value == remote_port && protocol != 1){
+							alert(av_alert_12);
+							return false;
+						}
+					}
+				}
+				
+				if(protocol != 3){
+					if(get_by_id("enable" + i).checked == true){
+						if(!check_forward_port(protocol, get_by_id("public_portS" + i).value, av_PubP)){
+							return false;
+						}
+					
+						if(!check_app_port(protocol,get_by_id("public_portS" + i).value, av_PubP)){
+							return false;
+						}
+						
+						if(!check_virtual_port(i, get_by_id("public_portS" + i).value, get_by_id("ip" + i).value, av_PubP)){
+							return false;
+						}
+						if(!check_virtual_port(i, get_by_id("private_portS" + i).value, get_by_id("ip" + i).value,av_PubP)){
+							return false;
+						}
+					}
+						
+					if (!check_pf_port(get_by_id("private_portS" + i).value)){
+						alert(KR10);
+		    	        return false;
+				    }
+				    
+				    if (!check_pf_port(get_by_id("public_portS" + i).value)){
+						alert(KR11);
+		            	return false;
+					}
+				       
+				}else if(protocol == 3){
+					if (isNaN(other) || other == "" || (parseInt(other) < 0 || parseInt(other) > 255)){
+						alert(TEXT011);
+				 		return false;
+					}
+				}
+		        
+        var is_enable = get_checked_value(get_by_id("enable" + i));
+        if (count > 9){
+					temp_vs = get_by_id("vs_rule_" + count);
+				}else{
+					temp_vs = get_by_id("vs_rule_0" + count);
+				}
+				
+				temp_vs.value = is_enable + "/" + get_by_id("name" + i).value + "/" + get_by_id("protocol" + i).value 
+					+ "/" + get_by_id("public_portS" + i).value +"/"+ get_by_id("private_portS" + i).value 
+					+ "/" + get_by_id("ip" + i).value + "/" + get_by_id("schedule" + i).value + "/" + get_by_id("inbound_filter" + i).value;
+				save_inbound_used(get_by_id("inbound_filter" + i).value, inbound_used);
+		        count++;
+			}
+		}
+
+		if(submit_button_flag == 0){
+			submit_button_flag = 1;
+			get_by_id("form1").submit();
+		}
+	}
+</script>    
+
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<style type="text/css">
+<!--
+.style1 {font-size: 11px}
+-->
+</style>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td
+ id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavon" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavoff" 
+height="29"><a href="st_device.htm" onClick="return 
+jump_if();">Status</a></td><td id="topnavoff" height="29"><a 
+href="support_men.htm" onClick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+                  <tbody>
+                    <tr>
+                      <td id="sidenav_container">
+                        <div id="sidenav"><ul><li><div id="sidenavoff">Virtual
+ Server</div></li><li><div><a 
+href="adv_portforward.htm" onClick="return 
+jump_if();">Port Forwarding</a></div></li><li><div><a 
+href="adv_appl.htm" onClick="return jump_if();">Application
+ Rules</a></div></li><li><div><a href="adv_qos.htm" 
+onclick="return jump_if();">QoS Engine</a></div></li><li><div><a 
+href="adv_filters_mac.htm" onClick="return 
+jump_if();">Network Filter</a></div></li><li><div><a 
+href="adv_access_control.htm" onClick="return 
+jump_if();">Access Control</a></div></li><li><div><a 
+href="adv_filters_url.htm" onClick="return 
+jump_if();">Website Filter</a></div></li><li><div><a 
+href="Inbound_Filter.htm" onClick="return jump_if();">Inbound
+ Filter</a></div></li><li><div><a href="adv_dmz.htm" 
+onclick="return jump_if();">Firewall Settings</a></div></li><li><div><a 
+href="adv_routing.htm" onClick="return jump_if();">Routing</a></div></li><li><div><a
+ href="adv_wlan_perform.htm" onClick="return 
+jump_if();">Advanced Wireless</a></div></li><li><div><a 
+href="adv_network.htm" onClick="return jump_if();">Advanced
+ Network</a></div></li><li><div><a 
+href="adv_ipv6_sel_wan.htm" onClick="return 
+jump_if();">IPv6</a></div></li></ul></div>
+                      	<div id="m17n_div" align="center"></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table></td>
+				<input id="schedule_rule_00" name="schedule_rule_00" 
+value="testSchedule/1111111/00:00/01:00" type="hidden">
+                <input id="schedule_rule_01" name="schedule_rule_01" 
+value="" type="hidden">
+                <input id="schedule_rule_02" name="schedule_rule_02" 
+value="" type="hidden">
+                <input id="schedule_rule_03" name="schedule_rule_03" 
+value="" type="hidden">
+                <input id="schedule_rule_04" name="schedule_rule_04" 
+value="" type="hidden">
+                <input id="schedule_rule_05" name="schedule_rule_05" 
+value="" type="hidden">
+                <input id="schedule_rule_06" name="schedule_rule_06" 
+value="" type="hidden">
+                <input id="schedule_rule_07" name="schedule_rule_07" 
+value="" type="hidden">
+                <input id="schedule_rule_08" name="schedule_rule_08" 
+value="" type="hidden">
+                <input id="schedule_rule_09" name="schedule_rule_09" 
+value="" type="hidden">
+                <input id="schedule_rule_10" name="schedule_rule_10" 
+value="" type="hidden">
+                <input id="schedule_rule_11" name="schedule_rule_11" 
+value="" type="hidden">
+                <input id="schedule_rule_12" name="schedule_rule_12" 
+value="" type="hidden">
+                <input id="schedule_rule_13" name="schedule_rule_13" 
+value="" type="hidden">
+                <input id="schedule_rule_14" name="schedule_rule_14" 
+value="" type="hidden">
+                <input id="schedule_rule_15" name="schedule_rule_15" 
+value="" type="hidden">
+                <input id="schedule_rule_16" name="schedule_rule_16" 
+value="" type="hidden">
+                <input id="schedule_rule_17" name="schedule_rule_17" 
+value="" type="hidden">
+                <input id="schedule_rule_18" name="schedule_rule_18" 
+value="" type="hidden">
+                <input id="schedule_rule_19" name="schedule_rule_19" 
+value="" type="hidden">
+				<input id="schedule_rule_20" name="schedule_rule_20" value="" 
+type="hidden">
+				<input id="schedule_rule_21" name="schedule_rule_21" value="" 
+type="hidden">
+				<input id="schedule_rule_22" name="schedule_rule_22" value="" 
+type="hidden">
+				<input id="schedule_rule_23" name="schedule_rule_23" value="" 
+type="hidden">
+				<input id="schedule_rule_24" name="schedule_rule_24" value="" 
+type="hidden">
+				<input id="schedule_rule_25" name="schedule_rule_25" value="" 
+type="hidden">
+				<input id="schedule_rule_26" name="schedule_rule_26" value="" 
+type="hidden">
+				<input id="schedule_rule_27" name="schedule_rule_27" value="" 
+type="hidden">
+				<input id="schedule_rule_28" name="schedule_rule_28" value="" 
+type="hidden">
+				<input id="schedule_rule_29" name="schedule_rule_29" value="" 
+type="hidden">
+				<input id="schedule_rule_30" name="schedule_rule_30" value="" 
+type="hidden">
+				<input id="schedule_rule_31" name="schedule_rule_31" value="" 
+type="hidden">
+      			<input id="port_forward_both_00" name="port_forward_both_00" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_01" name="port_forward_both_01" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_02" name="port_forward_both_02" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_03" name="port_forward_both_03" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_04" name="port_forward_both_04" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_05" name="port_forward_both_05" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_06" name="port_forward_both_06" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_07" name="port_forward_both_07" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_08" name="port_forward_both_08" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_09" name="port_forward_both_09" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_10" name="port_forward_both_10" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_11" name="port_forward_both_11" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_12" name="port_forward_both_12" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_13" name="port_forward_both_13" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_14" name="port_forward_both_14" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_15" name="port_forward_both_15" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_16" name="port_forward_both_16" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_17" name="port_forward_both_17" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_18" name="port_forward_both_18" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_19" name="port_forward_both_19" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_20" name="port_forward_both_20" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_21" name="port_forward_both_21" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_22" name="port_forward_both_22" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="port_forward_both_23" name="port_forward_both_23" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				<input id="application_00" name="application_00" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_01" name="application_01" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_02" name="application_02" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_03" name="application_03" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_04" name="application_04" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_05" name="application_05" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_06" name="application_06" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_07" name="application_07" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_08" name="application_08" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_09" name="application_09" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_10" name="application_10" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_11" name="application_11" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_12" name="application_12" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_13" name="application_13" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_14" name="application_14" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_15" name="application_15" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_16" name="application_16" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_17" name="application_17" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_18" name="application_18" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_19" name="application_19" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_20" name="application_20" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_21" name="application_21" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_22" name="application_22" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input id="application_23" name="application_23" 
+value="0//TCP/0/TCP/0/Always" type="hidden">
+                <form saved="true" id="form1" name="form1" method="post"
+ action="http://www.support.dlink.com/emulators/dir615_revE/510/apply.cgi"></form>
+                <input default="back.htm" id="html_response_page" 
+name="html_response_page" value="back.htm" type="hidden">
+				<input default="The setting is saved." id="html_response_message" 
+name="html_response_message" value="The setting is saved." type="hidden">
+				<input default="adv_virtual.htm" id="html_response_return_page" 
+name="html_response_return_page" value="adv_virtual.htm" type="hidden">
+				<input default="filter" id="reboot_type" name="reboot_type" 
+value="filter" type="hidden">
+				
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_00" name="vs_rule_00" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_01" name="vs_rule_01" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_02" name="vs_rule_02" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_03" name="vs_rule_03" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_04" name="vs_rule_04" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_05" name="vs_rule_05" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_06" name="vs_rule_06" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_07" name="vs_rule_07" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_08" name="vs_rule_08" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_09" name="vs_rule_09" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_10" name="vs_rule_10" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_11" name="vs_rule_11" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_12" name="vs_rule_12" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_13" name="vs_rule_13" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_14" name="vs_rule_14" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_15" name="vs_rule_15" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_16" name="vs_rule_16" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_17" name="vs_rule_17" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_18" name="vs_rule_18" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_19" name="vs_rule_19" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_20" name="vs_rule_20" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+				<input default="0//6/0/0/0.0.0.0/Always/Allow_All" id="vs_rule_21" 
+name="vs_rule_21" value="0//6/0/0/0.0.0.0/Always/Allow_All" 
+type="hidden">
+				<input default="0//6/0/0/0.0.0.0/Always/Allow_All" id="vs_rule_22" 
+name="vs_rule_22" value="0//6/0/0/0.0.0.0/Always/Allow_All" 
+type="hidden">
+				<input default="0//6/0/0/0.0.0.0/Always/Allow_All" id="vs_rule_23" 
+name="vs_rule_23" value="0//6/0/0/0.0.0.0/Always/Allow_All" 
+type="hidden">
+
+				<input default="" id="inbound_filter_name_00" 
+name="inbound_filter_name_00" value="" type="hidden">
+				<input default="" id="inbound_filter_name_01" 
+name="inbound_filter_name_01" value="" type="hidden">
+				<input default="" id="inbound_filter_name_02" 
+name="inbound_filter_name_02" value="" type="hidden">
+				<input default="" id="inbound_filter_name_03" 
+name="inbound_filter_name_03" value="" type="hidden">
+				<input default="" id="inbound_filter_name_04" 
+name="inbound_filter_name_04" value="" type="hidden">
+				<input default="" id="inbound_filter_name_05" 
+name="inbound_filter_name_05" value="" type="hidden">
+				<input default="" id="inbound_filter_name_06" 
+name="inbound_filter_name_06" value="" type="hidden">
+				<input default="" id="inbound_filter_name_07" 
+name="inbound_filter_name_07" value="" type="hidden">
+				<input default="" id="inbound_filter_name_08" 
+name="inbound_filter_name_08" value="" type="hidden">
+				<input default="" id="inbound_filter_name_09" 
+name="inbound_filter_name_09" value="" type="hidden">
+				<input default="" id="inbound_filter_name_10" 
+name="inbound_filter_name_10" value="" type="hidden">
+				<input default="" id="inbound_filter_name_11" 
+name="inbound_filter_name_11" value="" type="hidden">
+				<input default="" id="inbound_filter_name_12" 
+name="inbound_filter_name_12" value="" type="hidden">
+				<input default="" id="inbound_filter_name_13" 
+name="inbound_filter_name_13" value="" type="hidden">
+				<input default="" id="inbound_filter_name_14" 
+name="inbound_filter_name_14" value="" type="hidden">
+				<input default="" id="inbound_filter_name_15" 
+name="inbound_filter_name_15" value="" type="hidden">
+				<input default="" id="inbound_filter_name_16" 
+name="inbound_filter_name_16" value="" type="hidden">
+				<input default="" id="inbound_filter_name_17" 
+name="inbound_filter_name_17" value="" type="hidden">
+				<input default="" id="inbound_filter_name_18" 
+name="inbound_filter_name_18" value="" type="hidden">
+				<input default="" id="inbound_filter_name_19" 
+name="inbound_filter_name_19" value="" type="hidden">
+				<input default="" id="inbound_filter_name_20" 
+name="inbound_filter_name_20" value="" type="hidden">
+				<input default="" id="inbound_filter_name_21" 
+name="inbound_filter_name_21" value="" type="hidden">
+				<input default="" id="inbound_filter_name_22" 
+name="inbound_filter_name_22" value="" type="hidden">
+				<input default="" id="inbound_filter_name_23" 
+name="inbound_filter_name_23" value="" type="hidden">
+                                
+                <input 
+default="End User/192.168.0.100/00:04:23:2c:44:9f/Tue Dec 22 
+05:18:03 2009" id="dhcp_list" name="dhcp_list" 
+value="End User/192.168.0.100/00:04:23:2c:44:9f/Tue Dec 22 
+05:18:03 2009" type="hidden">
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">
+				  
+                  <div id="box_header">
+                    <h1>Virtual 
+Server</h1>
+                    The Virtual
+ Server option allows you to define a single public port on your router 
+for redirection to an internal LAN IP Address and Private LAN port if 
+required. This feature is useful for hosting online services such as FTP
+ or Web Servers.
+                    <br><br>
+                    <input id="button" name="button" 
+class="button_submit" value="Save Settings" onClick="emulator()" 
+type="button">
+                    <input id="button2" name="button2" 
+class="button_submit" value="Don't Save Settings" 
+onclick="dont_save();" type="button">
+                     
+                  </div>
+                  <div class="box">
+                    <h2>24 
+–– Virtual Servers List</h2>
+                    <table bgcolor="#dfdfdf" border="1" 
+bordercolor="#ffffff" cellpadding="2" cellspacing="1" width="525">
+                      <tbody>
+                        <tr>
+                          <td align="middle" width="20">&nbsp;</td>
+                          <td width="31">&nbsp;</td>
+                          <td width="195">&nbsp;</td>
+                          <td align="middle" width="130"><div 
+align="left"><strong>Port</strong></div></td>
+                          <td align="middle" width="125"><div 
+align="left"><strong>Traffic 
+Type</strong></div></td>
+                          <td align="middle" width="100"><div 
+align="center">&nbsp;</div></td>
+                        </tr>
+                        <tr><td rowspan="2" align="center" valign="middle"><input
+ default="false" id="enable0" name="enable0" value="1" type="checkbox"></td><td
+ valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name0" name="name0" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app0" 
+name="copy_app0" value="&lt;&lt;" onClick="copy_virtual(0)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application0" name="application0" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS0" 
+name="public_portS0" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select0" 
+name="protocol_select0" 
+onchange="protocol_change(0);detect_protocol_change_port(this.selectedIndex,'0');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule0" 
+name="schedule0" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip0" name="ip0" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip0" name="copy_ip0" value="&lt;&lt;" onClick="copy_ip(0)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list0" name="ip_list0" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS0" 
+name="private_portS0" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol0" name="protocol0" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter0" name="inbound_filter0" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable1" name="enable1" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name1" name="name1" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app1" 
+name="copy_app1" value="&lt;&lt;" onClick="copy_virtual(1)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application1" name="application1" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS1" 
+name="public_portS1" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select1" 
+name="protocol_select1" 
+onchange="protocol_change(1);detect_protocol_change_port(this.selectedIndex,'1');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule1" 
+name="schedule1" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip1" name="ip1" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip1" name="copy_ip1" value="&lt;&lt;" onClick="copy_ip(1)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list1" name="ip_list1" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS1" 
+name="private_portS1" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol1" name="protocol1" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter1" name="inbound_filter1" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable2" name="enable2" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name2" name="name2" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app2" 
+name="copy_app2" value="&lt;&lt;" onClick="copy_virtual(2)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application2" name="application2" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS2" 
+name="public_portS2" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select2" 
+name="protocol_select2" 
+onchange="protocol_change(2);detect_protocol_change_port(this.selectedIndex,'2');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule2" 
+name="schedule2" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip2" name="ip2" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip2" name="copy_ip2" value="&lt;&lt;" onClick="copy_ip(2)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list2" name="ip_list2" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS2" 
+name="private_portS2" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol2" name="protocol2" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter2" name="inbound_filter2" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable3" name="enable3" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name3" name="name3" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app3" 
+name="copy_app3" value="&lt;&lt;" onClick="copy_virtual(3)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application3" name="application3" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS3" 
+name="public_portS3" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select3" 
+name="protocol_select3" 
+onchange="protocol_change(3);detect_protocol_change_port(this.selectedIndex,'3');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule3" 
+name="schedule3" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip3" name="ip3" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip3" name="copy_ip3" value="&lt;&lt;" onClick="copy_ip(3)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list3" name="ip_list3" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS3" 
+name="private_portS3" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol3" name="protocol3" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter3" name="inbound_filter3" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable4" name="enable4" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name4" name="name4" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app4" 
+name="copy_app4" value="&lt;&lt;" onClick="copy_virtual(4)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application4" name="application4" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS4" 
+name="public_portS4" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select4" 
+name="protocol_select4" 
+onchange="protocol_change(4);detect_protocol_change_port(this.selectedIndex,'4');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule4" 
+name="schedule4" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip4" name="ip4" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip4" name="copy_ip4" value="&lt;&lt;" onClick="copy_ip(4)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list4" name="ip_list4" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS4" 
+name="private_portS4" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol4" name="protocol4" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter4" name="inbound_filter4" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable5" name="enable5" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name5" name="name5" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app5" 
+name="copy_app5" value="&lt;&lt;" onClick="copy_virtual(5)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application5" name="application5" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS5" 
+name="public_portS5" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select5" 
+name="protocol_select5" 
+onchange="protocol_change(5);detect_protocol_change_port(this.selectedIndex,'5');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule5" 
+name="schedule5" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip5" name="ip5" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip5" name="copy_ip5" value="&lt;&lt;" onClick="copy_ip(5)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list5" name="ip_list5" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS5" 
+name="private_portS5" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol5" name="protocol5" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter5" name="inbound_filter5" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable6" name="enable6" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name6" name="name6" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app6" 
+name="copy_app6" value="&lt;&lt;" onClick="copy_virtual(6)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application6" name="application6" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS6" 
+name="public_portS6" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select6" 
+name="protocol_select6" 
+onchange="protocol_change(6);detect_protocol_change_port(this.selectedIndex,'6');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule6" 
+name="schedule6" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip6" name="ip6" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip6" name="copy_ip6" value="&lt;&lt;" onClick="copy_ip(6)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list6" name="ip_list6" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS6" 
+name="private_portS6" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol6" name="protocol6" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter6" name="inbound_filter6" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable7" name="enable7" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name7" name="name7" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app7" 
+name="copy_app7" value="&lt;&lt;" onClick="copy_virtual(7)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application7" name="application7" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS7" 
+name="public_portS7" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select7" 
+name="protocol_select7" 
+onchange="protocol_change(7);detect_protocol_change_port(this.selectedIndex,'7');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule7" 
+name="schedule7" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip7" name="ip7" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip7" name="copy_ip7" value="&lt;&lt;" onClick="copy_ip(7)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list7" name="ip_list7" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS7" 
+name="private_portS7" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol7" name="protocol7" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter7" name="inbound_filter7" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable8" name="enable8" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name8" name="name8" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app8" 
+name="copy_app8" value="&lt;&lt;" onClick="copy_virtual(8)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application8" name="application8" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS8" 
+name="public_portS8" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select8" 
+name="protocol_select8" 
+onchange="protocol_change(8);detect_protocol_change_port(this.selectedIndex,'8');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule8" 
+name="schedule8" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip8" name="ip8" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip8" name="copy_ip8" value="&lt;&lt;" onClick="copy_ip(8)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list8" name="ip_list8" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS8" 
+name="private_portS8" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol8" name="protocol8" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter8" name="inbound_filter8" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable9" name="enable9" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name9" name="name9" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app9" 
+name="copy_app9" value="&lt;&lt;" onClick="copy_virtual(9)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application9" name="application9" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS9" 
+name="public_portS9" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select9" 
+name="protocol_select9" 
+onchange="protocol_change(9);detect_protocol_change_port(this.selectedIndex,'9');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule9" 
+name="schedule9" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip9" name="ip9" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip9" name="copy_ip9" value="&lt;&lt;" onClick="copy_ip(9)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list9" name="ip_list9" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS9" 
+name="private_portS9" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol9" name="protocol9" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter9" name="inbound_filter9" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable10" name="enable10" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name10" name="name10" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app10"
+ name="copy_app10" value="&lt;&lt;" onClick="copy_virtual(10)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application10" name="application10" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS10" 
+name="public_portS10" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select10" 
+name="protocol_select10" 
+onchange="protocol_change(10);detect_protocol_change_port(this.selectedIndex,'10');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule10" 
+name="schedule10" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip10" name="ip10" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip10" name="copy_ip10" value="&lt;&lt;" onClick="copy_ip(10)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list10" name="ip_list10" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS10" 
+name="private_portS10" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol10" name="protocol10" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter10" name="inbound_filter10" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable11" name="enable11" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name11" name="name11" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app11"
+ name="copy_app11" value="&lt;&lt;" onClick="copy_virtual(11)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application11" name="application11" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS11" 
+name="public_portS11" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select11" 
+name="protocol_select11" 
+onchange="protocol_change(11);detect_protocol_change_port(this.selectedIndex,'11');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule11" 
+name="schedule11" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip11" name="ip11" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip11" name="copy_ip11" value="&lt;&lt;" onClick="copy_ip(11)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list11" name="ip_list11" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS11" 
+name="private_portS11" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol11" name="protocol11" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter11" name="inbound_filter11" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable12" name="enable12" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name12" name="name12" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app12"
+ name="copy_app12" value="&lt;&lt;" onClick="copy_virtual(12)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application12" name="application12" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS12" 
+name="public_portS12" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select12" 
+name="protocol_select12" 
+onchange="protocol_change(12);detect_protocol_change_port(this.selectedIndex,'12');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule12" 
+name="schedule12" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip12" name="ip12" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip12" name="copy_ip12" value="&lt;&lt;" onClick="copy_ip(12)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list12" name="ip_list12" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS12" 
+name="private_portS12" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol12" name="protocol12" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter12" name="inbound_filter12" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable13" name="enable13" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name13" name="name13" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app13"
+ name="copy_app13" value="&lt;&lt;" onClick="copy_virtual(13)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application13" name="application13" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS13" 
+name="public_portS13" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select13" 
+name="protocol_select13" 
+onchange="protocol_change(13);detect_protocol_change_port(this.selectedIndex,'13');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule13" 
+name="schedule13" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip13" name="ip13" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip13" name="copy_ip13" value="&lt;&lt;" onClick="copy_ip(13)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list13" name="ip_list13" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS13" 
+name="private_portS13" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol13" name="protocol13" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter13" name="inbound_filter13" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable14" name="enable14" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name14" name="name14" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app14"
+ name="copy_app14" value="&lt;&lt;" onClick="copy_virtual(14)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application14" name="application14" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS14" 
+name="public_portS14" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select14" 
+name="protocol_select14" 
+onchange="protocol_change(14);detect_protocol_change_port(this.selectedIndex,'14');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule14" 
+name="schedule14" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip14" name="ip14" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip14" name="copy_ip14" value="&lt;&lt;" onClick="copy_ip(14)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list14" name="ip_list14" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS14" 
+name="private_portS14" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol14" name="protocol14" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter14" name="inbound_filter14" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable15" name="enable15" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name15" name="name15" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app15"
+ name="copy_app15" value="&lt;&lt;" onClick="copy_virtual(15)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application15" name="application15" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS15" 
+name="public_portS15" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select15" 
+name="protocol_select15" 
+onchange="protocol_change(15);detect_protocol_change_port(this.selectedIndex,'15');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule15" 
+name="schedule15" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip15" name="ip15" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip15" name="copy_ip15" value="&lt;&lt;" onClick="copy_ip(15)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list15" name="ip_list15" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS15" 
+name="private_portS15" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol15" name="protocol15" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter15" name="inbound_filter15" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable16" name="enable16" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name16" name="name16" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app16"
+ name="copy_app16" value="&lt;&lt;" onClick="copy_virtual(16)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application16" name="application16" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS16" 
+name="public_portS16" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select16" 
+name="protocol_select16" 
+onchange="protocol_change(16);detect_protocol_change_port(this.selectedIndex,'16');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule16" 
+name="schedule16" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip16" name="ip16" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip16" name="copy_ip16" value="&lt;&lt;" onClick="copy_ip(16)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list16" name="ip_list16" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS16" 
+name="private_portS16" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol16" name="protocol16" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter16" name="inbound_filter16" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable17" name="enable17" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name17" name="name17" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app17"
+ name="copy_app17" value="&lt;&lt;" onClick="copy_virtual(17)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application17" name="application17" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS17" 
+name="public_portS17" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select17" 
+name="protocol_select17" 
+onchange="protocol_change(17);detect_protocol_change_port(this.selectedIndex,'17');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule17" 
+name="schedule17" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip17" name="ip17" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip17" name="copy_ip17" value="&lt;&lt;" onClick="copy_ip(17)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list17" name="ip_list17" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS17" 
+name="private_portS17" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol17" name="protocol17" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter17" name="inbound_filter17" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable18" name="enable18" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name18" name="name18" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app18"
+ name="copy_app18" value="&lt;&lt;" onClick="copy_virtual(18)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application18" name="application18" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS18" 
+name="public_portS18" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select18" 
+name="protocol_select18" 
+onchange="protocol_change(18);detect_protocol_change_port(this.selectedIndex,'18');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule18" 
+name="schedule18" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip18" name="ip18" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip18" name="copy_ip18" value="&lt;&lt;" onClick="copy_ip(18)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list18" name="ip_list18" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS18" 
+name="private_portS18" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol18" name="protocol18" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter18" name="inbound_filter18" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable19" name="enable19" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name19" name="name19" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app19"
+ name="copy_app19" value="&lt;&lt;" onClick="copy_virtual(19)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application19" name="application19" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS19" 
+name="public_portS19" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select19" 
+name="protocol_select19" 
+onchange="protocol_change(19);detect_protocol_change_port(this.selectedIndex,'19');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule19" 
+name="schedule19" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip19" name="ip19" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip19" name="copy_ip19" value="&lt;&lt;" onClick="copy_ip(19)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list19" name="ip_list19" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS19" 
+name="private_portS19" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol19" name="protocol19" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter19" name="inbound_filter19" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable20" name="enable20" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name20" name="name20" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app20"
+ name="copy_app20" value="&lt;&lt;" onClick="copy_virtual(20)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application20" name="application20" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS20" 
+name="public_portS20" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select20" 
+name="protocol_select20" 
+onchange="protocol_change(20);detect_protocol_change_port(this.selectedIndex,'20');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule20" 
+name="schedule20" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip20" name="ip20" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip20" name="copy_ip20" value="&lt;&lt;" onClick="copy_ip(20)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list20" name="ip_list20" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS20" 
+name="private_portS20" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol20" name="protocol20" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter20" name="inbound_filter20" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable21" name="enable21" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name21" name="name21" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app21"
+ name="copy_app21" value="&lt;&lt;" onClick="copy_virtual(21)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application21" name="application21" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS21" 
+name="public_portS21" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select21" 
+name="protocol_select21" 
+onchange="protocol_change(21);detect_protocol_change_port(this.selectedIndex,'21');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule21" 
+name="schedule21" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip21" name="ip21" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip21" name="copy_ip21" value="&lt;&lt;" onClick="copy_ip(21)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list21" name="ip_list21" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS21" 
+name="private_portS21" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol21" name="protocol21" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter21" name="inbound_filter21" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable22" name="enable22" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name22" name="name22" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app22"
+ name="copy_app22" value="&lt;&lt;" onClick="copy_virtual(22)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application22" name="application22" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS22" 
+name="public_portS22" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select22" 
+name="protocol_select22" 
+onchange="protocol_change(22);detect_protocol_change_port(this.selectedIndex,'22');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule22" 
+name="schedule22" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip22" name="ip22" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip22" name="copy_ip22" value="&lt;&lt;" onClick="copy_ip(22)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list22" name="ip_list22" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS22" 
+name="private_portS22" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol22" name="protocol22" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter22" name="inbound_filter22" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr><tr><td
+ rowspan="2" align="center" valign="middle"><input default="false" 
+id="enable23" name="enable23" value="1" type="checkbox"></td><td 
+valign="bottom">Name<br><input autocomplete="off" default="" 
+class="flatL" id="name23" name="name23" size="16" maxlength="31" 
+type="text"></td><td align="left" valign="bottom"><input id="copy_app23"
+ name="copy_app23" value="&lt;&lt;" onClick="copy_virtual(23)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="application23" name="application23" modified="ignore"><option 
+selected="selected">Application Name</option><option>TELNET</option><option>HTTP</option><option>HTTPS</option><option>FTP</option><option>DNS</option><option>SMTP</option><option>POP3</option><option>H.323</option><option>REMOTE
+ DESKTOP</option><option>PPTP</option><option>L2TP</option><option>Wake-On-LAN</option></select></td><td
+ align="center" valign="bottom">Public Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="public_portS23" 
+name="public_portS23" size="5" maxlength="5" type="text"></td><td 
+align="center">Protocol<br><select width="80" id="protocol_select23" 
+name="protocol_select23" 
+onchange="protocol_change(23);detect_protocol_change_port(this.selectedIndex,'23');"><option
+ default="true" value="6" selected="selected">TCP</option><option 
+default="false" value="17">UDP</option><option default="false" 
+value="256">Both</option><option default="false" value="-1">Other</option></select></td><td
+ align="center">Schedule<br><select width="30" id="schedule23" 
+name="schedule23" style="width: 70px;"><option default="true" 
+value="Always" selected="selected">Always</option><option 
+default="false" value="Never">Never</option><option default="false" 
+value="testSchedule">testSchedule</option></select></td></tr><tr><td 
+valign="bottom">IP Address<br><input value="0.0.0.0" autocomplete="off" 
+default="0.0.0.0" class="flatL" id="ip23" name="ip23" size="16" 
+maxlength="15" type="text"></td><td align="left" valign="bottom"><input 
+id="copy_ip23" name="copy_ip23" value="&lt;&lt;" onClick="copy_ip(23)" 
+style="width: 23px;" type="button"><select style="width: 110px;" 
+id="ip_list23" name="ip_list23" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="192.168.0.100">End User (192.168.0.100 )</option></select></td><td
+ align="center" valign="bottom">Private Port<br><input value="0" 
+autocomplete="off" default="0" class="flatL" id="private_portS23" 
+name="private_portS23" size="5" maxlength="5" type="text"></td><td 
+align="center"><br><input value="6" autocomplete="off" default="6" 
+disabled="disabled" id="protocol23" name="protocol23" size="5" 
+maxlength="3" type="text"></td><td align="center">Inbound Filter<br><select
+ width="30" id="inbound_filter23" name="inbound_filter23" style="width: 
+70px;"><option default="true" value="Allow_All" selected="selected">Allow
+ All</option><option default="false" value="Deny_All">Deny All</option></select></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+             </td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bordercolordark="#ffffff" bordercolorlight="#ffffff" 
+bgcolor="#ffffff" border="0" bordercolor="#ffffff" cellpadding="2" 
+cellspacing="0">
+                  <tbody>
+                    <tr>
+                      <td id="help_text"><b>Helpful
+ Hints…</b>
+                      	<p>Check 
+the <strong>Application Name</strong> drop down menu for a list of 
+predefined server types. If you select one of the predefined server 
+types, click the arrow button next to the drop down menu to fill out the
+ corresponding field.</p>
+                        <p>You can 
+select a computer from the list of DHCP clients in the <strong>Computer 
+Name</strong> drop down menu, or you can manually enter the IP address 
+of the LAN computer to which you would like to open the specified port.</p>
+                        <p>Select a
+ schedule for when the virtual server will be enabled. If you do not see
+ the schedule you need in the list of schedules, go to the <a 
+href="tools_schedules.htm" onClick="return 
+jump_if();">Tools → Schedules</a> screen and create a new schedule.</p>
+                        <p>Select a
+ filter that restricts the Internet hosts that can access this virtual 
+server to hosts that you trust. If you do not see the filter you need in
+ the list of filters, go to the <a 
+href="Inbound_Filter.htm" onClick="return jump_if();">
+ Advanced → Inbound&nbsp;Filter</a> screen and create a new filter.</p>
+						<p><a href="support_adv.htm#Virtual_Server" 
+onclick="return jump_if();">More…</a></p>
+					   </td>
+                    </tr>
+                  </tbody>
+			  </table></td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+ 
+
+
+<script type="text/javascript">
+<!--
+disable_items_by_username(get_current_user);
+//-->
+</script>
+</body></html>

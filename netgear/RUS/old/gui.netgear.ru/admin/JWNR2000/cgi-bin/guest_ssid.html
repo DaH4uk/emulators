@@ -1,0 +1,836 @@
+<html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../guest.js"></script>
+<script>window.document.title=device_title</script>
+<title>NETGEAR Router</title>
+</head>
+<body onLoad="loadhelp('_guest');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#guest_ssid.html" target=formframe>
+<input type=hidden name=submit_flag value="guest">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+ <TR><TD colSpan=2><H1><script>document.write(guest_head);</script></H1></TD></TR>
+ <TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+ 
+ 
+<script>
+var ssid_1="NETGEAR";
+var str_none="";
+var str_wep="";
+var str_wpa="";
+var str_wpa2="";
+var str_wpas="";
+var js_ssid_2="NETGEAR_Guest1"
+var js_ssid_3="NETGEAR_Guest2"
+var js_ssid_4="NETGEAR_Guest3"
+var js_ssid_5="NETGEAR_Guest4"
+//mssid1 
+var get_wpa1_2=""
+var get_wpa2_2=""
+var get_wpas_2=""
+var ssid_2="NETGEAR_Guest1";
+var old_ssid2="NETGEAR_Guest1";
+var old_sectype2=1;
+var sectype2=sec_off;
+ if ( old_sectype2 == "2" )
+ sectype2="WEP";
+ else if ( old_sectype2 == "3" )
+ sectype2="WPA";
+ else if ( old_sectype2 == "4" )
+ sectype2="WPA2";
+ else if ( old_sectype2 == "5" )
+ sectype2="WPA / WPA2";
+var enable_g2="0";
+var enable_b2="1";
+var access_2="0";
+var show_guest_2=r_no;
+if ( enable_g2 == "1" )
+show_guest_2=r_yes;
+else
+show_guest_2=r_no;
+var show_broad_2=r_yes;
+if ( enable_b2 == "1" )
+show_broad_2=r_yes;
+else
+show_broad_2=r_no;
+//mssid2
+var get_wpa1_3=""
+var get_wpa2_3=""
+var get_wpas_3=""
+var ssid_3="NETGEAR_Guest2";
+var old_ssid3="NETGEAR_Guest2";
+var old_sectype3=1;
+var sectype3=sec_off;
+ if ( old_sectype3 == "2" )
+ sectype3="WEP";
+ else if ( old_sectype3 == "3" )
+ sectype3="WPA";
+ else if ( old_sectype3 == "4" )
+ sectype3="WPA2";
+ else if ( old_sectype3 == "5" )
+ sectype3="WPA / WPA2";
+var enable_g3="0";
+var enable_b3="1";
+var access_3="0";
+var show_guest_3=r_no;
+if ( enable_g3 == "1" )
+show_guest_3=r_yes;
+else
+show_guest_3=r_no;
+var show_broad_3=r_yes;
+if ( enable_b3 == "1" )
+show_broad_3=r_yes;
+else
+show_broad_3=r_no;
+//mssid3
+var get_wpa1_4=""
+var get_wpa2_4=""
+var get_wpas_4=""
+var ssid_4="NETGEAR_Guest3";
+var old_ssid4="NETGEAR_Guest3";
+var old_sectype4=1;
+var sectype4=sec_off;
+if ( old_sectype4 == "2" )
+ sectype4="WEP";
+ else if ( old_sectype4 == "3" )
+ sectype4="WPA";
+ else if ( old_sectype4 == "4" )
+ sectype4="WPA2";
+ else if ( old_sectype4 == "5" )
+ sectype4="WPA / WPA2";
+var enable_g4="0";
+var enable_b4="1";
+var access_4="0";
+var show_guest_4=r_no;
+if ( enable_g4 == "1" )
+show_guest_4=r_yes;
+else
+show_guest_4=r_no;
+var show_broad_4=r_yes;
+if ( enable_b4 == "1" )
+show_broad_4=r_yes;
+else
+show_broad_4=r_no;
+
+//mssid4
+var get_wpa1_5=""
+var get_wpa2_5=""
+var get_wpas_5=""
+var ssid_5="NETGEAR_Guest4";
+var old_ssid5="NETGEAR_Guest4";
+var old_sectype5=1;
+var sectype5=sec_off;
+if ( old_sectype5 == "2" )
+ sectype5="WEP";
+ else if ( old_sectype5 == "3" )
+ sectype5="WPA";
+ else if ( old_sectype5 == "4" )
+ sectype5="WPA2";
+ else if ( old_sectype5 == "5" )
+ sectype5="WPA / WPA2";
+var enable_g5="0";
+var enable_b5="1";
+var access_5="0";
+var show_guest_5=r_no;
+if ( enable_g5 == "1" )
+show_guest_5=r_yes;
+else
+show_guest_5=r_no;
+var show_broad_5=r_yes;
+if ( enable_b5 == "1" )
+show_broad_5=r_yes;
+else
+show_broad_5=r_no;
+ 
+</script>
+<input type="hidden" name="enable_guest_value">
+<input type="hidden" name="enable_broad_value">
+<input type="hidden" name="allow_access_value">
+<input type="hidden" name="generate_flag">
+<input type="hidden" name="old_length">
+<input type="hidden" name="sec_wpaphrase_len">
+<input type="hidden" name="hidden_wpa_psk">
+<input type="hidden" name="hidden_sec_type">
+<input type="hidden" name="wep_press_flag">
+<input type="hidden" name="wpa1_press_flag" value=0>
+<input type="hidden" name="wpa2_press_flag" value=0>
+<input type="hidden" name="wpas_press_flag" value=0>
+<!--input type="hidden" name="wps_change_flag" value=""-->
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_guest','network')"><b><script>document.write(guest_network);</script></b></td></tr>
+<tr><script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+<tr>
+<script>document.write(hd_center);</script> &nbsp;</td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(guest_table_profile);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(guest_table_ssid);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(guest_table_secur);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(r_enable);</script></span></td>
+<script>document.write(hd_center);</script><span class="subhead"><script>document.write(guest_table_broad);</script></span></td>
+</tr>
+<script>
+document.write('<tr>'+hd_center+'<input type="radio" name="ssidSelect" value="2" onclick=Check_Profile()></td>'+hd_center+'<span class="subhead">'+1+'</span></td>'+hd_center+js_ssid_2+'</td>'+hd_center+sectype2+'</td>'+hd_center+show_guest_2+'</td>'+hd_center+show_broad_2+'</td></tr>');
+document.write('<tr>'+hd_center+'<input type="radio" name="ssidSelect" value="3" onclick=Check_Profile()></td>'+hd_center+'<span class="subhead">'+2+'</span></td>'+hd_center+js_ssid_3+'</td>'+hd_center+sectype3+'</td>'+hd_center+show_guest_3+'</td>'+hd_center+show_broad_3+'</td></tr>');
+document.write('<tr>'+hd_center+'<input type="radio" name="ssidSelect" value="4" onclick=Check_Profile()></td>'+hd_center+'<span class="subhead">'+3+'</span></td>'+hd_center+js_ssid_4+'</td>'+hd_center+sectype4+'</td>'+hd_center+show_guest_4+'</td>'+hd_center+show_broad_4+'</td></tr>');
+document.write('<tr>'+hd_center+'<input type="radio" name="ssidSelect" value="5" onclick=Check_Profile()></td>'+hd_center+'<span class="subhead">'+4+'</span></td>'+hd_center+js_ssid_5+'</td>'+hd_center+sectype5+'</td>'+hd_center+show_guest_5+'</td>'+hd_center+show_broad_5+'</td></tr>');
+
+</script>
+</table>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_guest','wireless')"><b><script>document.write(guest_setting);</script><span id="pro_count">1</span> </b></td></tr>
+<tr><script>document.write(hd);</script><input type="checkbox" name="enable_guest" value="1"><a tabindex=-1 href="javascript:loadhelp('_guest','enable_guest')"><script>document.write(guest_enable);</script></td></tr>
+<tr><script>document.write(hd);</script><input type="checkbox" name="enable_broad" value="1"><a tabindex=-1 href="javascript:loadhelp('_guest','enable_ssid')"><script>document.write(guest_enable_broad);</script></td></tr>
+<tr><script>document.write(hd);</script><input type="checkbox" name="allow_access" value="1"><a tabindex=-1 href="javascript:loadhelp('_guest','allow_guest')"><script>document.write(guest_access);</script></td></tr>
+<tr><script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_guest','guest_ssid')"></a><script>document.write(guest_name);</script><input type="text" name="guest_name" value="" size="20" maxlength="32"></td></tr>
+</table>
+<script>document.write(bluebar);</script>
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr><script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_guest','security')"><b><script>document.write(guest_secur);</script><span id="pro_count2">1</span> <script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="security_type" value="Disable" onClick=setSecurity(1)><script>document.write(sec_off);</script><td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="security_type" value="WEP" onClick=setSecurity(2)><script>document.write(sec_wep);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="security_type" value="WPA-PSK" onClick=setSecurity(3) ><script>document.write(sec_wpa);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="security_type" value="WPA2-PSK" onClick=setSecurity(4) ><script>document.write(sec_wpa2);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="security_type" value="AUTO-PSK" onClick=setSecurity(5) ><script>document.write(sec_wpas);</script></td></tr>
+</table>
+<div id=view>
+</div>
+<!------ none DIV Start ------>
+<div align="center" ID="none" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script><tr><script>document.write(hd2);</script> </td></tr></table>
+</div> 
+<!------ none DIV End ------>
+<!------ WEP DIV Start ------>
+<div align="center" ID="wep" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_guest','wep')"><b><script>document.write(sec_enc_head);</script><script>document.write(ba);</script></td>
+</tr>
+<TR>
+ <script>document.write(hd);</script> <script>document.write(sec_auth);</script></TD>
+ <script>document.write(hd);</script> 
+ <select NAME="sec_auth" size="1">
+ <!--option value=0 ><script>document.write(sec_open);</script></option-->
+ <option value=1 ><script>document.write(sec_share);</script></option>
+ <option value=2 ><script>document.write(sec_auto);</script></option>
+ </select></TD>
+</TR>
+<TR>
+ <script>document.write(hd);</script> <script>document.write(sec_enc);</script></TD>
+ <script>document.write(hd);</script> 
+ <select NAME="sec_keylen" size="1" onChange="changekeylen(document.forms[0]);">
+ <option value=5 ><script>document.write(sec_64);</script></option>
+ <option value=13 ><script>document.write(sec_128);</script></option>
+ </select></TD>
+</TR>
+<script>document.write(bluebar);</script>
+<tr>
+ <script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_guest','wepkey')"><b><script>document.write(sec_key);</script><script>document.write(ba);</script></td>
+</tr>
+<tr>
+<script>document.write(hd2);</script>&nbsp;<script>document.write(ca_12a_passphrase);</script>&nbsp;
+ <input type="text" size="16" maxlength="32" NAME="weppassphrase" VALUE="" >&nbsp;&nbsp;
+ <script>document.write('<input type="button" name="gen" VALUE="'+generate_mark+'" OnClick="clickgenerate(document.forms[0])"></td>');</script> 
+</tr>
+<TR>
+ <script>document.write(hd2);</script>
+ <table>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(sec_key1);</script><input type=radio NAME=wepkeyno checked value="1"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey1" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(sec_key2);</script><input type=radio NAME=wepkeyno value="2"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey2" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></TD> 
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(sec_key3);</script><input type=radio NAME=wepkeyno value="3"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey3" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(sec_key4);</script><input type=radio NAME=wepkeyno value="4"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey4" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></td>
+ </tr>
+ </table>
+ </td>
+</TR>
+</table>
+</div>
+<!------ WEP DIV End ------>
+<!------ PSK DIV Start ------>
+<div align="center" ID="wpa" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_guest','wpa-psk')"><b><script>document.write(sec_pr_wpa);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(sec_phr);</script></td>
+ <script>document.write(hd);</script> <input type="text" id="textWpaPwdPhrase" size="20" maxlength="64" name="sec_wpaphrase" value="" onFocus="document.forms[0].wpa1_press_flag.value=1" onKeyPress="document.forms[0].wpa1_press_flag.value=1"> <span class="optiondesc" id="wpaPwdPhrExtText"><script>document.write(sec_863_or_64h);</script></span></td>
+ </tr>
+</table>
+</div>
+<!------ PSK DIV End ------>
+<!------ WPA2 DIV Start ------> 
+<div align="center" ID="wpa2" style="position:absolute;top:0;left:0;visibility:hidden"> 
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+ <tr><script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_guest','wpa2-psk')"><b><script>document.write(sec_pr_wpa2);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <span class="optiondesc" id="wpaPwdPhraseText"><script>document.write(sec_phr);</script></span></td>
+ <script>document.write(hd);</script> <input type="text" id="textWpaPwdPhrase" maxlength="64" size="20" name="sec_wpaphrase" value="" onFocus="document.forms[0].wpa2_press_flag.value=1" onKeyPress="document.forms[0].wpa2_press_flag.value=1"><span class="optiondesc" id="wpaPwdPhrExtText"><script>document.write(sec_863_or_64h);</script></span></td>
+</tr>
+</table>
+</div>
+<!------ WPA2 DIV End ------>
+<!------ WPA2 Mixed DIV Start ------> 
+<div align="center" ID="wpas" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_guest','wpa-psk+wpa2-psk')"><b><script>document.write(sec_pr_wpas);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <span class="optiondesc" id="wpaPwdPhraseText"><script>document.write(sec_phr);</script></span></td>
+ <script>document.write(hd);</script> <input type="text" id="textWpaPwdPhrase" size="20" maxlength="64" name="sec_wpaphrase" value="" onFocus="document.forms[0].wpas_press_flag.value=1" onKeyPress="document.forms[0].wpas_press_flag.value=1"> <span class="optiondesc" id="wpaPwdPhrExtText"><script>document.write(sec_863_or_64h);</script></span></td> 
+ </tr>
+</table>
+</div>
+<!------ WPA2 Mixed DIV End ------>
+<script>document.write(table_bolder0);</script>
+<script>document.write(bluebar);</script>
+ <tr> 
+ <script>document.write(hd2_center);</script>
+<script>document.write("<input type='submit' name='Apply' value='"+apply_mark+"' onclick='return check_guest()'>&nbsp;&nbsp;&nbsp;");</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"guest_ssid.html\";'></td>");</script> 
+ </tr>
+</table>
+</FORM>
+<script>
+function getObj(name)
+{
+ if (document.getElementById)
+ {
+ return document.getElementById(name);
+ }
+ else if (document.all)
+ {
+ return document.all[name];
+ }
+ else if (document.layers)
+ {
+ return document.layers[name];
+ }
+}
+function changekeylen(form)
+{
+ if(form.sec_keylen.options[0].selected == true)
+ {
+ form.wepkey1.size=form.wepkey2.size=form.wepkey3.size=form.wepkey4.size=12;
+ if(form.ssidSelect[0].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ else if(form.ssidSelect[1].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ else if(form.ssidSelect[2].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ else if(form.ssidSelect[3].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ }
+ else
+ {
+ form.wepkey1.size=form.wepkey2.size=form.wepkey3.size=form.wepkey4.size=28;
+ if(form.ssidSelect[0].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ else if(form.ssidSelect[1].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ else if(form.ssidSelect[2].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ }
+ else if(form.ssidSelect[3].checked==true) 
+ { 
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = ""; 
+ 
+ } 
+ }
+ form.generate_flag.value=0;
+}
+function setSecurity(num)
+{
+var form=document.forms[0];
+form.wpa1_press_flag.value=0;
+form.wpa2_press_flag.value=0;
+form.wpas_press_flag.value=0;
+if(form.ssidSelect[0].checked==true)
+{ 
+ if(num==2)
+ {
+getObj("view").innerHTML=str_wep;
+var form=document.forms[0];
+ var keyno_2='1';
+ var keylength_2='5';
+ var auth_2='2'
+ form.sec_auth.options[eval(auth_2)-1].selected = true;
+ form.wepkeyno[eval(keyno_2)-1].checked = true;
+ changekeylen(document.forms[0]);
+ form.old_length.value=keylength_2;
+ }
+ else if(num==3)
+ {
+getObj("view").innerHTML=str_wpa;
+ form.sec_wpaphrase.value=get_wpa1_2;
+ }
+ else if(num==4)
+ {
+getObj("view").innerHTML=str_wpa2;
+ form.sec_wpaphrase.value=get_wpa2_2;
+ }
+ else if(num==5)
+ {
+getObj("view").innerHTML=str_wpas;
+ form.sec_wpaphrase.value=get_wpas_2;
+ }
+ else
+getObj("view").innerHTML=str_none;
+
+} 
+ 
+else if(form.ssidSelect[1].checked==true)
+{ 
+ if(num==2)
+ {
+getObj("view").innerHTML=str_wep;
+var form=document.forms[0];
+ var keyno_3='1';
+ var keylength_3='5';
+ var auth_3='2'
+ form.sec_auth.options[eval(auth_3)-1].selected = true;
+ form.wepkeyno[eval(keyno_3)-1].checked = true;
+ changekeylen(document.forms[0]);
+ form.old_length.value=keylength_3;
+ }
+ else if(num==3)
+ {
+getObj("view").innerHTML=str_wpa;
+ form.sec_wpaphrase.value=get_wpa1_3;
+ }
+ else if(num==4)
+ {
+getObj("view").innerHTML=str_wpa2;
+ form.sec_wpaphrase.value=get_wpa2_3;
+ }
+ else if(num==5)
+ {
+getObj("view").innerHTML=str_wpas;
+ form.sec_wpaphrase.value=get_wpas_3;
+ }
+ else
+getObj("view").innerHTML=str_none;
+
+} 
+else if(form.ssidSelect[2].checked==true)
+{ 
+ if(num==2)
+ {
+getObj("view").innerHTML=str_wep;
+var form=document.forms[0];
+ var keyno_4='1';
+ var keylength_4='5';
+ var auth_4='2'
+ form.sec_auth.options[eval(auth_4)-1].selected = true;
+ form.wepkeyno[eval(keyno_4)-1].checked = true;
+ changekeylen(document.forms[0]);
+ form.old_length.value=keylength_4;
+ }
+ else if(num==3)
+ {
+getObj("view").innerHTML=str_wpa;
+ form.sec_wpaphrase.value=get_wpa1_4;
+ }
+ else if(num==4)
+ {
+getObj("view").innerHTML=str_wpa2;
+ form.sec_wpaphrase.value=get_wpa2_4;
+ }
+ else if(num==5)
+ {
+getObj("view").innerHTML=str_wpas;
+ form.sec_wpaphrase.value=get_wpas_4;
+ }
+ else
+getObj("view").innerHTML=str_none;
+
+} 
+else 
+{ 
+ if(num==2)
+ {
+getObj("view").innerHTML=str_wep;
+var form=document.forms[0];
+ var keyno_5='1';
+ var keylength_5='5';
+ var auth_5='2'
+ form.sec_auth.options[eval(auth_5)-1].selected = true;
+ form.wepkeyno[eval(keyno_5)-1].checked = true;
+ changekeylen(document.forms[0]);
+ form.old_length.value=keylength_5;
+ }
+ else if(num==3)
+ {
+getObj("view").innerHTML=str_wpa;
+ form.sec_wpaphrase.value=get_wpa1_5;
+ }
+ else if(num==4)
+ {
+getObj("view").innerHTML=str_wpa2;
+ form.sec_wpaphrase.value=get_wpa2_5;
+ }
+ else if(num==5)
+ {
+getObj("view").innerHTML=str_wpas;
+ form.sec_wpaphrase.value=get_wpas_5;
+ }
+ else
+getObj("view").innerHTML=str_none;
+
+} 
+
+
+}
+function loadvalue()
+{
+//top.contents.location.reload();
+var form=document.forms[0];
+
+str_none=getObj("none").innerHTML;
+str_wep=getObj("wep").innerHTML;
+str_wpa=getObj("wpa").innerHTML;
+str_wpa2=getObj("wpa2").innerHTML;
+str_wpas=getObj("wpas").innerHTML;
+getObj("none").innerHTML='';
+getObj("wep").innerHTML='';
+getObj("wpa").innerHTML='';
+getObj("wpa2").innerHTML='';
+getObj("wpas").innerHTML='';
+form.ssidSelect[0].checked=true;
+
+if ( enable_g2 == 1 )
+form.enable_guest.checked=true;
+else 
+form.enable_guest.checked=false;
+if ( enable_b2 == 1 )
+form.enable_broad.checked=true;
+else 
+form.enable_broad.checked=false;
+if ( access_2 == 1 )
+form.allow_access.checked=true;
+else
+form.allow_access.checked=false;
+
+form.guest_name.value=ssid_2;
+form.ssidSelect.value=2;
+
+setSecurity('1');
+/*
+if ( '' == '0' || '' == '0' )
+setDisabled(false,form.security_type[2],form.security_type[3],form.security_type[4]);
+else
+setDisabled(true,form.security_type[2],form.security_type[3],form.security_type[4]);
+ */
+form.security_type[parseInt(old_sectype2)-1].checked=true;
+if('1' == '2')
+{
+var form=document.forms[0];
+var keyno_2='1';
+var keylength_2='5';
+var auth_2='2';
+var wep_leng_2='5'
+
+ 
+ if( wep_leng_2 == 5 )
+  form.sec_keylen.options[0].selected = true;
+ else
+  form.sec_keylen.options[1].selected = true;
+ changekeylen(document.forms[0]);
+ form.sec_auth.options[eval(auth_2)-1].selected = true;
+form.wepkeyno[eval(keyno_2)-1].checked = true;
+form.old_length.value=keylength_2;
+}
+else if('1'==3)
+{
+form.sec_wpaphrase.value=get_wpa1_2;
+}
+else if('1'==4)
+{
+form.sec_wpaphrase.value=get_wpa2_2;
+}
+else if('1'==5)
+{
+form.sec_wpaphrase.value=get_wpas_2;
+}
+
+}
+function Check_Profile()
+{
+//top.contents.location.reload();
+var form=document.forms[0];
+//mssid1
+if(form.ssidSelect[0].checked==true)
+{
+if ( enable_g2 == 1 )
+form.enable_guest.checked=true;
+else 
+form.enable_guest.checked=false;
+if ( enable_b2 == 1 )
+form.enable_broad.checked=true;
+else 
+form.enable_broad.checked=false;
+if ( access_2 == 1 )
+form.allow_access.checked=true;
+else
+form.allow_access.checked=false;
+
+form.guest_name.value=ssid_2;
+form.ssidSelect.value=2;
+ getObj('pro_count').innerHTML = 1;
+ getObj('pro_count2').innerHTML = 1;
+setSecurity('1');
+form.security_type[parseInt(old_sectype2)-1].checked=true;
+if('1' == '2')
+{
+var form=document.forms[0];
+var keyno_2='1';
+var keylength_2='5';
+var auth_2='2';
+var wep_leng_2='5'
+ 
+ if( wep_leng_2 == 5 )
+  form.sec_keylen.options[0].selected = true;
+ else
+  form.sec_keylen.options[1].selected = true;
+changekeylen(document.forms[0]);
+ form.sec_auth.options[eval(auth_2)-1].selected = true;
+form.wepkeyno[eval(keyno_2)-1].checked = true;
+form.old_length.value=keylength_2;
+}
+else if('1'==3)
+{
+form.sec_wpaphrase.value=get_wpa1_2;
+}
+else if('1'==4)
+{
+form.sec_wpaphrase.value=get_wpa2_2;
+}
+else if('1'==5)
+{
+form.sec_wpaphrase.value=get_wpas_2;
+}
+}
+
+//mssid2
+else if(form.ssidSelect[1].checked==true)
+{
+if ( enable_g3 == 1 )
+form.enable_guest.checked=true;
+else 
+form.enable_guest.checked=false;
+if ( enable_b3 == 1 )
+form.enable_broad.checked=true;
+else 
+form.enable_broad.checked=false;
+if ( access_3 == 1 )
+form.allow_access.checked=true;
+else
+form.allow_access.checked=false;
+
+form.guest_name.value=ssid_3;
+form.ssidSelect.value=3;
+ getObj('pro_count').innerHTML = 2;
+ getObj('pro_count2').innerHTML = 2;
+setSecurity('1');
+form.security_type[parseInt(old_sectype3)-1].checked=true;
+if('1' == '2')
+{
+var form=document.forms[0];
+var keyno_3='1';
+var keylength_3='5';
+var auth_3='2';
+var wep_leng_3='5' 
+ if( wep_leng_3 == 5 )
+  form.sec_keylen.options[0].selected = true;
+ else
+  form.sec_keylen.options[1].selected = true;
+changekeylen(document.forms[0]);
+ form.sec_auth.options[eval(auth_3)-1].selected = true;
+form.wepkeyno[eval(keyno_3)-1].checked = true;
+form.old_length.value=keylength_3;
+}
+else if('1'==3)
+{
+form.sec_wpaphrase.value=get_wpa1_3;
+}
+else if('1'==4)
+{
+form.sec_wpaphrase.value=get_wpa2_3;
+}
+else if('1'==5)
+{
+form.sec_wpaphrase.value=get_wpas_3;
+}
+}
+
+//mssid3
+
+else if(form.ssidSelect[2].checked==true)
+{
+if ( enable_g4 == 1 )
+form.enable_guest.checked=true;
+else 
+form.enable_guest.checked=false;
+if ( enable_b4 == 1 )
+form.enable_broad.checked=true;
+else 
+form.enable_broad.checked=false;
+if ( access_4 == 1 )
+form.allow_access.checked=true;
+else
+form.allow_access.checked=false;
+
+form.guest_name.value=ssid_4;
+form.ssidSelect.value=4;
+ getObj('pro_count').innerHTML = 3;
+ getObj('pro_count2').innerHTML = 3;
+setSecurity('1');
+form.security_type[parseInt(old_sectype4)-1].checked=true;
+if('1' == '2')
+{
+var form=document.forms[0];
+var keyno_4='1';
+var keylength_4='5';
+var auth_4='2';
+var wep_leng_4='5'
+ if( wep_leng_4 == 5 )
+  form.sec_keylen.options[0].selected = true;
+ else
+  form.sec_keylen.options[1].selected = true;
+changekeylen(document.forms[0]); 
+ form.sec_auth.options[eval(auth_4)-1].selected = true;
+form.wepkeyno[eval(keyno_4)-1].checked = true;
+form.old_length.value=keylength_4;
+}
+else if('1'==3)
+{
+form.sec_wpaphrase.value=get_wpa1_4;
+}
+else if('1'==4)
+{
+form.sec_wpaphrase.value=get_wpa2_4;
+}
+else if('1'==5)
+{
+form.sec_wpaphrase.value=get_wpas_4;
+}
+
+}
+//mssid4
+else if(form.ssidSelect[3].checked==true)
+{
+if ( enable_g5 == 1 )
+form.enable_guest.checked=true;
+else 
+form.enable_guest.checked=false;
+if ( enable_b5 == 1 )
+form.enable_broad.checked=true;
+else 
+form.enable_broad.checked=false;
+if ( access_5 == 1 )
+form.allow_access.checked=true;
+else
+form.allow_access.checked=false;
+
+form.guest_name.value=ssid_5;
+form.ssidSelect.value=5;
+ getObj('pro_count').innerHTML = 4;
+ getObj('pro_count2').innerHTML = 4;
+setSecurity('1');
+form.security_type[parseInt(old_sectype5)-1].checked=true;
+if('1' == '2')
+{
+var form=document.forms[0];
+var keyno_5='1';
+var keylength_5='5';
+var auth_5='2';
+var wep_leng_5='5'
+ if( wep_leng_5 == 5 )
+  form.sec_keylen.options[0].selected = true;
+ else
+  form.sec_keylen.options[1].selected = true;
+changekeylen(document.forms[0]); 
+ form.sec_auth.options[eval(auth_5)-1].selected = true;
+form.wepkeyno[eval(keyno_5)-1].checked = true;
+form.old_length.value=keylength_5;
+}
+else if('1'==3)
+{
+form.sec_wpaphrase.value=get_wpa1_5;
+}
+else if('1'==4)
+{
+form.sec_wpaphrase.value=get_wpa2_5;
+}
+else if('1'==5)
+{
+form.sec_wpaphrase.value=get_wpas_5;
+}
+}
+
+
+}
+</script>
+</body>
+</html>

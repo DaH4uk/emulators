@@ -1,0 +1,1911 @@
+﻿<script language="javascript" type="text/javascript">
+var userTbl = new Array();
+var smbService;
+var ftpServer;
+var username = "";
+var password = "";
+var cfPassword = "";
+var blank = "&nbsp;&nbsp;";
+var usbDeviceList;
+var volumeList;
+var smbService;
+var dlnaService;
+var accessFolderList_samba;
+var accessFolderList_ftp;
+var accessFolderList_dlna;
+
+var numAliveDev = 0;
+var numAliveLog = 0;
+var idx;
+
+var currVolume = "";
+var currPath = "";
+
+var currentFolder = "";
+var fPath = "";
+
+var firstClick = 1;
+var firstNode = 1;
+var o;
+var prevObj;
+
+var folderPath = "";
+var currentVol = "";
+
+var folderIdx;
+var shareTabStatus = "";
+var editCurIndex;
+
+var g_ftpPort;
+var userCfg;
+
+function selectJudge(index) {
+    var i;
+    var selectAll = 1;
+
+    if ($("#cb" + index).prop("data-checked") == true) {
+        for (i = 0; i < accessFolderList_samba.length; i++) {
+            if ($("#cb" + i).prop("data-checked") == false) {
+                selectAll = 0;
+            }
+        }
+
+        if (selectAll == 1) {
+            $("#shareTitle").prop("checked", true);
+            $("#shareTitle").tpCheckbox();
+        }
+    } else {
+        $("#shareTitle").prop("checked", false);
+        $("#shareTitle").tpCheckbox();
+    }
+}
+
+
+function initAccessTab() {
+    var array = new Array();
+    var index;
+    var ipv4Addr;
+    var wanIpv4 = "0.0.0.0";
+    var brList = $.act(ACT_GL, L2_BRIDGING_ENTRY, null, null, ["bridgeName"]);
+		if (INCLUDE_WAN_MODE){ 
+    var realSysMode = $.act(ACT_GET, SYS_MODE, null, null);
+		}
+		else{
+			var realSysMode = {
+				mode:"ETH"
+			};
+		}
+    var wans = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    var l3f = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+    if (INCLUDE_VDSLWAN) {
+        vdsls = $.act(ACT_GL, WAN_PTM_LINK_CFG, null, null, ["X_TP_Used", "X_TP_VID"]);
+    }
+    if (INCLUDE_L2TP) {
+        var wanL2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name", "addressingType", "transportType", "externalIPAddress"]);
+    }
+    if (INCLUDE_PPTP) {
+        var wanPptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name", "addressingType", "transportType", "externalIPAddress"]);
+    }
+
+
+    if (INCLUDE_WAN_VLAN) {
+        var ips = $.act(ACT_GL, WAN_IP_CONN, null, null, ["name", "connectionType", "addressingType", "externalIPAddress", "subnetMask", "defaultGateway", "DNSServers", "X_TP_8021QEnabled", "X_TP_VlanID"]);
+        var ppps = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["name", "transportType", "username", "password", "X_TP_8021QEnabled", "X_TP_VlanID", "externalIPAddress"]);
+    } else {
+        var ips = $.act(ACT_GL, WAN_IP_CONN, null, null, ["name", "connectionType", "addressingType", "externalIPAddress", "subnetMask", "defaultGateway", "DNSServers"]);
+        var ppps = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["name", "transportType", "username", "password", "externalIPAddress"]);
+    }
+
+    if (!$.exe()) {
+        var systemMode = realSysMode.mode;
+
+        for (index = 0; index < brList.length; index++) {
+            var lanIPv4Cfg = $.act(ACT_GS, LAN_IP_INTF, null, brList[index].__stack, ["IPInterfaceIPAddress"]);
+            if (!$.exe()) {
+                ipv4Addr = lanIPv4Cfg[0].IPInterfaceIPAddress;
+            }
+        }
+
+        if (systemMode == "DSL") {
+            $.merge(ips, ppps);
+            $.each(ips, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 2)].WANAccessType === "DSL") {
+                    if (this.name === l3f.__ifAliasName) {
+                        var obj;
+                        wanIpv4 = this.externalIPAddress;
+                    }
+                }
+            });
+        } else if (systemMode == "ETH") {
+            $.merge(ips, ppps);
+            $.each(ips, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 2)].WANAccessType === "Ethernet") {
+                    if (this.name === l3f.__ifAliasName) {
+                        wanIpv4 = this.externalIPAddress;
+                    }
+                }
+            });
+
+            if (INCLUDE_PPTP) {
+                $.each(wanPptpList, function() {
+                    if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 1)].WANAccessType === "Ethernet") {
+                        if (this.name === l3f.__ifAliasName) {
+                            wanIpv4 = this.externalIPAddress;
+                        }
+                    }
+                });
+            }
+
+            if (INCLUDE_L2TP) {
+                $.each(wanL2tpList, function() {
+                    if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 1)].WANAccessType === "Ethernet") {
+                        if (this.name === l3f.__ifAliasName) {
+                            wanIpv4 = this.externalIPAddress;
+                        }
+                    }
+                });
+            }
+        }
+
+        array.push([{
+            "text": '<div><input type="checkbox" id="mediaServer" /><label></label></div>',
+            "width": "16%"
+        }, {
+            "text": table_str.mediaServer,
+            "width": "32%"
+        }, {
+            "text": "--",
+            "width": "32%"
+        }, {
+            "text": "--",
+            "width": "20%"
+        }], [{
+            "text": '<div><input type="checkbox" id="samba" /><label></label></div>',
+            "width": "16%"
+        }, {
+            "text": table_str.netNeig,
+            "width": "32%"
+        }, {
+            "text": "\\\\" + smbService.serverName,
+            "width": "32%"
+        }, {
+            "text": "--",
+            "width": "20%"
+        }], [{
+            "text": '<div><input type="checkbox" id="innerFtp" /><label></label></div>',
+            "width": "16%"
+        }, {
+            "text": table_str.ftp,
+            "width": "32%"
+        }, {
+            "text": table_str.ftpSign + ipv4Addr + ":" + g_ftpPort,
+            "width": "32%"
+        }, {
+            "text": '<input type="text" id="port" class="s" style="text-align:center" maxlength="5" />',
+            "width": "20%"
+        }], [{
+            "text": '<div><input type="checkbox" id="outerFtp" /><label></label></div>',
+            "width": "16%"
+        }, {
+            "text": table_str.ftpInternet,
+            "width": "32%"
+        }, {
+            "text": table_str.ftpSign + wanIpv4 + ":" + g_ftpPort,
+            "width": "32%"
+        }, {
+            "text": g_ftpPort,
+            "width": "20%"
+        }]);
+
+        $.initTableBody($('#accessTab'), array);
+        if (ftpServer.enable == 0) {
+            $('#accessTab').find('tr').eq(4).addClass('nd');
+        }
+        $("#innerFtp").click(function() {
+            if ($(this).prop("data-checked") == true) {
+                $('#accessTab').find('tr').eq(4).removeClass('nd');
+            } else {
+                $('#accessTab').find('tr').eq(4).addClass('nd');
+            }
+
+        });
+        return array;
+    }
+}
+
+function initShareTab() {
+    var array = new Array();
+    var fp;
+    var matchVolume;
+    var status;
+    var dlnaEnable;
+    var ableControl;
+    var j;
+    var index;
+    var edit = "";
+    var del = "";
+    var i;
+
+    for (index = 0; index < accessFolderList_samba.length; index++) {
+        var match = false;
+        var volumeName = "disconnected";
+        fp = accessFolderList_samba[index].volumeLabel + ":" + accessFolderList_samba[index].name;
+
+        $.each(volumeList, function() {
+            if (this.uuid == accessFolderList_samba[index].volumeUuid) {
+                matchVolume = this;
+                match = true;
+                return false;
+            }
+        });
+
+        dlnaEnable = table_str.off;
+		if (accessFolderList_dlna[index].enable == 1) {
+                    dlnaEnable = table_str.on;
+        }
+
+        if ((accessFolderList_samba[index].volumeUuid != "") && (match == false)) {
+            ableControl = "<span class='table-grid-icon inactive-disable-icon' id='sp" + index + "'></span>";//"' onclick='ableShare(" + index + ", " + match + ", " + matchVolume + ");'></span>";
+        } else if ((accessFolderList_samba[index].volumeUuid != "") && (matchVolume.status != "Online")) {
+            if ("Error" == matchVolume.status) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='sp" + index + "'></span>";
+            } else if (("Offline" == matchVolume.status) && (matchVolume.enable == 1)) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='sp" + index + "'></span>";
+            } else {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='sp" + index + "'></span>";
+            }
+        } else {
+            if (1 == accessFolderList_samba[index].enable) {
+                ableControl = "<span class='table-grid-icon enable-icon' id='sp" + index + "' onclick='ableShare(" + index + ");'></span>";
+            } else {
+                ableControl = "<span class='table-grid-icon disable-icon' id='sp" + index + "' onclick='ableShare(" + index + ");'></span>";
+            }
+        }
+
+        edit = "<span class='table-grid-icon edit-modify-icon' id='edit" + index + "' onclick='modifyShare(" + index + ");'></span>"
+        del = "<span class='table-grid-icon edit-trash-icon' id='del" + index + "' onclick='delShare(" + index + ");'></span>"
+
+        for (i = 0; i < volumeList.length; i++) {
+            if (volumeList[i].label == accessFolderList_samba[index].volumeLabel) {
+                volumeName = volumeList[i].name;
+            }
+        }
+
+        if (volumeName == undefined) {
+            volumeName = "disconnected";
+        }
+
+        array.push([{
+            "text": '<div><input type="checkbox" id="cb' + index + '" onclick="selectJudge(' + index + ');" /><label></label></div>',
+            "width": "8%"
+        }, {
+            "text": (index + 1),
+            "width": "5%"
+        }, {
+            "text": accessFolderList_samba[index].alias,
+            "width": "15%"
+        }, {
+            "text": escapeStr(fp),
+            "width": "25%"
+        }, {
+            "text": dlnaEnable,
+            "width": "10%"
+        }, {
+            "text": volumeName,
+            "width": "10%"
+        }, {
+            "text": ableControl,
+            "width": "10%"
+        }, {
+            "text": edit + del,
+            "width": "17%"
+        }]);
+    }
+
+    $.initTableBody($('#shareTab'), array);
+    $.tablePages($('#shareTab'), 8);
+    return array;
+}
+
+function ableShare(index) {
+    var command = {};
+
+    var matchVolume;
+    var match = false;
+    var _index;
+
+    $.each(volumeList, function() {
+        if (this.uuid == accessFolderList_samba[index].volumeUuid) {
+            matchVolume = this;
+            match = true;
+        }
+    });
+
+    if ((accessFolderList_samba[index].volumeUuid != "") && (match == false)) {
+
+    } else if ((accessFolderList_samba[index].volumeUuid != "") && (matchVolume.status != "Online")) {
+
+    } else {
+        if (1 == accessFolderList_samba[index].enable) {
+            command.enable = 0;
+        } else {
+            command.enable = 1;
+        }
+    }
+
+    var i;
+
+    for (_index = 0; _index < accessFolderList_dlna.length; _index++) {
+        if (accessFolderList_samba[index].name == accessFolderList_dlna[_index].name) {
+            $.act(ACT_SET, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[_index].__stack, null, command);
+        }
+    }
+
+    $.act(ACT_SET, SMB_SERVICE_FOLDER, accessFolderList_samba[index].__stack, null, command);
+    $.act(ACT_SET, FTP_SERVER_FOLDER, accessFolderList_ftp[index].__stack, null, command);
+
+    if (!$.exe()) {
+        $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+        $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+        if (!$.exe()) {
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("folderSharing.htm", param);
+        }
+    }
+}
+
+$("#shareItemAdd").click(function() {
+    shareTabStatus = "add";
+});
+
+function modifyShare(index) {
+    var i;
+    editCurIndex = index;
+    var str = accessFolderList_samba[index].volumeLabel + ":";
+
+    $("#shareVolume option[value='" + str + "']").prop("selected", "selected");
+    var options = {
+        refresh: 1
+    };
+    $("#shareVolume").tpSelect(options);
+
+    $("#filename").val(accessFolderList_samba[index].volumeLabel + ":" + accessFolderList_samba[index].name);
+    $("#shareName").val(accessFolderList_samba[index].alias);
+
+    if (accessFolderList_samba[index].needAuth == 1) {
+        $("#ea").prop("checked", true);
+        $("#ea").data("tpCheckbox").refresh();
+    }
+
+    for (i = 0; i < userAccessList_samba.length; i++) {
+        if (parseInt(accessFolderList_samba[index].__stack, 10) != parseInt(userAccessList_samba[i].__stack, 10)) {
+            continue;
+        }
+
+        if (parseInt(userList[0].__stack, 10) == userAccessList_samba[i].userId) {
+            if (userAccessList_samba[i].permissions == 7) {
+                $("#wa").prop("checked", true);
+                $("#wa").data("tpCheckbox").refresh();
+            } else {
+                $("#wa").prop("checked", false);
+                $("#wa").data("tpCheckbox").refresh();
+            }
+        }
+    }
+
+    if (accessFolderList_dlna[index].enable == 1) {
+            $("#ems").prop("checked", true);
+            $("#ems").data("tpCheckbox").refresh();
+        }
+
+    shareTabStatus = "modify";
+}
+
+function delShare(index) {
+    var i;
+
+    $.act(ACT_DEL, SMB_SERVICE_FOLDER, accessFolderList_samba[index].__stack, null, null);
+    $.act(ACT_DEL, FTP_SERVER_FOLDER, accessFolderList_ftp[index].__stack, null, null);
+
+    for (i = 0; i < accessFolderList_dlna.length; i++) {
+        if (accessFolderList_samba[index].name == accessFolderList_dlna[i].name) {
+            $.act(ACT_DEL, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[i].__stack, null, null);
+            accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+        }
+    }
+
+    if (!$.exe()) {
+        $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+        $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+        if (!$.exe()) {
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("folderSharing.htm", param);
+        }
+    }
+}
+
+function delShareMul(index) {
+    var i;
+
+    $.act(ACT_DEL, SMB_SERVICE_FOLDER, accessFolderList_samba[index].__stack, null, null);
+    $.act(ACT_DEL, FTP_SERVER_FOLDER, accessFolderList_ftp[index].__stack, null, null);
+
+    for (i = 0; i < accessFolderList_dlna.length; i++) {
+        if (accessFolderList_samba[index].name == accessFolderList_dlna[i].name) {
+            $.act(ACT_DEL, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[i].__stack, null, null);
+            accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+        }
+    }
+
+    $.exe();
+}
+
+function initAuthTab() {
+    var array = new Array();
+    var index;
+
+    if (volumeList.length == 0) {
+        array.push([{
+            "text": "--",
+            "width": "10%"
+        }, {
+            "text": "--",
+            "width": "40%"
+        }, {
+            "text": "--",
+            "width": "25%"
+        }, {
+            "text": "--",
+            "width": "25%"
+        }]);
+    }
+
+    usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+    volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+    if (!$.exe()) {
+    for (idx = 1; idx <= usbDeviceList.length; idx++) {
+        if ("Online" == usbDeviceList[idx - 1].status) {
+            for (index = 0; index < volumeList.length; index++) {
+                if (((usbDeviceList[idx - 1].__stack).split(','))[0] == ((volumeList[index].__stack).split(','))[0]) {
+                    if (volumeList[index].status == "Online") {
+                        array.push([{
+                            "text": (index + 1),
+                            "width": "10%"
+                        }, {
+                            "text": "volume(" + volumeList[index].name + ")",
+                            "width": "40%"
+                        }, {
+                            "text": volumeList[index].label + ":",
+                            "width": "25%"
+                        }, {
+                            "text": volumeList[index].name,
+                            "width": "25%"
+                        }]);
+                    }
+                }
+            }
+        }
+    }
+
+    $.initTableBody($('#authTab'), array);
+    $.tablePages($('#authTab'), 5);
+    }
+
+    return array;
+}
+
+$("#refShareSet").click(function() {
+   $.addLoading($("#refShareSet"));
+    initAuthTab();
+   $.removeLoading();
+});
+
+function selectAll() {
+    var index;
+    if ($("#shareTitle").prop("data-checked") == true) {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            $("#cb" + index).prop("checked", true);
+            $("#cb" + index).data("tpCheckbox").refresh();
+        }
+    } else {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            $("#cb" + index).prop("checked", false);
+            $("#cb" + index).data("tpCheckbox").refresh();
+        }
+    }
+}
+
+
+function init() {
+    userList = $.act(ACT_GL, USER_ACCOUNT, null, null);
+    smbService = $.act(ACT_GET, SMB_SERVICE, null, null, null);
+    ftpServer = $.act(ACT_GET, FTP_SERVER, null, null, null);
+
+    usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+    volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+
+    dlnaService = $.act(ACT_GET, DLNA_MEDIA_SERVER, null, null, null);
+    accessFolderList_samba = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+    accessFolderList_ftp = $.act(ACT_GL, FTP_SERVER_FOLDER, null, null, null);
+    accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+
+    userAccessList_samba = $.act(ACT_GL, SMB_USER_ACCESS, null, null, null);
+    userCfg = $.act(ACT_GET, USER_CFG, null, null, null);
+
+    var index;
+
+    if (!$.exe()) {
+        userTbl[0] = {};
+        userTbl[0].stack = userList[0].__stack;
+
+        if (userList[0].X_TP_UseLoginAccount == 1) {
+            $("#loginAccount").prop("checked", true);
+            $("#username").val(userCfg.adminName);
+            $("#username").prop("disabled", true);
+            $("#password").prop("disabled", true);
+            $("#password").val(userCfg.adminPwd);
+            $("#pwdCheck").addClass("nd");
+            $("#cfpwd").addClass("nd");
+        } else {
+            $("#followingAccount").prop("checked", true);
+            $("#username").val(userList[0].username);
+            $("#password").val(userList[0].password);
+            $("#cfPassword").val(userList[0].password);
+            $("#t_salp").addClass("nd");
+        }
+
+        g_ftpPort = ftpServer.portNumber;
+
+        var headArray = [{
+            "text": table_str.enable,
+            "width": "16%"
+        }, {
+            "text": table_str.acMethod,
+            "width": "32%"
+        }, {
+            "text": table_str.link,
+            "width": "32%"
+        }, {
+            "text": table_str.port,
+            "width": "20%"
+        }];
+        $.initTableHead($('#accessTab'), headArray);
+        $('#accessTab').tpTable(initAccessTab);
+
+        if (dlnaService.serverState == 1) {
+            $("#mediaServer").prop("checked", true);
+            $("#mediaServer").data("tpCheckbox").refresh();
+        } else {
+            $("#mediaServer").prop("checked", false);
+            $("#mediaServer").data("tpCheckbox").refresh();
+        }
+
+        if (smbService.enable == 1) {
+            $("#samba").prop("checked", true);
+            $("#samba").data("tpCheckbox").refresh();
+        } else {
+            $("#samba").prop("checked", false);
+            $("#samba").data("tpCheckbox").refresh();
+        }
+
+        if (ftpServer.enable == 1) {
+            $("#innerFtp").prop("checked", true);
+            $("#innerFtp").data("tpCheckbox").refresh();
+        } else {
+            $("#innerFtp").prop("checked", false);
+            $("#innerFtp").data("tpCheckbox").refresh();
+        }
+
+        if (ftpServer.accessFromInternet == 1) {
+            $("#outerFtp").prop("checked", true);
+            $("#outerFtp").data("tpCheckbox").refresh();
+        } else {
+            $("#outerFtp").prop("checked", false);
+            $("#outerFtp").data("tpCheckbox").refresh();
+        }
+
+        $("#port").val(ftpServer.portNumber);
+
+        $("#server_name").val(smbService.serverName);
+
+        var headArray = [{
+            "text": '<div><input type="checkbox" id="shareTitle" onclick="selectAll();" /><label></label></div>',
+            "width": "8%"
+        }, {
+            "text": table_str.id,
+            "width": "5%"
+        }, {
+            "text": table_str.shareName,
+            "width": "15%"
+        }, {
+            "text": table_str.folderPath,
+            "width": "25%"
+        }, {
+            "text": table_str.mediaSharing,
+            "width": "10%"
+        }, {
+            "text": table_str.volume,
+            "width": "10%"
+        }, {
+            "text": table_str.status,
+            "width": "10%"
+        }, {
+            "text": table_str.modify,
+            "width": "17%"
+        }];
+        $.initTableHead($('#shareTab'), headArray);
+        $('#shareTab').tpTable(initShareTab);
+
+        var authHeadArray = [{
+            "text": table_str.id,
+            width: "10%"
+        }, {
+            "text": table_str.shareName,
+            width: "40%"
+        }, {
+            "text": table_str.folderPath,
+            width: "25%"
+        }, {
+            "text": table_str.volume,
+            width: "25%"
+        }];
+        $.initTableHead($('#authTab'), authHeadArray);
+        $('#authTab').tpTable(initAuthTab);
+
+        if (smbService.anonymous == 0) {
+            $("#authOn").addClass("selected");
+        } else {
+            $("#authOff").addClass("selected");
+        }
+
+        if (smbService.shareAll == false) {
+            $("#shareOff").addClass("selected");
+            $("#authentication").addClass("nd");
+            $("#authDrawing").addClass("nd");
+            $("#shareDrawing").removeClass("nd");
+        } else {
+            $("#shareOn").addClass("selected");
+            $("#shareDrawing").addClass("nd");
+            $("#authentication").removeClass("nd");
+
+            $("#authDrawing").removeClass("nd");
+        }
+
+        $("#server_name").val(smbService.serverName);
+
+        var $volNameSelect = $("#shareVolume");
+
+        while ((i = $("#shareVolume option").length) > 0) {
+            $("#shareVolume option[index='0']").remove();
+        }
+
+        var $ispOption = $("<option></option>");
+        $ispOption.val(table_str.selectopt);
+        $ispOption.text(table_str.selectopt);
+
+        $volNameSelect.append($ispOption);
+
+        for (index = 0; index < volumeList.length; index++) {
+            if ("Online" == volumeList[index].status) {
+                $ispOption = $("<option></option>");
+                $ispOption.val(volumeList[index].label + ":");
+                $ispOption.text(volumeList[index].label + ":");
+
+                $volNameSelect.append($ispOption);
+            }
+        }
+
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if (parseInt(accessFolderList_samba[index].__stack, 10) != parseInt(userAccessList_samba[0].__stack, 10)) {
+                continue;
+            }
+        }
+
+        folderIdx = accessFolderList_samba.length;
+    }
+
+    if ($.mainParam !== undefined) {
+        var param = new Object();
+        param = $.mainParam;
+        $('#scroll').scrollTop(param.scrollTop);
+    }
+}
+
+$("#shareOn").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["shareAll=1"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["shareAll=1"]);
+    $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, ["shareAll=1"]);
+
+    if (!$.exe()) {
+        $("#authentication").removeClass("nd");
+        $("#shareDrawing").addClass("nd");
+        $("#authDrawing").removeClass("nd");
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("folderSharing.htm", param);
+    }
+});
+
+$("#shareOff").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["shareAll=0"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["shareAll=0"]);
+    $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, ["shareAll=0"]);
+
+    if (!$.exe()) {
+        $("#authentication").addClass("nd");
+        $("#authDrawing").addClass("nd");
+        $("#shareDrawing").removeClass("nd");
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("folderSharing.htm", param);
+    }
+});
+
+$("#authOn").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["anonymous=0"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["anonymous=0"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("folderSharing.htm", param);
+    };
+});
+
+$("#authOff").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["anonymous=1"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["anonymous=1"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("folderSharing.htm", param);
+    };
+});
+
+function getParentObj(obj) {
+    if (!obj.hasClass('cc')) {
+        currentFolder = obj.siblings().text();
+        if (fPath != "") {
+            currentFolder += ("/" + fPath);
+        }
+        fPath = currentFolder;
+        getParentObj(obj.parent());
+    } else {
+        fPath = "/" + fPath;
+    }
+}
+
+function clickFunc(obj) {
+    fPath = "";
+    currPath = "";
+
+    var id = obj.id;
+    var $ob = $("#" + id).parent();
+
+    getParentObj($ob);
+}
+
+$("#shareVolume").click(function() {
+    currentVol = $("#shareVolume").data("value");
+});
+
+function escapeStr(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/ /g, '&nbsp;');
+}
+
+function transStr(str) {
+    return str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\s/g, ' ');
+}
+
+function getFolderPath(obj) {
+    var label;
+    var index;
+
+    if (firstNode == 1) {
+        if (!$(obj).parent().hasClass('root')) {
+            folderPath = ("/" + $(obj).text());
+            o = obj;
+            firstNode = 0;
+            getFolderPath($(obj).parent());
+        } else {
+            folderPath = $(obj).text();
+
+            for (index = 0; index < volumeList.length; index++) {
+                if ($(obj).text() == (volumeList[index].label + ":")) {
+                    currVolume = volumeList[index].name;
+                }
+            }
+
+            var color = $(obj).css("color");
+            $(obj).css("color", "#0CF");
+            if (prevObj) {
+                $(prevObj).css("color", color);
+
+                var $prefol = $(prevObj).siblings(".folderSel");
+                if (prevObj != obj) {
+                    $prefol.removeClass("folderSel");
+                    $prefol.addClass("folderImg");
+                }
+            }
+            prevObj = obj;
+        }
+    } else {
+        if (!$(obj).parent().hasClass('root')) {
+            folderPath = ("/" + $(obj).siblings('span').text()) + folderPath;
+            getFolderPath($(obj).parent());
+        } else {
+            label = $(obj).siblings('.span').text();
+
+            for (index = 0; index < volumeList.length; index++) {
+                if ($(obj).siblings('.span').text() == (volumeList[index].label + ":")) {
+                    currVolume = volumeList[index].name;
+                }
+            }
+
+            folderPath = label + folderPath;
+            firstNode = 1;
+
+            var color = $(o).css("color");
+            $(o).css("color", "#0CF");
+
+            var $ofol = $(o).siblings(".folderImg");
+            $ofol.removeClass("folderImg");
+            $ofol.addClass("folderSel");
+
+            if (prevObj) {
+                $(prevObj).css("color", color);
+
+                var $prefol = $(prevObj).siblings(".folderSel");
+                if (prevObj != o) {
+                    $prefol.removeClass("folderSel");
+                    $prefol.addClass("folderImg");
+                }
+
+            }
+            prevObj = o;
+        }
+    }
+}
+
+function createChildFolder(obj) {
+    var index;
+
+    if (firstClick == 1) {
+        firstClick = 0;
+        o = obj;
+    }
+
+    if (!$(obj).parent().hasClass('root')) {
+        currentFolder = $(obj).siblings('.fName').text();
+
+        if (currPath != "") {
+            currentFolder += ("/" + currPath);
+        }
+        currPath = currentFolder;
+
+        createChildFolder($(obj).parent());
+    } else {
+        for (index = 0; index < volumeList.length; index++) {
+            if ($(obj).siblings('.span').text() == (volumeList[index].label + ":")) {
+                currVolume = volumeList[index].name;
+            }
+        }
+
+        var fullPath = currVolume + "/" + transStr(currPath);
+
+        var command = {};
+        command.targetPath = fullPath;
+        var ide;
+
+        $.act(ACT_SET, FOLDER_BROWSE, null, null, command);
+        folderList = $.act(ACT_GL, FOLDER_NODE, null, null, null);
+
+        if (!$.exe()) {
+            for (ide = 0; ide < folderList.length; ide++) {
+                var folderNameStr = escapeStr(folderList[ide].folderName);
+				/*add by wuzeyu do not show dir .media_server*/
+				if ($(obj).parent().hasClass('root'))
+				{
+					if (folderNameStr == ".media_server")
+					{
+						//alert("do not show dir:"+folderNameStr);
+						continue;
+					}
+				}
+				/*end add*/
+                text = ("<div style='padding-left:" + 23 + "px;' class='div'><div class='addFolder inline' onclick=loadClick(this);></div><div class='folderImg inline' onclick=foldSelect(this); style='cursor:pointer;'></div>&nbsp;<span class='fName inline' style='line-height:24px;vertical-align:top;cursor:pointer;' onClick='getFolderPath(this);'>" + folderNameStr + "</span></div>");
+                $(o).parent().append(text);
+            }
+        }
+        firstClick = 1;
+        currPath = "";
+        if (!($(o).parent().hasClass("root"))) {
+            $(o).parent().addClass("loaded");
+        }
+    }
+}
+
+function foldSelect(obj) {
+    $(obj).siblings(".fName").click();
+}
+
+function loadClick(obj) {
+    if ($(obj).hasClass("addFolder")) {
+        if ($(obj).parent().hasClass("vol")) {
+            $(obj).siblings('div').removeClass("nd");
+            $(o).parent().removeClass("vol");
+        } else if ($(obj).parent().hasClass("loaded")) {
+            $(obj).siblings('div').removeClass("nd");
+        } else {
+            createChildFolder(obj);
+        }
+
+        $(obj).removeClass("addFolder");
+        $(obj).addClass("hideFolder");
+    } else if ($(obj).hasClass("hideFolder")) {
+        $(obj).removeClass("hideFolder");
+        $(obj).addClass("addFolder");
+
+        if ($(obj).parent().hasClass("root")) {
+            $(obj).parent().addClass("vol");
+        }
+
+        $(obj).siblings('div').addClass("nd");
+    }
+}
+
+function showBrowse() {
+    $.setFixedCentral($("#folderSel"));
+    $.showCover();
+    $("#folderSel").removeClass("nd");
+    var index;
+    var i;
+
+    for (index = 0; index < volumeList.length; index++) {
+        if ("Online" == volumeList[index].status && currentVol == (volumeList[index].label + ":")) {
+            var text;
+            text = ("<div style='padding-left:10px;' class='root'><div class='addFolder inline' onclick=loadClick(this);></div>&nbsp;<span class='span inline' style='line-height:24px;vertical-align:top;cursor:pointer;' onClick='getFolderPath(this);'>" + volumeList[index].label + ":" + "</span></div>");
+
+            $("#folderSelContent").append(text);
+        }
+    }
+}
+
+$("#cancelPathSel").click(function() {
+    $.hideCover();
+    $("#folderSelContent").empty();
+    $("#folderSel").addClass("nd");
+});
+
+$("#confirmPathSel").click(function() {
+    $.hideCover();
+    $("#folderSelContent").empty();
+    $("#folderSel").addClass("nd");
+    $("#filename").val(transStr(folderPath));
+});
+
+function showFilename(o) {
+    var filename = $.id("filename");
+    if (filename) {
+        filename.value = o.value;
+    }
+}
+
+function deleteItem() {
+    var index;
+
+    if ($("#shareTitle").prop("data-checked") == true) {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            delShareMul(index);
+        }
+    } else {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if ($("#cb" + index).prop("data-checked") == true) {
+                delShareMul(index);
+            }
+        }
+    }
+
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+    $.exe();
+    var param = {};
+    param.scrollTop = $("#scroll").scrollTop();
+    $.loadMain("folderSharing.htm", param);
+}
+
+$("#edit-ok").click(function() {
+    var newStr;
+    var selectVolumeUuid;
+    var selectVolumeLabel;
+    var index;
+    var command = {};
+    var command_ftp = {};
+	var command_dlna = {};
+    var stack_samba;
+    var enableDlna = 0;
+    var str;
+    var stack_ftp;
+    var curFolderPath;
+
+    $.addLoading($(this));
+
+    newStr = $("#shareName").val();
+
+    if (newStr === "") {
+        $.alert(ERR_USB_SHARE_NAME_EMPTY);
+        return;
+    }
+
+	if ((/[\\\/:\*\?""<>|[\]\+\ ]+/).test(newStr)) {
+        $.alert(ERR_USB_INVALID_CHAR_IN_FOLDER_NAME);
+        return;
+    }
+    if ($.asc(newStr)) {
+        $.alert(ERR_USB_SHARE_NAME_NOT_ASCII);
+        return;
+    }
+
+    selectVolumeUuid = "";
+    selectVolumeLabel = "";
+
+    $.each(volumeList, function() {
+        if (this.name == currVolume) {
+            selectVolumeUuid = this.uuid;
+            selectVolumeLabel = this.label;
+        }
+    });
+
+    str = $("#filename").val();
+    if (str == "") {
+        $.alert(CMM_USB_BROWSE_FOLDER_PATH);
+        return;
+    }
+
+    if (str.length == 2) {
+        curFolderPath = "/";
+    } else {
+        curFolderPath = str.substring(str.indexOf(":")+1, str.length);
+    }
+
+    if (currentVol == table_str.selectopt) {
+        $.alert(CMM_USB_SELECT_VOLUME);
+        return;
+    }
+
+    if ("add" == shareTabStatus) {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if ((curFolderPath == accessFolderList_samba[index].name) && (selectVolumeUuid == accessFolderList_samba[index].volumeUuid)) {
+                $.alert(ERR_USB_DIR_EXIST);
+                return;
+            }
+
+            if ($("#shareName").val() == accessFolderList_samba[index].alias) {
+                $.alert(ERR_USB_SHARE_NAME_EXIST);
+                return;
+            }
+        }
+
+        command.name = curFolderPath;
+        command.alias = $("#shareName").val();
+        command.enable = 1;
+        command.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+
+        command_ftp.name = curFolderPath;
+        command_ftp.alias = $("#shareName").val();
+        command_ftp.enable = 1;
+        command_ftp.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+        command_ftp.writePermission = ($("#wa").prop("data-checked") == true) ? 7 : 3;
+
+		command_dlna.name = curFolderPath;
+        command_dlna.alias = $("#shareName").val();
+        command_dlna.enable = ($("#ems").prop("data-checked") == true) ? 1 : 0;
+        command_dlna.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+        if (selectVolumeUuid != "") {
+            command.volumeUuid = selectVolumeUuid;
+            command_ftp.volumeUuid = selectVolumeUuid;
+			command_dlna.volumeUuid = selectVolumeUuid;
+        }
+        if (selectVolumeLabel != "") {
+            command.volumeLabel = selectVolumeLabel;
+            command_ftp.volumeLabel = selectVolumeLabel;
+			command_dlna.volumeLabel = selectVolumeLabel;
+        }
+
+        $.act(ACT_ADD, SMB_SERVICE_FOLDER, null, null, command);
+        accessFolderList_samba = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+
+        $.act(ACT_ADD, FTP_SERVER_FOLDER, null, null, command_ftp);
+        accessFolderList_ftp = $.act(ACT_GL, FTP_SERVER_FOLDER, null, null, null);
+
+        $.act(ACT_ADD, DLNA_MEDIA_SERVER_FOLDER, null, null, command_dlna);
+            accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+    } else {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if (($("#shareName").val() == accessFolderList_samba[index].alias) && (index != editCurIndex)) {
+                $.alert(ERR_USB_SHARE_NAME_EXIST);
+                return;
+            }
+            if ((curFolderPath == accessFolderList_samba[index].name) && (selectVolumeUuid == accessFolderList_samba[index].volumeUuid) && (index != editCurIndex)) {
+                $.alert(ERR_USB_DIR_EXIST);
+                return;
+            }
+        }
+
+        command.name = curFolderPath;
+        command.alias = $("#shareName").val();
+        command.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+
+        command_ftp.name = curFolderPath;
+        command_ftp.alias = $("#shareName").val();
+        command_ftp.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+        command_ftp.writePermission = ($("#wa").prop("data-checked") == true) ? 7 : 3;
+
+		command_dlna.name = curFolderPath;
+        command_dlna.alias = $("#shareName").val();
+        command_dlna.enable = ($("#ems").prop("data-checked") == true) ? 1 : 0;
+        command_dlna.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+		
+        if (selectVolumeUuid != "") {
+            command.volumeUuid = selectVolumeUuid;
+            command_ftp.volumeUuid = selectVolumeUuid;
+			command_dlna.volumeUuid = selectVolumeUuid;
+        }
+        if (selectVolumeLabel != "") {
+            command.volumeLabel = selectVolumeLabel;
+            command_ftp.volumeLabel = selectVolumeLabel;
+			command_dlna.volumeLabel = selectVolumeLabel;
+        }
+
+        $.act(ACT_SET, SMB_SERVICE_FOLDER, accessFolderList_samba[editCurIndex].__stack, null, command);
+        accessFolderList_samba = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+
+        $.act(ACT_SET, FTP_SERVER_FOLDER, accessFolderList_ftp[editCurIndex].__stack, null, command_ftp);
+        accessFolderList_ftp = $.act(ACT_GL, FTP_SERVER_FOLDER, null, null, null);
+
+		$.act(ACT_SET, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[editCurIndex].__stack, null, command_dlna);
+        accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+    }
+
+    $.exe(function(ret) {
+        if (!ret) {
+            if ("add" == shareTabStatus) {
+                stack_samba = accessFolderList_samba[folderIdx].__stack;
+                stack_ftp = accessFolderList_ftp[folderIdx].__stack;
+            } else {
+                stack_samba = accessFolderList_samba[editCurIndex].__stack;
+                stack_ftp = accessFolderList_ftp[editCurIndex].__stack;
+            }
+
+            var newFlag = 1;
+            var userCommand = {};
+
+            for (index = 0; index < userAccessList_samba.length; index++) {
+                if (parseInt(stack_samba, 10) != parseInt(userAccessList_samba[index].__stack, 10)) {
+                    continue;
+                }
+
+                if (parseInt(userList[0].__stack, 10) == userAccessList_samba[index].userId) {
+                    userCommand.userId = 1;
+                    if ($("#wa").prop("data-checked") == true) {
+                        userCommand.permissions = 7;
+                    } else {
+                        userCommand.permissions = 3;
+                    }
+                }
+
+                $.act(ACT_SET, SMB_USER_ACCESS, userAccessList_samba[index].__stack, null, userCommand);
+                newFlag = 0;
+            }
+            if (1 == newFlag) {
+                userCommand.userId = 1;
+                if ($("#wa").prop("data-checked") == true) {
+                    userCommand.permissions = 7;
+                } else {
+                    userCommand.permissions = 3;
+                }
+
+                $.act(ACT_ADD, SMB_USER_ACCESS, null, stack_samba, userCommand);
+            }
+
+            $.exe(function(ret) {
+                if (!ret) {
+                    $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+                    $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+
+                    if (!$.exe()) {
+                        $.removeLoading();
+                        var param = {};
+                        param.scrollTop = $("#scroll").scrollTop();
+                        $.loadMain("folderSharing.htm", param);
+                    }
+                } else {
+                    $.removeLoading();
+                }
+            });
+        } else {
+            $.removeLoading();
+        }
+    });
+});
+
+$("#edit-cancel").click(function() {
+    var param = {};
+    param.scrollTop = $("#scroll").scrollTop();
+    $.loadMain("folderSharing.htm", param);
+});
+
+function doSet() {
+    var newName;
+    var newPwd;
+
+    newName = $("#username").val();
+	//alert(newName == "");
+    if (newName == "") {
+		$.alert(ERR_USER_NAME_EMPTY);
+        return false;
+    }
+
+    if ($.asc(newName, true)) {
+        $.alert(ERR_USER_NAME_ASCII);
+		return false;
+    }
+
+    if ((/[\\\/:\*\?""<>|[\]@\+=;,\.\ ()$]+/).test(newName)) {
+        $.alert(ERR_USB_INVALID_CHAR_IN_USER_NAME);
+         return false;
+    }
+
+    newPwd = $("#password").val();
+    if (newPwd === "") {
+        $.alert(ERR_USER_PWD_EMPTY);
+		return false;
+    }
+
+    if ($.asc(newPwd, true)) {
+        $.alert(ERR_USER_PWD_ASCII);
+		return false;
+    }
+
+    if (newPwd !== $("#cfPassword").val()) {
+        $.alert(ERR_USER_NAME_PWD_CONFLICT);
+		 return false;
+    }
+
+    userTbl[0].name = newName;
+    userTbl[0].pwd = newPwd;
+	return true;
+}
+
+$("#saveAccount").click(function() {
+    var command = {};
+    $.addLoading($(this));
+
+    if ($("#loginAccount").prop("checked") == true) {
+        command.X_TP_UseLoginAccount = 1;
+		$.act(ACT_SET, USER_ACCOUNT, userTbl[0].stack, null, command);
+		$.exe();
+    } else {
+        command.X_TP_UseLoginAccount = 0;
+        if (doSet() == true)
+        {
+        command.username = userTbl[0].name;
+        command.password = userTbl[0].pwd;
+			$.act(ACT_SET, USER_ACCOUNT, userTbl[0].stack, null, command);
+		    $.exe();
+        }
+    }
+        $.removeLoading();
+});
+
+$("#loginAccount").click(function() {
+    $("#username").prop("disabled", true);
+    $("#password").prop("disabled", true);
+    $("#username").val(userCfg.adminName);
+    $("#password").val(userCfg.adminPwd);
+    $("#pwdCheck").addClass("nd");
+    $("#cfpwd").addClass("nd");
+    $("#t_salp").removeClass("nd");
+});
+
+$("#followingAccount").click(function() {
+    $("#username").prop("disabled", false);
+    $("#password").prop("disabled", false);
+    $("#pwdCheck").removeClass("nd");
+    $("#cfpwd").removeClass("nd");
+    $("#t_salp").addClass("nd");
+
+    $("#username").val(userList[0].username);
+    $("#password").val(userList[0].password);
+    $("#cfPassword").val(userList[0].password);
+});
+
+function vtlServList_IP_ConfiltPort(port) {
+    var vtlServList_IP = $.act(ACT_GL, WAN_IP_CONN_PORTMAPPING, null, null);
+    var stacks = [];
+    var confilt = 0;
+    var index = 0;
+    var i;
+    var cancel = 0;
+
+    if (!$.exe()) {
+        $.each(vtlServList_IP, function() {
+            if ((this.portMappingEnabled == 1) &&
+                (((port == this.externalPort) || (port == this.X_TP_ExternalPortEnd)) ||
+                    ((this.externalPort > 0) && (this.externalPort < port) && (port < this.X_TP_ExternalPortEnd)))) {
+                stacks[index] = this.__stack;
+                index++;
+                confilt = 1;
+            }
+        });
+        if (1 == confilt) {
+            $.confirm(c_str.ftp_vs_conflict, function() {
+                for (i = 0; i < index; i++) {
+                    $.act(ACT_SET, WAN_IP_CONN_PORTMAPPING, stacks[i], null, ["portMappingEnabled=0"]);
+                }
+                if (!$.exe()) {
+                    return (vtlServList_PPP_ConfiltPort(port));
+                }
+            }, function() {
+                $.removeLoading();
+                var param = {};
+                param.scrollTop = $("#scroll").scrollTop();
+                $.loadMain("folderSharing.htm", param);
+            });
+        } else {
+            return (vtlServList_PPP_ConfiltPort(port));
+        }
+    }
+}
+
+function vtlServList_PPP_ConfiltPort(port) {
+    var vtlServList_PPP = $.act(ACT_GL, WAN_PPP_CONN_PORTMAPPING, null, null);
+    var stacks = [];
+    var confilt = 0;
+    var index = 0;
+    var i;
+    var cancel = 0;
+
+    if (!$.exe()) {
+        $.each(vtlServList_PPP, function() {
+            if ((this.portMappingEnabled == 1) &&
+                (((port == this.externalPort) || (port == this.X_TP_ExternalPortEnd)) ||
+                    ((this.externalPort < port) && (port < this.X_TP_ExternalPortEnd)))) {
+                stacks[index] = this.__stack;
+                index++;
+                confilt = 1;
+            }
+        });
+        if (1 == confilt) {
+            $.confirm(c_str.ftp_vs_conflict, function() {
+                for (i = 0; i < index; i++) {
+                    $.act(ACT_SET, WAN_PPP_CONN_PORTMAPPING, stacks[i], null, ["portMappingEnabled=0"]);
+                }
+
+                if (!$.exe()) {
+                    return (portTrigList_IP_ConfiltPort(port));
+                }
+            }, function() {
+                $.removeLoading();
+                var param = {};
+                param.scrollTop = $("#scroll").scrollTop();
+                $.loadMain("folderSharing.htm", param);
+            });
+        } else {
+            return (portTrigList_IP_ConfiltPort(port));
+        }
+    }
+}
+
+function portTrigList_IP_ConfiltPort(port) {
+    var portTrigList_IP = $.act(ACT_GL, IP_CONN_PORTTRIGGERING, null, null);
+    var stacks = [];
+    var confilt = 0;
+    var index = 0;
+    var i;
+    var cancel = 0;
+
+    if (!$.exe()) {
+        $.each(portTrigList_IP, function() {
+            if ((this.enable == 1) && ((port == this.triggerPort) || checkPort(port, this.openPort))) {
+                stacks[index] = this.__stack;
+                index++;
+                confilt = 1;
+            }
+        });
+
+        if (1 == confilt) {
+            $.confirm(c_str.ftp_pt_conflict, function() {
+                for (i = 0; i < index; i++) {
+                    $.act(ACT_SET, IP_CONN_PORTTRIGGERING, stacks[i], null, ["enable=0"]);
+                }
+
+                if (!$.exe()) {
+                    return (portTrigList_PPP_ConfiltPort(port));
+                }
+            }, function() {
+                $.removeLoading();
+                var param = {};
+                param.scrollTop = $("#scroll").scrollTop();
+                $.loadMain("folderSharing.htm", param);
+            });
+        } else {
+            return (portTrigList_PPP_ConfiltPort(port));
+        }
+    }
+}
+
+function portTrigList_PPP_ConfiltPort(port) {
+    var portTrigList_PPP = $.act(ACT_GL, PPP_CONN_PORTTRIGGERING, null, null);
+    var stacks = [];
+    var confilt = 0;
+    var index = 0;
+    var i;
+    var cancel = 0;
+
+    if (!$.exe()) {
+        $.each(portTrigList_PPP, function() {
+            if ((this.enable == 1) && ((port == this.triggerPort) || checkPort(port, this.openPort))) {
+                stacks[index] = this.__stack;
+                index++;
+                confilt = 1;
+            }
+        });
+
+        if (1 == confilt) {
+            $.confirm(c_str.ftp_pt_conflict, function() {
+                for (i = 0; i < index; i++) {
+                    $.act(ACT_SET, PPP_CONN_PORTTRIGGERING, stacks[i], null, ["enable=0"]);
+                }
+                if (!$.exe()) {
+                    return (dmzCfg_ConfiltPort(port));
+                }
+            }, function() {
+                $.removeLoading();
+                var param = {};
+                param.scrollTop = $("#scroll").scrollTop();
+                $.loadMain("folderSharing.htm", param);
+            });
+        } else {
+            return (dmzCfg_ConfiltPort(port));
+        }
+    }
+}
+
+function dmzCfg_ConfiltPort(port) {
+    var dmzCfg = $.act(ACT_GET, DMZ_HOST_CFG, null, null);
+    var cancel = 0;
+
+    if (!$.exe()) {
+        if (dmzCfg.enable == 1) {
+            $.confirm(c_str.ftp_dmz_conflict, function() {
+                $.act(ACT_SET, DMZ_HOST_CFG, null, null, ["enable=0", "IPAddress=" + dmzCfg.IPAddress]);
+                if (!$.exe()) {
+                    return (upnpCfgObj_ConfiltPort(port));
+                }
+            }, function() {
+                $.removeLoading();
+                var param = {};
+                param.scrollTop = $("#scroll").scrollTop();
+                $.loadMain("folderSharing.htm", param);
+            });
+        } else {
+            return (upnpCfgObj_ConfiltPort(port));
+        }
+    }
+}
+
+function upnpCfgObj_ConfiltPort(port) {
+    var upnpCfgObj = $.act(ACT_GET, UPNP_CFG);
+    var stacks = [];
+    var confilt = 0;
+    var index = 0;
+    var i;
+    var cancel = 0;
+
+    if (!$.exe()) {
+        if (upnpCfgObj.enable == 1) {
+            var portMappingList = $.act(ACT_GL, UPNP_PORTMAPPING, null, null);
+            if ($.exe()) {
+                return 0;
+            }
+            $.each(portMappingList, function() {
+                if ((this.portMappingEnabled == 1) && ((port == this.externalPort) || (port == this.internalPort))) {
+                    stacks[index] = this.__stack;
+                    index++;
+                    confilt = 1;
+                }
+            });
+
+            if (1 == confilt) {
+                $.confirm(c_str.ftp_upnp_conflict, function() {
+                    for (i = 0; i < index; i++) {
+                        $.act(ACT_DEL, UPNP_PORTMAPPING, stacks[i], null, null);
+                    }
+                    if (!$.exe()) {
+                        if ($("#innerFtp").prop("data-checked") == true) {
+                            $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=1"]);
+                        } else {
+                            $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+                        }
+
+                        $.act(ACT_SET, FTP_SERVER, null, null, ["portNumber=" + port]);
+                        $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+
+                        if (!$.exe()) {
+                            $.removeLoading();
+                            var param = {};
+                            param.scrollTop = $("#scroll").scrollTop();
+                            $.loadMain("folderSharing.htm", param);
+                        }
+                    }
+                }, function() {
+                    $.removeLoading();
+                    var param = {};
+                    param.scrollTop = $("#scroll").scrollTop();
+                    $.loadMain("folderSharing.htm", param);
+                });
+            } else {
+                if ($("#innerFtp").prop("data-checked") == true) {
+                    $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=1"]);
+                } else {
+                    $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+                }
+                $.act(ACT_SET, FTP_SERVER, null, null, ["portNumber=" + port]);
+                $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+
+                if (!$.exe()) {
+                    $.removeLoading();
+                    var param = {};
+                    param.scrollTop = $("#scroll").scrollTop();
+                    $.loadMain("folderSharing.htm", param);
+                }
+            }
+        } else {
+            if ($("#innerFtp").prop("data-checked") == true) {
+                $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=1"]);
+            } else {
+                $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+            }
+            $.act(ACT_SET, FTP_SERVER, null, null, ["portNumber=" + port]);
+            $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+
+            if (!$.exe()) {
+                $.removeLoading();
+                var param = {};
+                param.scrollTop = $("#scroll").scrollTop();
+                $.loadMain("folderSharing.htm", param);
+            }
+        }
+    }
+}
+
+function checkPort(ftpPort, port) {
+    port = port.toString();
+    var ports = port.split(",");
+    var conflict = false;
+    var index;
+
+    for (index = 0; index < ports.length; index++) {
+        var c = ports[index].split("-");
+        if (c.length == 1) {
+            if (parseInt(c[0]) == parseInt(ftpPort)) {
+                conflict = true;
+                break;
+            }
+        } else if (c.length == 2) {
+            if (parseInt(c[0]) <= parseInt(ftpPort) && parseInt(c[1]) >= parseInt(ftpPort)) {
+                conflict = true;
+                break;
+            }
+        }
+    }
+
+    return conflict;
+}
+
+$("input#password").keyup(function() {
+    $.pwdIntensityCheck($("#pwdCheck"), $(this).val());
+});
+
+$("#saveSett").click(function() {
+    var portValue;
+    var port;
+
+
+    if ($("#server_name").val().length >= 16) {
+        $.alert(CMM_USB_SERVER_NAME_LENGTH);
+        return;
+    }
+
+    var newDlnaObj = {};
+    $.addLoading($(this));
+    newDlnaObj.serverName = $("#server_name").val();
+
+    if (newDlnaObj.serverName == "") {
+        $.alert(ERR_USB_DLNA_SERVER_NAME_EMPTY);
+        return;
+    }
+    if ($.asc(newDlnaObj.serverName, true)) {
+        $.alert(ERR_USB_DLNA_SERVER_NAME_NOT_ASCII);
+        return;
+    }
+	if ((/[\\\/\*\?=:;,.()$#@^%!+""<>|\[\]\&\ ]+/).test(newDlnaObj.serverName))
+ 	{
+        $.alert(ERR_USB_DLNA_INVALID_SERVER_NAME);
+        return;
+    }
+
+    var command = {};
+    command.serverName = $("#server_name").val();
+
+    $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, newDlnaObj);
+    $.act(ACT_SET, SMB_SERVICE, null, null, command);
+
+    if ($("#mediaServer").prop("data-checked") == true) {
+        $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, ["serverState=1"]);
+    } else {
+        $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, ["serverState=0"]);
+    }
+
+    if ($("#samba").prop("data-checked") == true) {
+        $.act(ACT_SET, SMB_SERVICE, null, null, ["enable=1"]);
+    } else {
+        $.act(ACT_SET, SMB_SERVICE, null, null, ["enable=0"]);
+    }
+
+    if ($("#innerFtp").prop("data-checked") == true) {
+        $.act(ACT_SET, FTP_SERVER, null, null, ["enable=1"]);
+    } else {
+        $.act(ACT_SET, FTP_SERVER, null, null, ["enable=0"]);
+    }
+
+    portValue = $("#port").val();
+
+    if (portValue == "") {
+        $.alert(ERR_USB_FTP_PORT_EMPTY);
+        return;
+    }
+
+    if (!$.isnum(portValue)) {
+        $.alert(ERR_USB_FTP_PORT_NOT_NUM);
+        var element = $("#port");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return;
+    }
+
+    if ((portValue < 1) || (portValue > 65535)) {
+        $.alert(ERR_USB_FTP_PORT_RANGE);
+        var element = $("#port");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return;
+    }
+
+    if ((portValue == 53) || (portValue == 70) || (portValue == 80) ||
+        (portValue == 119) || (portValue == 110) || (portValue == 1723) ||
+        (portValue == 25) || (portValue == 1080) || (portValue == 23) ||
+        (portValue == 33344) || (portValue == 20005) || (portValue == 1900) ||
+        (portValue == 7547) || (portValue == 139) || (portValue == 445)) {
+        $.alert(ERR_USB_FTP_PORT_CONFLICT);
+        var element = $("#port");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return;
+    }
+
+    port = parseInt(portValue, 10);
+
+    if ($("#outerFtp").prop("data-checked") == true) {
+        return (vtlServList_IP_ConfiltPort(port));
+    } else {
+        $.act(ACT_SET, FTP_SERVER, null, null, ["portNumber=" + port]);
+        $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+        $.act(ACT_SET, FTP_SERVER, null, null, ["accessFromInternet=0"]);
+
+        if (!$.exe()) {
+            $.removeLoading();
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("folderSharing.htm", param);
+        }
+    }
+});
+</script>
+
+<h3 id="t_shareAcc">Sharing Account</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <p class="cfg-line" id="t_info1-0">Prepare an account for sharing contents. You can use the login account or create a new one.</p>
+        <div>
+            <b id="t_account" class="l">Account:</b>
+            <input type="radio" name="radio_name_account" id="loginAccount" />
+            <label id="t_ula">Use Default Account</label>
+        </div>
+        <div>
+            <b class="l"></b>
+            <input type="radio" name="radio_name_account" id="followingAccount" />
+            <label id="t_ufa">Use New Account</label>
+        </div>
+
+        <div id="user" class="pure-control-group">
+            <b class="T_username l">Username:</b>
+            <input type="text" maxlength="15" class="tp-input-text secLevel" id="username" />
+        </div>
+
+        <div id="pwd" class="pure-control-group">
+            <b class="T_passwd l">Password:</b>
+            <input type="password" maxlength="15" id="password" class="secLevel" />
+            <span id="t_salp">(Same as Login Password)</span>
+        </div>
+
+        <div class="secLevel" id="pwdCheck">
+            <span class="level1 T_low">Low</span>
+            <span class="level2 T_middle">Middle</span>
+            <span class="level3 T_high">High</span>
+        </div>
+
+        <div id="cfpwd" class="pure-control-group">
+            <b class="T_cfmpwd l">Confirm Password:</b>
+            <input type="password" maxlength="15" id="cfPassword" class="secLevel" />
+        </div>
+
+        <button type="submit" class="green T_save" id="saveAccount">Save</button>
+    </form>
+</div>
+
+<h3 id="t_shareSett">Sharing Setting</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="pure-control-group">
+            <b id="t_nsn" class="l">Network/Media Server Name:</b>
+            <input type="text" id="server_name" maxlength="15" />
+        </div>
+
+        <div id="accessDrawing" class="part-separate">
+            <table id='accessTab'>
+                <thead></thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="part-separate">
+            <button type="submit" class="green T_save" id="saveSett">Save</button>
+        </div>
+    </form>
+</div>
+
+<h3 id="t_sf">Folder Sharing</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b id="t_esa">Share All:</b>
+            <ul>
+                <li>
+                    <button id="shareOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="shareOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="browse-content-container nd" id="folderSel">
+            <div class="browse-content-container-wrap">
+                <span><b id="t_brw">My Router</b>
+                </span>
+                <br>
+                <br>
+                <div id="folderSelContent">
+                </div>
+            </div>
+
+            <div class="inline-btn-right">
+                <button type="submit" class="green inline T_cancel" id="cancelPathSel">Cancel</button>
+                <button type="submit" class="green inline T_ok" id="confirmPathSel">OK</button>
+            </div>
+        </div>
+
+        <div id="shareDrawing" class="nd">
+            <div class='table-op'>
+                <div class='table-btn'>
+                    <span class='add-icon' id="shareItemAdd"></span>
+                    <label class="T_add">Add</label>
+                    <span class='delete-icon' onclick="deleteItem()"></span>
+                    <label class="T_del">Delete</label>
+                </div>
+            </div>
+            <table id='shareTab'>
+                <thead></thead>
+                <tbody>
+                    <tr id="editShareFolder" class="nd">
+                        <td colspan="8">
+                            <div>
+                                <b id="t_vol">Volume Name:</b>
+                                <select id="shareVolume">
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_folP">Folder Path:</b>
+                                <input type="text" id="filename" class="xl" disabled required>
+                                <button type="submit" class="blue" id="t_browse" onclick="showBrowse()">Browse</button>
+                            </div>
+                            <div>
+                                <b id="t_shareN">Folder Name:</b>
+                                <input type="text" id="shareName" maxlength="31" class="xl" required>
+                            </div>
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="ea" />
+                                <label id="t_ea">Enable Authentication</label>
+                            </div>
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="wa" />
+                                <label id="t_wa">Enable Write Access</label>
+                            </div>
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="ems" />
+                                <label id="t_ems">Enable Media Sharing</label>
+                            </div>
+                            <div class="inline-btn-right">
+                                <button type="submit" class="green T_cancel" id="edit-cancel">Cancel</button>
+                                <button type="submit" class="green T_ok" id="edit-ok">OK</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-group-container" id="authentication">
+            <b id="t_ea_a">Enable Authentication:</b>
+            <ul>
+                <li>
+                    <button id="authOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="authOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+
+        <div id="authDrawing" class="nd">
+            <div class='table-op'>
+                <div class='table-btn'>
+                    <span class='refresh-icon' id="refShareSet"></span>
+                    <label class="T_refresh">Refresh</label>
+                </div>
+            </div>
+            <table id='authTab'>
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+$.tpInit(init);
+</script>

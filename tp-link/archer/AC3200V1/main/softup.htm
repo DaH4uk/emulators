@@ -1,0 +1,59 @@
+<script type="text/javascript">
+$("#t_upgrade").click(function()
+{
+	if($("#filename").val() == "")
+	{
+		$.alert(ERR_FIRM_FILE_NONE);
+		return false;
+	}
+	
+	var formObj = $.d.forms[0];	
+	try
+	{
+		formObj.target = "up_frame";
+		formObj.action = "/cgi/softup";
+		formObj.submit();
+	}catch(e){}
+	
+	$.guage(["<span class='T T_uploading'>"+s_str.uploading+"</span>", "<span class='T T_wait_upload'>"+s_str.wait_upload+"</span>"], 10, 300, function(){
+		$.guage(["<span class='T T_upgrading'>"+s_str.upgrading+"</span>", "<span class='T T_wait_upgrade'>"+s_str.wait_upgrade+"</span>"], 100, 1800, function(){$.refresh();});
+		$.cgi("/cgi/softburn", null, function(ret){
+			if (ret && ret != ERR_NETWORK && ret != ERR_EXIT && ret != ERR_NONE_FILE) $.errBack(ret, "softup.htm");
+		}, false, true);
+	});
+});
+function init()
+{
+	var obj = $.act(ACT_GET, IGD_DEV_INFO, null, null, ["hardwareVersion", "softwareVersion"]);
+	if (!$.exe()) 
+	{
+		$("#up_sver").prop("value", obj.softwareVersion);
+		$("#up_hver").prop("value", obj.hardwareVersion);
+	}
+}
+</script>
+<h3 id="et">Firmware Upgrade</h3>
+<div class="content-container">
+	<form class="pure-form pure-form-aligned" action="http://www.tp-linkru.com/cgi/softup" enctype="multipart/form-data" method="post">
+		<div class="file-container">
+			<b id="t_file">New Firmware File: </b>
+			<input type="file" name="filename" id="filename" />
+		</div>
+	</form>
+	<form class="pure-form pure-form-aligned" >
+		<div class="pure-control-group">
+			<b class="l T_swver">Firmware version:</b>
+			<input type="text" readonly="ture" class="tp-input-text xxxl" id="up_sver" />
+		</div>
+
+		<div class="pure-control-group">
+			<b class="l T_hwver">Hardware version:</b>
+			<input type="text" readonly="ture" class="tp-input-text xxxl" id="up_hver" />
+		</div>
+
+		<button type="submit" class="green l" id="t_upgrade" value="Upgrade">Upgrade</button>
+	</form>
+</div>
+<script type="text/javascript">
+$.tpInit(init);
+</script>

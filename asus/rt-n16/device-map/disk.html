@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title></title>
+<link href="../NM_style.css" rel="stylesheet" type="text/css" />
+<link href="../form_style.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="http://event.asus.com/state.js"></script>
+<script>
+var diskOrder = parent.getSelectedDiskOrder();
+var all_accessable_size = parent.simpleNum2(parent.computeallpools(diskOrder, "size")-parent.computeallpools(diskOrder, "size_in_use"));
+var mountedNum = parent.getDiskMountedNum(diskOrder);
+
+function get_cifs_status(){
+    return 1;
+}
+
+function get_ftp_status(){
+    return 1;
+}
+
+function get_dms_status(){
+    return 1;
+}
+
+function get_share_management_status(protocol){
+    if(protocol == "cifs")
+        return 1;
+    else if(protocol == "ftp")
+        return 1;
+    else
+        return -1;
+}
+
+function get_sharedfolder_in_pool(poolName){
+    if(poolName == "part0"){
+        return ["traffic_www", "share", "www_an23_0910", "an23"];
+    }
+}
+
+
+
+var NN_status = get_cifs_status();  // Network-Neighborhood
+var FTP_status = get_ftp_status();  // FTP
+var FTP_mode = get_share_management_status("ftp");
+var accounts = [];
+
+var ddns_enable = '0';
+var ddns_server = '';
+var ddns_hostname = '';
+
+function initial(){
+	flash_button();
+	
+	showtext($("disk_model_name"), parent.getDiskModelName(diskOrder));
+	showtext($("disk_total_size"), parent.getDiskTotalSize(diskOrder));
+	
+	if(mountedNum > 0){
+		showtext($("disk_avail_size"), all_accessable_size);
+		
+		$("show_remove_button").style.display = "";
+		
+		showdisklink();
+		DMhint(); //Download Master Hint for user
+	}
+	else{
+		$("mounted_item1").style.display = "none";
+		$("mounted_item2").style.display = "none";
+		
+		$("show_removed_string").style.display = "";
+		$("unmounted_refresh").style.display = "";
+	}
+}
+
+function showdisklink(){
+	// access the disk from LAN
+	if(NN_status == 1 && navigator.appName.indexOf("Microsoft") != -1)
+		$("ie_link").style.display = "";
+	else if(FTP_status == 1 && FTP_mode == 1) //When ftp is enabled and share without account.
+		$("notie_link").style.display = "";
+	else{
+		$("noLAN_link").style.display = "";
+		
+		if(NN_status != 1)
+			showtext($("noLAN_link"), "You have not yet enabled share via the Network Neighborhood. Please enable it in USB application / Share via the neighborhood.");
+		else
+			showtext($("noLAN_link"), "Your browser does not support entering the Network Neighborhood through clicking the hyperlink.");
+	}
+	
+	// access the disk from WAN
+	if(FTP_status == 1 && ddns_enable == 1 && ddns_server.length > 0 && ddns_hostname.length > 0){
+		if(FTP_mode == 1)
+			$("ddnslink1").style.display = "";
+		else{
+			$("ddnslink2").style.display = "";
+			
+			$("selected_account_link").href = 'ftp://'+accounts[0]+'@';
+			showtext($("selected_account_str"), 'ftp://'+accounts[0]+'@');
+		}
+	}
+	else{
+		$("noWAN_link").style.display = "";
+		
+		if(FTP_status != 1)
+			showtext($("noWAN_link"), "FTP server is not enabled. Enable the FTP server in USB application /  FTP Share.");
+		else if(ddns_enable != 1)
+			showtext($("noWAN_link"), "DDNS is not enable yet. You can enable it in WAN / DDNS when people need to access FTP via the domain name from WAN.");
+		else if(ddns_hostname.length <= 0)
+			showtext($("noWAN_link"), "DDNS is enable but register of domain name is fail. People still can't access FTP by domain name from WAN.");
+		else
+			alert("System error!");
+	}
+}
+
+function goUPnP(){
+	parent.showLoading();
+	parent.location.href = "/upnp.html";
+}
+
+function goAiDiskWizard(){
+	parent.showLoading();
+	parent.location.href = "/aidisk.html";
+}
+
+function remove_disk(){
+	var str = "Do you really want to remove this disk?";
+	
+	if(confirm(str)){
+		parent.showLoading();
+		
+		document.diskForm.action = "safely_remove_disk.html";
+		document.diskForm.disk.value = parent.getDiskPort(this.diskOrder);
+		
+		setTimeout("document.diskForm.submit();", 1);
+	}
+}
+
+function DMhint(){
+	var size_of_first_partition = 0;
+	var format_of_first_partition = "";
+	
+	for(var i = 0; i < parent.pool_names().length; ++i){
+		if(parent.per_pane_pool_usage_kilobytes(i, diskOrder)[0] && parent.per_pane_pool_usage_kilobytes(i, diskOrder)[0] > 0){
+			size_of_first_partition = parent.simpleNum(parent.per_pane_pool_usage_kilobytes(i, diskOrder)[0]);
+			format_of_first_partition = parent.pool_types()[i];
+			break;
+		}
+	}
+	
+	if(format_of_first_partition != 'vfat'
+			&& format_of_first_partition != 'msdos'
+			&& format_of_first_partition != 'ext2'
+			&& format_of_first_partition != 'ext3'
+			&& format_of_first_partition != 'ufsd' // NTFS
+			){
+		$("DMhint").style.display = "block";
+		$("DMFail_reason").innerHTML = "RT-N16 does not support this format for the first partition. It supports FAT32, MS-DOS, NTFS, and ext2/3.";
+	}
+	else if(size_of_first_partition <= 0.5){	// 0.5 = 512 Mb.
+		$("DMhint").style.display = "block";
+		$("DMFail_reason").innerHTML = "Disk quota for the first partition is < 512MB.";
+	}
+}
+</script>
+</head>
+
+<body class="statusbody" onload="initial();">
+<table width="95%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="table1px">
+  <tr>
+    <th width="130px">Model name:</th>
+    <td><span id="disk_model_name"></span>USB DISK</td>
+  </tr>
+  <tr>
+    <th>Total space:</th>
+    <td><span id="disk_total_size"></span>0.121 GB</td>
+  </tr>
+</table>
+
+<table id="mounted_item1" width="95%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="table1px">
+  <tr>
+    <th width="130px">Available space:</th>
+    <td><span id="disk_avail_size"></span>0.105 GB</td>
+  </tr>
+  <tr>
+    <th>UPnP Media Server:</th>
+    <td>
+	<input type="button" class="button" onclick="goUPnP();" value="GO" >
+	</td>
+  </tr>
+  <tr>
+    <th>AiDisk Wizard:</th>
+    <td>
+	<input type="button" class="button" onclick="goAiDiskWizard();" value="GO" >
+	</td>
+  </tr>
+</table>
+
+<table width="95%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="table1px">
+  <tr>
+    <th width="130px">Safely Remove disk:</th>
+    <td>
+	<input id="show_remove_button" type="button" class="button" onclick="remove_disk();" value="Remove">
+    <div id="show_removed_string" style="display:none;">Safe to remove disk</div>
+    </td>
+  </tr>
+</table>
+<div id="unmounted_refresh" style="padding:5px 0px 5px 25px; display:none">
+<ul style="font-size:11px; font-family:Arial; padding:0px; margin:0px; list-style:outside; line-height:150%;">
+	<li>I have plugged USB disk, <a href="../../../../../index.html" target="_parent">renew</a> the system status.</li>
+</ul>
+</div>
+<div id="mounted_item2" style="padding:5px 0px 5px 25px; ">
+<ul style="font-size:11px; font-family:Arial; padding:0px; margin:0px; list-style:outside; line-height:150%;">
+	<li>Share in LAN:
+	  <span id="ie_link" style="display:none;"><a href="http://event.asus.com/2009/networks/dummy_ui/rt-n16/device-map/\\RT-N16" target="_blank">\\RT-N16</a></span>
+	  <span id="notie_link"><a href="ftp://RT-N16" target="_blank">ftp://RT-N16</a></span>
+	  <span id="noLAN_link" style="display:none;"></span>
+	</li>
+	<li>FTP link:
+	  <span id="ddnslink1" style="display:none;"><a href="ftp://" target="_blank">ftp://</a></span>
+	  <span id="ddnslink2" style="display:none;">
+	  	<a id="selected_account_link" href="disk.html" target="_blank"><span id="selected_account_str"></span></a>
+	  </span>
+	  <span id="noWAN_link" >DDNS is not enable yet. You can enable it in WAN / DDNS when people need to access FTP via the domain name from WAN.</span>
+	</li>
+</ul>
+<div id="DMhint" class="DMhint">
+You cannot use Download Master because <span id="DMFail_reason"></span>
+</div>
+</div>
+
+<form method="post" name="diskForm" action="disk.html">
+<input type="hidden" name="disk" value="">
+</form>
+</body>
+</html>

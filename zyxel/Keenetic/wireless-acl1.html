@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="ndm.abbr" content="Access List">
+<meta name="ndm.abbr" content="Список доступа" xml:lang="RU" lang="RU">
+
+<title>ZyXEL Keenetic - 
+				Контроль доступа по MAC-адресам</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css">
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<script src="js/ndm-extras.js" type="text/javascript"></script>
+<style type="text/css">
+#acl_type label {
+	width: 280px;
+}
+</style>
+<script type="text/javascript">
+<!--
+var _CMD = "interface mac access-list address";
+var ap = new Interface(_AP0);
+var acl;
+var type;
+
+function loadValues() {
+	enableProgressIndicator();
+	acl = new Table(document.getElementById("acl"));
+	acl.showColumns("address");
+	acl.setEditorForm(new Form(document.editor));
+	acl.onStopEditing = function(element) {
+		if( this.getFlag(element) == TBL_ROW_INSERTED ) this.deleteRow(element);
+	}
+	type = new Form(document.acl_type);
+
+	ap.Config(_CMD, null, acl);
+	ap.Config("interface mac access-list type", null, type);
+	ap.onLoad = function() {
+		document.acl_type.type.onchange = setType;
+	}
+	ap.proceed(document.getElementById("logger"));
+}
+function save() {
+	var selected = acl.getSelectedRow();
+	var f = acl.getEditorForm();
+	if( acl.getFlag(selected) != TBL_ROW_INSERTED )	ap.No(_CMD, acl.getRowValues(selected));
+	ap.Command(_CMD, f.getParameters(), f);
+	ap.ConfigSave();
+	ap.onLoad = function() { 
+		if( !this.getErrorState() ) acl.setRowValues(selected, f.getParameters()); 
+	}
+	ap.proceed(document.getElementById("logger"));
+	return false;
+}
+function drop() {
+	var selected = acl.getSelectedRow();
+	if( acl.getFlag(selected) != TBL_ROW_INSERTED ) {
+		ap.No(_CMD, acl.getRowValues(selected));
+		ap.ConfigSave();
+		ap.onLoad = function() { 
+			if( !this.getErrorState() ) acl.deleteRow(selected); 
+		}
+		ap.proceed(document.getElementById("logger"));
+	} else {
+		acl.stopEditing();
+	}
+}
+function setType() {
+	ap.Command("interface mac access-list type", type.getParameters(), type);
+	ap.ConfigSave();
+	ap.proceed(document.getElementById("logger"));
+	return false;
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0"></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default">English</option><option selected="selected" value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband-shade.png');"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless.png');" class="selected"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br></div></div><div style="height: 639px;" id="content"><div id="title">Wi-Fi<div id="subtitle"></div></div><ul class="tabs"><li><a href="wireless.html"><span>Режим работы</span></a></li><li><a href="ap.html"><span>Точка доступа</span></a></li><li><a href="guest-ap.html"><span>Гостевая сеть</span></a></li><li><a class="current" href="wireless-acl.html"><span>Список доступа</span></a></li><li><a href="associations.html"><span>Соединения</span></a></li><li><a href="station.html"><span>Станция</span></a></li></ul><div class="block pink" style="border-bottom: none;">
+		<h1>Контроль доступа по MAC-адресам</h1>
+		<div class="rounded">
+		<p>Можно составить «белый» или «черный» список клиентов точки доступа 
+Wi-Fi. В режиме «Белый список» доступ к домашней беспроводной сети будет
+ заблокирован для всех клиентов, не вошедших в список. В режиме «Черный 
+список» доступ к домашней беспроводной сети будет заблокирован только 
+для клиентов из списка. Для изменения сохраненного MAC-адреса щелкните 
+его запись в списке.</p>
+		</div>
+		<form action="" name="acl_type" id="acl_type" onsubmit="return false;">
+			<label for="type">Режим блокировки:</label>
+				<select id="_ndm_1304671901882" name="type">
+					<option selected="selected" value="none">Не блокировать</option>
+					<option value="permit">Белый список</option>
+					<option value="deny">Черный список</option>
+				</select><br>
+		</form>
+		<br>
+
+		<table style="width: 100%; white-space: nowrap;" id="acl" class="styled" cellspacing="0">
+		<thead>
+			<tr>
+			<th>MAC-адрес</th>
+			</tr>
+		</thead>
+		<tbody><tr class=" highlight"><td colspan="1">(пусто)</td></tr><tr><td colspan="1" class="editor"><form action="" name="editor" onsubmit="return save();" onreset="acl.stopEditing();" id="editor">
+			<div class="header"><h1>MAC-адрес</h1><div class="close_button"><a href="wireless-acl.html" onclick=""><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Введите MAC-адрес клиента беспроводной сети. Для добавления в 
+список уже подключенных клиентов можно воспользоваться вкладкой 
+«Соединения».</p>
+			</div>
+
+			<fieldset>
+			<label for="address">MAC-адрес:</label><input name="address" type="text"><br>
+			<label for="nothing"></label>
+				<button class="apply" type="button" name="editor_apply">Сохранить</button>
+				<button class="cancel" type="button" onclick="document.location='wireless-acl.html'" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="">Удалить запись</button>
+			</fieldset>
+			</div>
+		</form></td></tr></tbody></table>
+
+		<br>
+		<button name="add" onclick="acl.startEditing(acl.insertRow())">Добавить Адрес</button>		
+
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return save();" onreset="acl.stopEditing();" id="editor">
+			<div class="header"><h1>MAC-адрес</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Введите MAC-адрес клиента беспроводной сети. Для добавления в 
+список уже подключенных клиентов можно воспользоваться вкладкой 
+«Соединения».</p>
+			</div>
+
+			<fieldset>
+			<label for="address">MAC-адрес:</label><input name="address" type="text"><br>
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="editor_apply">Сохранить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить запись</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+		
+		<div style="right: -225px; display: none;" class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif"></a></div></div>
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+<div style="margin: 0px; padding: 0px; position: absolute; left: 48%; top: 30%; width: auto; display: none;" id="ajaxBusy"><p><img src="img/loading.gif"></p></div></body></html>

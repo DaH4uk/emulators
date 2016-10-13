@@ -1,0 +1,414 @@
+<script type="text/javascript">
+var oldPort;
+var aclStk;
+$("input#newPwd").keyup(function() {
+    $.pwdIntensityCheck($("#pwdCheck"), $(this).val());
+});
+$("#r_http_en").click(function() {
+    if ($("#r_http_en").prop("data-checked")) {
+        $("#r_http_port").prop("disabled", false);
+        $("#r_host").prop("disabled", false);
+    } else {
+        $("#r_http_port").prop("disabled", true);
+        $("#r_host").prop("disabled", true);
+    }
+});
+$("#t_save4").click(function() {
+    $.addLoading($(this));
+    if (INCLUDE_ACL) {
+        var arg = {};
+        arg.IPStart = "0.0.0.0";
+        arg.IPEnd = "0.0.0.0";
+        arg.service = "Ping";
+        if ($("#pingRemote").prop("data-checked") == true || $("#pingLocal").prop("data-checked") == true) {
+            arg.enable = 1;
+            if ($("#pingRemote").prop("data-checked") == true && $("#pingLocal").prop("data-checked") == true) {
+                arg.location = "Both";
+            } else if ($("#pingRemote").prop("data-checked") == true) {
+                arg.location = "Remote";
+            } else {
+                arg.location = "Local";
+            }
+        } else {
+            arg.enable = 0;
+        }
+        $.act(aclStk ? ACT_SET : ACT_ADD, ACL_CFG, aclStk ? aclStk : null, null, arg);
+        $.exe(function(ret) {
+            $.removeLoading();
+            if (!ret)
+                $.reload('manageCtrl.htm');
+        });
+    }
+});
+$("#t_save3").click(function() {
+    $.addLoading($(this));
+    var httpCfg = {};
+    var refresh = false;
+
+    if ($("#r_http_en").prop("data-checked")) {
+        httpCfg.httpRemoteEnabled = 1;
+        arg = $("#r_http_port").prop('value');
+        if ($.num(arg, 80, [1024, 65535], true)) {
+            return $.alert(ERR_HTTP_REMOTE_PORT);
+        }
+        httpCfg.httpRemotePort = parseInt(arg, 10);
+
+        var appCfg = {};
+
+        arg = $("#r_host").prop('value');
+        if (arg !== "" && $.ifip(arg, true) && $.mac(arg, true)) {
+            return $.alert(ERR_APP_REMOTE_HOST);
+        }
+        if (!$.ifip(arg, true)) {
+            appCfg.remoteHost = $.num2ip($.ip2num(arg));
+        } else {
+            appCfg.remoteHost = arg.toUpperCase();
+        }
+    } else {
+        httpCfg.httpRemoteEnabled = 0;
+        refresh = false;
+    }
+
+    var newPort = bSecured ? (clientLocal ? 0 : httpCfg.httpsRemotePort) : (clientLocal ? 0 : httpCfg.httpRemotePort);
+
+    if ((!clientLocal && appCfg.remoteHost && appCfg.remoteHost != clientIp && appCfg.remoteHost != clientMac)) {
+        $.confirm(c_str.cdefaults, function() {
+            refresh = true;
+            doSave(appCfg, httpCfg, refresh, newPort);
+        }, function() {
+            $.reload();
+        });
+    } else if (newPort != oldPort && newPort != 0) {
+        $.confirm(c_str.refresh, function() {
+            refresh = true;
+            doSave(appCfg, httpCfg, refresh, newPort);
+        }, function() {
+            $.reload();
+        });
+    } else {
+        doSave(appCfg, httpCfg, refresh, newPort);
+        $.removeLoading();
+    }
+
+});
+$("#t_save2").click(function() {
+    $.addLoading($(this));
+    var httpCfg = {};
+    var appCfg = {};
+    var refresh = false;
+
+    arg = $("#l_http_port").prop('value');
+    if ($.num(arg, 80, [1024, 65535], true)) {
+        return $.alert(ERR_HTTP_LOCAL_PORT);
+    }
+
+    httpCfg.httpLocalPort = parseInt(arg, 10);
+
+    arg = $("#l_host").prop('value');
+    if (arg !== "" && $.ifip(arg, true) && $.mac(arg, true)) {
+        return $.alert(ERR_APP_LOCAL_HOST);
+    }
+    if (!$.ifip(arg, true)) {
+        appCfg.localHost = $.num2ip($.ip2num(arg));
+    } else {
+        appCfg.localHost = arg.toUpperCase();
+    }
+
+    var newPort = bSecured ? (clientLocal ? httpCfg.httpsLocalPort : 0) : (clientLocal ? httpCfg.httpLocalPort : 0);
+
+    if (clientLocal && appCfg.localHost && appCfg.localHost != clientIp && appCfg.localHost != clientMac) {
+        $.confirm(c_str.refresh_dis, function() {
+            refresh = true;
+            doSave(appCfg, httpCfg, refresh, newPort);
+        }, function() {
+            $.reload();
+        });
+    } else if (newPort != oldPort && newPort != 0) {
+        $.confirm(c_str.refresh, function() {
+            refresh = true;
+            doSave(appCfg, httpCfg, refresh, newPort);
+        }, function() {
+            $.reload();
+        });
+    } else {
+        doSave(appCfg, httpCfg, refresh, newPort);
+        $.removeLoading();
+    }
+
+});
+$("#t_save1").click(function() {
+    $.addLoading($(this));
+    var arg;
+    var userCfg = {};
+    var asciiWithoutSpace = /^(?=[^ ]+$)[\x21-\x7f]+$/;
+    if ($("#curPwd").prop('value') || $("#newName").prop('value') || $("#newPwd").prop('value') || $("#cfmPwd").prop('value')) {
+        arg = $("#curPwd").prop('value');
+        if (arg === "")
+		{
+			$("#curPwd").focus();
+			$("#curPwd").select();
+            return $.alert(ERR_USER_OLD_PWD_EMPTY);
+        }
+        if ($.asc(arg, true)) {
+			$("#curPwd").focus();
+			$("#curPwd").select();
+            return $.alert(ERR_USER_OLD_PWD_ASCII);
+        }
+        userCfg.oldPwd = arg;
+
+        arg = $("#newName").prop('value');
+        if (arg === "") {
+			$("#newName").focus();
+			$("#newName").select();
+            return $.alert(ERR_USER_NAME_EMPTY);
+        }
+        if ($.asc(arg, true) || asciiWithoutSpace.test(arg) == false) {
+			$("#newName").focus();
+			$("#newName").select();
+            return $.alert(ERR_USER_NAME_ASCII);
+        }
+        userCfg.name = arg;
+
+        arg = $("#newPwd").prop('value');
+        if (arg === "") {
+			$("#newPwd").focus();
+			$("#newPwd").select();
+            return $.alert(ERR_USER_PWD_EMPTY);
+        }
+        if ($.asc(arg, true) || asciiWithoutSpace.test(arg) == false) {
+			$("#newPwd").focus();
+			$("#newPwd").select();
+            return $.alert(ERR_USER_PWD_ASCII);
+        }
+        userCfg.pwd = arg;
+        if (arg !== $("#cfmPwd").prop('value')) {
+			$("#cfmPwd").focus();
+			$("#cfmPwd").select();
+            return $.alert(ERR_USER_NAME_PWD_CONFLICT);
+        }
+    }
+
+
+	/*check old password*/
+	var oldUsrCfg = $.act(ACT_GET, USER_CFG, null, null, ["adminName", "adminPwd"]);
+
+	if ($.exe())
+	{
+            return false;
+	}
+	/*check old user name*/
+	arg = $("#curName").prop('value');
+	if (arg == "")
+	{
+		$("#curName").focus();
+		$("#curName").select();
+		 $.alert(ERR_USER_OLD_NAME_EMPTY);
+		 return false;
+	}
+	if (oldUsrCfg.adminName != arg)
+	{
+		$("#curName").focus();
+		$("#curName").select();
+		 $.alert(ERR_USER_OLD_NAME_ERROR);
+		 return false;
+	}
+	/*****/
+	if (oldUsrCfg.adminPwd != userCfg.oldPwd)
+	{
+		$("#curPwd").focus();
+		$("#curPwd").select();
+	return $.alert(ERR_USER_OLD_PWD_ERROR);
+	}
+	/*add set FD- isFD == 1: have not ever changed password, need to set isFD =2*/
+	var info = $.act(ACT_GET, IGD_DEV_INFO, null, null, ["X_TP_IsFD"]);
+	$.exe();
+	$.isFD = info.X_TP_IsFD;
+	if ($.isFD == 1)
+	{
+		$.act(ACT_SET, IGD_DEV_INFO, null, null, ["X_TP_IsFD=2"]);
+		if ($.exe())
+		{
+		}
+	}
+	/**********************************************/
+    if (userCfg.oldPwd) {
+        $.act(ACT_CGI, "/cgi/auth", null, null, userCfg);
+    }
+
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            if (userCfg.oldPwd) {
+                $.deleteCookie("Authorization");
+            }
+            $.reload("manageCtrl.htm");
+        } else {
+            $.errBack(ret, "manageCtrl.htm");
+        }
+    });
+});
+
+function doSave(appCfg, httpCfg, refresh, newPort) {
+    $.act(ACT_SET, APP_CFG, null, null, appCfg);
+    $.act(ACT_SET, HTTP_CFG, null, null, httpCfg);
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            if (refresh)
+                $.refresh(null, newPort);
+            else {
+                $.reload();
+            }
+        } else {
+            $.errBack(ret, "manageCtrl.htm");
+        }
+    });
+}
+
+function init() {
+    if (INCLUDE_CHGINIT_PWD) {
+        $('#oldNameContainer').hide();
+        $('#newNameContainer').hide();
+        $('#newName').prop('value', 'admin');
+    }
+
+    $.act(ACT_CGI, "/cgi/info");
+    $.act(ACT_CGI, "/cgi/auth");
+    var httpCfg = $.act(ACT_GET, HTTP_CFG);
+    var appCfg = $.act(ACT_GET, APP_CFG);
+    if (INCLUDE_ACL) {
+        var aclList = $.act(ACT_GL, ACL_CFG, null, null);
+        $("#pingRemote").prop('checked', false);
+        $("#pingLocal").prop('checked', false);
+    }
+    $.exe();
+
+    $("#l_http_port").prop('value', httpCfg.httpLocalPort);
+    $("#r_http_port").prop('value', httpCfg.httpRemotePort);
+
+    if (httpCfg.httpRemoteEnabled == 1) {
+        $("#r_http_en").prop('checked', true);
+    } else {
+        $("#r_http_en").prop('checked', false);
+        $("#r_http_port").prop("disabled", true);
+        $("#r_host").prop("disabled", true);
+    }
+    $("#l_host").prop('value', appCfg.localHost ? appCfg.localHost : "");
+    $("#r_host").prop('value', appCfg.remoteHost ? appCfg.remoteHost : "");
+
+    oldPort = bSecured ? (clientLocal ? httpCfg.httpsLocalPort : httpCfg.httpsRemotePort) : (clientLocal ? httpCfg.httpLocalPort : httpCfg.httpRemotePort);
+
+    if (INCLUDE_ACL) {
+        $.each(aclList, function() {
+            if (this.service == "Ping") {
+                if (this.enable == "1") {
+                    if (this.location == "Both") {
+                        $("#pingRemote").prop('checked', true);
+                        $("#pingLocal").prop('checked', true);
+                    } else if (this.location == "Local") {
+                        $("#pingLocal").prop('checked', true);
+                        $("#pingRemote").prop('checked', false);
+                    } else if (this.location == "Remote") {
+                        $("#pingLocal").prop('checked', false);
+                        $("#pingRemote").prop('checked', true);
+                    }
+                }
+                aclStk = this.__stack;
+            }
+        });
+    }
+}
+</script>
+<h3 id="t_account">Account Management</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div id="oldNameContainer">
+            <b class="l" id="t_oldname">Old User Name:</b>
+            <input type="text" id="curName" maxlength="15" class="secLevel" />
+        </div>
+        <div>
+            <b class="l" id="t_oldpwd">Old Password:</b>
+            <input type="password" id="curPwd" maxlength="15" class="secLevel" />
+        </div>
+        <p class="br"></p>
+        <div id="newNameContainer">
+            <b class="l" id="t_newname">New User Name: </b>
+            <input type="text" id="newName" maxlength="15" class="secLevel" />
+        </div>
+        <div>
+            <b class="l" id="t_newpwd">New Password:</b>
+            <input type="password" id="newPwd" maxlength="15" class="secLevel" />
+        </div>
+        <div class="secLevel" id="pwdCheck">
+            <span class="level1 T_low">Low</span>
+            <span class="level2 T_middle">Middle</span>
+            <span class="level3 T_high">High</span>
+        </div>
+        <div>
+            <b class="l" id="t_confirm">Confirm New Password:</b>
+            <input type="password" id="cfmPwd" maxlength="15" class="secLevel" />
+        </div>
+        <p class="br"></p>
+        <div>
+            <button type="submit" class="green T_save" id="t_save1">Save</button>
+        </div>
+    </form>
+</div>
+<h3 id="t_local">Local Management</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b class="l T_c_port">Local Management Port:</b>
+            <input type="text" maxlength="5" id="l_http_port" />
+        </div>
+        <div>
+            <b class="l T_c_addr">Local Management IP Address:</b>
+            <input type="text" id="l_host" />
+        </div>
+        <div>
+            <button type="submit" class="green T_save" id="t_save2">Save</button>
+        </div>
+    </form>
+</div>
+<h3 id="t_remote">Remote Management</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b class="l" id="t_enableremote">Remote Management:</b>
+            <input type="checkbox" id="r_http_en" />
+            <label class="T_en">Enable</label>
+        </div>
+        <div>
+            <b class="l T_c_port">Web Management Port:</b>
+            <input type="text" maxlength="5" id="r_http_port" />
+        </div>
+        <div>
+            <b class="l T_c_addr">Remote Management IP Address:</b>
+            <input type="text" id="r_host" />
+        </div>
+        <div>
+            <button type="submit" class="green T_save" id="t_save3">Save</button>
+        </div>
+    </form>
+</div>
+
+<div class="content-container nd">
+<h3 id="t_icmp">ICMP Ping</h3>
+    <form class="pure-form pure-form-aligned">
+        <div class="inline">
+            <b class="l" id="t_ping_title">ICMP(ping):</b>
+            <input type="checkbox" id="pingRemote" />
+            <label id="t_ping_remote">Remote</label>
+        </div>
+        <div class="inline">
+            <input type="checkbox" id="pingLocal" />
+            <label id="t_ping_local">Local</label>
+        </div>
+        <div>
+            <button type="submit" class="green T_save" id="t_save4">Save</button>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+$.tpInit(init);
+</script>

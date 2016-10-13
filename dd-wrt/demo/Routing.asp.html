@@ -1,0 +1,455 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Routing</title>
+
+<script type="text/javascript">
+//<![CDATA[
+/*	
+route.zebra_copt = route.bird_copt;
+route.zebra_legend = route.bird_legend;
+route.zebra_log = route.bird_log;
+*/
+
+function valid_value(F) {
+if(F.wk_mode.value != "ospf") {
+if(!valid_ip(F,"F.route_ipaddr","IP",0))
+return false;
+if(!valid_mask(F,"F.route_netmask",ZERO_OK))
+return false;
+if(!valid_ip(F,"F.route_gateway","Gateway",MASK_NO))
+return false;
+}
+return true;
+}
+function DeleteEntry(F) {
+if(!confirm(errmsg.err57)) return;
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "del";
+apply(F);
+}
+function SelRoute(num,F) {
+F.change_action.value="gozila_cgi";
+F.route_page.value = F.route_page.options[num].value;
+F.submit();
+}
+function SelMode(num,F) {
+F.change_action.value="gozila_cgi";
+F.wk_mode.value = F.wk_mode.options[num].value;
+F.submit();
+}
+function olsrd_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_olsrd";
+F.submit();
+}
+function olsrd_del_submit(F,num) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "del_olsrd";
+F.olsrd_delcount.value = num;
+F.submit();
+}
+function olsrd_checkDijkstra(F) {
+if (F.olsrd_lqdijkstramin && F.olsrd_lqdijkstramax) {
+if (F.olsrd_lqdijkstramin.value>F.olsrd_lqdijkstramax.value) {
+alert(route.olsrd_lqdmin + errmsg.err103 + route.olsrd_lqdmax +".");
+}
+}
+}
+function submitcheck(F) {
+if (F.routing_bgp_neighbor_ip != null) {
+F.routing_bgp_neighbor_ip.value = F.routing_bgp_neighbor_ip_0.value+'.'+F.routing_bgp_neighbor_ip_1.value+'.'+F.routing_bgp_neighbor_ip_2.value+'.'+F.routing_bgp_neighbor_ip_3.value;
+}
+
+if(!valid_value(F)) return;
+
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+}
+function to_submit(F) {
+submitcheck(F);
+apply(F);
+}
+function to_apply(F) {
+submitcheck(F);
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+
+show_layer_ext(document.static.ospfd_copt, 'idospfd', 0 == 1);
+show_layer_ext(document.static.zebra_copt, 'idzebra', 0 == 1);
+
+update = new StatusbarUpdate();
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupbasic)</script></strong></a></li>
+      <li><a href="DDNS.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupddns)</script></strong></a></li>
+      <li><a href="WanMAC.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupmacclone)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.setuprouting)</script></strong></span></li>
+      <li><a href="Networking.asp.html"><strong><script type="text/javascript">Capture(bmenu.networking)</script></strong></a></li>
+      <li><a href="eop-tunnel.asp.html"><strong><script type="text/javascript">Capture(bmenu.setupeop)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="static" action="#" method="post" >
+<input type="hidden" name="submit_button" value="Routing" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action"/>
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="olsrd_delcount" />
+<input type="hidden" name="static_route" />
+<h2><script type="text/javascript">Capture(route.h2)</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(route.mod)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.mod)</script></div>
+<select name="wk_mode" onchange="SelMode(this.form.wk_mode.selectedIndex,this.form)">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"gateway\" selected=\"selected\" >" + share.gateway + "</option>");
+document.write("<option value=\"bgp\"  >BGP</option>");
+document.write("<option value=\"router\"  >" + route.rip2_mod + "</option>");
+document.write("<option value=\"ospf\"  >" + route.ospf_mod + "</option>");
+document.write("<option value=\"ospf bgp rip router\"  >vtysh OSPF BGP RIP router</option>");
+document.write("<option value=\"olsr\"  >" + route.olsrd_mod + "</option>");
+document.write("<option value=\"static\"  >" + share.router + "</option>");
+//]]>
+</script>
+
+</select>
+</div>
+</fieldset><br />
+
+<!--
+<fieldset>
+<legend><script type="text/javascript">Capture(route.ospf_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.ospf_copt)</script></div>
+<input class="spaceradio" type="radio" value="1" name="ospfd_copt"  onclick="show_layer_ext(this, 'idospfd', true)" /><script type="text/javascript">Capture(route.copt_gui)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="ospfd_copt" checked="checked" onclick="show_layer_ext(this, 'idospfd', false)" /><script type="text/javascript">Capture(route.copt_vtysh)</script>
+</div>
+<div id="idospfd">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.ospf_conf)</script></div>
+<textarea cols="60" rows="12" id="ospfd_conf" name="ospfd_conf"></textarea>
+<script type="text/javascript">
+//<![CDATA[
+var ospfd_conf = fix_cr( '' );
+document.getElementById("ospfd_conf").value = ospfd_conf;
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_copt)</script></div>
+<input class="spaceradio" type="radio" value="1" name="zebra_copt"  onclick="show_layer_ext(this, 'idzebra', true)" /><script type="text/javascript">Capture(route.copt_gui)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="zebra_copt" checked="checked" onclick="show_layer_ext(this, 'idzebra', false)" /><script type="text/javascript">Capture(route.copt_vtysh)</script>
+</div>
+<div id="idzebra">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_legend)</script></div>
+<textarea cols="60" rows="12" id="zebra_conf" name="zebra_conf"></textarea>
+<script type="text/javascript">
+//<![CDATA[
+var zebra_conf = fix_cr( '' );
+document.getElementById("zebra_conf").value = zebra_conf;
+//]]>
+</script>
+</div>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_log)</script></div>
+<input class="spaceradio" type="radio" name="zebra_log" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="zebra_log" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+</div>
+</fieldset><br />
+-->
+<!--					
+<fieldset>
+<legend><script type="text/javascript">Capture(route.bgp_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.bgp_own_as)</script></div>
+<input size="10" name="routing_bgp_as" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.bgp_ip)</script></div>
+<input type="hidden" name="routing_bgp_neighbor_ip" value="0.0.0.0" /><input size="3" maxlength="3" name="routing_bgp_neighbor_ip_0" onblur="valid_range(this,0,255,route.bgp_ip)" class="num" value="0" />.<input size="3" maxlength="3" name="routing_bgp_neighbor_ip_1" onblur="valid_range(this,0,255,route.bgp_ip)" class="num" value="0" />.<input size="3" maxlength="3" name="routing_bgp_neighbor_ip_2" onblur="valid_range(this,0,255,route.bgp_ip)" class="num" value="0" />.<input size="3" maxlength="3" name="routing_bgp_neighbor_ip_3" onblur="valid_range(this,0,254,route.bgp_ip)" class="num" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.bgp_as)</script></div>
+<input size="10" name="routing_bgp_neighbor_as" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_copt)</script></div>
+<input class="spaceradio" type="radio" value="1" name="zebra_copt"  onclick="show_layer_ext(this, 'idzebra', true)" /><script type="text/javascript">Capture(route.copt_gui)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="zebra_copt" checked="checked" onclick="show_layer_ext(this, 'idzebra', false)" /><script type="text/javascript">Capture(route.copt_vtysh)</script>
+</div>
+<div id="idzebra">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_legend)</script></div>
+<textarea cols="60" rows="12" id="zebra_conf" name="zebra_conf"></textarea>
+<script type="text/javascript">
+//<![CDATA[
+var zebra_conf = fix_cr( '' );
+document.getElementById("zebra_conf").value = zebra_conf;
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_log)</script></div>
+<input class="spaceradio" type="radio" name="zebra_log" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="zebra_log" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+</div>
+</fieldset><br/>							
+-->
+<!--
+<fieldset>
+<legend><script type="text/javascript">Capture(route.zebra_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_copt)</script></div>
+<input class="spaceradio" type="radio" value="1" name="zebra_copt"  onclick="show_layer_ext(this, 'idzebra', true)" /><script type="text/javascript">Capture(route.copt_gui)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="zebra_copt" checked="checked" onclick="show_layer_ext(this, 'idzebra', false)" /><script type="text/javascript">Capture(route.copt_vtysh)</script>
+</div>
+<div id="idzebra">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_legend)</script></div>
+<textarea cols="60" rows="12" id="zebra_conf" name="zebra_conf"></textarea>
+<script type="text/javascript">
+//<![CDATA[
+var zebra_conf = fix_cr( '' );
+document.getElementById("zebra_conf").value = zebra_conf;
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.zebra_log)</script></div>
+<input class="spaceradio" type="radio" name="zebra_log" value="1"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="zebra_log" value="0" checked="checked" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+</div>
+</fieldset><br />						
+-->							
+<!--
+<fieldset>
+<legend><script type="text/javascript">Capture(route.gateway_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.intrface)</script></div>
+<select size="1" name="dr_setting">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\" selected=\"selected\" >" + share.disable + "</option>");
+//]]>
+</script>
+<option value="1"  >WAN</option>
+<option value="2"  >LAN &amp; WLAN</option>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"3\"  >" + share.both + "</option>");
+//]]>
+</script>
+</select>
+</div>
+</fieldset><br/>
+-->
+
+<fieldset>
+<legend><script type="text/javascript">Capture(route.static_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.static_setno)</script></div>
+<select size="1" name="route_page" onchange="SelRoute(this.form.route_page.selectedIndex,this.form)">
+		<option value="0" selected="selected"> 1 ( )</option>
+		<option value="1" > 2 ( )</option>
+		<option value="2" > 3 ( )</option>
+		<option value="3" > 4 ( )</option>
+		<option value="4" > 5 ( )</option>
+		<option value="5" > 6 ( )</option>
+		<option value="6" > 7 ( )</option>
+		<option value="7" > 8 ( )</option>
+		<option value="8" > 9 ( )</option>
+		<option value="9" > 10 ( )</option>
+		<option value="10" > 11 ( )</option>
+		<option value="11" > 12 ( )</option>
+		<option value="12" > 13 ( )</option>
+		<option value="13" > 14 ( )</option>
+		<option value="14" > 15 ( )</option>
+		<option value="15" > 16 ( )</option>
+		<option value="16" > 17 ( )</option>
+		<option value="17" > 18 ( )</option>
+		<option value="18" > 19 ( )</option>
+		<option value="19" > 20 ( )</option>
+		<option value="20" > 21 ( )</option>
+		<option value="21" > 22 ( )</option>
+		<option value="22" > 23 ( )</option>
+		<option value="23" > 24 ( )</option>
+		<option value="24" > 25 ( )</option>
+		<option value="25" > 26 ( )</option>
+		<option value="26" > 27 ( )</option>
+		<option value="27" > 28 ( )</option>
+		<option value="28" > 29 ( )</option>
+		<option value="29" > 30 ( )</option>
+		<option value="30" > 31 ( )</option>
+		<option value="31" > 32 ( )</option>
+		<option value="32" > 33 ( )</option>
+		<option value="33" > 34 ( )</option>
+		<option value="34" > 35 ( )</option>
+		<option value="35" > 36 ( )</option>
+		<option value="36" > 37 ( )</option>
+		<option value="37" > 38 ( )</option>
+		<option value="38" > 39 ( )</option>
+		<option value="39" > 40 ( )</option>
+		<option value="40" > 41 ( )</option>
+		<option value="41" > 42 ( )</option>
+		<option value="42" > 43 ( )</option>
+		<option value="43" > 44 ( )</option>
+		<option value="44" > 45 ( )</option>
+		<option value="45" > 46 ( )</option>
+		<option value="46" > 47 ( )</option>
+		<option value="47" > 48 ( )</option>
+		<option value="48" > 49 ( )</option>
+		<option value="49" > 50 ( )</option>
+
+</select>&nbsp;&nbsp;
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"del_button\" value=\"" + sbutton.del + "\" onclick=\"DeleteEntry(this.form);\" />");
+//]]>
+</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.static_name)</script></div>
+<input name="route_name" size="25" maxlength="25" onblur="valid_name(this,route.static_name)" value="" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(route.metric)</script></div>
+<input name="route_metric" size="4" maxlength="4" onblur="valid_range(this,0,9999,route.metric)" class="num" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(routetbl.th1)</script></div>
+<input type="hidden" name="route_ipaddr" value="4" />
+<input name="route_ipaddr_0" size="3" maxlength="3" onblur="valid_range(this,0,255,routetbl.th1)" class="num" value="0" />.<input name="route_ipaddr_1" size="3" maxlength="3" onblur="valid_range(this,0,255,routetbl.th1)" class="num" value="0" />.<input name="route_ipaddr_2" size="3" maxlength="3" onblur="valid_range(this,0,255,routetbl.th1)" class="num" value="0" />.<input name="route_ipaddr_3" size="3" maxlength="3" onblur="valid_range(this,0,254,routetbl.th1)" class="num" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<input type="hidden" name="route_netmask" value="4" />
+<input name="route_netmask_0" size="3" maxlength="3" onblur="valid_range(this,0,255,share.subnet)" class="num" value="0" />.<input name="route_netmask_1" size="3" maxlength="3" onblur="valid_range(this,0,255,share.subnet)" class="num" value="0" />.<input name="route_netmask_2" size="3" maxlength="3" onblur="valid_range(this,0,255,share.subnet)" class="num" value="0" />.<input name="route_netmask_3" size="3" maxlength="3" onblur="valid_range(this,0,255,share.subnet)" class="num" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.gateway)</script></div>
+<input type="hidden" name="route_gateway" value="4" />
+<input size="3" maxlength="3" name="route_gateway_0" onblur="valid_range(this,0,255,share.gateway)" class="num" value="0" />.<input size="3" maxlength="3" name="route_gateway_1" onblur="valid_range(this,0,255,share.gateway)" class="num" value="0" />.<input size="3" maxlength="3" name="route_gateway_2" onblur="valid_range(this,0,255,share.gateway)" class="num" value="0" />.<input size="3" maxlength="3" name="route_gateway_3" onblur="valid_range(this,0,254,share.gateway)" class="num" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.intrface)</script></div>
+<select name="route_ifname">
+<option value="lan" selected="selected" >LAN &amp; WLAN</option>
+<option value="wan"  >WAN</option>
+<option value="any"  >ANY</option>
+<option value="eth1"  >eth1</option>
+<option value="ath0"  >ath0</option>
+
+</select>
+</div>
+<div class="center">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"button2\" value=\"" + sbutton.routingtab + "\" onclick=\"openWindow('RouteTable.asp', 720, 600);\" />");
+//]]>
+</script>
+<input type="hidden" value="0" name="Route_reload" />
+</div>
+</fieldset><br />
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(route.mod)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hroute.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(route.static_setno)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hroute.right4)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(route.static_name)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hroute.right6)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(route.static_ip)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hroute.right8)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.subnet)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hroute.right10)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HRouting.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:07 up 24 min, load average: 0.08, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

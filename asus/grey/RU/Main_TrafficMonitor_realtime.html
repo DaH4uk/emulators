@@ -1,0 +1,429 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//RU" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
+<meta name="svg.render.forceflash" content="false" />	
+<title>ASUS Wireless Router RT-AC66U - Мониторинг трафика : в режиме реального времени</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="tmmenu.css">
+<link rel="stylesheet" type="text/css" href="menu_style.css"> <!-- Viz 2010.09 -->
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">  
+<script language="JavaScript" type="text/javascript" src="help.js"></script>
+<!--script src='svg.js' data-path="/svghtc/" data-debug="false"></script-->	
+<script language="JavaScript" type="text/javascript" src="state.js"></script>
+<script language="JavaScript" type="text/javascript" src="general.js"></script>
+<script language="JavaScript" type="text/javascript" src="tmmenu.js"></script>
+<script language="JavaScript" type="text/javascript" src="tmcal.js"></script>	
+<script language="JavaScript" type="text/javascript" src="popup.js"></script>
+
+<script type='text/javascript'>
+
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+
+nvram = {
+	wan_ifname: '',
+	lan_ifname: 'br0',
+	wl_ifname: 'wl1.1',
+	wan_proto: 'dhcp',
+	web_svg: '',
+	rstats_colors: '',
+	http_id: 'TIDe855a6487043d70a'};
+
+
+var cprefix = 'bw_r';
+var updateInt = 2;
+var updateDiv = updateInt;
+var updateMaxL = 300;
+var updateReTotal = 1;
+var prev = [];
+var speed_history = [];
+var debugTime = 0;
+var avgMode = 0;
+var wdog = null;
+var wdogWarn = null;
+
+var ref = new TomatoRefresh('update.cgi', 'output=netdev', 2);
+
+ref.stop = function() {
+	this.timer.start(1000);
+}
+
+ref.refresh = function(text) {
+	var c, i, h, n, j, k;
+
+	watchdogReset();
+
+	++updating;
+	try {
+		netdev = null;
+		eval(text);
+
+		n = (new Date()).getTime();
+		if (this.timeExpect) {
+			if (debugTime) E('dtime').innerHTML = (this.timeExpect - n) + ' ' + ((this.timeExpect + 2000) - n);
+			this.timeExpect += 2000;
+			this.refreshTime = MAX(this.timeExpect - n, 500);
+		}
+		else {
+			this.timeExpect = n + 2000;
+		}
+
+		for (i in netdev) {
+			c = netdev[i];
+			if ((p = prev[i]) != null) {
+				h = speed_history[i];
+
+				h.rx.splice(0, 1);
+				h.rx.push((c.rx < p.rx) ? (c.rx + (0xFFFFFFFF - p.rx)) : (c.rx - p.rx));
+
+				h.tx.splice(0, 1);
+				h.tx.push((c.tx < p.tx) ? (c.tx + (0xFFFFFFFF - p.tx)) : (c.tx - p.tx));
+			}
+			else if (!speed_history[i]) {
+				speed_history[i] = {};
+				h = speed_history[i];
+				h.rx = [];
+				h.tx = [];
+				for (j = 300; j > 0; --j) {
+					h.rx.push(0);
+					h.tx.push(0);
+				}
+				h.count = 0;
+			}
+			prev[i] = c;
+		}
+		loadData();
+	}
+	catch (ex) {
+	}
+	--updating;
+}
+
+function watchdog()
+{
+	watchdogReset();
+	ref.stop();
+	wdogWarn.style.display = '';
+}
+
+function watchdogReset()
+{
+	if (wdog) clearTimeout(wdog)
+	wdog = setTimeout(watchdog, 10000);
+}
+
+function init()
+{
+	speed_history = [];
+
+	initCommon(2, 0, 0, 1);
+	wdogWarn = E('warnwd');
+	//watchdogReset();
+
+	//ref.start();
+	addOnlineHelp($("faq0"), ["ASUSWRT", "Traffic", "Monitor"]);
+	change_interface($('speed-tab-INTERNET'));
+}
+
+function switchPage(page){
+	if(page == "1")
+		
+		return false;
+	else if(page == "2")
+		location.href = "Main_TrafficMonitor_last24.html";
+	else
+		location.href = "Main_TrafficMonitor_daily.html";
+}
+function change_interface(obj){
+	if(obj.id == "speed-tab-INTERNET"){
+		$('speed-tab-INTERNET').className ="active";
+		$('speed-tab-Wired').className ="";
+		$('speed-tab-2g').className ="";
+		$('speed-tab-5g').className ="";
+		$('image_internet').style.display ="";
+		$('image_wired').style.display ="none";
+		$('image_2g').style.display ="none";
+		$('image_5g').style.display ="none";
+		$('rx-current').inerHTML ="0.61KB/s";
+		$('tx-current').inerHTML ="0.06KB/s";
+		$('rx-avg').innerHTML ="39.87KB/s";
+		$('tx-avg').innerHTML ="2.22KB/s";
+		$('rx-max').innerHTML ="536.34KB/s";
+		$('tx-max').innerHTML ="7.65KB/s";
+		$('rx-total').innerHTML ="23.36MB";
+		$('tx-total').innerHTML ="1,332.19KB";
+	}
+	else if (obj.id == "speed-tab-Wired"){
+		$('speed-tab-INTERNET').className ="";
+		$('speed-tab-Wired').className ="active";
+		$('speed-tab-2g').className ="";
+		$('speed-tab-5g').className ="";
+		$('image_internet').style.display ="none";
+		$('image_wired').style.display ="";
+		$('image_2g').style.display ="none";
+		$('image_5g').style.display ="none";
+		$('rx-current').innerHTML ="1.86KB/s";
+		$('tx-current').innerHTML ="1.69KB/s";
+		$('rx-avg').innerHTML ="6.10KB/s";
+		$('tx-avg').innerHTML ="45.08KB/s";
+		$('rx-max').innerHTML ="24.60KB/s";
+		$('tx-max').innerHTML ="238.50B/s";
+		$('rx-total').innerHTML ="3,660.47KB";
+		$('tx-total').innerHTML ="26.42MB";
+	}
+	else if (obj.id == "speed-tab-2g"){
+		$('speed-tab-INTERNET').className ="";
+		$('speed-tab-Wired').className ="";
+		$('speed-tab-2g').className ="active";
+		$('speed-tab-5g').className ="";
+		$('image_internet').style.display ="none";
+		$('image_wired').style.display ="none";
+		$('image_2g').style.display ="";
+		$('image_5g').style.display ="none";
+		$('rx-current').innerHTML ="2.84KB/s";
+		$('tx-current').innerHTML ="1.51KB/s";
+		$('rx-avg').innerHTML ="2.71KB/s";
+		$('tx-avg').innerHTML ="2.24KB/s";
+		$('rx-max').innerHTML ="11.16KB/s";
+		$('tx-max').innerHTML ="284.83KB/s";
+		$('rx-total').innerHTML ="1,628.88KB";
+		$('tx-total').innerHTML ="13.03MB";	
+	}
+	else{
+		$('speed-tab-INTERNET').className ="";
+		$('speed-tab-Wired').className ="";
+		$('speed-tab-2g').className ="";
+		$('speed-tab-5g').className ="active";
+		$('image_internet').style.display ="none";
+		$('image_wired').style.display ="none";
+		$('image_2g').style.display ="none";
+		$('image_5g').style.display ="";
+		$('rx-current').inerHTML ="0.00KB/s";
+		$('tx-current').inerHTML ="0.08KB/s";
+		$('rx-avg').innerHTML ="4.04KB/s";
+		$('tx-avg').innerHTML ="38.53KB/s";
+		$('rx-max').innerHTML ="15.01KB/s";
+		$('tx-max').innerHTML ="250.42KB/s";
+		$('rx-total').innerHTML ="2,422.54KB";
+		$('tx-total').innerHTML ="22.58MB";
+	}
+
+}
+</script>
+</head>
+
+<body onload="show_menu();init();" >
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="Main_TrafficMonitor_realtime.html" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" action="http://event.asus.com/2012/nw/dummy_ui/RU/apply.cgi" target="hidden_frame">
+<input type="hidden" name="current_page" value="Main_TrafficMonitor_realtime.html">
+<input type="hidden" name="next_page" value="Main_TrafficMonitor_realtime.html">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="action_wait" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="RU">
+<input type="hidden" name="firmver" value="3.0.0.4">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+<tr>
+	<td width="23">&nbsp;</td>
+
+<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+
+  <td valign="top">
+		<div id="tabMenu" class="submenuBlock"></div>		
+      	<!--===================================Beginning of Main Content===========================================-->
+      	<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+  		<tr>
+			<td align="left"  valign="top">
+			<table width="100%" border="0" cellpadding="4" cellspacing="0" class="FormTitle" id="FormTitle">		
+				<tbody>	
+				<!--===================================Beginning of graph Content===========================================-->
+	      		<tr>
+					<td bgcolor="#4D595D" valign="top"  >
+		  				<table width="740px" border="0" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="TMTable">
+        			<tr>
+						<td>
+							<table width="100%" >
+							<tr>
+							<td  class="formfonttitle" align="left">								
+										<div style="margin-top:5px;">Диспетчер трафика - Мониторинг трафика</div>
+									</td>
+							<td>
+     						<div align="right">
+     		   					<select onchange="switchPage(this.options[this.selectedIndex].value)" class="input_option">
+									<!--option>切換圖表:</option-->
+									<option value="1" selected>в режиме реального времени</option>
+									<option value="2">последние 24 часа</option>
+									<option value="3">ежедневно</option>
+								</select>	    
+							</div>
+							</td></tr></table>
+						</td>
+        			</tr>
+        			<tr>
+          				<td height="5"><img src="images/New_ui/export/line_export.png" /></td>
+        			</tr>
+        			<tr>
+          				<td height="30" align="left" valign="middle" >
+							<div class="formfontcontent"><p class="formfontcontent">Мониторинг трафика позволяет отслеживать входящие и исходящие пакеты :</p></div>										
+          				</td>
+        			</tr>
+        			<tr>
+          				<td align="left" valign="middle">
+							<table width="95%" border="1" align="left" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="DescTable">
+								<tr><th width="16%"></th><th width="26%">Интернет</th><th width="29%">Проводные</th><th width="29%">Беспроводные</th></tr>
+								<tr><th>Прием</th><td style="color:#FF9000;">Входящие Интернет пакеты </td><td style="color:#3CF;">Входящие пакеты из проводной сети</td><td style="color:#3CF;">Входящие пакеты из беспроводной сети</td></tr>
+								<tr><th>Передача</th><td style="color:#3CF;">Исходящие Интернет пакеты</td><td style="color:#FF9000;">Исходящие пакеты из проводной сети</td><td style="color:#FF9000;">Исходящие пакеты из беспроводной сети</td></tr>
+							</table>	
+          				</td>
+        			</tr>
+        			<tr>
+          				<td height="30" align="left" valign="middle" >
+							<div class="formfontcontent"><p class="formfontcontent"><b>Примечание:</b> сумма пакетов из сети Интернет равна сумме переданных пакетов для проводных и беспроводных устройств.</p></div>
+
+							<div class="formfontcontent"><p class="formfontcontent"><a id="faq0" href="Main_TrafficMonitor_realtime.html" target="_blank" style="font-weight: bolder;text-decoration:underline;">Мониторинг трафика FAQ</a></p></div>										
+          				</td>				
+        			</tr>        			
+
+        			<tr>
+        				<td>
+							<div id="tab-area">
+								<ul id="tabs" class="tabs">
+									<li>
+										<a id="speed-tab-INTERNET" onclick="change_interface(this);"  style="margin-right:3px;float:let;color:#ffffff;" >Internet</a>
+									</li>
+									<li>
+										<a id="speed-tab-Wired" onclick="change_interface(this);" style="margin-right:3px;float:let;color:#ffffff;" >Wired</a>
+									</li>
+									<li>
+										<a id="speed-tab-2g" onclick="change_interface(this);" style="margin-right:3px;float:let;color:#ffffff;" >Wireless(2.4GHz)</a>
+									</li>
+									<li>
+										<a id="speed-tab-5g" onclick="change_interface(this);" style="margin-right:3px;float:let;color:#ffffff;" >Wireless(5GHz)</a>
+									</li>
+								</ul>
+							
+							
+							</div>										
+						
+      					</td>
+        			</tr>
+					<tr>
+							<td>
+							<img id="image_internet" src="images/realtime.png" align="center">
+							<img id="image_wired" src="images/realtime-wired.png" align="center" style="display:none;">
+							<img id="image_2g" src="images/realtime-2g.png" align="center" style="display:none">
+							<img id="image_5g" src="images/realtime-5g.png" align="center" style="display:none">
+							</td>
+							</tr>
+  		     		<tr>
+						<td >
+				    	 	<table width="735px" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable_NWM" style="margin-top:10px">
+						  		<tr>
+						  			<th style="text-align:center; width:160px;height:25px;"></th>
+						  			<th style="text-align:center; width:160px;"></th>
+						  			<th style="text-align:center; width:160px;"></th>
+						  			<th style="text-align:center; width:160px;"></th>
+						  			<th style="text-align:center; width:160px;"></th>
+						  		</tr>
+						  		<tr>
+						  			<td style="text-align:center; background-color:#111;">
+										<div id='rx-sel'>Прием</div>										
+						  			</td>						  			
+						  			<td style="text-align:center;font-weight: bold; background-color:#111;"><span id='rx-current' style="color:#FF9000;">0.06KB/s</span></td>
+						  			<td style="text-align:center; background-color:#111;" id='rx-avg'>39.87<small>KB/s</small></td>
+						  			<td style="text-align:center; background-color:#111;" id='rx-max'>536.34<small>KB/s</small></td>
+						  			<td style="text-align:center; background-color:#111;" id='rx-total'>23.36<small>MB</small></td>
+						    	</tr>						    		
+						    	<tr>
+						    		<td style="text-align:center; background-color:#111;">
+										<div id='tx-sel'>Передача</div>  											             			
+              						</td>   
+									<td style="text-align:center;font-weight: bold; background-color:#111;"><span id='tx-current' style="color:#569AC7;">0.06KB/s</span></td>
+									<td style="text-align:center; background-color:#111;" id='tx-avg'>2.22<small>KB/s</small></td>
+									<td style="text-align:center; background-color:#111;" id='tx-max'>7.65<small>KB/s</small></td>
+									<td style="text-align:center; background-color:#111;" id='tx-total'>1,332.19<small>KB</small></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					</table>					
+					</td>
+				</tr>
+				
+				<tr style="display:none">
+					<td bgcolor="#FFFFFF">
+		  				<table width="100%"  border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+							<thead>
+								<tr>
+									<td colspan="5" id="TriggerList">Display Options</td>
+								</tr>
+							</thead>
+			
+						<div id='bwm-controls'>
+							<tr>
+								<th width='50%'><#Traffic_Avg#></th>
+								<td>
+									<a href='javascript:switchAvg(1)' id='avg1'>Off</a>,
+									<a href='javascript:switchAvg(2)' id='avg2'>2x</a>,
+									<a href='javascript:switchAvg(4)' id='avg4'>4x</a>,
+									<a href='javascript:switchAvg(6)' id='avg6'>6x</a>,
+									<a href='javascript:switchAvg(8)' id='avg8'>8x</a>
+								</td>
+							</tr>
+							<tr>
+								<th><#Traffic_Max#></th>
+								<td>
+									<a href='javascript:switchScale(0)' id='scale0'>Uniform</a>,
+									<a href='javascript:switchScale(1)' id='scale1'>Per IF</a>
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<a href='javascript:switchDraw(0)' id='draw0'>Solid</a>,
+									<a href='javascript:switchDraw(1)' id='draw1'>Line</a>
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<a href='javascript:switchColor()' id='drawcolor'>-</a><a href='javascript:switchColor(1)' id='drawrev'></a>
+								</td>
+							</tr>
+						</div>
+						</table>					
+					</td>
+				</tr>
+			</tbody>		
+			</table>	
+		</td>
+	</tr>
+	</table>				
+	</td>   	 
+	</tr>
+</table>
+
+<div id="footer"></div>
+</body>
+</html>

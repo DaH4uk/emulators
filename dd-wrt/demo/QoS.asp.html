@@ -1,0 +1,783 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - Quality of Service</title>
+
+<script type="text/javascript">
+//<![CDATA[
+
+function svcs_grey(sw_disabled,F) {
+F.add_svc.disabled = sw_disabled;
+for (i=0; i<F.svqos_nosvcs.value; i++) {
+eval("F.svqos_svcdel" + i).disabled = sw_disabled;
+eval("F.svqos_svcprio" + i).disabled = sw_disabled;
+}
+}
+function ips_grey(sw_disabled,F) {
+F.svqos_ipaddr0.disabled = sw_disabled;
+F.svqos_ipaddr1.disabled = sw_disabled;
+F.svqos_ipaddr2.disabled = sw_disabled;
+F.svqos_ipaddr3.disabled = sw_disabled;
+F.svqos_netmask.disabled = sw_disabled;
+F.add_ipsprio_button.disabled = sw_disabled;
+for (i=0; i<F.svqos_noips.value; i++){
+eval("F.svqos_ipdel" + i).disabled = sw_disabled;
+eval("F.svqos_ipprio" + i).disabled = sw_disabled;
+}
+}
+function macs_grey(sw_disabled,F) {
+F.svqos_hwaddr0.disabled = sw_disabled;
+F.svqos_hwaddr1.disabled = sw_disabled;
+F.svqos_hwaddr2.disabled = sw_disabled;
+F.svqos_hwaddr3.disabled = sw_disabled;
+F.svqos_hwaddr4.disabled = sw_disabled;
+F.svqos_hwaddr5.disabled = sw_disabled;
+F.add_macprio_button.disabled = sw_disabled;
+for (i=0; i<F.svqos_nomacs.value; i++){
+eval("F.svqos_macdel" + i).disabled = sw_disabled;
+eval("F.svqos_macprio" + i).disabled = sw_disabled;
+}
+}
+function port_grey(sw_disabled,F) {
+F.svqos_port1prio.disabled = sw_disabled;
+F.svqos_port2prio.disabled = sw_disabled;
+F.svqos_port3prio.disabled = sw_disabled;
+F.svqos_port4prio.disabled = sw_disabled;
+F.svqos_port1bw.disabled = sw_disabled;
+F.svqos_port2bw.disabled = sw_disabled;
+F.svqos_port3bw.disabled = sw_disabled;
+F.svqos_port4bw.disabled = sw_disabled;
+}
+function qos_grey(num,F) {
+var sw_disabled = (num == F.wshaper_enable[1].value) ? true : false;
+F._enable_game.disabled = sw_disabled;
+F.wshaper_uplink.disabled = sw_disabled;
+F.wshaper_downlink.disabled = sw_disabled;
+F.wshaper_dev.disabled = sw_disabled;
+F.qos_type.disabled = sw_disabled;
+F.add_svc_button.disabled = sw_disabled;
+F.edit_svc_button.disabled = sw_disabled;
+//port_grey(sw_disabled, F);
+macs_grey(sw_disabled, F);
+ips_grey(sw_disabled, F);
+svcs_grey(sw_disabled, F);
+}
+function service(id, name, port_start, port_end) {
+this.id = id;
+this.name = name;
+this.start = port_start;
+this.end = port_end;
+}
+var sorton = function(x,y) {
+if(x.name <  y.name) return -1;
+else if (x.name == y.name) return 0;
+else return 1;
+}
+services=new Array();
+services_length=0;
+/* Init. services data structure */
+services[0]=new service(0, "100bao", 0, 0, 99);
+services[1]=new service(1, "aim", 0, 0, 99);
+services[2]=new service(2, "aimwebcontent", 0, 0, 99);
+services[3]=new service(3, "applejuice", 0, 0, 100);
+services[4]=new service(4, "ares", 0, 0, 100);
+services[5]=new service(5, "armagetron", 0, 0, 99);
+services[6]=new service(6, "audiogalaxy", 0, 0, 99);
+services[7]=new service(7, "battlefield1942", 0, 0, 99);
+services[8]=new service(8, "battlefield2", 0, 0, 99);
+services[9]=new service(9, "battlefield2142", 0, 0, 99);
+services[10]=new service(10, "bgp", 0, 0, 99);
+services[11]=new service(11, "biff", 0, 0, 99);
+services[12]=new service(12, "bittorrent", 0, 0, 100);
+services[13]=new service(13, "bt", 0, 0, 99);
+services[14]=new service(14, "bt1", 0, 0, 99);
+services[15]=new service(15, "bt2", 0, 0, 99);
+services[16]=new service(16, "bt3", 0, 0, 99);
+services[17]=new service(17, "chikka", 0, 0, 99);
+services[18]=new service(18, "cimd", 0, 0, 99);
+services[19]=new service(19, "ciscovpn", 0, 0, 99);
+services[20]=new service(20, "citrix", 0, 0, 99);
+services[21]=new service(21, "clubbox", 0, 0, 99);
+services[22]=new service(22, "code_red", 0, 0, 99);
+services[23]=new service(23, "counterstrike-source", 0, 0, 99);
+services[24]=new service(24, "cvs", 0, 0, 99);
+services[25]=new service(25, "dayofdefeat-source", 0, 0, 99);
+services[26]=new service(26, "dazhihui", 0, 0, 99);
+services[27]=new service(27, "dhcp", 0, 0, 99);
+services[28]=new service(28, "directconnect", 0, 0, 100);
+services[29]=new service(29, "dns", 0, 0, 99);
+services[30]=new service(30, "doom3", 0, 0, 99);
+services[31]=new service(31, "edonkey", 0, 0, 100);
+services[32]=new service(32, "exe", 0, 0, 99);
+services[33]=new service(33, "fasttrack", 0, 0, 99);
+services[34]=new service(34, "finger", 0, 0, 99);
+services[35]=new service(35, "flash", 0, 0, 99);
+services[36]=new service(36, "freenet", 0, 0, 99);
+services[37]=new service(37, "freegate_dns", 0, 0, 99);
+services[38]=new service(38, "freegate_http", 0, 0, 99);
+services[39]=new service(39, "ftp", 0, 0, 99);
+services[40]=new service(40, "gif", 0, 0, 99);
+services[41]=new service(41, "gkrellm", 0, 0, 99);
+services[42]=new service(42, "gnucleuslan", 0, 0, 99);
+services[43]=new service(43, "gnutella", 0, 0, 100);
+services[44]=new service(44, "goboogy", 0, 0, 99);
+services[45]=new service(45, "gogobox", 0, 0, 99);
+services[46]=new service(46, "gopher", 0, 0, 99);
+services[47]=new service(47, "gtalk", 0, 0, 99);
+services[48]=new service(48, "gtalk1", 0, 0, 99);
+services[49]=new service(49, "gtalk2", 0, 0, 99);
+services[50]=new service(50, "gtalk_file", 0, 0, 99);
+services[51]=new service(51, "gtalk_file_1", 0, 0, 99);
+services[52]=new service(52, "gtalk_vista", 0, 0, 99);
+services[53]=new service(53, "guildwars", 0, 0, 99);
+services[54]=new service(54, "h323", 0, 0, 99);
+services[55]=new service(55, "hamachi1", 0, 0, 99);
+services[56]=new service(56, "halflife2-deathmatch", 0, 0, 99);
+services[57]=new service(57, "hddtemp", 0, 0, 99);
+services[58]=new service(58, "hotline", 0, 0, 99);
+services[59]=new service(59, "hotspot-shield", 0, 0, 99);
+services[60]=new service(60, "html", 0, 0, 99);
+services[61]=new service(61, "http-rtsp", 0, 0, 99);
+services[62]=new service(62, "http", 0, 0, 99);
+services[63]=new service(63, "http-dap", 0, 0, 99);
+services[64]=new service(64, "http-freshdownload", 0, 0, 99);
+services[65]=new service(65, "http-itunes", 0, 0, 99);
+services[66]=new service(66, "httpaudio", 0, 0, 99);
+services[67]=new service(67, "httpcachehit", 0, 0, 99);
+services[68]=new service(68, "httpcachemiss", 0, 0, 99);
+services[69]=new service(69, "httpvideo", 0, 0, 99);
+services[70]=new service(70, "icq_file", 0, 0, 99);
+services[71]=new service(71, "icq_file_1", 0, 0, 99);
+services[72]=new service(72, "icq_file_2", 0, 0, 99);
+services[73]=new service(73, "icq_login", 0, 0, 99);
+services[74]=new service(74, "ident", 0, 0, 99);
+services[75]=new service(75, "imap", 0, 0, 99);
+services[76]=new service(76, "imesh", 0, 0, 99);
+services[77]=new service(77, "ipp", 0, 0, 99);
+services[78]=new service(78, "irc", 0, 0, 99);
+services[79]=new service(79, "jabber", 0, 0, 99);
+services[80]=new service(80, "jpeg", 0, 0, 99);
+services[81]=new service(81, "kugoo", 0, 0, 99);
+services[82]=new service(82, "live365", 0, 0, 99);
+services[83]=new service(83, "liveforspeed", 0, 0, 99);
+services[84]=new service(84, "lpd", 0, 0, 99);
+services[85]=new service(85, "mohaa", 0, 0, 99);
+services[86]=new service(86, "mp3", 0, 0, 99);
+services[87]=new service(87, "msn-filetransfer", 0, 0, 99);
+services[88]=new service(88, "msnmessenger", 0, 0, 99);
+services[89]=new service(89, "mute", 0, 0, 100);
+services[90]=new service(90, "napster", 0, 0, 99);
+services[91]=new service(91, "nbns", 0, 0, 99);
+services[92]=new service(92, "ncp", 0, 0, 99);
+services[93]=new service(93, "netbios", 0, 0, 99);
+services[94]=new service(94, "nimda", 0, 0, 99);
+services[95]=new service(95, "nntp", 0, 0, 99);
+services[96]=new service(96, "ntp", 0, 0, 99);
+services[97]=new service(97, "ogg", 0, 0, 99);
+services[98]=new service(98, "openft", 0, 0, 99);
+services[99]=new service(99, "pcanywhere", 0, 0, 99);
+services[100]=new service(100, "pdf", 0, 0, 99);
+services[101]=new service(101, "perl", 0, 0, 99);
+services[102]=new service(102, "png", 0, 0, 99);
+services[103]=new service(103, "poco", 0, 0, 99);
+services[104]=new service(104, "pop3", 0, 0, 99);
+services[105]=new service(105, "postscript", 0, 0, 99);
+services[106]=new service(106, "pplive", 0, 0, 99);
+services[107]=new service(107, "pre_icq_login", 0, 0, 99);
+services[108]=new service(108, "pre_msn_login", 0, 0, 99);
+services[109]=new service(109, "pre_urlblock", 0, 0, 99);
+services[110]=new service(110, "pre_yahoo_login", 0, 0, 99);
+services[111]=new service(111, "pressplay", 0, 0, 99);
+services[112]=new service(112, "qianlong", 0, 0, 99);
+services[113]=new service(113, "qq", 0, 0, 99);
+services[114]=new service(114, "qq_login", 0, 0, 99);
+services[115]=new service(115, "qq_login_1", 0, 0, 99);
+services[116]=new service(116, "qq_tcp_file", 0, 0, 99);
+services[117]=new service(117, "qq_udp_file", 0, 0, 99);
+services[118]=new service(118, "qqdownload_1", 0, 0, 99);
+services[119]=new service(119, "qqdownload_2", 0, 0, 99);
+services[120]=new service(120, "qqdownload_3", 0, 0, 99);
+services[121]=new service(121, "qqfile", 0, 0, 99);
+services[122]=new service(122, "qqgame", 0, 0, 99);
+services[123]=new service(123, "qqlive", 0, 0, 99);
+services[124]=new service(124, "qqlive2", 0, 0, 99);
+services[125]=new service(125, "quake-halflife", 0, 0, 99);
+services[126]=new service(126, "quake1", 0, 0, 99);
+services[127]=new service(127, "quicktime", 0, 0, 99);
+services[128]=new service(128, "radmin", 0, 0, 99);
+services[129]=new service(129, "rar", 0, 0, 99);
+services[130]=new service(130, "rdp", 0, 0, 99);
+services[131]=new service(131, "replaytv-ivs", 0, 0, 99);
+services[132]=new service(132, "rlogin", 0, 0, 99);
+services[133]=new service(133, "rpm", 0, 0, 99);
+services[134]=new service(134, "rtf", 0, 0, 99);
+services[135]=new service(135, "rtp", 0, 0, 99);
+services[136]=new service(136, "rtsp", 0, 0, 99);
+services[137]=new service(137, "runesofmagic", 0, 0, 99);
+services[138]=new service(138, "shoutcast", 0, 0, 99);
+services[139]=new service(139, "sip", 0, 0, 99);
+services[140]=new service(140, "skypeout", 0, 0, 99);
+services[141]=new service(141, "skypetoskype", 0, 0, 99);
+services[142]=new service(142, "smb", 0, 0, 99);
+services[143]=new service(143, "smtp", 0, 0, 99);
+services[144]=new service(144, "snmp", 0, 0, 99);
+services[145]=new service(145, "snmp-mon", 0, 0, 99);
+services[146]=new service(146, "snmp-trap", 0, 0, 99);
+services[147]=new service(147, "socks", 0, 0, 99);
+services[148]=new service(148, "soribada", 0, 0, 99);
+services[149]=new service(149, "soulseek", 0, 0, 100);
+services[150]=new service(150, "ssdp", 0, 0, 99);
+services[151]=new service(151, "ssh", 0, 0, 99);
+services[152]=new service(152, "ssl", 0, 0, 99);
+services[153]=new service(153, "stun", 0, 0, 99);
+services[154]=new service(154, "subspace", 0, 0, 99);
+services[155]=new service(155, "subversion", 0, 0, 99);
+services[156]=new service(156, "tar", 0, 0, 99);
+services[157]=new service(157, "teamfortress2", 0, 0, 99);
+services[158]=new service(158, "teamspeak", 0, 0, 99);
+services[159]=new service(159, "teamviewer", 0, 0, 99);
+services[160]=new service(160, "teamviewer1", 0, 0, 99);
+services[161]=new service(161, "telnet", 0, 0, 99);
+services[162]=new service(162, "tesla", 0, 0, 99);
+services[163]=new service(163, "tftp", 0, 0, 99);
+services[164]=new service(164, "thecircle", 0, 0, 99);
+services[165]=new service(165, "thunder5_see", 0, 0, 99);
+services[166]=new service(166, "thunder5_tcp", 0, 0, 99);
+services[167]=new service(167, "tonghuashun", 0, 0, 99);
+services[168]=new service(168, "tor", 0, 0, 99);
+services[169]=new service(169, "tsp", 0, 0, 99);
+services[170]=new service(170, "unknown", 0, 0, 99);
+services[171]=new service(171, "uucp", 0, 0, 99);
+services[172]=new service(172, "validcertssl", 0, 0, 99);
+services[173]=new service(173, "ventrilo", 0, 0, 99);
+services[174]=new service(174, "vnc", 0, 0, 99);
+services[175]=new service(175, "webmail_163", 0, 0, 99);
+services[176]=new service(176, "webmail_gmail", 0, 0, 99);
+services[177]=new service(177, "webmail_hinet", 0, 0, 99);
+services[178]=new service(178, "webmail_hotmail", 0, 0, 99);
+services[179]=new service(179, "webmail_pchome", 0, 0, 99);
+services[180]=new service(180, "webmail_qq", 0, 0, 99);
+services[181]=new service(181, "webmail_seednet", 0, 0, 99);
+services[182]=new service(182, "webmail_sina", 0, 0, 99);
+services[183]=new service(183, "webmail_sohu", 0, 0, 99);
+services[184]=new service(184, "webmail_tom", 0, 0, 99);
+services[185]=new service(185, "webmail_url", 0, 0, 99);
+services[186]=new service(186, "webmail_yahoo", 0, 0, 99);
+services[187]=new service(187, "webmail_yam", 0, 0, 99);
+services[188]=new service(188, "whois", 0, 0, 99);
+services[189]=new service(189, "winmx", 0, 0, 100);
+services[190]=new service(190, "worldofwarcraft", 0, 0, 99);
+services[191]=new service(191, "x11", 0, 0, 99);
+services[192]=new service(192, "xboxlive", 0, 0, 99);
+services[193]=new service(193, "xdcc", 0, 0, 100);
+services[194]=new service(194, "xunlei", 0, 0, 99);
+services[195]=new service(195, "yahoo", 0, 0, 99);
+services[196]=new service(196, "yahoo_camera", 0, 0, 99);
+services[197]=new service(197, "yahoo_file", 0, 0, 99);
+services[198]=new service(198, "yahoo_login", 0, 0, 99);
+services[199]=new service(199, "yahoo_voice", 0, 0, 99);
+services[200]=new service(200, "zip", 0, 0, 99);
+services[201]=new service(201, "zmaap", 0, 0, 99);
+services_length = 202;
+
+services.sort(sorton);
+function svc_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_svc";
+apply(F);
+}
+function ip_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_ip";
+apply(F);
+}
+function mac_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_mac";
+apply(F);
+}
+function submitcheck(F) {
+if (F._enable_game.checked == false){
+F.enable_game.value = 0;
+}else{
+F.enable_game.value = 1;
+}
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "save";
+F.save_button.value = sbutton.saving;
+}
+function to_submit(F) {
+submitcheck(F);
+apply(F);
+}
+function to_apply(F) {
+submitcheck(F);
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+
+qos_grey(0,document.QoS);
+
+update = new StatusbarUpdate();
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationspforwarding)</script></strong></a></li>
+      <li><a href="Forward.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsprforwarding)</script></strong></a></li>
+      <li><a href="Triggering.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsptriggering)</script></strong></a></li>
+      <li><a href="UPnP.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsUpnp)</script></strong></a></li>
+      <li><a href="DMZ.asp.html"><strong><script type="text/javascript">Capture(bmenu.applicationsDMZ)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.applicationsQoS)</script></strong></span></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+	<div id="main">
+<div id="contents">
+<form name="QoS" action="#" method="post" >
+<input type="hidden" name="submit_button" value="QoS" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="commit" value="1" />
+
+<input type="hidden" name="enable_game" value="1" />
+
+<h2><script type="text/javascript">Capture(qos.h2)</script></h2>
+
+<fieldset>
+								<legend><script type="text/javascript">Capture(qos.legend)</script></legend>
+								<div class="setting">
+<div class="label"><script type="text/javascript">Capture(qos.srv)</script></div>
+<input class="spaceradio" type="radio" value="1" name="wshaper_enable" onclick="qos_grey(this.value,this.form)"  /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" value="0" name="wshaper_enable" onclick="qos_grey(this.value,this.form)" checked /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.port)</script></div>
+<select name="wshaper_dev">
+<option value="WAN" selected>WAN</option>
+<option value="LAN" >LAN &amp; WLAN</option>
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(qos.type)</script></div>
+<select name="qos_type">
+<option value="0" selected>HTB</option>
+<option value="1" >HFSC</option>
+</select>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(qos.uplink)</script></div>
+<input type="text" size="5" class="num" name="wshaper_uplink" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(qos.dnlink)</script></div>
+<input type="text" size="5" class="num" name="wshaper_downlink" value="0" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(qos.gaming)</script></div>
+<input type="checkbox" name="_enable_game" value="1"  />
+</div>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(qos.legend2)</script></legend>
+<table class="table" summary="services priority table">
+<tr>
+<th><script type="text/javascript">Capture(share.del)</script></th>
+<th><script type="text/javascript">Capture(share.srv)</script></th>
+<th><script type="text/javascript">Capture(share.priority)</script></th>
+</tr>
+<tr><td colspan="3"><input type="hidden" name="svqos_nosvcs" value="0" /></td></tr>
+<tr>
+<td>&nbsp;</td>
+<td colspan="2">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"add_svc_button\" value=\"" + sbutton.add + "\" onclick=\"svc_add_submit(this.form);\" />");
+//]]>
+</script>&nbsp;&nbsp;&nbsp;
+<select name="add_svc">
+<script type="text/javascript">
+//<![CDATA[
+var i=0;
+for(i=0;i<services_length;i++)
+document.write("<option value=\""+services[i].name+"\">"+services[i].name+ " [ "+
+services[i].start+" ~ "+
+services[i].end + " ]" + "</option>");
+//]]>
+</script>
+</select>
+</td>
+</tr>
+</table><br />
+<div class="center">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"edit_svc_button\" value=\"" + sbutton.edit_srv + "\" onclick=\"openWindow('Port_Services.asp', 630, 430);\" />");
+//]]>
+</script>&nbsp;&nbsp;&nbsp;
+</div>
+
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(qos.legend3)</script></legend>
+<table class="table" summary="IP addresses priority table">
+<tr>
+  					<th><script type="text/javascript">Capture(share.del)</script></th>
+  					<th><script type="text/javascript">Capture(qos.ipmask)</script></th>
+  					<th><script type="text/javascript">Capture(qos.maxuprate_b)</script></th>
+  					<th><script type="text/javascript">Capture(qos.maxdownrate_b)</script></th>
+  				</tr>
+<tr><td colspan="3"><input type="hidden" name="svqos_noips" value="0" /></td></tr>
+<tr>
+<td>&nbsp;</td>
+<td colspan="2">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"add_ipsprio_button\" value=\"" + sbutton.add + "\" onclick=\"ip_add_submit(this.form);\" />");
+//]]>
+</script>&nbsp;&nbsp;&nbsp;
+<input size="3" maxlength="3" name="svqos_ipaddr0" value="0" onblur="valid_range(this,0,255,'IP')" class="num" />.<input size="3" maxlength="3" name="svqos_ipaddr1" value="0" onblur="valid_range(this,0,255,'IP')" class="num" />.<input size="3" maxlength="3" name="svqos_ipaddr2" value="0" onblur="valid_range(this,0,255,'IP')" class="num" />.<input size="3" maxlength="3" name="svqos_ipaddr3" value="0" onblur="valid_range(this,0,255,'IP')" class="num" />&nbsp;/&nbsp;
+<input size="3" maxlength="3" name="svqos_netmask" value="0" onblur="valid_range(this,0,32,share.subnet)" class="num" />
+</td>
+</tr>
+</table>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(qos.legend4)</script></legend>
+<table class="table" summary="MAC priority table">
+<tr>
+  					<th><script type="text/javascript">Capture(share.del)</script></th>
+  					<th><script type="text/javascript">Capture(share.mac)</script></th>
+  					<th><script type="text/javascript">Capture(qos.maxuprate_b)</script></th>
+  					<th><script type="text/javascript">Capture(qos.maxdownrate_b)</script></th>
+  				</tr>
+<input type="hidden" name="svqos_nomacs" value="0" />
+<tr>
+<td>&nbsp;</td>
+<td colspan="2">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"add_macprio_button\" value=\"" + sbutton.add + "\" onclick=\"mac_add_submit(this.form);\" />")
+//]]>
+</script>&nbsp;&nbsp;&nbsp;
+<input name="svqos_hwaddr0" value="00" size="2" maxlength="2" onblur="valid_mac(this,0)" class="num" />:<input name="svqos_hwaddr1" value="00" size="2" maxlength="2" onblur="valid_mac(this,1)" class="num" />:<input name="svqos_hwaddr2" value="00" size="2" maxlength="2" onblur="valid_mac(this,1)" class="num"/>:<input name="svqos_hwaddr3" value="00" size="2" maxlength="2" onblur="valid_mac(this,1)" class="num" />:<input name="svqos_hwaddr4" value="00" size="2" maxlength="2" onblur="valid_mac(this,1)" class="num" />:<input name="svqos_hwaddr5" value="00" size="2" maxlength="2" onblur="valid_mac(this,1)" class="num" />
+</td>
+</tr>
+</table>
+</fieldset><br />
+<fieldset>
+<legend><script type="text/javascript">Capture(qos.legend6)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(qos.bandwidth)</script> Up</div>
+<input type="num" name="default_uplevel" size="6" value="100000" /> Down
+<input type="num" name="default_downlevel" size="6" value="100000" />
+</div>
+</fieldset><br />
+
+<!--							
+<fieldset>
+<legend><script type="text/javascript">Capture(qos.legend5)</script></legend>
+<table>
+<tr>
+<th>&nbsp;</th>
+<th><script type="text/javascript">Capture(share.priority)</script></th>
+<th><script type="text/javascript">Capture(qos.maxrate_o)</script></th>
+</tr>
+<tr>
+<td><script type="text/javascript">Capture(share.port)</script> 1</td>
+<td>
+<select name="svqos_port1prio">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"100\"  >" + qos.prio_x + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"10\" selected >" + qos.prio_p + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"20\"  >" + qos.prio_e + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"30\"  >" + share.standard + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"40\"  >" + qos.prio_b + "</option>");
+//]]>
+</script>
+</select>
+</td>
+<td>
+<select name="svqos_port1bw">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\"  >" + share.disable + "</option>");
+//]]>
+</script>
+<option value="256K" >256k</option>
+<option value="512K" >512k</option>
+<option value="1M" >1M</option>
+<option value="2M" >2M</option>
+<option value="5M" >5M</option>
+<option value="10M" >10M</option>
+<option value="20M" >20M</option>
+<option value="50M" >50M</option>
+<option value="FULL" selected>100M</option>
+</select>
+</td>
+</tr>
+<tr>
+<td><script type="text/javascript">Capture(share.port)</script> 2</td>
+<td>
+<select name="svqos_port2prio">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"100\"  >" + qos.prio_x + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"10\" selected >" + qos.prio_p + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"20\"  >" + qos.prio_e + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"30\"  >" + share.standard + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"40\"  >" + qos.prio_b + "</option>");
+//]]>
+</script>
+</select>
+</td>
+<td>
+<select name="svqos_port2bw">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\"  >" + share.disable + "</option>");
+//]]>
+</script>
+<option value="256K" >256k</option>
+<option value="512K" >512k</option>
+<option value="1M" >1M</option>
+<option value="2M" >2M</option>
+<option value="5M" >5M</option>
+<option value="10M" >10M</option>
+<option value="20M" >20M</option>
+<option value="50M" >50M</option>
+<option value="FULL" selected>100M</option>
+</select>
+</td>
+</tr>
+<tr>
+<td><script type="text/javascript">Capture(share.port)</script> 3</td>
+<td>
+<select name="svqos_port3prio">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"100\"  >" + qos.prio_x + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"10\" selected >" + qos.prio_p + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"20\"  >" + qos.prio_e + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"30\"  >" + share.standard + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"40\"  >" + qos.prio_b + "</option>");
+//]]>
+</script>
+</select>
+</td>
+<td>
+<select name="svqos_port3bw">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\"  >" + share.disable + "</option>");
+//]]>
+</script>
+<option value="256K" >256k</option>
+<option value="512K" >512k</option>
+<option value="1M" >1M</option>
+<option value="2M" >2M</option>
+<option value="5M" >5M</option>
+<option value="10M" >10M</option>
+<option value="20M" >20M</option>
+<option value="50M" >50M</option>
+<option value="FULL" selected>100M</option>
+</select>
+</td>
+</tr>
+<tr>
+<td><script type="text/javascript">Capture(share.port)</script> 4</td>
+<td>
+<select name="svqos_port4prio">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"100\"  >" + qos.prio_x + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"10\" selected >" + qos.prio_p + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"20\"  >" + qos.prio_e + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"30\"  >" + share.standard + "</option>");
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"40\"  >" + qos.prio_b + "</option>");
+//]]>
+</script>
+</select>
+</td>
+<td>
+<select name="svqos_port4bw">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<option value=\"0\"  >" + share.disable + "</option>");
+//]]>
+</script>
+<option value="256K" >256k</option>
+<option value="512K" >512k</option>
+<option value="1M" >1M</option>
+<option value="2M" >2M</option>
+<option value="5M" >5M</option>
+<option value="10M" >10M</option>
+<option value="20M" >20M</option>
+<option value="50M" >50M</option>
+<option value="FULL" selected>100M</option>
+</select>
+</td>
+</tr>
+</table>
+</fieldset><br />
+-->							
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(hqos.right1)</script></dt>
+<dd class="definition"><script type="text/javascript">Capture(hqos.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(hqos.right3)</script></dt>
+<dd class="definition"><script type="text/javascript">Capture(hqos.right4)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(qos.legend2)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hqos.right6)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(qos.legend3)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hqos.right8)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(qos.legend4)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hqos.right10)</script></dd>
+<!--dt class="term"><script type="text/javascript">Capture(qos.legend5)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hqos.right12)</script></dd-->
+</dl>
+<br/>
+<a href="javascript:openHelpWindow('HQos.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:04 up 24 min, load average: 0.00, 0.00, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+function isInputIntoView(elem) {
+    var $obj;
+    return $obj = elem.jquery ? elem : $(elem), $obj.position().top > 40 && $obj.position().top < $("#pageGeneral").height()
+}
+
+function scrollToVisible(elem) {
+    return $("#pageGeneral").is(":visible") && $(elem).is(":visible") ? void(0 == document.validateTemp.anim ? $("#pageGeneral").animate({
+        scrollTop: $(elem).position().top
+    }, 1200) : document.validateTemp.elem = elem) : !1
+}
+
+function jsEditClientViewPatch(ctrl, viewInx, options) {
+    jsEditClientViewPatch.superclass.constructor.call(this, ctrl, viewInx, options), jsEditClientViewPatch.prototype.drawView = function() {
+        jsEditClientViewPatch.superclass.drawView.call(this), $(this.viewBoxSel).bind("focusin", function() {
+            $(this).addClass("focus")
+        }).bind("focusout", function() {
+            $(this).removeClass("focus")
+        })
+    }, jsEditClientViewPatch.prototype.setError = function(statusCode) {
+        var child = this.getChild(0);
+        if (statusCode = statusCode ? statusCode : child.statusCode ? child.statusCode : this.statusCode, $(this.errorSel).hide(), statusCode) {
+            $(this.inputSel).is(":hidden") && this.getParent() instanceof jsFieldSetClientView && this.getParent().options && this.getParent().options.collapsed && this.getParent().toggleSlider(0), $(this.errorSel).html(lng(statusCode));
+            var errorSel = this.errorSel;
+            no(this.inputSel) ? ($(this.errorSel).fadeIn("slow"), scrollToVisible(this.errorSel)) : ($(this.inputSel).addClass("validate"), isInputIntoView(this.inputSel) ? ($(this.inputSel).parent().css("height", $(this.inputSel).parent().height()), document.validateTemp.anim++, $(this.inputSel).effect("bounce", {
+                times: 3,
+                direction: "left",
+                distance: 8
+            }, 300, function() {
+                $(this).css({
+                    left: "",
+                    top: "",
+                    position: "static"
+                }), $(errorSel).fadeIn("slow"), document.validateTemp.anim--, scrollToVisible(document.validateTemp.elem)
+            })) : ($(this.errorSel).fadeIn("slow"), scrollToVisible(this.errorSel))), this.ctrl.event("errstat", null, !0)
+        }
+        else $(this.errorSel).fadeOut("fast"), no(this.inputSel) || $(this.inputSel).removeClass("validate");
+        return !1
+    }
+}
+
+function nodeInputPatch(name, val, options) {
+    nodeInputPatch.superclass.constructor.apply(this, arguments), this.options = options ? options : {}, this.bindEvents = function() {
+        return this.pluginInput.bind("unfocus.input enter.input tab.input", context(this).callback(function(event) {
+            return this.pluginEdit.cleanError(), this.emit("fieldchange", this.pluginInput.fieldval()), event.stopPropagation(), !0
+        })), this.pluginInput.bind("error.input", context(this).callback(function(event, errorCode) {
+            isInputIntoView(this.$box) || scrollToVisible(this.$box), this.pluginEdit.setError(errorCode)
+        })), this.pluginInput.bind("onfocus.input", context(this).callback(function() {
+            this.pluginEdit.cleanError()
+        })), this
+    }, this.updateModel = function(status) {
+        if (!this.pluginEdit.isDisabled() && !this.pluginEdit.is(":hidden")) {
+            var errorCode;
+            return this.options.mandatory && (errorCode = this.pluginInput.isEmpty() ? "fieldEmpty" : null), is.unset(errorCode) && (errorCode = this.validate()), is.set(errorCode) ? (isInputIntoView(this.$box) || scrollToVisible(this.$box), this.pluginEdit.setError(errorCode), status.error = !0, status.nodes.push(this)) : this.value = this.val(), this
+        }
+    }
+}
+
+function nodeComboGridPatch() {
+    nodeComboGridPatch.superclass.constructor.apply(this, arguments), this.bindEvents = function() {
+        return is.string(this.options.blank) ? (this.pluginCombo.bind("unfocus.input enter.input tab.input", context(this).callback(function(event) {
+            return this.pluginEdit.cleanError(), this.fieldchange(), event.stopPropagation(), !0
+        })), this.pluginCombo.bind("rowclick.grid", context(this).callback(function(event, $row) {
+            return this.pluginEdit.cleanError(), this.emit("ruleselect", $row), event.stopPropagation(), !0
+        }))) : this.pluginCombo.bind("unfocus.input enter.input tab.input rowclick.grid", context(this).callback(function(event) {
+            return this.pluginEdit.cleanError(), this.fieldchange(), event.stopPropagation(), !0
+        })), this.pluginCombo.bind("error.input", context(this).callback(function(event, errorCode) {
+            isInputIntoView(this.$box) || scrollToVisible(this.$box), this.pluginEdit.setError(errorCode)
+        })), this.pluginCombo.bind("onfocus.input", context(this).callback(function() {
+            this.pluginEdit.cleanError()
+        })), this
+    }, this.updateModel = function(status) {
+        if (!this.pluginEdit.isDisabled() && !this.pluginEdit.is(":hidden")) {
+            var errorCode;
+            return this.options.mandatory && (errorCode = this.pluginCombo.isEmpty() ? "fieldEmpty" : null), is.unset(errorCode) && (errorCode = this.validate()), is.set(errorCode) ? (isInputIntoView(this.$box) || scrollToVisible(this.$box), this.pluginEdit.setError(errorCode), status.error = !0, status.nodes.push(this)) : this.value = this.val(), this
+        }
+    }
+}
+document.validateTemp = {
+    anim: 0,
+    elem: null
+}, extend(jsEditClientViewPatch, jsEditClientView), extend(jsInputSlotView, jsEditClientViewPatch), extend(jsSubNetAddrSlotView, jsEditClientViewPatch), extend(nodeInputPatch, nodeInput), extend(nodeip, nodeInputPatch), extend(nodemac, nodeInputPatch), extend(nodeDomainName, nodeInputPatch), extend(nodetext, nodeInputPatch), extend(nodenum, nodeInputPatch), extend(nodeComboGridPatch, nodeComboGrid), extend(nodeComboIP, nodeComboGridPatch), extend(nodeComboMAC, nodeComboGridPatch), extend(nodeComboHost, nodeComboGridPatch), extend(nodeComboText, nodeComboGridPatch);

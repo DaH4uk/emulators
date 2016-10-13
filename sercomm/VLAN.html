@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="product16" style="display: block;">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!--[if lt IE 9]>
+	<script src="js/html5.js"></script>
+	<![endif]-->
+    <link href="./img/entry-level.png" type="image/png" rel="icon">
+    <link rel="stylesheet" href="./css/reset.css" type="text/css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <link rel="stylesheet" href="./css/content.css" type="text/css">
+    <!--[if lt IE 9]><style type="text/css">article .button-cancel, article .button-apply, article .button-blank, #progress-bar-buttons .button-apply, #progress-bar-buttons .button-cancel { padding-bottom: 3px; }</style><![endif]-->
+    <script src="./js/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <style type="text/css">
+         :root .banner_box,
+         :root .adv {
+            display: none !important;
+        }
+    </style>
+    <style type="text/css">
+        #chromereload_page_informer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(142, 255, 186, 0.5);
+            height: 24px;
+            padding: 10px 10px 0 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #4A4A4A;
+            z-index: 99999;
+            cursor: pointer;
+        }
+    </style>
+    <script src="./js/jquery.easing.1.3.js" type="text/javascript"></script>
+    <script src="./js/jquery.hashchange.js" type="text/javascript"></script>
+    <!-- justin add -->
+    <!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie8content.css" type="text/css" />
+	<![endif]-->
+    <script src="./js/mainFunctions.js" type="text/javascript"></script>
+    <script src="./js/mainFrame.js" type="text/javascript"></script>
+    <script src="./js/pageLoadFunctions.js" type="text/javascript"></script>
+    <script src="./js/multi_lang.js" type="text/javascript"></script>
+
+    <script src="./js/settings.js" type="text/javascript"></script>
+
+    <!-- justin add end -->
+    <link rel="stylesheet" href="./css/settings.css" type="text/css">
+    <script src="./js/functionsNotOverview.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var category = 'settings';
+        var defaultSub = '60';
+        // get submenu and subsubmenu
+        var gets = getHashVars();
+        sub = gets['sub'];
+        var subSub = gets['subSub'];
+        var load = ''; // content to load
+        var oldCat = 'value';
+        var task = false;
+        var messagesCat = false;
+    </script>
+
+    <title>VLAN</title>
+</head>
+
+<body class="en expert settings">
+
+    <div id="wrap">
+        <header id="header">
+            <div id="head-wrap" class="clearfix">
+                <a href="./overview.html" class="logos"><img src="./img/entry-level.png" alt="Sercomm Logo"></a><a href="./index.html" id="logout">&nbsp;</a>
+                <div id="dropDownBasExp" class="admin" style="display: none;">
+                    <div href="" id="selectBasic" class="selectBasic"><span id="lang700056">Базовый режим</span></div>
+                    <div href="" id="selectExpert" class="selectExpert"><span id="lang700057">Эксперт-режим</span></div>
+                </div>
+            </div>
+            <nav>
+                <ul class="clearfix five settingsMenu ">
+                    <li id="overview"><a href="./overview.html"><span id="lang700031">Обзор</span></a></li>
+                    <li id="internet"><a href="./internet.html"><span id="lang700033">Интернет</span></a></li>
+                    <li id="wifi"><a href="./wifi.html"><span id="lang700034">Wi-Fi</span></a></li>
+                    <li id="settings" class="active"><a href="./settings.html"><span id="lang700035">Параметры</span></a></li>
+                    <li id="status-and-support"><a href="./status-and-support.html"><span id="lang700036">Статус и поддержка</span></a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="inner-wrap" class="clearfix notOverview">
+            <script>
+                document.write('<div id="indicator"><img src="img/indicator.png" alt="Indicator" /></div>');
+            </script>
+            <div id="indicator" style="display: none;"><img src="./img/indicator.png" alt="Indicator"></div>
+            <div id="navigation">
+                <ul>
+                    <li id="77" class="menuItem"><a href="./settings.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905021">Язык</span></a></li>
+                    <li id="60" class="menuItem"><a href="./password.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905001">Пароль</span></a></li>
+                    <li id="58" class="menuItem"><a href="./USB.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905003">USB</span></a></li>
+                    <li id="56" class="menuItem sub"><a href="./shared_USB_access.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505001">Общий доступ к USB</span></a>
+                        <div class="subMenu" style="display: none; height: 0px;">
+                            <ul>
+                                <li id="57" class="subMenuItem sub"><a href="./DLNA.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905004">DLNA</span></a></li>
+                                <li id="51" class="subMenuItem sub"><a href="./file_server.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505005">Файловый сервер</span></a></li>
+                                <li id="50" class="subMenuItem sub"><a href="./FTP.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905011">FTP</span></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li id="54" class="menuItem"><a href="./configuration_file.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905007">Файл конфигурации</span></a></li>
+                    <li id="52" class="menuItem"><a href="./LAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905009">LAN</span></a></li>
+                    <li id="59" class="menuItem"><a href="./firmware_update.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905002">Обновление прошивки</span></a></li>
+                    <li id="73" class="menuItem"><a href="./QoS.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905018">QoS</span></a></li>
+                    <li id="74" class="menuItem"><a href="./time_synchronization.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang513001">Синхронизация времени</span></a></li>
+                    <li id="75" class="menuItem"><a href="./TR-069.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905019">TR-069</span></a></li>
+                    <li id="80" class="menuItem"><a href="./Access_control.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang906017">Контроль доступа</span></a></li>
+                    <li id="68" class="menuItem"><a href="./WAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903013">WAN</span></a></li>
+                    <li id="302" class="menuItem"><a href="./PPPoE_Realy.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">PPPoE Relay</span></a></li>
+                    <li id="301" class="menuItem active"><a href="./VLAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">VLAN</span></a></li>
+                    <li id="300" class="menuItem"><a href="./IPTV.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang606029">IPTV</span></a></li>
+                    <li id="303" class="menuItem"><a href="./syslog_client.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1310572">Syslog Client</span></a></li>
+                    <li id="97" class="menuItem"><a href="./IPv6.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905023">IPv6</span></a></li>
+                    <li id="86" class="menuItem"><a href="./static_routes.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang522001">Статические маршруты</span></a></li>
+                    <li id="93" class="menuItem"><a href="./policy_routing.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903018">Политики маршрутизации</span></a></li>
+                </ul>
+            </div>
+
+            <article id="settings">
+                <div id="content" class="sub301">
+
+
+
+
+
+
+                    <h1><span id="lang1301403">VLAN Settings</span></h1>
+                    <h2>
+                        <!--span id="lang1301401">Enable IPTV on wired LAN port.</span-->
+                    </h2>
+
+                    <div class="h3-content">
+                        <div class="table vlan">
+                            <div class="table-row table-row-head">
+                                <!--div class="table-col table-col1"><span id="lang1301408" title="1301408">Enable</span></div-->
+                                <div class="table-col table-col2"><span id="lang302024">Устройство</span></div>
+                                <div class="table-col table-col3"><span id="lang312003">Режим</span></div>
+                                <div class="table-col table-col4"><span id="lang1301404">Тег</span></div>
+                                <div class="table-col table-col5"><span id="lang1301405">VLAN ID(-1~4095)</span></div>
+                                <!--div class="table-col table-col6"><span id="lang1301406" title="1301406">Priority</span></div>
+			<div class="table-col table-col7"><span id="lang1301407" title="1301407">CFI</span></div-->
+                            </div>
+                            <div class="table-row">
+                                <!--div class="table-col table-col1"><input id="eth_port1_enable" class="button checkbox checkbox-unchecked" type="button"></div-->
+                                <div class="table-col table-col2"><span id="lang1301409">Порт LAN</span>1</div>
+                                <div class="table-col table-col3"><select id="eth_port1_mode" class="mode"><option value="nat">NAT</option><option value="bridge">Bridge</option></select></div>
+                                <div class="table-col table-col4"><input id="eth_port1_tag" class="button checkbox checkbox-unchecked" type="button"></div>
+                                <div class="table-col table-col5"><input id="eth_port1_vid" class="max4 scm_min_number scm_max_number" scm_min_number="-1" scm_max_number="4095" type="text" maxlength="4" value="-1"></div>
+                                <!--div class="table-col table-col6"><select id="eth_port1_priority" class="priority"></select></div>
+			<div class="table-col table-col7"><input id="eth_port1_cfi" class="button checkbox checkbox-checked" type="button"></div-->
+                            </div>
+                            <div class="table-row">
+                                <!--div class="table-col table-col1"><input id="eth_port2_enable" class="button checkbox checkbox-unchecked" type="button"></div-->
+                                <div class="table-col table-col2"><span id="lang1301409">Порт LAN</span>2</div>
+                                <div class="table-col table-col3"><select id="eth_port2_mode" class="mode"><option value="nat">NAT</option><option value="bridge">Bridge</option></select></div>
+                                <div class="table-col table-col4"><input id="eth_port2_tag" class="button checkbox checkbox-unchecked" type="button"></div>
+                                <div class="table-col table-col5"><input id="eth_port2_vid" class="max4 scm_min_number scm_max_number" scm_min_number="-1" scm_max_number="4095" type="text" maxlength="4" value="-1"></div>
+                                <!--div class="table-col table-col6"><select id="eth_port2_priority" class="priority"></select></div>
+			<div class="table-col table-col7"><input id="eth_port2_cfi" class="button checkbox checkbox-checked" type="button"></div-->
+                            </div>
+                            <div class="table-row">
+                                <!--div class="table-col table-col1"><input id="eth_port3_enable" class="button checkbox checkbox-unchecked" type="button"></div-->
+                                <div class="table-col table-col2"><span id="lang1301409">Порт LAN</span>3</div>
+                                <div class="table-col table-col3"><select id="eth_port3_mode" class="mode"><option value="nat">NAT</option><option value="bridge">Bridge</option></select></div>
+                                <div class="table-col table-col4"><input id="eth_port3_tag" class="button checkbox checkbox-unchecked" type="button"></div>
+                                <div class="table-col table-col5"><input id="eth_port3_vid" class="max4 scm_min_number scm_max_number" scm_min_number="-1" scm_max_number="4095" type="text" maxlength="4" value="-1"></div>
+                                <!--div class="table-col table-col6"><select id="eth_port3_priority" class="priority"></select></div>
+			<div class="table-col table-col7"><input id="eth_port3_cfi" class="button checkbox checkbox-checked" type="button"></div-->
+                            </div>
+                            <div class="table-row">
+                                <!--div class="table-col table-col1"><input id="eth_port4_enable" class="button checkbox checkbox-unchecked" type="button"></div-->
+                                <div class="table-col table-col2"><span id="lang1301409">Порт LAN</span>4</div>
+                                <div class="table-col table-col3"><select id="eth_port4_mode" class="mode"><option value="nat">NAT</option><option value="bridge">Bridge</option></select></div>
+                                <div class="table-col table-col4"><input id="eth_port4_tag" class="button checkbox checkbox-unchecked" type="button"></div>
+                                <div class="table-col table-col5"><input id="eth_port4_vid" class="max4 scm_min_number scm_max_number" scm_min_number="-1" scm_max_number="4095" type="text" maxlength="4" value="-1"></div>
+                                <!--div class="table-col table-col6"><select id="eth_port4_priority" class="priority"></select></div>
+			<div class="table-col table-col7"><input id="eth_port4_cfi" class="button checkbox checkbox-checked" type="button"></div-->
+                            </div>
+                            <!--div class="table-row">
+			<div class="table-col table-col1"><input id="wifi24g_ap_enable" class="button checkbox checkbox-unchecked" type="button"></div> 
+			<div class="table-col table-col2"><span id="lang1301411" title="1301411">2.4G WIFI Primary AP</span></div>
+			<div class="table-col table-col3"><select id="wifi24g_ap_mode" class="mode"></select></div>
+			<div class="table-col table-col4"><input id="wifi24g_ap_tag" class="button checkbox checkbox-unchecked" type="button"></div>
+			<div class="table-col table-col5"><input id="wifi24g_ap_vid" class="max4 scm_min_number scm_max_number" scm_min_number="-1" scm_max_number="4095" type="text" maxlength="4" value=""></div>
+			<div class="table-col table-col6"><select id="wifi24g_ap_priority" class="priority"></select></div>
+			<div class="table-col table-col7"><input id="wifi24g_ap_cfi" class="button checkbox checkbox-checked" type="button"></div>
+		</div>
+		<div class="table-row">
+			<div class="table-col table-col1"><input id="wifi5g_ap_enable" class="button checkbox checkbox-unchecked" type="button"></div> 
+			<div class="table-col table-col2"><span id="lang1301412" title="1301412">5G WIFI Primary AP</span></div>
+			<div class="table-col table-col3"><select id="wifi5g_ap_mode" class="mode"></select></div>
+			<div class="table-col table-col4"><input id="wifi5g_ap_tag" class="button checkbox checkbox-unchecked" type="button"></div>
+			<div class="table-col table-col5"><input id="wifi5g_ap_vid" class="max4 scm_min_number scm_max_number" scm_min_number="-1" scm_max_number="4095" type="text" maxlength="4" value=""></div>
+			<div class="table-col table-col6"><select id="wifi5g_ap_priority" class="priority"></select></div>
+			<div class="table-col table-col7"><input id="wifi5g_ap_cfi" class="button checkbox checkbox-checked" type="button"></div>
+		</div-->
+                        </div>
+                    </div>
+
+                    <div class="apply-cancel-margin-top">
+
+                        <div class="clearfix apply-cancel">
+                            <div class="right">
+                                <input id="cancelButton" class="button button-cancel right" value="Отмена" type="button">
+                            </div>
+                            <div class="right">
+                                <input id="applyButton" class="button button-apply right" value="Применить" type="button">
+                            </div>
+                        </div>
+
+                        <div class="message-arrowbox" style="display: none;">
+                            <div class="message-arrowbox-right">
+                                <span id="lang700175">Некоторые параметры были изменены</span>
+                            </div>
+                        </div>
+                        <div class="message-arrowbox-applied" style="display: none;">
+                            <div class="message-arrowbox-applied-right">
+                                <span id="lang700176">Изменения были применены.</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+                    <style>
+                        .table-row {
+                            height: auto;
+                            min-height: 30px;
+                            padding-top: 6px;
+                        }
+                        
+                        .table.vlan .table-col {
+                            padding-right: 3px;
+                            word-wrap: break-word;
+                            overflow: hidden;
+                        }
+                        
+                        .table.vlan .table-col.table-col1 {
+                            width: 60px;
+                        }
+                        
+                        .table.vlan .table-col.table-col2 {
+                            width: 150px;
+                        }
+                        
+                        .table.vlan .table-col.table-col3 {
+                            width: 120px;
+                        }
+                        
+                        .table.vlan .table-col.table-col4 {
+                            width: 50px;
+                        }
+                        
+                        .table.vlan .table-col.table-col5 {
+                            width: 90px;
+                        }
+                        
+                        .table.vlan .table-col.table-col6 {
+                            width: 95px;
+                        }
+                        
+                        .table.vlan .table-col.table-col7 {
+                            width: 50px;
+                        }
+                        
+                        .table.vlan select {
+                            width: 90px;
+                        }
+                    </style>
+
+                    <style>
+                        .table.vlan .table-col.table-col2 {
+                            width: 320px;
+                        }
+                        
+                        .table.vlan .table-col.table-col3 {
+                            width: 130px;
+                        }
+                        
+                        .table.vlan .table-col.table-col4 {
+                            width: 70px;
+                        }
+                        
+                        .table.vlan .table-col.table-col5 {
+                            width: 100px;
+                        }
+                    </style>
+                </div>
+            </article>
+        </section>
+    </div>
+    <div id="langAndFirmware" class="clearfix">
+        <div class="left" id="langSelector"><a href="javascript:lang_change(&#39;en&#39;);" class="language-links line">English</a><a href="javascript:lang_change(&#39;ru&#39;);" class="language-links">Русский</a></div>
+        <div class="right firmwareVersion">
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>

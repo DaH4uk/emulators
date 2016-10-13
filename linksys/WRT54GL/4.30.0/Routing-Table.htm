@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0033)http://192.168.1.1/RouteTable.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>Routing Table</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=expires content=0>
+<META http-equiv=cache-control content=no-cache>
+<META http-equiv=pragma content=no-cache>
+<SCRIPT src="Routing-Table_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="Routing-Table_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/capapp.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/capasg.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/capsetup.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Routing-Table_files/layout.js" 
+type=text/javascript></SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY bgColor=white>
+<FORM>
+<CENTER>
+<TABLE height=100 cellSpacing=1 width=673 border=0>
+  <TBODY>
+  <TR>
+    <TD width=343 colSpan=2 height=30><B><FONT face=Arial color=#0000ff><SPAN 
+      style="FONT-SIZE: 14pt">
+      <SCRIPT>Capture(advroute.routetbllist)</SCRIPT>
+      </SPAN></FONT></B></TD>
+    <TD align=right width=140 height=30>&nbsp;</TD>
+    <TD align=middle><INPUT  type=button value=" Refresh "></TD></TR>
+  <TR align=middle bgColor=#b3b3b3>
+    <TH height=30><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(advroute.deslanip)</SCRIPT>
+      </SPAN></FONT></TH>
+    <TH height=30><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(share.submask)</SCRIPT>
+      </SPAN></FONT></TH>
+    <TH height=30><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(share.gateway)</SCRIPT>
+      </SPAN></FONT></TH>
+    <TH height=30><FONT face=Arial><SPAN style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(share.inter_face)</SCRIPT>
+      </SPAN></FONT></TH></TR>
+  <SCRIPT language=javascript>
+var table = new Array(
+ '0.0.0.0','0.0.0.0','0.0.0.0','LAN'
+,'0.0.0.0','0.0.0.0','0.0.0.0','WAN'
+//,'0.0.0.0','0.0.0.0','0.0.0.0','WAN'
+,'0.0.0.0','0.0.0.0','0.0.0.0','WAN'
+
+);
+var i = 0;
+for(;;){
+	if(!table[i]){
+		if(i == 0){
+			document.write("<tr bgcolor=cccccc align=middle>");
+			document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">wlanadv.none</td>");
+			document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">wlanadv.none</td>");
+			document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">wlanadv.none</td>");
+			document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">wlanadv.none</td></tr>");
+		}
+		break;
+	}
+	if(table[i+3] == "LAN")	table[i+3] = share.lanwireless;
+	else if(table[i+3] == "WAN") table[i+3] = advroute.waninternet;
+
+	document.write("<tr bgcolor=#cccccc align=middle>");
+	document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">"+table[i]+"</td>");
+	document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">"+table[i+1]+"</td>");
+	document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">"+table[i+2]+"</td>");
+	document.write("<td><SPAN STYLE=\"FONT-SIZE: 10pt\">"+table[i+3]+"</td></tr>");
+	i = i + 4;
+}
+</SCRIPT>
+
+  <TR align=middle bgColor=#cccccc>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>
+      <SCRIPT>document.write("<INPUT onclick=self.close() type=reset name=close value=\"" + sbutton.close + "\">");</SCRIPT>
+    </TD></TR></TBODY></TABLE></CENTER></FORM></BODY></HTML>

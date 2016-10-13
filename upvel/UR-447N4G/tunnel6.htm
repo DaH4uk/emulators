@@ -1,0 +1,43 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Configuring Tunnel 6to4</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<SCRIPT LANGUAGE="JavaScript">
+function onclick_func()
+{
+	if(Tunnel6form.enable_tunnel6.checked == false)
+	{
+		
+		Tunnel6form.routername.disabled=true;
+	}
+	else
+	{
+		Tunnel6form.routername.disabled=false;
+	}
+}
+</SCRIPT>
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+</head>
+
+<body bgcolor="#ffffff" text="#000000">
+<form method="POST" action="http://192.168.10.1/boafrm/formTunnel6" name=Tunnel6form>
+<h2><script>dw(tunnel6_header)</script></h2>
+<table border=0 width="550" cellspacing=0 cellpadding=0>
+  <tr><td><font size=2 id="tunnel6_intro">
+<script>dw(tunnel6_help)</script>
+  </font></td></tr>
+  <tr><td><hr size=1 noshade align=top></td></tr>
+</table>
+<input type=checkbox name=enable_tunnel6 value =1  onclick="onclick_func()"><strong>Enable Tunnel 6to4</strong><br />
+<input type="hidden" value="/tunnel6.htm" name="submit-url">
+<input type=submit name="submit" value="Save">
+</form>
+</body>
+</html> 

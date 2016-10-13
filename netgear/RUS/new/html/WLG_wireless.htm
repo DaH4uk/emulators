@@ -1,0 +1,1169 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/WLG_wireless.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "basic";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "basic";
+var G_Page = "WLG_wireless";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+var W_Wepkey1="";
+var W_Wepkey2="";
+var W_Wepkey3="";
+var W_Wepkey4="";
+var G_DeviceInfoRegion="RU";
+var W_Channel="0";
+var W_Standard="bgn";
+var W_RegulatoryDomain="RU";//country
+var W_AutoChannelEnable="1";
+var W_OperatingChannelBandwidth="20";
+var W_X_TWSZCOM_MIMO="0";
+var W_Enable="1";//Enable
+var W_SSID="NETGEAR95";
+var W_BeaconType="11i";
+var W_BasicEncryptionModes="WEPEncryption";
+var W_BasicAuthenticationMode="None";
+var W_SSIDEnable="1";
+var W_APIsolate="0";
+var W_WEPKeyIndex="1";
+var W_WEPEncryptionLevel="40-bit";
+var W_WPAEncryptionModes="AESEncryption";
+var W_WPAAuthenticationMode="PSKAuthentication";
+//var W_KeyPassphrase="-";
+var W_KeyPassphrase="";
+var W_PreSharedKey="pastelvalley986";
+var WDS_Enable="0";
+var WDS_WDSMode="";
+var G_Region = ['ZA','VN','AU','CA','CN','DE','IL','JP','KR','MX','IQ','RU','CO','US'];
+var G_passphrase_state=0;
+var W_WPSEnable = "1";
+function select_G_Region(_value)
+{
+for(var _i=0; _i<G_Region.length+1; _i++)
+{
+if(_value==G_Region[_i])
+return _i+1;
+}
+}
+function checkRegion()
+{
+if($('WRegion').selectedIndex < 0)
+{
+$('WRegion').focus();
+return alertError('WLG_wirelessWrongRegionBlank',1);
+}
+return true;
+}
+//just for wep check
+function isHexAndSpace(str)
+{
+var i;
+for(i = 0; i<str.length; i++) {
+var c = str.substring(i, i+1);
+if(("0" <= c && c <= "9") || ("a" <= c && c <= "f") || ("A" <= c && c <= "F")) {
+continue;
+}
+return false;
+}
+return true;
+}
+function checkData()
+{
+var msg = ""; var blankFlag = false; var sizeOK = false; var i;
+var len = ($('wepenc').selectedIndex==0)?10:(($('wepenc').selectedIndex==1)?26:32);
+if(!checkRegion()) return false;
+if ($('ssid').value == "")
+{
+alertError('WLG_wirelessSsidBlankWarn',1)
+return false;
+}
+if ($('ssid').value.match( /[^\x20-\x7E]/ ))
+{
+alertError('WLG_wirelessSsidWrongWord',1)
+$('ssid').focus();
+return false;
+}
+/*提交前，删除字符串前后空格。已经和测试部沟通。同意这种做法*/
+$('ssid').value = Trim($('ssid').value);
+if (WDS_Enable == "1" && $('w_channel').value=="0")
+{
+alertError('WLG_wirelessClacWithRepeater',1)
+$('w_channel').focus();
+return false;
+}
+if(Form.Radio('security_type')=='WEP')
+{
+var cf = document.getElementsByName('wep_key_no');
+var node_wep=$('KEY1','KEY2','KEY3','KEY4');
+for (i = 1; i < 5; i++ )
+{
+msg = "";
+blankFlag = ! (eval("(cf[" + (i-1) + "].checked)")); // default key
+if( (blankFlag) && (node_wep[i-1].value.length==0) )
+continue; // blank ok
+sizeOK = ((isHexAndSpace(node_wep[i-1].value)) && (node_wep[i-1].value.length==len));
+if (!sizeOK)
+{
+msg = (len == 10)?'WLG_wirelessmsg_key64_type':((len==26)?'WLG_wirelessmsg_key128_type':'WLG_wirelessmsg_key152_type');
+alertError(msg,1)
+if (i==1)
+$('KEY1').focus();
+else if (i==2)
+$('KEY2').focus();
+else if (i==3)
+$('KEY3').focus();
+else if (i==4)
+$('KEY4').focus();
+return false;
+}
+}
+}
+else if(Form.Radio('security_type')=='WPA-PSK'||Form.Radio('security_type')=='WPA2-PSK'||Form.Radio('security_type')=='AUTO-PSK')
+{
+if ($('passphrase').value.match( /[^\x20-\x7E]/ ))
+{
+alertError('WLG_wirelessPassphraseWrong',1)
+$('passphrase').focus();
+return false;
+}
+if($('passphrase').value.length < 8)
+{
+alertError('WLG_wirelessPassphraseWrongLength8',1)
+return false;
+}
+if($('passphrase').value.length > 63)
+{
+if ( isHex($('passphrase').value) == false )
+{
+alertError('WLG_wirelessPassphraseWrongLength63',1)
+$('passphrase').value = "";
+return false;
+}
+}
+$('passphrase').value = Trim($('passphrase').value);
+}
+return true;
+}
+function displayid(flag,id)
+{
+if(flag==0)
+$(id).style.display='none';
+else if(flag==1)
+$(id).style.display='';
+}
+function uiKeyInputMaxlength()
+{
+if($('wepenc').value == '1')
+return 10;
+if($('wepenc').value == '2')
+return 26;
+}
+function setKeys()
+{
+var cf=document.getElementsByName('wepenc');
+if (cf.wepenc.selectedIndex == 0)
+{
+var keysize = 10;
+$('KEY1').size = $('KEY2').size = $('KEY3').size = $('KEY4').size = keysize + 5 ; // extra for Mac
+if ($('KEY1').value.length>10)
+$('KEY1').value = $('KEY1').value.substring(0,10);
+if ($('KEY2').value.length>10)
+$('KEY2').value = $('KEY2').value.substring(0,10);
+if ($('KEY3').value.length>10)
+$('KEY3').value = $('KEY3').value.substring(0,10);
+if ($('KEY4').value.length>10)
+$('KEY4').value = $('KEY4').value.substring(0,10);
+$('KEY1').maxLength=10;
+$('KEY2').maxLength=10;
+$('KEY3').maxLength=10;
+$('KEY4').maxLength=10;
+}
+else if(cf.wepenc.selectedIndex == 1)
+{
+var keysize = 26;
+$('KEY1').size = $('KEY2').size = $('KEY3').size = $('KEY4').size = keysize + 15 ; // extra for Mac
+if ($('KEY1').value.length>26)
+$('KEY1').value = $('KEY1').value.substring(0,26);
+if ($('KEY2').value.length>26)
+$('KEY2').value = $('KEY2').value.substring(0,26);
+if ($('KEY3').value.length>26)
+$('KEY3').value= $('KEY3').value.substring(0,26);
+if ($('KEY4').value.length>26)
+$('KEY4').value = $('KEY4').value.substring(0,26);
+$('KEY1').maxLength=26;
+$('KEY2').maxLength=26;
+$('KEY3').maxLength=26;
+$('KEY4').maxLength=26;
+}
+else if(cf.wepenc.selectedIndex == 2)
+{
+var keysize = 32;
+$('KEY1').size = $('KEY2').size = $('KEY3').size = $('KEY4').size = keysize + 2 ;// extra for Mac
+}
+}
+function createwepAuthtype()
+{
+var new_options,new_values;
+new_options = G_AuthType_0;
+new_values = G_AuthType_one_Value;
+$S('authAlgm', new_options, new_values);
+}
+function createChannel(){
+var new_options,new_values;
+switch(G_Region[Number($('WRegion').value)-1]){
+case 'US' :
+case 'CO' :
+case 'MX' :
+case 'CA' :{
+new_options = ['Auto','01','02','03','04','05','06','07','08','09','10','11'];
+new_values = ['0','1','2','3','4','5','6','7','8','9','10','11'];
+break;
+}
+case 'IL' :{
+new_options = ['Auto','03','04','05','06','07','08','09','10','11','12','13'];
+new_values = ['0','3','4','5','6','7','8','9','10','11','12','13'];
+break;
+}
+/*把日本的信道也设置成1-13，所以注释掉这段
+case 'JP' : {
+new_options = ['Auto','01','02','03','04','05','06','07','08','09','10','11','12','13','14'];
+new_values = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14'];
+break;
+}*/
+default : {
+new_options = ['Auto','01','02','03','04','05','06','07','08','09','10','11','12','13'];
+new_values = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13'];
+}
+}
+new_options[0]=G_Auto;
+$S('w_channel', new_options, new_values);
+}
+function createRates(){
+var rates_options, rates_values;
+switch(W_X_TWSZCOM_MIMO){
+case '0' : {
+rates_options = G_Mode;
+rates_values = ['Up to 54 Mbps','Up to 65 Mbps','Up to 150 Mbps'];
+break;
+}
+case '1' : {
+rates_options = G_ModeSe;
+rates_values = ['Up to 54 Mbps','Up to 150 Mbps','Up to 300 Mbps'];
+break;
+}
+default :{
+break;
+}
+}
+$S('opmode', rates_options, rates_values);
+}
+/*页面刷新时，初始化基本参数*/
+function Onload_Basic()
+{
+createRates();
+var bgnmode;
+if(W_BeaconType=="Basic" || W_BeaconType=="WPA" )
+{
+$('opmode').disabled=true;
+}
+if(W_Standard=="bg")
+{
+bgnmode="Up to 54 Mbps";
+}
+else if(W_Standard=="bgn")
+{
+if(W_X_TWSZCOM_MIMO=='1')
+{
+if(W_OperatingChannelBandwidth=="20")
+bgnmode="Up to 150 Mbps";
+else if(W_OperatingChannelBandwidth=="40")
+bgnmode="Up to 300 Mbps";
+}
+else if(W_X_TWSZCOM_MIMO=='0')
+{
+if(W_OperatingChannelBandwidth=="20")
+bgnmode="Up to 65 Mbps";
+else if(W_OperatingChannelBandwidth=="40")
+bgnmode="Up to 150 Mbps";
+}
+}
+setJSONValue({
+'WRegion': select_G_Region(W_RegulatoryDomain),
+'ssid' : W_SSID,
+'opmode':bgnmode
+});
+createChannel();
+setJSONValue({'w_channel' : W_Channel});
+}
+/*刷新页面时，初始化加密方式*/
+function Onload_SecurityOptions()
+{
+var L_opt_id;
+if(W_BeaconType=="None")
+L_opt_id="Disable";
+else if(W_BeaconType=="Basic")
+{
+L_opt_id="WEP";
+if(W_WEPEncryptionLevel=="40-bit")
+setJSONValue({'wepenc':"1"});
+else if(W_WEPEncryptionLevel=="104-bit")
+setJSONValue({'wepenc':"2"});
+if(W_BasicAuthenticationMode=="AutoAuthentication")
+{
+setJSONValue({'authAlgm':"automatic"});
+}
+else if(W_BasicAuthenticationMode=="SharedAuthentication")
+{
+setJSONValue({'authAlgm':"sharedkey"});
+}
+setKeys();
+}
+else if(W_BeaconType=="WPA")
+{
+L_opt_id="WPA-PSK";
+}
+else if(W_BeaconType=="11i")
+{
+L_opt_id="WPA2-PSK";
+}
+else if(W_BeaconType=="WPAand11i")
+{
+L_opt_id="AUTO-PSK";
+}
+$("SELECT_Securityoptions").value=L_opt_id;
+Form.Radio('security_type', L_opt_id);
+SecurityOptions(L_opt_id,0);
+}
+function getPassphraseState()
+{
+if(W_BeaconType=="None")
+{
+return "Disable";
+}
+else if(W_BeaconType=="Basic")
+{
+return "WEP";
+}
+else if(W_BeaconType=="WPA")
+{
+return "WPA-PSK";
+}
+else if(W_BeaconType=="11i")
+{
+return "WPA2-PSK";
+}
+else if(W_BeaconType=="WPAand11i")
+{
+return "AUTO-PSK";
+}
+}
+function SecurityOptions(opt_id,_flag)
+{
+if(opt_id=="Disable")
+{
+hideChForWep('module_wep',9,'none');
+hideChForWep('module_tkip',1,'none');
+hideChForWep('module_aes',1,'none');
+hideChForWep('module_tkipaes',1,'none');
+hideChForWep('module_passphrase',1,'none');
+$('opmode').disabled=false;
+}
+else if(opt_id=="WEP")
+{
+if($('opmode').value!="Up to 54 Mbps")
+{
+alertError('WLG_wirelesswepchange');
+}
+hideChForWep('module_wep',9,'');
+hideChForWep('module_tkip',1,'none');
+hideChForWep('module_aes',1,'none');
+hideChForWep('module_tkipaes',1,'none');
+hideChForWep('module_passphrase',1,'none');
+Form.Radio('wep_key_no',W_WEPKeyIndex);
+if(_flag=='0')
+{
+setJSONValue({
+'KEY1':W_Wepkey1,
+'KEY2':W_Wepkey2,
+'KEY3':W_Wepkey3,
+'KEY4':W_Wepkey4
+});
+}
+else if(_flag=='1')
+{
+$('opmode').disabled=true;
+setJSONValue({
+'opmode':"Up to 54 Mbps",
+'KEY1':'',
+'KEY2':'',
+'KEY3':'',
+'KEY4':''
+});
+}
+setKeys();
+}
+else if(opt_id=="WPA-PSK")
+{
+if($('opmode').value!="Up to 54 Mbps")
+{
+alertError('WLG_wirelesswpachange');
+}
+hideChForWep('module_wep',9,'none');
+hideChForWep('module_tkip',1,'');
+hideChForWep('module_aes',1,'none');
+hideChForWep('module_tkipaes',1,'none');
+hideChForWep('module_passphrase',1,'');
+setJSONValue({'opmode':"Up to 54 Mbps"});
+$('opmode').disabled=true;
+if(getPassphraseState()=='Disable'||getPassphraseState()=='WEP')
+setJSONValue({'passphrase':W_PreSharedKey});
+else if(G_passphrase_state!='module_tkip'&&G_passphrase_state!='0'&&(getPassphraseState()!='WPA-PSK'))
+setJSONValue({'passphrase':''});
+else if(G_passphrase_state=='module_tkip'&&(getPassphraseState()!='WPA-PSK'))
+setJSONValue({'passphrase':''});
+else
+{
+if(W_KeyPassphrase!='')
+setJSONValue({'passphrase':W_KeyPassphrase});
+else
+setJSONValue({'passphrase':W_PreSharedKey});
+}
+G_passphrase_state='module_tkip';
+}
+else if(opt_id=="WPA2-PSK")
+{
+hideChForWep('module_wep',9,'none');
+hideChForWep('module_tkip',1,'none');
+hideChForWep('module_aes',1,'');
+hideChForWep('module_tkipaes',1,'none');
+hideChForWep('module_passphrase',1,'');
+$('opmode').disabled=false;
+if(getPassphraseState()=='Disable'||getPassphraseState()=='WEP')
+setJSONValue({'passphrase':W_PreSharedKey});
+else if(G_passphrase_state!='module_aes'&&G_passphrase_state!='0'&&(getPassphraseState()!='WPA2-PSK'))
+setJSONValue({'passphrase':''});
+else if(G_passphrase_state=='module_aes'&&(getPassphraseState()!='WPA2-PSK'))
+setJSONValue({'passphrase':''});
+else
+{
+if(W_KeyPassphrase!='')
+setJSONValue({'passphrase':W_KeyPassphrase});
+else
+setJSONValue({'passphrase':W_PreSharedKey});
+}
+G_passphrase_state='module_aes';
+}
+else if(opt_id=="AUTO-PSK")
+{
+hideChForWep('module_wep',9,'none');
+hideChForWep('module_tkip',1,'none');
+hideChForWep('module_aes',1,'none');
+hideChForWep('module_tkipaes',1,'');
+hideChForWep('module_passphrase',1,'');
+$('opmode').disabled=false;
+if(getPassphraseState()=='Disable'||getPassphraseState()=='WEP')
+setJSONValue({'passphrase':W_PreSharedKey});
+else if(G_passphrase_state!='module_tkipaes'&&G_passphrase_state!='0'&&(getPassphraseState()!='AUTO-PSK'))
+setJSONValue({'passphrase':''});
+else if(G_passphrase_state=='module_tkipaes'&&(getPassphraseState()!='AUTO-PSK'))
+setJSONValue({'passphrase':''});
+else
+{
+if(W_KeyPassphrase!='')
+setJSONValue({'passphrase':W_KeyPassphrase});
+else
+setJSONValue({'passphrase':W_PreSharedKey});
+}
+G_passphrase_state='module_tkipaes';
+}
+}
+var Array_For_repeater = ['RADIO_Tkip','RADIO_Aes','RADIO_TkipAes'];
+function DisWpaForRepeater(_A,_Bool)
+{
+if(G_DeviceInfoRegion=='PR')
+{
+return;
+}
+else
+{
+for(var _num=0; _num < _A.length; _num++)
+{
+$(_A[_num]).disabled=_Bool;
+}
+}
+}
+function menu_wps_default()
+{
+var menu_div;
+var content_length;
+menu_div = top.document.getElementById("wps");
+/*在basic_menu下没有wps,这里为空.会导致出错*/
+if(menu_div == null)
+return false;
+content_length = menu_div.getElementsByTagName("span")[0].innerHTML.length;
+if(W_WPSEnable=='1')
+{
+top.enabled_wps = 1;
+settingClass(menu_div, content_length, "advanced_black_button");
+}
+else
+{
+top.enabled_wps = 0;
+settingClass(menu_div, content_length, "advanced_grey_button");
+}
+}
+function uiOnload()
+{
+menu_wps_default();
+//DisWpaForRepeater(Array_For_repeater,'1'==WDS_Enable&&('Repeater'==WDS_WDSMode||'BaseStation'==WDS_WDSMode));
+createwepAuthtype();
+Onload_Basic();
+Onload_SecurityOptions();
+$("ssid_bc").checked=(W_SSIDEnable=='1'?true:false);
+$("CHECKBOX_EnableIsolated").checked=(W_APIsolate=='1'?true:false);
+dealWithError();
+}
+/*
+这个函数用于tkip,aes,tkip+aes几种加密方式密码设定。
+当passphrase为64位时，将INPUT框里的值给节点PreSharedKey，将KeyPassphrase设为空；
+当passphrase为其他位数时，反过来。
+*/
+function submitpassphrase()
+{
+if($('passphrase').value.length==64)
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.PreSharedKey': $('passphrase').value
+});
+}
+else
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.KeyPassphrase': $('passphrase').value
+});
+}
+}
+function uiSubmit()
+{
+if(checkData()==false)
+{
+return false;
+}
+if(W_BeaconType!='Basic'&&$('authAlgm').value=="sharedkey")
+{
+if(alertError('WLG_wirelessWpsWarnKeyShare',2)==false)
+return;
+}
+else if(W_BeaconType=='Basic'&&W_BasicAuthenticationMode!='SharedAuthentication'&&$('authAlgm').value=="sharedkey")
+{
+if(alertError('WLG_wirelessWpsWarnKeyShare',2)==false)
+return;
+}
+var Path = ':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.';
+var nodes = $('ssid','w_channel','opmode','SELECT_Securityoptions','authAlgm','wepenc','wepenc','WRegion');
+var node_wep=$('KEY1','KEY2','KEY3','KEY4');
+if(nodes[2].value=="Up to 54 Mbps")
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Standard': 'bg',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.OperatingChannelBandwidth': '20'
+});
+}
+if(W_X_TWSZCOM_MIMO=='0')
+{
+if(nodes[2].value=="Up to 65 Mbps")
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Standard': 'bgn',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.OperatingChannelBandwidth': '20'
+});
+}
+else if(nodes[2].value=="Up to 150 Mbps")
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Standard': 'bgn',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.OperatingChannelBandwidth': '40'
+});
+}
+}
+else if(W_X_TWSZCOM_MIMO=='1')
+{
+if(nodes[2].value=="Up to 150 Mbps")
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Standard': 'bgn',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.OperatingChannelBandwidth': '20'
+});
+}
+else if(nodes[2].value=="Up to 300 Mbps")
+{
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Standard': 'bgn',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.OperatingChannelBandwidth': '40'
+});
+}
+}
+/*encryption and authentication*/
+var value_radio = Form.Radio('security_type');
+if(WDS_Enable=='1')
+{
+if(value_radio=="Disable")
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': 'None'
+});
+}
+else if(value_radio=="WEP")
+{
+if(nodes[6].value=='1')
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': '40-bit',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WEPKeyIndex': Form.Radio('wep_key_no'),
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WEPKey': node_wep[Number(Form.Radio('wep_key_no'))-1].value
+});
+}
+else if(nodes[6].value=='2')
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': '104-bit',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WEPKeyIndex': Form.Radio('wep_key_no'),
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WEPKey': node_wep[Number(Form.Radio('wep_key_no'))-1].value
+});
+}
+}
+else if(value_radio=="WPA-PSK")
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': 'TKIPEncryption',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Passphrase': $('passphrase').value
+});
+}
+else if(value_radio=="WPA2-PSK")
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': 'AESEncryption',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Passphrase': $('passphrase').value
+});
+}
+else if(value_radio=="AUTO-PSK")
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': 'TKIPandAESEncryption',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Passphrase': $('passphrase').value
+});
+}
+}
+if(value_radio=="Disable")
+{
+if('Basic'==W_BeaconType&&'SharedAuthentication'==W_BasicAuthenticationMode)
+{$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': '1'
+});}
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': 'None'
+});
+}
+else if(value_radio=="WEP")
+{
+if(nodes[4].value=="automatic")
+{
+if('Basic'==W_BeaconType&&'SharedAuthentication'==W_BasicAuthenticationMode)
+{$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': '1'
+});}
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': 'Basic',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BasicEncryptionModes': 'WEPEncryption',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BasicAuthenticationMode': 'AutoAuthentication',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKeyIndex': Form.Radio('wep_key_no'),
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.1.WEPKey': node_wep[0].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.2.WEPKey': node_wep[1].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.3.WEPKey': node_wep[2].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.4.WEPKey': node_wep[3].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_WEPEncStrength': nodes[6].value=='1'?'40-bit':'104-bit'
+});
+}
+else if(nodes[4].value=="sharedkey")
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': '0',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': 'Basic',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BasicEncryptionModes': 'WEPEncryption',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BasicAuthenticationMode': 'SharedAuthentication',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKeyIndex': Form.Radio('wep_key_no'),
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.1.WEPKey': node_wep[0].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.2.WEPKey': node_wep[1].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.3.WEPKey': node_wep[2].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WEPKey.4.WEPKey': node_wep[3].value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_WEPEncStrength': nodes[6].value=='1'?'40-bit':'104-bit'
+});
+}
+}
+else if(value_radio=="WPA-PSK")
+{
+if('Basic'==W_BeaconType&&'SharedAuthentication'==W_BasicAuthenticationMode)
+{$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': '1'
+});}
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': 'WPA',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPAEncryptionModes': 'TKIPEncryption',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPAAuthenticationMode': 'PSKAuthentication'
+});
+submitpassphrase();
+}
+else if(value_radio=="WPA2-PSK")
+{
+if('Basic'==W_BeaconType&&'SharedAuthentication'==W_BasicAuthenticationMode)
+{$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': '1'
+});}
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': '11i',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.IEEE11iEncryptionModes': 'AESEncryption',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.IEEE11iAuthenticationMode': 'PSKAuthentication'
+});
+submitpassphrase();
+}
+else if(value_radio=="AUTO-PSK")
+{
+if('Basic'==W_BeaconType&&'SharedAuthentication'==W_BasicAuthenticationMode)
+{$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': '1'
+});}
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': 'WPAand11i',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPAEncryptionModes': 'TKIPandAESEncryption',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPAAuthenticationMode': 'PSKAuthentication',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.IEEE11iEncryptionModes': 'TKIPandAESEncryption',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.IEEE11iAuthenticationMode': 'PSKAuthentication'
+});
+submitpassphrase();
+}
+//others
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID': nodes[0].value,':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSIDAdvertisementEnabled':$('ssid_bc').checked==true?'1':'0',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_APIsolate':$('CHECKBOX_EnableIsolated').checked==true?'1':'0',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_GuestAccess':$('CHECKBOX_EnableIsolated').checked==true?'0':'1',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Channel': Number(nodes[1].value),
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.AutoChannelEnable': Number(nodes[1].value)==0?1:0,
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.RegulatoryDomain': G_Region[Number($('WRegion').value)-1],
+'var:baseShareOnInfo' : (nodes[4].value!='sharedkey'&&W_BasicAuthenticationMode=='SharedAuthentication') ? '1' : '-',
+'obj-action' : 'set',
+'var:page' : 'WLG_wireless',
+'var:errorpage': 'WLG_wireless',
+'getpage' : '../html/basic_home.htm',
+'errorpage' : '../html/basic_home.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function calcPassphrase()
+{
+if($('passphraseStr').value.length == 0)
+{
+alertError('WLG_wirelesspassphraseStrBlankWarn',1);
+return;
+}
+switch($('wepenc').value)
+{
+case '1':
+PassPhrase40();
+break;
+case '2':
+PassPhrase104();
+break;
+default:
+break;
+}
+}
+function PassPhrase40()
+{
+var seed = 0;
+var pseed = new Array(0, 0, 0, 0);
+var pkey = new Array(4);
+var asciiObj = new Array(4);
+Length = $('passphraseStr').value.length;
+if(Length != 0)
+{
+for (i=0; i<Length; i++ )
+pseed[i%4] ^= $('passphraseStr').value.charCodeAt(i);
+seed = pseed[0];
+seed += pseed[1] << 8;
+seed += pseed[2] << 16;
+seed += pseed[3] << 24;
+}
+$('KEY1').value = $('KEY2').value = "";
+$('KEY3').value = $('KEY4').value = "";
+pkey[0] = $('KEY1');
+pkey[1] = $('KEY2');
+pkey[2] = $('KEY3');
+pkey[3] = $('KEY4');
+for(j=0; j<4; j++)
+{
+for (i=0; i<5 ;i++ )
+{
+seed = (214013 * seed) & 0xffffffff;
+if(seed & 0x80000000)
+seed = (seed & 0x7fffffff) + 0x80000000 + 0x269ec3;
+else
+seed = (seed & 0x7fffffff) + 0x269ec3;
+temp = ((seed >> 16) & 0xff);
+if(temp < 0x10)
+pkey[j].value += "0" + temp.toString(16).toUpperCase();
+else
+pkey[j].value += temp.toString(16).toUpperCase();
+}
+}
+$('wep_key_no1').checked = true;
+}
+function PassPhrase104()
+{
+var pseed2 = "";
+Length2 = $('passphraseStr').value.length;
+var asciiObj = "";
+for(p=0; p<64; p++)
+{
+tempCount = p % Length2;
+pseed2 += $('passphraseStr').value.substring(tempCount, tempCount+1);
+}
+md5Str = calcMD5(pseed2);
+$('KEY1').value = md5Str.substring(0, 26).toUpperCase();
+$('KEY2').value = $('KEY1').value;
+$('KEY3').value = $('KEY1').value;
+$('KEY4').value = $('KEY1').value;
+$('wep_key_no1').checked = true;
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="WLG_wireless.htm"></form>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/advanced.js"></script>
+<style type="text/css">
+<!--
+.div_left { padding-left:0px; width:200px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+input[type=text] {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+letter-spacing:1px;
+}
+.page_title{ width: 100%; height: 20px; font: bold 17px arial; color: #9d98ff; position: absolute; top: 0px; left: 0px;}
+.title_line{border-top:2px solid #9966FF; margin-top:5px; padding:8px 0 0;}
+--></style>
+<script type="text/javascript" src="js/md5.js"></script>
+<div class="page_title" id="lang_basic">Wireless Network</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TR>
+<TD nowrap colspan=2 align=center>
+<input class="cancel_bt" id="cancel" type='button' name="Cancel" value='Cancel'>&nbsp;&nbsp;
+<input class="apply_bt" id="submit" type='submit' name="Apply" value='Apply' onClick="uiSubmit();"/>
+</TD>
+</TR>
+</TABLE>
+</div>
+<div id="main" class="main"><!--width:98% !important; -->
+<table class="content" style="background:white; width:100%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" colspan="2">
+<a href="javascript:loadhelp('region')"><p class="bk_black3_black_noborder" id="lang_basic_introduction">Region</p></a></td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><span id="lang_Region">Region :</span></td>
+<td nowrap="">
+<select id="WRegion" name="WRegion" size="1" onChange="createChannel();">
+<!-- <option value="0">--- Select Region ---</option>-->
+<option value="1" id="lang_Africa">Africa</option>
+<option value="2" id="lang_Vietnam">Asia</option>
+<option value="3" id="lang_Australia">Australia</option>
+<option value="4" id="lang_Canada">Canada</option>
+<option value="5" id="lang_China">China</option>
+<option value="6" id="lang_Europe">Europe</option>
+<option value="7" id="lang_Israel">Israel</option>
+<option value="8" id="lang_Japan">Japan</option>
+<option value="9" id="lang_Korea">Korea</option>
+<option value="10" id="lang_Mexico">Mexico</option>
+<option value="11" id="lang_MiddleEast">Middle East</option>
+<option value="12" id="lang_Russia">Russia</option>
+<option value="13" id="lang_SouthAmerica">South America</option>
+<option value="14" id="lang_UnitedStates">United States</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"> <a href="javascript:loadhelp('network')"><p class="do bk_black3_black" id="lang_wireless_network">Wireless Network</p></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div>
+<input type="checkbox" id="ssid_bc" name="ssid_bc" value="ssid_bc"/>
+<span id="langEnableSSIDContext">Enable SSID Broadcast</span></div>
+<div>
+<input name="checkbox" type="checkbox" id="CHECKBOX_EnableIsolated" />
+<span id="langEnableIsolatedContext">Enable Wireless Isolation</span></div></td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><span id="lang_SSID">Name(SSID) :</span></td>
+<td nowrap=""><input type="text" id="ssid" name="ssid"size="20" maxlength="32"></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_channel">Channel</span></td>
+<td nowrap="">
+<select id="w_channel" name="w_channel" size="1">
+<option>0</option>
+<option>01</option>
+<option>02</option>
+<option>03</option>
+<option>04</option>
+<option>05</option>
+<option>06</option>
+<option>07</option>
+<option>08</option>
+<option>09</option>
+<option>10</option>
+<option>11</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_mode">Mode :</span></td>
+<td nowrap="">
+<select id="opmode" name="opmode"size="1">
+</select></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('security')"><p class="do bk_black3_black" id="lang_security1" >Security Options</p></a></td>
+</tr>
+<tr>
+<td>
+<div style="display:none">
+<div class="div_left" id="lang_security2">Security Options :</div>
+<div class="div_right" >
+<select name="select" id="SELECT_Securityoptions" onChange="SecurityOptions(this.value,1)">
+<option value="none">None</option>
+<option value="wep">Wep</option>
+<option value="tkip">WPA-PSK[TKIP]</option>
+<option value="aes">WPA2-PSK[AES]</option>
+<option value="tkipaes">WPA-PSK[TKIP]+WPA2-PSK[AES]</option>
+</select>
+</div>
+</div>
+<div>
+<input type="radio" value="Disable" checked="checked" id="RADIO_None" name="security_type" onClick="SecurityOptions(this.value,1)" />
+<span id="RADIO_NoneContext">None</span></div>
+<div>
+<input type="radio" value="WEP" id="RADIO_Wep" name="security_type" onClick="SecurityOptions(this.value,1)" />
+<span id="RADIO_WepContext">WEP</span></div>
+<div>
+<input type="radio" value="WPA-PSK" id="RADIO_Tkip" name="security_type" onClick="SecurityOptions(this.value,1)" />
+<span id="RADIO_TkipContext">WPA-PSK[TKIP]</span></div>
+<div>
+<input type="radio" value="WPA2-PSK" id="RADIO_Aes" name="security_type" onClick="SecurityOptions(this.value,1)" />
+<span id="RADIO_AesContext">WPA2-PSK[AES]</span></div>
+<div>
+<input type="radio" value="AUTO-PSK" id="RADIO_TkipAes" name="security_type" onClick="SecurityOptions(this.value,1)" />
+<span id="RADIO_TkipAesContext">WPA-PSK[TKIP]+WPA2-PSK[AES]</span></div></td>
+</tr>
+<!-------------------->
+<tr id="module_wep1">
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('wep')"><p class="do bk_black3_black" id="Security_Encryption_WEP">Security Encryption(WEP)</p></a></td>
+</tr>
+<tr id="module_wep2">
+<td nowrap="" width="40%"><span id="lang_auth_type">Authentication Type :</span></td>
+<td nowrap="">
+<select id="authAlgm" name="authAlgm" size="1" >
+<!--<option value="open">Open System</option>-->
+<!--<option value="shared">Shared Key</option>-->
+<!--<option value="automatic">Automatic</option>-->
+</select></td>
+</tr>
+<tr id="module_wep3">
+<td nowrap=""><span id="lang_enc_strength">Encryption Strength :</span></td>
+<td nowrap="">
+<select id="wepenc" name="wepenc" size="1" onChange="setKeys();">
+<option value="1" id="lang_length64">64-bit</option>
+<option value="2" id="lang_length128">128-bit</option>
+</select></td>
+</tr>
+<!--<div><span id="lang_key1">Key1</span><input type="radio" name="INPUT_radiokey" id="INPUT_radiokey1" value="1"><input type="text" id="KEY1" maxLength="32" size="34" onFocus="this.maxLength=uiKeyInputMaxlength()"></div>
+<div><span id="lang_key2">Key2</span><input type="radio" name="INPUT_radiokey" id="INPUT_radiokey2" value="2"><input type="text" id="INPUT_key2" maxLength="32" size="34" onFocus="this.maxLength=uiKeyInputMaxlength()"></div>
+<div><span id="lang_key3">Key3</span><input type="radio" name="INPUT_radiokey" id="INPUT_radiokey3" value="3"><input type="text" id="INPUT_key3" maxLength="32" size="34" onFocus="this.maxLength=uiKeyInputMaxlength()"></div>
+<div><span id="lang_key4">Key4</span><input type="radio" name="INPUT_radiokey" id="INPUT_radiokey4" value="4"><input type="text" id="INPUT_key4" maxLength="32" size="34" onFocus="this.maxLength=uiKeyInputMaxlength()"></div>-->
+<tr id="module_wep4">
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('wepkey')"><p class="do bk_black3_black" id="lang_enc_key">Security Encryption(WEP) Key</p></a></td>
+</tr>
+<tr id="module_wep5">
+<td nowrap colspan="2"> <span id="lang_passphraseStr">Passphrase: </span>
+<input type="text" id="passphraseStr" name="passphraseStr" size="14" maxlength="32" value="">
+&nbsp;
+<input type="button" id="Generate" class="short_common_bt" name="Generate" value="Generate" onClick="calcPassphrase()">
+</td>
+</tr>
+<tr>
+<td nowrap colspan="2">
+<table>
+<tr id="module_wep6">
+<td nowrap="" width="40%"><span id="lang_key1">Key1</span>
+<input type="radio" name="wep_key_no" id="wep_key_no1" value="1"></td>
+<td nowrap=""><input type="text" id="KEY1" name="KEY1" size="34"></td>
+</tr>
+<tr id="module_wep7">
+<td nowrap="" width="40%"><span id="lang_key2">Key2</span>
+<input type="radio" name="wep_key_no" id="wep_key_no2" value="2"></td>
+<td nowrap=""><input type="text" id="KEY2" name="KEY2" size="34"></td>
+</tr>
+<tr id="module_wep8">
+<td nowrap="" width="40%"><span id="lang_key3">Key3</span>
+<input type="radio" name="wep_key_no" id="wep_key_no3" value="3"></td>
+<td nowrap=""><input type="text" id="KEY3" name="KEY3" size="34"></td>
+</tr>
+<tr id="module_wep9">
+<td nowrap="" width="40%"><span id="lang_key4">Key4</span>
+<input type="radio" name="wep_key_no" id="wep_key_no4" value="4"></td>
+<td nowrap=""><input type="text" id="KEY4" name="KEY4" size="34" maxlength="32"></td>
+</tr>
+</table>
+</td>
+</tr>
+<!---end of <div id="module_wep">--->
+<!-------------------->
+<tr id="module_tkip1">
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('wpa-psk')"><p class="do bk_black3_black" id="lang_security_WPA_PSK">Security Options(WPA-PSK)</p></a></td>
+</tr>
+<!---end of <div id="module_tkip">--->
+<tr id="module_aes1">
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('wpa2-psk')"><p class="do bk_black3_black" id="lang_security_WPA2_PSK">Security Options(WPA2-PSK)</p></a></td>
+</tr>
+<!---end of <div id="module_aes">--->
+<tr id="module_tkipaes1">
+<td nowrap="" colspan="2"><a href="javascript:loadhelp('wpa-psk+wpa2-psk')"><p class="do bk_black3_black" id="lang_security_WPA_WPA2_PSK">Security Options(WPA2-PSK)</p></a></td>
+</tr>
+<tr id="module_passphrase1">
+<td nowrap="" width="40%"><span id="lang_wpa_wpa2_passphrase">PassPhrase :</span></td>
+<td nowrap=""><input type="text" id="passphrase" name="passphrase" size="20" maxlength="64">
+<span id="lang_wpa_wpa2_note">(8-63 characters or 64 hexdigits)</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><p class="do bk_black3_black">&nbsp;</p></td>
+</tr>
+</tbody>
+</table>
+<!---end of <div id="module_tkipaes">--->
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("WLG_wireless")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

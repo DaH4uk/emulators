@@ -1,0 +1,943 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/WLG_wds.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "WLG_wds";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+var WDS_Enable="0";
+var WDS_DisableGuestAccess="0";
+var WDS_WDSMode="";
+var WDS_EncryptionModes="";
+var WDS_WEPKey="";
+var WDS_Passphrase="";
+var WDS_DisableRepeaterAccess="0";
+var WDS_ReIPAddress="";
+var WDS_ptp_macAddress="";
+var k=0;
+var WDS_ReMACAddress=[];
+WDS_ReMACAddress[k]= "";
+k++;
+WDS_ReMACAddress[k]= "";
+k++;
+WDS_ReMACAddress[k]= "";
+k++;
+WDS_ReMACAddress[k]= "";
+k++;
+var G_Channel = "0";
+var G_WPSEnable = "1";
+var G_BeaconType ="11i";
+var WirelessMAC ="00:00:00:00:00:00";
+var G_lan_dhcp_enable = "1";
+var G_lan_ip_addr = "192.168.1.1";
+var G_lan_mask = "255.255.255.0";
+var G_lan_BakupIP= "192.168.1.1";
+var W_WEPKeyIndex="1";
+var W_WEPEncryptionLevel="40-bit";
+var W_Wepkey1="";
+var W_Wepkey2="";
+var W_Wepkey3="";
+var W_Wepkey4="";
+var G_ajax;
+var tt;
+/* Just check if MAC address is all "F", or all "0" , with ':' in it or not weal @ Aug 14*/
+function MacStrallf(mac) {
+var temp=mac.value;
+for(i=0; i<mac.value.length;i++) {
+var c = mac.value.substring(i, i+1)
+if (c == "f" || c == "F" || c == "0" || c == ":" || c == "-")
+continue;
+else
+break;
+}
+if (i == mac.value.length)
+return true;
+else
+return false;
+}
+/* Check Multicast MAC */
+function checkMulticastMAC(macaddr) {
+var mac_defined = macaddr.value;
+var macadr_first_byte = parseInt(mac_defined.substring(0,2),16);
+var Multicast_Flag = macadr_first_byte & 0x01;
+if( Multicast_Flag )
+return true;
+return false;
+}
+/* Check Mac Address Format*/
+function checkMacMain(mac) {
+if(mac.value.length == 0) {
+if (mac.focus)
+mac.focus();
+return true;
+}
+for(i=0; i<mac.value.length;i++) {
+var c = mac.value.substring(i, i+1)
+if(("0" <= c && c <= "9") || ("a" <= c && c <= "f") || ("A" <= c && c <= "F")) {
+continue;
+}
+if (mac.focus)
+mac.focus();
+return true;
+}
+if(mac.value.length == 1) {
+mac.value = "0"+mac.value;
+}
+mac.value = mac.value.toUpperCase();
+return false;
+}
+/* Check Numeric*/
+function isNumeric(str, max) {
+if(str.value.length == 0 || str.value == null || str.value == "") {
+if (str.focus)
+str.focus();
+return true;
+}
+var i = parseInt(str.value,10);
+if(i>max) {
+if (str.focus)
+str.focus();
+return true;
+}
+for(i=0; i<str.value.length; i++) {
+var c = str.value.substring(i, i+1);
+if("0" <= c && c <= "9") {
+continue;
+}
+if (str.focus)
+str.focus();
+return true;
+}
+return false;
+}
+/* Check IP Address Format*/
+function checkIPMain(ip,max) {
+if( isNumeric(ip, max) ) {
+if (ip.focus)
+ip.focus();
+return true;
+}
+}
+function checkMacAddress(mac1, mac2, mac3, mac4, mac5, mac6) {
+if(checkMacMain(mac1)) return true;
+if(checkMacMain(mac2)) return true;
+if(checkMacMain(mac3)) return true;
+if(checkMacMain(mac4)) return true;
+if(checkMacMain(mac5)) return true;
+if(checkMacMain(mac6)) return true;
+var mac_str = new String("");
+mac_str.value = mac1.value + mac2.value + mac3.value+ mac4.value + mac5.value + mac6.value;
+if(checkMulticastMAC(mac_str) || MacStrallf(mac_str))
+return true;
+return false;
+}
+function check_mac(mac1, mac2, mac3, mac4, mac5, mac6)
+{
+var msg = "";
+var m1;
+if(checkMacAddress(mac1, mac2, mac3, mac4, mac5, mac6))
+msg += "Invalid MAC address.";
+if (mac1.value == "00" && mac2.value == "00" && mac3.value == "00" && mac4.value == "00" && mac5.value == "00" && mac6.value == "00")
+msg += "Invalid MAC address.";
+if (mac1.value == "FF" && mac2.value == "FF" && mac3.value == "FF" && mac4.value == "FF" && mac5.value == "FF" && mac6.value == "FF")
+msg += "Invalid MAC address.";
+m1 = parseInt(mac1.value, 16);
+if (m1 & 1)
+msg += "Invalid MAC address.";
+if (msg.length > 1) {
+alertError('WLG_wdsWrongMac',1);
+return false;
+}
+return true;
+}
+function checkIP(ip1, ip2, ip3, ip4,max) {
+if(checkIPMain(ip1,255)) return true;
+if(checkIPMain(ip2,255)) return true;
+if(checkIPMain(ip3,255)) return true;
+if(checkIPMain(ip4,max)) return true;
+if((ip1.value.charAt(0)=="0" && ip1.value.length!=1) ||
+(ip2.value.charAt(0)=="0" && ip2.value.length!=1) ||
+(ip3.value.charAt(0)=="0" && ip3.value.length!=1) ||
+(ip4.value.charAt(0)=="0" && ip4.value.length!=1))
+return true;
+if((parseInt(ip1.value)==0)||
+((parseInt(ip1.value)==0)&&(parseInt(ip2.value)==0)&&
+(parseInt(ip3.value)==0)&&(parseInt(ip4.value)==0)))
+return true;
+var loopback_ip_start = (127 << 24) | (0 << 16) | (0 << 8) | (0);
+var loopback_ip_end = (127 << 24) | (255 << 16) | (255 << 8) | (255);
+var groupcast_ip_start = (224 << 24) | (0 << 16) | (0 << 8) | (0);
+var groupcast_ip_end = (239 << 24) | (255 << 16) | (255 << 8) | (255);
+var dhcpresv_ip_start = (169 << 24) | (254 << 16) | (0 << 8) | (0);
+var dhcpresv_ip_end = (169 << 24) | (254 << 16) | (255 << 8) | (255);
+var ip_addr = (ip1.value << 24) | (ip2.value << 16) | (ip3.value << 8) | (ip4.value);
+if((ip_addr >= loopback_ip_start)&&(ip_addr <= loopback_ip_end))
+return true;
+if((ip_addr >= groupcast_ip_start)&&(ip_addr <= groupcast_ip_end ))
+return true;
+if((ip_addr >= dhcpresv_ip_start)&&(ip_addr <= dhcpresv_ip_end))
+return true;
+return false;
+}
+function getwds_mode(){
+var i;
+var cf = document.getElementsByName('wds_mode');
+for(i=0; i < cf.length; i++){
+if(eval("cf[i].checked")==true)
+break
+}
+if(i >= cf.length) return (-1)
+return(cf[i].value)
+}
+function checkData(){
+var ptp_ip,ptp_mac;
+var pmp_mac1,pmp_mac2,pmp_mac3,pmp_mac4,pmp_mac5,pmp_mac6,pmp_mac7,pmp_mac8,pmp_mac9;
+ptp_ip = $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value+'.'+ $('sysLANIPAddr3').value+'.'+ $('sysLANIPAddr4').value;
+ptp_mac=$('ptp_mac_1').value+ $('ptp_mac_2').value+ $('ptp_mac_3').value+ $('ptp_mac_4').value+ $('ptp_mac_5').value+ $('ptp_mac_6').value;
+pmp_mac1=$('pmp_mac1_1').value+ $('pmp_mac1_2').value+ $('pmp_mac1_3').value+ $('pmp_mac1_4').value+ $('pmp_mac1_5').value+ $('pmp_mac1_6').value;
+pmp_mac2=$('pmp_mac2_1').value+ $('pmp_mac2_2').value+ $('pmp_mac2_3').value+ $('pmp_mac2_4').value+ $('pmp_mac2_5').value+ $('pmp_mac2_6').value;
+pmp_mac3=$('pmp_mac3_1').value+ $('pmp_mac3_2').value+ $('pmp_mac3_3').value+ $('pmp_mac3_4').value+ $('pmp_mac3_5').value+ $('pmp_mac3_6').value;
+pmp_mac4=$('pmp_mac4_1').value+ $('pmp_mac4_2').value+ $('pmp_mac4_3').value+ $('pmp_mac4_4').value+ $('pmp_mac4_5').value+ $('pmp_mac4_6').value;
+pmp_mac5 = $('ptp_mac_1').value+':'+ $('ptp_mac_2').value+':'+ $('ptp_mac_3').value+':'+ $('ptp_mac_4').value+':'+ $('ptp_mac_5').value+':'+ $('ptp_mac_6').value;
+pmp_mac6 = $('pmp_mac1_1').value+':'+ $('pmp_mac1_2').value+':'+ $('pmp_mac1_3').value+':'+ $('pmp_mac1_4').value+':'+ $('pmp_mac1_5').value+':'+ $('pmp_mac1_6').value;
+pmp_mac7 = $('pmp_mac2_1').value+':'+ $('pmp_mac2_2').value+':'+ $('pmp_mac2_3').value+':'+ $('pmp_mac2_4').value+':'+ $('pmp_mac2_5').value+':'+ $('pmp_mac2_6').value;
+pmp_mac8 = $('pmp_mac3_1').value+':'+ $('pmp_mac3_2').value+':'+ $('pmp_mac3_3').value+':'+ $('pmp_mac3_4').value+':'+ $('pmp_mac3_5').value+':'+ $('pmp_mac3_6').value;
+pmp_mac9 = $('pmp_mac4_1').value+':'+ $('pmp_mac4_2').value+':'+ $('pmp_mac4_3').value+':'+ $('pmp_mac4_4').value+':'+ $('pmp_mac4_5').value+':'+ $('pmp_mac4_6').value;
+if ($('wds_enable').checked)
+{
+if (getwds_mode()=='Repeater') {
+if(checkIP($('sysLANIPAddr1'),$('sysLANIPAddr2'),$('sysLANIPAddr3'),$('sysLANIPAddr4'),254)||(parseInt($('sysLANIPAddr4').value)==0)||parseInt($('sysLANIPAddr1').value)>224) {
+alertError('WLG_wdsWrongIp',1);
+return false;
+}
+if (ptp_mac.length==0) {
+alertError('WLG_wdsBlankBaseMac',1);
+return false;
+}
+if(pmp_mac5.toLowerCase()==WirelessMAC.toLowerCase())
+{
+alertError("WLG_wdsMacSameWirlessMac1");
+return false;
+}
+if (!check_mac($('ptp_mac_1'), $('ptp_mac_2'), $('ptp_mac_3'), $('ptp_mac_4'), $('ptp_mac_5'), $('ptp_mac_6')))
+return false;
+} else if(getwds_mode()=='BaseStation') {
+if ((pmp_mac1.length==0) && (pmp_mac2.length==0)&&
+(pmp_mac3.length==0) && (pmp_mac4.length==0)) {
+alertError('WLG_wdsBlankRepeaterMac',1);
+return false;
+}
+if(pmp_mac6.toLowerCase()==WirelessMAC.toLowerCase())
+{
+alertError("WLG_wdsMacSameWirlessMac2");
+return false;
+}
+if(pmp_mac7.toLowerCase()==WirelessMAC.toLowerCase())
+{
+alertError("WLG_wdsMacSameWirlessMac2");
+return false;
+}
+if(pmp_mac8.toLowerCase()==WirelessMAC.toLowerCase())
+{
+alertError("WLG_wdsMacSameWirlessMac2");
+return false;
+}
+if(pmp_mac9.toLowerCase()==WirelessMAC.toLowerCase())
+{
+alertError("WLG_wdsMacSameWirlessMac2");
+return false;
+}
+if (pmp_mac1.length != 0)
+if (!check_mac($('pmp_mac1_1'), $('pmp_mac1_2'), $('pmp_mac1_3'), $('pmp_mac1_4'), $('pmp_mac1_5'), $('pmp_mac1_6')))
+return false;
+if (pmp_mac2.length != 0)
+if (!check_mac($('pmp_mac2_1'), $('pmp_mac2_2'), $('pmp_mac2_3'), $('pmp_mac2_4'), $('pmp_mac2_5'), $('pmp_mac2_6')))
+return false;
+if (pmp_mac3.length != 0)
+if (!check_mac($('pmp_mac3_1'), $('pmp_mac3_2'), $('pmp_mac3_3'), $('pmp_mac3_4'), $('pmp_mac3_5'), $('pmp_mac3_6')))
+return false;
+if (pmp_mac4.length != 0)
+if (!check_mac($('pmp_mac4_1'), $('pmp_mac4_2'), $('pmp_mac4_3'), $('pmp_mac4_4'), $('pmp_mac4_5'), $('pmp_mac4_6')))
+return false;
+} else {
+return false;
+}
+}
+return true;
+}
+function forMacDisable(_flag,_num1,_num2,_boot)
+{
+for(var _i=1; _i<_num2+1; _i++)
+{
+$(_flag+_num1+'_'+_i).disabled=_boot;
+}
+}
+function uiOnload()
+{
+Form.Radio('wds_mode',WDS_WDSMode);
+supplyValue('INPUT_WirelessMAC',WirelessMAC);
+var ptpmac = WDS_ptp_macAddress == "" ? "::::::".split(':') : WDS_ptp_macAddress.split(':');
+var pmp_mac1=WDS_ReMACAddress[0] == "" ? "::::::".split(':') : WDS_ReMACAddress[0].split(':');
+var pmp_mac2=WDS_ReMACAddress[1] == "" ? "::::::".split(':') : WDS_ReMACAddress[1].split(':');
+var pmp_mac3=WDS_ReMACAddress[2] == "" ? "::::::".split(':') : WDS_ReMACAddress[2].split(':');
+var pmp_mac4=WDS_ReMACAddress[3] == "" ? "::::::".split(':') : WDS_ReMACAddress[3].split(':');
+setJSONValue({
+'wds_enable': WDS_Enable,
+'ptp_sta': WDS_DisableGuestAccess,
+'pmp_sta': WDS_DisableRepeaterAccess,
+'ptp_mac_1': ptpmac[0],
+'ptp_mac_2': ptpmac[1],
+'ptp_mac_3': ptpmac[2],
+'ptp_mac_4': ptpmac[3],
+'ptp_mac_5': ptpmac[4],
+'ptp_mac_6': ptpmac[5],
+'pmp_mac1_1' : pmp_mac1[0],
+'pmp_mac1_2' : pmp_mac1[1],
+'pmp_mac1_3' : pmp_mac1[2],
+'pmp_mac1_4' : pmp_mac1[3],
+'pmp_mac1_5' : pmp_mac1[4],
+'pmp_mac1_6' : pmp_mac1[5],
+'pmp_mac2_1' : pmp_mac2[0],
+'pmp_mac2_2' : pmp_mac2[1],
+'pmp_mac2_3' : pmp_mac2[2],
+'pmp_mac2_4' : pmp_mac2[3],
+'pmp_mac2_5' : pmp_mac2[4],
+'pmp_mac2_6' : pmp_mac2[5],
+'pmp_mac3_1' : pmp_mac3[0],
+'pmp_mac3_2' : pmp_mac3[1],
+'pmp_mac3_3' : pmp_mac3[2],
+'pmp_mac3_4' : pmp_mac3[3],
+'pmp_mac3_5' : pmp_mac3[4],
+'pmp_mac3_6' : pmp_mac3[5],
+'pmp_mac4_1' : pmp_mac4[0],
+'pmp_mac4_2' : pmp_mac4[1],
+'pmp_mac4_3' : pmp_mac4[2],
+'pmp_mac4_4' : pmp_mac4[3],
+'pmp_mac4_5' : pmp_mac4[4],
+'pmp_mac4_6' : pmp_mac4[5]
+});
+setIPValue();
+ClickEnableRepeater();
+dealWithError();
+}
+function setIPValue()
+{
+var tmpIP;
+if(WDS_ReIPAddress=='')
+{
+tmpIP=setDefaultIPValue();
+}
+else
+{
+tmpIP=WDS_ReIPAddress || '';
+}
+OnloadIP4hops(tmpIP,'sysLANIPAddr1','sysLANIPAddr2','sysLANIPAddr3','sysLANIPAddr4');
+}
+function setDefaultIPValue()
+{
+var tmpDMZServer;
+var tmpLanIP;
+var tmpLanMask;
+var tmpIP=new Array(4);
+tmpLanIP=G_lan_ip_addr.split(".");
+tmpLanMask=G_lan_mask.split(".");
+for(var j=0; j<4; j++)
+{
+tmpIP[j]=tmpLanIP[j]&tmpLanMask[j];
+if(tmpIP[j]==0)
+tmpIP[j]='';
+}
+tmpDMZServer=tmpIP[0]+'.'+tmpIP[1]+'.'+tmpIP[2]+'.'+tmpIP[3];
+return tmpDMZServer;
+}
+function SelectMode()
+{
+if($('wds_enable').checked)
+{
+if($('Radio_repeater').checked)
+{
+disCtrl('ReapterIP',1);
+$('ptp_sta').disabled = false;
+$('pmp_sta').disabled = true;
+forMacDisable('ptp_mac',"",6,false);
+forMacDisable('pmp_mac',1,6,true);
+forMacDisable('pmp_mac',2,6,true);
+forMacDisable('pmp_mac',3,6,true);
+forMacDisable('pmp_mac',4,6,true);
+}
+else if($('Radio_basestation').checked)
+{
+disCtrl('ReapterIP',0);
+$('ptp_sta').disabled = true;
+$('pmp_sta').disabled = false;
+forMacDisable('ptp_mac',"",6,true);
+forMacDisable('pmp_mac',1,6,false);
+forMacDisable('pmp_mac',2,6,false);
+forMacDisable('pmp_mac',3,6,false);
+forMacDisable('pmp_mac',4,6,false);
+}
+else
+{
+;
+}
+}
+}
+function ClickEnableRepeater()
+{
+if($('wds_enable').checked)
+{
+if(G_Channel==0)
+{
+alertError('WLG_wdsNotAuto',1);
+Form.Checkbox('wds_enable','0');
+return document.location.href = '../html/WLG_wireless.htm';
+}
+$('Radio_repeater').disabled = false;
+$('Radio_basestation').disabled = false;
+SelectMode();
+}
+else
+{
+$('Radio_repeater').disabled=true;
+$('Radio_basestation').disabled=true;
+$('ptp_sta').disabled = true;
+$('pmp_sta').disabled = true;
+disCtrl('ReapterIP',0);
+forMacDisable('ptp_mac',"",6,true);
+forMacDisable('pmp_mac',1,6,true);
+forMacDisable('pmp_mac',2,6,true);
+forMacDisable('pmp_mac',3,6,true);
+forMacDisable('pmp_mac',4,6,true);
+}
+}
+function displayid(flag,id)
+{
+if(flag==0)
+$(id).style.display='none';
+else if(flag==1)
+$(id).style.display='';
+}
+function uiWpsTurnOff()
+{
+if(Form.Checkbox('wds_enable')=='1'&&G_WPSEnable==1)
+{
+if(alertError('WlreWpsOffWarn',2)==false)
+{
+return false;
+}
+}
+}
+function uiDhcpEnableCtrl(_Bool)
+{
+if(G_lan_dhcp_enable!=_Bool)
+return true;
+if(_Bool==true)
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPServerEnable': 0
+});
+}
+else if(_Bool==false)
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPServerEnable': 1
+});
+}
+}
+function uiSubmit()
+{
+if(checkData()==false)
+{
+return false;
+}
+var nodes = $('wds_enable','ptp_sta','ptp_mac_1','ptp_mac_2','ptp_mac_3','ptp_mac_4','ptp_mac_5','ptp_mac_6','pmp_mac1_1','pmp_mac1_2','pmp_mac1_3','pmp_mac1_4','pmp_mac1_5','pmp_mac1_6','pmp_mac2_1','pmp_mac2_2','pmp_mac2_3','pmp_mac2_4','pmp_mac2_5','pmp_mac2_6','pmp_mac3_1','pmp_mac3_2','pmp_mac3_3','pmp_mac3_4','pmp_mac3_5','pmp_mac3_6','pmp_mac4_1','pmp_mac4_2','pmp_mac4_3','pmp_mac4_4','pmp_mac4_5','pmp_mac4_6','pmp_sta');
+var tmpRepeaterIP=$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value+'.'+ $('sysLANIPAddr3').value+'.'+ $('sysLANIPAddr4').value || '0.0.0.0';
+var ptp_mac = $('ptp_mac_1').value+':'+ $('ptp_mac_2').value+':'+ $('ptp_mac_3').value+':'+ $('ptp_mac_4').value+':'+ $('ptp_mac_5').value+':'+ $('ptp_mac_6').value;
+var pmp_mac1 = $('pmp_mac1_1').value+':'+ $('pmp_mac1_2').value+':'+ $('pmp_mac1_3').value+':'+ $('pmp_mac1_4').value+':'+ $('pmp_mac1_5').value+':'+ $('pmp_mac1_6').value;
+var pmp_mac2 = $('pmp_mac2_1').value+':'+ $('pmp_mac2_2').value+':'+ $('pmp_mac2_3').value+':'+ $('pmp_mac2_4').value+':'+ $('pmp_mac2_5').value+':'+ $('pmp_mac2_6').value;
+var pmp_mac3 = $('pmp_mac3_1').value+':'+ $('pmp_mac3_2').value+':'+ $('pmp_mac3_3').value+':'+ $('pmp_mac3_4').value+':'+ $('pmp_mac3_5').value+':'+ $('pmp_mac3_6').value;
+var pmp_mac4 = $('pmp_mac4_1').value+':'+ $('pmp_mac4_2').value+':'+ $('pmp_mac4_3').value+':'+ $('pmp_mac4_4').value+':'+ $('pmp_mac4_5').value+':'+ $('pmp_mac4_6').value;
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Enable': nodes[0].checked==true?'1':'0'
+});
+if(Form.Checkbox('wds_enable')=='1')
+{
+if(Form.Radio('wds_mode')=='Repeater')
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceIPAddress': tmpRepeaterIP,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.DisableGuestAccess': nodes[1].checked==true?'1':'0',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WDSMode': Form.Radio('wds_mode'),
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Repeater.IPAddress': tmpRepeaterIP,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Repeater.MACAddress': ptp_mac,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.1.MACAddress': '',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.2.MACAddress': '',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.3.MACAddress': '',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.4.MACAddress': ''
+});
+}
+else if(Form.Radio('wds_mode')=='BaseStation')
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceIPAddress': G_lan_BakupIP==G_lan_ip_addr ? undefined : G_lan_BakupIP,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.DisableRepeaterAccess': nodes[32].checked==true?'1':'0',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WDSMode': Form.Radio('wds_mode'),
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.1.MACAddress': pmp_mac1 ==':::::' ? '' : pmp_mac1,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.2.MACAddress': pmp_mac2 ==':::::' ? '' : pmp_mac2,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.3.MACAddress': pmp_mac3 ==':::::' ? '' : pmp_mac3,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.BaseStation.4.MACAddress': pmp_mac4 ==':::::' ? '' : pmp_mac4,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Repeater.IPAddress': '',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Repeater.MACAddress': ''
+});
+}
+if((G_BeaconType == "WPA"||G_BeaconType == "11i"||G_BeaconType == "WPAand11i") && WDS_Enable == '0'){
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.BeaconType': 'None',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': 'None'
+});}
+else if(G_BeaconType == "None" && WDS_Enable == '0'){
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': 'None'
+});}
+else if(G_BeaconType == "Basic" && WDS_Enable == '0'&&W_WEPEncryptionLevel=="40-bit"){
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': '40-bit',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WEPKey': W_WEPKeyIndex == '1'? W_Wepkey1 :(W_WEPKeyIndex == '2'? W_Wepkey2 :(W_WEPKeyIndex == '3'? W_Wepkey3 :W_Wepkey4))
+});}
+else if(G_BeaconType == "Basic" && WDS_Enable == '0'&&W_WEPEncryptionLevel=="104-bit"){
+$H({
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.EncryptionModes': '104-bit',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.WEPKey': W_WEPKeyIndex == '1'? W_Wepkey1 :(W_WEPKeyIndex == '2'? W_Wepkey2 :(W_WEPKeyIndex == '3'? W_Wepkey3 :W_Wepkey4))
+});}
+}
+else
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceIPAddress': G_lan_BakupIP==G_lan_ip_addr ? undefined : G_lan_BakupIP,
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.DisableGuestAccess': '0',
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.DisableRepeaterAccess': '0'
+});
+}
+//for turn off WPS
+if(uiWpsTurnOff()==false)
+{
+return;
+}
+uiDhcpEnableCtrl(Form.Checkbox('wds_enable')=='1'&&Form.Radio('wds_mode')=='Repeater');
+if(Form.Radio('wds_mode')=='Repeater'&&Form.Checkbox('wds_enable')=='1')
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': 0,
+'obj-action' : 'set',
+'errorpage' : '',
+'var:page' : G_Page,
+'var:CacheLastData': ViewState.Save()
+});
+var _url = "";
+G_ajax = Ajax.getInstance(_url, "", 0, dealwithip1,null_errorfunc);
+tt=setTimeout(doRedirect1,3000);
+setTimeout(showChange,500);
+G_ajax.post($('uiPostForm'));
+}
+else
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable': (Form.Checkbox('wds_enable')=='1') ? 0 : 1,
+'obj-action' : 'set',
+'errorpage' : '',
+'var:page' : G_Page,
+'var:CacheLastData': ViewState.Save()
+});
+$('lang_disc').style.display='none';
+$('headpage').style.display='none';
+$('editPage').style.display='none';
+$('updatePage').style.display='';
+updateProgress();
+var _url = "";
+var ajax = Ajax.getInstance(_url, "", 0, dealwithip2,null_errorfunc);
+setTimeout(doRedirect2,3000);
+ajax.post($('uiPostForm'));
+}
+}
+function showChange()
+{
+if(G_Error != '1')
+{
+$('lang_disc').style.display='none';
+$('headpage').style.display='none';
+$('editPage').style.display='none';
+$('updatePage').style.display='';
+updateProgress();
+}
+else
+{
+G_Error='0';
+clearTimeout(tt);
+G_ajax.abort();
+}
+}
+function null_errorfunc()
+{
+return true;
+}
+var flag1=1;
+function doRedirect1()
+{
+if(flag1==1&&progressOver==1)
+{
+top.document.location.href = 'http://'+$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value+'.'+ $('sysLANIPAddr3').value+'.'+ $('sysLANIPAddr4').value+'/html/index_basic.htm';
+}
+else if(progressOver==1)
+{
+$G('../html/WLG_wds.htm',{
+'var:page': 'WLG_wds',
+'errorpage' : 'WLG_wds',
+'getpage': '../html/WLG_wds.htm',
+'errorpage': '../html/WLG_wds.htm'
+});
+}
+}
+var flag2=1;
+function doRedirect2()
+{
+if(((flag2==1)||(G_lan_BakupIP!=G_lan_ip_addr))&&progressOver==1)
+{
+top.document.location.href = 'http://'+G_lan_BakupIP+'/html/index_basic.htm';
+}
+else if(progressOver==1)
+{
+$G('../html/WLG_wds.htm',{
+'var:page': 'WLG_wds',
+'errorpage' : 'WLG_wds',
+'getpage': '../html/WLG_wds.htm',
+'errorpage': '../html/WLG_wds.htm'
+});
+}
+}
+function dealwithip1(_text){
+try{
+eval(_text);
+}
+catch (ex){
+return false;
+}
+if(G_Error == '1')
+{
+flag1=0;
+dealWithError();
+}
+else{
+flag1=1;
+progressOver=1;
+}
+}
+function dealwithip2(_text){
+try{
+eval(_text);
+}
+catch (ex){
+return false;
+}
+if(G_Error == '1')
+{
+flag2=0;
+dealWithError();
+}
+else{
+flag2=1;
+progressOver=1;
+}
+}
+var pchar = "|"; // progress char
+var maxchars = 63;
+var delay_time = 120; // msecs
+var charcount = 0;
+var progressOver =0 ;
+function makeStr(strsize, fillchar)
+{
+var temp = "";
+for (i=0; i < strsize ; i ++)
+temp = temp + fillchar;
+return temp;
+}
+function updateProgress()
+{
+if (charcount < maxchars)
+{
+charcount ++;
+setTimeout("updateProgress()",delay_time);
+}
+else
+{
+progressOver=1;
+if(Form.Radio('wds_mode')=='Repeater'&&Form.Checkbox('wds_enable')=='1')
+doRedirect1();
+else
+doRedirect2()
+}
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="WLG_wds.htm"></form>
+<script type="text/javascript" src="js/ajax.js"></script>
+<style type="text/css">
+<!--
+.div_left { padding-left:0px; width:225;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+input[type=text] {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+letter-spacing:0px;
+}
+H1 {
+FONT-WEIGHT: bold; FONT-SIZE: 16px; BACKGROUND: white; COLOR: #9966ff; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+.prgbar { font-family:Arial; padding:0px; height: 20px; width: 200px; font-weight: bolder; font-size: 10pt; color: #9966ff}
+-->
+</style>
+<!-- config -->
+<div class="page_title" id="lang_disc">Wireless Repeating Function</div>
+<div class="fix_button" id="headpage">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type='reset' id="Cancel" name='Cancel' value='Cancel'>&nbsp;&nbsp;
+<input class="apply_bt" type="submit" id="Apply" name="Apply" value="Apply">
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main">
+<table style="background:white;width:100%;">
+<tr>
+<td class="mainFramWidth" id="editPage" >
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" colspan="3"><input name="wds_enable" type="checkbox" id="wds_enable" value="1" onClick="ClickEnableRepeater();"/>&nbsp;<a tabindex=-1 href="javascript:loadhelp('en_repeat')"><b id="lang_enable_repeater">Enable Wireless Repeating Function</b></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap="" colspan="1" style="padding-left:24px"><span id="lang_wireless_mac">Wireless MAC of this router:</span></td><td nowrap="" colspan="2" ><span id="INPUT_WirelessMAC"></span></td>
+</tr>
+<tr>
+<td nowrap="">
+<div class="div_orange">
+<strong><div id="Profile_wirelessnum"></div></strong>
+</div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" style="padding-left:20px">
+<input type="radio" name="wds_mode" id="Radio_repeater" value="Repeater" onClick="SelectMode();" checked="checked" />&nbsp;<a tabindex=-1 href="javascript:loadhelp('repeat')"><b id="lang_repeater_mode">Wireless Repeater</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" style="padding-left:30px"><input name="ptp_sta" type="checkbox" id="ptp_sta" value="1" disabled/>&nbsp;<b id="lang_disable_clients">Disable Wireless Clients Association</b></td>
+</tr>
+<tr>
+<td nowrap="" rowspan="3" width="5%">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_repeater_ip_addr" style="padding-left:43px">Repeater IP Address: </span></td>
+<td nowrap=""><div id="ReapterIP"><input type='text' id="sysLANIPAddr1" name="sysLANIPAddr1" size="4" maxlength="3" style="text-align:left;" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysLANIPAddr2" name="sysLANIPAddr2" size="4" maxlength="3" style="text-align:left;" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysLANIPAddr3" name="sysLANIPAddr3" size="4" maxlength="3" style="text-align:left;" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysLANIPAddr4" name="sysLANIPAddr4" size="4" maxlength="3" style="text-align:left;" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" /></div></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_central_MAC" style="padding-left:43px">Basic Station MAC Address: </span></td>
+<td nowrap="">
+<input type="text" name=ptp_mac_1 id=ptp_mac_1 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)" >:
+<input type="text" name=ptp_mac_2 id=ptp_mac_2 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type="text" name=ptp_mac_3 id=ptp_mac_3 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type="text" name=ptp_mac_4 id=ptp_mac_4 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type="text" name=ptp_mac_5 id=ptp_mac_5 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type="text" name=ptp_mac_6 id=ptp_mac_6 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)"></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" style="padding-left:20px">
+<input type="radio" name="wds_mode" value="BaseStation" id="Radio_basestation" onClick="SelectMode();" />
+<a tabindex=-1 href="javascript:loadhelp('base')"><b id="lang_central_mode">Basic Station Mode</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" style="padding-left:30px"><input name="pmp_sta" type="checkbox" id="pmp_sta" value="1" disabled/>&nbsp;<b id="lang_disable_clients1">Disable Wireless Clients Association</b></td>
+</tr>
+<tr>
+<td nowrap="" rowspan="5">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_repeater1_MAC" style="padding-left:43px">Repeater MAC Address 1:</span></td>
+<td nowrap="">
+<input type=text name=pmp_mac1_1 id=pmp_mac1_1 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac1_2 id=pmp_mac1_2 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac1_3 id=pmp_mac1_3 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac1_4 id=pmp_mac1_4 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac1_5 id=pmp_mac1_5 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac1_6 id=pmp_mac1_6 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)"></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_repeater2_MAC" style="padding-left:43px">Repeater MAC Address 2:</span></td>
+<td nowrap="">
+<input type=text name=pmp_mac2_1 id=pmp_mac2_1 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac2_2 id=pmp_mac2_2 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac2_3 id=pmp_mac2_3 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac2_4 id=pmp_mac2_4 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac2_5 id=pmp_mac2_5 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac2_6 id=pmp_mac2_6 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)"></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_repeater3_MAC" style="padding-left:43px">Repeater MAC Address 3:</span></td>
+<td nowrap="">
+<input type=text name=pmp_mac3_1 id=pmp_mac3_1 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac3_2 id=pmp_mac3_2 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac3_3 id=pmp_mac3_3 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac3_4 id=pmp_mac3_4 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac3_5 id=pmp_mac3_5 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac3_6 id=pmp_mac3_6 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)"></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_repeater4_MAC" style="padding-left:43px">Repeater MAC Address 4:</span></td>
+<td nowrap="">
+<input type=text name=pmp_mac4_1 id=pmp_mac4_1 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac4_2 id=pmp_mac4_2 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac4_3 id=pmp_mac4_3 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac4_4 id=pmp_mac4_4 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac4_5 id=pmp_mac4_5 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)">:
+<input type=text name=pmp_mac4_6 id=pmp_mac4_6 value="" size="4" maxlength="2" onFocus="this.select();" onKeyUp="MacKeyUp(event,this);" onKeyDown="return MacKeyDown(event,this)"></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td style="display:none" id="updatePage" >
+<div class="wizard_content_div">
+<div class="wizard_words_div">
+<div class="waiting_connect_div" align="center">
+<h1 class="h1_black" id="lang_wait"><!--please waite a moment--></h1>
+</div>
+<div class="waiting_img_div" align="center">
+<img src="skin/image/wait30.gif" alt="waiting" />
+</div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("WLG_wds")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

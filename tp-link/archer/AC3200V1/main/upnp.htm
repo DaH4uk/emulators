@@ -1,0 +1,187 @@
+<script type="text/javascript">
+var upnpTbl;
+var upnpCfgObj;
+
+function init() {
+    var upnpEn = $.act(ACT_GET, UPNP_CFG, null, null, ['Enable']);
+    $.exe();
+    if (upnpEn.enable == 1) {
+        $("#upnp_on").addClass('selected');
+        $("#upnp_off").removeClass('selected');
+    } else {
+        $("#upnp_on").removeClass('selected');
+        $("#upnp_off").addClass('selected');
+    }
+}
+
+function doUpdate() {
+    var array = new Array();
+    upnpCfgObj = $.act(ACT_GET, UPNP_CFG, null, null);
+    if ($.exe()) {
+        return;
+    }
+    var tr = $("#table-upnp").find("tbody tr:not(.nd)");
+    tr.remove();
+    if (upnpCfgObj.enable == 0) {
+
+    } else {
+        var portMappingList = $.act(ACT_GL, UPNP_PORTMAPPING, null, null);
+        if ($.exe()) {
+            return;
+        }
+        $("#num").html('<span>' + portMappingList.length + '</span>');
+        for (var i = 0; i < portMappingList.length; i++) {
+            array.push([{
+                "text": (i + 1),
+                "width": "5%"
+            }, {
+                "text": portMappingList[i].portMappingDescription,
+                "width": "30%"
+            }, {
+                "text": portMappingList[i].externalPort,
+                "width": "20%"
+            }, {
+                "text": portMappingList[i].portMappingProtocol,
+                "width": "10%"
+            }, {
+                "text": portMappingList[i].internalClient,
+                "width": "35%"
+            }, {
+                "text": portMappingList[i].internalPort,
+                "width": "20%"
+            }]);
+        }
+        $.initTableBody($("#table-upnp"), array);
+    }
+}
+
+$("#fresh").click(function() {
+    initTable();
+});
+
+$("#upnp_on").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, UPNP_CFG, upnpCfgObj.__stack, null, ["Enable=1"]);
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            $.reload();
+        }
+    });
+
+});
+$("#upnp_off").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, UPNP_CFG, upnpCfgObj.__stack, null, ["Enable=0"]);
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            $.reload();
+        }
+    });
+});
+
+function initTable() {
+    var array = new Array();
+    upnpCfgObj = $.act(ACT_GET, UPNP_CFG, null, null);
+    if ($.exe()) {
+        return;
+    }
+
+    var tr = $("#table-upnp").find("tbody tr:not(.nd)");
+    tr.remove();
+
+    if (upnpCfgObj.enable == 1) {
+        var portMappingList = $.act(ACT_GL, UPNP_PORTMAPPING, null, null, null);
+        if ($.exe()) {
+            return;
+        }
+        $("#num").html("<span>" + portMappingList.length + "</span>");
+        for (var i = 0; i < portMappingList.length; i++) {
+            array.push([{
+                "text": (i + 1),
+                "width": "5%"
+            }, {
+                "text": portMappingList[i].portMappingDescription,
+                "width": "30%"
+            }, {
+                "text": portMappingList[i].externalPort,
+                "width": "20%"
+            }, {
+                "text": portMappingList[i].portMappingProtocol,
+                "width": "10%"
+            }, {
+                "text": portMappingList[i].internalClient,
+                "width": "25%"
+            }, {
+                "text": portMappingList[i].internalPort,
+                "width": "10%"
+            }]);
+        }
+    }
+    $.initTableBody($("#table-upnp"), array);
+    $.tablePages($("#table-upnp"), 8);
+}
+</script>
+<h3>UPnP</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b class="l" id="t_enupnp" class="s">UPnP:</b>
+            <ul>
+                <li>
+                    <button id="upnp_on" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="upnp_off" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+<br />
+<h3 id="t_servlist">UPnP Service List</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op" id="addItem">
+            <div class="table-note">
+                <label class="label-title" id="t_clientnum">Client Number:</label>
+                <span id="num" class="text">0</span>
+            </div>
+            <div class="table-btn">
+                <span class="refresh-icon" id="fresh"></span>
+                <label class="T_refresh">Refresh</label>
+            </div>
+        </div>
+        <table id="table-upnp">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+var headArray = [{
+    "text": table_str.id,
+    "width": "5%"
+}, {
+    "text": table_str.servdesc,
+    "width": "30%"
+}, {
+    "text": table_str.exterport,
+    "width": "20%"
+}, {
+    "text": table_str.protocol,
+    "width": "10%"
+}, {
+    "text": table_str.interipaddr,
+    "width": "25%"
+}, {
+    "text": table_str.interport,
+    "width": "10%"
+}];
+
+$.tpInit(init);
+
+$.initTableHead($("#table-upnp"), headArray);
+$("#table-upnp").tpTable(initTable);
+</script>

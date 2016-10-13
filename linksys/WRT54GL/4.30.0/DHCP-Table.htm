@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0032)http://192.168.1.1/DHCPTable.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>DHCP Clients Table</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=expires content=0>
+<META http-equiv=cache-control content=no-cache>
+<META http-equiv=pragma content=no-cache><LINK href="DHCP-Table_files/style.css" 
+type=text/css rel=stylesheet>
+<SCRIPT src="DHCP-Table_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="DHCP-Table_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="DHCP-Table_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="DHCP-Table_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="DHCP-Table_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=Javascript src="DHCP-Table_files/capstatus.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=Javascript src="DHCP-Table_files/capasg.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="DHCP-Table_files/layout.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript>
+function DHCPAct(F)
+{
+       F.submit_button.value="DHCPTable";
+       F.submit_type.value="delete";
+       F.change_action.value="gozila_cgi";
+       F.submit();
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY bgColor=white onload={window.focus();}>
+<FORM action="http://ui.linksys.com/WRT54GL/4.30.0/apply.cgi" method=post><INPUT type=hidden name=submit_button> <INPUT 
+type=hidden name=change_action> <INPUT type=hidden name=submit_type> 
+<CENTER>
+<TABLE height=108 cellSpacing=1 width=673 border=0>
+  <TBODY>
+  <TR>
+    <TD width=273 colSpan=2 height=27><FONT face=Arial color=blue><B><SPAN 
+      style="FONT-SIZE: 14pt">
+      <SCRIPT>Capture(dhcptbl.actip)</SCRIPT>
+      </SPAN></B></FONT></TD>
+    <TD align=right width=147 height=27>&nbsp;</TD>
+    <TD align=right width=73 height=27>&nbsp;</TD>
+    <TD align=right width=73 height=27>&nbsp;</TD></TR>
+  <TR>
+    <TD align=left colSpan=4 height=30><FONT face=Arial><SPAN 
+      style="FONT-SIZE: 10pt">
+      <SCRIPT>Capture(dhcptbl.dhcpsrvip)</SCRIPT>
+      &nbsp;:&nbsp;</SPAN> <B>&nbsp; 192.168.1.1 </B></FONT></TD>
+    <TD align=middle height=30>
+      <SCRIPT>document.write("<INPUT type=button name=refresh_button value=\"" + sbutton.refresh + "\">");</SCRIPT>
+    </TD></TR>
+  <TR align=middle bgColor=#b3b3b3>
+    <TH height=32><FONT color=black>
+      <SCRIPT>Capture(share.clihostname)</SCRIPT>
+      </FONT></TH>
+    <TH height=32><FONT color=black>
+      <SCRIPT>Capture(share.ipaddr)</SCRIPT>
+      </FONT></TH>
+    <TH height=32><FONT color=black>
+      <SCRIPT>Capture(share.macaddr)</SCRIPT>
+      </FONT></TH>
+    <TH height=32><FONT color=black>
+      <SCRIPT>Capture(dhcptbl.expires)</SCRIPT>
+      </FONT></TH>
+    <TD height=32>
+      <SCRIPT>document.write("<input type=button name=action  value=\"" + sbutton.del + "\">");</SCRIPT>
+      </TH>
+      <SCRIPT language=javascript>
+var table = new Array(
+ '&nbsp;','0.0.0.0','00:00:00:00:00:00','00:00:00','0'
+
+);
+var i = 0;
+var count = 0;
+for(;;){
+	if(!table[i]){
+		if(i == 0){
+			document.write("<tr bgcolor=cccccc align=middle>");
+			document.write("<td>"+wlanadv.none+"</td>");
+			document.write("<td>"+wlanadv.none+"</td>");
+			document.write("<td>"+wlanadv.none+"</td>");
+			document.write("<td>"+wlanadv.none+"</td>");
+			document.write("<td>&nbsp;</td></tr>");
+		}
+		break;
+	}
+	document.write("<tr bgcolor=cccccc align=middle>");
+	document.write("<td>"+table[i]+"</td>");
+	document.write("<td>"+table[i+1]+"</td>");
+	document.write("<td>"+table[i+2]+"</td>");
+	document.write("<td>"+table[i+3]+"</td>");
+	document.write("<td><input type=checkbox name=d_"+count+" value="+table[i+4]+"></td></tr>");
+	count ++;
+	i = i + 5;
+}
+</SCRIPT>
+
+  <TR align=middle bgColor=#cccccc>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>&nbsp;</TD>
+    <TD bgColor=#ffffff height=35>
+      <SCRIPT>document.write("<INPUT onclick=self.close() type=reset name=close_button value=\"" + sbutton.close + "\">");</SCRIPT>
+    </TD></TR></TBODY></TABLE></CENTER></FORM></BODY></HTML>

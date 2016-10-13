@@ -1,0 +1,639 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0036)http://192.168.1.1/Status_Router.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>Router Status</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=expires content=0>
+<META http-equiv=cache-control content=no-cache>
+<META http-equiv=pragma content=no-cache><LINK href="Status_files/style.css" 
+type=text/css rel=stylesheet>
+<STYLE fprolloverstyle>A:hover {
+	COLOR: #00ffff
+}
+.small A:hover {
+	COLOR: #00ffff
+}
+</STYLE>
+
+<SCRIPT src="Status_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="Status_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Status_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Status_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Status_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=Javascript src="Status_files/capstatus.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=Javascript src="Status_files/capsetup.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=Javascript src="Status_files/layout.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript>
+function DHCPAction(F,I)
+{
+	F.submit_type.value = I;
+	F.submit_button.value = "Status_Router";
+	F.change_action.value = "gozila_cgi";
+	F.submit();
+}
+function Connect(F,I)
+{
+	F.submit_type.value = I;
+	F.submit_button.value = "Status_Router";
+	F.change_action.value = "gozila_cgi";
+	F.submit();
+}
+function init()
+{
+	
+}
+function ShowAlert(M)
+{
+	var str = "";
+	var mode = "";
+	var wan_ip = "0.0.0.0";
+	var wan_proto = "dhcp";
+	var ac_name = "";
+	var srv_name = "";
+
+	if(document.status.wan_proto.value == "pppoe")
+		mode = "PPPoE";
+	else if(document.status.wan_proto.value == "l2tp")
+		mode = "L2TP";
+	else if(document.status.wan_proto.value == "heartbeat")
+		mode = "HBS";
+	else
+		mode = "PPTP";
+
+	if(M == "AUTH_FAIL" || M == "PAP_AUTH_FAIL" || M == "CHAP_AUTH_FAIL")
+                str = mode + hstatrouter2.authfail;
+//              str = mode + " authentication fail";
+	else if(M == "IP_FAIL" || (M == "TIMEOUT" && wan_ip == "0.0.0.0"))
+                str = hstatrouter2.noip + mode + hstatrouter2.server;
+//              str = "Can not get a IP address from " + mode + " server";
+        else if(M == "NEG_FAIL")
+                str = mode + hstatrouter2.negfail;
+//              str = mode + " negotication fail";
+        else if(M == "LCP_FAIL")
+                str = mode + hstatrouter2.lcpfail;
+//              str = mode + " LCP negotication fail";
+        else if(M == "TCP_FAIL" || (M == "TIMEOUT" && wan_ip != "0.0.0.0" && wan_proto == "heartbeat"))
+                str = hstatrouter2.tcpfail + mode + hstatrouter2.server;
+//              str = "Can not build a TCP connection to " + mode + " server";
+	else 
+                str = hstatrouter2.noconn + mode + hstatrouter2.server;
+//              str = "Can not connect to " + mode + " server";
+
+	alert(str);
+
+	Refresh();
+}
+var value=0;
+function Refresh()
+{
+	var refresh_time = "";
+	if(refresh_time == "")	refresh_time = 60000;
+	if (value>=1)
+	{
+		window.location.replace("Status_Router.asp");
+	}
+	value++;
+	timerID=setTimeout("Refresh()",refresh_time);
+}
+function ViewDHCP()
+{
+	dhcp_win = self.open('DHCP-Table.htm','inLogTable','alwaysRaised,resizable,scrollbars,width=720,height=600');
+	dhcp_win.focus();
+}
+function localtime()
+{
+        tmp = "Mon, 05 Dec 2005 12:00:00";
+        if( tmp == "Not Available")
+                document.write(satusroute.localtime);
+        else
+                document.write(tmp);
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY >
+<DIV align=center>
+<FORM name=status action="http://ui.linksys.com/WRT54GL/4.30.0/apply.cgi" method=post><INPUT type=hidden 
+name=submit_button> <INPUT type=hidden name=submit_type> <INPUT type=hidden 
+name=change_action> <INPUT type=hidden value=dhcp name=wan_proto> 
+<TABLE cellSpacing=0 cellPadding=0 width=809 border=0>
+  <TBODY>
+  <TR>
+    <TD width=95><IMG height=57 src="Status_files/UI_Linksys.gif" width=165 
+      border=0></TD>
+    <TD vAlign=bottom align=right width=714 bgColor=#6666cc><FONT 
+      style="FONT-SIZE: 7pt" color=#ffffff><FONT face=Arial>
+      <SCRIPT>Capture(share.firmwarever)</SCRIPT>
+      &nbsp;:&nbsp;v4.30.0&nbsp;&nbsp;&nbsp;</FONT></FONT></TD></TR>
+  <TR>
+    <TD width=808 bgColor=#6666cc colSpan=2><IMG height=11 
+      src="Status_files/UI_10.gif" width=809 border=0></TD></TR></TBODY></TABLE>
+<TABLE height=77 cellSpacing=0 cellPadding=0 width=809 bgColor=black border=0>
+  <TBODY>
+  <TR>
+    <TD 
+    style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+    borderColor=#000000 align=middle width=163 height=49>
+      <H3 style="MARGIN-TOP: 1px; MARGIN-BOTTOM: 1px"><FONT 
+      style="FONT-SIZE: 15pt" face=Arial color=#ffffff>
+      <SCRIPT>Capture(bmenu.statu)</SCRIPT>
+      </FONT></H3></TD>
+    <TD 
+    style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+    vAlign=center borderColor=#000000 width=646 bgColor=#000000 height=49>
+      <TABLE 
+      style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; BORDER-COLLAPSE: collapse; FONT-VARIANT: normal" 
+      height=33 cellSpacing=0 cellPadding=0 bgColor=#6666cc border=0>
+        <TBODY>
+        <TR>
+          <TD style="FONT-WEIGHT: bolder; FONT-SIZE: 10pt" align=right 
+          bgColor=#6666cc height=33><FONT color=#ffffff>
+            <SCRIPT>productname()</SCRIPT>
+            &nbsp;&nbsp;</FONT></TD>
+          <TD borderColor=#000000 borderColorLight=#000000 align=middle 
+          width=109 bgColor=#000000 borderColorDark=#000000 height=12 
+            rowSpan=2><FONT color=#ffffff><SPAN 
+            style="FONT-SIZE: 8pt"><B>WRT54GL</B></SPAN></FONT></TD></TR>
+        <TR>
+          <TD 
+          style="FONT-WEIGHT: normal; FONT-SIZE: 1pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+          width=537 bgColor=#000000 height=1>&nbsp;</TD></TR>
+        <TR>
+          <TD width=646 bgColor=#000000 colSpan=2 height=32>
+            <TABLE id=AutoNumber1 
+            style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; BORDER-COLLAPSE: collapse; FONT-VARIANT: normal" 
+            height=6 cellSpacing=0 cellPadding=0 width=646 border=0>
+              <TBODY>
+              <TR 
+              style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; FONT-WEIGHT: normal; FONT-SIZE: 1pt; BORDER-LEFT: medium none; COLOR: black; BORDER-BOTTOM: medium none; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+              align=middle bgColor=#6666cc><!--
+                <TD width=83 height=1><IMG height=10 src="image/UI_06.gif" width=83 border=0></TD>
+                <TD width=73 height=1><IMG height=10 src="image/UI_06.gif" width=83 border=0></TD>
+                <TD width=113 height=1><IMG height=10 src="image/UI_06.gif" width=83 border=0></TD>
+                <TD width=103 height=1><IMG height=10 src="image/UI_06.gif" width=103 border=0></TD>
+                <TD width=85 height=1><IMG height=10 src="image/UI_06.gif" width=100 border=0></TD>
+                <TD width=115 height=1><IMG height=10 src="image/UI_06.gif" width=115 border=0></TD>
+                <TD width=74 height=1><IMG height=10 src="image/UI_07.gif" width=79 border=0></TD>
+-->
+                <SCRIPT>document.write("<TD width=" + ui_06.w1 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w2 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w3 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w4 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w5 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w6 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w7 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_07.gif"></TD>")</SCRIPT>
+              </TR>
+              <TR>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Setup.htm">
+                  <SCRIPT>Capture(bmenu.setup)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Wireless.htm">
+                  <SCRIPT>Capture(bmenu.wireless)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Security.htm">
+                  <SCRIPT>Capture(bmenu.security)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Access-Restric.htm">
+                  <SCRIPT>Capture(bmenu.accrestriction)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#000000 height=20>
+                  <P style="MARGIN-BOTTOM: 4px"><FONT style="FONT-WEIGHT: 700" 
+                  color=#ffffff><A style="TEXT-DECORATION: none" 
+                  href="Applications.htm">
+                  <SCRIPT>Capture(bmenu.applications)</SCRIPT>
+                  <BR>&amp;
+                  <SCRIPT>Capture(bmenu.gaming)</SCRIPT>
+                   </A>&nbsp;&nbsp;&nbsp;&nbsp;</FONT></P></TD>
+                <TD align=middle bgColor=#000000 height=20>
+                  <P style="MARGIN-BOTTOM: 4px"><FONT style="FONT-WEIGHT: 700" 
+                  color=#ffffff><A style="TEXT-DECORATION: none" 
+                  href="Admin.htm">
+                  <SCRIPT>Capture(bmenu.admin)</SCRIPT>
+                  </A>&nbsp;&nbsp;&nbsp;&nbsp;</FONT></P></TD>
+                <TD align=middle bgColor=#6666cc height=20>
+                  <P style="MARGIN-BOTTOM: 4px"><FONT style="FONT-WEIGHT: 700" 
+                  color=#ffffff>
+                  <SCRIPT>Capture(bmenu.statu)</SCRIPT>
+                  &nbsp;&nbsp;&nbsp;&nbsp;</FONT></P></TD></TR>
+              <TR>
+                <TD width=643 bgColor=#6666cc colSpan=7 height=21>
+                  <TABLE borderColor=black height=21 cellSpacing=0 cellPadding=0 
+                  width=643>
+                    <TBODY>
+                    <TR align=left><!-- TD width=25></TD -->
+                      <SCRIPT>document.write("<TD width=" + sta_width.w1 + "></TD>")</SCRIPT>
+<!-- TD width=65 -->
+                      <SCRIPT>document.write("<TD width=" + sta_width.w2 + ">")</SCRIPT>
+                      <FONT style="COLOR: white">
+                      <SCRIPT>Capture(share.router)</SCRIPT>
+                      </FONT></TD>
+                      <TD align=middle width=1>
+                        <P class=bar><FONT color=white><B>|</B></FONT></P></TD><!-- TD width=25></TD -->
+                      <SCRIPT>document.write("<TD width=" + sta_width.w3 + "></TD>")</SCRIPT>
+<!-- TD class=small width=100 -->
+                      <SCRIPT>document.write("<TD class=small width=" + sta_width.w4 + ">")</SCRIPT>
+                      <A href="Status-Local.htm">
+                      <SCRIPT>Capture(statopmenu.localnet)</SCRIPT>
+                      </A></TD>
+                      <TD align=middle width=1>
+                        <P class=bar><FONT color=white><B>|</B></FONT></P></TD><!-- TD width=25></TD -->
+                      <SCRIPT>document.write("<TD width=" + sta_width.w5 + "></TD>")</SCRIPT>
+<!-- TD class=small width=100 -->
+                      <SCRIPT>document.write("<TD class=small width=" + sta_width.w6 + ">")</SCRIPT>
+                      <SPAN>&nbsp;</SPAN><A 
+                      href="Status-Wireless.htm">
+                      <SCRIPT>Capture(bmenu.wireless)</SCRIPT>
+                      </A></TD> <!--
+                      <TD width=1 align=center><P class=bar><font color='white'><b>|</b></font></P></TD>
+
+                      <script>document.write("<TD width=" + sta_width.w7 + "></TD>")</script>  
+
+                      <script>document.write("<TD class=small width=" + sta_width.w8 + ">")</script>  
+                      <A href="Status_Performance.asp">System Performance</A></TD>
+-->
+                      <TD>&nbsp;</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<TABLE height=5 cellSpacing=0 cellPadding=0 width=806 bgColor=black border=0>
+  <TBODY>
+  <TR bgColor=black>
+    <TD 
+    style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+    borderColor=#e7e7e7 width=163 bgColor=#e7e7e7 height=1><IMG height=15 
+      src="Status_files/UI_03.gif" width=164 border=0></TD>
+    <TD 
+    style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+    width=646 height=1><IMG height=15 src="Status_files/UI_02.gif" width=645 
+      border=0></TD></TR></TBODY></TABLE>
+<TABLE id=AutoNumber9 style="BORDER-COLLAPSE: collapse" borderColor=#111111 
+height=23 cellSpacing=0 cellPadding=0 width=809 border=0>
+  <TBODY>
+  <TR>
+    <TD width=633>
+      <TABLE height="100%" cellSpacing=0 cellPadding=0 border=0>
+        <TBODY>
+        <TR>
+          <TD width=156 bgColor=#000000 height=25>
+            <P align=right><B><FONT style="FONT-SIZE: 9pt" face=Arial 
+            color=#ffffff>
+            <SCRIPT>Capture(staleftmenu.routerinfo)</SCRIPT>
+            </B></P></FONT></TD>
+          <TD width=8 bgColor=#000000 height=25>&nbsp;</TD>
+          <TD width=14 height=25>&nbsp;</TD>
+          <TD width=17 height=25>&nbsp;</TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=101 height=25>&nbsp;</TD>
+          <TD width=296 height=25>&nbsp;</TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25>
+            <SCRIPT>Capture(share.firmwarever)</SCRIPT>
+            &nbsp;:&nbsp;</TD>
+          <TD><B>v4.30.0, Sep. 23, 2005</B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25>
+            <SCRIPT>Capture(stacontent.curtime)</SCRIPT>
+            &nbsp;:&nbsp;</TD><!-- TD><b>Thu, 01 Dec 2005 12:28:14</b></TD -->
+          <TD><B>
+            <SCRIPT>localtime();</SCRIPT>
+            </B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25>
+            <SCRIPT>Capture(share.macaddr)</SCRIPT>
+            &nbsp;:&nbsp;</TD>
+          <TD><B>00:00:00:00:00:00       </B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25>
+            <SCRIPT>Capture(share.routename)</SCRIPT>
+            &nbsp;:&nbsp;</TD>
+          <TD><B>WRT54GL&nbsp;</B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25>
+            <SCRIPT>Capture(share.hostname)</SCRIPT>
+            &nbsp;:&nbsp;</TD>
+          <TD><B>&nbsp;</B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25>
+            <SCRIPT>Capture(share.domainname)</SCRIPT>
+            &nbsp;:&nbsp;</TD>
+          <TD><B>
+            <SCRIPT language=javascript>
+if("" != "") {
+	document.write("");
+}
+else {
+	document.write("");
+}
+</SCRIPT>
+            </B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#000000 height=25>
+            <P align=right><B><FONT style="FONT-SIZE: 9pt" color=#ffffff><SPAN>
+            <SCRIPT>Capture(share.internet)</SCRIPT>
+            </SPAN></FONT></B></P></TD>
+          <TD width=8 bgColor=#000000 height=25>&nbsp;</TD>
+          <TD colSpan=6>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>
+            <P align=right><FONT style="FONT-WEIGHT: 700"><SPAN>
+            <SCRIPT>Capture(share.cfgtype)</SCRIPT>
+            </SPAN></FONT></P></TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 height=25><SPAN>
+            <SCRIPT>Capture(stacontent.logtype)</SCRIPT>
+            </SPAN>&nbsp;:&nbsp;</TD>
+          <TD><B>
+            <SCRIPT>Capture(setupcontent.dhcp)</SCRIPT>
+            </B></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR><!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><!--
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background=image/UI_04.gif height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD><FONT style="FONT-SIZE: 8pt"><script>Capture(stacontent.logsta)</script>&nbsp;:&nbsp;</FONT></TD>
+          <TD><FONT style="FONT-SIZE: 8pt"><B>
+<script language=javascript>
+        var status1 = "Disable";
+        var status2 = "&nbsp;";
+	if(status1 == "Status")         status1 = bmenu.statu;
+        if(status2 == "Connecting")     status2 = hstatrouter2.connecting;
+        else    if(status2 == "Disconnected")   status2 = hstatrouter2.disconnected;
+        else    if(status2 == "Connected")      status2 = stacontent.conn;
+	document.write(status2);
+	document.write("&nbsp;&nbsp;");
+
+	var but_arg = "";
+        var wan_proto = "dhcp";
+        var but_type = "";
+	if(but_arg == "Connect")        but_value = stacontent.connect;
+        else if(but_arg == "Disconnect")        but_value = hstatrouter2.disconnect;
+        but_type = but_arg +"_" + wan_proto;
+	document.write("<INPUT type=button value='"+but_value+"' onClick=Connect(this.form,'"+but_type+"')>");
+</script>
+</B></FONT></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background=image/UI_05.gif height=25>&nbsp;</TD></TR>
+-->
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD><FONT style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.ipaddr)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD><FONT style="FONT-SIZE: 8pt"><B>0.0.0.0</B></FONT></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 height=25><IMG height=30 src="Status_files/UI_04.gif" 
+            width=8 border=0></TD>
+          <TD bgColor=#ffffff colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 bgColor=#ffffff height=25><FONT 
+style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.submask)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD width=296 bgColor=#ffffff height=25><FONT 
+            style="FONT-SIZE: 8pt"><B>0.0.0.0</B></FONT></TD>
+          <TD width=13 bgColor=#ffffff height=25>&nbsp;</TD>
+          <TD width=15 bgColor=#ffffff height=25><IMG height=30 
+            src="Status_files/UI_05.gif" width=15 border=0></TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 height=25><IMG height=30 src="Status_files/UI_04.gif" 
+            width=8 border=0></TD>
+          <TD bgColor=#ffffff colSpan=3 height=25>&nbsp;</TD>
+          <TD width=101 bgColor=#ffffff height=25><FONT 
+style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.defgateway)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD width=296 bgColor=#ffffff height=25><FONT 
+            style="FONT-SIZE: 8pt"><B>0.0.0.0</B></FONT></TD>
+          <TD width=13 bgColor=#ffffff height=25>&nbsp;</TD>
+          <TD width=15 bgColor=#ffffff height=25><IMG height=30 
+            src="Status_files/UI_05.gif" width=15 border=0></TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD><FONT style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.dns)</SCRIPT>
+            1&nbsp;:&nbsp;</FONT></TD>
+          <TD><FONT style="FONT-SIZE: 8pt"><B>0.0.0.0</B></FONT></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD height=25><FONT style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.dns)</SCRIPT>
+            2&nbsp;:&nbsp;</FONT></TD>
+          <TD height=25><FONT 
+            style="FONT-SIZE: 8pt"><B>0.0.0.0</B></FONT></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD height=25><FONT style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.dns)</SCRIPT>
+            3&nbsp;:&nbsp;</FONT></TD>
+          <TD height=25><FONT style="FONT-SIZE: 8pt"><B>0.0.0.0</B></FONT></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD height=25><FONT style="FONT-SIZE: 8pt">
+            <SCRIPT>Capture(share.mtu)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD height=25><FONT style="FONT-SIZE: 8pt"><B>1500</B></FONT></TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD width=14 height=25></TD>
+          <TD colSpan=4 height=25>
+            <HR color=#b5b5e6 SIZE=1>
+          </TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25>&nbsp;</TD>
+          <TD colSpan=2 height=25><!-- % nvram_match("wan_proto", "dhcp", "<INPUT onclick=DHCPAction(this.form,'release') type=button value='DHCP Release'>&nbsp;&nbsp;&nbsp;&nbsp;<INPUT onclick=DHCPAction(this.form,'renew') type=button value='DHCP Renew'>"); % -->
+            <SCRIPT>document.write("<INPUT  type=button name=dhcp_release value=\"" + stabutton.dhcprelease + "\">");</SCRIPT>
+
+            <SCRIPT>document.write("<INPUT  type=button name=dhcp_renew value=\"" + stabutton.dhcprenew + "\">");</SCRIPT>
+            &nbsp;</TD>
+          <TD width=13 height=25>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif" 
+height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif">&nbsp;</TD>
+          <TD colSpan=6>&nbsp;</TD>
+          <TD width=15 
+      background="Status_files/UI_05.gif">&nbsp;</TD></TR></TBODY></TABLE></TD>
+    <TD vAlign=top width=176 bgColor=#6666cc>
+      <TABLE cellSpacing=0 cellPadding=0 width=176 border=0>
+        <TBODY>
+        <TR>
+          <TD width=11 bgColor=#6666cc height=25>&nbsp;</TD>
+          <TD width=156 bgColor=#6666cc height=25><FONT 
+            color=#ffffff><SPAN><BR>
+            <SCRIPT>Capture(hstatrouter2.right1)</SCRIPT>
+            <BR><BR>
+            <SCRIPT>Capture(hstatrouter2.right2)</SCRIPT>
+            <BR><BR>
+            <SCRIPT>Capture(hstatrouter2.right3)</SCRIPT>
+            <BR><BR>
+            <SCRIPT>Capture(hstatrouter2.right4)</SCRIPT>
+            <BR><B><A href="Status-Help.htm" target=_blank>
+            <SCRIPT>Capture(share.more)</SCRIPT>
+            </A></B></SPAN><BR><BR>
+            <SCRIPT>Capture(hstatrouter2.right5)</SCRIPT>
+            <BR><B><A href="Status-Help.htm" target=_blank>
+            <SCRIPT>Capture(share.more)</SCRIPT>
+            </A></B></SPAN></FONT></TD>
+          <TD width=9 bgColor=#6666cc 
+  height=25>&nbsp;</TD></TR></TBODY></TABLE></TD></TR>
+  <TR>
+    <TD width=809 colSpan=2>
+      <TABLE cellSpacing=0 cellPadding=0 border=0>
+        <TBODY>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=30>&nbsp;</TD>
+          <TD width=8 background="Status_files/UI_04.gif">&nbsp;</TD>
+          <TD width=454>&nbsp;</TD>
+          <TD width=15 background="Status_files/UI_05.gif">&nbsp;</TD>
+          <TD width=176 bgColor=#6666cc rowSpan=2><IMG height=64 
+            src="Status_files/UI_Cisco.gif" width=176 border=0></TD></TR>
+        <TR>
+          <TD width=156 bgColor=#000000>&nbsp;</TD>
+          <TD width=8 bgColor=#000000>&nbsp;</TD>
+          <TD align=right width=454 bgColor=#6666cc><!-- INPUT  type=button name="refresh_button" -->
+            <SCRIPT>document.write("<INPUT  type=button name=refresh_button value=\"" + sbutton.refresh + "\">");</SCRIPT>
+            &nbsp;&nbsp; </TD>
+          <TD width=15 bgColor=#000000 
+  height=33>&nbsp;</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></FORM></DIV></BODY></HTML>

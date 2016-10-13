@@ -1,0 +1,1891 @@
+var __CONNECTOR = new function() {
+        function wanTree(iftree) {
+            function addLevelObj(levels) {
+                function addLevel(data, key, lname) {
+                    data.__ifname = key, level[lname] = data
+                }
+                var params = Array.prototype.slice.call(arguments, 1),
+                    level = {};
+                params.length > 0 && addLevel(params[0], params[1], "l2"), params.length > 2 && addLevel(params[2], params[3], "l3"), params.length > 4 && addLevel(params[4], params[5], "l4"), levels.push(level)
+            }
+            var result = [];
+            return _.each(iftree, function(iface, ifaceKey) {
+                if (iface.is_wan) {
+                    var services = iface.services;
+                    return !services || _.isEmpty(services) ? void addLevelObj(result, iface, ifaceKey) : void _.each(services, function(service, serviceKey) {
+                        var tunnels = service.tunnels;
+                        return !tunnels || _.isEmpty(tunnels) ? void addLevelObj(result, iface, ifaceKey, service, serviceKey) : void _.each(tunnels, function(tunnel, tunnelKey) {
+                            addLevelObj(result, iface, ifaceKey, service, serviceKey, tunnel, tunnelKey)
+                        })
+                    })
+                }
+            }), result
+        }
+
+        function unionWanTree(wanTree) {
+            function getLevel(connection, levelName) {
+                var level = connection[levelName];
+                if (_.isUndefined(level)) return {};
+                var key = _.clone(level.__ifname);
+                return delete level.__ifname, "l2" == levelName && delete level.services, "l3" == levelName && delete level.tunnels, {
+                    key: key,
+                    data: level
+                }
+            }
+            var result = {};
+            return _.each(wanTree, function(connection) {
+                var out = {},
+                    media = getLevel(connection, "l2"),
+                    services = getLevel(connection, "l3"),
+                    tunnels = getLevel(connection, "l4");
+                _.isEmpty(tunnels) || (services.data.tunnels = {}, services.data.tunnels[tunnels.key] = tunnels.data), _.isEmpty(services) || (media.data.services = {}, media.data.services[services.key] = services.data), out[media.key] = media.data, _.extend(result, out)
+            }), result
+        }
+
+        function filterWanTree(iface, params) {
+            function isSetParam(obj, name, value) {
+                return !_.isUndefined(obj) && !_.isUndefined(obj[name]) && obj[name] == value
+            }
+            return _.filter(iface, function(conn) {
+                return _.every(params, function(value, name) {
+                    return isSetParam(conn.l2, name, value) || isSetParam(conn.l3, name, value) || isSetParam(conn.l4, name, value)
+                })
+            })
+        }
+
+        function getConnectionInfo(connection, ports, netstat, dslstatus, version) {
+            var l2 = connection.l2,
+                activeConnection = getActiveLevel(connection, version),
+                connStatus = activeConnection.connection_status;
+            for (var port in ports) ports[port].iface && (l2.iface = l2.__ifname.substr(0, ports[port].iface.length));
+            if (isDSLPort(ports, l2.iface)) var portInfo = getDslPortInfo(dslstatus);
+            else var portInfo = findPortInfo(ports, {
+                iface: l2.iface
+            });
+            var netInfo = getNetInfo(netstat, activeConnection.__ifname, version);
+            return {
+                l2: {
+                    data: l2,
+                    type: getL2Type(l2)
+                },
+                connection: {
+                    data: activeConnection,
+                    net: netInfo
+                },
+                status: {
+                    connection: _.isUndefined(connStatus) || "Connected" != connStatus ? !1 : !0,
+                    port: portInfo ? portInfo.status : !1
+                }
+            }
+        }
+
+        function isActiveConnection(connection, version) {
+            var activeLevel = getActiveLevel(connection, version);
+            return !_.isNull(activeLevel)
+        }
+
+        function getActiveLevel(connection, version) {
+            var l3 = connection.l3,
+                l4 = connection.l4,
+                gwifName = "v6" == version ? "gwifv6" : "gwif";
+            return l4 && 1 == l4[gwifName] ? l4 : l3 && 1 == l3[gwifName] ? l3 : null
+        }
+
+        function isDSLPort(ports, iface) {
+            return !_.some(ports, function(port) {
+                return port.iface == iface
+            })
+        }
+
+        function findPortInfo(ports, params) {
+            return _.find(ports, function(port) {
+                return _.every(params, function(value, name) {
+                    return port[name] == value
+                })
+            })
+        }
+
+        function getDslPortInfo(dslstatus) {
+            var status;
+            return dslstatus && "0" != dslstatus.adslTrainingState ? "1" == dslstatus.adslTrainingState && (status = !0) : status = !1, {
+                status: status
+            }
+        }
+
+        function getNetInfo(netstat, name, version) {
+            var result = {},
+                backup = _.clone($$.rate[version]),
+                constat = netstat[name];
+            return result.rx = constat.rx, result.tx = constat.tx, result.time = constat.time_stat, backup.time ? (result.dspeed = (result.rx - backup.rx) / (result.time - backup.time), result.sspeed = (result.tx - backup.tx) / (result.time - backup.time)) : (result.dspeed = 0, result.sspeed = 0), $$.rate[version] = _.clone(result), result
+        }
+
+        function getL2Type(l2) {
+            function isWifi(l2) {
+                var type = l2.type,
+                    port = l2.port;
+                return "ethernet" == type && "WiFiClient" == port
+            }
+
+            function isDongle(l2) {
+                var types = ["3g", "lte", "usb"];
+                return _.contains(types, l2.type)
+            }
+            return isWifi(l2) ? "wifi" : isDongle(l2) ? "dongle" : l2.type
+        }
+
+        function isIpv4(connection) {
+            var type = connection.type,
+                onlyIpv6Types = ["ipv6", "pppv6"];
+            return !_.contains(onlyIpv6Types, type)
+        }
+
+        function isIpv6(connection) {
+            var type = connection.type,
+                ipv6Types = ["ipv6", "pppv6", "pppdual"];
+            return _.contains(ipv6Types, type)
+        }
+
+        function getState(ppp_state) {
+            var result = "airUnknownError";
+            switch (ppp_state) {
+                case 1:
+                    result = "airServNotAvail";
+                    break;
+                case 2:
+                    result = "airPeerFailed";
+                    break;
+                case 3:
+                    result = "airPeerNotResp";
+                    break;
+                case 4:
+                    result = "airAuthFail"
+            }
+            return result
+        }
+
+        function createARPList(arplist, devinfo, version) {
+            function addItem(mac, version) {
+                var $item = $("				<li>					<a href='#'>" + mac + "</a>				</li>			").appendTo(clonelist);
+                $item.find("a").bind("click", callback(self, function(mac) {
+                    HELPER.hide(), this.cloneMAC(mac, version)
+                }, mac, version))
+            }
+            var clonelist = $connector[version].find(".clone>.tip>ul"),
+                exmac = $connector[version].find(".clone>.tip>.ex");
+            clonelist.hide().find("li").remove(), exmac.hide();
+            var useMacs = [];
+            _.each(arplist, function(client) {
+                var mac = client.mac.toUpperCase();
+                _.contains(useMacs, mac) || (addItem(mac, version), useMacs.push(mac))
+            });
+            var factoryMac = devinfo.factory_wan_mac;
+            factoryMac && exmac.show(), clonelist.find("li").length && clonelist.show(), exmac.bind("click", callback(self, function() {
+                this.cloneMAC(factoryMac, version)
+            }, factoryMac, version))
+        }
+
+        function createWanList(iface) {
+            function addConnection(iftree, version) {
+                var activeConnection = _.isEmpty(iface[version]) ? {} : iface[version].connection.data;
+                _.each(iftree[version], function(levels) {
+                    var l3 = levels.l3,
+                        l4 = levels.l4;
+                    l3 && "bridge" != l3.type && "auto" != l3.type && (l4 ? addItem(l4, activeConnection, version) : l3 && addItem(l3, activeConnection, version))
+                })
+            }
+
+            function addItem(connection, current, version) {
+                var name = connection.name,
+                    ifname = connection.__ifname,
+                    bull = ifname == current.__ifname ? "&bull;" : "&nbsp;";
+                if (hideFlag("wan_button_del")) var $item = $("					<li>						<div class='bull'>" + bull + "</div>						<div class='title'>							<a href='#'>" + name + "</a>						</div>						<div class='version'>" + version + "</div>						<div class='clear'></div>					</li>				").appendTo(wanlist);
+                else var $item = $("					<li>						<div class='bull'>" + bull + "</div>						<div class='title'>							<a href='#'>" + name + "</a>						</div>						<div class='version'>" + version + "</div>						<div class='delete'>							<a href='#'>x</a>						</div>						<div class='clear'></div>					</li>				").appendTo(wanlist);
+                $item.find(".title>a").bind("click", callback(self, function(connection) {
+                    HELPER.hide(), this.changeConnection(connection.__ifname, version)
+                }, connection)), $item.find(".delete>a").bind("click", callback(self, function(connection) {
+                    HELPER.hide(), this.deleteConnection(connection.__ifname)
+                }, connection, version))
+            }
+
+            function sortByIpVersion(iftree) {
+                var v4 = [],
+                    v6 = [];
+                return _.each(iftree, function(levels) {
+                    var l3 = levels.l3;
+                    l3 && (isIpv4(l3) && v4.push(levels), isIpv6(l3) && v6.push(levels))
+                }), {
+                    v4: v4,
+                    v6: v6
+                }
+            }
+            var wanlist = $internet.find(".tip>ul");
+            wanlist.hide().find("li").remove();
+            var iftree = sortByIpVersion(iface.all);
+            addConnection(iftree, "v4"), addConnection(iftree, "v6"), wanlist.find("li").length && wanlist.show()
+        }
+
+        function loading(visible) {
+            visible ? ($connector.v4.find(".loading").show(), $connector.v6.find(".loading").show()) : ($connector.v4.find(".loading").hide(), $connector.v6.find(".loading").hide())
+        }
+        var self = this,
+            $$ = {
+                iface: null,
+                ifacename: null,
+                service: null,
+                servicename: null,
+                tunnel: null,
+                name: null,
+                ip: null,
+                mac: null,
+                actconn: null,
+                status: !1,
+                cable: !1,
+                port: null,
+                rate: {
+                    v4: {
+                        time: null,
+                        rx: null,
+                        dspeed: null
+                    },
+                    v6: {
+                        time: null,
+                        rx: null,
+                        dspeed: null
+                    }
+                },
+                backup: {},
+                clear: function() {
+                    this.iface = null, this.ifacename = null, this.service = null, this.servicename = null, this.tunnel = null, this.name = null, this.ip = null, this.mac = null, this.actconn = null, this.status = !1, this.port = null, this.cable = !1
+                }
+            },
+            $connector = {
+                v4: "#wideNetwork>.v4.service.connector",
+                v6: "#wideNetwork>.v6.service.connector"
+            },
+            $internet = "#wideNetwork>.service.internet",
+            $widenetwork = "#wideNetwork",
+            $statbar = {
+                v4: {
+                    info: {
+                        name: "#wideNetwork>.v4.service.connector>.statbar.info>.name",
+                        ip: "#wideNetwork>.v4.service.connector>.statbar.info>.ip",
+                        mac: "#wideNetwork>.v4.service.connector>.statbar.info>.mac",
+                        error: "#wideNetwork>.v4.service.connector>.statbar.info>.error"
+                    },
+                    error: "#wideNetwork>.v4.service.connector>.statbar.error"
+                },
+                v6: {
+                    info: {
+                        name: "#wideNetwork>.v6.service.connector>.statbar.info>.name",
+                        ip: "#wideNetwork>.v6.service.connector>.statbar.info>.ip",
+                        mac: "#wideNetwork>.v6.service.connector>.statbar.info>.mac",
+                        error: "#wideNetwork>.v6.service.connector>.statbar.info>.error"
+                    },
+                    error: "#wideNetwork>.v6.service.connector>.statbar.error"
+                }
+            },
+            $ratebar = {
+                common: {
+                    box: "#wideNetwork>.service.rate>.ratebar.common",
+                    dspeed: "#wideNetwork>.service.rate>.ratebar.common>.dspeed",
+                    rx: "#wideNetwork>.service.rate>.ratebar.common>.rx",
+                    sspeed: "#wideNetwork>.service.rate.>.ratebar.common>.sspeed",
+                    tx: "#wideNetwork>.service.rate>.ratebar.common>.tx"
+                },
+                v4: {
+                    box: "#wideNetwork>.service.rate>.ratebar.v4",
+                    dspeed: "#wideNetwork>.service.rate>.ratebar.v4>.dspeed",
+                    rx: "#wideNetwork>.service.rate>.ratebar.v4>.rx",
+                    sspeed: "#wideNetwork>.service.rate>.ratebar.v4>.sspeed",
+                    tx: "#wideNetwork>.service.rate>.ratebar.v4>.tx"
+                },
+                v6: {
+                    box: "#wideNetwork>.service.rate>.ratebar.v6",
+                    dspeed: "#wideNetwork>.service.rate>.ratebar.v6>.dspeed",
+                    rx: "#wideNetwork>.service.rate>.ratebar.v6>.rx",
+                    sspeed: "#wideNetwork>.service.rate>.ratebar.v6>.sspeed",
+                    tx: "#wideNetwork>.service.rate>.ratebar.v6>.tx"
+                }
+            },
+            $line = {
+                0: "#wideNetwork>.join>.line0",
+                1: "#wideNetwork>.join>.line1"
+            };
+        this.cloneMAC = function(mac, version) {
+            HELPER.hide();
+            var connKey = $$.iface[version].connection.data.__ifname,
+                wanTree = filterWanTree($$.iface.all, {
+                    __ifname: connKey
+                });
+            wanTree[0].l2.mac = mac;
+            var iface = unionWanTree(wanTree);
+            return loading(!0), device.config.write(1, iface), this
+        }, this.changeConnection = function(id, version) {
+            return loading(!0), "v6" == version ? device.config.write(131, [id]) : device.config.write(62, [id]), this
+        }, this.deleteConnection = function(id) {
+            return loading(!0), device.config.remove(1, [id]), this
+        }, this.updateSettings = function(iftree, netstat, portstatus, dslstatus, arplist, devinfo) {
+            function buildConnection(iface, arplist, devinfo, version) {
+                _.isEmpty(iface[version]) ? hideConnector(version) : (showConnection(iface, version), createARPList(arplist, devinfo, version))
+            }
+
+            function showConnection(iface, version) {
+                showConnector(version); {
+                    var info = iface[version],
+                        status = info.status;
+                    info.connection.net
+                }
+                status.port || status.connection ? status.connection ? showWanInfo(info, version) : setConnectionDisconnectedError(info, version) : setCableDisconnectedError(info, version)
+            }
+
+            function showConnector(version) {
+                $connector[version].show(), "v4" == version && $line[0].css({
+                    height: "25px"
+                }), "v6" == version && $line[1].css({
+                    height: "35px"
+                })
+            }
+
+            function hideConnector(version) {
+                $connector[version].hide(), "v4" == version && $line[0].css({
+                    height: "49px"
+                }), "v6" == version && $line[1].css({
+                    height: "59px"
+                })
+            }
+
+            function setCableDisconnectedError(info, version) {
+                var l2Type = info.l2.type;
+                $widenetwork.addClass("disconnected"), $connector[version].removeClass("on break empty").addClass("off");
+                var errorHtml;
+                errorHtml = "wifi" == l2Type ? '<span langkey="airNotConn">' + lng("airNotWiFiConn") + "</span>" : '<span langkey="airNotCable">' + lng("airNotCable") + "</span>", $statbar[version].error.show(), $statbar[version].error.html(errorHtml)
+            }
+
+            function setConnectionDisconnectedError(info, version) {
+                var connection = info.connection.data;
+                $connector[version].removeClass("off empty").addClass("on break"), $statbar[version].info.name.text(connection.name), $statbar[version].info.ip.html('<span langkey="airDisconnected">' + lng("airDisconnected") + "</span>"), $statbar[version].info.mac.hide();
+                var error = "",
+                    msg = "";
+                _.isUndefined(connection.ppp_state) || (error = getState(connection.ppp_state), msg = lng(error)), $statbar[version].info.error.show().html("<span langkey='" + error + "'>" + msg + "</span>")
+            }
+
+            function showWanInfo(info, version) {
+                var connection = info.connection.data,
+                    l2 = info.l2.data;
+                if ("v4" == version) var ip = connection.ip;
+                else var ipv6 = connection.ipv6.split(":"),
+                    middle = Math.ceil(ipv6.length / 2),
+                    startIp = ipv6.slice(0, middle).join(":"),
+                    endIp = ipv6.slice(middle + 1, ipv6.length).join(":"),
+                    ip = startIp + "\n" + endIp;
+                $widenetwork.removeClass("disconnected"), $connector[version].removeClass("off empty break").addClass("on"), $statbar[version].info.error.hide(), $statbar[version].info.name.text(connection.name), $statbar[version].info.ip.text(ip), _.isUndefined(l2.mac) ? $statbar[version].info.mac.hide() : $statbar[version].info.mac.show().find(":input").not(":focus").val(l2.mac)
+            }
+
+            function showConnectionsRate(iface) {
+                function updateRateInfo(iface, version) {
+                    var rate = getActiveRate(iface, version);
+                    rate ? showRateInfo(rate, version) : hideRateInfo(version)
+                }
+
+                function getActiveRate(iface, version) {
+                    return "common" == version ? isActivePort(iface, "v4") ? iface.v4.connection.net : isActivePort(iface, "v6") ? iface.v6.connection.net : "" : isActivePort(iface, version) ? iface[version].connection.net : ""
+                }
+
+                function isActivePort(iface, version) {
+                    return iface[version].status && iface[version].status.port
+                }
+
+                function isGeneral(iface) {
+                    return iface.v4.l2 && iface.v6.l2 && iface.v4.l2.type == iface.v6.l2.type
+                }
+                isGeneral(iface) ? (hideRateInfo("v4"), hideRateInfo("v6"), updateRateInfo(iface, "common")) : (hideRateInfo("common"), updateRateInfo(iface, "v4"), updateRateInfo(iface, "v6"))
+            }
+
+            function showRateInfo(rate, version) {
+                $ratebar[version].box.show(), $ratebar[version].dspeed.find(".value").text(lookSpeed(rate.dspeed).value), $ratebar[version].dspeed.find(".metric").text(lng(lookSpeed(rate.dspeed).metric) + "/" + lng("S")), $ratebar[version].rx.find(".value").text(lookSize(rate.rx).value), $ratebar[version].rx.find(".metric").text(lookSize(rate.rx).metric), $ratebar[version].sspeed.find(".value").text(lookSpeed(rate.sspeed).value), $ratebar[version].sspeed.find(".metric").text(lng(lookSpeed(rate.sspeed).metric) + "/" + lng("S")), $ratebar[version].tx.find(".value").text(lookSize(rate.tx).value), $ratebar[version].tx.find(".metric").text(lookSize(rate.tx).metric)
+            }
+
+            function hideRateInfo(version) {
+                $ratebar[version].box.hide()
+            }
+            return $$.clear(), $$.iftree = _.clone(iftree), $$.iface = {
+                v4: {},
+                v6: {}
+            }, $$.iface.all = wanTree(iftree), _.each($$.iface.all, function(connection) {
+                _.isEmpty($$.iface.v4) && isActiveConnection(connection, "v4") && _.extend($$.iface.v4, getConnectionInfo(connection, portstatus, netstat, dslstatus, "v4")), _.isEmpty($$.iface.v6) && isActiveConnection(connection, "v6") && _.extend($$.iface.v6, getConnectionInfo(connection, portstatus, netstat, dslstatus, "v6"))
+            }), buildConnection($$.iface, arplist, devinfo, "v4"), buildConnection($$.iface, arplist, devinfo, "v6"), showConnectionsRate($$.iface), $$.backup.iftree = $$.iftree, $$.backup.iface = $$.iface, $$.backup.netstat = netstat, createWanList($$.iface), loading(!1), this
+        }, this.loadSettings = function() {
+            return device.config.read([1, 104, 129, 46], callback(this, function(data) {
+                this.updateSettings(data.rq[0].resident.iface_names, data.rq[0].resident)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $internet = $($internet), $widenetwork = $($widenetwork), $connector.v4 = $($connector.v4), $statbar.v4.info.name = $($statbar.v4.info.name), $statbar.v4.info.ip = $($statbar.v4.info.ip), $statbar.v4.info.mac = $($statbar.v4.info.mac), $statbar.v4.info.error = $($statbar.v4.info.error), $statbar.v4.error = $($statbar.v4.error), $connector.v6 = $($connector.v6), $statbar.v6.info.name = $($statbar.v6.info.name), $statbar.v6.info.ip = $($statbar.v6.info.ip), $statbar.v6.info.mac = $($statbar.v6.info.mac), $statbar.v6.info.error = $($statbar.v6.info.error), $statbar.v6.error = $($statbar.v6.error), $line[0] = $($line[0]), $line[1] = $($line[1]), $ratebar.common.box = $($ratebar.common.box), $ratebar.common.dspeed = $($ratebar.common.dspeed), $ratebar.common.rx = $($ratebar.common.rx), $ratebar.common.sspeed = $($ratebar.common.sspeed), $ratebar.common.tx = $($ratebar.common.tx), $ratebar.v4.box = $($ratebar.v4.box), $ratebar.v4.dspeed = $($ratebar.v4.dspeed), $ratebar.v4.rx = $($ratebar.v4.rx), $ratebar.v4.sspeed = $($ratebar.v4.sspeed), $ratebar.v4.tx = $($ratebar.v4.tx), $ratebar.v6.box = $($ratebar.v6.box), $ratebar.v6.dspeed = $($ratebar.v6.dspeed), $ratebar.v6.rx = $($ratebar.v6.rx), $ratebar.v6.sspeed = $($ratebar.v6.sspeed), $ratebar.v6.tx = $($ratebar.v6.tx), $internet.find(".tip>.add>a").bind("click", callback(this, function() {
+                HELPER.hide(), wzInet.show()
+            }));
+            var versions = ["v4", "v6"];
+            _.each(versions, function(version) {
+                $statbar[version].info.mac.find(":input").bind({
+                    keypress: function(e) {
+                        if (13 == e.keyCode) {
+                            var re = new RegExp("^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"),
+                                target = $(e.target);
+                            if (!re.test(target.val())) return bounce(target), e.stopPropagation(), !1
+                        }
+                    },
+                    "apply.fastedit": callback(self, function(e) {
+                        var target = $(e.target);
+                        this.cloneMAC(target.val(), version)
+                    })
+                })
+            })
+        }))
+    },
+    __WIRELESS = new function() {
+        function loading(visible) {
+            visible ? $wireless.find(".loading").show() : $wireless.find(".loading").hide()
+        }
+
+        function updateState() {
+            var enable = $$.backup.wifi[$$.prefix + "Radio"],
+                apcli = $$.backup.wifi.apcli && $$.backup.wifi.apcli.ApCliEnable;
+            $widenetwork.removeClass("wifi_off wifi_on wifi_apcli"), $widenetwork.addClass(enable ? "wifi_on" : "wifi_off"), apcli && ($widenetwork.addClass("wifi_apcli"), $apcli_ssid.text($$.backup.wifi.apcli.ApCliSsid), $apcli_bssid.text($$.backup.wifi.apcli.ApCliBssid), $apcli_enable.fieldval($$.backup.wifi.apcli.ApCliEnable)), $state.fieldval(enable)
+        }
+
+        function setProtect(mode, encrypt) {
+            var radius = {
+                WPA: !0,
+                WPA2: !0,
+                WPA1WPA2: !0
+            };
+            $wireless.removeClass("protected radius open"), $wireless.addClass("OPEN" == mode && "NONE" == encrypt ? "open" : radius[mode] ? "radius" : "protected")
+        }
+
+        function setVisible(visible) {
+            visible ? $wireless.removeClass("hidden") : $wireless.addClass("hidden")
+        }
+        var $$ = {
+                prefix: "",
+                virgin: !0,
+                backup: {}
+            },
+            $wireless = "#wideNetwork>.service.wireless",
+            $widenetwork = "#wideNetwork",
+            $basic = "#wideNetwork>.service.wireless>.statbar.basic",
+            $security = "#wideNetwork>.service.wireless>.statbar.security",
+            $state = "#wideNetwork>.service.wireless>.statbar.basic .state",
+            $apcli = "#wideNetwork>.service.apcli",
+            $apcli_ssid = "#wideNetwork>.service.apcli>.statbar.info>.ssid",
+            $apcli_bssid = "#wideNetwork>.service.apcli>.statbar.info>.bssid",
+            $apcli_enable = "#wideNetwork>.service.apcli>.join .enable";
+        this.getPrefix = function() {
+            return $$.prefix
+        }, this.enable = function(enable) {
+            if (HELPER.hide(), !is.set(enable)) return $$.backup.wifi[$$.prefix + "Radio"];
+            loading(!0), $$.backup.wifi[$$.prefix + "Radio"] = 1 == enable;
+            var obj = {};
+            return obj[$$.prefix + "Radio"] = $$.backup.wifi[$$.prefix + "Radio"], obj[$$.prefix + "mbssidNum"] = $$.backup.wifi[$$.prefix + "mbssidNum"], obj[$$.prefix + "mbssidCur"] = $$.backup.wifi[$$.prefix + "mbssidCur"], device.config.write(39, obj, callback(this, function() {
+                updateState(), loading(!1)
+            })), this
+        }, this.basic = function(ssid, visible, mode, channel) {
+            var wifi = $$.backup.wifi;
+            loading(!0);
+            var obj = {};
+            return obj[$$.prefix + "HideSSID"] = is.set(visible) ? visible : wifi[$$.prefix + "HideSSID"], obj[$$.prefix + "mbssid"] = [{
+                SSID: is.set(ssid) ? ssid : wifi[$$.prefix + "mbssid"][0].SSID
+            }], obj.CountryCode = wifi.CountryCode, obj[$$.prefix + "Channel"] = is.set(channel) ? channel : wifi[$$.prefix + "Channel"], obj[$$.prefix + "WirelessMode"] = is.set(mode) ? mode : wifi[$$.prefix + "WirelessMode"], obj[$$.prefix + "MaxStaNum"] = wifi[$$.prefix + "MaxStaNum"], device.config.write(35, obj, callback(this, function() {
+                loading(!1)
+            })), this
+        }, this.security = function(passwd) {
+            loading(!0);
+            var wifi = $$.backup.wifi,
+                data = {};
+            if (data[$$.prefix + "RekeyInterval"] = wifi[$$.prefix + "RekeyInterval"], data[$$.prefix + "mbssid"] = wifi[$$.prefix + "mbssid"], data[$$.prefix + "RADIUS_Server"] = wifi[$$.prefix + "RADIUS_Server"], data[$$.prefix + "RADIUS_Port"] = wifi[$$.prefix + "RADIUS_Port"], data[$$.prefix + "RADIUS_Key"] = wifi[$$.prefix + "RADIUS_Key"], passwd) {
+                var auth_to_encrypt = {
+                        WPAPSK: "AES",
+                        WPA2PSK: "AES",
+                        WPAPSKWPA2PSK: "TKIPAES"
+                    },
+                    mode = bestAuthMode(wifi.AuthAvailable);
+                data[$$.prefix + "mbssid"][0].WPAPSK = passwd, data[$$.prefix + "mbssid"][0].AuthMode = mode, data[$$.prefix + "mbssid"][0].EncrypType = auth_to_encrypt[mode]
+            }
+            else data[$$.prefix + "mbssid"][0].AuthMode = "OPEN", data[$$.prefix + "mbssid"][0].EncrypType = "NONE";
+            return device.config.write(36, data, callback(this, function() {
+                loading(!1)
+            })), this
+        }, this.updateSettings = function(wifi) {
+            var mode = wifi[$$.prefix + "mbssid"][0].AuthMode.toUpperCase(),
+                encrypt = wifi[$$.prefix + "mbssid"][0].EncrypType.toUpperCase();
+            if (setProtect(mode, encrypt), setVisible(!wifi[$$.prefix + "HideSSID"]), $basic.find(".ssid :input").not(":focus").val(wifi[$$.prefix + "mbssid"][0].SSID), $$.virgin) {
+                $security.find(".mode select>*").remove();
+                for (var i = 0; i < wifi[$$.prefix + "ModeAvailable"].length; i++) {
+                    $("					<option value='" + wifi[$$.prefix + "ModeAvailable"][i].Id + "'>" + wifi[$$.prefix + "ModeAvailable"][i].Name + "</option>				").appendTo($security.find(".mode select"))
+                }
+                $security.find(".mode select").bind("change", callback(this, function(e) {
+                    var target = $(e.target);
+                    this.basic(null, null, target.find("option:selected").val(), null)
+                }))
+            }
+            $security.find(".mode select>option[value=" + wifi[$$.prefix + "WirelessMode"] + "]").attr("selected", "selected");
+            var passwd = wifi[$$.prefix + "mbssid"][0].WPAPSK;
+            if ("WEP" == encrypt) {
+                var n = parseInt(wifi[$$.prefix + "mbssid"][0].DefaultKeyID) + 1;
+                passwd = wifi[$$.prefix + "mbssid"][0]["Key" + n + "Str"]
+            }
+            $security.find(".passwd :input").not(":focus").val(passwd);
+            var modeList = $security.find("div.mode>select");
+            modeList.children().remove();
+            var modeAvail = wifi[$$.prefix + "ModeAvailable"];
+            for (var i in modeAvail) modeList.append('<option value="' + modeAvail[i].Id + '">' + modeAvail[i].Name + "</option>");
+            var mode = wifi[$$.prefix + "WirelessMode"];
+            return modeList.val(mode), $$.virgin = !1, $$.backup.wifi = wifi, updateState(), this
+        }, this.loadSettings = function() {
+            return device.config.read(35, callback(this, function(data) {
+                this.updateSettings(data.resident)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $wireless = $($wireless), $widenetwork = $($widenetwork), $basic = $($basic), $security = $($security), $state = $($state), $apcli = $($apcli), $apcli_ssid = $($apcli_ssid), $apcli_bssid = $($apcli_bssid), $apcli_enable = $($apcli_enable), $wireless.find(".ghz_switch").bind("click", callback(this, function() {
+                "5G_" == $$.prefix ? ($$.prefix = "", $wireless.find(".ghz_switch").text("2.4GHz")) : $$.backup.wifi && is.set($$.backup.wifi["5G_Radio"]) && ($$.prefix = "5G_", $wireless.find(".ghz_switch").text("5GHz")), __WIFILTER.updateSettings(DATA[$$.prefix + "wifilter"], DATA[$$.prefix + "wifilteracc"]), this.updateSettings($$.backup.wifi)
+            })), $state = $state.lightUISwitcher({
+                change: callback(this, this.enable)
+            }), $state.find(".SWITCHER").attr({
+                langkey: "airTipWiFi",
+                tip: lng("airTipWiFi")
+            }), $apcli_enable = $apcli_enable.lightUISwitcher({
+                off: callback(this, function() {
+                    HELPER.hide(), $apcli.find(".loading").show();
+                    var apcli = $$.backup.wifi.apcli;
+                    is.object(apcli) && ($$.backup.apcli = apcli), is.func(apcli) && (cb = apcli), $$.backup.apcli.ApCliEnable = !1, device.config.write(110, {
+                        apcli: $$.backup.apcli
+                    }, callback(this, function() {
+                        $apcli.find(".loading").hide()
+                    }))
+                })
+            }), $apcli_enable.find(".SWITCHER").attr({
+                langkey: "airTipApcli",
+                tip: lng("airTipApcli"),
+                direct: "bottom"
+            }), $basic.find(".visible").bind("click", callback(this, function() {
+                var visible = $wireless.hasClass("hidden");
+                setVisible(visible), this.basic(null, !visible, null, null)
+            })), $basic.find(".ssid :input").bind({
+                keypress: function(e) {
+                    if (13 == e.keyCode) {
+                        var re = new RegExp("^[A-z0-9_-]+$"),
+                            target = $(e.target);
+                        if (!re.test(target.val())) return bounce(target), e.stopPropagation(), !1
+                    }
+                },
+                "apply.fastedit": callback(this, function(e) {
+                    this.basic($(e.target).val(), null, null, null)
+                })
+            }), $security.find(".passwd :input[type=password]").bind("focusin", callback(this, function(e) {
+                $(e.target).hide(), $security.find(".passwd :input[type=text]").show().focus()
+            })), $security.find(".passwd :input[type=text]").bind({
+                focusout: callback(this, function(e) {
+                    $(e.target).hide(), $security.find(".passwd :input[type=password]").show().css("display", "")
+                }),
+                keypress: function(e) {
+                    if (13 == e.keyCode) {
+                        var re = new RegExp("^[A-z0-9_-]{8,}$"),
+                            target = $(e.target);
+                        if (!re.test(target.val())) return bounce(target), e.stopPropagation(), !1
+                    }
+                },
+                "apply.fastedit": callback(this, function(e) {
+                    var passwd = $(e.target).val();
+                    $security.find(".passwd :input[type=password]").val(passwd), this.security(passwd)
+                })
+            }), $security.find(".protect").bind("click", callback(this, function() {
+                var protect = $wireless.hasClass("protected");
+                if (protect) setProtect("OPEN", "NONE"), this.security();
+                else {
+                    var inputs = $security.find(".passwd :input");
+                    "" == inputs.val() && inputs.val("0123456789"), setProtect(), this.security(inputs.val())
+                }
+            }))
+        }))
+    },
+    __URLFILTER = new function() {
+        function loading(visible) {
+            visible ? $urlfilter.find(".loading").show() : $urlfilter.find(".loading").hide()
+        }
+
+        function getIndex(url) {
+            for (var i = 0; i < $$.backup.urlfilter.list.length; i++)
+                if ($$.backup.urlfilter.list[i].url.toLowerCase() == url) return i;
+            return -1
+        }
+
+        function updateState() {
+            var enable = $$.backup.urlfilter.config.enable;
+            enable ? $urlfilter.removeClass("off") : $urlfilter.addClass("off"), $state.fieldval(enable)
+        }
+
+        function updateType() {
+            if ($$.backup.urlfilter.config.type) {
+                var type = $$.backup.urlfilter.config.type.toLowerCase();
+                $type.find(">option[value=" + type + "]").attr("selected", "selected")
+            }
+        }
+        var self = this,
+            $$ = {
+                backup: {}
+            },
+            $count = "#wideNetwork>.service.control>.statbar>.count",
+            $urlfilter = "#wideNetwork>.service.control",
+            $type = "#wideNetwork>.service.control>.statbar select",
+            $tip = "#wideNetwork>.service.control .tip",
+            $state = "#wideNetwork>.service.control>.statbar .state";
+        this.enable = function(enable) {
+            return HELPER.hide(), is.set(enable) ? (loading(!0), $$.backup.urlfilter.config.enable = 1 == enable, device.config.write(71, $$.backup.urlfilter.config, callback(this, function() {
+                updateState(), loading(!1)
+            })), this) : $$.backup.urlfilter.config.enable
+        }, this.mode = function(mode) {
+            return loading(!0), $$.backup.urlfilter.config.type = mode.capitalize(), device.config.write(71, $$.backup.urlfilter.config, callback(this, function() {
+                updateType(), loading(!1)
+            })), this
+        }, this.add = function(url, port, func) {
+            return loading(!0), device.config.write(72, {
+                url: url
+            }, -1, func ? func : callback(this, function() {
+                REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            })), this
+        }, this.edit = function(index, url) {
+            return loading(!0), device.config.write(72, {
+                url: url
+            }, index, callback(this, function() {
+                REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            })), this
+        }, this.remove = function(url) {
+            loading(!0);
+            var pos = getIndex(url);
+            return device.config.remove(72, {
+                url: url
+            }, pos, callback(this, function(index) {
+                $tip.find("ul>li").eq(index).remove(), REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            }, pos)), this
+        }, this.updateSettings = function(urlfilter) {
+            function addItem(urlfilter, url, port, index) {
+                var $item = $("				<li>					<div class='favicon'>						<img src='http://" + url + "/favicon.ico' />					</div>					<div class='title'>						<a href='#'>" + url + "</a>					</div>					<div class='delete'>						<a href='#'>x</a>					</div>					<div class='clear'></div>				</li>			").appendTo(urlist);
+                $item.find(".title>a").bind("click", callback(self, function(urlfilter, url, port, index) {
+                    HELPER.hide(), UrlFilterForm.show(urlfilter, index, url, port)
+                }, urlfilter, url, port, index)), $item.find(".delete>a").bind("click", callback(self, function(url, port) {
+                    HELPER.hide(), this.remove(url, port)
+                }, url, port, index))
+            }
+            var urlist = $tip.find("ul");
+            urlist.hide().find("li").remove();
+            for (var i = 0; i < urlfilter.list.length; i++) {
+                var curport = urlfilter.list[i].port ? urlfilter.list[i].port : "";
+                addItem(urlfilter.list, urlfilter.list[i].url.toLowerCase(), curport, i)
+            }
+            return $count.text(urlfilter.list.length), urlfilter.list.length ? $urlfilter.removeClass("empty") : $urlfilter.addClass("empty"), urlist.find("li").length && urlist.show(), loading(!1), $$.backup.urlfilter = urlfilter, updateState(), updateType(), this
+        }, this.loadSettings = function() {
+            return device.config.read([71, 72], callback(this, function(data) {
+                this.updateSettings({
+                    config: data.rq[0].resident,
+                    list: data.rq[1].resident
+                })
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $count = $($count), $urlfilter = $($urlfilter), $tip = $($tip), $type = $($type), $state = $($state), $tip.find(".add>a").bind("click", callback(this, function() {
+                HELPER.hide(), UrlFilterForm.show(DATA.urlfilter.list)
+            })), $type.bind("change", callback(this, function(e) {
+                var target = $(e.target);
+                this.mode(target.find("option:selected").val())
+            })), $state = $state.lightUISwitcher({
+                change: callback(this, this.enable)
+            }), $state.find(".SWITCHER").attr({
+                langkey: "airTipUfilter",
+                tip: lng("airTipUfilter"),
+                direct: "left"
+            })
+        }))
+    },
+    __WIFILTER = new function() {
+        function loading(visible) {
+            visible ? $wifilter.find(".loading").show() : $wifilter.find(".loading").hide()
+        }
+
+        function updateState() {
+            var enable = 0 != $$.backup.policy;
+            enable ? $wifilter.removeClass("off") : $wifilter.addClass("off"), $state.fieldval(enable)
+        }
+
+        function updateType() {
+            var type = 2 == $$.backup.policy ? "deny" : "access";
+            $type.find(">option[value=" + type + "]").attr("selected", "selected")
+        }
+        var self = this,
+            $$ = {
+                prefix: "",
+                backup: {}
+            },
+            $wifilter = "#wideNetwork>.service.wifilter",
+            $count = "#wideNetwork>.wifilter.service>.statbar>.count",
+            $type = "#wideNetwork>.wifilter.service>.statbar select",
+            $tip = "#wideNetwork>.wifilter.service .tip",
+            $state = "#wideNetwork>.wifilter.service>.statbar .state";
+        this.edit = function() {
+            return !1
+        }, this.add = function(MacFilterList, wifilter) {
+            loading(!0);
+            var flag = !1;
+            for (var key in wifilter)
+                if (_.isEqual(MacFilterList.mac, wifilter[key].mac)) {
+                    alert(lng("dup")), flag = !0;
+                    break
+                }
+            if (!flag) {
+                var prefix = __WIRELESS.getPrefix(),
+                    ruleMac = {};
+                ruleMac[prefix + "MacFilterList"] = MacFilterList, device.config.write(42, ruleMac, -1, callback(this, function() {
+                    REFRESH.waitActualUpdate(function() {
+                        loading(!1)
+                    })
+                })), WiFilterForm.hide()
+            }
+            return this
+        }, this.remove = function(macitem, index) {
+            loading(!0);
+            var prefix = __WIRELESS.getPrefix(),
+                ruleMac = {};
+            return ruleMac[prefix + "MacFilterList"] = macitem, rParams = [], rParams.push([42, ruleMac, parseInt(index)]), device.config.remove(rParams, callback(this, function() {
+                $tip.find("ul>li").eq(index).remove(), loading(!1)
+            })), this
+        }, this.enable = function(enable) {
+            return HELPER.hide(), is.set(enable) ? (this.mode(1 == enable ? "access" : "disable"), this) : 0 != $$.backup.policy
+        }, this.mode = function(mode) {
+            loading(!0);
+            var sig = {
+                disable: 0,
+                access: 1,
+                deny: 2
+            };
+            $$.backup.policy = sig[mode];
+            var prefix = __WIRELESS.getPrefix(),
+                options = {};
+            return options[prefix + "AccessPolicy"] = sig[mode], device.config.write(42, options, callback(this, function() {
+                updateState(), updateType(), loading(!1)
+            })), this
+        }, this.updateSettings = function(maclist, policy) {
+            function addItem(macitem, index) {
+                var mac = macitem.mac,
+                    host = macitem.hostname,
+                    $item = $("				<li>					<div class='title'>						<a href='#'>" + mac + " <span>" + host + "</span></a>					</div>					<div class='delete'>						<a href='#'>x</a>					</div>					<div class='clear'></div>				</li>			").appendTo(mlist);
+                $item.find(".delete>a").bind("click", callback(self, function(macitem, index) {
+                    HELPER.hide(), this.remove(macitem, index)
+                }, macitem, index))
+            }
+            var mlist = $tip.find("ul");
+            mlist.hide().find("li").remove();
+            var mcount = 0;
+            if (delete maclist.max_instance, !_.isEmpty(maclist))
+                for (var key in maclist) addItem(maclist[key], parseInt(key)), mcount++;
+            return $count.text(mcount), mlist.find("li").length && mlist.show(), loading(!1), $$.backup.maclist = maclist, $$.backup.policy = policy, updateState(), updateType(), this
+        }, this.loadSettings = function() {
+            var prefix = __WIRELESS.getPrefix();
+            return device.config.read(42, callback(this, function(data) {
+                this.updateSettings(data.resident[prefix + "MacFilterList"], data.resident[prefix + "AccessPolicy"])
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $wifilter = $($wifilter), $count = $($count), $tip = $($tip), $type = $($type), $state = $($state), $tip.find(".add>a").bind("click", callback(this, function() {
+                HELPER.hide(), WiFilterForm.show(DATA.neighbour, DATA.wifilter)
+            })), $type.bind("change", callback(this, function(e) {
+                var target = $(e.target);
+                this.mode(target.find("option:selected").val())
+            })), $state = $state.lightUISwitcher({
+                change: callback(this, this.enable)
+            }), $state.find(".SWITCHER").attr({
+                langkey: "airTipWfilter",
+                tip: lng("airTipWfilter"),
+                direct: "left"
+            })
+        }))
+    },
+    __FIREWALL = new function() {
+        function loading(visible) {
+            visible ? $firewall.find(".loading").show() : $firewall.find(".loading").hide()
+        }
+
+        function getIndex(id) {
+            for (var i = 0; i < $$.backup.rules.length; i++)
+                if ($$.backup.rules[i].id == id) return i;
+            return -1
+        }
+        var self = this,
+            $$ = {
+                backup: {}
+            },
+            $count = "#wideNetwork>.service.firewall>.statbar>.count>.n",
+            $firewall = "#wideNetwork>.service.firewall",
+            $tip = "#wideNetwork>.service.firewall .tip";
+        this.add = function(rule) {
+            loading(!0), device.config.write(88, rule, -1, callback(this, function() {
+                REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            }))
+        }, this.toggle = function(rule) {
+            loading(!0);
+            var pos = getIndex(rule.id),
+                rule = $$.backup.rules[pos];
+            return rule.action = 0 == rule.action ? 1 : 0, device.config.write(88, rule, pos, callback(this, function(index, isDROP) {
+                var type = isDROP ? "airDeny2" : "airAllow";
+                $tip.find("ul>li").eq(index).find(".action").text(lng(type)).attr("langkey", type), loading(!1)
+            }, pos, 1 == rule.action)), this
+        }, this.edit = function(rule, index) {
+            return loading(!0), device.config.write(88, rule, index, callback(this, function() {
+                loading(!1)
+            })), !1
+        }, this.remove = function(name, func) {
+            loading(!0);
+            var pos = getIndex(name);
+            return device.config.remove(88, $$.backup.rules[pos], pos, func ? func : callback(this, function(index) {
+                $tip.find("ul>li").eq(index).remove(), loading(!1)
+            }, pos)), this
+        }, this.updateSettings = function(rules) {
+            function addItem(rule, index, isDROP) {
+                var type = isDROP ? "airDeny2" : "airAllow",
+                    port_src = ST_PORT.get(rule.ports, 2 == rule.proto ? "udp" : "tcp"),
+                    port_dst = ST_PORT.get(rule.portd, 2 == rule.proto ? "udp" : "tcp"),
+                    ip_src = rule.ips ? rule.ips.split("-") : "airAllIP",
+                    ip_dst = rule.ipd ? rule.ipd.split("-") : "airAllIP";
+                "" == port_src && (port_src = "airAllPorts"), "" == port_dst && (port_dst = "airAllPorts"), 2 == ip_src.length && (ip_src[1] = "...", ip_src = ip_src.join("-")), 2 == ip_dst.length && (ip_dst[1] = "...", ip_dst = ip_dst.join("-"));
+                var $item = $("				<li>					<div class='src'>						<div class='port' langkey='" + port_src + "'>" + lng(port_src) + "</div>						<div class='ip' langkey='" + ip_src + "'>" + lng(ip_src) + "</div>					</div>					<div class='to'>&rarr;</div>					<div class='dst'>						<div class='port' langkey='" + port_dst + "'>" + lng(port_dst) + "</div>						<div class='ip' langkey='" + ip_dst + "'>" + lng(ip_dst) + "</div>					</div>					<div class='action' langkey='" + type + "'>" + lng(type) + "</div>					<div class='delete'><a href='#'>x</a></div>					<div class='toggle'></div>					<div class='clear'></div>				</li>			").appendTo(rulist);
+                $item.bind("click", callback(self, function(rule, index) {
+                    HELPER.hide(), IPFilterForm.show(DATA.iftree, DATA.arp, DATA.ipfilter, rule, index)
+                }, rule, index)), $item.find(".delete>a").bind("click", callback(self, function(rule) {
+                    HELPER.hide(), this.remove(rule.id)
+                }, rule, index)), $item.find(".toggle").bind("click", callback(self, function(rule) {
+                    HELPER.hide(), this.toggle(rule)
+                }, rule, index))
+            }
+            var rulist = $tip.find("ul");
+            rulist.hide().find("li").remove();
+            for (var i = 0; i < rules.length; i++) {
+                var isDROP = 1 == rules[i].action;
+                addItem(rules[i], i, isDROP)
+            }
+            return $count.text(rules.length), rules.length ? $firewall.removeClass("empty") : $firewall.addClass("empty"), rulist.find("li").length && rulist.show(), $$.backup.rules = rules, loading(!1), this
+        }, this.loadSettings = function() {
+            return device.config.read(88, callback(this, function(data) {
+                this.updateSettings(data.resident.ipfilter)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $count = $($count), $firewall = $($firewall), $tip = $($tip), $tip.find(".add>a").bind("click", callback(this, function() {
+                HELPER.hide(), IPFilterForm.show(DATA.iftree, DATA.arp, DATA.ipfilter)
+            }))
+        }))
+    },
+    DHCP = new function() {
+        function findPosByIP(ip) {
+            return $dhcp.width() * ip.index() / $$.lan.count()
+        }
+
+        function findIPByPos(pos) {
+            var index = Math.floor((pos + $dhcp.width() / $$.lan.count()) * $$.lan.count() / $dhcp.width());
+            return $$.lan.network().inc(index).ip().join(".")
+        }
+
+        function moveToddler(tddlr, npos) {
+            function correctStuff() {
+                $full.css({
+                    left: $toddler.begin.position().left + $toddler.begin.width() / 2
+                }).width($toddler.end.position().left - $toddler.begin.position().left), $slideline.width($toddler.device.position().left + $toddler.device.width() / 2)
+            }
+            var anim = !1,
+                ip = npos;
+            return is.number(npos) && (ip = findIPByPos(npos)), is.number(npos) || (npos = findPosByIP(npos), anim = !0), npos -= tddlr.width() / 2, anim ? tddlr.animate({
+                left: npos
+            }, {
+                duration: 600,
+                step: correctStuff,
+                complete: correctStuff
+            }) : (tddlr.css({
+                left: npos
+            }), correctStuff()), new IPv4(ip, $$.lan.shortmask())
+        }
+
+        function updateCounter() {
+            $counter.find(".value").text($$.dhcpd.end.index() - $$.dhcpd.begin.index() + 1)
+        }
+
+        function showCounter() {
+            $clientarea.trigger("show.overlay"), $counter.stop(!0, !0).fadeIn(600)
+        }
+
+        function hideCounter() {
+            $clientarea.trigger("hide.overlay"), $counter.stop(!0, !0).fadeOut(600)
+        }
+
+        function toddlersVisible(action) {
+            switch (action) {
+                case "unhold":
+                    break;
+                case "hold":
+                    break;
+                case "show":
+                    clearTimeout($toddler.tID), $toddlers.find(".addr").stop(!0, !0).fadeIn(600);
+                    break;
+                case "hide":
+                    clearTimeout($toddler.tID), $toddler.tID = setTimeout(function() {
+                        $toddlers.find(".addr").stop(!0, !0).fadeOut(600)
+                    }, 1200)
+            }
+        }
+
+        function adaptDHCPRange() {
+            var ip1 = new IPv4(findIPByPos(Math.floor($toddler.begin.position().left + $toddler.begin.width() / 2)), $$.lan.shortmask()),
+                ip2 = new IPv4(findIPByPos(Math.floor($toddler.end.position().left + $toddler.end.width() / 2)), $$.lan.shortmask());
+            return ip1.toString() == ip2.toString() && (ip1.dec().fromRange($$.lan.hostmin(), ip2.dec()) ? ip1 = ip1.dec() : ip2 = ip2.inc()), {
+                begin: ip1,
+                end: ip2
+            }
+        }
+
+        function updateNetworkInfo() {
+            var str = "",
+                templan = new IPv4($toddler.device.find(".devip").val(), parseInt($toddler.device.find(".netmask").val()));
+            str += '<span langkey="airClass">' + lng("airClass") + '</span>: "' + templan.netclass() + '"<br />', str += '<span langkey="airNetwork">' + lng("airNetwork") + "</span>: " + templan.network() + "<br />", str += '<span langkey="airNetmask">' + lng("airNetmask") + "</span>: " + templan.netmask() + "<br />", str += '<span langkey="airHostmin">' + lng("airHostmin") + "</span>: " + templan.hostmin() + "<br />", str += '<span langkey="airHostmax">' + lng("airHostmax") + "</span>: " + templan.hostmax() + "<br />", str += '<span langkey="airWildcard">' + lng("airWildcard") + "</span>: " + templan.wildcard() + "<br />", str += '<span langkey="airBroadcast">' + lng("airBroadcast") + "</span>: " + templan.broadcast() + "<br />", str += '<span langkey="airHosts">' + lng("airHosts") + "</span>: " + templan.count() + "<br />", $toddler.device.find(".info").html(str).stop(!0, !0).slideDown()
+        }
+
+        function enableToddlers() {
+            $toddlers.addClass("moving"), DRAGGER.add($toddlers), $clientarea.trigger("hide.overlay")
+        }
+
+        function disableToddlers() {
+            $toddlers.removeClass("moving"), DRAGGER.remove($toddlers), $clientarea.trigger("show.overlay")
+        }
+        var $$ = {
+                lan: null,
+                dhcpd: {
+                    begin: null,
+                    end: null,
+                    relay: null,
+                    state: null
+                },
+                editmode: !1,
+                virgin: !0,
+                backup: {}
+            },
+            $dhcp = "#dhcp",
+            $bar = "#dhcp>.bar",
+            $full = "#dhcp>.full",
+            $counter = "#dhcp>.full>.counter",
+            $ranges = "#dhcp>.bar>.range",
+            $range = {
+                from: "#dhcp>.bar>.range.from",
+                to: "#dhcp>.bar>.range.to"
+            },
+            $toddlers = "#dhcp>.toddler",
+            $toddler = {
+                device: "#dhcp>.toddler.device",
+                begin: "#dhcp>.toddler.begin",
+                end: "#dhcp>.toddler.end",
+                error: "#dhcp>.toddler.errordhcp",
+                tID: null
+            },
+            $slideline = "#dhcp .slideline",
+            $status = "#dhcp>.status",
+            $clientarea = "#clientarea";
+        this.findPosByIP = function(ip) {
+            var ip = new IPv4(ip, $$.lan.shortmask());
+            return findPosByIP(ip)
+        }, this.lan = function() {
+            return new IPv4($$.lan)
+        }, this.dhcpd = function() {
+            return copy($$.dhcpd)
+        }, this.setDevice = function(npos) {
+            return is.unset(npos) && (npos = $$.lan), $$.lan = moveToddler($toddler.device, npos), $toddler.device.find(".label").html($$.lan.subnet().join(".") + ".<u>" + $$.lan.host().join(".") + "</u>/" + $$.lan.shortmask()), this
+        }, this.setBegin = function(npos) {
+            return is.unset(npos) && (npos = $$.dhcpd.begin), $$.dhcpd.begin = moveToddler($toddler.begin, npos), $toddler.begin.find(".label").html($$.dhcpd.begin.subnet().join(".") + ".<u>" + $$.dhcpd.begin.host().join(".") + "</u>"), updateCounter(), this
+        }, this.setEnd = function(npos) {
+            return is.unset(npos) && (npos = $$.dhcpd.end), $$.dhcpd.end = moveToddler($toddler.end, npos), $toddler.end.find(".label").html($$.dhcpd.end.subnet().join(".") + ".<u>" + $$.dhcpd.end.host().join(".") + "</u>"), updateCounter(), this
+        }, this.setNetwork = function(lan) {
+            $$.lan = new IPv4(lan), $range.from.text($$.lan.hostmin().toString()), $range.to.text($$.lan.hostmax().toString()), this.setDevice()
+        }, this.setDHCP = function(enable, begin, end, relay) {
+            return $$.dhcpd = {
+                begin: begin,
+                end: end,
+                relay: relay
+            }, $$.dhcpd.state = relay ? "relay" : enable ? "on" : "off", $status.fieldval("on" == $$.dhcpd.state), "on" == $$.dhcpd.state ? ($([$toddler.begin[0], $toddler.end[0], $full[0]]).stop(!0, !0).fadeIn(600), this.setBegin().setEnd()) : $([$toddler.begin[0], $toddler.end[0], $full[0]]).stop(!0, !0).fadeOut(300), this
+        }, this.updateSettings = function(br0) {
+            var lan = new IPv4(br0.services.br0.ip, br0.services.br0.mask),
+                dhcpd = br0.services.br0.dhcpd;
+            return this.setNetwork(lan), this.setDHCP(dhcpd.enable, new IPv4(dhcpd.start_ip, lan.shortmask()), new IPv4(dhcpd.end_ip, lan.shortmask()), dhcpd.relay ? new IPv4(dhcpd.relay.ip) : null), $$.backup.br0 = br0, $$.virgin && enableToddlers(), $$.virgin = !1, this
+        }, this.loadSettings = function() {
+            return device.config.read(1, callback(this, function(data) {
+                this.updateSettings(data.resident.iface_names.br0), setCookie("lan_ip", $$.lan.toString())
+            })), this
+        }, this.saveSettings = function() {
+            with($$.backup.br0.services.br0) ip = $$.lan.toString(), mask = $$.lan.netmask().toString(), dhcpd.enable = "on" == $$.dhcpd.state, dhcpd.start_ip = $$.dhcpd.begin.toString(), dhcpd.end_ip = $$.dhcpd.end.toString();
+            var lanipold = getCookie("lan_ip");
+            setCookie("lan_ip_older", lanipold);
+            var lanipnew = $$.lan.toString();
+            return setCookie("lan_ip", lanipnew), device.config.write(1, {
+                br0: $$.backup.br0
+            }, callback(this, function(data) {
+                12 == data.status && (confirm(lng("config_aplly_ok_reboot")) && (LOGIC.stop(), WAITER.start("airRebooting", 9e4, function() {
+                    "" != lanipold && lanipold != lanipnew ? confirm(lng("airRedirectIpConf")) ? (reload(lanipnew), newIp(lanipnew)) : reload() : reload(lanipnew)
+                }), device.stop().system.reboot(!0), device.lock(!0)), setCookie("lan_ip", lanipnew))
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $dhcp = $($dhcp), $bar = $($bar), $full = $($full), $counter = $($counter), $ranges = $($ranges), $range.from = $($range.from), $range.to = $($range.to), $toddlers = $($toddlers), $toddler.device = $($toddler.device), $toddler.begin = $($toddler.begin), $toddler.end = $($toddler.end), $toddler.error = $($toddler.error), $slideline = $($slideline), $status = $($status), $clientarea = $($clientarea), $dhcp.hover(function() {
+                $bar.addClass("hover"), toddlersVisible("show")
+            }, function() {
+                $bar.removeClass("hover"), $$.backup.editmode || toddlersVisible("hide")
+            }), $toddlers.find(".label").bind("click", callback(this, function(e) {
+                var target = $(e.target).parents(".toddler").removeClass("error");
+                return $toddlers.not(target).find(".edit .cancel").trigger("click"), $$.backup.editmode = !0, target.is($toddler.device) ? (target.find(".devip").val($$.lan), target.find(".netmask").val($$.lan.shortmask()), updateNetworkInfo()) : target.is($toddler.begin) ? target.find(".ip").val($$.dhcpd.begin) : target.is($toddler.end) && target.find(".ip").val($$.dhcpd.end), target.find(".label").hide(), target.find(".edit").fadeTo(600, .9), target.find(":input:eq(0)").focus(), disableToddlers(), !1
+            })).bind("mousedown", function() {
+                return !1
+            }).bind("mouseup", function() {}), $toddlers.bind("down.dragger", callback(this, function(e) {
+                var target = $(e.target);
+                LOGIC.stop(), $toddlers.css({
+                    "z-index": 0
+                }), target.css({
+                    "z-index": 10
+                }), showCounter()
+            })).bind("up.dragger", callback(this, function() {
+                this.saveSettings(), hideCounter(), LOGIC.start()
+            })).bind("move.dragger", callback(this, function(e, attr) {
+                if (is.unset(attr)) return !1;
+                var target = $(e.target),
+                    offset = Math.ceil($dhcp.width() / $$.lan.count());
+                attr.left = attr.left + target.width() / 2, attr.left > 0 && attr.left < $dhcp.width() && (target.is($toddler.device) ? this.setDevice(attr.left) : target.is($toddler.begin) ? attr.left + offset < $toddler.end.position().left + $toddler.end.width() / 2 && this.setBegin(attr.left) : target.is($toddler.end) && attr.left - offset > $toddler.begin.position().left + $toddler.begin.width() / 2 && this.setEnd(attr.left))
+            })), $toddlers.find(".edit").bind("click", function(e) {
+                return $(e.target).is(":input") || $(this).find(":input:eq(0)").focus(), !1
+            }), $toddlers.find(".edit .cancel").bind("click", callback(this, function(e) {
+                var target = $(e.target).parents(".toddler");
+                return target.find(".edit").is(":visible") ? ($$.backup.editmode = !1, target.is($toddler.device) ? this.setDevice() : target.is($toddler.begin) ? this.setBegin() : target.is($toddler.end) && this.setEnd(), target.find(".edit").hide(), target.find(".label").fadeIn(600), enableToddlers(), !1) : !1
+            })), $toddlers.find(":input").bind("change", callback(this, function(e) {
+                var target = $(e.target).parents(".toddler");
+                if (target.is($toddler.device)) {
+                    var ip = target.find(":input:eq(0)").val(),
+                        shortmask = parseInt(target.find(":input:eq(1)").val());
+                    is.IPv4(ip) && shortmask > 0 && 33 > shortmask ? updateNetworkInfo() : $toddler.device.find(".info").stop(!0, !0).slideUp()
+                }
+            })).bind("keypress", callback(this, function(e) {
+                var target = $(e.target).parents(".toddler");
+                if (27 == e.keyCode) return target.find(".edit .cancel").trigger("click"), !1;
+                if (13 == e.which) {
+                    var ip = target.find(":input:eq(0)").val(),
+                        ok = !1,
+                        saveme = !1;
+                    if (target.is($toddler.device)) {
+                        var shortmask = parseInt(target.find(":input:eq(1)").val()),
+                            lan = new IPv4(ip, shortmask);
+                        if (lan.toString(!0) == $$.lan.toString(!0)) ok = !0;
+                        else if (is.IPv4(ip) && shortmask > 0 && 33 > shortmask && lan.fromRange(lan.hostmin(), lan.hostmax())) {
+                            this.setNetwork(lan);
+                            var adapt = adaptDHCPRange();
+                            this.setDHCP("on" == $$.dhcpd.state, adapt.begin, adapt.end, $$.dhcpd.relay), saveme = ok = !0
+                        }
+                    }
+                    else if (target.is($toddler.begin)) {
+                        var newip = new IPv4(ip, $$.lan.shortmask());
+                        newip.toString() == $$.dhcpd.begin ? ok = !0 : is.IPv4(ip) && newip.fromRange($$.lan.hostmin(), $$.dhcpd.end.dec()) && (this.setBegin(newip), saveme = ok = !0)
+                    }
+                    else if (target.is($toddler.end)) {
+                        var newip = new IPv4(ip, $$.lan.shortmask());
+                        newip.toString() == $$.dhcpd.end ? ok = !0 : is.IPv4(ip) && newip.fromRange($$.dhcpd.begin.inc(), $$.lan.hostmax()) && (this.setEnd(newip), saveme = ok = !0)
+                    }
+                    ok ? (target.find(".edit").hide(), target.find(".label").fadeIn(600), enableToddlers(), saveme && this.saveSettings()) : (target.addClass("error"), target.find(".errordhcp").show())
+                }
+            })).bind("keyup", callback(this, function(e) {
+                13 != e.which && ($toddler.begin.find(".errordhcp").hide(), $toddler.begin.removeClass("error"), $toddler.end.find(".errordhcp").hide(), $toddler.end.removeClass("error")), $(this).trigger("change")
+            })), $toddlers.find(".apply").bind("click", function(e) {
+                var eventObj = jQuery.Event("keypress", {
+                    which: 13,
+                    target: $(e.target)
+                });
+                $toddlers.find(":input").trigger(eventObj)
+            }), $status = $status.lightUISwitcher({
+                change: callback(this, function(value) {
+                    $toddlers.find(".edit .cancel").trigger("click"), this.setDHCP(value, $$.lan.hostmin(), $$.lan.hostmax(), $$.dhcpd.relay), this.saveSettings()
+                }),
+                vertical: !0
+            }), $status.find(".SWITCHER").attr({
+                langkey: "airTipDHCPD",
+                tip: lng("airTipDHCPD")
+            })
+        }))
+    },
+    MACFILTER = new function() {
+        function loading(visible) {
+            visible ? $macfilter.find(".loading").show() : $macfilter.find(".loading").hide()
+        }
+
+        function getIndex(mac) {
+            mac = mac.toUpperCase();
+            for (var i = 0; i < $$.backup.maclist.length; i++)
+                if ($$.backup.maclist[i].mac && $$.backup.maclist[i].mac.toUpperCase() == mac) return i;
+            return -1
+        }
+        var self = this,
+            $$ = {
+                backup: {}
+            },
+            $count = "#splitter>.macfilter>.statbar>.count",
+            $macfilter = "#splitter>.macfilter",
+            $tip = "#splitter>.macfilter .tip";
+        this.add = function(rule, func) {
+            return loading(!0), device.config.write(74, rule, -1, func ? func : callback(this, function() {
+                REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            })), this
+        }, this.edit = function(rule, index) {
+            return loading(!0), device.config.write(74, rule, index, callback(this, function() {
+                loading(!1)
+            })), !1
+        }, this.toggle = function(mac) {
+            loading(!0);
+            var pos = getIndex(mac),
+                rule = "DROP" == $$.backup.maclist[pos].enable.toUpperCase() ? "ACCEPT" : "DROP";
+            return device.config.write(74, {
+                mac: mac,
+                enable: rule
+            }, pos, callback(this, function(index, isDeny) {
+                var type = isDeny ? "airDeny2" : "airAllow";
+                $tip.find("ul>li").eq(index).find(".title span").text(lng(type)).attr("langkey", type), REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            }, pos, "DROP" == rule)), this
+        }, this.remove = function(mac, func) {
+            loading(!0);
+            var pos = getIndex(mac);
+            return device.config.remove(74, {
+                mac: mac.toUpperCase(),
+                enable: $$.backup.maclist[pos].enable,
+                state: $$.backup.maclist[pos].state,
+                id: $$.backup.maclist[pos].id
+            }, pos, func ? func : callback(this, function(index) {
+                $tip.find("ul>li").eq(index).remove(), REFRESH.waitActualUpdate(function() {
+                    loading(!1)
+                })
+            }, pos)), this
+        }, this.updateSettings = function(maclist) {
+            function addItem(macitem, index, isDeny) {
+                var type = isDeny ? "airDeny2" : "airAllow",
+                    $item = $("				<li>					<div class='title'>						<a href='#'>" + macitem.mac.toUpperCase() + ' <span langkey="' + type + '">' + lng(type) + "</span></a>					</div>					<div class='delete'>						<a href='#'>x</a>					</div>					<div class='toggle'></div>					<div class='clear'></div>				</li>			").appendTo(mlist);
+                $item.find(".title>a").bind("click", callback(self, function(macitem, index) {
+                    HELPER.hide(), MACFilterForm.show(DATA.arp, DATA.macfilter, macitem, index)
+                }, macitem, index)), $item.find(".delete>a").bind("click", callback(self, function(macitem) {
+                    HELPER.hide(), this.remove(macitem.mac)
+                }, macitem, index)), $item.find(".toggle").bind("click", callback(self, function(macitem) {
+                    HELPER.hide(), this.toggle(macitem.mac)
+                }, macitem, index))
+            }
+            var mlist = $tip.find("ul");
+            mlist.hide().find("li").remove();
+            var macount = 0,
+                maclistFix = _.filter(maclist, function(arr) {
+                    return _.isNull(arr.mac) ? void 0 : arr
+                });
+            if (!_.isEqual(maclistFix, maclist));
+            for (var i = 0; i < maclistFix.length; i++) {
+                var isDeny = "DROP" == maclistFix[i].enable.toUpperCase();
+                addItem(maclistFix[i], i, isDeny), isDeny && macount++
+            }
+            return $count.html($("<span>" + macount + "<sup>/" + maclistFix.length + "</sup></span>")), maclistFix.length ? $macfilter.removeClass("empty") : $macfilter.addClass("empty"), mlist.find("li").length && mlist.show(), $$.backup.maclist = maclist, loading(!1), this
+        }, this.loadSettings = function() {
+            return device.config.read(74, callback(this, function(data) {
+                this.updateSettings(data.resident.macfilter)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $count = $($count), $macfilter = $($macfilter), $tip = $($tip), $tip.find(".add>a").bind("click", callback(this, function() {
+                HELPER.hide(), MACFilterForm.show(DATA.arp, DATA.macfilter)
+            }))
+        }))
+    },
+    __VSERVERS = new function() {
+        function loading(visible) {
+            visible ? $virtverv.find(".loading").show() : $virtverv.find(".loading").hide()
+        }
+        var self = this,
+            $$ = {
+                backup: {}
+            },
+            $virtverv = "#splitter>.virtserv",
+            $join = "#splitter>.virtserv .join",
+            $statbar = "#splitter>.virtserv>.statbar",
+            $count = "#splitter>.virtserv>.statbar>.count>span.n",
+            $tip = "#splitter>.virtserv .tip";
+        this.add = function(rule) {
+            loading(!0), device.config.write(10, rule, -1, callback(this, function() {
+                loading(!1)
+            }))
+        }, this.edit = function(rule, index) {
+            return loading(!0), device.config.write(10, rule, index, callback(this, function() {
+                loading(!1)
+            })), !1
+        }, this.remove = function(vserv, index) {
+            return loading(!0), device.config.remove(10, $$.backup.vservlist[index], index, callback(this, function() {
+                loading(!1), $tip.find("ul>li").eq(index).remove()
+            })), this
+        }, this.updateSettings = function(vservlist) {
+            function addItem(vserv, index, inRange) {
+                if ("" == vserv.ports_end) var port = ST_PORT.get(vserv.ports_begin, vserv.proto),
+                    $item = $("					<li>						<div class='title'>							<a href='#'>" + vserv.ipd + " <span> &#126; " + port + "</span></a>						</div>						<div class='delete'>							<a href='#'>x</a>						</div>						<div class='clear'></div>					</li>				").appendTo(vlist);
+                else var port = vserv.ports_begin + ":" + vserv.ports_end,
+                    $item = $("					<li>						<div class='title'>							<a href='#'>" + vserv.ipd + " <span> &#126; " + port + "</span></a>						</div>						<div class='delete'>							<a href='#'>x</a>						</div>						<div class='clear'></div>					</li>				").appendTo(vlist);
+                inRange || $item.find(".title>a").css({
+                    "text-decoration": "line-through"
+                }), $item.find(".title>a").bind("click", callback(self, function(vserv, index) {
+                    HELPER.hide(), wzVServ.show(DATA.iftree, DATA.arp, vserv, index, DATA.rmaccess, DATA.vserver)
+                }, vserv, index)), $item.find(".delete>a").bind("click", callback(self, function(vserv, index) {
+                    HELPER.hide(), this.remove(vserv, index)
+                }, vserv, index))
+            }
+            this.hideConnector();
+            var vlist = $tip.find("ul");
+            vlist.hide().find("li").remove();
+            for (var vservcount = 0, lan = DHCP.lan(), i = 0; i < vservlist.length; i++) {
+                var inRange = new IPv4(vservlist[i].ipd).fromRange(lan.hostmin(), lan.hostmax());
+                addItem(vservlist[i], i, inRange), inRange && vservcount++
+            }
+            return $count.html($("<span>" + vservcount + "<sup>/" + vservlist.length + "</sup></span>")), vservlist.length ? $virtverv.removeClass("empty") : $virtverv.addClass("empty"), vlist.find("li").length && vlist.show(), $$.backup.vservlist = vservlist, this.showConnector(), this
+        }, this.loadSettings = function() {
+            return device.config.read(10, callback(this, function(data) {
+                this.updateSettings(data.resident.vserver)
+            })), this
+        }, this.showConnector = function() {
+            return $join.show(), $statbar.show(), this
+        }, this.hideConnector = function() {
+            return $join.hide(), $statbar.hide(), this
+        }, $(document).bind("ready", callback(this, function() {
+            $virtverv = $($virtverv), $join = $($join), $statbar = $($statbar), $count = $($count), $tip = $($tip), this.hideConnector(), $tip.find(".add>a").bind("click", callback(this, function() {
+                HELPER.hide(), wzVServ.show(DATA.iftree, DATA.arp, null, null, DATA.rmaccess, DATA.vserver)
+            }))
+        }))
+    },
+    CLIENTLIST = new function() {
+        function getClientPos(index) {
+            var pos = {
+                    left: 0,
+                    top: 0
+                },
+                S = consts.clientTop + consts.clientBottom,
+                R = consts.clientTop / S - Math.floor(consts.clientTop / S) + 1e-4,
+                E = index / S - Math.floor(index / S);
+            if (E > 0 && R >= E) {
+                var offset = ($clientarea.width() - consts.clientWidth * consts.clientTop) / (consts.clientTop + 1),
+                    i = index - Math.floor(index / S) * consts.clientBottom;
+                pos.left = i * offset + (i - 1) * consts.clientWidth + Math.floor((index - 1) / S) * offset, pos.top = i % 2 == 0 ? consts.clientHeight / 2 + 100 : 100
+            }
+            else {
+                var offset = ($clientarea.width() - consts.clientWidth * consts.clientBottom) / (consts.clientBottom + 1),
+                    i = index - Math.ceil(index / S) * consts.clientTop;
+                pos.left = i * offset + (i - 1) * consts.clientWidth + Math.floor((index - 1) / S) * offset, pos.top = consts.clientHeight + consts.clientHeight / 2 + 100
+            }
+            return pos
+        }
+
+        function prepareScrolls() {
+            var S = consts.clientTop + consts.clientBottom;
+            $$.scroll.offsetTop > 0 ? $scroll.top.left.show() : $scroll.top.left.hide(), $$.client.dynamic.length > S && $$.scroll.offsetTop < Math.floor($$.client.dynamic.length / S) ? $scroll.top.right.show() : $scroll.top.right.hide(), $$.scroll.offsetBottom > 0 ? $scroll.bottom.left.show() : $scroll.bottom.left.hide(), $$.client["static"].length > S && $$.scroll.offsetBottom < Math.floor($$.client["static"].length / S) ? $scroll.bottom.right.show() : $scroll.bottom.right.hide()
+        }
+
+        function animateClientPos(client, pos, speed) {
+            is.unset(pos) && (pos = client.pos), is.number(pos) && (speed = pos, pos = client.pos), is.unset(speed) && (speed = 600);
+            var offset = "dynamic" == client.group ? $$.scroll.offsetTop : $$.scroll.offsetBottom;
+            client.graph.$obj.stop(!0, !0).animate({
+                left: pos.left - offset * $clientarea.width(),
+                top: pos.top,
+                opacity: 1
+            }, {
+                step: callback(this, updateRelation, client),
+                duration: speed
+            })
+        }
+
+        function scrolling(offsetTop, offsetBottom) {
+            var S = consts.clientTop + consts.clientBottom,
+                newOffsetTop = $$.scroll.offsetTop + offsetTop,
+                newOffsetBottom = $$.scroll.offsetBottom + offsetBottom;
+            if (newOffsetTop = 0 > newOffsetTop ? 0 : newOffsetTop, newOffsetTop = newOffsetTop > Math.floor($$.client.dynamic.length / S) ? Math.floor($$.client.dynamic.length / S) : newOffsetTop, newOffsetBottom = 0 > newOffsetBottom ? 0 : newOffsetBottom, newOffsetBottom = newOffsetBottom > Math.floor($$.client["static"].length / S) ? Math.floor($$.client["static"].length / S) : newOffsetBottom, $$.scroll.offsetTop != newOffsetTop) {
+                $$.scroll.offsetTop = newOffsetTop;
+                for (var i = 0; i < $$.client.dynamic.length; i++) animateClientPos($$.client.dynamic[i], 200 + 100 * i)
+            }
+            if ($$.scroll.offsetBottom != newOffsetBottom) {
+                $$.scroll.offsetBottom = newOffsetBottom;
+                for (var i = 0; i < $$.client["static"].length; i++) {
+                    {
+                        $$.client["static"][i]
+                    }
+                    animateClientPos($$.client["static"][i], 200 + 100 * i)
+                }
+            }
+            prepareScrolls()
+        }
+
+        function clientMouseEnter(client) {
+            return client.graph.$obj.find(".overlay").length ? !0 : ($clientarea.find(".client").css({
+                "z-index": 0
+            }), client.graph.$obj.addClass("hover").css({
+                "z-index": 10
+            }), client.graph.bgline.attr({
+                "stroke-width": 5
+            }).toFront(), client.graph.line.attr({
+                "stroke-width": 1,
+                "stroke-dasharray": ""
+            }).toFront(), void client.graph.arrow.attr({
+                "stroke-width": 1
+            }).toFront())
+        }
+
+        function clientMouseLeave(client) {
+            return client.graph.$obj.find(".overlay").length ? !0 : (client.graph.$obj.removeClass("hover"), client.graph.bgline.attr({
+                "stroke-width": 3.5
+            }), client.graph.line.attr({
+                "stroke-width": .5,
+                "stroke-dasharray": jQuery.browser.msie && parseInt(jQuery.browser.version) < 9 ? "" : "- "
+            }), void client.graph.arrow.attr({
+                "stroke-width": .5
+            }))
+        }
+
+        function updateRelation(client) {
+            if (!is.unset(client) && !client.removed) {
+                var isTopDirection = client.graph.$obj.position().top + consts.clientHeight < $clientarea.height() / 2,
+                    MX = DHCP.findPosByIP(client.ip) + 20,
+                    MY = $clientarea.height() / 2,
+                    X = client.graph.$obj.position().left + consts.clientWidth / 2,
+                    Y = client.graph.$obj.position().top;
+                Y += isTopDirection ? consts.clientHeight : 0;
+                var curve = [
+                        ["M", MX, MY],
+                        ["C", MX, isTopDirection ? MY - 64 : MY + 64, X, MY, X, Y]
+                    ],
+                    arrow = [
+                        ["M", X, Y],
+                        ["L", X - 3, isTopDirection ? Y + 7 : Y - 7],
+                        ["L", X + 3, isTopDirection ? Y + 7 : Y - 7],
+                        ["L", X, Y]
+                    ];
+                client.graph.bgline.attr({
+                    path: curve
+                }), client.graph.line.attr({
+                    path: curve
+                }), client.graph.arrow.attr({
+                    path: arrow
+                });
+                var _X = X,
+                    _Y = client.graph.$obj.position().top + consts.clientHeight;
+                if (client.vservers.length && client.graph.vservers) {
+                    var rel = [],
+                        arel = [];
+                    self.isClientVisible(client) && (rel = [
+                        ["M", consts.vpoint.x, consts.vpoint.y],
+                        ["C", _X / 2, consts.vpoint.y, _X, consts.vpoint.y, _X, _Y]
+                    ], arel = [
+                        ["M", _X, _Y],
+                        ["L", X - 3, _Y + 7],
+                        ["L", _X + 3, _Y + 7],
+                        ["L", _X, _Y]
+                    ]), client.graph.vservers.line.attr({
+                        path: rel
+                    }), client.graph.vservers.arrow.attr({
+                        path: arel
+                    }), client.graph.vservers.ports.attr({
+                        x: _X,
+                        y: _Y + 18
+                    });
+                    var pbox = client.graph.vservers.ports.getBBox();
+                    client.graph.vservers.ports_b.attr({
+                        x: pbox.x - 2.5,
+                        y: pbox.y - 1.5,
+                        width: pbox.width + 4,
+                        height: pbox.height + 2
+                    })
+                }
+            }
+        }
+
+        function correctClientsPos(group) {
+            for (var i = 0; i < $$.client[group].length; i++) {
+                var client = $$.client[group][i];
+                client.pos = getClientPos(i + 1), "static" == client.group && (client.pos.top = $clientarea.height() - consts.clientHeight - client.pos.top), animateClientPos(client)
+            }
+            prepareScrolls()
+        }
+
+        function sortClients(delay) {
+            setTimeout(callback(this, function() {
+                $$.client.sort(), correctClientsPos("dynamic"), correctClientsPos("static")
+            }), delay)
+        }
+
+        function bindDragger(client) {
+            DRAGGER.remove(client.graph.$obj).add(client.graph.$obj), client.graph.$obj.unbind("down.dragger").unbind("up.dragger").unbind("move.dragger").bind("down.dragger", callbackEx(self, function(e) {
+                var target = $(e.target);
+                HELPER.hide(), LOGIC.stop(), clientareaOverlayVisible(!0), target.css({
+                    "z-index": 10
+                })
+            }, client)).bind("up.dragger", callbackEx(self, function(e, attr, client) {
+                hideClientAlert(client), clientareaOverlayVisible(!1), attr.top + consts.clientHeight < $clientarea.height() / 2 && "virtual" != client.type && "static" == client.group && client.usedhcp ? this.unbindIPFromClient(client) : attr.top > $clientarea.height() / 2 && "virtual" != client.type && "dynamic" == client.group && client.usedhcp && this.bindIPToClient(client), animateClientPos(client), LOGIC.start()
+            }, client)).bind("move.dragger", callbackEx(self, function(e, attr, client) {
+                attr.left >= 16 && attr.left + consts.clientWidth < $clientarea.width() - 16 && client.graph.$obj.css({
+                    left: attr.left
+                }), attr.top >= 16 && attr.top + consts.clientHeight < $clientarea.height() - 16 && (client.graph.$obj.css({
+                    top: attr.top
+                }), attr.top + consts.clientHeight < $clientarea.height() / 2 && "virtual" != client.type && "static" == client.group && client.usedhcp ? showClientAlert(client, "airUnbindIP") : attr.top > $clientarea.height() / 2 && "virtual" != client.type && "dynamic" == client.group && client.usedhcp ? showClientAlert(client, "airBindIP") : hideClientAlert(client)), updateRelation(client)
+            }, client))
+        }
+
+        function showClientAlert(client, text) {
+            var alert = client.graph.$obj.find(">.alert");
+            alert.length || (alert = $("<div class='alert'><span></span></div>").appendTo(client.graph.$obj)), alert.find("span").text(lng(text)).attr("langkey", text), alert.show()
+        }
+
+        function hideClientAlert(client) {
+            var alert = client.graph.$obj.find(">.alert");
+            alert.hide().remove()
+        }
+
+        function setClientAttrs(client) {
+            function addAction(name) {
+                return $("				<li><a href='#' langkey='" + name + "'>" + lng(name) + "</a></li>			").appendTo($menulist).find("a")
+            }
+            var isDynamic = "dynamic" == client.group,
+                isConnected = "connected" == client.status,
+                isWiFi = is.set(client.wireless),
+                isVirtual = "virtual" == client.type,
+                displayname = client.hostname,
+                displaymac = client.mac ? client.mac : "";
+            if (displayname || (displayname = client.alias ? "@" + client.alias : "<span class='unknown' langkey='airUnknown'>" + lng("airUnknown") + "</span>"), getCookie("user_ip") == client.ip && (displayname += "<sup class='you'>[<span langkey='airYou'>" + lng("airYou") + "</span>]</sup>"), client.graph.$obj.removeClass("wifi eth dynamic static virtual connected disconnected dhcp banned"), client.graph.$obj.addClass(isWiFi ? "wifi" : "eth").addClass(client.type).addClass(client.usedhcp ? "dhcp" : null).addClass(client.status).addClass(client.banned ? "banned" : null), client.graph.line.attr({
+                    stroke: isConnected ? "#00a8ec" : "#707070"
+                }), client.graph.arrow.attr({
+                    stroke: isConnected ? "#00a8ec" : "#707070"
+                }), client.vservers.length) {
+                client.vports = new Array;
+                for (var i = 0; i < client.vservers.length; i++) {
+                    var port = ST_PORT.get(client.vservers[i].ports_begin, client.vservers[i].proto);
+                    client.vports.push(port)
+                }
+                client.graph.vservers || (client.graph.vservers = {}, client.graph.vservers.line = paper.canvas.path([]).attr({
+                    stroke: consts.vpoint.color,
+                    "stroke-width": .5,
+                    "stroke-linecap": "round",
+                    "stroke-dasharray": "--."
+                }), client.graph.vservers.arrow = paper.canvas.path([]).attr({
+                    stroke: consts.vpoint.color,
+                    "stroke-width": .5,
+                    "stroke-linecap": "round",
+                    fill: "#ffffff"
+                }), client.graph.vservers.ports_b = paper.canvas.rect(0, 0, 0, 0, 3).attr({
+                    stroke: consts.vpoint.color,
+                    "stroke-width": .5,
+                    fill: "#ffffff"
+                }), client.graph.vservers.ports = paper.canvas.text(0, 0, "").attr({
+                    "font-family": "Arial, Helvetica, sans-serif",
+                    "font-size": 10,
+                    fill: consts.vpoint.color
+                })), client.graph.vservers.ports.attr({
+                    text: client.vports.join("/")
+                }), updateRelation(client)
+            }
+            else client.graph.vservers && client.graph.vservers.line && (client.graph.vservers.line.remove(), client.graph.vservers.arrow.remove(), client.graph.vservers.ports_b.remove(), client.graph.vservers.ports.remove(), client.graph.vservers = null);
+            var ip = new IPv4(client.ip, DHCP.lan().shortmask());
+            client.graph.$obj.find(".name").html("<span>" + displayname + "</span>"), client.graph.$obj.find(".mac").html("<span>" + displaymac + "</span>"), client.graph.$obj.find(".ip").html("<span>" + ip.subnet().join(".") + ".<u>" + ip.host().join(".") + "</u></span>"), client.graph.$obj.find(".action").removeClass("edit");
+            var $mark = client.graph.$obj.find(".mark"),
+                $menulist = client.graph.$obj.find("ul.menulist");
+            $mark.find("img").remove(), $menulist.find(">li").remove(), client.wifilter && $mark.append("<img src='image/mark_filter.png' />"), client.banned && $mark.append("<img src='image/mark_deny.png' />"), isVirtual || (isWiFi && !client.wifilter && addAction("airAddToWifi").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.addToWiFilter(client), !1
+            }, client)), client.banned || addAction("airBanByMAC").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.addToMACFilter(client), !1
+            }, client)), isDynamic || "static" == client.type && !client.usedhcp ? addAction("airBindIP").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.bindIPToClient(client), !1
+            }, client)) : addAction("airUnbindIP").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.unbindIPFromClient(client), !1
+            }, client)), isWiFi && addAction("airDisconnect").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.disconnectWiFiClient(client), !1
+            }, client)), addAction("airCloneMAC").bind("click", callback(self, function(client) {
+                HELPER.hide();
+                var version = is.IPv4(client.ip) ? "v4" : is.IPv6(client.ip) ? "v6" : null;
+                return __CONNECTOR.cloneMAC(client.mac, version), !1
+            }, client))), (!isDynamic && client.usedhcp || isVirtual) && (addAction("airEdit").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.edit(client), !1
+            }, client)), client.graph.$obj.find(".action").addClass("edit").unbind("click").bind("click", callback(self, function(client) {
+                return HELPER.hide(), this.edit(client), !1
+            }, client)))
+        }
+
+        function addClient(clients) {
+            is.array(clients) || (clients = [arguments[0]]);
+            for (var i = 0; i < clients.length; i++) {
+                var client = clients[i],
+                    isDynamic = "dynamic" == client.group,
+                    pos = ("connected" == client.status, is.set(client.wireless), getClientPos($$.client[client.group].length + 1));
+                client.pos = pos, client.graph = {
+                    $obj: $("						<div class='client unselectable'>							<div class='icon'></div>							<div class='info'>								<div class='name'></div>								<div class='mac'></div>								<div class='ip'></div>							</div>							<div class='action'>								<div class='tip'>									<ul class='menulist'></ul>									<div class='mark'></div>								</div>							</div>						</div>					").css({
+                        opacity: 0
+                    })
+                }, client.graph.$obj.find(".action").mousedown(function() {
+                    return !1
+                }), client.graph.bgline = paper.canvas.path([]).attr({
+                    stroke: "#ffffff",
+                    "stroke-width": 3.5,
+                    "stroke-linecap": "round"
+                }), client.graph.line = paper.canvas.path([]).attr({
+                    "stroke-width": .5,
+                    "stroke-linecap": "round",
+                    "stroke-dasharray": jQuery.browser.msie && parseInt(jQuery.browser.version) < 9 ? "" : "- "
+                }), client.graph.arrow = paper.canvas.path([]).attr({
+                    "stroke-width": .5,
+                    fill: "#ffffff"
+                }), setClientAttrs(client), isDynamic ? client.graph.$obj.css({
+                    left: pos.left,
+                    top: pos.top + consts.clientHeight
+                }).appendTo($clientarea.find(".clients")) : (pos.top = $clientarea.height() - consts.clientHeight - pos.top, client.graph.$obj.css({
+                    left: pos.left,
+                    top: pos.top - consts.clientHeight
+                }).appendTo($clientarea.find(".clients"))), client.graph.$obj.hover(callback(this, clientMouseEnter, client), callback(this, clientMouseLeave, client)), bindDragger(client), animateClientPos(client, 600 + 250 * i), $$.client[client.group].push(client)
+            }
+            prepareScrolls(), clients.length && sortClients(800 + 250 * clients.length)
+        }
+
+        function removeClient(clients) {
+            is.array(clients) || (clients = [arguments[0]]);
+            for (var i = 0; i < clients.length; i++) {
+                var client = clients[i],
+                    isDynamic = "dynamic" == client.group,
+                    index = ("connected" == client.status, $$.client.of(client.ip).index),
+                    ntop = isDynamic ? "-=" : "+=";
+                client.graph.$obj.stop(!0, !0).animate({
+                    top: ntop + consts.clientHeight,
+                    opacity: 0
+                }, {
+                    step: callback(this, updateRelation, client),
+                    duration: 800,
+                    complete: callback(this, function(client) {
+                        client.graph.$obj.remove(), client.removed = !0, client.graph.vservers && client.graph.vservers.line && (client.graph.vservers.line.remove(), client.graph.vservers.arrow.remove(), client.graph.vservers.ports_b.remove(), client.graph.vservers.ports.remove(), client.graph.vservers = null), client.graph.arrow.remove(), client.graph.line.remove(), client.graph.bgline.remove()
+                    }, client)
+                }), client.graph.bgline.animate({
+                    opacity: 0
+                }, 600), client.graph.line.animate({
+                    opacity: 0
+                }, 600), client.graph.arrow.animate({
+                    opacity: 0
+                }, 600), DRAGGER.remove(client.graph.$obj), $$.client[client.group].splice(index, 1), setTimeout(callback(this, correctClientsPos, client.group), 1e3)
+            }
+            clients.length
+        }
+
+        function upgradeClient(clients) {
+            is.array(clients) || (clients = [arguments[0]]);
+            for (var i = 0; i < clients.length; i++) {
+                var client = clients[i],
+                    oldClient = ("dynamic" == client.group, "connected" == client.status, is.set(client.wireless), $$.client.of(client.ip));
+                client.graph = oldClient.self.graph, client.pos = oldClient.self.pos, setClientAttrs(client), oldClient.group != client.group && ($$.client[oldClient.group].splice(oldClient.index, 1), client.pos = getClientPos($$.client[client.group].length + 1), "static" == client.group && (client.pos.top = $clientarea.height() - consts.clientHeight - client.pos.top), animateClientPos(client), correctClientsPos(oldClient.group), $$.client[client.group].push(client)), bindDragger(client), $$.client.overlay(oldClient.client, !1)
+            }
+            clients.length && sortClients(800)
+        }
+
+        function loading(visible) {
+            visible ? $clientarea.find(".loading").show() : $clientarea.find(".loading").hide()
+        }
+
+        function clientareaOverlayVisible(visible) {
+            visible ? ($clientarea.find(".client").css({
+                "z-index": 0
+            }), 0 == $clientarea.find(".WRAPPER>.clients>.overlay").length && $clientarea.find(".WRAPPER>.clients").append("<div class='overlay' />"), $clientarea.find(".WRAPPER>.clients>.overlay").show()) : $clientarea.find(".WRAPPER>.clients>.overlay").hide().remove()
+        }
+        var self = this,
+            $$ = {
+                client: {
+                    dynamic: new Array,
+                    "static": new Array,
+                    of: function(ip, mac) {
+                        is.object(arguments[0]) && (mac = arguments[0].mac, ip = arguments[0].ip);
+                        for (var ok, i = 0; i < this.dynamic.length; i++)
+                            if (ok = this.dynamic[i].ip == ip, ok = is.set(mac) ? this.dynamic[i].mac == mac : ok) return {
+                                index: i,
+                                group: "dynamic",
+                                client: this.dynamic[i],
+                                self: this.dynamic[i]
+                            };
+                        for (var i = 0; i < this["static"].length; i++)
+                            if (ok = this["static"][i].ip == ip, ok = is.set(mac) ? this["static"][i].mac == mac : ok) return {
+                                index: i,
+                                group: "static",
+                                client: this["static"][i],
+                                self: this["static"][i]
+                            };
+                        return null
+                    },
+                    sort: function() {
+                        function rule(client1, client2) {
+                            return client1.status != client2.status ? "connected" == client1.status ? -1 : 1 : new IPv4(client1.ip).toSerial() < new IPv4(client2.ip).toSerial() ? -1 : 1
+                        }
+                        this.dynamic = this.dynamic.sort(rule), this["static"] = this["static"].sort(rule)
+                    },
+                    overlay: function(client, visible) {
+                        visible ? (0 == client.graph.$obj.find(".overlay").length && client.graph.$obj.append("<div class='overlay' />"), client.graph.$obj.removeClass("hover").find(".overlay").bind("mouseenter", function() {
+                            return !1
+                        }).show(), client.graph.bgline.attr({
+                            opacity: .25
+                        }), client.graph.line.attr({
+                            opacity: .25
+                        }), client.graph.arrow.attr({
+                            opacity: .25
+                        })) : (client.graph.$obj.find(".overlay").hide().remove(), client.graph.bgline.attr({
+                            opacity: 1
+                        }), client.graph.line.attr({
+                            opacity: 1
+                        }), client.graph.arrow.attr({
+                            opacity: 1
+                        }))
+                    }
+                },
+                scroll: {
+                    offsetTop: 0,
+                    offsetBottom: 0
+                },
+                virgin: !0,
+                backup: {}
+            },
+            consts = {
+                clientWidth: 128,
+                clientHeight: 44,
+                clientTop: 3,
+                clientBottom: 2,
+                vpoint: {
+                    x: 20,
+                    y: 485,
+                    color: "#8AC000"
+                }
+            },
+            paper = {
+                canvas: null,
+                width: null,
+                height: null,
+                offset: null
+            },
+            $clientarea = "#localNetwork>#clientarea",
+            $scroll = {
+                top: {
+                    left: "#clientarea>.scroll.top.left",
+                    right: "#clientarea>.scroll.top.right"
+                },
+                bottom: {
+                    left: "#clientarea>.scroll.bottom.left",
+                    right: "#clientarea>.scroll.bottom.right"
+                }
+            },
+            $trim = {
+                top: "#trim>.text.top",
+                bottom: "#trim>.text.bottom"
+            },
+            $addcli = "#clientarea>.addcli";
+        this.isClientVisible = function(client) {
+            return client.graph.$obj.position().left >= 0 && client.graph.$obj.position().left < $clientarea.height()
+        }, this.disconnectWiFiClient = function(client) {
+            return $$.client.overlay(client, !0), device.config.write(108, [{
+                mac: client.mac
+            }], callbackEx(this, function(answer, client) {
+                $$.client.overlay(client, !1), Ok(answer.status) && removeClient(client)
+            }, client)), this
+        }, this.add = function(client, cb) {
+            for (var reserved = $$.backup.br0.services.br0.dhcpd.reserved, exist = !1, i = 0; i < reserved.length && !exist; i++) reserved[i].ip == client.ip && reserved[i].mac.toUpperCase() == client.mac.toUpperCase() && (exist = !0);
+            return exist || (reserved.push({
+                host: client.hostname ? client.hostname : client.alias,
+                ip: client.ip,
+                mac: client.mac
+            }), device.config.write(1, {
+                br0: $$.backup.br0
+            }, cb ? cb : callback(this, function(client) {
+                var vclient = $$.client.of(client.ip);
+                vclient ? (vclient = vclient.client, vclient.ip = client.ip, vclient.mac = client.mac, vclient.alias = client.alias, vclient.usedhcp = !0, vclient.type = "static", vclient.group = "static", upgradeClient(vclient)) : addClient({
+                    ip: client.ip,
+                    mac: client.mac,
+                    hostname: null,
+                    alias: client.alias,
+                    wireless: null,
+                    status: "disconnected",
+                    usedhcp: !0,
+                    type: "static",
+                    group: "static",
+                    lease: null,
+                    banned: null,
+                    wifilter: null,
+                    vservers: new Array
+                })
+            }, client))), this
+        }, this.change = function(nClient, oClient) {
+            var reserved = $$.backup.br0.services.br0.dhcpd.reserved,
+                client = $$.client.of(oClient.ip, oClient.mac).client;
+            $$.client.overlay(client, !0);
+            for (var i = 0; i < reserved.length; i++)
+                if (reserved[i].ip == oClient.ip && oClient.mac && reserved[i].mac.toUpperCase() == oClient.mac.toUpperCase()) {
+                    reserved[i].ip = nClient.ip, reserved[i].mac = nClient.mac, reserved[i].host = nClient.alias;
+                    break
+                }
+            return client.ip = nClient.ip, client.mac = nClient.mac, client.alias = nClient.alias, client.usedhcp = !0, client.type = "static", client.group = "static", device.config.write(1, {
+                br0: $$.backup.br0
+            }, callback(this, function(client) {
+                upgradeClient(client), $$.client.overlay(client, !1)
+            }, client)), this
+        }, this.edit = function(client) {
+            return client && client.mac ? StatClientForm.editClient(client, this.change) : StatClientForm.addClient(client, this.add), this
+        }, this.bindIPToClient = function(client) {
+            return $$.client.overlay(client, !0), this.add(client, callbackEx(this, function(answer, client) {
+                $$.client.overlay(client, !1), client.usedhcp = !0, client.type = "static", client.group = "static", upgradeClient(client)
+            }, client)), this
+        }, this.unbindIPFromClient = function(client) {
+            $$.client.overlay(client, !0);
+            for (var reserved = $$.backup.br0.services.br0.dhcpd.reserved, i = 0; i < reserved.length; i++)
+                if (reserved[i].ip == client.ip && reserved[i].mac.toUpperCase() == client.mac.toUpperCase()) {
+                    reserved.splice(i, 1);
+                    break
+                }
+            return device.config.write(1, {
+                br0: $$.backup.br0
+            }, callbackEx(this, function(answer, client) {
+                $$.client.overlay(client, !1), "connected" == client.status || client.vservers.length ? (client.group = "virtual" == client.type || client.usedhcp ? "static" : "dynamic", client.usedhcp = !1, upgradeClient(client)) : removeClient(client)
+            }, client)), this
+        }, this.addToWiFilter = function(client) {
+            var rule = {
+                mac: client.mac,
+                hostname: client.hostname,
+                active: !0
+            };
+            return $$.client.overlay(client, !0), __WIFILTER.mode("deny"), __WIFILTER.add(rule, null, callback(this, function(client) {
+                $$.client.overlay(client, !1), client.wifilter = !0, client.banned = !0, upgradeClient(client)
+            }, client)), this
+        }, this.addToMACFilter = function(client) {
+            $$.client.overlay(client, !0);
+            var macFilter = $$.backup.macFilter;
+            if (macFilter) var objMaxId = _.max(macFilter, function(mac) {
+                return mac.id
+            });
+            var id = objMaxId && !_.isUndefined(objMaxId.id) ? objMaxId.id + 1 : 0,
+                mac = client.mac.toUpperCase(),
+                mac_exist_flag = !1,
+                index = null;
+            if (macFilter)
+                for (var i = 0; i < macFilter.length; i++)
+                    if (macFilter[i].mac == mac) {
+                        mac_exist_flag = !0, index = i;
+                        break
+                    }
+            var rule = {
+                mac: mac,
+                enable: "DROP",
+                state: !0,
+                id: index ? index : id
+            };
+            return mac_exist_flag ? MACFILTER.edit(rule, index) : MACFILTER.add(rule, callback(this, function(client) {
+                $$.client.overlay(client, !1), client.banned = !0, upgradeClient(client)
+            }, client)), this
+        }, this.updateSettings = function(br0, virtualServers, dhcpDynamic, activeClients, wifiClients, macFilter, wiFilter) {
+            function clientOf(ip, mac) {
+                for (var ok, i = 0; i < clients.length; i++)
+                    if (ok = clients[i].ip == ip, ok &= is.set(mac) ? clients[i].mac == mac : ok) return clients[i];
+                return null
+            }
+            for (var clients = new Array, dhcpStatic = br0.services.br0.dhcpd.reserved, wifiInfoByMAC = {}, macFilterInfoByMAC = {}, wiFilterInfoByMAC = {}, lan = DHCP.lan(), i = 0; i < wifiClients.length; i++) wifiInfoByMAC[wifiClients[i].mac.toUpperCase()] = !0;
+            for (var macFilterFix = _.filter(macFilter, function(arr) {
+                    return _.isNull(arr.mac) ? void 0 : arr
+                }), i = 0; i < macFilterFix.length; i++) macFilterInfoByMAC[macFilterFix[i].mac.toUpperCase()] = "DROP" == macFilterFix[i].enable.toUpperCase();
+            if (wiFilter && (delete wiFilter.max_instance, !_.isEmpty(wiFilter)))
+                for (var key in wiFilter) wiFilterInfoByMAC[wiFilter[key].mac.toUpperCase()] = !0;
+            for (var i = 0; i < activeClients.length; i++) {
+                var MAC = activeClients[i].mac.toUpperCase();
+                new IPv4(activeClients[i].ip, lan.shortmask()).fromRange(lan.hostmin(), lan.hostmax()) && clients.push({
+                    ip: activeClients[i].ip,
+                    mac: MAC,
+                    hostname: activeClients[i].hostname && "" != activeClients[i].hostname ? activeClients[i].hostname : null,
+                    alias: null,
+                    wireless: wifiInfoByMAC[MAC],
+                    status: "connected",
+                    usedhcp: !1,
+                    type: "static",
+                    group: "static",
+                    lease: null,
+                    banned: macFilterInfoByMAC[MAC],
+                    wifilter: wiFilterInfoByMAC[MAC],
+                    vservers: new Array
+                })
+            }
+            for (var i = 0; i < dhcpDynamic.length; i++) {
+                var client = clientOf(dhcpDynamic[i].ip, dhcpDynamic[i].MACAddress.toUpperCase());
+                client && (client.usedhcp = !0, client.type = "dynamic", client.group = "dynamic", client.lease = dhcpDynamic[i].lease, client.hostname = dhcpDynamic[i].hostname)
+            }
+            for (var i = 0; i < dhcpStatic.length; i++) {
+                var MAC = dhcpStatic[i].mac.toUpperCase(),
+                    client = clientOf(dhcpStatic[i].ip, MAC);
+                client ? (client.usedhcp = !0, client.alias = dhcpStatic[i].host, client.type = "static", client.group = "static") : new IPv4(dhcpStatic[i].ip, lan.shortmask()).fromRange(lan.hostmin(), lan.hostmax()) && clients.push({
+                    ip: dhcpStatic[i].ip,
+                    mac: MAC,
+                    hostname: null,
+                    alias: dhcpStatic[i].host,
+                    wireless: null,
+                    status: "disconnected",
+                    usedhcp: !0,
+                    type: "static",
+                    group: "static",
+                    lease: null,
+                    banned: macFilterInfoByMAC[MAC],
+                    wifilter: wiFilterInfoByMAC[MAC],
+                    vservers: new Array
+                })
+            }
+            for (var i = 0; i < virtualServers.length; i++) {
+                var client = clientOf(virtualServers[i].ipd);
+                client ? (client.vservers.push(virtualServers[i]), client.alias = client.alias ? client.alias : virtualServers[i].name) : new IPv4(virtualServers[i].ipd, lan.shortmask()).fromRange(lan.hostmin(), lan.hostmax()) && clients.push({
+                    ip: virtualServers[i].ipd,
+                    mac: null,
+                    hostname: null,
+                    alias: virtualServers[i].name,
+                    wireless: null,
+                    status: "disconnected",
+                    usedhcp: !1,
+                    type: "virtual",
+                    group: "static",
+                    lease: null,
+                    banned: null,
+                    wifilter: null,
+                    vservers: [virtualServers[i]]
+                })
+            }
+            for (var disconnectedClients = new Array, connectedClients = new Array, existedClients = new Array, allclients = $$.client.dynamic.concat($$.client["static"]), i = 0; i < allclients.length; i++) {
+                var client = clientOf(allclients[i].ip);
+                client ? (existedClients.push(copy(client)), clients.splice(indexOf(clients, client), 1)) : disconnectedClients.push(copy(allclients[i]))
+            }
+            return connectedClients = clients, upgradeClient(existedClients), removeClient(disconnectedClients), addClient(connectedClients), $$.backup.br0 = br0, $$.backup.macFilter = macFilter, this
+        }, this.loadSettings = function() {
+            return loading($$.virgin && !0), device.config.read([1, 10, 34, 46, 64, 74, 35], callback(this, function(data) {
+                with($$.virgin = !1, loading(!1), data) this.updateSettings(rq[0].resident.iface_names.br0, is.set(rq[1].resident) ? rq[1].resident.vserver : new Array, is.set(rq[2].resident) ? rq[2].resident : new Array, is.set(rq[3].resident) ? rq[3].resident : new Array, is.set(rq[4].resident) ? rq[4].resident : new Array, is.set(rq[5].resident) ? rq[5].resident.macfilter : new Array, is.set(rq[6].resident) ? rq[6].resident.mbssid[0].AccessControlList : new Array, is.set(rq[6].resident) ? rq[6].resident.mbssid[0].AccessPolicy : new String)
+            })), this
+        }, $(document).bind("ready", callback(this, function() {
+            $clientarea = $($clientarea), $scroll.top.left = $($scroll.top.left), $scroll.top.right = $($scroll.top.right), $scroll.bottom.left = $($scroll.bottom.left), $scroll.bottom.right = $($scroll.bottom.right), $trim.top = $($trim.top), $trim.bottom = $($trim.bottom), $addcli = $($addcli), paper = {
+                width: $clientarea.width(),
+                height: $clientarea.height(),
+                offset: $clientarea.position().left,
+                canvas: Raphael($clientarea.find(".canvas").get(0), this.width, this.height)
+            };
+            var scrolls = [$scroll.top.left[0], $scroll.top.right[0], $scroll.bottom.left[0], $scroll.bottom.right[0]];
+            $(scrolls).bind("click", callback(this, function(e) {
+                var target = $(e.currentTarget);
+                target.is($scroll.top.left) && scrolling(-1, 0), target.is($scroll.top.right) && scrolling(1, 0), target.is($scroll.bottom.left) && scrolling(0, -1), target.is($scroll.bottom.right) && scrolling(0, 1)
+            })), $clientarea.bind("mousewheel", callback(this, function(e, delta) {
+                var Y = e.clientY - $clientarea.offset().top;
+                return Y < $clientarea.height() / 2 ? scrolling(delta > 0 ? 1 : -1, 0) : scrolling(0, delta > 0 ? 1 : -1), !1
+            })).bind("show.overlay", callback(this, function() {
+                clientareaOverlayVisible(!0)
+            })).bind("hide.overlay", callback(this, function() {
+                clientareaOverlayVisible(!1)
+            })), $addcli.bind("click", callback(this, function() {
+                return this.edit({}), !1
+            }))
+        }))
+    };

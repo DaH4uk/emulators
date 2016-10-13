@@ -1,0 +1,57 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"></script>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title><script>dw(ddnsv6_menu_title)</script></title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<SCRIPT LANGUAGE="JavaScript">
+function onclick_func()
+{
+	if(Dnsv6form.enable_dnsv6.checked == false)
+	{
+		Dnsv6form.routername.disabled=true;
+	}
+	else
+	{
+		Dnsv6form.routername.disabled=false;
+	}
+}
+
+</SCRIPT>
+</head>
+
+<body>
+<blockquote>
+<h2><script>dw(ddnsv6_menu_title)</script></h2>
+<form method="POST" action="http://192.168.10.1/boafrm/formDnsv6" name="Dnsv6form">
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td>
+   <script>dw(ddnsv6_title)</script>
+  </td></tr>
+</table>
+<br>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td class="item_td">
+<input type=checkbox name=enable_dnsv6 value=1  onclick="onclick_func()"><script>dw(ddnsv6_enbl)</script>
+</td></tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(ddnsv6_r_name)</script></td>
+	<td width ="70%" class="item_td"><input type=text name=routername size=15 maxlength=15 value="router.my"></td>
+</tr>
+</table>
+<br>
+<input type="hidden" value="/dnsv6.htm" name="submit-url">
+<input type=submit name="apply" value="Apply">
+<script>document.Dnsv6form.apply.value=save_changes;</script>
+</form>
+</blockquote>
+</body>
+</html> 

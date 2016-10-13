@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ndm.abbr" content="DyDNS" />
+
+<title>ZyXEL Keenetic -  Dynamic DNS</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css" />
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+form label {
+	width: 230px;
+}
+</style>
+<script type="text/javascript">
+<!--
+function Bindings(e, profile) {
+//private:
+	var triggers = new Array();
+	var pendingCmds = new Packet();
+//public:
+	this.load = function(node) {
+		if( getNodeValue(node, "global") == "yes" ) {
+			var label = document.createElement("label");
+			var desc = narrow(getNodeValue(node, "description"), 25);
+			var name = node.getAttribute("name");
+			label.htmlFor = name;
+			e.appendChild(label);
+			var trigger = document.createElement("input");
+			trigger.type = "checkbox";
+			trigger.name = trigger.id = name;
+			e.appendChild(trigger);
+			e.appendChild(document.createTextNode(desc ? (desc + " (" + name + ")") : name));
+			e.appendChild(document.createElement("br"));
+
+			triggers[name] = new Trigger(trigger, {tag: "profile", hasValue: profile});
+			pendingCmds.Config("interface dyndns profile", {"name": name}, triggers[name]);
+		}
+	}
+	this.continueLoading = function(packet) {
+		pendingCmds.flushTo(packet);
+	}
+	this.save = function(packet) {
+		for( var name in triggers ) {
+			triggers[name].save(packet, "interface dyndns profile", {"name": name, "profile": profile});
+			if( triggers[name].isEnabled() ) packet.Command("interface dyndns update", {"name": name});
+		}
+	}
+}
+Bindings.prototype = new ParameterSet();
+
+var bindings;
+var frm;
+
+function loadValues() {
+	enableProgressIndicator();
+	frm = new Form(document.dyndns);
+	bindings = new Bindings(document.getElementById("bindings"), _WEBADMIN);
+
+	var p = new Packet();
+	p.Command("show interface", null, bindings);
+	p.onLoad = function() {
+		var dyndns = new Named(_WEBADMIN);
+		dyndns.Command("dyndns profile");
+		bindings.continueLoading(dyndns);
+		dyndns.Config("dyndns profile type", null, frm);
+		dyndns.Config("dyndns profile domain", null, frm);
+		dyndns.Config("dyndns profile username", null, frm);
+		dyndns.Config("dyndns profile password", null, frm);
+		dyndns.proceed(document.getElementById("logger"));
+	}
+	p.proceed(document.getElementById("logger"));
+}
+function sumbitDyndns() {
+	var dyndns = new Named(_WEBADMIN);
+	dyndns.Command("dyndns profile");
+	dyndns.Command("dyndns profile type", {"type": ""}, frm);
+	dyndns.Command("dyndns profile domain", {"domain": ""}, frm);
+	dyndns.Command("dyndns profile username", {"username": ""}, frm);
+	dyndns.Command("dyndns profile password", {"password": ""}, frm);
+	bindings.save(dyndns);
+	dyndns.ConfigSave();
+	dyndns.proceed(document.getElementById("logger"));
+	return false;
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0" /></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default"></option><option value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br /></div></div><div id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a href="broadband.html"><span>IPoE</span></a></li><li><a href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a href="3g.html"><span>3G</span></a></li><li><a href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a class="current" href="dyndns.html"><span>DyDNS</span></a></li><li><a href="routes.html"><span>Маршруты</span></a></li></ul><div class="block orange">
+		<h1>Доменное имя</h1>
+		<div class="rounded">
+		<p>Если вы установили домашний интернет-сервер или хотите подключаться к компьютерам домашней сети из Интернета, вы можете использовать для обращения к ним постоянное доменное имя (даже в том случае, если провайдер не выдал вам постоянный IP-адрес).  Для этого зарегистрируйтесь на <a href='http://www.dyndns.com/' target='_blank'>dyndns.com</a>, <a href='http://www.no-ip.com' target='_blank'>no-ip.com</a> или <a href='http://www.tzo.com/' target='_blank'>tzo.com</a> и заведите там собственное доменное имя, после чего введите полученные данные в этом меню.</p>
+		</div>
+	<form action="" name="dyndns" onsubmit="return sumbitDyndns();" id="dyndns">
+		<fieldset> 
+		<label for="type">Используемый сервис:</label>
+		<select name="type" id="type">
+			<option value="dyndns">DynDNS.com</option>
+			<option value="tzo">TZO</option>
+			<option value="noip">No-IP</option>
+		</select><br />
+		<label for="domain">Доменное имя:</label><input type="text" name="domain" id="domain" /><br />
+		<label for="username">Имя пользователя (или TZO Key):</label><input type="text" name="username" id="username" /><br />
+		<label for="password">Пароль</label><input type="text" name="password" id="password" /><br /><br />
+		<label for="none">Использовать для следующих интернет-соединений:</label><br /><br />
+		<div id="bindings"></div><br />
+		<label for="nothing"></label><button class="apply" type="submit" name="apply">Применить</button>
+		</fieldset>
+	</form>
+	<div class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif" /></a></div></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("../default.htm")[1];
+			if( lang )
+				$("#lang").val("../default.htm" + lang + "../default.htm");
+			$("#lang .default").text("English");
+		});
+		</script></body>
+</html>

@@ -1,0 +1,210 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="ndm.abbr" content="PPTP">
+
+<title>ZyXEL Keenetic - 
+				Подключения PPTP</title>
+<link rel="stylesheet" href="css/keenetic.css" type="text/css">
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/constants.js" type="text/javascript"></script>
+<script src="js/l10n.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/ndm.js" type="text/javascript"></script>
+<style type="text/css">
+form label {
+	width: 230px;
+}
+</style>
+<script type="text/javascript">
+<!--
+var conn;
+var pptp;
+var maxId = -1;
+
+function loadValues() {
+	enableProgressIndicator();
+	var interfaces = new IfList(document.getElementById("via"));
+	conn = new Table(document.getElementById("connections"));
+	conn.defineRow("interface");
+	conn.showColumns("name", "description", "global");
+	conn.setEditorForm(new Form(document.editor));
+	conn.keepWidth(true);
+	conn.filterBy(function(row) {
+		return (row["type"].match("PPTP"));
+	});
+	conn.onRowChange = function(element, values) {
+		if( (values["index"] * 1) > maxId ) maxId = (values["index"] * 1); 
+	}
+	conn.onStartEditing = function(element) {
+		var f = this.getEditorForm().getElement();
+		pptp = new PPP(this.getRowValues(element)["name"]);
+		pptp.create();
+		if( this.getFlag(element) == TBL_ROW_INSERTED ) pptp.Command("interface ip tcp adjust-mss", {"pmtu": 0});
+		pptp.loadConnectState(f.enabled, f.via);
+		pptp.loadPriority(f.global);
+		pptp.loadPeer(f.peer);
+		pptp.loadCredentials(f.identity, f.password);
+		pptp.loadAuthMode(f.pap, f.chap, f.mschap, f.mschapv2);
+		pptp.loadMppeState(f.encryption);
+		pptp.loadDescription(f.description);
+		pptp.loadAdjustMssState(f.adjustmss);
+		pptp.proceed(document.getElementById("logger"));
+	}
+
+	var p = new Packet();
+	p.Command("show interface", null, new Aggregator(conn, interfaces));
+	p.onLoad = function() {
+		var e = conn.find({"name": self.document.location.hash.substring(1)});
+		if( e ) conn.startEditing(e);
+	}
+	p.proceed(document.getElementById("logger"));
+}
+function add() {
+	conn.startEditing(conn.insertRow({name: "PPTP" + (++maxId), type: "PPTP"}));
+}
+function drop() {
+	var selected = conn.getSelectedRow();
+	pptp.onLoad = function() {
+		if( !this.getErrorState() ) conn.deleteRow(selected); 
+	}
+	pptp.No("interface");
+	pptp.ConfigSave();
+	pptp.proceed(document.getElementById("logger"));
+}
+function submitPptp() {
+	pptp.onLoad = function() {
+		if( !this.getErrorState() ) {
+			conn.stopEditing();
+			var p = new Packet();
+			p.Command("show interface", null, conn);
+			p.proceed(document.getElementById("logger"));
+		}
+	}
+	pptp.create();
+	pptp.saveConnectState();
+	pptp.savePriority();
+	pptp.savePeer();
+	pptp.saveCredentials();
+	pptp.saveAuthMode();
+	pptp.saveMppeState();
+	pptp.saveDescription();
+	pptp.saveAdjustMssState();
+	pptp.ConfigSave();
+	pptp.proceed(document.getElementById("logger"));
+	return false;	
+}
+-->
+</script>
+</head>
+
+<body onload="loadValues()">
+	<noscript><strong>Please, enable JavaScript support in your browser.</strong></noscript>
+	<div id="page"><div id="topframe"><div id="logo"><a href="status.html"><img src="img/logo.gif" border="0"></a></div><div id="logoname">Keenetic</div><div id="sysinfo"><script type="text/javascript"><!--
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>Язык: <select id="lang" onchange="setLang(this)"><option value="/" class="default">English</option><option selected="selected" value="/RU/">Русский</option></select></div></div><div id="menu_position"><div id="tabs"><ul><li style="background:url('img/status-shade.png');"><a href="status.html">Монитор</a></li><li style="background:url('img/broadband.png');" class="selected"><a href="globals.html">Интернет</a></li><li style="background:url('img/home-shade.png');"><a href="home.html">Домашняя сеть</a></li><li style="background:url('img/wireless-shade.png');"><a href="wireless.html">Wi-Fi</a></li><li style="background:url('img/security-shade.png');"><a href="statics.html">Безопасность</a></li><li style="background:url('img/tools-shade.png');"><a href="log.html">Система</a></li><li style="background:url('img/usb-shade.png');"><a href="swap.html">USB</a></li></ul><br></div></div><div style="height: 639px;" id="content"><div id="title">Интернет<div id="subtitle"></div></div><ul class="tabs"><li><a href="globals.html"><span>Список</span></a></li><li><a href="broadband.html"><span>IPoE</span></a></li><li><a class="current" href="pptp.html"><span>PPTP</span></a></li><li><a href="l2tp.html"><span>L2TP</span></a></li><li><a href="pppoe.html"><span>PPPoE</span></a></li><li><a href="dot1x.html"><span>802.1x</span></a></li><li><a href="mac.html"><span>MAC</span></a></li><li><a href="3g.html"><span>3G</span></a></li><li><a href="yota.html"><span>Yota</span></a></li><li><a href="dns.html"><span>DNS</span></a></li><li><a href="dyndns.html"><span>DyDNS</span></a></li><li><a href="routes.html"><span>Маршруты</span></a></li></ul><div class="block orange" style="border-bottom: none;">
+		<h1>Соединение VPN (PPTP)</h1>
+		<div class="rounded">
+		<p>Если для авторизации пользователей ваш провайдер использует 
+протокол PPTP, создайте здесь новое соединение и укажите регистрационные
+ данные, предоставленные провайдером. Можно также организовать 
+защищенное соединение с VPN-сервером, например для удаленного доступа к 
+корпоративной сети. Чтобы изменить параметры созданного соединения, 
+щелкните его запись в списке.</p>
+		</div>
+		<table style="width: 100%;" id="connections" class="styled" cellspacing="0">
+		<thead>
+			<tr>
+			<th width="100px">Интерфейс</th>
+			<th>Описание</th>
+			<th width="10px">Интернет</th>
+			</tr>
+		</thead>
+		<tbody><tr class=" highlight"><td class="col_name"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 101px;">PPTP0</div></td><td class="col_description"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 473px;">&nbsp;</div></td><td class="col_global"><div style="overflow: hidden; padding: 0pt; margin: 0pt; width: 54px;">&nbsp;</div></td></tr><tr><td colspan="3" class="editor"><form action="" name="editor" onsubmit="return submitPptp();" onreset="conn.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка интерфейса для соединения по PPTP</h1><div class="close_button"><a href="pptp.html" onclick=""><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Включите интерфейс и укажите регистрационные данные, необходимые 
+для соединения с VPN-сервером. Если данное соединение предназначается 
+для подключения к Интернету, установите соответствующий флажок.</p>
+		</div>
+			<fieldset>
+			<label for="enabled">Включить интерфейс:</label><input value="" id="_ndm_1304667944583" name="enabled" type="checkbox"><br>
+			<label for="description">Описание:</label><input name="description" type="text"><br>
+			<label for="via">Подключаться через:</label>
+				<select name="via" id="via" style="width: 250px;">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option></select><br>
+			<label for="global">Использовать для доступа в Интернет:</label><input id="_ndm_1304667944584" name="global" value="1000" type="checkbox"><br>
+			<label for="peer">Адрес сервера:</label><input name="peer" type="text"><br>
+			<label for="identity">Имя пользователя:</label><input name="identity" type="text"><br>
+			<label for="password">Пароль:</label><input name="password" type="text"><br>
+			<label for="encryption">Включить шифрование:</label><input name="encryption" type="checkbox"><br>
+			<label for="pap">Алгоритм проверки подлинности:</label>
+				<input name="pap" type="checkbox"> pap<br>
+			<label for="chap"></label><input name="chap" type="checkbox"> chap<br>
+			<label for="mschap"></label><input name="mschap" type="checkbox"> mschap<br>
+			<label for="mschapv2"></label><input name="mschapv2" type="checkbox"> mschap v2<br>
+			<label for="adjustmss">Автоматически подстраивать TCP-MSS:</label><input checked="checked" name="adjustmss" type="checkbox"><br>
+			<label for="nothing"></label>
+				<button class="apply" type="button" name="apply">Применить</button>
+				<button class="cancel" type="button" onclick="document.location='pptp.html'" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="">Удалить</button>
+			</fieldset>
+			</div>
+		</form></td></tr></tbody></table>
+
+		<br>
+		<button name="add_conn" onclick="add()">Добавить интерфейс</button>
+
+		<div style="display:none;">
+		<form action="" name="editor" onsubmit="return submitPptp();" onreset="conn.stopEditing();" id="editor">
+			<div class="header"><h1>Настройка интерфейса для соединения по PPTP</h1><div class="close_button"><a href="#" onclick="getClosest(this,'form').reset()"><img src="img/i_close.gif"></a></div></div>
+			<div class="controls">
+			<div class="rounded">
+			<p>Включите интерфейс и укажите регистрационные данные, необходимые 
+для соединения с VPN-сервером. Если данное соединение предназначается 
+для подключения к Интернету, установите соответствующий флажок.</p>
+		</div>
+			<fieldset>
+			<label for="enabled">Включить интерфейс:</label><input name="enabled" type="checkbox"><br>
+			<label for="description">Описание:</label><input name="description" type="text"><br>
+			<label for="via">Подключаться через:</label>
+				<select name="via" id="via" style="width: 250px;">
+					<option selected="selected"></option>
+				<option value="Switch0">Switch0</option><option value="WifiStation0">Wi-Fi client (WifiStation0)</option><option value="WifiMaster0">WifiMaster0</option><option value="AccessPoint">Wi-Fi access point (AccessPoint)</option><option value="GuestWiFi">Guest access point (GuestWiFi)</option><option value="WifiMaster0/AccessPoint2">WifiMaster0/AccessPoint2</option><option value="WifiMaster0/AccessPoint3">WifiMaster0/AccessPoint3</option><option value="Switch0/VLAN1">LAN ports 1-4 (Switch0/VLAN1)</option><option value="ISP">Broadband connection (ISP)</option><option value="Home">Home network (Home)</option><option value="WiMax0">Yota (WiMax0)</option><option value="Switch0/VLAN3">Switch0/VLAN3</option><option value="Switch0/VLAN4">Switch0/VLAN4</option><option value="Switch0/VLAN5">Switch0/VLAN5</option><option value="Switch0/VLAN8">Switch0/VLAN8</option></select><br>
+			<label for="global">Использовать для доступа в Интернет:</label><input name="global" value="1000" type="checkbox"><br>
+			<label for="peer">Адрес сервера:</label><input name="peer" type="text"><br>
+			<label for="identity">Имя пользователя:</label><input name="identity" type="text"><br>
+			<label for="password">Пароль:</label><input name="password" type="text"><br>
+			<label for="encryption">Включить шифрование:</label><input name="encryption" type="checkbox"><br>
+			<label for="pap">Алгоритм проверки подлинности:</label>
+				<input name="pap" type="checkbox"> pap<br>
+			<label for="chap"></label><input name="chap" type="checkbox"> chap<br>
+			<label for="mschap"></label><input name="mschap" type="checkbox"> mschap<br>
+			<label for="mschapv2"></label><input name="mschapv2" type="checkbox"> mschap v2<br>
+			<label for="adjustmss">Автоматически подстраивать TCP-MSS:</label><input name="adjustmss" type="checkbox"><br>
+			<label for="nothing"></label>
+				<button class="apply" type="submit" name="apply">Применить</button>
+				<button class="cancel" type="reset" name="editor_reset">Отмена</button>
+				<button class="cancel" type="button" name="editor_delete" onclick="drop()">Удалить</button>
+			</fieldset>
+			</div>
+		</form>
+		</div>
+	<div style="right: -225px; display: block;" class="logger" id="logger"><div id="logger_close"><a href="#" onclick="document.getElementById('logger').style.display='none'"><img src="img/logger_close.gif"></a></div><span class="message">Created interface PPTP0.</span><br><span class="message">TCP-MSS adjustment enabled.</span><br></div>
+
+	</div></div></div>
+<script src="js/screensize.js" type="text/javascript"></script><script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+<div style="margin: 0px; padding: 0px; position: absolute; left: 48%; top: 30%; width: auto; display: none;" id="ajaxBusy"><p><img src="img/loading.gif"></p></div></body></html>

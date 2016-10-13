@@ -1,0 +1,405 @@
+
+
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+<!--
+
+<!-- RpUseIdentifier RpIdentifier=doLoadFunc RpItemType=ItemGroup -->
+    function doLoad()
+    {
+        top.buttom.location="buttom.html";
+    }
+
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+// -->
+</script>
+
+<SCRIPT language="JavaScript">
+<!--
+  ns = (document.layers) ? true : false;
+  ie = (document.all) ? true : false;
+
+  function OnAlertChange(form) {
+    if(form.LogSettings_ScheduleSelect.selectedIndex == 0) {
+      form.LogSettings_DaySelect.selectedIndex = 0;
+      form.LogSettings_Hour.value = 0;
+      form.LogSettings_Minute.value = 0;
+
+      if(ie) {
+        form.LogSettings_DaySelect.disabled = true;
+        form.LogSettings_Hour.disabled = true;
+        form.LogSettings_Minute.disabled = true;
+      }
+    } else if(form.LogSettings_ScheduleSelect.selectedIndex == 1) {
+      form.LogSettings_DaySelect.selectedIndex = 0;
+      form.LogSettings_Hour.value = 0;
+      form.LogSettings_Minute.value = 0;
+
+      if(ie) {
+        form.LogSettings_DaySelect.disabled = true;
+        form.LogSettings_Hour.disabled = true;
+        form.LogSettings_Minute.disabled = true;
+      }
+    } else if(form.LogSettings_ScheduleSelect.selectedIndex == 2) {
+      form.LogSettings_DaySelect.selectedIndex = 0;
+
+      if(ie) {
+        form.LogSettings_DaySelect.disabled = true;
+        form.LogSettings_Hour.disabled = false;
+        form.LogSettings_Minute.disabled = false;
+      }
+    } else if(form.LogSettings_ScheduleSelect.selectedIndex == 3) {
+      if(ie) {
+        form.LogSettings_DaySelect.disabled = false;
+        form.LogSettings_Hour.disabled = false;
+        form.LogSettings_Minute.disabled = false;
+      }
+    } else if(form.LogSettings_ScheduleSelect.selectedIndex == 4) {
+      form.LogSettings_DaySelect.selectedIndex = 0;
+      form.LogSettings_Hour.value = 0;
+      form.LogSettings_Minute.value = 0;
+
+      if(ie) {
+        form.LogSettings_DaySelect.disabled = true;
+        form.LogSettings_Hour.disabled = true;
+        form.LogSettings_Minute.disabled = true;
+      }
+    }
+
+    return;
+  }
+
+  function AlertTimeFocus(form) {
+    var warnString;
+
+    if(form.LogSettings_ScheduleSelect.selectedIndex != 3) {
+      warnString = form.LogSettings_ScheduleSelect.options[form.LogSettings_ScheduleSelect.selectedIndex].text;
+      form.LogSettings_ScheduleSelect.focus();
+      form.LogSettings_ScheduleSelect.focus();
+    }
+  }
+
+  function HourMinuteFocus(form) {
+    var warnString;
+
+    if(   (form.LogSettings_ScheduleSelect.selectedIndex == 0)
+      ||  (form.LogSettings_ScheduleSelect.selectedIndex == 1)
+      ||  (form.LogSettings_ScheduleSelect.selectedIndex == 4)) {
+      warnString = form.LogSettings_ScheduleSelect.options[form.LogSettings_ScheduleSelect.selectedIndex].text;
+      form.LogSettings_ScheduleSelect.focus();
+    }
+  }
+// -->
+</SCRIPT>
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+<form method="post" action="http://www.zyxeltech.de/Forms/LogSettings_1" target="buttom">
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>               <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" ><div align=center><a href="ViewLog.html" target="main" class="sub"><b><FONT class=NaviText>
+	View Log				   </font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"><div align=center><b>
+	Log Settings				   </b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+</tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	E-mail Log Settings                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td width="36%">
+    Mail Server                         </td>
+<td><input type="text" name="LogSettings_mailServer" size="30" maxlength="127" value="" />
+    (Outgoing SMTP Server NAME or IP Address)                         </td>
+</tr>
+<tr>
+                         <td>Mail Subject                         </td>
+<td><input type="text" name="LogSettings_mailSubject" size="30" maxlength="127" value="" />
+                         </td>
+</tr>
+<tr>
+                         <td>Send Log to                         </td>
+<td><input type="text" name="LogSettings_sendLogTo" size="30" maxlength="127" value="" />
+    (E-Mail Address)                         </td>
+</tr>
+<tr>
+                         <td>Send Alerts to                         </td>
+<td><input type="text" name="LogSettings_sendAlertsTo" size="30" maxlength="127" value="" />
+    (E-Mail Address)                         </td>
+</tr>
+ 						<tr>
+                			<td colspan="2">
+    <input type="checkbox" name="LogSettings_SMTPCheck" />
+    SMTP Authentication                			</td>
+</tr>
+<tr>
+                		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    User Name                		</td>
+<td class="cfig_word">
+    <input type="text" name="LogSettings_userName" size="30" maxlength="31" value="" />
+                		</td>
+</tr>
+<tr>
+                		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Password                		</td>
+<td class="cfig_word">
+    <input type="password" name="LogSettings_Password" size="30" maxlength="31" value="" />
+                		</td>
+</tr>
+                       <tr>
+                         <td>Log Schedule                         </td>
+<td><select name="LogSettings_ScheduleSelect" size="1" RpGetRtr="LogSettings_ScheduleSelect_Get" RpPutType="Function" RpPutPtr="LogSettings_ScheduleSelect_Put" onChange="OnAlertChange(this.form);">
+<option value=00000000>When Log is Full
+<option value=00000001>Hourly
+<option value=00000002>Daily
+<option value=00000003>Weekly
+<option value=00000004 selected>None
+</select>                         </td>
+</tr>
+<tr>
+                         <td>Day for Sending Log                         </td>
+<td><select name="LogSettings_DaySelect" size="1" OnFocus="AlertTimeFocus(this.form);" OnMouseDown="AlertTimeFocus(this.form);" OnDblClick="AlertTimeFocus(this.form);">
+<option value=00000000 selected>Sunday
+<option value=00000001>Monday
+<option value=00000002>Tuesday
+<option value=00000003>Wednesday
+<option value=00000004>Thursday
+<option value=00000005>Friday
+<option value=00000006>Saturday
+</select>                         </td>
+</tr>
+<tr>
+                         <td>Time for Sending Log						 </td>
+<td><input type="text" name="LogSettings_Hour" size="2" maxlength="2" value="0" OnFocus="HourMinuteFocus(this.form);" onkeypress="chk_num(event)" />
+    (hour)					&nbsp;
+    <input type="text" name="LogSettings_Minute" size="2" maxlength="2" value="0" OnFocus="HourMinuteFocus(this.form);" onkeypress="chk_num(event)" />
+    (minute)						 </td>
+</tr>
+<tr>
+                         <td colspan="2">
+    <input type="checkbox" name="LogSettings_ClearLog" />
+    Clear log after sending mail                         </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+	Syslog Logging                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td colspan="2">
+    <input type="checkbox" name="LogSettings_syslogCheck" checked />
+    Active                         </td>
+</tr>
+<tr>
+                         <td width="40%">
+    Syslog Server IP Address						 </td>
+<td><input type="text" name="LogSettings_syslogServer" size="30" maxlength="127" value="192.168.1.255" />
+    (Server NAME or IP Address)						 </td>
+</tr>
+<tr>
+                         <td>Log Facility                         </td>
+<td><select name="LogSettings_syslogFacility" size="1">
+<option value=00000000>Local 1
+<option value=00000001>Local 2
+<option value=00000002>Local 3
+<option value=00000003>Local 4
+<option value=00000004>Local 5
+<option value=00000005>Local 6
+<option value=00000006 selected>Local 7
+</select>						 </td>
+</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                       <tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+                         <td width="3%" height="19" class=cTitle>&nbsp;&nbsp;</td>
+<td class="cTitle">
+    Active Log and Alert                         </td>
+</tr>
+<tr>
+                         <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+                       <tr>
+                         <td width="50%">
+    Log                          </td>
+<td>Send immediate alert                         </td>
+</tr>
+<tr>
+                         <td valign=top>
+    <input type="checkbox" name="LogSettings_logCheck?1" value="?1" checked />
+    System Maintenance						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?2" value="?2" checked />
+    System Errors						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?3" value="?3" checked />
+    Access Control						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?4" value="?4" checked />
+    TCP Reset						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?5" value="?5" checked />
+    Packet Filter						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?6" value="?6" checked />
+    ICMP						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?7" value="?7" checked />
+    Remote Management						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?8" value="?8" checked />
+    CDR						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?9" value="?9" checked />
+    PPP						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?10" value="?10" checked />
+    UPnP						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?11" value="?11" checked />
+    Forward Web Sites						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?12" value="?12" checked />
+    Blocked Web Sites						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?13" value="?13" checked />
+    Blocked Java etc.						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?14" value="?14" checked />
+    Attacks						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?15" value="?15" checked />
+    802.1x						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?16" value="?16" checked />
+    Wireless						 <br />
+    <input type="checkbox" name="LogSettings_logCheck?17" value="?17" checked />
+    Any IP						 <br />
+                         </td>
+<td valign=top>			
+    <input type="checkbox" name="LogSettings_alertCheck?1" value="?1" />
+    System Errors						<br />
+    <input type="checkbox" name="LogSettings_alertCheck?2" value="?2" />
+    Access Control						<br />
+    <input type="checkbox" name="LogSettings_alertCheck?3" value="?3" />
+    Blocked Web Sites						<br />
+    <input type="checkbox" name="LogSettings_alertCheck?4" value="?4" />
+    Blocked Java etc.						<br />
+    <input type="checkbox" name="LogSettings_alertCheck?5" value="?5" />
+    Attacks						<br />
+						 </td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+    <input type="submit" name="LogSettings_Apply" value="Apply" onClick="doSubmit();" />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <INPUT TYPE=RESET NAME="Reset" VALUE="Reset">						 </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+ 
+</form>
+<p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+showFullPath(
+'Maintenance > Logs > Log Settings');
+OnAlertChange(document.forms[0]);
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

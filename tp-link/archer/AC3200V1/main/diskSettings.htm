@@ -1,0 +1,287 @@
+<script language="javascript" type="text/javascript">
+var blank = "&nbsp;&nbsp;";
+var usbDeviceList;
+var volumeList;
+var numAliveDev = 0;
+var numAliveLog = 0;
+var idx;
+
+function handleUsb(idx) {
+    var command = {};
+
+    if ("Online" == usbDeviceList[idx].status) {
+        command.enable = 0;
+        usbDeviceList[idx].enable = 0;
+    } else if (("Standby" == usbDeviceList[idx].status) && (1 == usbDeviceList[idx].enable)) {
+        usbDeviceList[idx].enable = 0;
+        command.enable = 0;
+    } else {
+        usbDeviceList[idx].enable = 1;
+        command.enable = 1;
+    }
+
+    $.act(ACT_SET, USB_DEVICE, usbDeviceList[idx].__stack, null, command);
+    var usbDevice = $.act(ACT_GET, USB_DEVICE, usbDeviceList[idx].__stack, null, null);
+
+    if (!$.exe()) {
+        $.reload();
+    }
+}
+
+function mountUsb(idx) {
+    var command = {};
+    if (("Standby" == usbDeviceList[idx].status) && (1 == usbDeviceList[idx].enable)) {
+        command.enable = 1;
+        $.act(ACT_SET, USB_DEVICE, usbDeviceList[idx].__stack, null, command);
+        var usbDevice = $.act(ACT_GET, USB_DEVICE, usbDeviceList[idx].__stack, null, null);
+
+        if (!$.exe()) {
+            $.reload();
+        }
+        return;
+    }
+}
+
+function ableFunc(num, event) {
+    var command = {};
+    var e = window.event || event;
+    var target = e.srcElement || e.target;
+    $(target).off('click');
+    $.addLoading($(target));
+    var table = $(target).parents('table');
+    if ("Online" == volumeList[num].status) {
+        command.enable = 0;
+    } else if ("Error" == volumeList[num].status) {
+        return;
+    } else if (("Offline" == volumeList[num].status)) {
+        command.enable = 1;
+    } else {
+        $.reload();
+    }
+
+    $.act(ACT_SET, LOGICAL_VOLUME, volumeList[num].__stack, null, command);
+	$.exe(function() {
+    var volume = $.act(ACT_GET, LOGICAL_VOLUME, volumeList[num].__stack, null, null);
+		volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+		$.exe(function() {
+		   handleVolumeChange()
+           $.bodyStyleUpdate(table);
+           $.removeLoading();
+		});
+
+    });
+
+}
+
+
+function handleVolumeChange(){
+     numAliveLog = 0;
+        for (idx = 0; idx < volumeList.length; idx++) {
+            if ("Online" == volumeList[idx].status) {
+                numAliveLog++;
+            }
+        }
+        for (i = 0; i < volumeList.length; i++) {
+            if ($('#vol' + i).hasClass('disable-icon')) {
+                $('#vol' + i).removeClass('disable-icon');
+            }
+            if ($('#vol' + i).hasClass('enable-icon')) {
+                $('#vol' + i).removeClass('enable-icon');
+            }
+            if ($('#vol' + i).hasClass('inactive-icon')) {
+                $('#vol' + i).removeClass('inactive-icon');
+            }
+            if (volumeList[i].status == "Online") {
+                $('#vol' + i).addClass('enable-icon').attr('onclick', 'ableFunc(' + i + ',event)');
+            } else if ("Error" == volumeList[i].status) {
+                $('#vol' + i).addClass('inactive-icon').attr('onclick', null);
+            } else if (("Offline" == volumeList[i].status) && (1 == volumeList[i].enable)) {
+                if (8 > numAliveLog) {
+                    $('#vol' + i).addClass(' disable-icon').attr('onclick', 'handleVolumeForce(' + i + ',event)');
+                } else {
+                    $('#vol' + i).addClass('inactive-icon').attr('onclick', null);
+                }
+            } else {
+                $('#vol' + i).addClass('disable-icon').attr('onclick', 'ableFunc(' + i + ',event)');
+            }
+    }
+}
+
+function handleVolumeForce(num, event) {
+    var command = {};
+    var e = window.event || event;
+    var target = e.srcElement || e.target;
+    $(target).off('click');
+     $.addLoading($(target));
+    var table = $(target).parents('table');
+    if (("Offline" == volumeList[num].status) && (1 == volumeList[num].enable)) {
+        command.enable = 1;
+        command.force = 1;
+        $.act(ACT_SET, LOGICAL_VOLUME, volumeList[num].__stack, null, command);
+        var volume = $.act(ACT_GET, LOGICAL_VOLUME, volumeList[num].__stack, null, null);
+         volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+        if (!$.exe()) {
+             handleVolumeChange();
+            $.bodyStyleUpdate(table);
+            $.removeLoading();
+        }
+        return;
+    }
+}
+
+function initTable() {
+    var array = new Array();
+    var i;
+    for (i = 0; i < volumeList.length; i++) {
+        if (((usbDeviceList[idx - 1].__stack).split(','))[0] == ((volumeList[i].__stack).split(','))[0]) {
+            var ableControl;
+
+            if (volumeList[i].status == "Online") {
+                ableControl = "<span class='table-grid-icon enable-icon' id='vol" + i + "' onclick='ableFunc(" + i + ",event)'></span>";
+            } else if ("Error" == volumeList[i].status) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='vol" + i + "'></span>";
+
+            } else if (("Offline" == volumeList[i].status) && (1 == volumeList[i].enable)) {
+                if (0) {
+                    ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='ableFunc(" + i + ",event)'></span>";
+                    if (8 > numAliveLog) {
+                        ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='handleVolumeForce(" + i + ",event);ableFunc(" + i + ",event);'></span>";
+                    }
+                } else {
+                    if (8 > numAliveLog) {
+                        ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='handleVolumeForce(" + i + ",event)'></span>";
+                    } else {
+                        ableControl = "<span class='table-grid-icon inactive-icon' id='vol" + i + "'></span>";
+                    }
+                }
+            } else {
+                ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='ableFunc(" + i + ",event)'></span>";
+            }
+
+            if ((0 == usbDeviceList[idx - 1].enable) || ("Online" != usbDeviceList[idx - 1].status)) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='vol" + i + "'></span>";
+            }
+
+            array.push([{
+                "text": i + 1,
+                "width": "16%"
+            }, {
+                "text": volumeList[i].name,
+                "width": "21%"
+            }, {
+                "text": volumeList[i].capacity,
+                "width": "21%"
+            }, {
+                "text": volumeList[i].freeSpace,
+                "width": "21%"
+            }, {
+                "text": ableControl,
+                "width": "21%"
+            }]);
+        }
+    }
+
+    $.initTableBody($('#volumeTbl' + idx), array);
+    $.tablePages($('#volumeTbl' + idx), 5);
+    return array;
+}
+
+function init() {
+    usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+    volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+    smbService = $.act(ACT_GET, SMB_SERVICE, null, null, null);
+    accessFolderList = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+
+    if (!$.exe()) {
+        if (0 == usbDeviceList.length) {
+            return;
+        }
+
+        for (idx = 0; idx < usbDeviceList.length; idx++) {
+            if ("Online" == usbDeviceList[idx].status) {
+                numAliveDev++;
+            }
+        }
+
+        for (idx = 0; idx < volumeList.length; idx++) {
+            if ("Online" == volumeList[idx].status) {
+                numAliveLog++;
+            }
+        }
+
+        for (idx = 1; idx <= usbDeviceList.length; idx++) {
+            if ("Online" == usbDeviceList[idx - 1].status) {
+                $("#usb_drawing").append("<div class='table-op'><div class='table-note' id='usbInfo" + idx + "'></div><div class='table-btn' id='usbStatus" + idx + "' onClick='handleUsb(" + (idx - 1) + ");'></div></div>");
+                var diskInfo;
+                diskInfo = usbDeviceList[idx - 1].vendor + blank + usbDeviceList[idx - 1].model;
+                $("#usbInfo" + idx).html(diskInfo);
+
+                if ("Online" == usbDeviceList[idx - 1].status) {
+                    $("#usbStatus" + idx).append("<span class='safely-remove-icon'></span><label class='table-icon-text'>" + table_str.safelyRemove + "</label>");
+                }
+
+                var usbDrawing;
+                usbDrawing = "<table id='volumeTbl" + idx + "'><thead></thead><tbody></tbody></table>";
+                $("#usb_drawing").append(usbDrawing);
+
+                $("#usb_drawing").append("<br><br>");
+                var headArray = [{
+                    "text": table_str.id,
+                    "width": "16%"
+                }, {
+                    "text": table_str.volume,
+                    "width": "21%"
+                }, {
+                    "text": table_str.capacity,
+                    "width": "21%"
+                }, {
+                    "text": table_str.freeSpace,
+                    "width": "21%"
+                }, {
+                    "text": table_str.active,
+                    "width": "21%"
+                }];
+
+                $.initTableHead($('#volumeTbl' + idx), headArray);
+                $('#volumeTbl' + idx).tpTable(initTable);
+            }
+        }
+    }
+}
+
+$("#refresh").click(function() {
+    $.addLoading($(this));
+    usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+
+    if (!$.exe()) {
+        if (0 == usbDeviceList.length) {
+            $.removeLoading();
+            $.reload();
+	$.alert(CMM_USB_SCAN_NO_DEVICE);
+            return;
+        }
+
+        var idx;
+
+        for (idx = 0; idx < usbDeviceList.length; idx++) {
+            usbDeviceList[idx].enable = 1;
+            mountUsb(idx);
+        }
+        $.removeLoading();
+        $.reload();
+    }
+});
+</script>
+
+<h3 id="t_diskSett">Device Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <button type="submit" id="refresh" class="blue left T_scan">Scan</button>
+        <div id="usb_drawing" class="part-separate">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+init();
+</script>

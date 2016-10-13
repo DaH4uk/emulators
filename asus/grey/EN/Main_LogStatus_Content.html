@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>ASUS Wireless Router RT-AC66U - General Log</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<script language="JavaScript" type="text/javascript" src="state.js"></script>
+<script language="JavaScript" type="text/javascript" src="general.js"></script>
+<script language="JavaScript" type="text/javascript" src="popup.js"></script>
+<script language="JavaScript" type="text/javascript" src="help.js"></script>
+<!--script language="JavaScript" type="text/javascript" src="/jquery.js"></script-->
+<script>
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+function showclock(){
+	JS_timeObj.setTime(systime_millsec);
+	systime_millsec += 1000;
+	JS_timeObj2 = JS_timeObj.toString();	
+	JS_timeObj2 = JS_timeObj2.substring(0,3) + ", " +
+	              JS_timeObj2.substring(4,10) + "  " +
+				  checkTime(JS_timeObj.getHours()) + ":" +
+				  checkTime(JS_timeObj.getMinutes()) + ":" +
+				  checkTime(JS_timeObj.getSeconds()) + "  " +
+				  /*JS_timeObj.getFullYear() + " GMT" +
+				  timezone;*/ // Viz remove GMT timezone 2011.08
+				  JS_timeObj.getFullYear();
+	$("system_time").value = JS_timeObj2;
+	setTimeout("showclock()", 1000);
+	if(navigator.appName.indexOf("Microsoft") >= 0)
+		document.getElementById("textarea").style.width = "99%";
+    //$("banner3").style.height = "13";
+}
+
+function showbootTime(){
+	Days = Math.floor(boottime / (60*60*24));	
+	Hours = Math.floor((boottime / 3600) % 24);
+	Minutes = Math.floor(boottime % 3600 / 60);
+	Seconds = Math.floor(boottime % 60);
+	
+	$("boot_days").innerHTML = Days;
+	$("boot_hours").innerHTML = Hours;
+	$("boot_minutes").innerHTML = Minutes;
+	$("boot_seconds").innerHTML = Seconds;
+	boottime += 1;
+	setTimeout("showbootTime()", 1000);
+}
+function clearLog(){
+	/*document.form1.target = "hidden_frame";
+	document.form1.action_mode.value = " Clear ";
+	document.form1.submit();
+	location.href = location.href;*/
+	$('textarea').innerHTML = "";
+	flag = 1;
+}
+
+function initial(){
+	show_menu();
+	load_body();
+	showclock();
+	showbootTime();
+	document.getElementById('textarea').scrollTop = 9999999;//make Scroll_y bottom
+}
+</script>
+</head>
+
+<body onload="initial();" onunLoad="return unload_body();">
+<div id="TopBanner"></div>
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="Main_LogStatus_Content.html" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" name="form" action="http://event.asus.com/2012/nw/dummy_ui/EN/apply.cgi" target="hidden_frame">
+<input type="hidden" name="current_page" value="Main_LogStatus_Content.html">
+<input type="hidden" name="next_page" value="Main_LogStatus_Content.html">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_wait" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="firmver" value="3.0.0.4">
+</form>
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="17">&nbsp;</td>
+		<td valign="top" width="202">
+			<div id="mainMenu"></div>
+			<div id="subMenu"></div>
+		</td>	
+		<td valign="top">
+			<div id="tabMenu" class="submenuBlock"></div>		
+			<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+				<tr>
+					<td align="left" valign="top">				
+						<table width="760px" border="0" cellpadding="5" cellspacing="0" bordercolor="#6b8fa3"  class="FormTitle" id="FormTitle">		
+							<tr>
+								<td bgcolor="#4D595D" colspan="3" valign="top">
+									<div>&nbsp;</div>
+									<div class="formfonttitle">System Log - General Log</div>
+									<div style="margin-left:5px;margin-top:10px;margin-bottom:10px"><img src="images/New_ui/export/line_export.png"></div>
+									<div class="formfontdesc">This page shows the detailed system's activities. </div>
+									<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+										<tr>
+											<th width="20%">System Time</th>
+											<td>
+												<input type="text" id="system_time" name="system_time" size="40" class="devicepin" value="" readonly="1" style="font-size:12px;">
+											</td>										
+										</tr>
+										<tr>
+											<th><!--a class="hintstyle" href="javascript:void(0);" onClick="openHint(12, 1);"-->Uptime</a></th>
+											<td><span id="boot_days"></span> days <span id="boot_hours"></span> hours <span id="boot_minutes"></span> minutes <span id="boot_seconds"></span> seconds</td>
+										</tr>
+									</table>
+									<div style="margin-top:8px">
+										<textarea cols="63" rows="27" wrap="off" readonly="readonly" id="textarea" style="width:99%; font-family:'Courier New', Courier, mono; font-size:11px;background:#475A5F;color:#FFFFFF;">Jan  1 00:00:10 syslogd started: BusyBox v1.17.4
+Jan  1 00:00:10 kernel: klogd started: BusyBox v1.17.4 (2013-06-14 23:29:06 CST)
+Jan  1 00:00:10 kernel: Linux version 2.6.36.4brcmarm (jieming@jieming-virtual-machine) (gcc version 4.5.3 (Buildroot 2012.02) ) #1 SMP PREEMPT Sat Jun 15 00:16:16 CST 2013
+Jan  1 00:00:10 kernel: CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7f
+Jan  1 00:00:10 kernel: CPU: VIPT nonaliasing data cache, VIPT nonaliasing instruction cache
+Jan  1 00:00:10 kernel: Machine: Northstar Prototype
+Jan  1 00:00:10 kernel: Ignoring unrecognised tag 0x00000000
+Jan  1 00:00:10 kernel: Memory policy: ECC disabled, Data cache writealloc
+Jan  1 00:00:10 kernel: Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 60928
+Jan  1 00:00:10 kernel: Kernel command line: root=/dev/mtdblock2 console=ttyS0,115200 init=/sbin/preinit earlyprintk debug
+Jan  1 00:00:10 kernel: Memory: 255528k/255528k available, 6616k reserved, 0K highmem
+Jan  1 00:00:10 syslog: module ledtrig-usbdev not found in modules.dep
+Jan  1 00:00:10 syslog: module leds-usb not found in modules.dep
+Jan  1 00:00:10 kernel: Virtual kernel memory layout:
+Jan  1 00:00:10 kernel:     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+Jan  1 00:00:10 kernel:     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+Jan  1 00:00:10 kernel:     DMA     : 0xf7e00000 - 0xffe00000   ( 128 MB)
+Jan  1 00:00:10 kernel:     vmalloc : 0xd8800000 - 0xf0000000   ( 376 MB)
+Jan  1 00:00:10 kernel:     lowmem  : 0xc0000000 - 0xd8000000   ( 384 MB)
+Jan  1 00:00:10 kernel:     modules : 0xbf000000 - 0xc0000000   (  16 MB)
+Jan  1 00:00:10 kernel:       .init : 0xc0008000 - 0xc003d000   ( 212 kB)
+Jan  1 00:00:10 kernel:       .text : 0xc003d000 - 0xc03a9000   (3504 kB)
+Jan  1 00:00:10 kernel:       .data : 0xc03c0000 - 0xc03e0600   ( 130 kB)
+Jan  1 00:00:10 kernel: External imprecise Data abort at addr=0x0, fsr=0x1c06 ignored.
+Jan  1 00:00:10 kernel: Mount-cache hash table entries: 512
+Jan  1 00:00:10 kernel: CPU1: Booted secondary processor
+Jan  1 00:00:10 kernel: Found a AMD NAND flash:
+Jan  1 00:00:10 kernel: Total size:  128MB
+Jan  1 00:00:10 kernel: Block size:  128KB
+Jan  1 00:00:10 kernel: Page Size:   2048B
+Jan  1 00:00:10 kernel: OOB Size:    64B
+Jan  1 00:00:10 kernel: Sector size: 512B
+Jan  1 00:00:10 kernel: Spare size:  16B
+Jan  1 00:00:10 kernel: ECC level:   8-bit
+Jan  1 00:00:10 kernel: Device ID: 0x 1 0xf1 0x 0 0x1d 0x 1
+Jan  1 00:00:10 kernel: bio: create slab <bio-0> at 0
+Jan  1 00:00:11 kernel: PCI: no core
+Jan  1 00:00:11 kernel: PCI: no core
+Jan  1 00:00:11 kernel: PCI: Fixing up bus 0
+Jan  1 00:00:11 kernel: PCI: Fixing up bus 0
+Jan  1 00:00:11 kernel: PCI: Fixing up bus 1
+Jan  1 00:00:11 kernel: PCI: Fixing up bus 0
+Jan  1 00:00:11 kernel: PCI: Fixing up bus 2
+Jan  1 00:00:11 kernel: VFS: Disk quotas dquot_6.5.2
+Jan  1 00:00:11 syslog: module fat not found in modules.dep
+Jan  1 00:00:11 kernel: Dquot-cache hash table entries: 1024 (order 0, 4096 bytes)
+Jan  1 00:00:11 syslog: module vfat not found in modules.dep
+Jan  1 00:00:11 kernel: pflash: found no supported devices
+Jan  1 00:00:11 kernel: bcmsflash: found no supported devices
+Jan  1 00:00:11 kernel: Boot Partition size = 524288(0x80000)
+Jan  1 00:00:11 kernel: lookup_nflash_rootfs_offset: offset = 0x200000
+Jan  1 00:00:11 kernel: nflash: squash filesystem with lzma found at block 28
+Jan  1 00:00:11 kernel: Creating 4 MTD partitions on "nflash":
+Jan  1 00:00:11 kernel: 0x000000000000-0x000000080000 : "boot"
+Jan  1 00:00:11 kernel: 0x000000080000-0x000000200000 : "nvram"
+Jan  1 00:00:11 kernel: 0x000000200000-0x000002000000 : "linux"
+Jan  1 00:00:11 kernel: 0x00000039e610-0x000002000000 : "rootfs"
+Jan  1 00:00:11 kernel: === PPTP init ===
+Jan  1 00:00:11 kernel: Bridge firewalling registered
+Jan  1 00:00:11 kernel: Registering the dns_resolver key type
+Jan  1 00:00:11 kernel: Spare area=64 eccbytes 56, ecc bytes located at:
+Jan  1 00:00:11 kernel:  2 3 4 5 6 7 8 9 10 11 12 13 14 15 18 19 20 21 22 23 24 25 26 27 28 29 30 31 34 35 36 37 38 39 40 41 42 43 44 45 46 47 50 51 52 53 54 55 56 57 58 59 60 61 62 63
+Jan  1 00:00:11 kernel: Available 7 bytes at (off,len):
+Jan  1 00:00:11 kernel: (1,1) (16,2) (32,2) (48,2) (0,0) (0,0) (0,0) (0,0) 
+Jan  1 00:00:11 kernel: Bad eraseblock 175 at 0x0000015e0000
+Jan  1 00:00:11 kernel: Bad eraseblock 176 at 0x000001600000
+Jan  1 00:00:11 kernel: Options: NO_AUTOINCR,NO_READRDY,BBT_SCAN2NDPAGE,
+Jan  1 00:00:11 kernel: Creating 1 MTD partitions on "brcmnand":
+Jan  1 00:00:11 kernel: 0x000002000000-0x000008000000 : "brcmnand"
+Jan  1 00:00:11 kernel: VFS: Mounted root (squashfs filesystem) readonly on device 31:3.
+Jan  1 00:00:11 kernel: ctf: module license 'Proprietary' taints kernel.
+Jan  1 00:00:11 kernel: Disabling lock debugging due to kernel taint
+Jan  1 00:00:11 kernel: et_module_init: passivemode set to 0x0
+Jan  1 00:00:11 kernel: et_module_init: txworkq set to 0x1
+Jan  1 00:00:11 kernel: et_module_init: et_txq_thresh set to 0x400
+Jan  1 00:00:11 kernel: eth0: Broadcom BCM47XX 10/100/1000 Mbps Ethernet Controller 6.30.163.46 (r401410)
+Jan  1 00:00:11 kernel: wl_module_init: passivemode set to 0x0
+Jan  1 00:00:11 kernel: wl_module_init: txworkq set to 0x1
+Jan  1 00:00:11 kernel: eth1: Broadcom BCM4360 802.11 Wireless Controller 6.30.163.46 (r401410)
+Jan  1 00:00:11 kernel: eth2: Broadcom BCM4360 802.11 Wireless Controller 6.30.163.46 (r401410)
+Jan  1 00:00:12 kernel: SCSI subsystem initialized
+Jan  1 00:00:12 kernel: ufsd: driver (8.6, Jun  7 2013 09:57:23, LBD=ON, delalloc, acl, ioctl, ugm, rwm) loaded at bf53c000
+Jan  1 00:00:12 kernel: NTFS (with native replay) support included
+Jan  1 00:00:12 kernel: optimized: speed
+Jan  1 00:00:12 kernel: Build_for__Asus_RT-AC56U_k2.6.36_2013-01-18_U86_r195788_b2
+Jan  1 00:00:12 kernel: xhci_hcd 0000:00:0b.0: Failed to enable MSI-X
+Jan  1 00:00:12 kernel: xhci_hcd 0000:00:0b.0: failed to allocate MSI entry
+Jan  1 00:00:12 kernel: usb usb1: No SuperSpeed endpoint companion for config 1  interface 0 altsetting 0 ep 129: using minimum values
+Jan  1 00:00:13 kernel: wlc_phy_cal_init_acphy: NOT Implemented
+Jan  1 00:00:13 kernel: wlc_phy_cal_init_acphy: NOT Implemented
+Jan  1 00:00:13 kernel: scsi 1:0:0:0: Direct-Access     HP       Photosmart B110  1.00 PQ: 0 ANSI: 5
+Jan  1 00:00:13 kernel: sd 1:0:0:0: Attached scsi generic sg0 type 0
+Jan  1 00:00:13 kernel: sd 1:0:0:0: [sda] Attached SCSI removable disk
+Jan  1 00:00:13 kernel: scsi 0:0:0:0: Direct-Access     JetFlash Transcend 8GB    1100 PQ: 0 ANSI: 4
+Jan  1 00:00:13 kernel: sd 0:0:0:0: Attached scsi generic sg1 type 0
+Jan  1 00:00:13 kernel: sd 0:0:0:0: [sdb] 15820800 512-byte logical blocks: (8.10 GB/7.54 GiB)
+Jan  1 00:00:13 kernel: sd 0:0:0:0: [sdb] Write Protect is off
+Jan  1 00:00:13 kernel: sd 0:0:0:0: [sdb] Assuming drive cache: write through
+Jan  1 00:00:13 kernel: sd 0:0:0:0: [sdb] Assuming drive cache: write through
+Jan  1 00:00:13 kernel: sd 0:0:0:0: [sdb] Assuming drive cache: write through
+Jan  1 00:00:13 kernel: sd 0:0:0:0: [sdb] Attached SCSI removable disk
+Jan  1 00:00:14 stop_nat_rules: apply the redirect_rules!
+Jan  1 00:00:14 kernel: ufsd: use builtin utf8 instead of kernel utf8
+Jan  1 00:00:14 WAN Connection: ISP's DHCP did not function properly.
+Jan  1 00:00:14 kernel: ufsd: sdb1 without journal
+Jan  1 00:00:14 RT-AC66U: start httpd
+Jan  1 00:00:14 rc_service: hotplug 525:notify_rc restart_nasapps
+Jan  1 00:00:15 miniupnpd[595]: HTTP listening on port 46365
+Jan  1 00:00:15 miniupnpd[595]: Listening for NAT-PMP traffic on port 5351
+Jan  1 00:00:15 disk monitor: be idle
+Jan  1 00:00:18 stop_nat_rules: apply the redirect_rules!
+Jan  1 00:00:18 kernel: nf_conntrack_rtsp v0.6.21 loading
+Jan  1 00:00:18 kernel: nf_nat_rtsp v0.6.21 loading
+Jan  1 00:00:18 rc_service: udhcpc 631:notify_rc stop_upnp
+Jan  1 00:00:18 rc_service: stop_upnp is waitting restart_nasapps...
+Jan  1 00:00:19 WAN Connection: WAN was restored.
+Jan  1 00:00:20 kernel: wl_module_init: passivemode set to 0x0
+Jan  1 00:00:20 kernel: wl_module_init: txworkq set to 0x1
+Jan  1 00:00:20 kernel: eth1: Broadcom BCM4360 802.11 Wireless Controller 6.30.163.46 (r401410)
+Jan  1 00:00:20 kernel: eth2: Broadcom BCM4360 802.11 Wireless Controller 6.30.163.46 (r401410)
+Jan  1 00:00:20 kernel: wlc_phy_cal_init_acphy: NOT Implemented
+Jan  1 00:00:20 kernel: wlc_phy_cal_init_acphy: NOT Implemented
+Jan  1 00:00:26 FTP Server: daemon is stoped
+Jan  1 00:00:26 Samba Server: smb daemon is stoped
+Jan  1 00:00:27 kernel: gro disabled
+Jan  1 00:00:27 kernel: gro enabled with interval 2
+Jan  1 00:00:29 Samba Server: daemon is started
+Jan  1 00:00:29 rc_service: udhcpc 631:notify_rc start_upnp
+Jan  1 00:00:29 rc_service: start_upnp is waitting stop_upnp...
+Jan  1 00:00:30 miniupnpd[595]: received signal 15, good-bye
+Jan  1 00:00:30 rc_service: udhcpc 631:notify_rc stop_ntpc
+Jan  1 00:00:30 rc_service: stop_ntpc is waitting start_upnp...
+Jan  1 00:00:31 rc_service: udhcpc 631:notify_rc start_ntpc
+Jan  1 00:00:31 rc_service: start_ntpc is waitting stop_ntpc...
+Jan  1 00:00:32 miniupnpd[788]: HTTP listening on port 36122
+Jan  1 00:00:32 miniupnpd[788]: Listening for NAT-PMP traffic on port 5351
+Jan  1 00:00:32 dhcp client: bound 192.168.66.244 via 192.168.66.1 during 86400 seconds.
+Jun 15 16:52:33 rc_service: ntp 793:notify_rc restart_upnp
+Jun 15 16:52:33 rc_service: ntp 793:notify_rc restart_diskmon
+Jun 15 16:52:33 rc_service: restart_diskmon is waitting restart_upnp...
+Jun 15 16:52:33 miniupnpd[788]: received signal 15, good-bye
+Jun 15 16:52:33 miniupnpd[809]: HTTP listening on port 42008
+Jun 15 16:52:33 miniupnpd[809]: Listening for NAT-PMP traffic on port 5351
+Jun 15 16:52:35 disk monitor: be idle
+Jun 15 16:53:06 rc_service: httpd 566:notify_rc start_autodet
+Jun 15 16:53:12 rc_service: httpd 566:notify_rc restart_wireless;restart_time
+Jun 15 16:53:15 rc_service: httpd 566:notify_rc start_webs_update
+Jun 15 16:53:15 rc_service: start_webs_update is waitting restart_wireless;restart_time...
+Jun 15 16:53:15 start_nat_rules: apply the nat_rules(/tmp/nat_rules_eth0_eth0)!
+Jun 15 16:53:20 kernel: wl_module_init: passivemode set to 0x0
+Jun 15 16:53:20 kernel: wl_module_init: txworkq set to 0x1
+Jun 15 16:53:20 kernel: eth1: Broadcom BCM4360 802.11 Wireless Controller 6.30.163.46 (r401410)
+Jun 15 16:53:20 kernel: eth2: Broadcom BCM4360 802.11 Wireless Controller 6.30.163.46 (r401410)
+Jun 15 16:53:20 kernel: wlc_phy_cal_init_acphy: NOT Implemented
+Jun 15 16:53:20 kernel: wlc_phy_cal_init_acphy: NOT Implemented
+Jun 15 16:53:26 kernel: klogd: exiting
+Jun 15 16:53:26 syslogd exiting
+Jun 16 00:53:26 syslogd started: BusyBox v1.17.4
+Jun 16 00:53:26 RT-AC66U: start httpd
+Jun 16 00:53:26 kernel: klogd started: BusyBox v1.17.4 (2013-06-14 23:29:06 CST)
+Jun 16 00:53:26 start_nat_rules: apply the nat_rules(/tmp/nat_rules_eth0_eth0)!
+</textarea>
+									</div>
+									<div>
+									<table class="apply_gen">
+										<tr class="apply_gen" valign="top">
+											<td width="40%" align="right">
+												<form method="post" name="form1" action="http://event.asus.com/2012/nw/dummy_ui/EN/apply.cgi">
+													<input type="hidden" name="current_page" value="Main_LogStatus_Content.html">
+													<input type="hidden" name="action_mode" value=" Clear ">
+													<input type="hidden" name="next_host" value="">
+													<input type="button" onClick="clearLog();" value="Clear" class="button_gen">
+												</form>
+											</td>	
+											<td width="20%" align="center">
+												<form method="post" name="form2" action="http://event.asus.com/2012/nw/dummy_ui/EN/syslog.txt">
+													<input type="hidden" name="next_host" value="">
+													<input type="button" onClick="location.href = 'syslog.txt'" value="Save" class="button_gen">
+												</form>
+											</td>	
+											<td width="40%" align="left" >
+											<form method="post" name="form3" action="http://event.asus.com/2012/nw/dummy_ui/EN/apply.cgi">
+												<input type="hidden" name="current_page" value="Main_LogStatus_Content.html">
+												<input type="hidden" name="action_mode" value=" Refresh ">
+												<input type="hidden" name="next_host" value="">
+												<input type="button" onClick="location.href=location.href" value="Refresh" class="button_gen">
+											</form>
+											</td>	
+										</tr>
+									</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<!--===================================Ending of Main Content===========================================-->
+		</td>
+		<td width="10" align="center" valign="top"></td>
+	</tr>
+</table>
+<div id="footer"></div>
+</body>
+</html>

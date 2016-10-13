@@ -1,0 +1,705 @@
+<script language="javascript" type="text/javascript">
+var tcEntry;
+var tcRuleList;
+var guestnetObj, guestnetObj5g;
+
+var upstreamCurrRate;
+var downstreamCurrRate;
+var wanDslStatus;
+
+var tcRuleEntryIndex;
+//var ewanEnable;
+var tcSettings = {};
+
+function init() {
+    tcRuleList = $.act(ACT_GL, TC_RULE, null, null);
+    tcEntry = $.act(ACT_GET, TC, null, null);
+
+    var wlanObj, wlanObj5g;
+    if (INCLUDE_LAN_WLAN_GUESTNETWORK) {
+        var basicList = $.act(ACT_GL, LAN_WLAN, null, null, ["X_TP_Band"]);
+        if (!$.exe()) {
+            $.each(basicList, function() {
+                if ("2.4GHz" == this.X_TP_Band) {
+                    wlanObj = this;
+                } else if (INCLUDE_LAN_WLAN_DUALBAND && "5GHz" == this.X_TP_Band) {
+                    wlanObj5g = this;
+                }
+            });
+
+            guestnetObj = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj.__stack, null, null);
+            if (INCLUDE_LAN_WLAN_DUALBAND) {
+                guestnetObj5g = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj5g.__stack, null, null);
+            }
+        }
+    }
+
+    if (!$.exe()) {
+        if (INCLUDE_ADSLWAN) {
+            initType();
+        }
+        initTc();
+        initRuleTable();
+        if (INCLUDE_LAN_WLAN_GUESTNETWORK) {
+            initTcRuleTableForGN();
+        }
+    }
+	
+	tcSettings.enable = tcEntry.enable;
+}
+
+if (INCLUDE_ADSLWAN) {
+function initType() {
+    var wanComInfList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    ewanEnable = false;
+
+    if (!$.exe()) {
+        var dslStk;
+        var ewanStk;
+        $.each(wanComInfList, function() {
+            if (this.WANAccessType == "DSL") {
+                dslStk = this.__stack;
+            } else if (this.WANAccessType == "Ethernet") {
+                ewanStk = this.__stack;
+            }
+        });
+    }
+
+    var wanDslCfg = $.act(ACT_GET, WAN_DSL_INTF_CFG, dslStk, null, ["status", "upstreamCurrRate", "downstreamCurrRate"]);
+    if (!$.exe()) {
+        wanDslStatus = wanDslCfg.status;
+        if (wanDslCfg.status == "Up") {
+            $("#curDslUp").removeClass("nd");
+            $("#curDslDown").removeClass("nd");
+            $("#upStreamCurrRate").prop("value", wanDslCfg.upstreamCurrRate + " " + s_str.kbps);
+            $("#downStreamCurrRate").prop("value", wanDslCfg.downstreamCurrRate + " " + s_str.kbps);
+        }
+    }
+
+    var ewanCfg = $.act(ACT_GET, WAN_ETH_INTF, ewanStk, null, ["enable"]);
+    if (!$.exe()) {
+        ewanEnable = ewanCfg.enable;
+    }
+
+    upstreamCurrRate = wanDslCfg.upstreamCurrRate;
+    downstreamCurrRate = wanDslCfg.downstreamCurrRate;
+}
+}
+
+function initRuleTable() {
+    var tcTableHeadArray = [{
+        "text": '<div><input type="checkbox" id="tcAll" onClick="clickSelTcAll();"/><label></label></div>',
+        "width": "10%"
+    }, {
+        "text": table_str.descpt,
+        "width": "35%"
+    }, {
+        "text": table_str.priority,
+        "width": "5%"
+    }, {
+        "text": table_str.upbw,
+        "width": "15%"
+    }, {
+        "text": table_str.downbw,
+        "width": "15%"
+    }, {
+        "text": table_str.enable,
+        "width": "10%"
+    }, {
+        "text": table_str.modify,
+        "width": "10%"
+    }];
+
+    $.initTableHead($("#tcTable"), tcTableHeadArray);
+
+    $("#tcTable").tpTable(initRuleTableBody);
+}
+
+function initRuleTableBody() {
+
+    var index = 0;
+    var array = new Array();
+    var des = "";
+    $.each(tcRuleList, function() {
+        if (this.ruleType == 0) {
+            var tmpIP = "";
+            if ((this.startIP == 0) && (this.endIP == 0))
+                tmpIP = "";
+            else if ((this.startIP == 0) && (this.endIP != 0))
+                tmpIP = $.num2ip(parseInt(this.endIP, 10));
+            else if ((this.startIP != 0) && (this.endIP == 0))
+                tmpIP = $.num2ip(parseInt(this.startIP, 10));
+            else if (this.startIP == this.endIP)
+                tmpIP = $.num2ip(parseInt(this.startIP, 10));
+            else if ((this.startIP != 0) && (this.endIP != 0))
+                tmpIP = $.num2ip(parseInt(this.startIP, 10)) + "-" + $.num2ip(parseInt(this.endIP, 10));
+
+
+            var tmpPort = "";
+            if ((this.startPort == 0) && (this.endPort == 0))
+                tmpPort = "";
+            else if ((this.startPort == 0) && (this.endPort != 0))
+                tmpPort = this.endPort;
+            else if ((this.startPort != 0) && (this.endPort == 0))
+                tmpPort = this.startPort;
+            else if (this.startPort == this.endPort)
+                tmpPort = this.startPort;
+            else if ((this.startPort != 0) && (this.endPort != 0))
+                tmpPort = this.startPort + "-" + this.endPort;
+
+            var tmpProtcl = "";
+            if (this.protocol == 0)
+                tmpProtcl = "<span class='T_all'>" + s_str.all + "</span>";
+            else if (this.protocol == 6)
+                tmpProtcl = "TCP";
+            else if (this.protocol == 17)
+                tmpProtcl = "UDP";
+
+            if (tmpIP != "") des = tmpIP;
+            else if (tmpPort != "") des = tmpPort;
+            else if (tmpProtcl != "") des = tmpProtcl;
+
+            array.push([{
+                "text": '<div><input type="checkbox" id="tcCheckbox' + index + '"/><label></label></div>',
+                "width": "10%"
+            }, {
+                "text": des,
+                "width": "35%"
+            }, {
+                "text": this.precedence,
+                "width": "5%"
+            }, {
+                "text": (this.upMinBW == 0 ? "" : this.upMinBW) + "/" + (this.upMaxBW == 0 ? "" : this.upMaxBW) + " " + s_str.kbps,
+                "width": "15%"
+            }, {
+                "text": (this.downMinBW == 0 ? "" : this.downMinBW) + "/" + (this.downMaxBW == 0 ? "" : this.downMaxBW) + " " + s_str.kbps,
+                "width": "15%"
+            }, {
+                "text": (this.enable == 1) ? "<span class='table-grid-icon enable-icon' onClick='disableTcClk(" + index + ")'></span>" : "<span class='table-grid-icon disable-icon' onClick='enableTcClk(" + index + ")'></span>",
+                "width": "10%"
+            }, {
+                "text": "<span class='table-grid-icon edit-modify-icon' onClick='doTcEdit(" + index + ")'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doTcDel(" + index + ");'></span>",
+                "width": "10%"
+            }]);
+        }
+
+        index++;
+    });
+
+    $.initTableBody($("#tcTable"), array);
+    $.tablePages($("#tcTable"), 8);
+    return array;
+}
+
+function initTcRuleTableForGN() {
+    var tcGuestTableHeadArray = [{
+        "text": table_str.ssid,
+        "width": "35%"
+    }, {
+        "text": table_str.priority,
+        "width": "5%"
+    }, {
+        "text": table_str.upbw,
+        "width": "20%"
+    }, {
+        "text": table_str.downbw,
+        "width": "20%"
+    }, {
+        "text": "status",
+        "width": ""
+    }];
+
+    $.initTableHead($("#guestTcTable"), tcGuestTableHeadArray);
+
+    $("#guestTcTable").tpTable(initTcRuleTableBodyForGN);
+}
+
+function initTcRuleTableBodyForGN() {
+    var array = new Array();
+    var index = 0;
+    var descpt = "Unknown";
+    var guestMultiObj;
+
+    $.each(tcRuleList, function() {
+        if (1 == this.enable && 1 == this.ruleType) {
+            guestMultiObj = $.act(ACT_GL, LAN_WLAN_MSSIDENTRY, null, null, ["name", "SSID"]);
+            if (!$.exe()) {
+                if (this.id == guestnetObj.TCRuleID) {
+                    $.each(guestMultiObj, function() {
+                        if (this.name == guestnetObj.name) {
+                            descpt = this.SSID;
+                        }
+                    });
+                } else if (this.id == guestnetObj5g.TCRuleID) {
+                    $.each(guestMultiObj, function() {
+                        if (this.name == guestnetObj5g.name) {
+                            descpt = this.SSID;
+                        }
+                    });
+                }
+            }
+
+            array.push([{
+                "text": descpt,
+                "width": "35%"
+            }, {
+                "text": this.precedence,
+                "width": "5%"
+            }, {
+                "text": (this.upMinBW == 0 ? "" : this.upMinBW) + "/" + (this.upMaxBW == 0 ? "" : this.upMaxBW) + " " + s_str.kbps,
+                "width": "15%"
+            }, {
+                "text": (this.downMinBW == 0 ? "" : this.downMinBW) + "/" + (this.downMaxBW == 0 ? "" : this.downMaxBW) + " " + s_str.kbps,
+                "width": "15%"
+            }, {
+                "text": (this.enable == 1) ? "Enabled" : "Disabled",
+                "width": ""
+            }]);
+        }
+        index++;
+    });
+
+    $.initTableBody($("#guestTcTable"), array);
+    return array;
+}
+
+function initTc() {
+    if (!INCLUDE_QOS) {
+        $("#enableTc").prop("checked", (tcEntry.enable == 0) ? false : true);
+
+        if (tcEntry.enable == 0) {
+            $("#tcCont").addClass("nd");
+        }
+        if (INCLUDE_ADSLWAN) {
+            $("#adsl_type").prop("checked", (tcEntry.linkType == 1) ? true : false);
+            $("#other_type").prop("checked", (tcEntry.linkType == 1) ? false : true);
+        } else {
+            $("#adsl_type").prop("checked", false);
+            $("#other_type").prop("checked", true);
+        }
+        $("#upTotalBW").val(tcEntry.upTotalBW == 0 ? "" : tcEntry.upTotalBW);
+        $("#downTotalBW").val(tcEntry.downTotalBW == 0 ? "" : tcEntry.downTotalBW);
+    } else {
+        $("#tcHeader").addClass("nd");
+        $("#tcEnableBox").addClass("nd");
+        $("#tcCont").addClass("nd");
+        $("#saveBtn").addClass("nd");
+    }
+
+    if (INCLUDE_IPTV) {
+        //$("#iptvTcCont").removeClass("nd");
+
+        if (1 == tcEntry.iptvEnable) {
+            $("#enableIptvTc").prop("checked", true);
+            $("#iptv_elem").removeClass("nd");
+        } else {
+            $("#enableIptvTc").prop("checked", false);
+            $("#iptv_elem").addClass("nd");
+        }
+
+        $("#iptvUpMinBW").val((tcEntry.iptvUpMinBW == 0) ? "" : tcEntry.iptvUpMinBW);
+        $("#iptvDownMinBW").val((tcEntry.iptvDownMinBW == 0) ? "" : tcEntry.iptvDownMinBW);
+    }
+
+    if (INCLUDE_VOIP) {
+        $("#voipTcCont").removeClass("nd");
+        $("#enableVoIPTc").prop("checked", (tcEntry.voIPEnable == 1) ? true : false);
+    }
+
+    if (INCLUDE_LAN_WLAN_GUESTNETWORK) {
+        if ((1 == guestnetObj.TCEnable && 1 == guestnetObj.enable) ||
+            (INCLUDE_LAN_WLAN_DUALBAND && 1 == guestnetObj5g.TCEnable && 1 == guestnetObj5g.enable)) {
+            $("#guestTcCont").removeClass("nd");
+        } else {
+            $("#guestTcCont").addClass("nd");
+        }
+    }
+}
+
+function tcStatusChange(tcobj){
+	function doReboot(){
+		$.act(ACT_SET, TC, null, null, tcobj);
+		$.exe(function(err) {
+            if (!err) {
+				$.guage(["<span class='T T_rebooting'>"+s_str.rebooting+"</span>", "<span class='T T_wait_reboot'>"+s_str.wait_reboot+"</span>",], 100, $.guageInterval, function(){$.refresh();});
+            }
+            $.act(ACT_OP, ACT_OP_REBOOT);
+            $.exe(true);
+        });
+	}
+	function doCancle(){
+		$.reload();
+	}
+	
+	if ((tcobj.enable > 0) ^ (tcEntry.enable > 0)){
+		$.confirm(c_str.creboot, doReboot, doCancle);
+	} else {
+		$.act(ACT_SET, TC, null, null, tcobj);
+		$.exe(function(err) {
+        });
+	}
+}
+
+function doSave() {
+    var tcSettings = {};
+
+    if (!INCLUDE_QOS) {
+        tcSettings.enable = $("#enableTc").prop("data-checked") == true ? 3 : 0;
+        if (tcSettings.enable != 0) {
+        if (wanDslStatus == "Up") {
+            if (parseInt($("#upTotalBW").val(), 10) > upstreamCurrRate) {
+                $.alert(ERR_TC_BW_UP_LARGER, upstreamCurrRate);
+                    $("#upTotalBW").focus();
+                    $("#upTotalBW").select();
+                return false;
+            }
+
+            if (parseInt($("#downTotalBW").val(), 10) > downstreamCurrRate) {
+                    $.alert(ERR_TC_BW_DOWN_LARGER, downstreamCurrRate);
+                    $("#downTotalBW").focus();
+                    $("#downTotalBW").select();
+                return false;
+            }
+        }
+
+        if (($("#upTotalBW").val() == "") || (!$.isnum($("#upTotalBW").val())) || (0 == $("#upTotalBW").val())) {
+            $.alert(ERR_TC_NUM_INVAD);
+            $("#upTotalBW").focus();
+            $("#upTotalBW").select();
+            return false;
+        }
+
+        if (($("#downTotalBW").val() == "") || (!$.isnum($("#downTotalBW").val())) || (0 == $("#downTotalBW").val())) {
+            $.alert(ERR_TC_NUM_INVAD);
+            $("#downTotalBW").focus();
+            $("#downTotalBW").select();
+            return false;
+        }
+            tcSettings.upTotalBW = parseInt($("#upTotalBW").val(), 10);
+            tcSettings.downTotalBW = parseInt($("#downTotalBW").val(), 10);
+            tcSettings.linkType = $("#other_type").prop("checked") == true ? 1 : 0;
+        }
+    } else {
+        tcSettings.enable = tcEntry.enable;
+        tcSettings.upTotalBW = tcEntry.upTotalBW;
+        tcSettings.downTotalBW = tcEntry.upTotalBW;
+        tcSettings.linkType = tcEntry.linkType;
+    }
+
+    if (tcSettings.enable != 0) {
+        if (INCLUDE_IPTV) {
+            tcSettings.iptvEnable = $("#enableIptvTc").prop("data-checked") == true ? 1 : 0;
+            if (tcSettings.iptvEnable != 0) {
+            if (1 == (tcSettings.enable & 1)) {
+            if (($("#iptvUpMinBW").val() == "") ||
+                (!$.isnum($("#iptvUpMinBW").val())) ||
+                (0 == parseInt($("#iptvUpMinBW").val(), 10))) {
+                $.alert(ERR_TC_NUM_INVAD);
+                $("#iptvUpMinBW").focus();
+                $("#iptvUpMinBW").select();
+                return false;
+            }
+        }
+
+            if (2 == (tcSettings.enable & 2)) {
+            if (($("#iptvDownMinBW").val() == "" ||
+                (!$.isnum($("#iptvDownMinBW").val())) ||
+                (0 == parseInt($("#iptvDownMinBW").val(), 10)))) {
+                $.alert(ERR_TC_NUM_INVAD);
+                $("#iptvDownMinBW").focus();
+                $("#iptvDownMinBW").select();
+                return false;
+            }
+        }
+
+                tcSettings.iptvUpMinBW = parseInt($("#iptvUpMinBW").val(), 10);
+                tcSettings.iptvDownMinBW = parseInt($("#iptvDownMinBW").val(), 10);
+            }
+        }
+
+        if (INCLUDE_VOIP) {
+            tcSettings.voIPEnable = $("#enableVoIPTc").prop("data-checked") == true ? 1 : 0;
+        }
+
+        if (INCLUDE_IPTV && INCLUDE_VOIP 
+                         && $("#enableTc").prop("data-checked") == true
+                         && $("#enableIptvTc").prop("data-checked") == true
+                         && $("#enableVoIPTc").prop("data-checked") == true) {
+            if (parseInt($("#iptvUpMinBW").val(), 10) >= parseInt($("#upTotalBW").val(), 10)) {
+                $.alert(CMM_TC_UP_TOTAL_BW);
+                $("#iptvUpMinBW").focus();
+                $("#iptvUpMinBW").select();
+                return false;
+            }
+        }
+    }
+	
+
+
+	$.addLoading($(this));
+	tcStatusChange(tcSettings);
+	$.removeLoading();
+	
+}
+
+function doTcEdit(index) {
+    isEdit = 1;
+    tcRuleEntryIndex = index;
+    $.loadPage("tcEditPage", "trafCtrlEdit.htm");
+}
+
+function doTcDel(index) {
+    $.act(ACT_DEL, TC_RULE, tcRuleList[index].__stack, null);
+    $.exe(function(err) {
+        if (!err) $.reload();
+    });
+}
+
+function enableTcClk(index) {
+    $.act(ACT_SET, TC_RULE, tcRuleList[index].__stack, null, ["enable=1"]);
+    if (!$.exe()) {
+        $.reload();
+    }
+}
+
+function disableTcClk(index) {
+    $.act(ACT_SET, TC_RULE, tcRuleList[index].__stack, null, ["enable=0"]);
+    if (!$.exe()) {
+        $.reload();
+    }
+}
+
+function clickTcRuleAdd() {
+    isEdit = 0;
+    $.loadPage("tcEditPage", "trafCtrlEdit.htm");
+}
+
+function clickTcRuleDel() {
+    var bDel = 0;
+
+    for (var ix = 0; ix < tcRuleList.length; ix++) {
+        if (0 == tcRuleList[ix].ruleType) {
+            var checkboxID = $("#tcCheckbox" + ix);
+            if (checkboxID.prop("data-checked")) {
+                bDel = 1;
+                break;
+            }
+        }
+    }
+
+    if (bDel) {
+        $.confirm(c_str.del_choosed, ok);
+    }
+
+    function ok() {
+        for (var ix = 0; ix < tcRuleList.length; ix++) {
+            if (0 == tcRuleList[ix].ruleType) {
+                var checkboxID = $("#tcCheckbox" + ix);
+                if (checkboxID.prop("data-checked")) {
+                    checkboxID.parents("tr").first().remove();
+                    $.act(ACT_DEL, TC_RULE, tcRuleList[ix].__stack, null);
+
+                    $.exe(function(err) {
+                        if (!err) $.reload();
+                    });
+                }
+            }
+        }
+    }
+}
+
+function clickSelTcAll() {
+    var bSelected = $("#tcAll").prop("data-checked");
+    for (var ix = 0; ix < tcRuleList.length; ix++) {
+        if (0 == tcRuleList[ix].ruleType) {
+            var checkboxID = $("#tcCheckbox" + ix);
+            if (checkboxID.prop("data-checked") != bSelected) {
+                checkboxID.prop("checked", bSelected);
+                checkboxID.data("tpCheckbox").refresh();
+            }
+        }
+    }
+}
+
+function clickToSet(arg, contID) {
+    $.act(ACT_SET, TC, null, null, arg);
+    if (!$.exe()) {
+        if (contID != null) {
+            if ((arg.enable != undefined && arg.enable >= 1) ||
+                (arg.iptvEnable != undefined && arg.iptvEnable >= 1)) {
+                contID.removeClass("nd");
+            } else {
+                contID.addClass("nd");
+            }
+        }
+
+        $.removeLoading();
+        $.reload();
+    }
+
+}
+
+function clickToShow(show, contID) {
+    if (contID != null) {
+        if (show) {
+            contID.removeClass("nd");
+        } else {
+            contID.addClass("nd");
+        }
+    }
+}
+
+$("#enableTc").on('click', function() {
+    clickToShow($("#enableTc").prop("data-checked"), $("#tcCont"));
+});
+
+$("#enableIptvTc").on('click', function() {
+    clickToShow($("#enableIptvTc").prop("data-checked"), $("#iptv_elem"));
+});
+
+$("#enableVoIPTc").on('click', function() {});
+
+$("#editOK").on('click', function() {
+    $.addLoading($(this));
+    doSave();
+});
+</script>
+<div id="tcHeader">
+<h3 id="et">Bandwidth Control</h3>
+</div>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div id="tcEnableBox">
+            <b class="xxl" id="t_en">Bandwidth Control:</b>
+            <input type="checkbox" id="enableTc" />
+            <label class="T_enable">Enable</label>
+        </div>
+
+        <div id="tcCont">
+            <div class="nd" id="lineType">
+                <b class="xxl" id="t_type">Line Type:</b>
+                <input type="radio" id="adsl_type" name="lineTypeRadio" />
+                <label>DSL</label>
+                <input type="radio" id="other_type" name="lineTypeRadio" />
+                <label id="t_other">Other</label>
+            </div>
+
+
+            <div class="pure-control-group nd" id="curDslUp">
+                <b class="xxl" id="t_dslUp">Current Up Stream Rate:</b>
+                <input type="text" readonly="true" class="tp-input-text xxxl" id="upStreamCurrRate">
+            </div>
+
+            <div class="pure-control-group nd" id="curDslDown">
+                <b class="xxl" id="t_dslDown">Current Down Stream Rate:</b>
+                <input type="text" readonly="true" class="tp-input-text xxxl" id="downStreamCurrRate">
+            </div>
+
+            <div>
+                <b class="xxl" id="t_tup">Total Upstream Bandwidth:</b>
+                <input type="text" id="upTotalBW" maxlength="7" />
+                <span class="T_kbps">Kbps</span>
+            </div>
+
+            <div>
+                <b class="xxl" id="t_tdown">Total Downstream Bandwidth:</b>
+                <input type="text" id="downTotalBW" maxlength="7" />
+                <span class="T_kbps">Kbps</span>
+            </div>
+
+            <div id="iptvTcCont" class="nd">
+                <div class="button-group-container">
+                    <b class="xxl" id="t_graiptvon">IPTV Bandwidth Guarantee:</b>
+                    <input type="checkbox" id="enableIptvTc" />
+                    <label class="T_enable">Enable</label>
+                </div>
+
+                <div id="iptv_elem" class="nd">
+                    <div>
+                        <b class="xxl" id="t_upgrabd">Upstream Bandwidth Guarantee:</b>
+                        <input type="text" id="iptvUpMinBW" />
+                        <span class="T_kbps">Kbps</span>
+                    </div>
+
+                    <div>
+                        <b class="xxl" id="t_downgrabd">Downstream Bandwidth Guarantee:</b>
+                        <input type="text" id="iptvDownMinBW" />
+                        <span class="T_kbps">Kbps</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="voipTcCont" class="nd">
+                <div>
+                    <b class="xxl" id="t_enVoip">VoIP Bandwidth Guarantee:</b>
+                    <input type="checkbox" id="enableVoIPTc" />
+                    <label class="T_enable">Enable</label>
+                </div>
+                </div>
+            </div>
+
+        <div id="saveBtn">
+            <p class="br"></p>
+            <div class="btn-right">
+                <button type="submit" class="green T_save" id="editOK">Save</button>
+            </div>
+        </div>
+    </form>
+
+    <p class="br"></p>
+
+    <h3 id="t_rule">Bandwidth Rules</h3>
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+            <div class="table-op">
+                <div class="table-note">
+                </div>
+
+                <div class="table-btn">
+                    <span class="add-icon" id="tcRuleAddBtn" onclick="clickTcRuleAdd()"></span>
+                    <label class="T_add">Add</label>
+                    <span class="delete-icon" id="tcRuleDelBtn" onclick="clickTcRuleDel()"></span>
+                    <label class="T_del">Delete</label>
+                </div>
+            </div>
+
+            <table id="tcTable">
+                <thead></thead>
+                <tbody id="tcTableBody">
+                    <tr id="tcTableEdit" class="nd">
+                        <td colspan="7">
+                            <div id="tcEditPage"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </form>
+    </div>
+
+    <div id="guestTcCont" class="nd">
+        <p class="br"></p>
+        <h3 id="t_guest_rule">Guest Network Bandwidth Rules</h3>
+        <div class="content-container">
+            <form class="pure-form pure-form-aligned">
+                <table id="guestTcTable">
+                    <thead></thead>
+                    <tbody id="guestTcTableBody">
+                        <tr id="guestTcTableEdit" class="nd">
+                            <td colspan="5">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    $.tpInit(init);
+});
+</script>

@@ -1,0 +1,1 @@
+﻿var data_language = {innerHTML : {'lang_updateSetting' : 'Обновление параметров','langWan' : 'Основные настройки','idLoginContext' : 'Требуется ли при подключении к Интернету ввести имя пользователя и пароль?','idLoginYesContext' : ' Да ','idLoginNoContext' : ' Нет '},value : {'Apply' : 'Применить','Cancel' : 'Отмена','Test' : 'Проверка'}};

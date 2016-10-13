@@ -1,0 +1,1690 @@
+<script type="text/javascript">
+var wlanObj_2g,
+    wlanObj_5g,
+    wlanObj_5g_2;
+
+var wanAccessType = "Ethernet";
+var intfCfgStack = "";
+var wanConnStack = "";
+var wanType = "";
+var bStart = false; /* indicates that whether we've started a dns diagnostic once */
+var bDiagFinished = false; /* indicates whether the diagnostic process is finished */
+var step = 0;
+var usb3gLinkCfg = {};
+//var currDslType = INCLUDE_VDSLWAN ? "vdsl" : "adsl";
+var internetDiagId = $.getAsync();
+
+function internetInit() {
+    /* this function must execute after internetDiagInit() */
+    if (wanConnStack == "") {
+        return;
+    }
+
+    var wanDefaultConn = {};
+    var bHaveIpv6Param = INCLUDE_IPV6 ? true : false;
+
+    if (wanType == "ppp") {
+        wanDefaultConn = $.act(ACT_GET, WAN_PPP_CONN, wanConnStack, null, null);
+    } else if (wanType == "ip") {
+        wanDefaultConn = $.act(ACT_GET, WAN_IP_CONN, wanConnStack, null, null);
+    } else if (INCLUDE_PPTP && wanType == "pptp") {
+        wanDefaultConn = $.act(ACT_GET, WAN_PPTP_CONN, wanConnStack, null, null);
+        bHaveIpv6Param = false;
+    } else if (INCLUDE_L2TP && wanType == "l2tp") {
+        wanDefaultConn = $.act(ACT_GET, WAN_L2TP_CONN, wanConnStack, null, null);
+        bHaveIpv6Param = false;
+    }
+
+    $.exe(function() {
+        var dnsv4 = wanDefaultConn.DNSServers.split(',');
+        var dnsv41 = dnsv4[0] ? dnsv4[0] : '0.0.0.0';
+        var dnsv42 = dnsv4[1] ? dnsv4[1] : '0.0.0.0';
+        var ipv4 = wanDefaultConn.externalIPAddress ? wanDefaultConn.externalIPAddress : '0.0.0.0';
+        var gatev4 = wanDefaultConn.defaultGateway ? wanDefaultConn.defaultGateway : '0.0.0.0';
+        if (bHaveIpv6Param) {
+            var dnsv6 = wanDefaultConn.X_TP_IPv6DNSServers.split(',');
+        var dnsv61 = dnsv6[0] ? dnsv6[0] : '::';
+        var dnsv62 = dnsv6[1] ? dnsv6[1] : '::';
+        var ipv6 = wanDefaultConn.X_TP_ExternalIPv6Address ? wanDefaultConn.X_TP_ExternalIPv6Address : '::';
+        var gatev6 = wanDefaultConn.X_TP_DefaultIPv6Gateway ? wanDefaultConn.X_TP_DefaultIPv6Gateway : '::';
+        }
+
+        if (wanType == 'ip' && wanDefaultConn.enable == 1) {
+            if (wanDefaultConn.connectionType == "IP_Bridged") {
+                $('#internetConnType').prop('value', s_str.bridge);
+            } else if (wanDefaultConn.connectionType == "IP_Routed") {
+                var wanComStk = $.stkPop(wanDefaultConn.__stack, 2);
+                var wanComInf = $.act(ACT_GET, WAN_COMMON_INTF_CFG, wanComStk, null, null);
+            
+                if (!$.exe()) {
+                    if (wanComInf.WANAccessType == "DSL" && wanDslLnk.linkType == "IPoA") {
+                        $('#internetConnType').prop('value', 'IPoA');
+                        var dns = wanDefaultConn.DNSServers.split(',');
+                        $('#internetDns').prop('value', dns[0] + ' ' + dns[1]);
+                        $('#internetIp').prop('value', wanDefaultConn.externalIPAddress);
+                        $('#internetGateway').prop('value', wanDefaultConn.defaultGateway);
+                    } else {
+                        $('#internetConnType').prop('value', wanDefaultConn.addressingType == 'DHCP' ? s_str.dynip : s_str.staip);
+                        if (INCLUDE_IPV6) {
+                            if (wanDefaultConn.X_TP_IPv4Enabled == 1 && wanDefaultConn.X_TP_IPv6Enabled == 0) {
+                                $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42);
+                                $('#internetIp').prop('value', ipv4);
+                                $('#internetGateway').prop('value', gatev4);
+                            } else if (wanDefaultConn.X_TP_IPv4Enabled == 0 && wanDefaultConn.X_TP_IPv6Enabled == 1) {
+                                $('#internetDns').prop('value', dnsv61 + ' ' + dnsv62);
+                                $('#internetIp').prop('value', ipv6);
+                                $('#internetGateway').prop('value', gatev6);
+                            } else if (wanDefaultConn.X_TP_IPv4Enabled == 1 && wanDefaultConn.X_TP_IPv6Enabled == 1) {
+                                $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42 + ' / ' + dnsv61 + ' ' + dnsv62);
+                                $('#internetIp').prop('value', ipv4 + ' / ' + ipv6);
+                                $('#internetGateway').prop('value', gatev4 + ' / ' + gatev6);
+                            }
+                        } else {
+                            $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42);
+                            $('#internetIp').prop('value', ipv4);
+                            $('#internetGateway').prop('value', gatev4);
+                        }
+                    }
+                }
+            }
+        } else if (wanType == 'ppp' && wanDefaultConn.enable == 1) {
+            if (INCLUDE_IPV6) {
+                $('#internetConnType').prop('value', wanDefaultConn.transportType);
+                if (wanDefaultConn.X_TP_IPv4Enabled == 1 && wanDefaultConn.X_TP_IPv6Enabled == 0) {
+                    $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42);
+                    $('#internetIp').prop('value', ipv4);
+                    $('#internetGateway').prop('value', gatev4);
+                } else if (wanDefaultConn.X_TP_IPv4Enabled == 0 && wanDefaultConn.X_TP_IPv6Enabled == 1) {
+                    $('#internetDns').prop('value', dnsv61 + ' ' + dnsv62);
+                    $('#internetIp').prop('value', ipv6);
+                    $('#internetGateway').prop('value', gatev6);
+                } else if (wanDefaultConn.X_TP_IPv4Enabled == 1 && wanDefaultConn.X_TP_IPv6Enabled == 1) {
+                    $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42 + ' / ' + dnsv61 + ' ' + dnsv62);
+                    $('#internetIp').prop('value', ipv4 + ' / ' + ipv6);
+                    $('#internetGateway').prop('value', gatev4 + ' / ' + gatev6);
+                }
+            } else {
+                $('#internetConnType').prop('value', wanDefaultConn.transportType);
+                $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42);
+                $('#internetIp').prop('value', ipv4);
+                $('#internetGateway').prop('value', gatev4);
+            }
+        } else if (INCLUDE_L2TP && wanType == 'l2tp' && wanDefaultConn.enable == 1) {
+            $('#internetConnType').prop('value', 'L2TP');
+            var dns = wanDefaultConn.DNSServers.split(',');
+            $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42);
+            $('#internetIp').prop('value', ipv4);
+            $('#internetGateway').prop('value', gatev4);
+        } else if (INCLUDE_PPTP && wanType == 'pptp' && wanDefaultConn.enable == 1) {
+            $('#internetConnType').prop('value', 'PPTP');
+            var dns = wanDefaultConn.DNSServers.split(',');
+            $('#internetDns').prop('value', dnsv41 + ' ' + dnsv42);
+            $('#internetIp').prop('value', ipv4);
+            $('#internetGateway').prop('value', gatev4);
+        }
+    });
+}
+
+function wirelessInit() {
+    var vapObj2g, vapObj5g, vapObj5g_2;
+    var wlList = $.act(ACT_GL, LAN_WLAN, null, null, ["Enable", "BSSID", "SSID", "X_TP_Band", "subBand", "Channel", "AutoChannelEnable", "BasicEncryptionModes", "BeaconType"]);
+    var localObj = $.act(ACT_GET, LOCAL, null, null, ["WirelessPhyBtn"]);
+    if (!$.exe()) {
+        $.each(wlList, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                wlanObj_2g = this;
+            } else if (INCLUDE_LAN_WLAN_DUALBAND && "5GHz" == this.X_TP_Band) {
+                if (1 == this.subBand)
+                wlanObj_5g = this;
+                else if(4 == this.subBand)
+                    wlanObj_5g_2 = this;
+                else
+                    /*do nothing*/;
+            }
+        });
+
+        if (INCLUDE_LAN_WLAN_MSSID) {
+            var vapList_2g = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_2g.__stack, ["Name", "SSID", "Enable"]);
+            var vapList_5g = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_5g.__stack, ["Name", "SSID", "Enable"]);
+            var vapList_5g_2 = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_5g_2.__stack, ["Name", "SSID", "Enable"]);
+            if (INCLUDE_LAN_WLAN_GUESTNETWORK) {
+                var guestObj_2g = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_2g.__stack, null, ["Name", "Enable"]);
+                var guestObj_5g = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_5g.__stack, null, ["Name", "Enable"]);
+                var guestObj_5g_2 = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_5g_2.__stack, null, ["Name", "Enable"]);
+            }
+            if (!$.exe()) {
+                $.each(vapList_2g, function(arg, index) {
+                    if (this.name == guestObj_2g.name)
+                        vapObj2g = this;
+                });
+                $.each(vapList_5g, function(arg, index) {
+                    if (this.name == guestObj_5g.name)
+                        vapObj5g = this;
+                });
+                $.each(vapList_5g_2, function(arg, index) {
+                    if (this.name == guestObj_5g_2.name)
+                        vapObj5g_2 = this;
+                });
+            }
+        }
+    }
+
+    if (INCLUDE_LAN_WLAN_DUALBAND) {
+        if (wlanObj_5g.enable == 1) {
+            if (wlanObj_5g.basicEncryptionModes == 'None' && wlanObj_5g.beaconType == 'Basic') {
+                $('#map_router_5g_img').addClass('not-secure');
+            } else {
+                $('#map_router_5g_img').removeClass('not-secure');
+            }
+        } else {
+            $('#map_router_5g_img').removeClass('not-secure');
+            $('#map_router_5g_img').addClass('not-open');
+        }
+        if (wlanObj_5g_2.enable == 1) {
+            if (wlanObj_5g_2.basicEncryptionModes == 'None' && wlanObj_5g_2.beaconType == 'Basic') {
+                $('#map_router_5g_img_2').addClass('not-secure');
+            } else {
+                $('#map_router_5g_img_2').removeClass('not-secure');
+            }
+        } else {
+            $('#map_router_5g_img_2').removeClass('not-secure');
+            $('#map_router_5g_img_2').addClass('not-open');
+        }
+
+        $('#routerWirelessStatus_5g').prop('value', wlanObj_5g.enable == 1 ? m_str.on : m_str.off);
+        $('#routerWirelessSsid_5g').prop('value', wlanObj_5g.SSID);
+        $('#routerWirelessChannel_5g').prop('value', wlanObj_5g.autoChannelEnable == 1 ? m_str.auto + '(' + m_str.curChannel + ' ' + wlanObj_5g.channel + ')' : m_str.curChannel + ' ' + wlanObj_5g.channel);
+        $('#routerWirelessMac_5g').prop('value', wlanObj_5g.BSSID);
+        $('#routerWirelessGuestStatus_5g').prop('value', vapObj5g.enable == 1 ? m_str.on : m_str.off);
+        $('#routerWirelessGuestSsid_5g').prop('value', vapObj5g.SSID);
+
+        $('#routerWirelessStatus_5g_2').prop('value', wlanObj_5g_2.enable == 1 ? m_str.on : m_str.off);
+        $('#routerWirelessSsid_5g_2').prop('value', wlanObj_5g_2.SSID);
+        $('#routerWirelessChannel_5g_2').prop('value', wlanObj_5g_2.autoChannelEnable == 1 ? m_str.auto + '(' + m_str.curChannel + ' ' + wlanObj_5g_2.channel + ')' : m_str.curChannel + ' ' + wlanObj_5g_2.channel);
+        $('#routerWirelessMac_5g_2').prop('value', wlanObj_5g_2.BSSID);
+        $('#routerWirelessGuestStatus_5g_2').prop('value', vapObj5g_2.enable == 1 ? m_str.on : m_str.off);
+        $('#routerWirelessGuestSsid_5g_2').prop('value', vapObj5g_2.SSID);
+    } else {
+        $('#map_router_5g').addClass('nv');
+        $('.map-router-bar').addClass('nv');
+
+        $('#5gGroup').empty().html($('#guest2gGroup').html());
+        $('#guestGroup').hide();
+    }
+
+    if (wlanObj_2g.enable == 1) {
+        if (wlanObj_2g.basicEncryptionModes == 'None' && wlanObj_2g.beaconType == 'Basic') {
+            $('#map_router_24g_img').addClass('not-secure');
+        } else {
+            $('#map_router_24g_img').removeClass('not-secure');
+        }
+    } else {
+        $('#map_router_24g_img').removeClass('not-secure');
+        $('#map_router_24g_img').addClass('not-open');
+    }
+
+    $('#routerWirelessStatus_2g').prop('value', wlanObj_2g.enable == 1 ? m_str.on : m_str.off);
+    $('#routerWirelessSsid_2g').prop('value', wlanObj_2g.SSID);
+    $('#routerWirelessChannel_2g').prop('value', wlanObj_2g.autoChannelEnable == 1 ? m_str.auto + '(' + m_str.curChannel + ' ' + wlanObj_2g.channel + ')' : m_str.curChannel + ' ' + wlanObj_2g.channel);
+    $('#routerWirelessMac_2g').prop('value', wlanObj_2g.BSSID);
+
+    $('#routerWirelessGuestStatus_2g').prop('value', vapObj2g.enable == 1 ? m_str.on : m_str.off);
+    $('#routerWirelessGuestSsid_2g').prop('value', vapObj2g.SSID);
+
+    //added by jy
+    if (localObj.wirelessPhyBtn == false){
+        $('#map_router_24g_img').removeClass('not-secure');
+        $('#map_router_24g_img').addClass('not-open');
+        $('#map_router_5g_img').removeClass('not-secure');
+        $('#map_router_5g_img').addClass('not-open');
+        $('#map_router_5g_img_2').removeClass('not-secure');
+        $('#map_router_5g_img_2').addClass('not-open');
+    }
+}
+
+function wirelessClientInit() {
+    $("#tableWlStat").tpTable(initWirelessTable);
+}
+
+function initWirelessTable() {
+    var array = [];
+    var wirelessNum = 0;
+    var wirelessIndex = 1;
+    var lanHostList = $.act(ACT_GL, LAN_HOST_ENTRY, null, null);
+    $.exe(function(ret) {
+        if (!ret) {}
+
+        $.each(lanHostList, function(index) {
+			if (this.active != 1)
+				return;
+		
+            if (this.X_TP_ConnType == 1 || this.X_TP_ConnType == 2 || this.X_TP_ConnType == 3 || this.X_TP_ConnType == 4) {
+                array.push([{
+                    "text": wirelessIndex,
+                    "width": "5%"
+                }, {
+                    "text": this.hostName == '' ? m_str.unknown : this.hostName,
+                    "width": "35%"
+                }, {
+                    "text": this.IPAddress,
+                    "width": "30%"
+                }, {
+                    "text": this.MACAddress,
+                    "width": "30%"
+                }]);
+                wirelessNum = wirelessIndex;
+                wirelessIndex++;
+            }
+        });
+        $.initTableBody($("#tableWlStat"), array);
+        $.tablePages($("#tableWlStat"), 5);
+        $('#map_num_wireless').html(wirelessNum);
+    });
+
+    var wl = $.act(ACT_GS, LAN_WLAN, null, null, ["Enable", "X_TP_Band", "subBand"]);
+    var isEnable_2g;
+    var isEnable_5g;
+    var isEnable_5g_2;
+    $.exe(function() {
+        $.each(wl, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                isEnable_2g = this.enable;
+            } else {
+                if (1 == this.subBand)
+                isEnable_5g = this.enable;
+                else if (4 == this.subBand)
+                    isEnable_5g_2 = this.enable;
+                else
+                    ;
+            }
+            if (isEnable_2g == 0 && isEnable_5g == 0 && isEnable_5g_2 == 0) {
+                $('#map_num_wireless').addClass('nd');
+                $('#map_icon_wireless').addClass('map-icon-wireless-n');
+            }
+        });
+    });
+}
+
+function initWireTable() {
+    var array = [];
+    var wireNum = 0;
+    var wireIndex = 1;
+    var lanHostList = $.act(ACT_GL, LAN_HOST_ENTRY, null, null);
+    $.exe(function(ret) {
+        if (!ret) {}
+
+        $.each(lanHostList, function(index) {
+            if (this.active == 1 && this.X_TP_ConnType == 0) {
+                array.push([{
+                    "text": wireIndex,
+                    "width": "5%"
+                }, {
+                    "text": this.hostName == '' ? m_str.unknown : this.hostName,
+                    "width": "35%"
+                }, {
+                    "text": this.IPAddress,
+                    "width": "30%"
+                }, {
+                    "text": this.MACAddress,
+                    "width": "30%"
+                }]);
+                wireNum = wireIndex;
+                wireIndex++;
+            }
+        });
+        $.initTableBody($("#tableWireStat"), array);
+        $.tablePages($("#tableWireStat"), 5);
+        $('#map_num_wire').html(wireNum);
+    });
+
+}
+
+function printInit() {
+    var curStatus = $.act(ACT_GET, XTP_PRINT_SERVICE, null, null, null);
+
+    $.exe(function() {
+        if (curStatus.enable == 0) {
+            $('#map_num_printer').addClass('nd');
+            $('#map_icon_printer').addClass('map-icon-printer-n');
+            $('#hasPrinter').addClass('nd');
+            $('#noPrinter').removeClass('nd');
+            return;
+        }
+        if (curStatus.serverName == 'No Printer') {
+            $('#map_num_printer').html(0);
+            $('#hasPrinter').addClass('nd');
+            $('#noPrinter').removeClass('nd');
+        } else {
+            $('#hasPrinter').removeClass('nd');
+            $('#noPrinter').addClass('nd');
+            $('#map_num_printer').html(1);
+            $('#printName').prop('value', curStatus.serverName);
+        }
+
+    });
+
+}
+
+function changeUsbUnit(capacity, unit) {
+    var changed;
+    if (unit == 1) {
+        /* Change MB to proper unit */
+        changed = (capacity / 1024).toFixed(1);
+        if (changed > 1024) {
+            changed = (changed / 1024).toFixed(1) + ' TB';
+        } else {
+            changed = changed + ' GB';
+        }
+        return changed;
+    } else if (unit == 2) {
+        /* Change GB to MB */
+        return (capacity * 1024).toFixed(1);
+    } else if (unit == 3) {
+        /* Change TB to MB */
+        return (capacity * 1024 * 1024).toFixed(1);
+    }
+}
+
+function usbInit() {
+    var usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+    var volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+    var availableSpace = [];
+
+    if (!$.exe()) {
+        for (var j = usbDeviceList.length; j > 0; j--) {
+            availableSpace[j - 1] = 0;
+            for (var i = 0; i < volumeList.length; i++) {
+                if (((usbDeviceList[j - 1].__stack).split(','))[0] == ((volumeList[i].__stack).split(','))[0]) {
+                    var freeSpace = volumeList[i].freeSpace.split(' ');
+                    if (freeSpace[1] == 'MB') {
+                        availableSpace[j - 1] += Number(freeSpace[0]);
+                    } else if (freeSpace[1] == 'GB') {
+                        availableSpace[j - 1] += Number(changeUsbUnit((freeSpace[0]), 2));
+                    } else if (freeSpace[1] == 'TB') {
+                        availableSpace[j - 1] += Number(changeUsbUnit((freeSpace[0]), 3));
+                    }
+                }
+            }
+            availableSpace[j - 1] = (changeUsbUnit((availableSpace[j - 1]), 1));
+        }
+
+        $('#usb1').addClass('nv');
+        $('#usb2').addClass('nv');
+        $('#noUsb').removeClass('nd');
+        $('#map_icon_usb').removeClass('nd');
+
+        if (usbDeviceList.length >= 4) {
+            $('#noUsb').addClass('nd');
+            $('#map_icon_usb').removeClass('nd');
+            $('#usb1').removeClass('nv');
+            $('#usb2').removeClass('nv');
+            $('#usb3').removeClass('nv');
+            $('#usb4').removeClass('nv');
+            $('#map_num_usb').html(4);
+
+            $('#usbBrand4').prop('value', usbDeviceList[3].vendor + ' ' + usbDeviceList[3].model);
+            $('#usbTotal4').prop('value', changeUsbUnit(usbDeviceList[3].capacity, 1));
+            $('#usbAvaliable4').prop('value', availableSpace[3]);
+
+            $('#usbBrand3').prop('value', usbDeviceList[2].vendor + ' ' + usbDeviceList[2].model);
+            $('#usbTotal3').prop('value', changeUsbUnit(usbDeviceList[2].capacity, 1));
+            $('#usbAvaliable3').prop('value', availableSpace[2]);
+
+            $('#usbBrand2').prop('value', usbDeviceList[1].vendor + ' ' + usbDeviceList[1].model);
+            $('#usbTotal2').prop('value', changeUsbUnit(usbDeviceList[1].capacity, 1));
+            $('#usbAvaliable2').prop('value', availableSpace[1]);
+
+            $('#usbBrand1').prop('value', usbDeviceList[0].vendor + ' ' + usbDeviceList[0].model);
+            $('#usbTotal1').prop('value', changeUsbUnit(usbDeviceList[0].capacity, 1));
+            $('#usbAvaliable1').prop('value', availableSpace[0]);
+        } else if (usbDeviceList.length == 3) {
+            $('#noUsb').addClass('nd');
+            $('#map_icon_usb').removeClass('nd');
+            $('#usb1').removeClass('nv');
+            $('#usb2').removeClass('nv');
+            $('#usb3').removeClass('nv');
+            $('#usb4').addClass('nv');
+            $('#map_num_usb').html(3);
+
+            $('#usbBrand3').prop('value', usbDeviceList[2].vendor + ' ' + usbDeviceList[2].model);
+            $('#usbTotal3').prop('value', changeUsbUnit(usbDeviceList[2].capacity, 1));
+            $('#usbAvaliable3').prop('value', availableSpace[2]);
+
+            $('#usbBrand2').prop('value', usbDeviceList[1].vendor + ' ' + usbDeviceList[1].model);
+            $('#usbTotal2').prop('value', changeUsbUnit(usbDeviceList[1].capacity, 1));
+            $('#usbAvaliable2').prop('value', availableSpace[1]);
+
+            $('#usbBrand1').prop('value', usbDeviceList[0].vendor + ' ' + usbDeviceList[0].model);
+            $('#usbTotal1').prop('value', changeUsbUnit(usbDeviceList[0].capacity, 1));
+            $('#usbAvaliable1').prop('value', availableSpace[0]);
+        } else if (usbDeviceList.length == 2) {
+            $('#noUsb').addClass('nd');
+            $('#map_icon_usb').removeClass('nd');
+            $('#usb1').removeClass('nv');
+            $('#usb2').removeClass('nv');
+            $('#usb3').addClass('nv');
+            $('#usb4').addClass('nv');
+            $('#map_num_usb').html(2);
+
+            $('#usbBrand2').prop('value', usbDeviceList[1].vendor + ' ' + usbDeviceList[1].model);
+            $('#usbTotal2').prop('value', changeUsbUnit(usbDeviceList[1].capacity, 1));
+            $('#usbAvaliable2').prop('value', availableSpace[1]);
+
+            $('#usbBrand1').prop('value', usbDeviceList[0].vendor + ' ' + usbDeviceList[0].model);
+            $('#usbTotal1').prop('value', changeUsbUnit(usbDeviceList[0].capacity, 1));
+            $('#usbAvaliable1').prop('value', availableSpace[0]);
+        } else if (usbDeviceList.length == 1) {
+            $('#noUsb').addClass('nd');
+            $('#map_icon_usb').removeClass('nd');
+            $('#usb1').removeClass('nv');
+            $('#usb2').addClass('nv');
+            $('#usb3').addClass('nv');
+            $('#usb4').addClass('nv');
+            $('#map_num_usb').html(1);
+
+            $('#usbBrand1').prop('value', usbDeviceList[0].vendor + ' ' + usbDeviceList[0].model);
+            $('#usbTotal1').prop('value', changeUsbUnit(usbDeviceList[0].capacity, 1));
+            $('#usbAvaliable1').prop('value', availableSpace[0]);
+        } else if (usbDeviceList.length == 0) {
+            $('#usb1').addClass('nv');
+            $('#usb2').addClass('nv');
+            $('#usb3').addClass('nv');
+            $('#usb4').addClass('nv');
+            $('#map_num_usb').html(0);
+        }
+    }
+}
+
+function wireClientInit() {
+    $("#tableWireStat").tpTable(initWireTable);
+}
+
+var incomingFlag = [
+    0x01,
+    0x02,
+    0x04,
+    0x08,
+    0x10,
+    0x20,
+    0x40,
+    0x80
+];
+
+function getIncomingNum(index) {
+    var num = "";
+    count = 0;
+
+    for (var i = 0; i < voipAccounts.length; i++) {
+        if (voipAccounts[i].multiExtension && voipAccounts[i].multiExtension != "") {
+            if ((voipAccounts[i].multiAccountInRoute) & incomingFlag[index]) {
+                num += voipAccounts[i].multiProfileName;
+                num += "<br />";
+                count++;
+            }
+        }
+    }
+    if (count == 0) {
+        num = "--";
+    }
+    if (count == voipAccounts.length) {
+        num = "All";
+    }
+
+    return num;
+}
+
+function initPhoneTable() {
+    var array = [];
+    var telephoneStatus = 0;
+    var phoneNum = 0;
+    voipAccounts = $.act(ACT_GL, XTP_MULTI_ISP, null, null, ["multiProfileName", "multiAccountInRoute", "multiExtension", "multiStatus"]);
+    voipLineList = $.act(ACT_GL, VOICE_PROF_LINE, null, null, ["Enable", "X_TP_PhoneName", "X_TP_InternalNumber", "X_TP_PhoneType", "Status"]);
+    voipCallingFeaturesList = $.act(ACT_GL, VOICE_PROF_LINE_CALLFEAT, null, null, ["X_TP_UsbVoiceEnable"]);
+
+    $.exe(function(ret) {
+        if (ret) {
+            return;
+        }
+
+        var accAccount = 0;
+        for (var i = 0; i < voipAccounts.length; i++) {
+            if (voipAccounts[i].multiExtension && voipAccounts[i].multiExtension != "") {
+                accAccount++;
+                if (voipAccounts[i].multiStatus == 1) {
+                    telephoneStatus = 1;
+                }
+            }
+        }
+
+        if (telephoneStatus == 1) {
+            $('#teleStatus').html(m_str.srccess);
+        } else {
+            $('#teleStatus').html(m_str.teleunavail);
+        }
+
+        var index = 0;
+        $.each(voipLineList, function() {
+            var self = this;
+            if ((self.enable == "Enabled")) {
+                if (self.X_TP_PhoneType == "DECT") {
+                    dectInfo = $.act(ACT_GET, XTP_DECT_HANDSET_INFO, self.__stack, null, ["Status"]);
+                    if (0 != $.exe()) {
+                        return;
+                    }
+                    if (dectInfo.status == 0) {
+                        return;
+                    }
+                }
+                phoneNum++;
+                var name;
+                if (self.X_TP_PhoneName == "Phone 1") {
+                    name = table_str.phone1;
+                } else if (self.X_TP_PhoneName == "Phone 2") {
+                    name = table_str.phone2;
+                } else {
+                    name = self.X_TP_PhoneName;
+                }
+                var tmpNum = getIncomingNum(index);
+                var incomingNum;
+                if (tmpNum == table_str.na) {
+                    incomingNum = tmpNum;
+                } else {
+                    incomingNum = tmpNum.slice(0, -2);
+                }
+                var interNum = self.X_TP_InternalNumber;
+                var voipCallingFeaturesObj = $.act(ACT_GET, VOICE_PROF_LINE_CALLFEAT, self.__stack, null, ["X_TP_OutgoingCallpriorAccount"]);
+                if (0 != $.exe()) {
+                    return;
+                }
+                if (accAccount == 0) {
+                    outgoingNum = table_str.na;
+                } else if (voipCallingFeaturesObj.X_TP_OutgoingCallpriorAccount == 0xffffffff) {
+                    outgoingNum = table_str.auto;
+                } else {
+                    outgoingNum = voipAccounts[voipCallingFeaturesObj.X_TP_OutgoingCallpriorAccount - 1].multiProfileName;
+                }
+
+                var selfStk = "[" + self.__stack + "]";
+                if (self.X_TP_PhoneType == "FXS") {
+                    array.push([{
+                        "text": name,
+                        "width": "20%"
+                    }, {
+                        "text": incomingNum,
+                        "width": "30%"
+                    }, {
+                        "text": interNum,
+                        "width": "20%"
+                    }, {
+                        "text": outgoingNum,
+                        "width": "30%"
+                    }]);
+                } else if (self.X_TP_PhoneType == "DECT") {
+                    array.push([{
+                        "text": name,
+                        "width": "20%"
+                    }, {
+                        "text": incomingNum,
+                        "width": "30%"
+                    }, {
+                        "text": interNum,
+                        "width": "20%"
+                    }, {
+                        "text": outgoingNum,
+                        "width": "30%"
+                    }]);
+                }
+
+            }
+            index++;
+        });
+        if (voipCallingFeaturesList[0].X_TP_UsbVoiceEnable == 2) {
+            array.push([{
+                "text": table_str.voicemail,
+                "width": "20%"
+            }, {
+                "text": table_str.na,
+                "width": "30%"
+            }, {
+                "text": "*20",
+                "width": "20%"
+            }, {
+                "text": table_str.na,
+                "width": "30%"
+            }]);
+        }
+        $.initTableBody($("#tablePhoneStat"), array);
+        $.tablePages($("#tablePhoneStat"), 5);
+        /*$('#map_num_phone').html(phoneNum);*/
+        return array;
+    });
+}
+
+function phoneInit() {
+    $("#tablePhoneStat").tpTable(initPhoneTable);
+}
+
+function internetDiagInit() {
+    var l3Forward = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+    var ipList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["Enable", "Name", "X_TP_IPv4Enabled"]); 
+    var pppList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["Enable", "Name", "X_TP_IPv4Enabled"]);
+    var commonIntfList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+
+    if( INCLUDE_ADSLWAN || INCLUDE_VDSLWAN )
+    {
+    var dslIntfCfgList = INCLUDE_VDSLWAN ? $.act(ACT_GL, WAN_DSL_INTF_CFG, null, null, ["LinkEncapsulationUsed"]) : {};
+    }
+    var connStack = "";
+    var found = false;
+
+    /*
+    if (INCLUDE_IPV6)
+        var l3ForwardIpv6 = $.act(ACT_GET, L3_IP6_FORWARDING, null, null, ["__ifAliasName"]);
+    */
+
+    if (INCLUDE_PPTP)
+        var pptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["Enable", "Name"]);
+    if (INCLUDE_L2TP)
+        var l2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["Enable", "Name"]);
+
+    if (INCLUDE_WAN_MODE)
+        var sysMode = $.act(ACT_GET, SYS_MODE, null, null, ["Mode"]);
+
+    if (INCLUDE_USB_3G_DONGLE)
+        var usb3gLinkCfgList = $.act(ACT_GL, WAN_USB_3G_LINK_CFG, null, null, ["Enable", "CardName"]);
+
+    bStart = false;
+    step = 0;
+    if ($.exe())
+        return false;
+
+    $.each(ipList, function() {
+        if (this.enable == 1 && this.X_TP_IPv4Enabled == 1 && (this.name == l3Forward.__ifAliasName)) {
+            wanConnStack = this.__stack;
+            intfCfgStack = $.stkPop(wanConnStack, 2);
+            wanType = "ip";
+            found = true;
+            return false;
+        } else if (this.enable == 1 && this.X_TP_IPv4Enabled == 1) {
+            wanType = "ip";
+            found = true;
+            wanConnStack = this.__stack;
+            intfCfgStack = $.stkPop(wanConnStack, 2);
+        }
+    });
+    $.each(pppList, function() {
+        if (this.enable == 1 && this.X_TP_IPv4Enabled == 1 && (this.name == l3Forward.__ifAliasName)) {
+            wanConnStack = this.__stack;
+            intfCfgStack = $.stkPop(wanConnStack, 2);
+            wanType = "ppp";
+            found = true;
+            return false;
+        }
+    });
+    if (INCLUDE_PPTP) {
+        $.each(pptpList, function() {
+            if (this.enable && this.name == l3Forward.__ifAliasName) {
+                wanConnStack = this.__stack;
+                intfCfgStack = $.stkPop(wanConnStack, 1);
+                wanType = "pptp";
+                found = true;
+                return false;
+            }
+        });
+    }
+    if (INCLUDE_L2TP) {
+        $.each(l2tpList, function() {
+            if (this.enable && this.name == l3Forward.__ifAliasName) {
+                wanConnStack = this.__stack;
+                intfCfgStack = $.stkPop(wanConnStack, 1);
+                wanType = "l2tp";
+                found = true;
+                return false;
+            }
+        });
+    }
+
+    if (found == false) {
+        if (INCLUDE_WAN_MODE) {
+            if (sysMode.mode == "DSL")
+                wanAccessType = "DSL";
+            else if (sysMode.mode == "ETH")
+                wanAccessType = "Ethernet";
+            else if (INCLUDE_USB_3G_DONGLE && sysMode.mode == "USB_3G")
+                wanAccessType = "USB_3G";
+        }
+
+        $.each(commonIntfList, function() {
+            if (this.WANAccessType == wanAccessType) {
+                intfCfgStack = this.__stack;
+                return false;
+            }
+        });
+    } else {
+        $.each(commonIntfList, function() {
+            if (this.__stack == intfCfgStack) {
+                wanAccessType = this.WANAccessType;
+                intfCfgStack = this.__stack;
+                return false;
+            }
+        });
+    }
+    
+    if (wanAccessType == "DSL") {
+        if (INCLUDE_VDSLWAN) {
+            $.each(dslIntfCfgList, function() {
+                if (this.__stack == intfCfgStack) {
+                    if (this.linkEncapsulationUsed == "G.992.3_Annex_K_ATM")
+                        currDslType = "adsl";
+                    else if (this.linkEncapsulationUsed == "G.993.2_Annex_K_PTM")
+                        currDslType = "vdsl";
+                }
+            });
+        }
+    } else if (wanAccessType == "Ethernet") {
+        if (wanType == "pptp" || wanType == "l2tp")
+            intfCfgStack = wanConnStack;
+        else
+            intfCfgStack = $.stkPop(wanConnStack, 1);
+    } else if (INCLUDE_USB_3G_DONGLE && wanAccessType == "USB_3G") {
+        $.each(usb3gLinkCfgList, function() {
+            if (this.enable == 1 && $.stkPop(this.__stack, 1) == intfCfgStack) {
+                usb3gLinkCfg = this;
+                return false;
+            }
+        });
+    }
+    return true;
+}
+
+function showFailInfo(infoStr) {
+	$("#failInfo").html(infoStr);
+	if (infoStr == "")
+		$("#failInfo").parent().addClass("nd");
+	else
+		$("#failInfo").parent().removeClass("nd");
+}
+
+function doInternetDiag() {
+    var dslIntfConfig = {};
+    var ethIntfConfig = {};
+    var wanConn = {};
+    var phyLinkStatus = "";
+    var diagTool = {};
+
+    if (!$.checkAsync(internetDiagId))
+        return;
+
+    switch (step) {
+        case 0:
+            var linkDiagFunc = function(err) {
+                if (err) {
+                    $.alert(err);
+                    bDiagFinished = true;
+                    return;
+                }
+                if (wanAccessType == "DSL") {
+                    if (dslIntfConfig.status == "Up") {
+                        step++;
+                        doInternetDiag();
+                    } else if (dslIntfConfig.status == "NoSignal" || dslIntfConfig.status == "Disabled") {
+                        $("#internetStatus").prop("value", m_str.disconnected);
+                        showFailInfo(s_str.dslSyncFail);
+                        $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                        $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                        $('#map_icon_internet_status').addClass("map-icon-internet-status disconn");
+                        bDiagFinished = true;
+                    } else {
+                        $("#internetStatus").prop("value", m_str.connecting);
+                        showFailInfo("");
+                        setTimeout(doInternetDiag, 1000);
+                    }
+                } else if (wanAccessType == "Ethernet") {
+                    if (ethIntfConfig.ethernetLinkStatus == "Up") {
+                        step++;
+                        doInternetDiag();
+                    } else if (ethIntfConfig.ethernetLinkStatus == "Unavailable" || ethIntfConfig.ethernetLinkStatus == "Down") {
+                        $("#internetStatus").prop("value", m_str.disconnected);
+                        showFailInfo(s_str.ethNoLink);
+                        $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                        $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                        $('#map_icon_internet_status').addClass("map-icon-internet-status disconn");
+                        bDiagFinished = true;
+                    } else {
+                        $("#internetStatus").prop("value", m_str.connecting);
+                        showFailInfo("");
+                        setTimeout(doInternetDiag, 1000);
+                    }
+                } else if (INCLUDE_USB_3G_DONGLE && wanAccessType == "USB_3G") {
+                    if (usb3gLinkCfg.cardName == "Unplugged" || usb3gLinkCfg.cardName == "Unknown") {
+                        $("#internetStatus").prop("value", m_str.disconnected);
+                        showFailInfo(s_str.usb3gUnplugged);
+                        $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                        $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                        $('#map_icon_internet_status').addClass("map-icon-internet-status disconn");
+                        bDiagFinished = true;
+                    } else if (usb3gLinkCfg.cardName == "Identifying...") {
+                        $("#internetStatus").prop("value", m_str.connecting);
+                        showFailInfo("");
+                        setTimeout(doInternetDiag, 1000);
+                    } else {
+                        step++;
+                        doInternetDiag();
+                    }
+                }
+            };
+            $('#map_icon_internet_status').removeClass("map-icon-internet-status");
+            $('#map_icon_internet_status').removeClass("disconn");
+            $('#map_icon_internet_status').removeClass("bridge");
+            $('#map_icon_internet_status').removeClass("usb3gConn");
+            $('#map_icon_internet_status').removeClass("map-internet-connect");
+
+            $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+            $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+            if ($('#map_icon_internet').hasClass('map-icon-internet-conn'))
+                $('#map_icon_internet').addClass('map-icon-internet-connecting-sel');
+            else
+                $('#map_icon_internet').addClass('map-icon-internet-connecting');
+
+            if (wanAccessType == "DSL") {
+                dslIntfConfig = $.act(ACT_GET, WAN_DSL_INTF_CFG, intfCfgStack, null, ["Status"]);
+                $.exe(linkDiagFunc);
+            } else if (wanAccessType == "Ethernet") {
+                ethIntfConfig = $.act(ACT_GET, WAN_ETH_LINK_CFG, intfCfgStack, null, ["EthernetLinkStatus"]);
+                $.exe(linkDiagFunc);
+            } else if (INCLUDE_USB_3G_DONGLE && wanAccessType == "USB_3G") {
+                usb3gLinkCfg = $.act(ACT_GET, WAN_USB_3G_LINK_CFG, usb3gLinkCfg.__stack, null, ["CardName"]);
+                $.exe(linkDiagFunc);
+            }
+
+            break;
+        case 1:
+            if (wanType == "ppp")
+                wanConn = $.act(ACT_GET, WAN_PPP_CONN, wanConnStack, null, ["LastConnectionError", "ConnectionStatus"]);
+            else if (wanType == "ip")
+                wanConn = $.act(ACT_GET, WAN_IP_CONN, wanConnStack, null, ["ConnectionStatus", "ConnectionType", "X_TP_TransportType"]);
+            else if (INCLUDE_PPTP && wanType == "pptp")
+                wanConn = $.act(ACT_GET, WAN_PPTP_CONN, wanConnStack, null, ["ConnectionStatus"]);
+            else if (INCLUDE_PPTP && wanType == "l2tp")
+                wanConn = $.act(ACT_GET, WAN_L2TP_CONN, wanConnStack, null, ["ConnectionStatus"]);
+            else {
+                $("#internetStatus").prop("value", m_str.disconnected);
+                $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                $('#map_icon_internet_status').addClass("map-icon-internet-status disconn");
+                showFailInfo(s_str.noAvaiIntf);
+                bDiagFinished = true;
+                return;
+            }
+            $.exe(function(err) {
+                if (err) {
+                    $.alert(err);
+                    bDiagFinished = true;
+                    return;
+                }
+                if (wanType == "ip" && wanConn.connectionType == "IP_Bridged") {
+                    $("#internetStatus").prop("value", s_str.bridge);
+                    $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                    $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                    $('#map_icon_internet_status').addClass("map-icon-internet-status bridge");
+                    bDiagFinished = true;
+                    return;
+                }
+                if (wanConn.connectionStatus == "Connected") {
+                    step++;
+                    doInternetDiag();
+                } else if (wanConn.connectionStatus == "Connecting") {
+                    $("#internetStatus").prop("value", m_str.connecting);
+                    showFailInfo("");
+                    setTimeout(doInternetDiag, 1000);
+                } else {
+                    $("#internetStatus").prop("value", m_str.disconnected);
+                    $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                    $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                    $('#map_icon_internet_status').addClass("map-icon-internet-status disconn");
+                    if (wanType == "ppp") {
+                        if (wanConn.lastConnectionError == "ERROR_ISP_TIME_OUT") {
+                            if (wanAccessType == "DSL") {
+                                if (currDslType == "adsl")
+									showFailInfo(s_str.adslPppTimeout);
+                                else if (currDslType == "vdsl")
+									showFailInfo(s_str.vdslPppTimeout);
+                            } else if (wanAccessType == "Ethernet")
+                                showFailInfo(s_str.ethPppTimeout);
+                            else {
+                                /* for 3G */
+                            }
+                        } else if (wanConn.lastConnectionError == "ERROR_AUTHENTICATION_FAILURE") {
+                            if (wanAccessType == "DSL" || wanAccessType == "Ethernet")
+                                showFailInfo(s_str.pppAuthFail);
+                            else if (INCLUDE_USB_3G_DONGLE && wanAccessType == "USB_3G")
+                                showFailInfo(s_str.usb3gAuthFail);
+                        } else {
+                            if (wanAccessType == "DSL" || wanAccessType == "Ethernet")
+                                showFailInfo(s_str.pppOtherFail);
+                            else if (INCLUDE_USB_3G_DONGLE && wanAccessType == "USB_3G")
+                                showFailInfo(s_str.usb3gOtherFail);
+                        }
+                    } else {
+                        /* to be processed */
+                        if (INCLUDE_USB_3G_DONGLE && wanConn.X_TP_TransportType == "DHCP4G")
+                            showFailInfo(s_str.usb3gOtherFail);
+                        else {
+							if (wanAccessType == "DSL") {
+								if (currDslType == "adsl")
+									showFailInfo(s_str.adslPppTimeout);
+								else if (currDslType == "vdsl")
+									showFailInfo(s_str.vdslPppTimeout);
+                            } else if (wanAccessType == "Ethernet")
+                                showFailInfo(s_str.ethPppTimeout);
+						}             
+                    }
+                    bDiagFinished = true;
+                }
+            });
+            break;
+        case 2:
+            diagTool = $.act(ACT_GET, DIAG_TOOL, null, null, ["LastResult"]);
+            $.exe(function(err) {
+                if (err) {
+                    $.alert(err);
+                    bDiagFinished = true;
+                    return;
+                }
+                if (diagTool.lastResult == 3) {
+                    $("#internetStatus").prop("value", m_str.connecting);
+                    showFailInfo("");
+                    setTimeout(doInternetDiag, 1000);
+                } else {
+                    if (bStart == true) {
+                        if (diagTool.lastResult == 1) {
+                            $("#internetStatus").prop("value", m_str.connected);
+                            showFailInfo("");
+                            $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                            $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                            $('#map_icon_internet_status').addClass("map-icon-internet-status");
+                            if (wanAccessType == "USB_3G")
+                                $('#map_icon_internet_status').addClass("usb3gConn");
+                            else
+                                $('#map_icon_internet_status').addClass("map-internet-connect");
+                        } else {
+                            $("#internetStatus").prop("value", m_str.disconnected);
+                            showFailInfo(s_str.dnsDiagFail);
+                            $('#map_icon_internet').removeClass('map-icon-internet-connecting-sel');
+                            $('#map_icon_internet').removeClass('map-icon-internet-connecting');
+                            //$('#map_icon_internet_status').addClass("map-icon-internet-status disconn");
+                            $('#map_icon_internet_status').addClass("map-icon-internet-status dnserr");
+                        }
+                        step++;
+                        bDiagFinished = true;
+                    } else {
+                        $("#internetStatus").prop("value", m_str.detecting);
+                        showFailInfo("");
+                        bStart = true;
+                        $.act(ACT_OP, ACT_OP_DIAG_DNSDIAG, diagTool.__stack);
+                        $.exe(function(err) {
+                            if (err) {
+                                $.alert(err);
+                                bDiagFinished = true;
+                                return;
+                            }
+                            setTimeout(doInternetDiag, 1000);
+                        });
+                    }
+                }
+            });
+            break;
+    }
+}
+</script>
+<div class="map_wrap">
+    <div id="map_internet" class="map-internet map-internet-connect">
+        <div id="map_icon_internet" class="map-icon-internet">
+            <span id="map_icon_internet_status" class="map-icon-internet-status"></span>
+        </div>
+        <p class="T_internet">Internet</p>
+    </div>
+
+    <div id="map_router" class="map-router">
+        <div id="map_icon_router" class="map-icon-router"></div>
+        <p class="T_c_router">Router</p>
+        <div id="map_router_tip" class="map-router-tip">
+            <div id="map_router_24g" class="map-router-wrap">
+                <div id="map_router_24g_img" class="map-router-24g-img"></div>
+                <p id="map_router_24g_text">2.4G</p>
+                <div class="map-router-bar"></div>
+            </div>
+            <div id="map_router_5g" class="map-router-wrap">
+                <div id="map_router_5g_img" class="map-router-24g-img"></div>
+                <p id="map_router_5g_text">5G-1</p>
+                 <div class="map-router-bar"></div>
+            </div>
+            <div id="map_router_5g_2" class="map-router-wrap">
+                <div id="map_router_5g_img_2" class="map-router-24g-img"></div>
+                <p id="map_router_5g_text_2">5G-2</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-line-horizontal"></div>
+    <div class="map-line-vertical"></div>
+    <div class="map-line-branch-left"></div>
+    <div class="map-line-branch-right"></div>
+
+    <div class="map-wrap-left">
+        <div id="map_wireless" class="map-wireless">
+            <div id="map_icon_wireless" class="map-icon-wireless">
+                <span id="map_num_wireless" class="map-icon-num"></span>
+            </div>
+            <p class="T_c_wlclient">Wireless Clients</p>
+        </div>
+
+        <div id="map_wire" class="map-wire">
+            <div id="map_icon_wire" class="map-icon-wire">
+                <span id="map_num_wire" class="map-icon-num"></span>
+            </div>
+            <p class="T_c_wireclient">Wired Clients</p>
+        </div>
+    </div>
+
+    <div class="map-wrap-middle">
+    </div>
+
+    <div class="map-wrap-right">
+        <div id="map_printer" class="map-printer">
+            <div id="map_icon_printer" class="map-icon-printer">
+                <span id="map_num_printer" class="map-icon-num"></span>
+            </div>
+            <p class="T_c_printer">Printer</p>
+        </div>
+
+        <div id="map_usb" class="map-usb">
+            <!-- <div id="map-icon-usb" class="map-icon-usb-conn"></div> -->
+            <div id="map_icon_usb" class="map-icon-usb">
+                <span id="map_num_usb" class="map-icon-num"></span>
+            </div>
+            <p class="T_c_usbdisk">USB Disk</p>
+        </div>
+    </div>
+
+</div>
+
+<div id="internet_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-internet"></span>
+        <span class="T_internet">Internet</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <div id="map_grid_internet">
+            <form class="pure-form pure-form-aligned">
+				<div class="pure-control-group">
+                    <b class="T" id="t_netstatus">Internet Status:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="internetStatus" />
+                </div>
+				<div class="pure-control-group nd">
+                    <span id="failInfo"></span>
+				</div>
+                <div class="pure-control-group">
+                    <b class="T_c_conntype">Connection Type:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="internetConnType" />
+                </div>
+                <div class="pure-control-group">
+                    <b class="T_c_netaddr">Internet IP Address:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="internetIp" />
+                </div>
+                <div class="pure-control-group">
+                    <b class="T_c_dns">DNS:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="internetDns" />
+                </div>
+                <div class="pure-control-group">
+                    <b class="T_c_gateway">Gateway:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="internetGateway" />
+                </div>
+                <div class="pure-control-group nd">
+                    <b class="T_c_secconn">Secondary Connection:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="SecConn" />
+                </div>
+                <div class="pure-control-group nd">
+                    <b class="T_c_ipaddr">IP Address:</b>
+                    <input type="text" readonly="ture" class="tp-input-text xxxxl" id="SecIp" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="router_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-router"></span>
+        <span class="T_c_router">Router</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <div class="pure-g">
+            <div class="pure-u-1-2">
+                <div class="content">
+                    <h5 id="routerWirelessTitle_2g" class="map-form-title T_wl2g">Wireless 2.4GHz</h5>
+                    <form class="pure-form pure-form-aligned">
+                        <!-- <div class="pure-control-group">
+                            <b class="s T_c_status">Status:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessStatus_2g" />
+                        </div> -->
+                        <div class="pure-control-group">
+                            <b class="s T_c_ssid">SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessSsid_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_channel">Channel:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessChannel_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_mac">MAC:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessMac_2g" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+             <div class="pure-u-1-2" id="guest2gGroup">
+                <div class="content">
+                    <h5 id="routerWirelessGuestTitle_2g" class="map-form-title T_c_guest2g">Guest Network 2.4GHz</h5>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_status">Status:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessGuestStatus_2g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_ssid">SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessGuestSsid_2g" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="pure-g" id="guestGroup">
+            <div class="pure-u-1-2" id="5gGroup">
+                <div class="content">
+                    <h5 id="routerWirelessTitle_5g" class="map-form-title T_wl5g_1">Wireless 5GHz-1</h5>
+                    <form class="pure-form pure-form-aligned">
+                       <!--  <div class="pure-control-group">
+                            <b class="s T_c_status">Status:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessStatus_5g" />
+                        </div> -->
+                        <div class="pure-control-group">
+                            <b class="s T_c_ssid">SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessSsid_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_channel">Channel:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessChannel_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_mac">MAC:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessMac_5g" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+           
+            <div class="pure-u-1-2">
+                <div class="content">
+                    <h5 id="routerWirelessGuestTitle_5g" class="map-form-title T_c_guest5g_1">Guest Network 5GHz-1</h5>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_status">Status:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessGuestStatus_5g" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_ssid">SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessGuestSsid_5g" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /*  */ -->
+        <div class="pure-g" id="guestGroup_2">
+            <div class="pure-u-1-2" id="5gGroup_2">
+                <div class="content">
+                    <h5 id="routerWirelessTitle_5g_2" class="map-form-title T_wl5g_2">Wireless 5GHz-2</h5>
+                    <form class="pure-form pure-form-aligned">
+                        <!-- <div class="pure-control-group">
+                            <b class="s T_c_status">Status:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessStatus_5g_2" />
+                        </div> -->
+                        <div class="pure-control-group">
+                            <b class="s T_c_ssid">SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessSsid_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_channel">Channel:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessChannel_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_mac">MAC:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessMac_5g_2" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+           
+            <div class="pure-u-1-2">
+                <div class="content">
+                    <h5 id="routerWirelessGuestTitle_5g_2" class="map-form-title T_c_guest5g_2">Guest Network 5GHz-2</h5>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_status">Status:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="routerWirelessGuestStatus_5g_2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_ssid">SSID:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="routerWirelessGuestSsid_5g_2" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="wireless_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-wireless"></span>
+        <span class="T_c_wlclient">Wireless Clients</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <div id="map_grid_wireless">
+            <form class="pure-form pure-form-aligned">
+                <table id="tableWlStat">
+                    <thead></thead>
+                    <tbody id="bodyWlStat">
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="wire_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-wire"></span>
+        <span class="T_c_wireclient">Wire Clients</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <div id="map_grid_wire">
+            <form class="pure-form pure-form-aligned">
+                <table id="tableWireStat">
+                    <thead></thead>
+                    <tbody id="bodyWireStat">
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="phone_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-phone"></span>
+        <span class="T_c_phone">Phone</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <p class="cfg-line">
+            <span id="t_telestatus">Telephone Status:</span>
+            <span id="teleStatus"></span>
+        </p>
+        <div id="map_grid_phone">
+            <form class="pure-form pure-form-aligned">
+                <table id="tablePhoneStat">
+                    <thead></thead>
+                    <tbody id="bodyPhoneStat">
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--<div id="dect_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-dect"></span>
+        <span class="T_c_dect">DECT</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <div id="map_grid_wire">
+            <form class="pure-form pure-form-aligned">
+                <table id="tableWireStat">
+                    <thead></thead>
+                    <tbody id="bodyWireStat">
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>-->
+
+<div id="printer_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-printer"></span>
+        <span class="T_c_printer">Printer</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <form class="pure-form pure-form-aligned">
+            <div class="pure-control-group nd" id="noPrinter">
+                <input type="text" readonly="ture" class="tp-input-text xxxxl" id="t_noprint" />
+            </div>
+            <div class="pure-control-group" id="hasPrinter">
+                <b class="s T_c_name">Name:</b>
+                <input type="text" readonly="ture" class="tp-input-text xxxxl" id="printName" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="usb_panel" class="map-panel nd">
+    <h4 class="map-panel-title">
+        <span class="map-panel-icon-usb"></span>
+        <span class="T_c_usbdisk">USB Disk</span>
+    </h4>
+    <div class="map-panel-cnt">
+        <div id="noUsb" class="nd">
+            <form class="pure-form pure-form-aligned">
+                <div class="pure-control-group">
+                    <input type="text" readonly="ture" class="tp-input-text" id="t_nousb" />
+                </div>
+            </form>
+        </div>
+        <div class="pure-g">
+            <div class="pure-u-1-2" id="usb1">
+                <div class="content">
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_brand">Brand:</b> 
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="usbBrand1" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_total">Total:</b> 
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbTotal1" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_avil">Avaliable:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbAvaliable1" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="pure-u-1-2 nv" id="usb2">
+                <div class="content">
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_brand">Brand:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="usbBrand2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_total">Total:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbTotal2" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_avil">Avaliable:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbAvaliable2" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="pure-g">
+            <div class="pure-u-1-2 nv" id="usb3">
+                <div class="content">
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_brand">Brand:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="usbBrand3" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_total">Total:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbTotal3" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_avil">Avaliable:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbAvaliable3" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="pure-u-1-2 nv" id="usb4">
+                <div class="content">
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <b class="s T_c_brand">Brand:</b>
+                            <input type="text" readonly="ture" class="tp-input-text xl" id="usbBrand4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_total">Total:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbTotal4" />
+                        </div>
+                        <div class="pure-control-group">
+                            <b class="s T_c_avil">Avaliable:</b>
+                            <input type="text" readonly="ture" class="tp-input-text" id="usbAvaliable4" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(e) {
+    function clearStatus() {
+        $('div#map_icon_internet').removeClass('map-icon-internet-conn');
+        $('div#map_icon_router').removeClass('map-icon-router-conn');
+        $('div#map_icon_wireless').removeClass('map-icon-wireless-conn');
+        $('div#map_icon_wire').removeClass('map-icon-wire-conn');
+        $('div#map_icon_phone').removeClass('map-icon-phone-conn');
+        $('div#map_icon_dect').removeClass('map-icon-dect-conn');
+        $('div#map_icon_printer').removeClass('map-icon-printer-conn');
+        $('div#map_icon_usb').removeClass('map-icon-usb-conn');
+
+        $('div#internet_panel').hide();
+        $('div#router_panel').hide();
+        $('div#wireless_panel').hide();
+        $('div#wire_panel').hide();
+        $('div#phone_panel').hide();
+        $('div#dect_panel').hide();
+        $('div#printer_panel').hide();
+        $('div#usb_panel').hide();
+    }
+
+
+    /* widget operation */
+    $('div#map_internet').click(function() {
+        clearStatus();
+        $('div#map_icon_internet').addClass('map-icon-internet-conn');
+        $('div.panel').hide();
+        $('div#internet_panel').fadeIn(150, function() {
+            internetDiagInit();
+            internetInit();
+            if (bDiagFinished == true) {
+                bDiagFinished = false;
+                doInternetDiag();
+            }
+        });
+    });
+
+    $('div#map_router').click(function() {
+        clearStatus();
+        $('div#map_icon_router').addClass('map-icon-router-conn');
+        $('div.panel').hide();
+        $('div#router_panel').fadeIn(150, function() {
+            wirelessInit();
+        });
+    });
+
+    $('div#map_wireless').click(function() {
+        clearStatus();
+        $('div#map_icon_wireless').addClass('map-icon-wireless-conn');
+        $('div.panel').hide();
+        $('div#wireless_panel').fadeIn(150, function() {
+            wirelessClientInit();
+        });
+    });
+
+    $('div#map_wire').click(function() {
+        clearStatus();
+        $('div#map_icon_wire').addClass('map-icon-wire-conn');
+        $('div.panel').hide();
+        $('div#wire_panel').fadeIn(150, function() {
+            wireClientInit();
+        });
+    });
+
+    $('div#map_dect').click(function() {
+        clearStatus();
+        $('div#map_icon_dect').addClass('map-icon-dect-conn');
+        $('div.panel').hide();
+        $('div#dect_panel').fadeIn(150, function() {
+            //dectInit();
+        });
+    });
+
+    $('div#map_printer').click(function() {
+        clearStatus();
+        $('div#map_icon_printer').addClass('map-icon-printer-conn');
+        $('div.panel').hide();
+        $('div#printer_panel').fadeIn(150, function() {
+            printInit();
+        });
+    });
+
+    $('div#map_usb').click(function() {
+        clearStatus();
+        $('div#map_icon_usb').addClass('map-icon-usb-conn');
+        $('div.panel').hide();
+        $('div#usb_panel').fadeIn(150, function() {
+            usbInit();
+        });
+    });
+
+    var headArray = [{
+        "text": table_str.id,
+        "width": "5%"
+    }, {
+        "text": table_str.name,
+        "width": "35%"
+    }, {
+        "text": table_str.ip,
+        "width": "30%"
+    }, {
+        "text": table_str.mac,
+        "width": "30%"
+    }];
+
+    var phoneArray = [{
+        "text": table_str.phonename,
+        "width": "20%"
+    }, {
+        "text": table_str.innum,
+        "width": "30%"
+    }, {
+        "text": table_str.internum,
+        "width": "20%"
+    }, {
+        "text": table_str.outnum,
+        "width": "30%"
+    }];
+
+    $.initTableHead($("#tableWlStat"), headArray);
+    $.initTableHead($("#tableWireStat"), headArray);
+    $.initTableHead($("#tablePhoneStat"), phoneArray);
+    wirelessInit();
+    wirelessClientInit();
+    wireClientInit();
+    internetDiagInit();
+    doInternetDiag();
+    if (INCLUDE_VOIP) {
+        phoneInit();
+    } else {
+        $('.map-wrap-middle').hide();
+        $('.map-wrap-left').css({
+            width: "330px"
+        });
+        $('.map-wrap-right').css({
+            width: "330px",
+            left: '365px'
+        });
+        $('.map-wireless').css({
+            left: '30px'
+        });
+        $('.map-wire').css({
+            left: '180px'
+        });
+        $('.map-printer').css({
+            left: '30px'
+        });
+        $('.map-usb').css({
+            left: '180px'
+        });
+        $('.map-line-branch-right').hide();
+        $('.map-line-branch-left').css({
+            width: "370px",
+            left: "160px"
+        });
+
+    }
+    if (INCLUDE_USB_OVER_IP) {
+        printInit();
+    } else {
+        $('.map-printer').hide();
+        $('.map-usb').css({
+            left: '5px'
+        });
+        $('.map-wrap-left').css({
+            width: "330px",
+            left: "50px"
+        });
+        $('.map-wrap-right').css({
+            width: "132px",
+            left: '504px'
+        });
+    }
+    if (INCLUDE_USB_STORAGE) {
+        usbInit();
+    } else {
+        $('.map-wrap-right').hide();
+        $('.map-line-branch-right').hide();
+        if (INCLUDE_VOIP) {
+            $('.map-line-branch-left').css({
+                width: "370px",
+                left: "160px"
+            });
+            $('.map-wrap-middle').css({
+                left: "465px"
+            });
+            $('.map-wrap-left').css({
+                width: "330px"
+            });
+            $('.map-wireless').css({
+                left: '30px'
+            });
+            $('.map-wire').css({
+                left: '180px'
+            });
+        } else {
+            $('.map-line-branch-left').hide();
+            $('.map-line-vertical').css({
+                height: "46px"
+            });
+            $('.map-wrap-left').css({
+                width: "505px",
+                left: "90px"
+            });
+            $('.map-wireless').css({
+                left: '30px'
+            });
+            $('.map-wire').css({
+                left: '330px'
+            });
+        }
+    }
+
+    $('div#map_internet').click();
+});
+</script>

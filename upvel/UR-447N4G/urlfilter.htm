@@ -1,0 +1,172 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<SCRIPT language=Javascript src="urlfilter.htm"></SCRIPT>
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Фильтрация по URL</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"> </script>
+<script>
+function addClick()
+{
+  if (!document.formFilterAdd.enabled.checked)
+  	return true;
+  var str = document.formFilterAdd.url.value;
+  	if(document.formFilterAdd.urlFilterWhite.checked == true)
+		document.formFilterAdd.urlFilterMode.value = 1;
+	else
+		document.formFilterAdd.urlFilterMode.value = 0;
+	for (var i=0; i<str.length; i++) {
+     		if (str.charAt(i) == ';')
+     		{
+     			alert(urlfilter_apply_error);
+			return false;
+     		}
+	}
+			
+  if (document.formFilterAdd.url.value=="")
+	return true;
+
+  return true;
+}
+
+function deleteClick()
+{
+  if ( !confirm(firewall_delete_selectconfm) ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+function deleteAllClick()
+{
+   if ( !confirm(firewall_delete_allconfm) ) {
+	return false;
+  }
+  else
+	return true;
+}
+
+function disableDelButton()
+{
+	disableButton(document.formFilterDel.deleteSelFilterUrl);
+	disableButton(document.formFilterDel.deleteAllFilterUrl);
+}
+
+function urlFilterModeBlack()
+{
+  document.formFilterAdd.urlFilterMode.value=0;
+  document.formFilterAdd.urlFilterWhite.checked = false;
+  document.formFilterAdd.urlFilterBlack.checked = true;
+}
+
+function urlFilterModeWhite()
+{
+  document.formFilterAdd.urlFilterMode.value=1;
+  document.formFilterAdd.urlFilterWhite.checked = true;
+  document.formFilterAdd.urlFilterBlack.checked = false;
+}
+
+function updateState()
+{
+  if (document.formFilterAdd.enabled.checked){
+ 	enableTextField(document.formFilterAdd.url);  
+	enableTextField(document.formFilterAdd.urlFilterWhite); 
+	enableTextField(document.formFilterAdd.urlFilterBlack); 
+  }
+  else{
+ 	disableTextField(document.formFilterAdd.url); 
+	disableTextField(document.formFilterAdd.urlFilterWhite); 
+	disableTextField(document.formFilterAdd.urlFilterBlack); 
+  }
+}
+
+function Load_Setting()
+{
+	if ( 0 )
+		document.formFilterAdd.enabled.checked = true;
+	if ( 0 )
+		document.formFilterAdd.urlFilterWhite.checked = true;
+	else
+		document.formFilterAdd.urlFilterBlack.checked = true;
+	updateState();
+}
+</script>
+</head>
+
+<body onload="Load_Setting();">
+<blockquote>
+<h2><script>dw(urlfilter_header)</script></h2>
+
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<tr><td>
+<script>dw(urlfilter_header_explain)</script>
+</td></tr>
+</table>
+<br>
+
+<form action="http://upvel.ru/emulators/UR-447N4G/%22http://192.168.10.1/%22http://192.168.10.1/boafrm/formFilter%22%22" method=POST name="formFilterAdd">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td class="item_td">
+   	<input type="checkbox" name="enabled" value="ON" ONCLICK=updateState()>&nbsp;<script>dw(urlfilter_enable)</script>
+  </td></tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+  <tr><td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(urlfilter_urladdr)</script>:</td>
+    <td width ="70%" class="item_td"><input type="text" name="url" size="30" maxlength="30"></td>
+  </tr>
+</table>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<input type="hidden" name="urlFilterMode">
+<tr style="display:none">
+    <td width="100%" colspan="2"><font size=2>
+		<input type="radio" value="blackList" name="urlFilterBlack" onClick="urlFilterModeBlack()">deny url address(black list)      
+	</td>
+</tr>
+<tr style="display:none">
+    <td width="100%" colspan="2"><font size=2>
+        <input type="radio" value="whiteList" name="urlFilterWhite" onClick="urlFilterModeWhite()">allow url address(white list)      
+	</td>
+</tr>
+<tr>
+     <input type="submit"  name="addFilterUrl" onClick="return addClick()">&nbsp;&nbsp;
+	 <script>document.formFilterAdd.addFilterUrl.value=firewall_apply;</script>
+     <!--<input type="reset" value="Reset" name="reset">-->
+     <input type="hidden" value="/urlfilter.htm" name="submit-url">     
+	</tr>
+</table>
+  <script> updateState(); </script>
+</form>
+<br>
+<form action="http://upvel.ru/emulators/UR-447N4G/%22javascript:if(confirm(%27http://192.168.10.1/boafrm/formFilter?deleteSelFilterUrl=/urlfilter.htm&amp;deleteAllFilterUrl=&amp;submit-url="  \n\nThis file was not retrieved by Teleport Pro, because it was unavailable, or its retrieval was aborted, or the project was stopped too soon.  \n\nDo you want to open it from the server?%27))window.location=%27http://192.168.10.1/boafrm/formFilter?deleteSelFilterUrl=/urlfilter.htm&deleteAllFilterUrl=&submit-url=%27%22 tppabs="http://192.168.10.1/boafrm/formFilter?deleteSelFilterUrl=/urlfilter.htm&deleteAllFilterUrl=&submit-url=" method=POST name="formFilterDel">
+  <table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+	 
+  </table>
+  <table border=1 width=550 cellpadding=0 cellspacing=0 class="form">  
+	  <tr><td class="title" colspan="2"><b><script>dw(firewall_filtertbl)</script></b></td></tr>
+  		<tr><td align=center width="70%" class="head"><font size="2"><b><script>dw(urlfilter_urladdr)</script></b></font></td>
+<td align=center width="30%" class="head"><font size="2"><b><script>dw(firewall_tbl_select)</script></b></font></td></tr>
+
+  </table>
+  <br>
+  <input type="submit"  name="deleteSelFilterUrl" onClick="return deleteClick()">&nbsp;&nbsp;
+  <script>document.formFilterDel.deleteSelFilterUrl.value=firewall_delete_select;</script>
+  <input type="submit"  name="deleteAllFilterUrl" onClick="return deleteAllClick()">&nbsp;&nbsp;&nbsp;
+  <script>document.formFilterDel.deleteAllFilterUrl.value=firewall_delete_all;</script>
+  <!--<input type="reset" value="Reset" name="reset">-->
+  <input type="hidden" value="/urlfilter.htm" name="submit-url">
+ <script>
+	if ( 0 == 0 )
+		disableDelButton();
+ </script>
+</form>
+
+</blockquote>
+</body>
+</html>

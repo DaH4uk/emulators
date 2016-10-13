@@ -1,0 +1,580 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0037)http://192.168.1.1/Wireless_Basic.asp -->
+<!--
+*********************************************************
+*   Copyright 2003, CyberTAN  Inc.  All Rights Reserved *
+*********************************************************
+
+This is UNPUBLISHED PROPRIETARY SOURCE CODE of CyberTAN Inc.
+the contents of this file may not be disclosed to third parties,
+copied or duplicated in any form without the prior written
+permission of CyberTAN Inc.
+
+This software should be used as a reference only, and it not
+intended for production use!
+
+
+THIS SOFTWARE IS OFFERED "AS IS", AND CYBERTAN GRANTS NO WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE.  CYBERTAN
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE
+--><HTML><HEAD><TITLE>Basic Wireless Settings</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=expires content=0>
+<META http-equiv=cache-control content=no-cache>
+<META http-equiv=pragma content=no-cache><LINK href="Wireless_files/style.css" 
+type=text/css rel=stylesheet>
+<STYLE fprolloverstyle>A:hover {
+	COLOR: #00ffff
+}
+.small A:hover {
+	COLOR: #00ffff
+}
+</STYLE>
+
+<SCRIPT src="Wireless_files/common.js"></SCRIPT>
+
+<SCRIPT language=Javascript src="Wireless_files/capsec.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/share.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/help.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/capapp.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/capasg.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/capwrt54g.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/layout.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=javascript src="Wireless_files/ses.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript>
+var EN_DIS = '1';
+var init_gmode;
+function SelWL(num,F)
+{
+	if (num == 0)
+		I = '0';
+	else
+		I = '1';
+	wl_enable_disable(F,I);
+}
+
+function wl_enable_disable(F,I)
+{
+        EN_DIS = I;
+        if( I == "0"){
+                choose_disable(F.wl_ssid);
+                choose_disable(F.wl_channel);
+                choose_disable(F.wl_closed[0]);
+                choose_disable(F.wl_closed[1]);
+                choose_disable(F.B1);
+                choose_disable(F.B2);
+        }
+        else{
+                choose_enable(F.wl_ssid);
+                choose_enable(F.wl_channel);
+                choose_enable(F.wl_closed[0]);
+                choose_enable(F.wl_closed[1]);
+                choose_enable(F.B1);
+                choose_enable(F.B2);
+        }
+}
+function ses_enable_disable(F,I)
+{
+        EN_DIS = I;
+        if( I == "0"){
+                choose_disable(F.B1);
+                choose_disable(F.B2);
+        }
+        else{
+                choose_enable(F.B1);
+                choose_enable(F.B2);
+        }
+}
+
+function to_submit(F)
+{
+	var gmode = 1;
+	var security_mode = "disabled";
+
+	if(F.wl_ssid.value == ""){
+//                alert("You must input a SSID!");
+                alert(errmsg2.err2);
+                F.wl_ssid.focus();
+                return false;
+        }
+
+	//if(F.wl_gmode.value == 6){
+	//	if(security_mode != "wep" && security_mode != "disabled"){
+	//		if(confirm("The SpeedBooster mode can only allow WEP. Click the OK button to change your security mode.")){
+	//			window.location.replace('WL_WPATable.asp');
+	//			return false;
+	//		}
+	//		else{
+	//			F.wl_gmode[init_gmode].selected = true;
+	//			return false;
+	//		}
+	//	}
+	//}
+
+	F.submit_button.value = "Wireless_Basic";
+	F.action.value = "Apply";
+	F.submit();
+}
+
+var ses = 'DEFAULTS';
+                                                                                                   
+function ses_status()
+{
+        return ses;
+}
+                                                                                                   
+function Reset_SES(F)
+{
+        F.submit_button.value = "Wireless_Basic";
+        F.submit_type.value = "Reset_SES";
+        F.change_action.value = "gozila_cgi";
+        F.submit();
+}
+                                                                                                   
+function Set_SES_Short_Push(F)
+{
+        var wl_net_mode = 'mixed';
+	var ses_enable = '1';
+
+	if(wl_net_mode == "disabled" || ses_enable == "0")
+		return ;
+                                                                                                   
+        if (confirm(SW_SES_BTN.MSG2)) {
+                F.submit_button.value = "Wireless_Basic";
+                F.submit_type.value = "Set_SES_Short_Push";
+                F.change_action.value = "gozila_cgi";
+                F.next_page.value = "SES_Status.asp";
+                F.submit();
+        }
+}
+
+function Set_SES_Long_Push(F)
+{
+        if (confirm(SW_SES_BTN.MSG3)) {
+                F.submit_button.value = "Wireless_Basic";
+                F.submit_type.value = "Set_SES_Long_Push";
+                F.change_action.value = "gozila_cgi";
+                F.next_page.value = "Wireless_Basic.asp";
+                F.submit();
+        }
+}
+
+function init()
+{
+	init_gmode = document.wireless.wl_net_mode.selectedIndex;
+
+	wl_enable_disable(document.wireless,'1');
+
+	ses_enable_disable(document.wireless,'1');
+
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2800.1522" name=GENERATOR></HEAD>
+<BODY >
+<DIV align=center>
+<FORM name=wireless onsubmit="return false;" action="http://ui.linksys.com/WRT54GL/4.30.0/apply_cgi.htm" method=post><INPUT 
+type=hidden value=Wireless_Basic name=submit_button> <INPUT type=hidden 
+value=Apply name=action> <INPUT type=hidden name=submit_type> <INPUT type=hidden 
+name=change_action> <INPUT type=hidden name=next_page> 
+<TABLE cellSpacing=0 cellPadding=0 width=809 border=0>
+  <TBODY>
+  <TR>
+    <TD width=95><IMG height=57 src="Wireless_files/UI_Linksys.gif" width=165 
+      border=0></TD>
+    <TD vAlign=bottom align=right width=714 bgColor=#6666cc><FONT 
+      style="FONT-SIZE: 7pt" color=#ffffff><FONT face=Arial>
+      <SCRIPT>Capture(share.firmwarever)</SCRIPT>
+      &nbsp;:&nbsp;v4.30.0&nbsp;&nbsp;&nbsp;</FONT></FONT></TD></TR>
+  <TR>
+    <TD width=808 bgColor=#6666cc colSpan=2><IMG height=11 
+      src="Wireless_files/UI_10.gif" width=809 border=0></TD></TR></TBODY></TABLE>
+<TABLE height=77 cellSpacing=0 cellPadding=0 width=809 bgColor=black border=0>
+  <TBODY>
+  <TR>
+    <TD 
+    style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+    borderColor=#000000 align=middle width=163 height=49>
+      <H3 style="MARGIN-TOP: 1px; MARGIN-BOTTOM: 1px"><FONT 
+      style="FONT-SIZE: 15pt" face=Arial color=#ffffff>
+      <SCRIPT>Capture(bmenu.wireless)</SCRIPT>
+      </FONT></H3></TD>
+    <TD 
+    style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+    vAlign=center borderColor=#000000 width=646 bgColor=#000000 height=49>
+      <TABLE 
+      style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; BORDER-COLLAPSE: collapse; FONT-VARIANT: normal" 
+      height=33 cellSpacing=0 cellPadding=0 bgColor=#6666cc border=0>
+        <TBODY>
+        <TR>
+          <TD style="FONT-WEIGHT: bolder; FONT-SIZE: 10pt" align=right 
+          bgColor=#6666cc height=33><FONT color=#ffffff>
+            <SCRIPT>productname()</SCRIPT>
+            &nbsp;&nbsp;</FONT></TD>
+          <TD borderColor=#000000 borderColorLight=#000000 align=middle 
+          width=109 bgColor=#000000 borderColorDark=#000000 height=12 
+            rowSpan=2><FONT color=#ffffff><SPAN 
+            style="FONT-SIZE: 8pt"><B>WRT54GL</B></SPAN></FONT></TD></TR>
+        <TR>
+          <TD 
+          style="FONT-WEIGHT: normal; FONT-SIZE: 1pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+          width=537 bgColor=#000000 height=1>&nbsp;</TD></TR>
+        <TR>
+          <TD width=646 bgColor=#000000 colSpan=2 height=32>
+            <TABLE id=AutoNumber1 
+            style="FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: black; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; BORDER-COLLAPSE: collapse; FONT-VARIANT: normal" 
+            height=6 cellSpacing=0 cellPadding=0 width=646 border=0>
+              <TBODY>
+              <TR 
+              style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; FONT-WEIGHT: normal; FONT-SIZE: 1pt; BORDER-LEFT: medium none; COLOR: black; BORDER-BOTTOM: medium none; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-VARIANT: normal" 
+              align=middle bgColor=#6666cc><!--
+                <TD width=83 height=1><IMG height=10 src="image/UI_06.gif" width=83 border=0></TD>
+                <TD width=73 height=1><IMG height=10 src="image/UI_07.gif" width=83 border=0></TD>
+                <TD width=113 height=1><IMG height=10 src="image/UI_06.gif" width=83 border=0></TD>
+                <TD width=103 height=1><IMG height=10 src="image/UI_06.gif" width=103 border=0></TD>
+                <TD width=85 height=1><IMG height=10 src="image/UI_06.gif" width=100 border=0></TD>
+                <TD width=115 height=1><IMG height=10 src="image/UI_06.gif" width=115 border=0></TD>
+                <TD width=74 height=1><IMG height=10 src="image/UI_06.gif" width=79 border=0></TD>
+-->
+                <SCRIPT>document.write("<TD width=" + ui_06.w1 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w2 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_07.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w3 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w4 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w5 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w6 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+
+                <SCRIPT>document.write("<TD width=" + ui_06.w7 + " height=8 background="http://ui.linksys.com/WRT54GL/4.30.0/image/UI_06.gif"></TD>")</SCRIPT>
+              </TR>
+              <TR>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Setup.htm">
+                  <SCRIPT>Capture(bmenu.setup)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#6666cc height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff>
+                  <SCRIPT>Capture(bmenu.wireless)</SCRIPT>
+                  </FONT></TD>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Security.htm">
+                  <SCRIPT>Capture(bmenu.security)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#000000 height=20><FONT 
+                  style="FONT-WEIGHT: 700" color=#ffffff><A 
+                  style="TEXT-DECORATION: none" 
+                  href="Access-Restric.htm">
+                  <SCRIPT>Capture(bmenu.accrestriction)</SCRIPT>
+                  </A></FONT></TD>
+                <TD align=middle bgColor=#000000 height=20>
+                  <P style="MARGIN-BOTTOM: 4px"><FONT style="FONT-WEIGHT: 700" 
+                  color=#ffffff><A style="TEXT-DECORATION: none" 
+                  href="Applications.htm">
+                  <SCRIPT>Capture(bmenu.applications)</SCRIPT>
+                  <BR>&amp;
+                  <SCRIPT>Capture(bmenu.gaming)</SCRIPT>
+                   </A>&nbsp;&nbsp;&nbsp;&nbsp;</FONT></P></TD>
+                <TD align=middle bgColor=#000000 height=20>
+                  <P style="MARGIN-BOTTOM: 4px"><FONT style="FONT-WEIGHT: 700" 
+                  color=#ffffff><A style="TEXT-DECORATION: none" 
+                  href="Admin.htm">
+                  <SCRIPT>Capture(bmenu.admin)</SCRIPT>
+                  </A>&nbsp;&nbsp;&nbsp;&nbsp;</FONT></P></TD>
+                <TD align=middle bgColor=#000000 height=20>
+                  <P style="MARGIN-BOTTOM: 4px"><FONT style="FONT-WEIGHT: 700" 
+                  color=#ffffff><A style="TEXT-DECORATION: none" 
+                  href="Status.htm">
+                  <SCRIPT>Capture(bmenu.statu)</SCRIPT>
+                  </A>&nbsp;&nbsp;&nbsp;&nbsp;</FONT></P></TD></TR>
+              <TR>
+                <TD width=643 bgColor=#6666cc colSpan=7 height=21>
+                  <TABLE borderColor=black height=21 cellSpacing=0 cellPadding=0 
+                  width=643>
+                    <TBODY>
+                    <TR align=left><!-- TD width=40></TD -->
+                      <SCRIPT>document.write("<TD width=" + wl_width.w1 + "></TD>")</SCRIPT>
+<!-- TD class=small width=210 -->
+                      <SCRIPT>document.write("<TD class=small width=" + wl_width.w2 + ">")</SCRIPT>
+                      <FONT style="COLOR: white">
+                      <SCRIPT>Capture(wlantopmenu.basicset)</SCRIPT>
+                      </FONT></TD>
+                      <TD align=middle width=1>
+                        <P class=bar><FONT color=white><B>|</B></FONT></P></TD><!-- TD width=20></TD -->
+                      <SCRIPT>document.write("<TD width=" + wl_width.w3 + "></TD>")</SCRIPT>
+<!-- TD class=small width=165 -->
+                      <SCRIPT>document.write("<TD class=small width=" + wl_width.w4 + ">")</SCRIPT>
+                      <A href="Wireless-Security.htm">&nbsp;
+                      <SCRIPT>Capture(wlantopmenu.security)</SCRIPT>
+                      </A></TD> 
+                      <TD align=middle width=1>
+                        <P class=bar><FONT color=white><B>|</B></FONT></P></TD><!-- TD width=20></TD -->
+                      <SCRIPT>document.write("<TD width=" + wl_width.w5 + "></TD>")</SCRIPT>
+<!-- TD class=small width=165 -->
+                      <SCRIPT>document.write("<TD class=small width=" + wl_width.w6 + ">")</SCRIPT>
+                      <A href="Wireless-MAC-Filter.htm">&nbsp;
+                      <SCRIPT>Capture(wlantopmenu.macfilter)</SCRIPT>
+                      </A></TD> 
+                      <TD align=middle width=1>
+                        <P class=bar><FONT color=white><B>|</B></FONT></P></TD><!-- TD width=22></TD -->
+                      <SCRIPT>document.write("<TD width=" + wl_width.w7 + "></TD>")</SCRIPT>
+<!-- TD class=small width=260 -->
+                      <SCRIPT>document.write("<TD class=small width=" + wl_width.w8 + ">")</SCRIPT>
+                      <A href="Wireless-Advanced-Settings.htm">
+                      <SCRIPT>Capture(wlantopmenu.advwireless)</SCRIPT>
+                      </A></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<TABLE height=5 cellSpacing=0 cellPadding=0 width=806 bgColor=black border=0>
+  <TBODY>
+  <TR>
+    <TD borderColor=#e7e7e7 width=164 bgColor=#e7e7e7 height=1><IMG height=15 
+      src="Wireless_files/UI_03.gif" width=164 border=0></TD>
+    <TD width=645 height=1><IMG height=15 src="Wireless_files/UI_02.gif" 
+      width=645 border=0></TD></TR></TBODY></TABLE>
+<TABLE id=AutoNumber9 style="BORDER-COLLAPSE: collapse" borderColor=#111111 
+height=23 cellSpacing=0 cellPadding=0 width=809 border=0>
+  <TBODY>
+  <TR>
+    <TD width=633>
+      <TABLE height="100%" cellSpacing=0 cellPadding=0 width=633 border=0>
+        <TBODY>
+        <TR>
+          <TD width=155 bgColor=#000000 height=25>
+            <P align=right><B><FONT style="FONT-SIZE: 9pt" face=Arial 
+            color=#ffffff>
+            <SCRIPT>Capture(wlanleftmenu.wirelessnet)</SCRIPT>
+            </FONT></B></P></TD>
+          <TD width=8 bgColor=black height=25>&nbsp;</TD>
+          <TD width=21 height=25>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;</TD>
+          <TD width=276 height=25>&nbsp;</TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" 
+        height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Wireless_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD width=21 height=25>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<FONT style="FONT-SIZE: 8pt" 
+            face=Arial>
+            <SCRIPT>Capture(wlansetup.networkmode)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD width=276 height=25>&nbsp;&nbsp;<FONT face=verdana 
+            size=2><B><SELECT 
+            onchange=SelWL(this.form.wl_net_mode.selectedIndex,this.form) 
+            name=wl_net_mode> <OPTION value=disabled>
+              <SCRIPT>Capture(share.disabled)</SCRIPT>
+              </OPTION> <OPTION value=mixed selected>
+              <SCRIPT>Capture(wlansetup.mixed)</SCRIPT>
+              </OPTION> <OPTION value=b-only>
+              <SCRIPT>Capture(wlansetup.bonly)</SCRIPT>
+              </OPTION> <OPTION value=g-only>
+              <SCRIPT>Capture(wlansetup.gonly)</SCRIPT>
+              </OPTION></SELECT></B></FONT></TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" 
+        height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Wireless_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD width=21 height=25>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<FONT style="FONT-SIZE: 8pt" 
+            face=Arial>
+            <SCRIPT>Capture(wlansetup.ssid)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD width=276 height=25>&nbsp;&nbsp;<INPUT 
+            onblur='valid_name(this,"SSID")' maxLength=32 value=linksys 
+            name=wl_ssid></FONT></TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" 
+        height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background="Wireless_files/UI_04.gif" height=25>&nbsp;</TD>
+          <TD width=21 height=25>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<FONT style="FONT-SIZE: 8pt" 
+            face=Arial>
+            <SCRIPT>Capture(wlansetup.channel)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD width=276 height=25>&nbsp;&nbsp;<SELECT 
+            onfocus=check_action(this,0) name=wl_channel> 
+              <SCRIPT language=javascript>
+	var max_channel = '11';
+	var wl_channel = '6';
+	var buf = "";
+	var ch = "";
+	//var freq = new Array("","2.412","2.417","2.422","2.427","2.432","2.437","2.442","2.447","2.452","2.457","2.462","2.467","2.472");
+	for(i=1 ; i<=max_channel ; i++){
+		if(i == wl_channel)	buf = "selected";
+		else			buf = "";
+		ch = eval("wlansetup.ch"+i);
+		document.write("<option value="+i+" "+buf+">"+i+" - "+ch+"</option>");
+	}
+</SCRIPT>
+            </SELECT></TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" 
+        height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=30>&nbsp;</TD>
+          <TD width=8 background="Wireless_files/UI_04.gif" height=30>&nbsp;</TD>
+          <TD width=21 height=30>&nbsp;</TD>
+          <TD width=156 height=30>&nbsp;<FONT style="FONT-SIZE: 8pt" 
+            face=Arial>
+            <SCRIPT>Capture(wlansetup.ssidbroadcast)</SCRIPT>
+            &nbsp;:&nbsp;</FONT></TD>
+          <TD width=276 height=40>
+            <TABLE id=AutoNumber17 
+            style="BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-COLLAPSE: collapse; BORDER-RIGHT-WIDTH: 0px" 
+            borderColor=#111111 cellSpacing=0 cellPadding=0 width=270 
+              border=1><TBODY>
+              <TR>
+                <TD 
+                style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none" 
+                width=270 height=40><SPAN>&nbsp;</SPAN><INPUT type=radio 
+                  CHECKED value=0 name=wl_closed><B>
+                  <SCRIPT>Capture(share.enable)</SCRIPT>
+                  </B>&nbsp;&nbsp;&nbsp;<INPUT type=radio value=1 
+                  name=wl_closed><B>
+                  <SCRIPT>Capture(share.disable)</SCRIPT>
+                  </B></TD></TR></TBODY></TABLE></TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" 
+        height=45>&nbsp;</TD></TR><!--
+        <TR>
+          <TD align=right width=156 bgColor=#e7e7e7 colSpan=3 
+            height=25>&nbsp;</TD>
+          <TD width=8 background=image/UI_04.gif height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25 width="21">&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<font face="Arial" style="font-size: 8pt">SSID of associating AP:</font></TD>
+          <TD width=262 height=25>&nbsp;&nbsp;<INPUT maxLength=32 value='' name="wl_ap_ssid" size="20"  onBlur=valid_name(this,"SSID")></TD>
+          <TD width=15 height=25>&nbsp;</TD>
+          <TD width=15 background=image/UI_05.gif height=25>&nbsp;</TD></TR>                                              
+        <TR>
+          <TD align=right width=156 bgColor=#e7e7e7 colSpan=3 
+            height=25>&nbsp;</TD>
+          <TD width=8 background=image/UI_04.gif height=25>&nbsp;</TD>
+          <TD colSpan=3 height=25 width="21">&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<font face="Arial" style="font-size: 8pt">Default IP of associating AP:</font></TD>
+          <TD width=262 height=25>&nbsp;<input type=hidden name="wl_ap_ip" value=4>
+                <INPUT class=num maxLength=3 size=3 value='0' name="wl_ap_ip_0" onBlur=valid_range(this,0,255,"IP")> .
+                <INPUT class=num maxLength=3 size=3 value='0' name="wl_ap_ip_1" onBlur=valid_range(this,0,255,"IP")> .
+                <INPUT class=num maxLength=3 size=3 value='0' name="wl_ap_ip_2" onBlur=valid_range(this,0,255,"IP")> .
+                <INPUT class=num maxLength=3 size=3 value='0' name="wl_ap_ip_3" onBlur=valid_range(this,0,254,"IP")></TD>
+          <TD width=15 height=25>&nbsp;</TD>
+          <TD width=15 background=image/UI_05.gif height=25>&nbsp;</TD></TR>                                              
+--><!--
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background=image/UI_04.gif height=25>&nbsp;</TD>
+          <TD height=25 width=21>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<font face="Arial" style="font-size: 8pt">Mode&nbsp;:&nbsp;</font></TD>
+          <TD width=276 height=25>&nbsp;&nbsp;<font face=verdana size=2><b><select name="wl_mode">
+	  		<option value="ap" selected>Access Point</option>
+			<option value="wds" >Wireless Bridge</option>
+		</select></TD>
+          <TD width=15 background=image/UI_05.gif height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background=image/UI_04.gif height=25>&nbsp;</TD>
+          <TD height=25 width=21>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<font face="Arial" style="font-size: 8pt">Bridge Restrict&nbsp;:&nbsp;</font></TD>
+          <TD width=276 height=25>&nbsp;&nbsp;<font face=verdana size=2><b><select name="wl_lazywds">
+	  		<option value="0" >Enabled</option>
+			<option value="1" selected>Disabled</option>
+		</select></TD>
+          <TD width=15 background=image/UI_05.gif height=25>&nbsp;</TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25>&nbsp;</TD>
+          <TD width=8 background=image/UI_04.gif height=25>&nbsp;</TD>
+          <TD height=25 width=21>&nbsp;</TD>
+          <TD width=156 height=25>&nbsp;<font face="Arial" style="font-size: 8pt">Remote Bridges&nbsp;:&nbsp;</font></TD>
+          <TD width=276 height=25>&nbsp;&nbsp;<input type="hidden" name="wl_wds" value="4"><INPUT maxLength=17 size=17 name=wl_wds0  value='' onblur=valid_macs_17(this)><br>&nbsp;<INPUT maxLength=17 size=17 name=wl_wds1  value='' onblur=valid_macs_17(this)><br>&nbsp;<INPUT maxLength=17 size=17 name=wl_wds2  value='' onblur=valid_macs_17(this)><br>&nbsp;<INPUT maxLength=17 size=17 name=wl_wds3  value='' onblur=valid_macs_17(this)></TD>
+          <TD width=15 background=image/UI_05.gif height=25>&nbsp;</TD></TR>
+
+-->
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25></TD>
+          <TD width=8 background="Wireless_files/UI_04.gif" height=25></TD>
+          <TD width=21 height=25></TD>
+          <TD width=432 bgColor=#ffffff colSpan=2 height=79>
+            <P align=center><!--
+                <img border="0" src="Wireless_files/SES-button-color.gif" width="50" height="50"><br>
+--><INPUT 
+            onclick=Set_SES_Short_Push(this.form) type=image height=50 width=50 
+            src="Wireless_files/SES-button-color.gif" name=B2><BR><FONT 
+            style="FONT-SIZE: 8pt" face=Arial><B>
+            <SCRIPT>Capture(bmenu.statu)</SCRIPT>
+            :</B>
+            <SCRIPT>document.write(SW_SES_BTN.DEFAULTS)</SCRIPT>
+            </FONT></P></TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" height=25></TD></TR>
+        <TR>
+          <TD align=right width=155 bgColor=#e7e7e7 height=25></TD>
+          <TD width=8 background="Wireless_files/UI_04.gif" height=25></TD>
+          <TD width=21 height=25></TD>
+          <TD width=432 bgColor=#ffffff colSpan=2 height=25>
+            <P align=center>
+            <a href="Wireless.htm"><INPUT onclick= "window.location.replace ('Wireless.htm')" type=button value="Reset Security">
+            </P></TD>
+          <TD width=15 background="Wireless_files/UI_05.gif" height=25></TD></TR>
+        <TR>
+          <TD bgColor=#e7e7e7>&nbsp;</TD>
+          <TD background="Wireless_files/UI_04.gif">&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD 
+background="Wireless_files/UI_05.gif">&nbsp;</TD></TR></TBODY></TABLE></TD>
+    <TD vAlign=top width=176 bgColor=#6666cc>
+      <TABLE cellSpacing=0 cellPadding=0 width=176 border=0>
+        <TBODY>
+        <TR>
+          <TD width=11 bgColor=#6666cc height=25>&nbsp;</TD>
+          <TD width=156 bgColor=#6666cc height=25><FONT color=#ffffff><SPAN 
+            style="FONT-FAMILY: Arial"><BR>
+            <SCRIPT>Capture(hwlbas2.right1)</SCRIPT>
+            <BR><B><A href="http://192.168.1.1/help/HWireless.asp#wireless" 
+            target=_blank>
+            <SCRIPT>Capture(share.more)</SCRIPT>
+            </A></B></SPAN></FONT></TD>
+          <TD width=9 bgColor=#6666cc 
+  height=25>&nbsp;</TD></TR></TBODY></TABLE></TD></TR>
+  <TR>
+    <TD width=809 colSpan=2>
+      <TABLE cellSpacing=0 cellPadding=0 border=0>
+        <TBODY>
+        <TR>
+          <TD width=156 bgColor=#e7e7e7 height=30>&nbsp;</TD>
+          <TD width=8 background="Wireless_files/UI_04.gif">&nbsp;</TD>
+          <TD width=454>&nbsp;</TD>
+          <TD width=15 background="Wireless_files/UI_05.gif">&nbsp;</TD>
+          <TD width=176 bgColor=#6666cc rowSpan=2><IMG height=64 
+            src="Wireless_files/UI_Cisco.gif" width=176 border=0></TD></TR>
+        <TR>
+          <TD width=156 bgColor=#000000>&nbsp;</TD>
+          <TD width=8 bgColor=#000000>&nbsp;</TD>
+          <TD align=right width=454 bgColor=#6666cc>
+            <SCRIPT>document.write("<input type=button name=save_button" + " value=\"" + sbutton.save + "\" >");</SCRIPT>
+            &nbsp;
+            <SCRIPT>document.write("<input type=button name=cancel" + " value=\"" + sbutton.cancel + "\" >");</SCRIPT>
+             &nbsp;&nbsp; </TD>
+          <TD width=15 bgColor=#000000 
+  height=33>&nbsp;</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></FORM></DIV></BODY></HTML>

@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>Untitled Document</title>
+<link rel="stylesheet" type="text/css" href="aidisk.css"> 
+
+<script type="text/javascript" src="../state.js"></script>
+<script>
+var ddns_enable_x = parent.getASUSDDNS_enable();
+var ddns_server_x = '';
+var ddns_hostname_x = '';
+
+var ddns_hostname_title;
+
+var SAFE_TIME = 2;
+var FOLDER_WORK_TIME = 2;
+
+function initial(){
+	parent.show_help_iframe(4);
+	parent.hideLoading();
+	
+	parent.get_account_parameter();
+	
+	show_dummyshareway();
+	
+	showDDNS();
+	
+	clickevent();
+	
+	parent.restore_help_td();	
+	parent.openHint(15, 4);
+}
+
+function show_dummyshareway(){
+	switch(parent.$("dummyShareway").value){
+		case "0":
+			showtext($("dummyShareStr"), "\"limitless access rights\"");
+			break;
+		case "1":
+			showtext($("dummyShareStr"), "\"limited access rights\"");
+			break;
+		case "2":
+			showtext($("dummyShareStr"), "\"admin rights\"");
+			break;
+		default:
+			alert("System error!");
+	}
+}
+
+function showDDNS(){
+	if('1' == "1"){
+		if(this.ddns_enable_x == "1"){
+			$("haveDDNS").style.display = "block";
+		}
+		else{
+			$("noDDNS").style.display = "block";
+		}
+	}
+	else
+		$("noFTP").style.display = "block";
+}
+
+function go_pre_page(){
+	document.redirectForm.action = "Aidisk-3.html";
+	document.redirectForm.submit();
+}
+
+function compute_work_time(){
+	var total_folder_number = 0;
+	
+	for(var i = 0; i < parent.pool_names().length; ++i){
+		if(parent.pool_names()[i].indexOf("part") < 0)
+			continue;
+		
+		total_folder_number += parent.get_sharedfolder_in_pool(parent.pool_names()[i]).length;
+	}
+	
+	return SAFE_TIME;
+}
+
+function clickevent(){
+	$("finish").onclick = function(){
+			//parent.showLoading();
+			parent.location.href = "../aidisk.html";
+			parent.showLoading(compute_work_time(), "waiting");
+	};
+}
+</script>
+</head>
+
+<body onload="initial();">
+<form method="post" name="redirectForm" action=""></form>
+
+<table width="400" border="0" align="center" cellpadding="0" cellspacing="0" >
+	<tr>
+		<td colspan="3" valign="top">
+		<table width="250" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="64"><img src="../images/aidisk-01.gif" width="64" height="59" /></td>
+              <td width="29"><p><img src="../images/aidisk-arrow-1.gif" width="29" height="29" /></p></td>
+              <td width="64"><img src="../images/aidisk-02.gif" width="64" height="59" /></td>
+              <td width="29"><img src="../images/aidisk-arrow-1.gif" width="29" height="29" /></td>
+              <td><img src="../images/aidisk-03_r.gif" width="64" height="59" /></td>
+            </tr>
+        </table>
+		</td>
+	</tr>
+	<tr>
+        <td colspan="3" valign="top"><div class="title">Configuration is successful.</div></td>
+	</tr>
+      
+      <tr>
+      	<td colspan="3" valign="top" class="textbox">
+      	<ul>
+		 <li>Your share folder setting is <span id="dummyShareStr"></span></li>
+		 <!--[if lte IE 6.5]><li>Share in LAN:<a href="\\RT-N16" target="_blank">\\RT-N16</a></li><![endif]-->
+         <li>
+      	  <div id="haveDDNS" style="display:none;">
+              <span>FTP link:</span>
+              <br />
+              <a href="FTP://" target="_blank">FTP://</a>
+          </div>
+            
+          <div id="noDDNS" class="ServerClose">
+          	  DDNS is not enable yet. You can enable it in WAN / DDNS when people need to access FTP via the domain name from WAN.
+          </div>
+          
+          <div id="noFTP" class="ServerClose" style="display:none;">
+          	  DDNS is enable but register of domain name is fail. People still can't access FTP by domain name from WAN.
+          </div>
+		  </li>
+		 </ul>
+        </td>
+      </tr>
+      <tr>
+        <td align="right" height="50">
+		  <div class="short_btn"><a href="Aidisk-3.html">Previous</a></div>		        
+		</td>
+        <td>
+          <div id="finish" class="short_btn"><a href="javascript:;">Finish</a></div>
+        </td>
+      </tr>
+</table>
+	</td>
+  </tr>
+</table>
+</body>
+</html>

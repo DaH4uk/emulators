@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html class="product16" style="display: block;">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!--[if lt IE 9]>
+	<script src="js/html5.js"></script>
+	<![endif]-->
+    <link href="./img/entry-level.png" type="image/png" rel="icon">
+    <link rel="stylesheet" href="./css/reset.css" type="text/css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <link rel="stylesheet" href="./css/content.css" type="text/css">
+    <!--[if lt IE 9]><style type="text/css">article .button-cancel, article .button-apply, article .button-blank, #progress-bar-buttons .button-apply, #progress-bar-buttons .button-cancel { padding-bottom: 3px; }</style><![endif]-->
+    <script src="./js/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <style type="text/css">
+         :root .banner_box,
+         :root .adv {
+            display: none !important;
+        }
+    </style>
+    <style type="text/css">
+        #chromereload_page_informer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(142, 255, 186, 0.5);
+            height: 24px;
+            padding: 10px 10px 0 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #4A4A4A;
+            z-index: 99999;
+            cursor: pointer;
+        }
+    </style>
+    <script src="./js/jquery.easing.1.3.js" type="text/javascript"></script>
+    <script src="./js/jquery.hashchange.js" type="text/javascript"></script>
+    <!-- justin add -->
+    <!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie8content.css" type="text/css" />
+	<![endif]-->
+    <script src="./js/mainFunctions.js" type="text/javascript"></script>
+    <script src="./js/mainFrame.js" type="text/javascript"></script>
+    <script src="./js/pageLoadFunctions.js" type="text/javascript"></script>
+    <script src="./js/multi_lang.js" type="text/javascript"></script>
+
+    <script src="./js/settings.js" type="text/javascript"></script>
+
+    <!-- justin add end -->
+    <link rel="stylesheet" href="./css/settings.css" type="text/css">
+    <script src="./js/functionsNotOverview.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var category = 'settings';
+        var defaultSub = '60';
+        // get submenu and subsubmenu
+        var gets = getHashVars();
+        sub = gets['sub'];
+        var subSub = gets['subSub'];
+        var load = ''; // content to load
+        var oldCat = 'value';
+        var task = false;
+        var messagesCat = false;
+    </script>
+
+    <title>QoS</title>
+</head>
+
+<body class="en expert settings">
+
+    <div id="wrap">
+        <header id="header">
+            <div id="head-wrap" class="clearfix">
+                <a href="./overview.html" class="logos"><img src="./img/entry-level.png" alt="Sercomm Logo"></a><a href="./index.html" id="logout">&nbsp;</a>
+                <div id="dropDownBasExp" class="admin" style="display: none;">
+                    <div href="" id="selectBasic" class="selectBasic"><span id="lang700056">Базовый режим</span></div>
+                    <div href="" id="selectExpert" class="selectExpert"><span id="lang700057">Эксперт-режим</span></div>
+                </div>
+            </div>
+            <nav>
+                <ul class="clearfix five settingsMenu ">
+                    <li id="overview"><a href="./overview.html"><span id="lang700031">Обзор</span></a></li>
+                    <li id="internet"><a href="./internet.html"><span id="lang700033">Интернет</span></a></li>
+                    <li id="wifi"><a href="./wifi.html"><span id="lang700034">Wi-Fi</span></a></li>
+                    <li id="settings" class="active"><a href="./settings.html"><span id="lang700035">Параметры</span></a></li>
+                    <li id="status-and-support"><a href="./status-and-support.html"><span id="lang700036">Статус и поддержка</span></a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="inner-wrap" class="clearfix notOverview">
+            <script>
+                document.write('<div id="indicator"><img src="img/indicator.png" alt="Indicator" /></div>');
+            </script>
+            <div id="indicator" style="display: none;"><img src="./img/indicator.png" alt="Indicator"></div>
+            <div id="navigation">
+                <ul>
+                    <li id="77" class="menuItem"><a href="./settings.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905021">Язык</span></a></li>
+                    <li id="60" class="menuItem"><a href="./password.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905001">Пароль</span></a></li>
+                    <li id="58" class="menuItem"><a href="./USB.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905003">USB</span></a></li>
+                    <li id="56" class="menuItem sub"><a href="./shared_USB_access.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505001">Общий доступ к USB</span></a>
+                        <div class="subMenu" style="display: none; height: 0px;">
+                            <ul>
+                                <li id="57" class="subMenuItem sub"><a href="./DLNA.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905004">DLNA</span></a></li>
+                                <li id="51" class="subMenuItem sub"><a href="./file_server.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang505005">Файловый сервер</span></a></li>
+                                <li id="50" class="subMenuItem sub"><a href="./FTP.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905011">FTP</span></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li id="54" class="menuItem"><a href="./configuration_file.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905007">Файл конфигурации</span></a></li>
+                    <li id="52" class="menuItem"><a href="./LAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905009">LAN</span></a></li>
+                    <li id="59" class="menuItem"><a href="./firmware_update.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905002">Обновление прошивки</span></a></li>
+                    <li id="73" class="menuItem active"><a href="./QoS.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905018">QoS</span></a></li>
+                    <li id="74" class="menuItem"><a href="./time_synchronization.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang513001">Синхронизация времени</span></a></li>
+                    <li id="75" class="menuItem"><a href="./TR-069.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905019">TR-069</span></a></li>
+                    <li id="80" class="menuItem"><a href="./Access_control.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang906017">Контроль доступа</span></a></li>
+                    <li id="68" class="menuItem"><a href="./WAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903013">WAN</span></a></li>
+                    <li id="302" class="menuItem"><a href="./PPPoE_Realy.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">PPPoE Relay</span></a></li>
+                    <li id="301" class="menuItem"><a href="./VLAN.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1301402">VLAN</span></a></li>
+                    <li id="300" class="menuItem"><a href="./IPTV.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang606029">IPTV</span></a></li>
+                    <li id="303" class="menuItem"><a href="./syslog_client.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang1310572">Syslog Client</span></a></li>
+                    <li id="97" class="menuItem"><a href="./IPv6.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang905023">IPv6</span></a></li>
+                    <li id="86" class="menuItem"><a href="./static_routes.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang522001">Статические маршруты</span></a></li>
+                    <li id="93" class="menuItem"><a href="./policy_routing.html" onclick="page_data_load(&#39;settings&#39;);"><span id="lang903018">Политики маршрутизации</span></a></li>
+                </ul>
+            </div>
+
+            <article id="settings">
+                <div id="content" class="sub73">
+
+
+
+
+
+
+                    <h1><span id="lang512001">QoS (Качество сервиса)</span></h1>
+                    <h2>
+                        <!--span id="lang512002" title="512002">I??m a Placeholder for H2 !!!</span-->
+                    </h2>
+
+                    <div class="h3-content">
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang512001">QoS (Качество сервиса)</span> </div>
+                            <div class="right">
+                                <input class="button button-on" id="qos_enable" type="button">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="left">
+                                <span id="lang512046">Скорость подключения к провайдеру (в кбит/с)</span> </div>
+                            <div class="right">
+                                <input id="ftth_upstream_bw" type="text" class="scm_unsigned_int scm_max_number" value="100000" scm_max_number="100000">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="qos_enable">
+                        <h3><span id="lang512003">Правила QoS</span></h3>
+                        <div class="h3-content">
+                            <div class="table qos-table">
+                                <div class="table-row table-row-head">
+                                    <div class="table-col table-col1"><span id="lang508022">Имя</span></div>
+                                    <div class="table-col table-col2"><span id="lang512004">Порядок</span></div>
+                                    <div class="table-col table-col3"><span id="lang512005">Соответствие критериям</span></div>
+                                    <div class="table-col table-col4"><span id="lang512006">Действия</span></div>
+                                    <div class="table-col table-col5">&nbsp;</div>
+                                    <div class="table-col table-col6">&nbsp;</div>
+                                    <div class="table-col table-col7">&nbsp;</div>
+                                </div>
+                                <div class="table-row-wrap" id="1">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">POP3S-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">1</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="1" qos_name="POP3S-Customer-Outgoing" qos_order="1" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="995-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="2">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SSMTP-Customer-Incoming</div>
+                                        <div class="table-col table-col2">2</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="2" qos_name="SSMTP-Customer-Incoming" qos_order="2" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="465-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="3">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IGMP</div>
+                                        <div class="table-col table-col2">3</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="3" qos_name="IGMP" qos_order="3" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="igmp" mc_protocol_exclude="0" mc_source_ip="" mc_source_ip_subnet_mask=""
+                                        mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask="" mc_source_mac_exclude="0"
+                                        mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="46" action_priority="-1"
+                                        action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="4">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SSMTP-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">4</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="4" qos_name="SSMTP-Customer-Outgoing" qos_order="4" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="465-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="5">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DSCP-High-Prio</div>
+                                        <div class="table-col table-col2">5</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="5" qos_name="DSCP-High-Prio" qos_order="5" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="all" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="56" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="6">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">TCP-Small-Customer</div>
+                                        <div class="table-col table-col2">6</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="6" qos_name="TCP-Small-Customer" qos_order="6" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="40-64" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="7">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DSCP-0x2E</div>
+                                        <div class="table-col table-col2">7</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="7" qos_name="DSCP-0x2E" qos_order="7" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="all" mc_protocol_exclude="0" mc_source_ip="" mc_source_ip_subnet_mask=""
+                                        mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask="" mc_source_mac_exclude="0"
+                                        mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="46" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1" action_dscp="-1" action_priority="-1"
+                                        action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="8">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">PPPoE</div>
+                                        <div class="table-col table-col2">8</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: PPPoE</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="8" qos_name="PPPoE" qos_order="8" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="pppoe" mc_ip_protocol="all" mc_protocol_exclude="0" mc_source_ip="" mc_source_ip_subnet_mask=""
+                                        mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask="" mc_source_mac_exclude="0"
+                                        mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1" action_priority="-1"
+                                        action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="9">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DHCP-Outgoing</div>
+                                        <div class="table-col table-col2">9</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="9" qos_name="DHCP-Outgoing" qos_order="9" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="67-68" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="10">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DHCP-Incoming</div>
+                                        <div class="table-col table-col2">10</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="10" qos_name="DHCP-Incoming" qos_order="10" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="67-68" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="11">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">NTP-Outgoing</div>
+                                        <div class="table-col table-col2">11</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="11" qos_name="NTP-Outgoing" qos_order="11" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="123-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="12">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">NTP-Incoming</div>
+                                        <div class="table-col table-col2">12</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="12" qos_name="NTP-Incoming" qos_order="12" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="23460-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="13">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DNS-Incoming</div>
+                                        <div class="table-col table-col2">13</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="13" qos_name="DNS-Incoming" qos_order="13" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="53-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="14">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DNS-Outgoing</div>
+                                        <div class="table-col table-col2">14</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="14" qos_name="DNS-Outgoing" qos_order="14" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="53-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="15">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SSH-Outgoing</div>
+                                        <div class="table-col table-col2">15</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="15" qos_name="SSH-Outgoing" qos_order="15" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="22-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="16">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SSH-Incoming</div>
+                                        <div class="table-col table-col2">16</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="16" qos_name="SSH-Incoming" qos_order="16" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="22-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="17">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SSH-Bak-Outgoing</div>
+                                        <div class="table-col table-col2">17</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="17" qos_name="SSH-Bak-Outgoing" qos_order="17" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="22-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="18">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SSH-Bak-Incoming</div>
+                                        <div class="table-col table-col2">18</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="18" qos_name="SSH-Bak-Incoming" qos_order="18" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="22-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="19">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SNMP-Outgoing</div>
+                                        <div class="table-col table-col2">19</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="19" qos_name="SNMP-Outgoing" qos_order="19" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="161-162" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="20">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SNMP-Incoming</div>
+                                        <div class="table-col table-col2">20</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="20" qos_name="SNMP-Incoming" qos_order="20" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="161-162" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="21">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SNMP-Bak-Outgoing</div>
+                                        <div class="table-col table-col2">21</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="21" qos_name="SNMP-Bak-Outgoing" qos_order="21" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="16161-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="22">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SNMP-Bak-Incoming</div>
+                                        <div class="table-col table-col2">22</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="22" qos_name="SNMP-Bak-Incoming" qos_order="22" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="16161-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="23">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">HTTP-Outgoing</div>
+                                        <div class="table-col table-col2">23</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="23" qos_name="HTTP-Outgoing" qos_order="23" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="80-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="24">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">HTTP-Incoming</div>
+                                        <div class="table-col table-col2">24</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="24" qos_name="HTTP-Incoming" qos_order="24" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="80-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="25">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">HTTP-Bak-Outgoing</div>
+                                        <div class="table-col table-col2">25</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: Local<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="25" qos_name="HTTP-Bak-Outgoing" qos_order="25" qos_rules_enable="1" mc_interface="local" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="8080-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="26">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">HTTP-Bak-Incoming</div>
+                                        <div class="table-col table-col2">26</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: -1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="26" qos_name="HTTP-Bak-Incoming" qos_order="26" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="8080-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="-1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="27">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">ICMP</div>
+                                        <div class="table-col table-col2">27</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="27" qos_name="ICMP" qos_order="27" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="icmp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="28">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">POP3S-Customer-Incoming</div>
+                                        <div class="table-col table-col2">28</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="28" qos_name="POP3S-Customer-Incoming" qos_order="28" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="995-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="29">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">FTP-Incoming</div>
+                                        <div class="table-col table-col2">29</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="29" qos_name="FTP-Incoming" qos_order="29" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="21-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="30">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">HTTPS-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">30</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="30" qos_name="HTTPS-Customer-Outgoing" qos_order="30" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="443-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="31">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">HTTPS-Customer-Incoming</div>
+                                        <div class="table-col table-col2">31</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="31" qos_name="HTTPS-Customer-Incoming" qos_order="31" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="443-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="32">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IPSEC-Incoming</div>
+                                        <div class="table-col table-col2">32</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="32" qos_name="IPSEC-Incoming" qos_order="32" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="500-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="33">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IPSEC-Outgoing</div>
+                                        <div class="table-col table-col2">33</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="33" qos_name="IPSEC-Outgoing" qos_order="33" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="500-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="34">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">PPTP-Outgoing</div>
+                                        <div class="table-col table-col2">34</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="34" qos_name="PPTP-Outgoing" qos_order="34" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="1723-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="35">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">PPTP-Incoming</div>
+                                        <div class="table-col table-col2">35</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="35" qos_name="PPTP-Incoming" qos_order="35" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="1723-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="36">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SMTP-Customer-Incoming</div>
+                                        <div class="table-col table-col2">36</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="36" qos_name="SMTP-Customer-Incoming" qos_order="36" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="25-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="37">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">SMTP-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">37</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="37" qos_name="SMTP-Customer-Outgoing" qos_order="37" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="25-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="38">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IMAP-Customer-Incoming</div>
+                                        <div class="table-col table-col2">38</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="38" qos_name="IMAP-Customer-Incoming" qos_order="38" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="143-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="39">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IMAP-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">39</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="39" qos_name="IMAP-Customer-Outgoing" qos_order="39" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="143-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="40">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IMAPS-Customer-Incoming</div>
+                                        <div class="table-col table-col2">40</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="40" qos_name="IMAPS-Customer-Incoming" qos_order="40" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="993-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="41">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">IMAPS-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">41</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="41" qos_name="IMAPS-Customer-Outgoing" qos_order="41" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="993-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="42">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">POP3-Customer-Incoming</div>
+                                        <div class="table-col table-col2">42</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="42" qos_name="POP3-Customer-Incoming" qos_order="42" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="110-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row-wrap" id="43">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">POP3-Customer-Outgoing</div>
+                                        <div class="table-col table-col2">43</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="43" qos_name="POP3-Customer-Outgoing" qos_order="43" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0"
+                                        mc_source_ip="" mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="110-" mc_destination_port="-" mc_source_mac=""
+                                        mc_source_mac_mask="" mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1"
+                                        action_dscp="-1" action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="44">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">VOICE-Incoming</div>
+                                        <div class="table-col table-col2">44</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 3<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="44" qos_name="VOICE-Incoming" qos_order="44" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="5060-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="3" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="45">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">VOICE-Outgoing</div>
+                                        <div class="table-col table-col2">45</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: LAN<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 3<br><span id="lang512014">Приоритет</span>: 5</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="45" qos_name="VOICE-Outgoing" qos_order="45" qos_rules_enable="1" mc_interface="lan" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="udp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="5060-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="3" action_dscp="46"
+                                        action_priority="5" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="46">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">DSCP-Medium-Prio</div>
+                                        <div class="table-col table-col2">46</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 2<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="46" qos_name="DSCP-Medium-Prio" qos_order="46" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4" mc_ip_protocol="all" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="48" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="2" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="low"></div>
+                                </div>
+                                <div class="table-row-wrap" id="47">
+                                    <div class="table-row">
+                                        <div class="table-col table-col1">FTP_CMD</div>
+                                        <div class="table-col table-col2">47</div>
+                                        <div class="table-col table-col3"><span id="lang512013">Интерфейс</span>: All<br><span id="lang512017">Протокол</span>: IPv4&amp;IPv6</div>
+                                        <div class="table-col table-col4"><span id="lang512024">Очередь</span>: 1<br><span id="lang512014">Приоритет</span>: -1</div>
+                                        <div class="table-col table-col5"><input class="button button-edit-small qos-add" value="" type="button"></div>
+                                        <div class="table-col table-col6"><input class="button button-delete-small" value="" type="button"></div>
+                                        <div class="table-col table-col7"><input class="button button-on" type="button"></div>
+                                    </div>
+                                    <div class="rule-data" style="display: none;" qos_id="47" qos_name="FTP_CMD" qos_order="47" qos_rules_enable="1" mc_interface="all" mc_outgoing_interface="all" mc_ethernet_protocol="ipv4_ipv6" mc_ip_protocol="tcp" mc_protocol_exclude="0" mc_source_ip=""
+                                        mc_source_ip_subnet_mask="" mc_source_ip_exclude="0" mc_destination_ip="" mc_destination_ip_subnet_mask="" mc_destination_ip_exclude="0" mc_source_port="-" mc_destination_port="21-" mc_source_mac="" mc_source_mac_mask=""
+                                        mc_source_mac_exclude="0" mc_destination_mac="" mc_destination_mac_mask="" mc_destination_mac_exclude="0" mc_ip_length="0-0" mc_dscp_check="-1" mc_priority_check="-1" mc_vlan_id_check="-1" action_queue="1" action_dscp="-1"
+                                        action_priority="-1" action_ingress_priority="high"></div>
+                                </div>
+                                <div class="table-row italic no-entry tC" style="display: none;">
+                                    <span id="lang509017">Правила не установлены.</span> </div>
+                                <div class="row add-row">
+                                    <div class="right">
+                                        <input value="" name="" class="button button-add qos-add" type="button">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="apply-cancel-margin-top">
+
+                        <div class="clearfix apply-cancel">
+                            <div class="right">
+                                <input id="cancelButton" class="button button-cancel right" value="Отмена" type="button">
+                            </div>
+                            <div class="right">
+                                <input id="applyButton" class="button button-apply right" value="Применить" type="button">
+                            </div>
+                        </div>
+
+                        <div class="message-arrowbox" style="display: none;">
+                            <div class="message-arrowbox-right">
+                                <span id="lang700175">Некоторые параметры были изменены</span>
+                            </div>
+                        </div>
+                        <div class="message-arrowbox-applied" style="display: none;">
+                            <div class="message-arrowbox-applied-right">
+                                <span id="lang700176">Изменения были применены.</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="data_store" style="display:none;"></div>
+                    <div class="popup big" style="display: none;"></div>
+                    <div class="blackBackground" style="display: none;">&nbsp;</div>
+                    <input id="qos_del_id_list" type="hidden" value="">
+                    <input id="qos_edit_id_list" type="hidden" value="">
+
+
+
+                    <style>
+                        .product16 .table.qos-table .table-row {
+                            height: auto;
+                            min-height: 24px;
+                            padding-top: 6px;
+                        }
+                        
+                        .product16 .table.qos-table .table-col:nth-child(1) {
+                            width: 170px;
+                        }
+                        
+                        .table.qos-table .table-col.table-col1 {
+                            width: 170px;
+                        }
+                        
+                        .product16 .table.qos-table .table-col:nth-child(2) {
+                            width: 110px;
+                        }
+                        
+                        .table.qos-table .table-col.table-col2 {
+                            width: 110px;
+                        }
+                        
+                        .product16 .table.qos-table .table-col:nth-child(3) {
+                            width: 120px;
+                        }
+                        
+                        .table.qos-table .table-col.table-col3 {
+                            width: 120px;
+                        }
+                        
+                        .product16 .table.qos-table .table-col:nth-child(4) {
+                            width: 90px;
+                        }
+                        
+                        .table.qos-table .table-col.table-col4 {
+                            width: 90px;
+                        }
+                        
+                        .product16 .table.qos-table .table-col:nth-child(5) {
+                            width: 40px;
+                            text-align: right;
+                        }
+                        
+                        .table.qos-table .table-col.table-col5 {
+                            width: 40px;
+                        }
+                        
+                        .table.qos-table .table-col.table-col6 {
+                            width: 30px;
+                        }
+                        
+                        .table.qos-table .table-col.table-col7 {
+                            width: 70px;
+                            text-align: right;
+                        }
+                        
+                        .table.qos-table .table-row.inactive {
+                            opacity: 0.5;
+                        }
+                    </style>
+
+                    <!--[if lt IE 9]>
+<style>
+.table-row.inactive {
+	color: rgb(192, 192, 192);
+}
+.table-row.inactive .button-edit-small {
+	background-image: url("../img/button-edit-small-inactive.png");
+}
+.table-row.inactive .button-delete-small {
+	background-image: url("../img/button-delete-small-inactive.png");
+}
+.table-row.inactive .button-off {
+	background-image: url("../img/button-off-inactive.png");
+}
+.product16 .table.qos-table .table-col {
+    width: 170px;
+}
+.product16 .table.qos-table .table-col + div {
+    width: 110px;
+}
+.product16 .table.qos-table .table-col + div + div {
+    width: 120px;
+}
+.product16 .table.qos-table .table-col + div + div + div {
+    width: 90px;
+}
+.product16 .table.qos-table .table-col + div + div + div + div {
+    width: 40px;
+}
+.product16 .table.qos-table .table-col + div + div + div + div + div {
+    width: 30px;
+}
+.product16 .table.qos-table .table-col + div + div + div + div + div + div {
+    width: 70px;
+}
+</style>
+<![endif]-->
+                </div>
+            </article>
+        </section>
+    </div>
+    <div id="langAndFirmware" class="clearfix">
+        <div class="left" id="langSelector"><a href="javascript:lang_change(&#39;en&#39;);" class="language-links line">English</a><a href="javascript:lang_change(&#39;ru&#39;);" class="language-links">Русский</a></div>
+        <div class="right firmwareVersion">
+        </div>
+    </div>
+
+    <script>
+        $('.button-edit-small').bind('click', function() {
+            if (logMessage && window.console) console.log('.button-edit-small click');
+
+            if ($(this).closest('.table-row').hasClass('inactive')) return;
+
+            $('body, html').animate({
+                scrollTop: '0px'
+            });
+
+            $('.popup.big').html(page_settings_qos_rules_popup_HTMLStr());
+            page_settings_qos_rules_popup_func($(this).closest('.table-row-wrap'));
+
+            //write edit data
+            var tmp_obj = $(this).closest('.table-row-wrap').find('.rule-data');
+            page_settings_qos_rules_popup_write_edit_data(tmp_obj);
+            //write edit data end
+            $('#mc_ethernet_protocol').trigger('change');
+
+            $('.popup, .blackBackground').fadeIn();
+        });
+
+
+
+        function page_settings_qos_rules_popup_HTMLStr() {
+            var html = '';
+            html += '<p class="title tL"><span id="lang512001">QoS (Качество сервиса)</span></p><div class="row"><div class="left"><span id="lang508022">Имя</span></div><div class="right"><input id="qos_id" type="hidden" value="2"><input id="qos_name" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512004">Порядок</span></div><div class="right"><input id="qos_order" value="" type="text"></div></div>'
+            html += '<p class="title tL" style="margin-top: 24px; margin-bottom: 24px;"><span id="lang512005">Соответствие критериям</span></p><div class="row"><div class="left"><span id="lang512013">Интерфейс</span></div><div class="right"><select id="mc_interface"><option value="all">Все</option><option value="lan">Локальная сеть</option><option value="lan1">Локальная сеть1</option><option value="lan2">Локальная сеть2</option><option value="lan3">Локальная сеть3</option><option value="lan4">Локальная сеть4</option><option value="local">Локальный</option><option value="wlan">WLAN</option><option value="wan1">WAN1</option><option value="wan2">WAN2</option></select></div></div><div class="mc_ethernet_protocol_ip" style="display: block;"><div class="row"><div class="left">Исходящий интерфейс</div><div class="right"><select id="mc_outgoing_interface"><option value="all">Все</option><option value="wan1">WAN1</option><option value="wan2">WAN2</option></select></div></div></div><div class="row"><div class="left">Протокол Ethernet</div><div class="right"><select id="mc_ethernet_protocol"><option value="ipv4">IPv4</option><option value="ipv6">IPv6</option><option value="ipv4_ipv6">IPv4&amp;IPv6</option><option value="802dot1q">802.1Q</option><option value="pppoe">PPPoE</option></select></div></div><div class="mc_ethernet_protocol_ip" style="display: block;"><div class="row"><div class="left">Протокол IP</div><div class="right"><select id="mc_ip_protocol"><option value="all">Все</option><option value="tcp">TCP</option><option value="udp">UDP</option><option value="icmp">ICMP</option><option value="igmp">IGMP</option></select></div></div><div class="row"><div class="left"><span id="lang512015">Исключить</span></div><div class="right"><input id="mc_protocol_exclude" class="button checkbox checkbox-unchecked" type="button"></div></div><div class="row"><div class="left"><span id="lang512018">IP-адрес источника</span></div><div class="right" id=""><input id="mc_source_ip" class="scm_ip4ip6 scm_can_empty" name="" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512019">Маска подсети</span></div><div class="right" id=""><input id="mc_source_ip_subnet_mask" class="scm_ip4ip6 scm_can_empty" name="" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512015">Исключить</span></div><div class="right"><input id="mc_source_ip_exclude" class="button checkbox checkbox-unchecked" type="button"></div></div><div class="row"><div class="left"><span id="lang512020">IP-адрес назначения</span></div><div class="right" id=""><input id="mc_destination_ip" class="scm_ip4ip6 scm_can_empty" name="" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512019">Маска подсети</span></div><div class="right" id=""><input id="mc_destination_ip_subnet_mask" class="scm_ip4ip6 scm_can_empty" name="" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512015">Исключить</span></div><div class="right"><input id="mc_destination_ip_exclude" class="button checkbox checkbox-unchecked" type="button"></div></div><div class="mc_ip_protocol all tcp udp" style="display: block;"><div class="row"><div class="left">Порт источника</div><div class="right" id="mc_source_port"><input id="mc_source_port_from" class="max5" name="" value="" type="text" maxlength="5"> - <input id="mc_source_port_to" class="max5" name="" value="" type="text" maxlength="5"></div></div><div class="row"><div class="left">Порт назначения</div><div class="right" id="mc_destination_port"><input id="mc_destination_port_from" class="max5" name="" value="" type="text" maxlength="5"> - <input id="mc_destination_port_to" class="max5" name="" value="" type="text" maxlength="5"></div></div></div></div><div class="row"><div class="left"><span id="lang512021">MAC источника</span></div><div class="right"><input id="mc_source_mac" class="scm_mac_string" value="" type="text">';
+            html += '</div></div><div class="row"><div class="left"><span id="lang512022">Маска MAC</span></div><div class="right"><input id="mc_source_mac_mask" class="scm_mac_string" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512015">Исключить</span></div><div class="right"><input id="mc_source_mac_exclude" class="button checkbox checkbox-unchecked" type="button"></div></div><div class="row"><div class="left"><span id="lang512023">MAC назначения</span></div><div class="right"><input id="mc_destination_mac" class="scm_mac_string" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512022">Маска MAC</span></div><div class="right"><input id="mc_destination_mac_mask" class="scm_mac_string" value="" type="text"></div></div><div class="row"><div class="left"><span id="lang512015">Исключить</span></div><div class="right"><input id="mc_destination_mac_exclude" class="button checkbox checkbox-unchecked" type="button"></div></div><div class="mc_ethernet_protocol_ip" style="display: block;"><div class="row"><div class="left">Длина IP</div><div class="right" id="mc_ip_length"><input id="mc_ip_length_from" class="max5" name="" value="" type="text" maxlength="5"> - <input id="mc_ip_length_to" class="max5" name="" value="" type="text" maxlength="5"></div></div><div class="row"><div class="left">Проверка DSCP</div><div class="right"><input id="mc_dscp_check" name="" value="" type="text" class=""></div></div></div><div class="mc_ethernet_protocol_802dot1q" style="display: none;"><div class="row"><div class="left">Проверка приоритета</div><div class="right"><input id="mc_priority_check" name="" value="" type="text" class="scm_not_chk"></div>'
+            html += '</div><div class="row"><div class="left">Проверка VLAN ID</div><div class="right"><input id="mc_vlan_id_check" name="" value="" type="text" class="scm_not_chk"></div></div></div><p class="title tL" style="margin-top: 24px; margin-bottom: 24px;"><span id="lang512006">Действия</span></p><div class="row"><div class="left"><span id="lang512024">Очередь</span></div><div class="right"><select id="action_queue"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div></div><div class="mc_ethernet_protocol_ip" style="display: block;"><div class="row"><div class="left"><span id="lang512016">DSCP</span></div><div class="right"><input id="action_dscp" class="scm_unsigned_int scm_max_number scm_min_number" scm_max_number="63" scm_min_number="0" name="" value="" type="text"></div></div></div><div class="mc_ethernet_protocol_ip mc_ethernet_protocol_802dot1q" style="display: block;"><div class="row"><div class="left">Маркировка приоритета 802.1D</div><div class="right"><select id="action_priority"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div></div></div><div class="mc_ethernet_protocol_ip" style="display: block;"><div class="row"><div class="left">Приоритет входящих пакетов</div><div class="right"><select id="action_ingress_priority"><option value="low">Низкий</option><option value="high">Высокий</option></select></div></div></div><div class="scm_empty row">&nbsp;</div><div class="row"><div class="left">&nbsp;</div><div class="right"><input value="Применить" class="button applyPop button-apply" type="button"><input value="Отмена" class="button closePop button-cancel" type="button"></div></div>';
+
+            return html;
+        }
+
+        function page_settings_qos_rules_popup_func(obj) {
+            //#mc_ip_protocol
+            $('#mc_ip_protocol').bind('change', function() {
+                if (logMessage && window.console) console.log('#mc_ip_protocol change');
+
+                $('.mc_ip_protocol').hide();
+                $('.mc_ip_protocol input').addClass('scm_not_chk');
+                $('.mc_ip_protocol.' + $(this).val()).show();
+                $('.mc_ip_protocol.' + $(this).val() + ' input').removeClass('scm_not_chk');
+            });
+
+            //#mc_ethernet_protocol
+            $('#mc_ethernet_protocol').bind('change', function() {
+                if (logMessage && window.console) console.log('#mc_ethernet_protocol change');
+
+                $('.mc_ethernet_protocol_ip').hide();
+                $('.mc_ethernet_protocol_ip input').addClass('scm_not_chk');
+                $('.mc_ethernet_protocol_802dot1q').hide();
+                $('.mc_ethernet_protocol_802dot1q input').addClass('scm_not_chk');
+
+                var tmp_val = $(this).val();
+
+                if (tmp_val == 'ipv6') {
+                    $('#mc_ip_protocol option[value=icmp]').remove();
+                    $('#mc_ip_protocol option[value=igmp]').remove();
+                }
+                else {
+                    if ($('#mc_ip_protocol option[value=icmp]').length == 0 && $('#mc_ip_protocol option[value=igmp]').length == 0) {
+                        var html = '';
+                        html += '<option value="icmp">' + getHTMLString(517001) + '</option>'; //ICMP
+                        html += '<option value="igmp">' + getHTMLString(512036) + '</option>'; //IGMP
+                        $('#mc_ip_protocol').append(html);
+                    }
+                }
+
+                if (tmp_val == 'ipv4' || tmp_val == 'ipv6' || tmp_val == 'ipv4_ipv6') {
+                    $('.mc_ethernet_protocol_ip').show();
+                    $('.mc_ethernet_protocol_ip input').removeClass('scm_not_chk');
+                    $('#mc_ip_protocol').trigger('change');
+
+                }
+                else if (tmp_val == '802dot1q') {
+                    $('.mc_ethernet_protocol_802dot1q').show();
+                    $('.mc_ethernet_protocol_802dot1q input').removeClass('scm_not_chk');
+                }
+            });
+
+            //.closePop
+            $('.closePop').bind('click', function() {
+                if (logMessage && window.console) console.log('.closePop click');
+
+                $('.popup, .blackBackground').fadeOut();
+            });
+
+            //.applyPop
+            $('.applyPop').bind('click', function() {
+                $('.table.qos-table .table-row.no-entry').hide();
+
+
+                $('.popup, .blackBackground').fadeOut();
+            });
+
+        }
+
+        function page_settings_qos_rules_popup_write_edit_data(tmp_obj) {
+            $('.popup.big #qos_id').val(tmp_obj.attr('qos_id'));
+            $('.popup.big #qos_name').val(tmp_obj.attr('qos_name'));
+            $('.popup.big #qos_order').val(tmp_obj.attr('qos_order'));
+            $('.popup.big #mc_interface').val(tmp_obj.attr('mc_interface'));
+            $('.popup.big #mc_outgoing_interface').val(tmp_obj.attr('mc_outgoing_interface'));
+            $('.popup.big #mc_ethernet_protocol').val(tmp_obj.attr('mc_ethernet_protocol'));
+            $('.popup.big #mc_ip_protocol').val(tmp_obj.attr('mc_ip_protocol'));
+            //mc_protocol_exclude
+            if (tmp_obj.attr('mc_protocol_exclude') == '1') {
+                $('.popup.big #mc_protocol_exclude').removeClass('checkbox-unchecked').addClass('checkbox-checked');
+            }
+            else {
+                $('.popup.big #mc_protocol_exclude').removeClass('checkbox-checked').addClass('checkbox-unchecked');
+            }
+            //mc_source_ip
+            $('.popup.big #mc_source_ip').val(tmp_obj.attr('mc_source_ip'));
+            //mc_source_ip_subnet_mask
+            $('.popup.big #mc_source_ip_subnet_mask').val(tmp_obj.attr('mc_source_ip_subnet_mask'));
+            //mc_source_ip_exclude
+            if (tmp_obj.attr('mc_source_ip_exclude') == '1') {
+                $('.popup.big #mc_source_ip_exclude').removeClass('checkbox-unchecked').addClass('checkbox-checked');
+            }
+            else {
+                $('.popup.big #mc_source_ip_exclude').removeClass('checkbox-checked').addClass('checkbox-unchecked');
+            }
+            //mc_destination_ip
+            $('.popup.big #mc_destination_ip').val(tmp_obj.attr('mc_destination_ip'));
+            //mc_destination_ip_subnet_mask
+            $('.popup.big #mc_destination_ip_subnet_mask').val(tmp_obj.attr('mc_destination_ip_subnet_mask'));
+            //mc_destination_ip_exclude
+            if (tmp_obj.attr('mc_destination_ip_exclude') == '1') {
+                $('.popup.big #mc_destination_ip_exclude').removeClass('checkbox-unchecked').addClass('checkbox-checked');
+            }
+            else {
+                $('.popup.big #mc_destination_ip_exclude').removeClass('checkbox-checked').addClass('checkbox-unchecked');
+            }
+            //mc_source_port
+            var tmp_ary = tmp_obj.attr('mc_source_port').split('-');
+            if (tmp_ary.length == 2) {
+                $('.popup.big #mc_source_port input').each(function(idx) {
+                    $(this).val(tmp_ary[idx]);
+                });
+            }
+            //mc_destination_port
+            var tmp_ary = tmp_obj.attr('mc_destination_port').split('-');
+            if (tmp_ary.length == 2) {
+                $('.popup.big #mc_destination_port input').each(function(idx) {
+                    $(this).val(tmp_ary[idx]);
+                });
+            }
+            $('.popup.big #mc_source_mac').val(tmp_obj.attr('mc_source_mac'));
+            $('.popup.big #mc_source_mac_mask').val(tmp_obj.attr('mc_source_mac_mask'));
+            //mc_source_mac_exclude
+            if (tmp_obj.attr('mc_source_mac_exclude') == '1') {
+                $('.popup.big #mc_source_mac_exclude').removeClass('checkbox-unchecked').addClass('checkbox-checked');
+            }
+            else {
+                $('.popup.big #mc_source_mac_exclude').removeClass('checkbox-checked').addClass('checkbox-unchecked');
+            }
+            $('.popup.big #mc_destination_mac').val(tmp_obj.attr('mc_destination_mac'));
+            $('.popup.big #mc_destination_mac_mask').val(tmp_obj.attr('mc_destination_mac_mask'));
+            //mc_destination_mac_exclude
+            if (tmp_obj.attr('mc_destination_mac_exclude') == '1') {
+                $('.popup.big #mc_destination_mac_exclude').removeClass('checkbox-unchecked').addClass('checkbox-checked');
+            }
+            else {
+                $('.popup.big #mc_destination_mac_exclude').removeClass('checkbox-checked').addClass('checkbox-unchecked');
+            }
+            //mc_ip_length
+            var tmp_ary = tmp_obj.attr('mc_ip_length').split('-');
+            if (tmp_ary.length == 2) {
+                $('.popup.big #mc_ip_length input').each(function(idx) {
+                    $(this).val(tmp_ary[idx]);
+                });
+            }
+            $('.popup.big #mc_dscp_check').val(tmp_obj.attr('mc_dscp_check'));
+            $('.popup.big #mc_priority_check').val(tmp_obj.attr('mc_priority_check'));
+            $('.popup.big #mc_vlan_id_check').val(tmp_obj.attr('mc_vlan_id_check'));
+
+            $('.popup.big #action_queue').val(tmp_obj.attr('action_queue'));
+            $('.popup.big #action_dscp').val(tmp_obj.attr('action_dscp'));
+            $('.popup.big #action_priority').val(tmp_obj.attr('action_priority'));
+            $('.popup.big #action_ingress_priority').val(tmp_obj.attr('action_ingress_priority'));
+        }
+        
+        
+        $(document).ready(function(){
+	page_settings_qos_load();
+
+	transHTMLString();
+});
+
+function page_settings_qos_load(){
+	var JSONSource = './data/settings_qos.json?_=' + new Date().getTime();
+	
+	$.getJSON(JSONSource, function(data) {
+		//Invalid filter
+		data = filterInvalidString(data);
+		
+		var qos_enable;
+		var ftth_upstream_bw = '';
+		var ftth_upstream_bw_max = '';
+		$.each(data, function(e_key, e_value){
+			$.each(e_value, function(key, val){
+				if(key == 'qos_enable') qos_enable = val;
+				if(key == 'ftth_upstream_bw') ftth_upstream_bw = val;
+				if(key == 'ftth_upstream_bw_max') ftth_upstream_bw_max = val;
+			});
+		});
+		if(qos_enable == '1'){
+			$('#qos_enable').removeClass('button-off').addClass('button-on');
+			$('.qos_enable').show();
+		}else{
+			$('#qos_enable').removeClass('button-on').addClass('button-off');
+			$('.qos_enable').hide();
+		}
+		$('#ftth_upstream_bw').val(ftth_upstream_bw);
+		
+		ftth_upstream_bw_max = parseInt(ftth_upstream_bw_max, 10);
+		if(ftth_upstream_bw_max > 0){
+			$('#ftth_upstream_bw').addClass('scm_max_number').attr('scm_max_number', ftth_upstream_bw_max);
+		}
+	});
+	
+
+}
+
+    </script>
+
+</body>
+
+</html>

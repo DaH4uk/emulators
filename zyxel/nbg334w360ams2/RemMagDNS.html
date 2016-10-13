@@ -1,0 +1,300 @@
+
+<html><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon">
+<meta http-equiv='content-type' content='text/html;charset=iso-8859-1'>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="generator" content="GoLive CyberStudio 3">
+
+<link href="control.css" rel="stylesheet" type="text/css">
+
+<script language="JavaScript">
+<!-- //
+
+    function doLoad() {
+        top.buttom.location="buttom.html";
+    }
+
+
+    function doSubmit() {
+        top.buttom.location="ack.html";
+    }
+
+    var szHelp="h_UPnP.html";
+
+    function doHelp() {
+        window.open(szHelp, 'HELP', 'width=450,height=250,scrollbars=yes,resizable=yes');
+    }
+// -->
+</script>
+
+<script type="text/javascript" src="Generaljs.js" ></script>
+<script language="JavaScript">
+
+	var gl = top.data;//pointer to frames name "data"
+	var j = top.frames[1].dLength;	//this var place in panel.html
+
+	function decide_dns(form, str)
+	{
+ 		if(str == "all")
+  		{
+   			form.txtdnsip.disabled = true;
+  		}
+  		else
+  		{
+   			form.txtdnsip.disabled = false;
+  		}
+	}
+	
+	function doIPcheck(object)
+	{
+  		var szAddr = object.value;
+		var len = szAddr.length;
+		var addrNo = new Array(0, 0, 0, 0);
+		var errMsg = "Invalid IP Address";
+
+  		if ( len == 0 )
+    		return;
+
+  		var j = 0;
+  		for ( var i = 0; i < len; i++ )
+  		{
+    		var c = szAddr.charAt(i);
+    		if ( ((c < "0") || (c > "9")) && (c != ".") )
+    		{
+      			alert(errMsg);
+      			object.value="0.0.0.0";
+      			return;
+    		}
+
+    		if  ( c == "." )
+    		{
+      			if ( (i == 0) || (j == 3) || (szAddr.charAt(i+1) == ".") )
+      			{
+        			alert(errMsg);
+        			object.value="0.0.0.0";
+        			return;
+      			}
+      			j = j + 1;
+    		}
+    		else
+    		{
+      			addrNo[j] = addrNo[j]*10 + parseInt(c);
+      			if ( addrNo[j] > 255 )
+      			{
+        			alert(errMsg);
+        			object.value="0.0.0.0";
+        			return;
+      			}
+    		}
+  		}
+  		if ( (szAddr.charAt(len-1) == ".") || j != 3 )
+  		{
+    		alert(errMsg);
+    		object.value="0.0.0.0";
+  		}
+	}
+	
+	function DNS_disPrompt(form)
+	{
+  		if ( document.forms[0].btndns[0].checked == true )
+  		{
+    		decide_dns(document.forms[0], "all");
+  		}
+  		else
+  		{
+    		decide_dns(document.forms[0], "selected");
+  		}
+  		form.DNSservicePort.disabled = true;
+	}
+
+	function doDNSAccess()
+	{
+  		if ( document.forms[0].DNSAccessInterface.selectedIndex == 1 )
+  		{
+    		document.forms[0].txtdnsip.disabled = true;
+    		document.forms[0].btndns[0].disabled = true;
+    		document.forms[0].btndns[1].disabled = true;
+  		}
+  		else
+  		{
+    		document.forms[0].txtdnsip.disabled = false;
+    		document.forms[0].btndns[0].disabled = false;
+    		document.forms[0].btndns[1].disabled = false;
+  		}
+	}
+	
+</script>
+
+
+<style type="text/css">
+<!--
+body {
+	background-attachment: fixed;
+	background-image: url(images/config_bg.gif);
+}
+-->
+</style>
+</head>
+
+<body marginwidth="0" marginheight="0" LINK="#000000" VLINK="#000000" ALINK="#000000" onload="doLoad();"-->
+
+<form method="post" action="http://www.zyxeltech.de/Forms/RemMagDNS_1" target="buttom">
+
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="1" colspan="2" bgcolor="#A7A7A7"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+    <td width="42" align=center>&nbsp;</td>
+<td><table width="99%" border="0" cellspacing="0" cellpadding="0" >
+      <tr>
+        <td height="18">&nbsp;</td>
+</tr>
+<tr>
+        <td>		<table border="0" cellspacing="0" cellpadding="0">
+		  <tr> 
+			<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+				<div align=center><a href="RemMagWWW.html" target="main" class="sub"><b><FONT class=NaviText>
+WWW			</font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" >
+				<div align=center><a href="RemMag.html" target="main" class="sub"><b><FONT class=NaviText>
+Telnet			</font></b></a></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+<td width="14"><img src="images/sub_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_2.gif" class="sub"> 
+				<div align=center><a href="RemMagFTP.html" target="main" class="sub"><b><FONT class=NaviText>
+FTP			</b></div>
+</td>
+<td width="14"><img src="images/sub_3.gif" width="14" height="24"></td>
+			<td width="14"><img src="images/sub_on_1.gif" width="14" height="24"></td>
+<td nowrap background="images/sub_on_2.gif" class="sub"> 
+				<div align=center><b>
+DNS			</b></div>
+</td>
+<td width="14"><img src="images/sub_on_3.gif" width="14" height="24"></td>
+		  </tr>
+</table>
+
+	  	</td>
+</tr>
+<tr>
+		<td class="BG4">
+	  	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+		  	<td width="3" rowspan="3" background="images/config_bo_l.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td height="3" background="images/config_bo_t.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+<td width="3" rowspan="3" background="images/config_bo_r.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+<tr>
+		  	<td>          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+                <td colspan="2">&nbsp;</td>
+</tr>
+<tr>
+              <td width="3%" height="19" class=cTitle>&nbsp;&nbsp; </td>
+<td class=cTitle>
+DNS                </td>
+</tr>
+<tr>
+			    <td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<table width="90%" border="0" align=center cellspacing="0">
+            <tr> 
+                <td width="35%">
+Service Port                </td>
+<td class="cfig_word">
+<input type="text" name="DNSservicePort" size="5" maxlength="5" value="53" onkeypress="chk_num(event)" />
+                </td>
+</tr>
+<tr>
+                <td width="35%">
+Service Access                </td>
+<td class="cfig_word">
+<select name="DNSAccessInterface" size="1" onchange="doDNSAccess();">
+<option value=00000000 selected>LAN & Guest WLAN
+<option value=00000001>Disable
+<option value=00000002>LAN
+<option value=00000003>Guest WLAN
+</select>                </td>
+</tr>
+<tr>
+                <td width="35%">
+Secured Client IP Address                </td>
+<td class="cfig_word">
+<input type="radio" name="btndns" value="btndns_0" checked onclick="decide_dns(form,'all');" />
+All                  &nbsp;&nbsp;&nbsp;
+<input type="radio" name="btndns" value="btndns_1" onclick="decide_dns(form,'selected');" />
+Selected                  &nbsp;
+<input type="text" name="txtdnsip" size="20" maxlength="15" value="0.0.0.0" onBlur="doIPcheck(this);" onFocus="if (this.form.btndns[0].checked) this.form.btndns[0].focus();" />
+                </td>
+</tr>
+<tr>
+				<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+
+			<table border="0" cellspacing="0" cellpadding="0" width="300" align=center>
+            	<tr> 
+                	<td>&nbsp;</td>
+</tr>
+<tr align=center> 
+                    <td background="images/wg_dotline.gif">&nbsp;</td>
+</tr>
+<tr> 
+                    <td align=center>
+<input type="submit" name="sysSubmit" value="Apply" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<INPUT TYPE=RESET NAME="Reset" VALUE="Reset">                    </td>
+
+                </tr>
+<tr>
+                    <td height="35">&nbsp;</td>
+</tr>
+</table>
+                      
+
+            </td>
+</tr>
+<tr>
+		    <td height="3" background="images/config_bo_b.gif"><img src="images/dotspacer.gif" width="1" height="1"></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+</form>
+<!-- WaterMark Begin -->
+<!-- WaterMark End -->
+ <p>&nbsp;</p>
+
+</body>
+<!-- WaterMark Begin -->
+<script language="JavaScript">    
+<!--
+markW=33;   // pixels wide
+markH=354;   // pixels high
+markRefresh=10;   // milliseconds
+
+DNS_disPrompt(document.forms[0]);
+doDNSAccess();
+
+showFullPath(
+'Management > Remote MGMT > DNS');
+
+//-->
+</script>
+<!-- WaterMark End -->
+</html>

@@ -1,0 +1,34 @@
+var SAVEME = new function() {
+    function beforeunload() {}
+    var self = this,
+        locking = !1,
+        $$ = {
+            save: !1,
+            reboot: !1
+        };
+    this.lock = function() {
+        return locking = !0, this.disable(), this
+    }, this.unlock = function() {
+        return locking = !1, this.enable(), this
+    }, this.disable = function() {
+        return $(window).unbind("beforeunload", beforeunload), this
+    }, this.enable = function() {
+        return locking || $(window).unbind("beforeunload", beforeunload).bind("beforeunload", beforeunload), this
+    }, this.enabling = function() {
+        return $$.save || $$.reboot ? this.enable() : this.disable(), this
+    }, this.trigger = {
+        save: callback(self, function(need) {
+            $$.save = need, this.enabling()
+        }),
+        reboot: callback(self, function(need) {
+            $$.reboot = need, this.enabling()
+        })
+    }, $(document).bind({
+        ready: callback(this, function() {
+            device.hook(device.notify.SAVE, callback(this, this.trigger.save)), device.hook(device.notify.REBOOT, callback(this, this.trigger.reboot))
+        }),
+        keydown: callback(this, function(e) {
+            return 116 == e.which && this.lock(), !0
+        })
+    })
+};

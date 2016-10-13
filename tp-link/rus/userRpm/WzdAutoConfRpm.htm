@@ -1,0 +1,805 @@
+﻿<SCRIPT language="javascript" type="text/javascript">
+var wzdAutoConfInf = new Array(
+0,
+0,
+0,
+0,
+0,
+4294967295,
+4294967295,
+"",
+0,0 );
+</SCRIPT>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<HTML>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico"><TITLE>TL-WR740N</TITLE>
+<META http-equiv=Pragma content=no-cache>
+<META http-equiv=Expires content="wed, 26 Feb 1997 08:21:57 GMT">
+<LINK href="../dynaform/css_main.css" rel=stylesheet type="text/css">
+<SCRIPT language="javascript" src="../dynaform/common.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="javascript" type="text/javascript"><!--
+if(window.parent == window){window.location.href="http://192.168.0.1";}
+function Click(){ return false;}
+document.oncontextmenu=Click;
+//--></SCRIPT>
+
+<script type="text/javascript" src="../dynaform/ispAutoConf.js"></script>
+<SCRIPT type="text/javascript">
+function bindNext(obj)
+{
+	var button = document.forms[0].Next;
+	if (obj.keyCode == 13)
+	{
+		button.click();
+		obj.returnValue = false;
+	}
+}
+
+</script>
+<style type="text/css">
+	tr.displayBlock{
+		display:block;
+		display:table-row;
+	}
+	tr.displayNone{
+		display:none;
+	}
+	select.select{
+		width:270px;
+	}
+</style>
+</HEAD>
+<body onLoad="setTagStr(document,'wzd_autoconf');LoadHelp('WzdAutoConfHelpRpm.htm'); resize(this);" onResize="resize(this);" onkeyDown="bindNext(event);">
+<center>
+  <form action="WzdAutoConfRpm.htm" enctype="multipart/form-data" method="get" onSubmit="return doSubmit();">
+    <table id="autoWidth" border=0>
+      <tbody>
+		<tr>
+			<TD class=h1 colspan=2 id="t_title">Quick Setup - Configure Internet Connection by Choosing ISP</TD>
+        </tr>
+		<TR>
+        <TD class=blue colspan=2></TD>
+		</TR>
+        <tr>
+			<td align = "right" class=Item id="t_country">Country:</td>
+			<td><select class=select id="country" name="country" onchange="changeselect_country(this)"></select></td>
+        </tr>
+        <tr>
+			<td align = "right" class=Item id="t_city">City/Region:</td>
+			<td><select class=select id="city" name="city" onchange="changeselect_city(this)"></select></td>
+        </tr>
+		<tr>
+			<td align = "right" class=Item id="t_isp">ISP:</td>
+			<td><select class=select id="isp" name="isp" onchange="changeselect_isp(this)"></select></td>
+        </tr>
+		<tr>
+			<td align = "right"  class=Item id="t_wan">WAN Connection Type:</td>
+			<td><select class=select id="wan" name="firstConnection"onchange="changeselect_wan(this)"></select></td>
+        </tr>
+		<tr id="tr_second" class="displayBlock">
+			<td align = "right"  class=Item id="t_second">Secondary Connection:</td>
+			<td><select class=select id="select_second" name="select_second"onchange="changeselect_second(this)"></select></td>
+        </tr>
+		<tr id="tr_vpn" class="displayBlock">
+			<td align = "right"  class=Item id="t_vpn">Server IP Address/Name:</td>
+			<td><select class=select id="select_vpn" name="select_vpn" onchange="changeselect_vpn(this)"></select></td>
+        </tr>
+		<tr>
+			<td class="Item">
+				<input type="checkbox" onclick="doSet();" value="2" name="manual">
+			</td>
+			<td>
+				<span id="t_config">I can't find appropriate information</span>
+			</td>
+		</tr>
+		 <TR>
+          <TD class=info colspan=2 id="t_warn">Please make sure the cable of the WAN port is well connected to your device</TD>
+        </TR>
+		<TR>
+			<TD class=blue colspan=2></TD>
+		</TR>
+		<tr>
+			<td class="mbtn" colspan="2">
+			<input id="return" class="buttonBig" type="button" value="Back" name="Return" onClick="doBack();">
+			&nbsp; &nbsp;&nbsp;&nbsp;
+			<input id="next" class="buttonBig" type="button" value="Next" name="Next" onClick="doNext();">
+			</td>
+		</tr>
+      </tbody>
+    </table>
+	<INPUT id="secondConnection" name="secondConnection" type="hidden" value="">
+	<INPUT id="vpn" name="vpn" type="hidden" value="">
+	<INPUT id = "mac" name="mac" type="hidden" value="">
+  </form>
+</center>
+</body>
+<script type="text/javascript">
+	
+	var select = document.getElementById("country");
+	var select_city = document.getElementById("city");
+	var select_isp = document.getElementById("isp");
+	var select_wan = document.getElementById("wan");
+	var next =  document.getElementById("next");
+	var select_second = document.getElementById("select_second");
+	var select_vpn = document.getElementById("select_vpn");
+	var label_second = document.getElementById("label_second");
+	var label_vpn = document.getElementById("label_vpn");
+	var j = 0;
+	var flag = 0;
+
+	select_city.options.add(new Option( ("-Выберите из списка-"), j));
+	select_isp.options.add(new Option( ("-Выберите из списка-"), j));
+	select_wan.options.add(new Option("-Выберите из списка-", j-1));
+	select_second.options.add(new Option("-Выберите из списка-", j-1));
+	select_vpn.options.add(new Option("-Выберите из списка-", j));
+	select.options.add(new Option("-Выберите из списка-", j++));
+	
+	select_city.disabled = true;
+	select_isp.disabled = true;
+	select_wan.disabled = true;
+	next.disabled = true;
+	
+	document.getElementById("tr_second").className = "displayNone";
+	document.getElementById("tr_vpn").className = "displayNone";	
+	
+	for (var i in ispAutoConfTable)
+	{
+
+		var opt = new Option(ispAutoConfTable["country" + (j - 1)].country_name, j);
+		
+		select.options.add(opt);
+		j++;
+	}
+	function clearSelectBox(obj)
+	{
+		for(var i = 1, len = obj.options.length; i < len; i++)
+		{
+			obj.remove(1);
+		}
+	}
+
+	if(wzdAutoConfInf[2])
+	{
+		select.options[wzdAutoConfInf[2]].selected = true;
+		changeselect_country(select);
+		if(wzdAutoConfInf[3])
+		{
+			select_city.options[wzdAutoConfInf[3]].selected = true;
+			changeselect_city(select_city);
+			if(wzdAutoConfInf[4])
+			{
+				select_isp.options[wzdAutoConfInf[4]].selected = true;
+				changeselect_isp(select_isp);
+				for(j = 0; j < select_wan.options.length; j++)
+				//for(var i in select_wan.options)
+				{
+						
+					if(wzdAutoConfInf[5] == -1)
+					{
+						select_wan.options[0].selected = true;
+						break;
+					}
+					if(select_wan.options[j].value == wzdAutoConfInf[5])
+					{
+						select_wan.options[j].selected = true;
+						changeselect_wan(select_wan);
+						break;
+					}
+				}
+				if(document.getElementById("tr_second").className == "displayBlock")
+				{
+					if(wzdAutoConfInf[6] > 100)
+					{
+						wzdAutoConfInf[6] = -2;
+					}
+					for(j = 0; j < select_second.options.length; j++)
+					{
+						if(select_second.options[j].value == wzdAutoConfInf[6])
+						{
+							select_second.options[j].selected = true;
+							changeselect_second(select_second);
+							break;
+						}
+					}
+				}
+				if(document.getElementById("tr_vpn").className == "displayBlock")
+				{
+					for(j = 0; j < select_vpn.options.length; j++)
+					{
+							
+						if(wzdAutoConfInf[7] == 0)
+						{
+							select_vpn.options[0].selected = true;
+							break;
+						}
+						if(select_vpn.options[j].text == wzdAutoConfInf[7])
+						{
+							select_vpn.options[j].selected = true;
+							changeselect_vpn(select_vpn);
+							break;
+						}
+					}
+				}
+			}
+		}
+	
+	}
+	//select_wan.options[wzdAutoConfInf[5]].selected = true;
+	if(select.selectedIndex != 0 && select_city.selectedIndex != 0
+		&& select_isp.selectedIndex != 0 && select_wan.selectedIndex != 0)
+	{
+		next.disabled = false;
+	}
+	
+	function changeselect_country(obj)
+	{		
+		j = 1;
+		var select = document.getElementById("city");
+		var select_isp = document.getElementById("isp");
+		var select_wan = document.getElementById("wan");
+		
+		clearSelectBox(select);
+		clearSelectBox(select_isp);
+		clearSelectBox(select_wan);
+		
+		document.getElementById("tr_second").className = "displayNone";
+		document.getElementById("tr_vpn").className = "displayNone";		
+		
+		select.disabled = false;
+		select_isp.disabled = true;
+		select_wan.disabled = true;
+		next.disabled = true;
+		
+		if(obj.selectedIndex == 0)
+		{
+			select.disabled = false;
+			return;
+		}
+		
+		for (var i in ispAutoConfTable["country" + (obj.selectedIndex - 1)])
+		{
+			if(flag == 0)
+			{		
+				flag = 1;
+				continue;
+			}	
+			select.options.add(new Option(ispAutoConfTable["country" + (obj.selectedIndex - 1)]["location" + (j - 1)].city_region, j++));	
+						 
+		}
+		flag = 0;
+		
+	}
+	function changeselect_city(obj)
+	{
+		j = 1;
+	
+		var select_wan = document.getElementById("wan");
+		var select = document.getElementById("isp");
+		var first_select = document.getElementById("country");
+		
+		clearSelectBox(select);
+		clearSelectBox(select_wan);
+		
+		document.getElementById("tr_second").className = "displayNone";
+		document.getElementById("tr_vpn").className = "displayNone";
+		
+		select.disabled = false;
+		select_wan.disabled = true;
+		next.disabled = true;
+		
+		if(obj.selectedIndex == 0)
+		{
+			select.disabled = false;
+			return;
+		}
+		
+		for (var i in ispAutoConfTable["country" + (first_select.selectedIndex - 1)]["location" + (obj.selectedIndex - 1)])
+		{
+			if(flag == 0)
+			{
+				flag = 1;
+				continue;
+			}
+			select.options.add(new Option(ispAutoConfTable["country" + (first_select.selectedIndex - 1)]["location" + (obj.selectedIndex - 1)]["isp" + (j - 1)].isp_name, j++));
+		}
+		flag = 0;
+	}
+	function changeselect_isp(obj)
+	{
+		j = 1;
+		var select = document.getElementById("wan");
+		var first_select = document.getElementById("country");
+		var second_select = document.getElementById("city");
+		var text;
+		var k = 0;
+		
+		var tmp1 = 0;
+		var tmp2 = 0;
+		var tmp3 = 0;
+		var tmp4 = 0;
+		var tmp5 = 0;
+		
+		clearSelectBox(select);
+		
+		document.getElementById("tr_second").className = "displayNone";
+		document.getElementById("tr_vpn").className = "displayNone";
+		
+		select.disabled = false;
+		next.disabled = true;
+		
+		if(obj.selectedIndex == 0)
+		{
+			select.disabled = false;
+			return;
+		}
+		
+		for (var i in ispAutoConfTable["country" + (first_select.selectedIndex - 1)]["location" + (second_select.selectedIndex - 1)]["isp" + (obj.selectedIndex - 1)])
+		{
+			if(flag == 0)
+			{
+				flag = 1;
+				continue;
+			}
+			if(ispAutoConfTable["country" + (first_select.selectedIndex - 1)]["location" + (second_select.selectedIndex - 1)]["isp" + (obj.selectedIndex - 1)].hasOwnProperty("flag") == true && flag == 1)
+			{
+				flag = 2;
+				continue;
+			}
+			text = ispAutoConfTable["country" + (first_select.selectedIndex - 1)]["location" + (second_select.selectedIndex - 1)]["isp" + (obj.selectedIndex - 1)]["auto_config" + (j - 1)].first_connection;
+			
+			j++;
+			
+			if(text == "Динамический IP-адрес")
+			{
+				if(flag == 2 && tmp1 == 1)
+				{
+					continue;
+				}
+				k = 0;		
+				tmp1 = 1;
+			}
+			if(text == "Статический IP-адрес")
+			{
+				if(flag == 2 && tmp2 == 1)
+				{
+					continue;
+				}
+				k = 1;
+				tmp2 = 1;
+			}
+			if(text == "PPPoE")
+			{
+				if(flag == 2 && tmp3 == 1)
+				{
+					continue;
+				}
+				k = 2;
+				tmp3 = 1;
+			}
+			if(text == "PPTP")
+			{
+				if(flag == 2 && tmp4 == 1)
+				{
+					continue;
+				}
+				k = 7;
+				tmp4 = 1;
+			}
+			if(text == "L2TP")
+			{
+				if(flag == 2 && tmp5 == 1)
+				{
+					continue;
+				}
+				k = 6;
+				tmp5 =1;
+			}
+			select.options.add(new Option(text, k));
+			
+			//select.options.add(new Option(ispAutoConfTable["country" + (first_select.selectedIndex - 1)]["location" + (second_select.selectedIndex - 1)]["isp" + (obj.selectedIndex - 1)]["auto_config" + (j - 1)].first_connection, j++));
+		}
+		flag = 0;
+	}
+	function changeselect_wan(obj)
+	{
+		var select_country = document.getElementById("country");
+		var select_city = document.getElementById("city");
+		var select_isp = document.getElementById("isp");
+		
+		var second_connection = document.getElementById("secondConnection");
+		var vpn = document.getElementById("vpn");
+		var mac = document.getElementById("mac");
+		
+		document.getElementById("tr_second").className = "displayNone";
+		document.getElementById("tr_vpn").className = "displayNone";
+		
+		next.disabled = true;
+		
+		if(obj.selectedIndex == 0)
+		{
+			return;
+		}
+		
+		var tmp1 = ispAutoConfTable["country" + (select_country.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)]["auto_config" + (obj.selectedIndex - 1)].second_connection;
+		vpn.value = ispAutoConfTable["country" + (select_country.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)]["auto_config" + (obj.selectedIndex - 1)].vpn_ip_name;
+		var tmp2 = ispAutoConfTable["country" + (select_country.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)]["auto_config" + (obj.selectedIndex - 1)].mac_clone;
+		
+		if(ispAutoConfTable["country" + (select_country.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)].hasOwnProperty("flag"))
+		{
+			
+			handlePlus();
+			return;
+		}
+		
+		if(tmp1 == "Динамический IP-адрес")
+		{
+			second_connection.value = 0;
+		}
+		if(tmp1 == "Статический IP-адрес")
+		{
+			second_connection.value = 1;
+		}
+		if(tmp1 == "PPPoE")
+		{
+			second_connection.value = 2;
+		}
+		if(tmp1 == "PPTP")
+		{
+			second_connection.value = 7;
+		}
+		if(tmp1 == "L2TP")
+		{
+			second_connection.value = 6;
+		}
+		if(tmp1 == "")
+		{
+			second_connection.value = -1;
+		}
+		
+		if(tmp2 == "YES")
+		{	
+			mac.value = 1;
+		}
+		if(tmp2 == "NO")
+		{
+			mac.value = 0;
+		}
+		
+		next.disabled = false;
+	
+	}
+	function doSet()
+	{
+		var select_country = document.getElementById("country");
+		var select_city = document.getElementById("city");
+		var select_isp = document.getElementById("isp");
+		var select_wan = document.getElementById("wan");
+		if(document.forms[0].manual.checked)
+		{
+			select_country.options[0].selected = true;
+			select_city.options[0].selected = true;
+			select_isp.options[0].selected = true;
+			select_wan.options[0].selected = true;
+			
+			select_country.disabled = true;
+			select_city.disabled = true;
+			select_isp.disabled = true;
+			select_wan.disabled = true;
+			document.getElementById("tr_second").className = "displayNone";
+			document.getElementById("tr_vpn").className = "displayNone";
+			next.disabled = false;
+			
+		}
+		else
+		{
+			
+			select_country.disabled = false;
+			document.getElementById("tr_second").className = "displayNone";
+			document.getElementById("tr_vpn").className = "displayNone";
+			next.disabled = true;
+		}
+		return true;
+	}
+	function handlePlus()
+	{
+		var j = 0;
+		var tmp_obj = ispAutoConfTable["country" + (select.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)];
+		
+		var second_connection = document.getElementById("secondConnection");
+		var vpn = document.getElementById("vpn");
+		var mac = document.getElementById("mac");
+		
+		for(var i in tmp_obj)
+		{
+			if(j < 2)
+			{
+				j++;
+				continue;
+			}
+			if(tmp_obj["auto_config" + (j - 2)].first_connection == select_wan.options[select_wan.selectedIndex].text)
+			{
+				if(tmp_obj["auto_config" + (j - 2)].hasOwnProperty("handle_level"))
+				{
+					if(tmp_obj["auto_config" + (j - 2)].handle_level == 1)
+					{
+						document.getElementById("tr_second").className = "displayBlock";
+						document.getElementById("tr_vpn").className = "displayNone";
+						clearSelectBox(select_second);
+						//clearSelectBox(select_vpn);
+					}
+					else
+					{
+						document.getElementById("tr_second").className = "displayBlock";
+						document.getElementById("tr_vpn").className = "displayBlock";
+						clearSelectBox(select_second);
+						clearSelectBox(select_vpn);
+						select_vpn.disabled = true;
+					}
+					addSecondConn2Select();
+					break;
+				}
+				else
+				{
+					document.getElementById("tr_second").className = "displayNone";
+					document.getElementById("tr_vpn").className = "displayNone";
+					var tmp1 = tmp_obj["auto_config" + (j - 2)].second_connection;
+					vpn.value = tmp_obj["auto_config" + (j - 2)].vpn_ip_name;
+					var tmp2 = tmp_obj["auto_config" + (j - 2)].mac_clone;
+					if(tmp1 == "Динамический IP-адрес")
+					{
+						second_connection.value = 0;
+					}
+					if(tmp1 == "Статический IP-адрес")
+					{
+						second_connection.value = 1;
+					}
+					if(tmp1 == "PPPoE")
+					{
+						second_connection.value = 2;
+					}
+					if(tmp1 == "PPTP")
+					{
+						second_connection.value = 7;
+					}
+					if(tmp1 == "L2TP")
+					{
+						second_connection.value = 6;
+					}
+					if(tmp1 == "")
+					{
+						second_connection.value = -1;
+					}
+					
+					if(tmp2 == "YES")
+					{	
+						mac.value = 1;
+					}
+					if(tmp2 == "NO")
+					{
+						mac.value = 0;
+					}
+					
+					next.disabled = false;
+				}
+			}
+			j++;
+		}
+	}
+	function addSecondConn2Select()
+	{
+		var j = 0;
+		var tmp_obj = ispAutoConfTable["country" + (select.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)];		
+		
+		var tmp1 = 0;
+		var tmp2 = 0;
+		var tmp3 = 0;
+		var tmp4 = 0;
+		var tmp5 = 0;
+		for(var i in tmp_obj)
+		{
+			if(j < 2)
+			{
+				j++;
+				continue;
+			}
+			if(tmp_obj["auto_config" + (j - 2)].first_connection == select_wan.options[select_wan.selectedIndex].text)
+			{
+				second_con = tmp_obj["auto_config" + (j - 2)].second_connection;
+				if(second_con == "Динамический IP-адрес")
+				{
+					if(tmp1 == 0)
+					{
+						
+						tmp1 = 1;						
+						select_second.options.add(new Option(second_con, 0));
+					}
+				}
+				if(second_con == "Статический IP-адрес")
+				{
+					if(tmp2 == 0)
+					{
+						tmp2 = 1;
+						select_second.options.add(new Option(second_con, 1));
+					}
+				}
+				if(second_con == "PPPoE")
+				{
+					if(tmp3 == 0)
+					{
+						tmp3 = 1;
+						select_second.options.add(new Option(second_con, 2));
+					}
+				}
+				if(second_con == "PPTP")
+				{
+					if(tmp4 == 0)
+					{
+						tmp4 = 1;
+						select_second.options.add(new Option(second_con, 7));
+					}
+				}
+				if(second_con == "L2TP")
+				{
+					if(tmp5 == 0)
+					{
+						tmp5 = 1;
+						select_second.options.add(new Option(second_con, 6));
+					}
+				}
+				if(second_con == "")
+				{
+					select_second.options.add(new Option("Нет вторичного подключения", -2));
+				}
+			}
+			j++;
+		}		
+	}
+	function changeselect_second(obj)
+	{
+		//add vpn select
+		var j = 0;
+		var tmp_obj = ispAutoConfTable["country" + (select.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)];
+
+		var second_connection = document.getElementById("secondConnection");
+		var vpn = document.getElementById("vpn");
+		var mac = document.getElementById("mac");
+		
+		next.disabled = true;
+		clearSelectBox(select_vpn);
+		if(obj.selectedIndex == 0)
+		{
+			return;
+		}
+		if(tmp_obj.flag == 1)
+		{
+			second_connection.value = select_second.value;
+			for(var i in tmp_obj)
+			{
+				if(j < 2)
+				{
+					j++;
+					continue;
+				}
+				if(tmp_obj["auto_config" + (j - 2)].first_connection == select_wan.options[select_wan.selectedIndex].text && tmp_obj["auto_config" + (j - 2)].second_connection == select_second.options[select_second.selectedIndex].text)
+				{
+					vpn.value = tmp_obj["auto_config" + (j - 2)].vpn_ip_name;
+					if(tmp_obj["auto_config" + (j - 2)].mac_clone == "YES")
+					{
+						mac.value = 1;
+					}
+					else 
+					{
+						mac.value = 0;
+					}
+				}
+				j++;
+			}
+			next.disabled = false;
+			return;
+		}
+		j = 0;
+		for(var i in tmp_obj)
+		{
+			if(j < 2)
+			{
+				j++;
+				continue;
+			}
+			if(tmp_obj["auto_config" + (j - 2)].first_connection == select_wan.options[select_wan.selectedIndex].text && tmp_obj["auto_config" + (j - 2)].second_connection == obj.options[select_second.selectedIndex].text)
+			{
+				select_vpn.options.add(new Option(tmp_obj["auto_config" + (j - 2)].vpn_ip_name, j));
+			}
+			j++;
+		}
+		select_vpn.disabled = false;
+	}
+	function changeselect_vpn(obj)
+	{
+		var second_connection = document.getElementById("secondConnection");
+		var vpn = document.getElementById("vpn");
+		var mac = document.getElementById("mac");
+		var j = 0;
+		second_connection.value = select_second.value;
+
+		vpn.value = select_vpn.options[select_vpn.selectedIndex].text;
+		
+		next.disabled = true;
+		if(obj.selectedIndex == 0)
+		{
+			return;
+		}
+		var tmp_obj = ispAutoConfTable["country" + (select.selectedIndex - 1)]["location" + (select_city.selectedIndex - 1)]["isp" + (select_isp.selectedIndex - 1)];	
+		for(var i in tmp_obj)
+		{
+			if(j < 2)
+			{
+				j++;
+				continue;
+			}
+			if(tmp_obj["auto_config" + (j - 2)].first_connection == select_wan.options[select_wan.selectedIndex].text && tmp_obj["auto_config" + (j - 2)].second_connection == select_second.options[select_second.selectedIndex].text && tmp_obj["auto_config" + (j - 2)].vpn_ip_name == obj.options[obj.selectedIndex].text)
+			{
+				if(tmp_obj["auto_config" + (j - 2)].mac_clone == "YES")
+				{
+					mac.value = 1;
+				}
+				else 
+				{
+					mac.value = 0;
+				}
+			}
+			j++;
+		}
+		next.disabled = false;
+	}
+	function doSubmit()
+	{
+	
+		return true;
+	}
+	function doNext()
+{
+	if(document.forms[0].manual.checked)
+	{
+		setCookie("IsManual", 1);
+		location.href = "../userRpm/WzdWanTypeRpm.htm";
+	}
+	else
+	{
+		setCookie("IsManual", 0);
+		//setCookie("WzdWanType", 10);
+		var wan = document.getElementById("wan");
+		if (wan.value == 0)
+		{
+			setCookie("WzdWanType" ,11);
+			location.href = "../userRpm/WzdWlanRpm.htm";
+		}
+		else if(wan.value == 1)
+		{
+			setCookie("WzdWanType" ,2);
+			location.href = "../userRpm/WzdStaticIpRpm.htm";
+		}
+		else if(wan.value == 2)
+		{
+			setCookie("WzdWanType" ,3);
+			location.href = "../userRpm/WzdPPPoERpm.htm";
+		}
+		else if(wan.value == 6)
+		{
+			setCookie("WzdWanType" ,4);
+			location.href = "../userRpm/WzdL2TPRpm.htm";
+		}
+		else if(wan.value == 7)
+		{
+			setCookie("WzdWanType" ,5);
+			location.href = "../userRpm/WzdPPTPRpm.htm";
+		}
+	}
+}
+
+function doBack()
+{
+	location.href = "../userRpm/WzdStartRpm.htm";
+}
+</script>
+</html>

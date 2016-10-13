@@ -1,0 +1,100 @@
+<html>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta HTTP-equiv="Cache-Control" content="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+<script type="text/javascript" src="language_ru.js"></script>
+<title>Обновление прошивки</title>
+<link href="style.css" tppabs="http://192.168.10.1/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="util_gw.js" tppabs="http://192.168.10.1/util_gw.js"></script>
+<script>
+var MWJ_progBar = 0;
+var time=0;
+var delay_time=1000;
+var loop_num=0;
+
+function progress()
+{
+  if (loop_num == 3) {
+	alert(upload_up_failed);
+	return false;
+  }
+  if (time < 1) 
+	time = time + 0.033;
+  else {
+	time = 0;
+	loop_num++;
+  }
+  setTimeout('progress()',delay_time);  
+  myProgBar.setBar(time); 
+}
+
+
+function sendClicked(F)
+{
+  if(document.upload.binary.value == ""){
+      	document.upload.binary.focus();
+  	alert(upload_send_file_empty);
+  	return false;
+  }
+  F.submit();
+  show_div(true, "progress_div");   
+  progress();
+}
+
+</script>
+
+</head>
+<BODY>
+<blockquote>
+<h2><script>dw(upload_header)</script></h2>
+
+<form method="post" action="http://192.168.10.1/boafrm/formUpload" enctype="multipart/form-data" name="upload">
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+ <tr><td>
+ <script>dw(upload_header_explain)</script>
+ </td></tr>
+</table>
+<br>
+<table border=0 width=550 cellpadding=0 cellspacing=0 class="menu_content_list_table">
+<!--
+  <tr>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td">Start Address:</td>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><input type="text" name="readAddr" size="10" maxlength="8" value=20000>(hex)</td>
+  </tr>
+  <tr>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td">Size:</td>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><input type="text" name="size" size="10" maxlength="8" value=F0000>(hex)</td>
+  </tr>
+  <tr>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td">Save File:</td>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td">
+      <input type="submit" value="Save..." name="save"></td>
+  </tr>
+-->
+<tr>
+                <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(upload_version)</script>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td width ="70%" class="item_td">v3.4.6.3</td>
+</tr>
+  <tr>
+      <td width ="30%" bgcolor="#eaeaea" align="right" class="itemdesc_td"><script>dw(upload_file_select)</script>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td width ="70%" class="item_td"><input type="file" name="binary" size=20></td>
+  </tr>
+  </table> 
+     <input onclick=sendClicked(this.form) type=button  name="send">&nbsp;&nbsp;    
+    <script>document.upload.send.value=upload_send;</script>
+<!-- 	<input type="reset" value="Reset" name="reset"> -->
+<!--
+	<input type="hidden" value="0x10000" name="writeAddrWebPages">
+	<input type="hidden" value="0x20000" name="writeAddrCode">
+-->
+	<input type="hidden" value="/upload.htm" name="submit-url">
+	
+ </form>
+ 
+ </blockquote>
+</body>
+</html>

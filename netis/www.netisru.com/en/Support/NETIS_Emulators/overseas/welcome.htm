@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link href="css/welcome.css" type="text/css" rel="stylesheet"/>
+<script type="text/javascript" src="script/netcore.js"></script>
+<script type="text/javascript" src="config/config.js"></script>
+<script type="text/javascript" src="config/language_us.js"></script>
+<script type="text/javascript" src="config/language_cz.js"></script>
+<script type="text/javascript" src="config/language_de.js"></script>
+<script type="text/javascript" src="config/language_du.js"></script>
+<script type="text/javascript" src="config/language_es.js"></script>
+<script type="text/javascript" src="config/language_fr.js"></script>
+<script type="text/javascript" src="config/language_it.js"></script>
+<script type="text/javascript" src="config/language_po.js"></script>
+<script type="text/javascript" src="config/language_pt.js"></script>
+<script type="text/javascript" src="config/language_ru.js"></script>
+<script type="text/javascript" src="config/language_tc.js"></script>
+<script type="text/javascript" src="config/language_tu.js"></script>
+<script type="text/javascript" src="script/debug.js"></script> 
+<script type="text/javascript" src="script/logic.js"></script>
+<script type="text/javascript" src="script/action.js"></script> 
+<script type="text/javascript">
+
+function set_radio(name,value){
+	var flag=true;
+	var collection = document.getElementsByName(name);
+	for (i=0;i<collection.length;i++){
+		if(collection[i].value == value){
+			collection[i].checked =true;
+			flag=false;
+		}
+	}
+	if(flag && collection.length >1){
+		collection[0].checked =true;
+	}
+}
+function setConnTip(str,lan){
+	var val = ($.DataMap.chip_flag=='1'&&$.DataMap.conntype=='6')?"L2TP":getConntypeLanguage($.DataMap.conntype);
+	val = (($.DataMap.access_mode==2)?"WISP-":"")+val;
+	var ConnTip = (str!=0&&str!=1&&str!=3)?Language[lan].network.wan.conntype_label+" : "+val:" ";
+	document.getElementById("inter_tips").innerHTML = ConnTip;
+}
+function set_wl_val(str){
+	document.getElementById("sec_mode").value = str;
+	var flag = (str=='0')?true:false;
+	document.getElementById("key_wpa").disabled = flag;
+}
+function change_language_show(data){
+	var lan = ($.ShowLan)?$.Lan_map[data]:data;
+	obj2obj($.CommonLan,Language[lan].common);
+	document.title = $.CommonLan['welcome_title'];
+	//if($.ShowLan){ID("setlan").value = data;}
+	var connect = eval("("+Language[lan].network.wan.conntype_options+")");
+	ID("s_dhcp").innerHTML = (connect[0].indexOf('(')!=-1)?connect[0].split('(')[0]:connect[0];
+	ID("s_pppoe").innerHTML = connect[2];
+	ID("s_static").innerHTML = connect[1];
+	ID("s_other").innerHTML = $.CommonLan['other'];
+	setConnTip(ID('conntype').value,lan);
+	ID("s_tips").innerHTML = Language[lan].common.wel_tips;
+	ID("s_inter").innerHTML = Language[lan].common.wel_inter_tip;
+	ID("s_wirel").innerHTML = Language[lan].common.wel_wirel_tip;
+	ID("s_disable").innerHTML = Language[lan].common.off;
+	ID("s_enable").innerHTML = Language[lan].common.on;
+	ID("s_ssid").innerHTML = Language[lan].status.status.ssid_label+" :";
+	ID("s_status").innerHTML = Language[lan].common.wel_status_label;
+	ID("s_key").innerHTML = Language[lan].wireless.base.key_wep_label+" :";
+	if(ID("s_wan_ip"))
+		ID("s_wan_ip").innerHTML = Language[lan].network.wan.wan_ip_label+" :";
+	if(ID("s_wan_mask"))
+		ID("s_wan_mask").innerHTML = Language[lan].network.wan.wan_mask_label+" :";
+	if(ID("s_wan_gw"))
+		ID("s_wan_gw").innerHTML = Language[lan].network.wan.wan_gw_label+" :";
+	if(ID("s_dns_a"))
+		ID("s_dns_a").innerHTML = Language[lan].network.wan.dns_a_label+" :";
+	if(ID("s_dns_b"))
+		ID("s_dns_b").innerHTML = Language[lan].network.wan.dns_b_label+" :";
+	if(ID("dns_b_after"))
+		ID("dns_b_after").innerHTML = Language[lan].network.wan.dns_b_after;
+	if(ID("s_pppoe_username"))
+		ID("s_pppoe_username").innerHTML = Language[lan].network.wan.pppoe_username_label+" :";
+	if(ID("s_pppoe_pwd"))
+		ID("s_pppoe_pwd").innerHTML = Language[lan].network.wan.pppoe_pwd_label+" :";
+	ID("s_key_tip").innerHTML = Language[lan].common.wel_pwd_tip;
+	ID("s_save").value = Language[lan].common.save;
+}
+function InitTextPanel(id,len,after){
+	var panel = new Element("DIV:df_context");
+	var label = new Element("LABEL:df_label");
+	var text  = new Element("INPUT:df_text");
+	var after = new Element("LABEL:df_after");
+	label.entity.id = "s_"+id;
+	text.entity.id = id;
+	if(len)
+		text.entity.maxLength = len;
+	text.entity.value = $.DataMap[id];
+	if(after){
+		after.entity.id = id+"_after";
+		panel.push(label,text,after);
+	}else
+		panel.push(label,text);
+	panel.showIn(ID("inter_right_panel"));
+}
+function set_value(str){
+	document.getElementById("conntype").value = str;
+	ID("inter_right_panel").innerHTML = "";
+	if(str=="0"){		//static
+		InitTextPanel("wan_ip","15");
+		InitTextPanel("wan_mask","15");
+		InitTextPanel("wan_gw","15");
+		InitTextPanel("dns_a","15");
+		InitTextPanel("dns_b","15",true);
+	}else if(str=="3"){	//pppoe
+		InitTextPanel("pppoe_username","127");
+		InitTextPanel("pppoe_pwd","127");
+	}
+	setConnTip(str,$.Language);
+	var lan_val = ($.ShowLan)?$.DataMap.language:$.Language;
+	change_language_show(lan_val);
+}
+function set_power(str){
+	document.getElementById("wl_power").value = str;
+	document.getElementById("wl_power_image").innerHTML="";
+	var img = new Image();
+	img.className = "wl_power_img";
+	img.src=(str=="0")?"images/high.gif":"images/normal.gif";
+	document.getElementById("wl_power_image").appendChild(img);
+	ID("wl_power_image").style.background = "no-repeat scroll center center";
+}
+function set_wan_other_conntype(data){
+	ID('other').disabled=(data.access_mode==0&&(data.conntype==0||data.conntype==1||data.conntype==3))?true:false;
+	ID('other').value=(data.conntype!=1&&data.conntype!=3&&data.conntype!=0)?data.conntype:'';
+	if(data.access_mode!=0)
+		ID('other').value='wisp'+data.conntype;
+}
+function init_welcome(){
+	if($.Debug){
+		var data = debugData;
+		set_wan_other_conntype(data);
+		if($.ShowLan){
+			var sel = document.getElementById('showlan');
+			if(!sel.innerHTML){
+				var option = eval("("+$.Lan_opt+")");
+				var select = new CreateSelect(option);
+				sel.appendChild(select.entity);
+			}
+		}
+		var lan_val = ($.ShowLan)?data.language:$.Language;
+		change_language_show(lan_val);
+		var str = window.location.toString().split("welcome.htm")[0]+"index.htm"; 
+		document.getElementById("advance").href = str;
+		var cc = (data.access_mode==2)?('wisp'+data.conntype):data.conntype;
+		set_value(cc);
+		set_radio("conn_type",cc);
+		var secmode = (data.sec_mode!=0)?'4':'0';
+		set_radio("enable_wire",secmode);
+		set_wl_val(data.sec_mode);
+		if(ID("wl_power_layer")){
+			set_radio("wl_power",data.wl_power);
+			set_power(data.wl_power);
+		}
+	}else{
+		getAppData(function(data){
+		data = $.DataMap;
+		set_wan_other_conntype(data);
+		if($.ShowLan){
+			var sel = document.getElementById('showlan');
+			if(!sel.innerHTML){
+				var option = eval("("+$.Lan_opt+")");
+				var select = new CreateSelect(option);
+				sel.appendChild(select.entity);
+			}
+		}
+		var lan_val = ($.ShowLan)?data.language:$.Language;
+		change_language_show(lan_val);
+		var str = window.location.toString().split('http://')[1].split('/')[0];
+		document.getElementById("advance").href = "http://"+str+"/index.htm";
+		if(ID("pppoe_username"))
+			document.getElementById("pppoe_username").value=data.pppoe_username;
+		if(ID("pppoe_pwd"))
+			document.getElementById("pppoe_pwd").value=data.pppoe_pwd;
+		if(ID("wan_ip"))
+			document.getElementById("wan_ip").value=data.wan_ip;
+		if(ID("wan_mask"))
+			document.getElementById("wan_mask").value=data.wan_mask;
+		if(ID("wan_gw"))
+			document.getElementById("wan_gw").value=data.wan_gw;
+		if(ID("pppoe_pwd"))
+		var Dns_a = (data.dns_a=="0.0.0.0")?"":data.dns_a;
+		if(ID("dns_a"))
+			document.getElementById("dns_a").value=Dns_a;
+		var Dns_b = (data.dns_b=="0.0.0.0")?"":data.dns_b;
+		if(ID("dns_b"))
+		document.getElementById("dns_b").value=Dns_b;
+		document.getElementById("ssid").value=data.ssid;
+		document.getElementById("key_wpa").value=data.key_wpa;
+		var cc = (data.access_mode==2)?('wisp'+data.conntype):data.conntype;
+		set_value(cc);
+		set_radio("conn_type",cc);
+		var secmode = (data.sec_mode!=0)?'4':'0';
+		set_radio("enable_wire",secmode);
+		set_wl_val(data.sec_mode);
+		if(ID("wl_power_layer")){
+			set_radio("wl_power",data.wl_power);
+			set_power(data.wl_power);
+		}
+	});
+	}
+}
+function save_shortcut(){
+	var obj = new Object();
+	var connVal = document.getElementById("conntype").value;
+	if(connVal==0||connVal==1||connVal==3){obj.conntype = connVal;}
+	if(obj.conntype=='3'){
+		obj.pppoe_username = document.getElementById("pppoe_username").value;
+		obj.pppoe_pwd = document.getElementById("pppoe_pwd").value;
+		if(!checkSingleText(ID("pppoe_username"),'text_string')){return;}
+		if(!checkSingleText(ID("pppoe_pwd"),'text_string')){return;}
+	}else if(obj.conntype=='0'){
+		obj.wan_ip = document.getElementById("wan_ip").value;
+		obj.wan_mask = document.getElementById("wan_mask").value;
+		obj.wan_gw = document.getElementById("wan_gw").value;
+		obj.dns_a = document.getElementById("dns_a").value;
+		obj.dns_b = document.getElementById("dns_b").value;
+		if(!checkSingleText(ID("wan_ip"),'text_ip')){return;}
+		if(!checkSingleText(ID("wan_mask"),'text_mask')){return;}
+		if(!checkSingleText(ID("wan_gw"),'text_ip')){return;}
+		if(!checkSingleText(ID("dns_a"),'text_dns')){return;}
+		if(!checkSingleText(ID("dns_b"),'text_dns')){return;}
+		if(!check_ip_mask(obj.wan_ip,obj.wan_mask,'wan_ip')){return;}
+		if(!check_ip_mask(obj.wan_gw,obj.wan_mask,'wan_gw',obj.wan_ip)){return;}
+		if(obj.dns_a==''){checkCommon(ID("dns_a"),$.CommonLan['dns_null_err']);return;}
+	}
+	if(!checkSingleText(ID("ssid"),'text_string_ssid')){return;}
+	if(ID("wl_power"))
+		obj.wl_power = ID("wl_power").value;
+	obj.sec_mode = document.getElementById("sec_mode").value;
+	if(obj.sec_mode!='0'){
+		obj.sec_mode = '4';
+		obj.key_mode_wpa = '1'; //ASCII
+		obj.key_type = '3'; 	//TKIP&AES
+		obj.key_wpa = document.getElementById("key_wpa").value;
+		if(!checkSingleText(ID("key_wpa"),'text_string')){return;}
+		if(ID("key_wpa").value.length<8||ID("key_wpa").value.length>63){
+			checkCommon(ID("key_wpa"),$.CommonLan['wel_key_err']);return;
+		}
+	}
+	obj.ssid = trim(document.getElementById("ssid").value);
+	//if($.ShowLan){obj.language = ID("setlan").value;}
+	setAppData('save',obj,function(data){});
+}
+</script>
+</head>
+<body onload="init_welcome()">
+<div class="head_top">
+	<div class="top_left"></div>
+	<div class="top_right"></div>
+</div>
+<div class="head">
+	<a href="http://www.netis-systems.com"><div class="head_left"></div></a>
+	<div class="head_middle" id="showlan"></div>
+	<div class="head_right" id="advanced"><a id="advance" href="http://192.168.1.1/index.htm"><img src="images/btn_mobile_setup.jpg" border="0" /></a></div>
+</div>
+<div class="tips" align="center">
+	<span id="s_tips">  </span>
+	<!--span>一键式安装，</span><br />
+	<span>路由器配置更便捷。</span-->
+</div>
+<div class="inter" id="inter">
+	<div class="inter_left"></div>
+	<div class="inter_right">
+		<div class="inter_right_span" id="s_inter"></div>
+		<div class="inter_right_radio">
+			<input type="radio" class="df_radio" id="dhcp" value="1" onclick="set_value(this.value)" name="conn_type" />
+			<label id="s_dhcp"></label>
+			<input type="radio" class="df_radio" id="static" value="0" onclick="set_value(this.value)" name="conn_type" />
+			<label id="s_static"></label>
+			<input type="radio" class="df_radio" id="pppoe" value="3" checked="checked" onclick="set_value(this.value)" name="conn_type" />
+			<label id="s_pppoe"></label>
+			<input type="radio" class="df_radio" id="other" value="other" onclick="set_value(this.value)" name="conn_type" />
+			<label id="s_other">Others</label>
+			<input type="hidden" id="conntype" value="1" />
+		</div>
+		<div class="inter_right_contype" id="inter_right_panel"></div>
+		<div class="inter_right_tips" id="inter_tips"></div>
+	</div>
+	<div style="font: 0px/0px sans-serif;clear: both;display: block">auto suit </div>
+</div>
+<!--div id="wl_power_layer" class="wl_power">
+	<div id="wl_power_image" class="wl_power_left"></div>
+	<div class="wl_power_right">
+		<div id="s_power" class="wl_power_right_span">Wireless Powerlevel</div>		
+			<div id="s_power1" class="df_label" style="margin-bottom:1px;">Wireless Powerlevel:</div>
+			<div>
+				<input class="df_radio" type="radio" onclick="set_power(0)" name="wl_power" value="0">
+				<label id="s_down">Normal Power</label>
+				<input class="df_radio" type="radio" onclick="set_power(1)" name="wl_power" value="1">
+				<label id="s_up">High Power</label>
+				<input type="hidden" id="wl_power" value="0" />
+			</div>
+	</div>
+</div-->
+<div class="wire">
+	<div class="wire_left"></div>
+	<div class="wire_right">
+		<div class="df_panel">
+		<div class="wire_right_span" id="s_wirel"></div>
+		</div>
+		<div class="df_panel">
+			<div class="df_label" id="s_ssid">SSID :</div>
+			<div><input type="text" id="ssid" class="df_text" maxlength="31" value=""  /></div>
+		</div>
+		<div class="df_panel">
+			<div class="df_label" id="s_status" style="margin-bottom:1px;">Password Status :</div>
+			<div>
+				<input type="radio" class="df_radio" value="0" name="enable_wire" onclick="set_wl_val(this.value)" />
+				<label id="s_disable">Disable</label>
+				<input type="radio" class="df_radio" value="4" name="enable_wire" onclick="set_wl_val(this.value)"/>
+				<label id="s_enable">Enable</label>
+			<input type="hidden" id="sec_mode" value="4" />
+			</div>
+		</div>
+		<div class="df_panel">
+			<div class="df_label" id="s_key" style="height:50px; line-height:50px;">Password :</div>
+			<div>
+				<input type="text" id="key_wpa" maxlength="63" class="df_text"/><div id="s_key_tip" style="float:left;width:360px; margin-left:5px;">Please enter any 8-63 charcters</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+<div class="bottom" align="center">
+	<input type="button" id="s_save" value="Save" class="df_btn" onClick="save_shortcut();" />
+</div>
+<div class="tail">
+	<div class="tail_left"></div> <div class="tail_right"></div>
+</div>
+<div class="help">http://www.netis-systems.com | E-mail:support@netis-systems.com</div>
+</body>
+<script>(function(w){$.CurrentApp = "Welcome";})(window)</script>
+<script type="text/javascript" src="script/init.js"></script>
+</html>

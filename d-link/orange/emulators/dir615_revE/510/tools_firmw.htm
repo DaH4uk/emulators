@@ -1,0 +1,324 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">	
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<script language="Javascript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script language="JavaScript">
+	function send_file(aform,act){
+		try {
+			get_by_id("msg_upload").style.display = "";
+			get_by_id("upgrade_button").disabled = true;
+			send_submit(aform,act);
+		}catch (e){
+			alert("%[.error:Error]%: " + e.message);
+			get_by_id("msg_upload").style.display = "none";
+			get_by_id("upgrade_button").disabled = false;
+        }
+	}
+
+	function send_request(aform,act){
+		if (get_by_id("file").value === "") {
+			alert(tf_FWF1);
+			return false;
+		}
+		if (!confirm(tf_USSW)) {
+			return false;
+		}
+		if (!confirm(tf_really__FWF+" \"" +
+				get_by_id("file").value + "\"?")) {
+				return false;
+		}
+		send_file(aform,act);
+	}
+	
+	function New_update_button(){
+		get_by_id("iframe_scan").src = "tools_firmw_chk.htm";
+		//get_by_id("update_new_result").style.display ="";
+		get_by_id("check_now_b").disabled = true;
+		document.getElementById("check_result").innerHTML = "";
+	}
+	
+	function download_latest_fm(){
+		for (var i = 0; i < get_by_id("sel_site").length; i++){
+			if(get_by_id("sel_site").options[i].selected == true){
+				var html = get_by_id("sel_site").options[i].value;
+			}
+		}
+		window.open(""+html+"");
+	}
+</script>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td
+ id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavoff" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavon" height="29"><a href="tools_admin.htm" 
+onclick="return jump_if();">Tools</a></td><td id="topnavoff" height="29"><a
+ href="st_device.htm" onClick="return jump_if();">Status</a></td><td
+ id="topnavoff" height="29"><a href="support_men.htm"
+ onclick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td id="sidenav_container">
+							<div id="sidenav"><ul><li><div><a 
+href="tools_admin.htm" onClick="return jump_if();">Admin</a></div></li><li><div><a
+ href="tools_time.htm" onClick="return jump_if();">Time</a></div></li><li><div><a
+ href="tools_syslog.htm" onClick="return jump_if();">SysLog</a></div></li><li><div><a
+ href="tools_email.htm" onClick="return jump_if();">Email
+ Settings</a></div></li><li><div><a 
+href="tools_system.htm" onClick="return jump_if();">System</a></div></li><li><div
+ id="sidenavoff">Firmware</div></li><li><div><a 
+href="tools_ddns.htm" onClick="return jump_if();">Dynamic
+ DNS</a></div></li><li><div><a href="tools_vct.htm" 
+onclick="return jump_if();">System Check</a></div></li><li><div><a 
+href="tools_schedules.htm" onClick="return 
+jump_if();">Schedules</a></div></li></ul></div>
+							<div id="m17n_div" align="center"></div>
+						</td>			
+					</tr>
+				</tbody></table>			
+			</td>
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">				
+					<div id="box_header"> 
+						<h1>Firmware</h1>
+						<p>There
+ may be new firmware for your DIR-615 to improve functionality and 
+performance.</p>
+						<p>To upgrade the 
+firmware, locate the upgrade file on the local hard drive with the 
+Browse button.Once you have found the file to be used, click the Upload 
+button below to start the firmware upgrade.</p>
+					</div>
+					<div class="box"> 
+						<h2>Firmware Information</h2>
+							<table width="525" cellspacing="2" cellpadding="2" border="0">
+
+
+							  <tbody><tr>
+								<td width="40%" align="right" class="duple">Current Firmware Version&nbsp;:</td>
+								<td width="15%" class="output">5.10</td>
+								<td width="10%" align="right" class="output" style="font-weight: bold;">Date&nbsp;:</td>
+								<td width="35%" class="output">Fri, 26 Feb 2010</td>
+							  </tr>
+<!--LP_VERSION-->
+							  <tr style="display: none;" id="lp_ver_field">
+								<td width="40%" nowrap="" align="right" class="duple">Current Language Pack Version&nbsp;:</td>
+								<td width="15%" class="output">NA</td>
+								<td width="10%" align="right" class="output" style="font-weight: bold;">Date&nbsp;:</td>
+								<td width="35%" class="output"></td>
+							  </tr>
+							  <tr style="" id="na_lp_ver_field">
+								<td width="40%" nowrap="" align="right" class="duple">
+								Current Language Pack Version&nbsp;:</td>
+								<td width="60%" colspan="3" class="output">
+									 No Language Pack</td>
+							  </tr>
+					
+<!--LP_VERSION-->
+<form action="http://www.support.dlink.com/emulators/dir615_revE/510/lp_clear.cgi" method="post" name="formclearlp" id="formclearlp"></form>
+<input type="hidden" value="back.htm" name="html_response_page">
+<input type="hidden" value="tools_firmw.htm" name="html_response_return_page">
+<input type="hidden" value="The setting is saved." name="html_response_message" id="html_response_message">
+                              <tr sytle="Display:none" id="lp_clear_field" style="display: none;">
+                              	<td align="right" class="duple">Remove Language Pack:</td>
+                                <td width="60%" class="output" colspan="3">
+									<input type="button" onclick="confirm_clearlp()" name="lpclrBtn" id="lpclrBtn" value="Remove" disabled="">
+
+                                </td>
+                              </tr>
+
+
+                              <tr>
+                                <td nowrap="" colspan="4">&nbsp;&nbsp;&nbsp;&nbsp;<strong>
+									Check Online Now for Latest Firmware and Language pack Version
+									&nbsp;:&nbsp;
+                                	<input type="button" onClick='alert("This feature has been disabled on this emulator.")' value="Check Now" class="button_submit" name="check_now_b" id="check_now_b">
+                                	
+                                	</strong>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="4">
+                                	<strong><div id="check_result"></div></strong>
+                                </td>
+                              </tr>
+                            </tbody></table>
+				    </div>
+				  	<div id="check_now_result" name="check_now_result" class="box" 
+style="display: none;"> 
+				  	<h2>Check Latest 
+Firmware Version</h2>
+							<table border="0" cellpadding="2" cellspacing="2" height="57" 
+width="76%">
+                              <tbody><tr>
+                                <td width="40%"><div align="right">Latest
+ Firmware Version&nbsp;</div></td>
+                                <td colspan="2" height="10" width="60%">
+								<div id="latest_version" align="left"></div>
+								</td>
+                              </tr>
+                              <tr>
+                              <td width="40%">
+							  	<div align="right">Latest
+ Firmware Date &nbsp;</div>
+								</td>
+                                <td colspan="2" height="10" width="60%">
+                                  <div id="latest_date" align="left"></div></td>
+                              </tr>
+                              <tr><td width="40%"><div align="right">Available
+ Download Site &nbsp;</div></td>
+                                <td colspan="2" height="10" width="60%">
+                                 <select id="sel_site" name="sel_site" 
+onchange="">
+								 </select>
+								 </td>
+                              </tr>
+                              <tr>
+                                <td colspan="3" align="center" 
+height="21">
+                                    <input name="download" id="download"
+ value="Download" onClick="download_latest_fm();" type="button">
+                                    
+                                </td>
+                              </tr>
+                            </tbody></table>
+				  	</div>
+				    <form id="form1" name="form1" method="POST" 
+action="http://www.support.dlink.com/emulators/dir615_revE/510/firmware_upgrade.cgi" enctype="multipart/form-data">
+					<input id="html_response_page" name="html_response_page" 
+value="ustatus.htm" type="hidden">
+					<input name="html_response_return_page" value="tools_firmw.htm" 
+type="hidden">
+				    <div class="box"> 
+						<h2>Firmware Upgrade</h2>
+						<table border="0" cellpadding="2" cellspacing="2" width="525">
+                          <tbody><tr>
+                            <td colspan="3">
+                                <p class="box_alert">
+	                                <strong>Note:</strong>
+ 
+	                                Some
+ firmware upgrades reset the configuration options to the factory 
+defaults. Before performing an upgrade, be sure to save the current 
+configuration from the <a href="tools_system.htm">Tools&nbsp;-&gt;&nbsp;System</a>
+ screen.
+                                </p>
+                                <p class="box_msg">To
+ upgrade the firmware, your PC must have a wired connection to the 
+router. Enter the name of the firmware upgrade file, and click on the 
+Upload button.</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="duple" align="right"></td>
+                            <td colspan="2" height="59">
+                            	<input id="file" name="file" size="30" 
+type="file"><br>
+                            	<input id="upgrade_button" 
+name="upgrade_button" class="button_submit" value="Upload" 
+onclick="emulator()" type="button">
+                            	
+                            </td>
+                          </tr>
+                          <tr id="msg_upload" style="display: none;" 
+class="msg_inprogress">
+                            <td class="duple" align="right"></td>
+                            <td colspan="2">Note:
+ Now uploading. The upload may take up to 1&nbsp;minute.</td>
+                          </tr>
+                        </tbody></table>
+				    </div>
+                    <div class="box">
+                        <h2>LANGUAGE PACK UPGRADE</h2>
+                        <table width="525" cellspacing="2" cellpadding="2" border="0">
+                          <tbody><tr>
+                            <td align="right" class="duple"></td>
+                            <td height="59" colspan="2">
+                                <input type="file" size="30" name="fileLP" id="fileLP"><br>
+                                <input type="button" onClick='alert("This feature has been disabled on this emulator.")' class="button_submit" name="btn_LPupgrade" id="btn_LPupgrade" value="Upload">
+                                
+                            </td>
+                          </tr>
+                        </tbody></table>
+                    </div>
+				  </form>
+
+				  
+				  <div id="update_new_result" name="update_new_result"> 
+					<table border="0" cellpadding="2" cellspacing="2" width="90%">
+						<tbody><tr>
+                          <td align="center" height="0">
+				          	<iframe id="iframe_scan" name="iframe_scan" border="0" 
+marginwidth="0" marginheight="0" src="tools_firmw.htm" align="middle" frameborder="0" 
+height="0" scrolling="no" width="100%"></iframe>
+				          </td>
+				        </tr>
+				    </tbody></table>
+				  </div>
+				</div>
+			</td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bgcolor="#ffffff" border="0" cellpadding="2" cellspacing="0">
+					<tbody><tr>
+					  <td id="help_text"><strong>Helpful
+ Hints…</strong>
+							<p>Firmware updates are 
+released periodically to improve the functionality of your router and to
+ add features. If you run into a problem with a specific feature of the 
+router, check if updated firmware is available for your router.</p>
+							<p class="more"><a 
+href="support_tools.htm#Firmware" onClick="return 
+jump_if();">More…</a></p>
+					  </td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+
+</body></html>

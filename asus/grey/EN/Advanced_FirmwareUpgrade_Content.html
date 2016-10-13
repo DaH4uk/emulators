@@ -1,0 +1,438 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>ASUS Wireless Router RT-AC66U - Firmware Upgrade</title>
+<link rel="stylesheet" type="text/css" href="index_style.css">
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<style>
+.Bar_container{
+	width:85%;
+	height:21px;
+	border:1px inset #999;
+	margin:0 auto;
+	margin-top:20px \9;
+	background-color:#FFFFFF;
+	z-index:100;
+}
+#proceeding_img_text{
+	position:absolute; 
+	z-index:101; 
+	font-size:11px; color:#000000; 
+	line-height:21px;
+	width: 83%;
+}
+#proceeding_img{
+ 	height:21px;
+	background:#C0D1D3 url(images/proceeding_img.gif);
+}
+</style>
+
+<script language="JavaScript" type="text/javascript" src="state.js"></script>
+<script type="text/javascript" language="JavaScript" src="help.js"></script>
+<script language="JavaScript" type="text/javascript" src="general.js"></script>
+<script language="JavaScript" type="text/javascript" src="popup.js"></script>
+<script language="JavaScript" type="text/javascript" src="jquery.js"></script>
+<script language="JavaScript" type="text/javascript" src="ajax.js"></script>
+<script>
+
+var $j = jQuery.noConflict();
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+var webs_state_update = '';
+var webs_state_upgrade = '';
+var webs_state_error = '';
+var webs_state_info = '';
+
+var varload = 0;
+
+function initial(){
+	show_menu();
+	if(live_update_support == -1)
+		$("update").style.display = "none";
+	else if('' != '')
+		detect_firmware();	
+}
+
+var exist_firmver="3.0.0.4";
+var dead = 0;
+function detect_firmware(){
+
+	$j.ajax({
+    		url: '/detect_firmware.html',
+    		dataType: 'script',
+
+    		error: function(xhr){
+						dead++;
+						if(dead < 30)
+    				setTimeout("detect_firmware();", 1000);
+						else{
+      					$('update_scan').style.display="none";
+      					$('update_states').innerHTML="The router cannot connect to ASUS server to check for the firmware update. After reconnecting to the Internet, go back to this page and click Check to check for the latest firmware updates.";
+						}
+    		},
+
+    		success: function(){
+      			if(webs_state_update==0){
+      					setTimeout("detect_firmware();", 1000);
+      			}else{	// got wlan_update.zip
+      					if(webs_state_error==1){
+      								$('update_scan').style.display="none";
+      								$('update_states').innerHTML="The router cannot connect to ASUS server to check for the firmware update. After reconnecting to the Internet, go back to this page and click Check to check for the latest firmware updates.";
+      								return;
+      					}
+      					else{
+
+	      					var Latest_firmver = webs_state_info.split("_");
+	      					var Latest_firm = Latest_firmver[0];
+	      					var Latest_buildno = Latest_firmver[1];
+	      					var Latest_extendno = Latest_firmver[2];
+	      					
+	      					if(Latest_firm && Latest_buildno && Latest_extendno ){	//match model FW
+      								current_firm = parseInt(exist_firmver.replace(/[.]/gi,""));
+      								current_buildno = parseInt("372");
+      								current_extendno = "0-g55910de";
+      								if((current_buildno < Latest_buildno) || 
+      									 (current_firm < Latest_firm && current_buildno == Latest_buildno) ||
+      									 (current_extendno != Latest_extendno && current_buildno == Latest_buildno && current_firm == Latest_firm))
+      								{
+      										$('update_scan').style.display="none";
+      										$('update_states').style.display="none";
+      										if(confirm("There is a new firmware version available. Do you want to upgrade the firmware?")){
+      												document.start_update.action_mode.value="apply";
+      												document.start_update.action_script.value="start_webs_upgrade";
+															document.start_update.submit();
+															return;
+      										}
+      										
+      								}else{
+      										//var flag = getCookie("after_check");
+      										//if(flag==1){
+      							  				$('update_states').innerHTML="The router's current firmware is the latest version.";
+      												$('update_scan').style.display="none";
+      												//setCookie("after_check", 0, 365);
+      										//}
+      								}
+      						}
+      						else{		//miss-match model FW
+      								$('update_scan').style.display="none";
+      								$('update_states').innerHTML="No available updates";
+      								return;
+      						}
+								}
+							}
+  		}
+  		});
+}
+
+function detect_update(){
+	
+	if((link_status == "2" && link_auxstatus == "0") || (link_status == "2" && link_auxstatus == "2")){
+		//setCookie("after_check", 1, 365);
+  	document.start_update.action_mode.value="apply";
+  	document.start_update.action_script.value="start_webs_update";  	
+  	$('update_states').innerHTML="The router is checking the ASUS server for the firmware update.";
+  	$('update_scan').style.display="";
+		document.start_update.submit();				
+	}else{
+		$('update_scan').style.display="none";
+    $('update_states').innerHTML="The router cannot connect to ASUS server to check for the firmware update. After reconnecting to the Internet, go back to this page and click Check to check for the latest firmware updates.";
+    return false;	
+	}	
+}
+
+function getCookie(c_name)
+{
+var i,x,y,ARRcookies=document.cookie.split(";");
+for (i=0;i<ARRcookies.length;i++)
+  {
+  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+  x=x.replace(/^\s+|\s+$/g,"");
+  if (x==c_name)
+    {
+    return unescape(y);
+    }
+  }
+}
+
+function setCookie(c_name,value,exdays)
+{
+var exdate=new Date();
+exdate.setDate(exdate.getDate() + exdays);
+var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+document.cookie=c_name + "=" + c_value;
+}
+
+function checkCookie()
+{
+var aft_chk=getCookie("after_check");
+if (aft_chk!=null && aft_chk!="")
+  {
+  	aft_chk=parseInt(aft_chk)+1;
+  	setCookie("after_check", aft_chk, 365);
+  }
+else
+  {
+    setCookie("after_check", 0, 365);
+  }
+
+return getCookie("after_check");
+}
+
+
+var dead = 0;
+function detect_httpd(){
+
+	$j.ajax({
+    		url: '/httpd_check.htm',
+    		dataType: 'script',
+				timeout: 1500,
+    		error: function(xhr){
+    				dead++;
+    				if(dead < 6)
+    						setTimeout("detect_httpd();", 1000);
+    				else{
+    						$('loading_block1').style.display = "none";
+    						$('loading_block2').style.display = "none";
+    						$('loading_block3').style.display = "";
+    						$('loading_block3').innerHTML = "<div>Firmware upgrade is done. Please reboot RT-AC66U manually.</div>";
+    				}
+    		},
+
+    		success: function(){
+    				setTimeout("hideLoadingBar();",1000);
+      			location.href = "index.html";
+  			}
+  		});
+}
+
+var rebooting = 0;
+function isDownloading(){
+	$j.ajax({
+    		url: '/detect_firmware.html',
+    		dataType: 'script',
+				timeout: 1500,
+    		error: function(xhr){
+					
+					rebooting++;
+					if(rebooting < 30){
+							setTimeout("isDownloading();", 1000);
+					}
+					else{							
+							$("drword").innerHTML = "The router cannot connect to ASUS server to check for the firmware update. After reconnecting to the Internet, go back to this page and click Check to check for the latest firmware updates.";
+							return false;
+					}
+						
+    		},
+    		success: function(){
+					if(webs_state_upgrade == 0){				
+    				setTimeout("isDownloading();", 1000);
+					}
+					else{ 	// webs_upgrade.sh is done
+						
+						if(webs_state_error == 1){
+								$("drword").innerHTML = "The router cannot connect to ASUS server to check for the firmware update. After reconnecting to the Internet, go back to this page and click Check to check for the latest firmware updates.";
+								return false;
+						}
+						else if(webs_state_error == 2){
+								$("drword").innerHTML = "Memory space is NOT enough to upgrade on internet. Please wait for rebooting.<br>Please visit the ASUS support site ( http://support.asus.com ) to get the latest firmware."; //Untranslated.fw_size_higher_mem
+								return false;						
+						}
+						else if(webs_state_error == 3){
+								$("drword").innerHTML = "Firmware upgrade unsuccessfully. It may result from incorrect image or error transmission. Please check the version of firmware and try again.<br>Please visit the ASUS support site ( http://support.asus.com ) to get the latest firmware.";
+								return false;												
+						}
+						else{		// start upgrading
+								$("hiddenMask").style.visibility = "hidden";
+								showLoadingBar(270);
+								setTimeout("detect_httpd();", 272000);
+								return false;
+						}
+						
+					}
+  			}
+  		});
+}
+
+function startDownloading(){
+	disableCheckChangedStatus();			
+	dr_advise();
+	$("drword").innerHTML = "&nbsp;&nbsp;&nbsp;Download Firmware...";
+	isDownloading();
+}
+
+function check_zip(obj){
+	var reg = new RegExp("^.*.(zip|ZIP|rar|RAR|7z|7Z)$", "gi");
+	if(reg.test(obj.value)){
+			alert("Please decompress the compressed file first.");
+			obj.focus();
+			obj.select();
+			return false;
+	}
+	else
+			return true;		
+}
+
+function submitForm(){
+	if(!check_zip(document.form.file))
+			return;
+	else
+		onSubmitCtrlOnly(document.form.upload, 'Upload1');	
+}
+</script>
+</head>
+
+<body onload="initial();">
+
+<div id="TopBanner"></div>
+
+<div id="LoadingBar" class="popup_bar_bg">
+<table cellpadding="5" cellspacing="0" id="loadingBarBlock" class="loadingBarBlock" align="center">
+	<tr>
+		<td height="80">
+		<div id="loading_block1" class="Bar_container">
+			<span id="proceeding_img_text"></span>
+			<div id="proceeding_img"></div>
+		</div>
+		<div id="loading_block2" style="margin:5px auto; width:85%;">Firmware is upgrading. Please wait about 3 minutes.</div>
+		<div id="loading_block3" style="margin:5px auto;width:85%; font-size:12pt;"></div>
+		</td>
+	</tr>
+</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+<div id="Loading" class="popup_bg"></div><!--for uniform show, useless but have exist-->
+
+<div id="hiddenMask" class="popup_bg">
+	<table cellpadding="5" cellspacing="0" id="dr_sweet_advise" class="dr_sweet_advise" align="center" style="height:100px;">
+		<tr>
+		<td>
+			<div class="drword" id="drword" style="">&nbsp;&nbsp;&nbsp;&nbsp;Proceeding...</div>
+		</td>
+		</tr>
+	</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="Advanced_FirmwareUpgrade_Content.html" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" action="http://event.asus.com/2012/nw/dummy_ui/EN/upgrade.cgi" name="form" target="hidden_frame" enctype="multipart/form-data">
+<input type="hidden" name="current_page" value="Advanced_FirmwareUpgrade_Content.html">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="action_wait" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="firmver" value="3.0.0.4">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="17">&nbsp;</td>
+
+		<td valign="top" width="202">
+		<div id="mainMenu"></div>
+		<div id="subMenu"></div>
+		</td>
+
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div>
+		<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="left" valign="top" >
+
+		<table width="760px" border="0" cellpadding="5" cellspacing="0" class="FormTitle" id="FormTitle">
+		<tbody>
+		<tr>
+		  <td bgcolor="#4D595D" valign="top"  >
+		  <div>&nbsp;</div>
+		  <div class="formfonttitle">Administration - Firmware Upgrade</div>
+		  <div style="margin-left:5px;margin-top:10px;margin-bottom:10px"><img src="images/New_ui/export/line_export.png"></div>
+		  <div class="formfontdesc"><strong>
+		  	Note:</strong>
+				<ol>
+					<li>Previous firmware versions do not need to be installed prior to installing the latest firmware. The latest firmware version will include updates from earlier firmware.</li>
+					<li>For a configuration parameter existing both in the old and new firmware, its setting will be kept during the upgrade process.</li>
+					<li>In case the upgrade process fails, RT-AC66U enters the emergency mode automatically. The LED signals at the front of RT-AC66U will indicate such situation. Use the Firmware Restoration utility on the CD to do system recovery.</li>
+				</ol>
+			</div>
+		  <br>
+		  <div class="formfontdesc">Please visit the ASUS support site ( http://support.asus.com ) to get the latest firmware.</div>
+
+		<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+			<tr>
+				<th>Product ID</th>
+				<td>RT-AC66U</td>
+			</tr>
+<!--###HTML_PREP_START###-->
+<!--###HTML_PREP_ELSE###-->
+<!--
+[DSL-N55U][DSL-N55U-B]
+{ADSL firmware version}
+			<tr>
+				<th>ADSL Driver Version</th>
+				<td><input type="text" class="input_15_table" value="" readonly="1"></td>
+			</tr>
+			<tr>
+				<th>RAS</th>
+				<td><input type="text" class="input_20_table" value="" readonly="1"></td>
+			</tr>
+-->
+<!--###HTML_PREP_END###-->
+			<tr>
+				<th>Firmware Version</th>
+				<td><input type="text" name="firmver_table" class="input_20_table" value="3.0.0.4.372_0-g55910de" readonly="1"><!--/td-->
+						<input type="button" id="update" name="update" class="button_gen" onclick="detect_update();" value="Check" />
+						<div id="check_states">
+								<span id="update_states"></span>
+								<img id="update_scan" style="display:none;" src="images/InternetScan.gif" />
+						</div>
+				</td>
+			</tr>
+			<tr>
+				<th>New Firmware File</th>
+				<td><input type="file" name="file" class="input" style="color:#FFCC00;*color:#000;width: 300px;"></td>
+			</tr>
+			<tr align="center">
+			  <td colspan="2"><input type="button" name="upload" class="button_gen" onclick="submitForm()" value="Upload" /></td>
+			</tr>			
+		</table>
+			  </td>
+              </tr>
+            </tbody>
+            </table>
+		  </td>
+
+
+        </tr>
+      </table>
+		<!--===================================Ending of Main Content===========================================-->
+	</td>
+
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+</form>
+
+<form method="post" name="start_update" action="http://event.asus.com/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="productid" value="RT-AC66U">
+<input type="hidden" name="current_page" value="Advanced_FirmwareUpgrade_Content.html">
+<input type="hidden" name="next_page" value="Advanced_FirmwareUpgrade_Content.html">
+<input type="hidden" name="flag" value="liveUpdate">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="action_wait" value="">
+</form>
+</body>
+</html>

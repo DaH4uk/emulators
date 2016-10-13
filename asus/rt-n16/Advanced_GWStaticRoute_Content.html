@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/Advanced_GWStaticRoute_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - Route</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '33663168'; }
+function login_ip_str() { return '192.168.1.2'; }
+function login_ip_str_now() { return '192.168.1.2'; }
+function login_mac_str() { return '00:1A:92:47:00:02'; }
+
+var wireless = [];	// [[MAC, associated, authorized], ...]
+
+var GWStaticList = [];
+
+function initial(){
+	show_banner(1);
+	show_menu(5,2,3);
+	show_footer();
+	
+	enable_auto_hint(6, 5);
+	showGWStaticList();
+}
+
+function applyRule(){
+location.reload(true)
+
+}
+function done_validating(action){
+	refreshpage();
+}
+
+function GWStatic_markGroup(o, s, c, b) {	
+	document.form.group_id.value = s;	
+	
+	if(b == " Add "){
+		if (document.form.sr_num_x_0.value > c){
+			alert("This table only allow " + c + " items!");
+			return false;
+		}
+		else if (!validate_ipaddr(document.form.sr_ipaddr_x_0, "") ||
+				 !validate_ipaddr(document.form.sr_netmask_x_0, "") ||
+				 !validate_ipaddr(document.form.sr_gateway_x_0, "")){
+				 return false;
+		}
+		else if (document.form.sr_ipaddr_x_0.value == ""){
+				 alert("Fields cannot be blank!");
+				 document.form.sr_ipaddr_x_0.focus();
+				 return false;				 
+		}
+		else if (document.form.sr_netmask_x_0.value == ""){
+				 alert("Fields cannot be blank!");
+				 document.form.sr_netmask_x_0.focus();
+				 return false;				 
+		}
+		else if (document.form.sr_gateway_x_0.value == ""){
+				 alert("Fields cannot be blank!");
+				 document.form.sr_gateway_x_0.focus();
+				 return false;				 
+		}				
+		else if (GWStatic_validate_duplicate_noalert(GWStaticList, document.form.sr_ipaddr_x_0.value, 31, 0) &&
+				 GWStatic_validate_duplicate_noalert(GWStaticList, document.form.sr_netmask_x_0.value, 31, 1) &&
+				 GWStatic_validate_duplicate_noalert(GWStaticList, document.form.sr_gateway_x_0.value, 31, 2) &&
+				 GWStatic_validate_duplicate(GWStaticList, document.form.sr_if_x_0.value, 2, 4)
+				) return false;  //Check the IP, Submask, gateway and Interface is duplicate or not.
+	}
+	
+	pageChanged = 0;
+	pageChangedCount = 0;
+	
+	document.form.action_mode.value = b;
+	return true;		
+}
+
+function GWStatic_validate_duplicate_noalert(o, v, l, off){	
+	for (var i=0; i<o.length; i++)
+	{
+		if (entry_cmp(o[i][off], v, l)==0){ 
+			return true;
+		}
+	}
+	return false;
+}
+
+function GWStatic_validate_duplicate(o, v, l, off){
+	for(var i = 0; i < o.length; i++){
+		if(entry_cmp(o[i][off].toLowerCase(), v.toLowerCase(), l) == 0){
+			alert('This entry has been in list.');
+			return true;
+		}
+	}
+	return false;
+}
+
+function showGWStaticList(){
+
+	var code = "";
+	code +='<table width="100%" border="1" cellspacing="0" cellpadding="3" align="center" class="list_table">';
+	if(GWStaticList.length == 0)
+		code +='<tr><td style="color:#CC0000;">No data in table.</td></tr>';
+	else{
+		for(var i = 0; i < GWStaticList.length; i++){
+		code +='<tr id="row'+i+'">';
+		code +='<td width="">'+ GWStaticList[i][0] +'</td>';		//IP
+		code +='<td width="100">'+ GWStaticList[i][1] +'</td>';		//Mask
+		code +='<td width="102">'+ GWStaticList[i][2] +'&nbsp;</td>';//Gateway
+		code +='<td width="50">'+ GWStaticList[i][3] +'</td>';		//Metric
+		code +='<td width="30">'+ GWStaticList[i][4] +'</td>';        //Interface
+		code +='<td width=\"27\"><input type=\"checkbox\" name=\"GWStatic_s\" value='+ i +' onClick="changeBgColor(this,'+i+');" id=\"check'+ i +'\"></td>';
+		if(i == 0)
+			code +="<td width='75' style='background:#C0DAE4;' rowspan=" + GWStaticList.length + "><input style=\"padding:2px 2px 0px 2px\" class=\"button\" type=\"submit\" onclick=\"markGroup(this, 'GWStatic', 31, ' Del ');\" value=\"Delete\"/></td>";
+		
+	    code +='</tr>';
+		}
+	}
+	code +='<tfoot><tr align="right">';
+	code +='<td colspan="8"><input name="button" type="button" class="button" onclick="applyRule();" value="Apply"/></td>';	
+	code +='</tr></tfoot>';
+  	code +='</table>';
+	
+	$("GWStaticList_Block").innerHTML = code;
+}
+
+function changeBgColor(obj, num){
+	if(obj.checked)
+ 		$("row" + num).style.background='#FF9';
+	else
+ 		$("row" + num).style.background='#FFF';
+}
+</script>
+</head>
+
+<body onload="initial();" onunLoad="disable_auto_hint(6, 5);return unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="#" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" id="ruleForm" action="https://admin:admin@192.168.1.1/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="current_page" value="Advanced_GWStaticRoute_Content.html">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="sid_list" value="RouterConfig;">
+<input type="hidden" name="group_id" value="GWStatic">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+
+<input type="hidden" name="sr_num_x_0" value="0" readonly="1">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td width="23">&nbsp;</td>
+	
+	<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div><br />
+<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td valign="top" >
+	  <table width="550" border="0" align="center" cellpadding="5" cellspacing="0" class="FormTitle" table>
+		<thead>
+		<tr>
+		  <td>LAN - Route</td>
+		</tr>
+		</thead>
+		
+		<tr>
+		  <td bgcolor="#FFFFFF">This function allows you to add routing rules into RT-N16. It is useful if you connect several routers behind RT-N16 to share the same connection to the Internet.</td>
+		</tr>
+		
+		<tbody>
+		<tr>
+		  <td bgcolor="#FFFFFF"></td>
+		</tr>
+		
+		<tr>
+		  <td bgcolor="#FFFFFF">
+			<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+			  <thead>
+			  <tr>
+				<td colspan="2" id="GWStatic">Static Route List</td>
+			  </tr>
+			  </thead>
+				
+				<!-- 2008.03 James. patch for Oleg's patch. { -->
+				<tr>
+					<th width="144">Use DHCP routes?</th>
+					<td>
+						<input type="radio" value="1" name="dr_enable_x" class="input" onClick="return change_common_radio(this, 'RouterConfig', 'dr_enable_x', '1')" checked>Yes
+						<input type="radio" value="0" name="dr_enable_x" class="input" onClick="return change_common_radio(this, 'RouterConfig', 'dr_enable_x', '0')" >No
+					</td>
+				</tr>
+				
+				<tr>
+					<th width="144">Enable multicast routing?</th>
+					<td>
+						<input type="radio" value="1" name="mr_enable_x" class="input" onClick="return change_common_radio(this, 'RouterConfig', 'mr_enable_x', '1')" checked>Yes
+						<input type="radio" value="0" name="mr_enable_x" class="input" onClick="return change_common_radio(this, 'RouterConfig', 'mr_enable_x', '0')" >No
+					</td>
+				</tr>
+				<!-- 2008.03 James. patch for Oleg's patch. } -->
+				
+			  <tr>
+			    <th width="144">Enable static routes?</th>
+			    <td>
+				  <input type="radio" value="1" name="sr_enable_x" class="input" onclick="return change_common_radio(this, 'RouterConfig', 'sr_enable_x', '1')"  />Yes
+				  <input type="radio" value="0" name="sr_enable_x" class="input" onclick="return change_common_radio(this, 'RouterConfig', 'sr_enable_x', '0')" checked />No
+				</td>
+			  </tr>
+			</table>
+			
+			<table width="100%" border="1" align="center" cellpadding="3" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+   		  	<thead>
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(6,1);">Network/Host IP</a></th>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(6,2);">Netmask</a></th>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(6,3);">Gateway</a></th>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(6,4);">Metric </a></th>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(6,5);">Interface</a></th>
+				<th>&nbsp;</th>
+			  </tr>
+			  </thead>
+			  <tr>
+				<td align="center"><input type="text" maxlength="15" class="input" size="14" name="sr_ipaddr_x_0" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)"></td>
+				<td align="center"><input type="text" maxlength="15" class="input" size="13" name="sr_netmask_x_0" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)"></td>
+				<td align="center"><input type="text" maxlength="15" class="input" size="14" name="sr_gateway_x_0" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)"></td>
+				<td align="center"><input type="text" maxlength="15" class="input" size="3" name="sr_matric_x_0" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)"></td>
+				<td width="64" align="center">
+					<select name="sr_if_x_0" class="input">
+						<option value="LAN" >LAN</option>
+						<!-- 2008.03 James. patch for Oleg's patch. { -->
+						<option value="MAN" >MAN</option>
+						<!-- 2008.03 James. patch for Oleg's patch. } -->
+						<option value="WAN" >WAN</option>
+					</select>
+				</td>
+				
+				<td width="75" align="center">
+					<!-- 2008.03 James. patch for Oleg's patch. { -->
+					<input class="button" type="submit" onClick="return GWStatic_markGroup(this, 'GWStatic', 31, ' Add ');" name="GWStatic" value="Add" size="12">
+					<!-- 2008.03 James. patch for Oleg's patch. } -->
+				</td>
+			  </tr>
+			</table>
+			<div id="GWStaticList_Block"></div>
+		  </td>
+		</tr>
+		</tbody>
+	  </table>
+	</td>
+</form>
+
+	<!--==============Beginning of hint content=============-->
+	<td id="help_td" style="width:15px;"  valign="top">
+	  <div id="helpicon" onClick="openHint(0, 0);" title="Click to open AiHelp">
+		<img src="images/help.gif">
+	  </div>
+	  
+	  <div id="hintofPM" style="display:none;">
+<form name="hint_form"></form>
+		<table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:closeHint();"><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tbody>
+		  <tr>
+			<td valign="top">
+			  <div id="hint_body" class="hint_body2"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="#" frameborder="0"></iframe>
+			</td>
+		  </tr>
+		  </tbody>
+		</table>
+	  </div>
+	</td>
+	<!--==============Ending of hint content=============-->
+  </tr>
+</table>				
+<!--===================================Ending of Main Content===========================================-->		
+	</td>
+		
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+
+</body>
+
+<!-- Mirrored from 192.168.1.1/Advanced_GWStaticRoute_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+</html>

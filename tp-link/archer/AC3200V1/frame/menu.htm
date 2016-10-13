@@ -1,0 +1,486 @@
+﻿<script type="text/javascript">
+var menuBasic = {
+    'netMap': [{
+        'name': menu_str['map'],
+        'url': 'networkMap.htm'
+    }],
+    'internet': [{
+        'name': menu_str['internet'],
+        'url': 'wanBasic.htm'
+    }],
+    'wireless': [{
+        'name': menu_str['wl'],
+        'url': 'wirelessBasic.htm'
+    }],
+    'usb': [{
+        'name': menu_str['usb'],
+        'url': 'usbManage.htm'
+    }, {
+        'name': menu_str['fold'],
+        'url': 'usbManage.htm'
+    }, {
+        'name': menu_str['printer'],
+        'url': 'printSrv.htm'
+    }, {
+        'name': menu_str['usb3g'],
+        'url': 'basic3g.htm',
+    }],
+    'voip': [{
+        'name': menu_str['voip'],
+        'url': 'voice_basic.htm'
+    }],
+    'parentCtrl': [{
+        'name': menu_str['pc'],
+        'url': 'parentCtrl.htm'
+    }],
+    'guestNtw': [{
+        'name': menu_str['wlguest'],
+        'url': 'wlGuestDulBandBasic.htm'
+    }]
+}
+
+var menuAdv = {
+    'status': [{
+        'name': menu_str['status'],
+        'url': 'status.htm'
+    }],
+    'sysMode': [{
+        'name': menu_str['sysmod'],
+        'url': INCLUDE_WAN_MODE ? 'sysMode.htm' : 0
+    }],
+    'internet': [{
+        'name': menu_str['network'],
+        'url': 'ethWan.htm'
+    }, {
+        'name': menu_str['internet'],
+        'url': 'ethWan.htm'
+    }, {
+        'name': menu_str['lan'],
+        'url': 'lan.htm'
+    }, {
+		'name': menu_str['iptv'],
+		'url': INCLUDE_IPTV ? 'iptv.htm':0
+	}, {
+        'name': menu_str['dhcp'],
+        'url': 'dhcp.htm'
+    }, {
+        'name': menu_str['group'],
+        'url': INCLUDE_ADSLWAN ? 'group.htm' : 0
+    }, {
+        'name': menu_str['ddns'],
+        'url': 'ddns.htm'
+    }, {
+        'name': menu_str['advroute'],
+        'url': 'route.htm'
+    }, {
+        'name': menu_str['ipsec'],
+        'url': 'ipsec.htm'
+    }],
+    'wireless': [{
+        'name': menu_str['wl'],
+        'url': 'wirelessSettings.htm'
+    }, {
+        'name': menu_str['wlset'],
+        'url': 'wirelessSettings.htm'
+    }, {
+        'name': menu_str['wps'],
+        'url': 'wps.htm'
+    }, {
+        'name': menu_str['wlacl'],
+        'url': 'macFilter.htm'
+    }, {
+        'name': menu_str['wlsche'],
+        'url': 'wirelessSchedule.htm'
+    }, {
+        'name': menu_str['stat'],
+        'url': 'wirelessStat.htm'
+    } /* , {
+        'name': menu_str['advset'],
+        'url': 'wirelessAdv.htm'
+    }*/],
+    'guestNtw': [{
+        'name': menu_str['wlguest'],
+        'url': 'wlGuestDulBandAdv.htm'
+    }],
+    'voip': [{
+        'name': menu_str['voip'],
+        'url': 'voice_advance.htm'
+    }, {
+        'name': menu_str['voicetel'],
+        'url': 'voice_advance.htm'
+    }, {
+		'name': menu_str['voicebook'],
+        'url': 'voice_telebook.htm'
+    }, {
+		'name': menu_str['voicedev'],
+        'url': 'voice_telephony.htm'
+    }, {
+		'name': menu_str['voicelog'],
+        'url': 'voice_calllog.htm'
+    }, {
+		'name': menu_str['voicerule'],
+        'url': 'voice_electionRule.htm'
+    }, {
+		'name': menu_str['voiceblock'],
+        'url': 'voice_callblocks.htm'
+    }, {
+		'name': menu_str['voicefwd'],
+        'url': 'voice_callforward.htm'
+    }, {
+		'name': menu_str['voiceth'],
+        'url': 'voice_callthrough.htm'
+    }, {
+		'name': menu_str['voicedect'],
+        'url': 'voice_dectadv.htm'
+    }, {
+		'name': menu_str['usbmail'],
+        'url': 'voice_usbmail.htm'
+    }],
+    'fwd': [{
+        'name': menu_str['fwd'],
+        'url': 'alg.htm'
+    }, {
+		'name': menu_str['alg'],
+        'url': 'alg.htm'
+    }, {
+        'name': menu_str['vs'],
+        'url': 'virtualServer.htm'
+    }, {
+        'name': menu_str['pt'],
+        'url': 'portTrigger.htm'
+    }, {
+        'name': menu_str['dmz'],
+        'url': 'dmz.htm'
+    }, {
+        'name': menu_str['upnp'],
+        'url': 'upnp.htm'
+    }],
+    'usb': [{
+        'name': menu_str['usb'],
+        'url': 'diskSettings.htm'
+    }, {
+        'name': menu_str['disk'],
+        'url': 'diskSettings.htm'
+    }, {
+        'name': menu_str['fold'],
+        'url': 'folderSharing.htm'
+    }, {
+        'name': menu_str['printer'],
+        'url': 'printSrv.htm'
+    }, {
+        'name': menu_str['usb3g'],
+        'url': 'usb3g.htm'
+    }],
+    'parentCtrl': [{
+        'name': menu_str['pc'],
+        'url': 'parentCtrl.htm'
+    }],
+    'trafficCtrl': [{
+        'name': menu_str['tc'],
+        'url': 'trafficCtrl.htm'
+    }],
+    'security': [{
+        'name': menu_str['sec'],
+        'url': 'ddos.htm'
+    }, {
+        'name': menu_str['settings'],
+        'url': 'ddos.htm'
+    }, {
+        'name': menu_str['acc'],
+        'url': 'accessControl.htm'
+    }, {
+        'name': menu_str['arp'],
+        'url': 'arpBind.htm'
+    }],
+    'Ipv6': [{
+        'name': menu_str['ipv6'],
+        'url': 'ipv6.htm'
+    }],
+    'tools': [{
+        'name': menu_str['tools'],
+        'url': 'time.htm'
+    }, {
+        'name': menu_str['time'],
+        'url': 'time.htm'
+    }, {
+        'name': menu_str['diag'],
+        'url': 'diagnostic.htm'
+    }, {
+        'name': menu_str['softup'],
+        'url': 'softup.htm'
+    }, {
+        'name': menu_str['bnr'],
+        'url': 'backNRestore.htm'
+    }, {
+        'name': menu_str['admin'],
+        'url': 'manageCtrl.htm'
+    }, {
+        'name': menu_str['log'],
+        'url': 'log.htm'
+    }, {
+        'name': menu_str['snmp'],
+        'url': 'snmp.htm'
+    }, {
+        'name': menu_str['stat'],
+        'url': 'stat.htm'
+    }, {
+        'name': menu_str['sysConf'],
+        'url': 'sysconf.htm'
+    }, {
+        'name': menu_str['ledTools'],
+        'url': 'ledTools.htm'
+    }]
+};
+
+(function($) {
+    'use strict';
+
+    function TPMenu() {}
+
+    TPMenu.prototype = {
+        constructor: TPMenu,
+        instances: [],
+        init: function(id, menuargs) {
+            var self = this;
+            var page;
+            var expr = /\w+.htm$/;
+            var hasMore = 0; /* means has secondary menu */
+            var inHTMLTmp = '';
+
+            self.id = id;
+            self.$menu = $("#" + id);
+
+            if ($("#qs").hasClass("selected")) {
+                $('#menu').tpMenu('destroy');
+                $("#con").fadeOut(200);
+                /* load quick setup clear main data */
+                jQuery.cleanData($('#main').get(0).getElementsByTagName("*"));
+                $('#main').empty();
+                $.loadPage("quicksetup", "quicksetup.htm", function() {
+                    $.emptyElem($.bak);
+                    $.clearAsync();
+                    $.unlock();
+                });
+                $("#quicksetup").fadeIn(200);
+                $.curPage = "quicksetup.htm";
+                return;
+            } else {
+                $("#con").fadeIn(200);
+                $("#quicksetup").fadeOut(200);
+            }
+
+            var inHTML = '<div><ul class="mu1" id="menuTree">';
+
+            /* Get menulist from DUT */
+            $.cgi("./frame/menu.cgi", null, function(err) {
+                if (err) {
+                    return;
+                }
+
+                var menulistLen = menulist.length;
+                for (var i = 0; i < menulistLen; i++) {
+                    if (!$.local) {
+                        if ((clientLocal == 0) && ((menulist[i] == 'softup.htm') || (menulist[i] == 'backNRestore.htm'))) {
+                            menulist[i] = undefined;
+                            continue;
+                        }
+                    }
+
+                    var ret = expr.exec(menulist[i]);
+                    if (ret) {
+                        menulist[i] = ret[0];
+                    } else {
+                        menulist[i] = undefined;
+                    }
+                }
+
+                self.menuFilter(menulist, menuargs);
+
+                for (page in menuargs) {
+                    inHTMLTmp = '';
+                    hasMore = 0;
+
+                    if (menuargs[page].length == 1) {
+                        if (($.sysMode == "USB_3G" && menuargs[page][0].name == menu_str['internet']) ||
+                            ($.sysMode != "DSL" && menuargs[page][0].name == menu_str['iptv']) || (menuargs[page][0].url == '0')) {
+                            continue;
+                        }
+                        inHTML += '<li class="ml1"><a class="click" href="javascript:void(0);" url="' + menuargs[page][0].url + '">';
+                        inHTML += '<span class="icon" id="' + page + '"></span>';
+                        inHTML += '<span class="text T">' + menuargs[page][0].name + '</span></a>';
+                        inHTML += '</li>';
+                    } else {
+                        if ($.sysMode == "USB_3G" && (menuargs[page][0].url == menu_str['wan'])) {
+                            continue;
+                        }
+
+                        inHTMLTmp += '<li class="ml1"><a class="click more" href="javascript:void(0);" url="' + menuargs[page][0].url + '">';
+                        inHTMLTmp += '<span class="icon" id="' + page + '"></span>';
+                        inHTMLTmp += '<span class="text T">' + menuargs[page][0].name + '</span></a>';
+                        inHTMLTmp += '<ul class="mu2 nd">';
+                        for (var l = 1; l < menuargs[page].length; l++) {
+                            if (($.sysMode == "USB_3G" && menuargs[page][l].name == menu_str['wan']) || (menuargs[page][l].url == '0')) {
+                                continue;
+                            }
+                            hasMore = 1;
+                            inHTMLTmp += '<li class="ml2"><a class="click" href="javascript:void(0);" url="' + menuargs[page][l].url + '">';
+                            inHTMLTmp += '<span class="text T">' + menuargs[page][l].name + '</span></a>';
+                            inHTMLTmp += '</li>';
+                        }
+                        inHTMLTmp += '</ul>';
+                        inHTMLTmp += '</li>';
+                        if (hasMore == 0) {
+                            continue;
+                        } else if (hasMore == 1 && inHTMLTmp !== undefined) {
+                            inHTML += inHTMLTmp;
+                        }
+                    }
+                }
+                inHTML += '</ul></div>';
+                $('#menu').append($(inHTML));
+
+                if ($.browser.mozilla) {
+                    $('#menu').perfectScrollbar('destroy');
+                    $('#menu').perfectScrollbar({
+                        suppressScrollX: true
+                    });
+                } else {
+                    $('#menu').css({
+                        overflowX: 'hidden',
+                        overflowY: 'auto'
+                    });
+                }
+
+                self.$a = $('a.click');
+                self.$li = $('li');
+                self.registerHandlers();
+                self.$a.first().click();
+            });
+        },
+        menuFilter: function(menulist, menuargs) {
+            var have = 0;
+            for (var page in menuargs) {
+                for (var l = 0; l < menuargs[page].length; l++) {
+                    have = 0;
+                    $.each(menulist, function() {
+                        var self = this;
+                        if (this == menuargs[page][l].url) {
+                            have = 1;
+                            return false;
+                        }
+                    });
+                    if ((have == 0)) {
+                        menuargs[page][l].url = '0';
+                    }
+                }
+            }
+        },
+        registerHandlers: function() {
+            var self = this;
+            self.$a.on('click.tpMenu', function(e) {
+                var pageUrl;
+                var me = $(this);
+                var parentli = me.parent('li');
+                if (me.hasClass('sel')) {
+                    var firstli = parentli.find('ul.mu2 li.ml2').eq(0).find('a');
+                    if (firstli.length != 0) {
+                        firstli.click();
+                        return;
+                    }
+                }
+
+                $('li.ml2').removeClass('sel');
+
+                if (parentli.hasClass('ml2')) {
+                    parentli.siblings('li').find('a.sel').removeClass('sel').removeClass('clicked');
+                    parentli.addClass('sel');
+                } else {
+                    $('ul.mu2').slideUp('fast');
+                    $('a').removeClass('sel').removeClass('clicked');
+                }
+
+                me.addClass('sel').addClass('clicked');
+
+                if (me.hasClass('more')) {
+                    var $clicked = me.next('ul.mu2');
+                    $clicked.slideDown('fast');
+                    var $child = $clicked.children('li').first();
+                    $child.addClass('sel');
+                    $child.find('a').addClass('sel').addClass('clicked');
+                    pageUrl = $child.find('a').attr('url');
+                } else {
+                    pageUrl = me.attr('url');
+                }
+                $('#scroll').scrollTop(0);
+                $.loadMain(pageUrl);
+            });
+
+            self.$li.on('mouseenter.tpMenu', function(e) {
+                $(this).find('a').first().addClass('hover');
+            });
+
+            self.$li.on('mouseleave.tpMenu', function(e) {
+                $(this).find('a').first().removeClass('hover');
+            });
+        },
+        destroy: function() {
+            var self = this;
+            if (self.$a) {
+                self.$a.off('.tpMenu');
+            }
+            if (self.$li) {
+                self.$li.off('.tpMenu');
+            }
+            delete Object.getPrototypeOf(self).instances[self.id];
+        }
+    };
+
+    $.fn.tpMenu = function(options) {
+        this.each(function() {
+            var tpmenu = $(this).data('tpMenu');
+            if (!tpmenu) {
+                $(this).data('tpMenu', new TPMenu());
+                $(this).data('tpMenu').init(this.id, menuargs);
+            } else if (options === 'destroy' && tpmenu) {
+                tpmenu.destroy();
+            } else {
+                tpmenu.destroy();
+                $(this).data('tpMenu', new TPMenu());
+                $(this).data('tpMenu').init(this.id, menuargs);
+            }
+        });
+    };
+
+})(jQuery);
+
+var haveClick = false;
+if ($("#advanced").hasClass("selected") || 
+	$("#basic").hasClass("selected"))
+	haveClick = true;
+
+//if ($.isFD == 1 || $.isFD == 2) {
+if ((haveClick == false) && ($.isFD == 1 || $.isFD == 2)) {
+    $("#base").css("background-color", "#fff");
+    $("#qs").addClass("selected");
+    $("#con").fadeOut(200);
+    $.loadPage("quicksetup", "quicksetup.htm", function() {
+        $.curPage = "quicksetup.htm";
+        $.emptyElem($.bak);
+        $.clearAsync();
+        $.unlock();
+    });
+    $("#quicksetup").css("display", "block");
+} else {
+    if ($("#advanced").hasClass("selected")) {
+        menuargs = menuAdv;
+        $("#base").css("background-color", "#f2f2f2");
+    } else if ($("#qs").hasClass("selected")) {
+        $("#base").css("background-color", "#fff");
+    } else {
+        menuargs = menuBasic;
+        $("#basic").addClass("selected");
+        $("#base").css("background-color", "#f2f2f2");
+    }
+    $('#menu').tpMenu(menuargs);
+}
+</script>

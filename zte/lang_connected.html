@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/connected.js"></script>
+    <script type="text/javascript" src="./js/boot.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "-";
+        var G_Menu = "setup";
+        var G_Page = "connected";
+        var G_SubPage = "-";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = '' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = "./lang_connected.html";
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('1' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+        var G_WanConns = [];
+        var m = 0;
+        //modify by wuyouhui start 2011-09-29 for IPV6 Connection's default gateway 
+
+        G_WanConns[m] = ["InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.", //Path
+            "1", //Enable
+            "1_TR069_INTERNET_R", //Name
+            "IP_Routed", //ConnectionType
+            "PPP", //X_TWSZ-COM_ConnectionMode
+            "TR069,INTERNET", //X_TWSZ-COM_ServiceList
+            "IPv4_6", //ProtocolType
+            "Disconnected" //ConnectionStatus
+        ];
+
+        if ("IPv4_6" == "IPv6") {
+            G_WanConns[m][7] = (("Disconnected" == "GlobalConnected") ? "Connected" : "Disconnected");
+        }
+        m++;
+
+
+        G_WanConns[m] = ["InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANIPConnection.1.", //Path
+            "0", //Enable
+            "2_TR069_R", //Name
+            "IP_Routed" == "IP_Routed" ? "DHCP" : "IP_Routed", //AddressingType
+            "IP", //X_TWSZ-COM_ConnectionMode
+            "TR069,", //X_TWSZ-COM_ServiceList
+            "IPv4", //ProtocolType
+            "Disconnected" //ConnectionStatus
+        ];
+
+        if ("IPv4" == "IPv6") {
+            G_WanConns[m][7] = (("Disconnected" == "GlobalConnected") ? "Connected" : "Disconnected");
+        }
+        m++;
+
+
+
+
+
+        //modify by wuyouhui end
+        var wanConIndex = '-';
+        var G_DefaultRouter = ""; // -> display,onlyread
+        var G_DefaultRouter_def = ""; // write
+
+        var G_DefaultRouterV6 = "";
+        var G_RussuWan_Path = "InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.";
+
+        function createDefGwOpt() {
+            var _text = [],
+                _value = [];
+
+            for (var i = 0, j = 0, _len = G_WanConns.length; i < _len; i++) {
+                //duan* 2012/08/15 for only display the wan connected
+                if (G_WanConns[i][5].indexOf('INTERNET') > -1 && 'IP_Bridged' != G_WanConns[i][3] && G_WanConns[i][7] == 'Connected') {
+                    _text[j] = G_WanConns[i][2];
+                    _value[j] = G_WanConns[i][0].replace(/\.$/, '');
+                    j++;
+                }
+            }
+            $S('SELECT_DefGw', _text, _value);
+        }
+
+        function findWanName(_def_router) {
+            if (!_def_router) {
+                for (var i = 0, _len = G_WanConns.length; i < _len; i++) {
+                    if (G_WanConns[i][7].indexOf("Connected") > -1) {
+                        return G_WanConns[i][2];
+                    }
+                }
+                return 'No Default Gateway';
+            }
+
+            if (_def_router) {
+                for (var i = 0, _len = G_WanConns.length; i < _len; i++) {
+                    if (G_WanConns[i][0].indexOf(_def_router) > -1) {
+                        return G_WanConns[i][2];
+                    }
+                }
+            }
+            //else
+            //{
+            /*add by wuyouhui start 2011-09-29 for ipv6 connection's default gateway setting*/
+            //	for(var i = 0, _len = G_WanConns.length; i < _len; i++){
+            //		if(G_WanConns[i][0].indexOf(_def_routerV6) > -1){			
+            //			return G_WanConns[i][2];
+            //		}
+            //	}
+            /*add by wuyouhui end*/
+            //}
+        }
+
+        function uiOnload() {
+            // create wan connection table
+            var array_value = [];
+            for (var i = 0, _len = G_WanConns.length; i < _len; i++) {
+                array_value[i] = [G_WanConns[i][1] == '1' ? 'Enabled' : 'Disabled',
+                    G_WanConns[i][2],
+                    getConnType(G_WanConns[i][3]),
+                    G_WanConns[i][5]
+                ];
+
+                if (G_WanConns[i][2].indexOf("1_") == 0 ||
+                    (G_WanConns[i][2].indexOf("3_") == 0 && G_WanConns[i][3] == "IP_Bridged")) {
+                    /*Begin : Recovered By yangzhen 12696 For Close Managing Privileges To NetUser  2015-01-22*/
+                    array_value[i].push('<input type="image" src="./img/edit.gif" id="Edit' + i + '" title="Edit" onclick="uiEdit(' + i + ')">', '<input type="image" src="./img/gray_del.gif" id="Delete' + i + '" title="Delete" disabled>');
+                }
+                else if (G_WanConns[i][2].indexOf("2_") == 0) {
+                    array_value[i].push('<input type="image" src="./img/gray_edit.gif" id="Edit' + i + '" title="Edit" disabled>', '<input type="image" src="./img/gray_del.gif" id="Delete' + i + '" title="Delete" disabled>');
+                }
+                else {
+                    array_value[i].push('<input type="image" src="./img/edit.gif" id="Edit' + i + '" title="Edit" onclick="uiEdit(' + i + ')">', '<input type="image" src="./img/del.gif" id="Delete' + i + '" title="Delete" onclick="uiDelete(' + i + ')">');
+                }
+                /*End : Recovered By yangzhen 12696 For Close Managing Privileges To NetUser  2015-01-22*/
+            }
+            $T('wan_conn', array_value);
+
+            createDefGwOpt(G_DefaultRouter_def);
+
+            setJSONValue({
+                'DIV_CurrentDefGy': findWanName(G_DefaultRouter),
+                'def_mode': G_DefaultRouter_def == '' ? 'Auto' : 'Manual'
+            });
+
+            ctrlDefRouter();
+        }
+
+        function ctrlDefRouter() {
+            $('DIV_Manual').style.display = Form.Radio('def_mode') == 'Auto' ? 'none' : 'block';
+            $('DIV_Auto').style.display = Form.Radio('def_mode') == 'Manual' ? 'none' : 'block';
+            /* Modify by wuyouhui for default route start at 2011-11-15 */
+            $('SELECT_DefGw').value = "";
+            if ($('SELECT_DefGw').value == '') {
+                $('SELECT_DefGw').value = "";
+            }
+
+            if ($('SELECT_DefGw').value == '') {
+                $('SELECT_DefGw').selectedIndex = 0;
+            }
+            /*Modify by wuyouhui end*/
+        }
+
+        function getConnType(_type) {
+            switch (_type) {
+                case 'IP_Routed':
+                    {
+                        _type = 'PPPoE';
+                        break;
+                    }
+                case 'PPTP_Relay':
+                    {
+                        _type = 'PPTP';
+                        break;
+                    }
+                case 'L2TP_Relay':
+                    {
+                        _type = 'L2TP';
+                        break;
+                    }
+                case 'IP_Bridged':
+                    {
+                        _type = 'Bridge';
+                        break;
+                    }
+            }
+
+            return _type;
+        }
+
+        function uiEdit(_i) {
+            $H({
+                'var:menu': G_Menu,
+                'var:page': G_Page,
+                'var:subpage': 'wanadsl',
+                'getpage': 'html/index.html',
+                'errorpage': 'html/index.html',
+                'var:SecIndex': G_WanConns[_i][0].split('.')[4],
+                'var:ThdIndex': G_WanConns[_i][0].split('.')[6],
+                'var:WanType': G_WanConns[_i][4]
+            }, true);
+
+            $('uiPostForm').submit();
+        }
+
+        function uiGeTProgress() {
+            location.href = "";
+        }
+
+        function uiDelete(_i) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                return false;
+            }
+
+
+
+            $H({
+                'mid': '0438',
+                'var:menu': G_Menu,
+                'var:page': G_Page,
+                'var:subpage': G_SubPage,
+                'getpage': './index.html',
+                'errorpage': './index.html',
+                'del-obj': G_WanConns[_i][0],
+                'obj-action': 'del'
+            }, true);
+
+            //dcb+ for avoid the issues result with click edit or delete button when do del action
+            $('Edit' + _i).disabled = true;
+            $('Delete' + _i).disabled = true;
+
+            $('uiPostForm').submit();
+        }
+
+        /*Modify by wuyouhui for default route start 2011-11-16*/
+        function uiApplyDefGw() {
+
+            var _select = $('SELECT_DefGw').value;
+            if ('' == _select) {
+                alert(SEcode[1002]);
+                return false;
+            }
+
+            var defgw = Form.Radio('def_mode') == 'Auto' ? '' : _select.replace(/[.]$/, '');
+
+            $H({
+                // ipv4 default route
+                ':InternetGatewayDevice.Layer3Forwarding.X_TWSZ-COM_DefaultConnectionService': defgw,
+                // ipv6 default route
+                ':InternetGatewayDevice.X_TWSZ-COM_IPv6Layer3Forwarding.DefaultConnectionService': defgw,
+                'obj-action': 'set',
+                'var:menu': G_Menu,
+                'var:page': G_Page,
+                'var:errorpage': G_Page,
+                'var:wanConIndex': Form.Radio('def_mode') == 'Auto' ? '-' : _select,
+                'getpage': './index.html',
+                'errorpage': './index.html'
+            }, true);
+
+            $('uiPostForm').submit();
+        }
+        /*Modify by wuyouhui end*/
+
+        function toWanConfig() {
+            document.location.href = './addWanInterface.html';
+        }
+
+        function dealWithError() {
+            if (G_Error != 1) {
+                return false;
+            }
+            var arrayHint = [];
+            dealErrorMsg(arrayHint, G_Error_Msg);
+        }
+
+
+        addListeners(uiOnload, dealWithError);
+
+
+        //]]>
+        //???????????
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+                <li class="on"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('1' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "./zte";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_setup" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+
+
+            <!-- setup -->
+            <div class="M1">
+                <p id="down" class="lan"><a href="./lang_setup.html" id="lang_lan">LAN Basic</a></p>
+                <p id="up" class="wan"><a href="./lang_connected.html" id="lang_connected">WAN</a></p>
+                <p id=""><a href="./lang_lan_advanced.html" id="lang_lan_advanced">WAN Advanced</a></p>
+                <p id=""><a href="./lang_lanIPV6.html" id="lang_lanIPV6">IPV6 LAN</a></p>
+                <p id="" style="display:none;"><a href="./lang_wanIPV6.html" id="lang_wanIPV6">IPV6 WAN</a></p>
+                <!-- <p id="" style="display:none" class="dialing"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=setup&var:page=dialing" id="dialing">Dialing</a><p> -->
+                <!--zp delete 20120425-->
+
+            </div>
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+
+            <!-- management -->
+
+        </div>
+
+        <!--  content -->
+
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go"><img id="pointTo" src="./img/helpBook.gif" alt="Help" /></a> <span id="lang_title">WAN Configuration</span></div>
+            <div class="Embody">
+                <div class="SmallTittle" id="">WAN Settings</div>
+                <p style="padding-left:30px; ">You can add multiple wan connection by "Add" button.</p>
+                <div class="div_button" style="padding-left:30px; "><input type="button" id="Add" value="Add" onClick="toWanConfig()"></div>
+                <!-- WAN CONNECTION -->
+                <p class="SmallTittle" id="">Connection List</p>
+                <div id="MainTable">
+                    <table class="td_table" id="wan_conn">
+                        <tr class="tr_bold">
+                            <td>Status</td>
+                            <td>Name</td>
+                            <td>Protocol</td>
+                            <td>Service Type</td>
+                            <td colspan="2">action</td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- Default Gateway -->
+                <p class="SmallTittle" id="">Default Gateway</p>
+                <div class="div_left" style="padding-left:90px; width:150px;">Default Gateway Mode :</div>
+                <div class="div_right"><input type="radio" name="def_mode" value="Auto" onClick="ctrlDefRouter()">Auto &nbsp;&nbsp;&nbsp;<input type="radio" name="def_mode" value="Manual" onClick="ctrlDefRouter()">Manual</div>
+                <!-- Manual -->
+                <div id="DIV_Manual">
+                    <div class="div_left" style="padding-left:90px; width:150px;">Choose Wan Connection :</div>
+                    <div class="div_right"><select id="SELECT_DefGw"></select></div>
+                </div>
+                <div id="DIV_Auto">
+                    <div class="div_left" style="padding-left:90px; width:150px;">Current Default Gateway :</div>
+                    <div class="div_right" style="padding-top:3px;" id="DIV_CurrentDefGy"></div>
+                </div>
+                <div class="div_left" style="padding-left:90px; width:150px;">
+                    <div class="div_button"><input type="button" id="Apply" value="Apply" onClick="uiApplyDefGw()">
+                    <input type="button" id="Refresh" value="Refresh" onClick="uiPageRefresh()"></div>
+                </div>
+                <div class="div_right">&nbsp;</div>
+            </div>
+            <!--end Embody-->
+            <form name="uiPostForm" id="uiPostForm" method="post" action=""></form>
+        </div>
+        <!--end Content-->
+
+        <!-- if loading and content will not display-->
+        <div id="Loading">
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=
+iso-8859-1">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language="JavaScript">
+function doLogout()
+{
+top.location.href="http://192.168.1.1/maintenance/tools_logout.htm";
+}
+function doSubmit( )
+{
+document.Language_form.flagFresh.value = 1;
+
+}
+function fresh()
+{
+if(document.Language_form.flagFresh.value == 1)
+{
+top.navigation.location = "../navigation-status.html";
+top.main.location.href = "../status/status_deviceinfo.htm";
+}
+}
+</script>
+</head><body onLoad="fresh()">
+<FORM METHOD="POST" ACTION="status.html" tppabs="http://192.168.1.1/Forms/status_1?flagFresh=0" name="Language_form"><div align=center>
+<table width="760" height="5" border="0" align=center cellpadding="0" cellspacing="0" class="orange">
+<tr>
+<td></td></tr></table><table border="0" width="760" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+<tr>
+<td width="200" height="50" align=center valign=middle bgcolor="#FFFFFF"><div align=left>
+<img src="Logo.gif" tppabs="http://192.168.1.1/Images/Logo.gif" width="200" height="50">
+</div><INPUT TYPE="HIDDEN" NAME="flagFresh" VALUE="0"></td><td width="560" align=right valign="bottom" bgcolor="#FFFFFF" class="model">
+<font color="#000000">UR-314AWN</font></td></tr></table><table width="760" height="1" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#CCCCCC">
+<tr>
+<td></td></tr></table></div></form>
+</body></html>

@@ -1,0 +1,53 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language="JavaScript">
+function commCheck(object) {
+var len = object.value.length;
+var c;
+var i, j = 0;
+for (i = 0; i < len; i++)
+{
+var c = object.value.charAt(i);
+if (c == '"')
+{
+j += 6;
+}
+else
+j++;
+}
+if (j > 31)
+{
+alert('too many quotation marks!');return true;
+}
+return false;
+}
+function SNMPsave() {
+if (commCheck(document.forms[0].SNMP_get))
+return;
+if (commCheck(document.forms[0].SNMP_set))
+return;
+location.reload();
+}
+</script>
+</head><body><FORM METHOD="POST" ACTION="http://192.168.1.1/Forms/access_snmp_1" name="SNMP_form"><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">SNMP</font></td><td width="10" class="black">&nbsp;</td><td width="150"></td><td width="10" ></td><td width="440"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Get Community</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="SNMP_get" SIZE="30" MAXLENGTH="30" VALUE="public"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Set Community</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+<INPUT TYPE="TEXT" NAME="SNMP_set" SIZE="30" MAXLENGTH="30" VALUE="public"></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td>&nbsp;</td><td>&nbsp;</td><td class="tabdata">&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" class="black" height="42" >&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">
+<INPUT TYPE="BUTTON" NAME="SaveBtn" VALUE="SAVE" onClick="SNMPsave();"></td></tr></table></form>
+</body></html>

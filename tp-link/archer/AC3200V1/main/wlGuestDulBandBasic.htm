@@ -1,0 +1,587 @@
+﻿<script type="text/javascript">
+var wlanObj_2g,
+    wlanObj_5g,
+    vapObj_2g,
+    vapObj_5g,
+    guestnetObj_2g,
+    guestnetObj_5g;
+var isSec_2g = 0;
+var isSec_5g = 0;
+
+var wlanObj_5g_2,
+    vapObj_5g_2,
+    guestnetObj_5g_2;
+var isSec_5g_2 = 0;
+
+function isHex(str, arg) {
+    str = str.toLowerCase();
+    for (var i = 0; i < str.length; i++) {
+        if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) >= 'a' && str.charAt(i) <= 'f'))
+            continue;
+        else {
+            if (arg != 0)
+                $.alert(ERR_WLAN_WEP_KEY_HEX_INVALID);
+            return false;
+        }
+    }
+    if (parseInt(str, 16) == 0) {
+        if (arg != 0)
+            $.alert(ERR_WLAN_WEP_KEY_HEX_INVALID);
+        return false;
+    }
+    return true;
+}
+
+function checkSSID(band) {
+    var s = $('#ssid' + band);
+    var ssidLen = $.realLen(s.prop('value'));
+
+    if (INCLUDE_LAN_WLAN_MSSID) {
+        /*var index = 1;
+
+        for (index = 1; index < ssidNum; index++) {
+            var cp1 = $.id("ssid").value;
+            var cp2 = $.id("ssid" + index).value;
+            if (cp1 == cp2) {
+                $.alert(CMM_WLAN_SSID_CONFLICTE);
+                s.focus();
+                s.select();
+                return false;
+            }
+        }
+
+        for (index = 1; index < ssidNum; index++) {
+            var cp1 = $.id("ssid" + index).value;
+            var loop = 0;
+            for (loop = index + 1; loop < ssidNum; loop++) {
+                var cp2 = $.id("ssid" + loop).value;
+                if (cp1 == cp2) {
+                    $.alert(CMM_WLAN_SSID_CONFLICTE);
+                    $.id("ssid" + index).focus();
+                    $.id("ssid" + index).select();
+                    return false;
+                }
+            }
+        }*/
+
+        if (INCLUDE_LAN_WLAN_GUESTNETWORK) {
+            if (s.prop('value') == wlanObj_2g.SSID || s.prop('value') == wlanObj_5g.SSID) {
+                $.alert(CMM_WLAN_SSID_CONFLICTE);
+                s.focus();
+                s.select();
+                return false;
+            }
+            /*            for (index = 1; index < ssidNum; index++) {
+                if ($.id("ssid" + index).value == guestVap.ssid) {
+                    $.alert(CMM_WLAN_SSID_CONFLICTE_WITH_GUESTNET);
+                    $.id("ssid" + index).focus();
+                    $.id("ssid" + index).select();
+                    return false;
+                }
+            }*/
+        }
+    }
+    if (ssidLen <= 0) {
+        $.alert(ERR_WLAN_SSID_IS_EMPTY);
+        s.focus();
+        s.select();
+        return false;
+    } else if (ssidLen > 32) {
+        $.alert(ERR_WLAN_SSID_LEN_OUTRANGE);
+        s.focus();
+        s.select();
+        return false;
+    }
+    /* else if (INCLUDE_LAN_WLAN_MSSID) {
+        for (index = 1; index < ssidNum; index++) {
+            var s2 = $.id("ssid" + index);
+            var ssidLen2 = $.realLen(s2.value);
+            if (ssidLen2 <= 0) {
+                $.alert(ERR_WLAN_SSID_IS_EMPTY);
+                s2.focus();
+                s2.select();
+                return false;
+            } else if (ssidLen2 > 32) {
+                $.alert(ERR_WLAN_SSID_LEN_OUTRANGE);
+                s2.focus();
+                s2.select();
+                return false;
+            }
+        }
+    }*/
+
+    return true;
+}
+
+function checkPersonal(band) {
+    var t = $('#wpa2PersonalPwd' + band);
+    var pwd = t.prop('value');
+
+    if (pwd.length == 0) {
+        $.alert(ERR_WLAN_WPA_PSK_EMPTY);
+        t.focus();
+        t.select();
+        return false;
+    } else if (pwd.length < 8) {
+        $.alert(ERR_WLAN_WPA_PSK_LENGTH_INVALID);
+        t.focus();
+        t.select();
+        return false;
+    } else if (pwd.length >= 64) {
+        if (!isHex(pwd, 0)) {
+            $.alert(ERR_WLAN_WPA_PSK_HEX_INVALID);
+            t.focus();
+            t.select();
+            return false;
+        }
+        t.prop('value', t.prop('value').substr(0, 64));
+    } else {
+        if ($.asc(pwd, true)) {
+            $.alert(ERR_WLAN_WPA_PSK_ASCII_INVALID);
+            t.focus();
+            t.select();
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function init() {
+    var basicList = $.act(ACT_GL, LAN_WLAN, null, null, ["Enable", "SSID", "X_TP_Band", "subBand", "BeaconType", "BasicEncryptionModes"]);
+    if (!$.exe()) {
+        $.each(basicList, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                wlanObj_2g = this;
+            }
+            if ("5GHz" == this.X_TP_Band) {
+                if (1 == this.subBand)
+                wlanObj_5g = this;
+                else if (4 == this.subBand)
+                     wlanObj_5g_2 = this;
+                else
+                    /*do nothing*/;
+            }
+        });
+
+        localObj = $.act(ACT_GET, LOCAL, null, null, ["WirelessPhyBtn"]);
+
+        mssidObj_2g = $.act(ACT_GET, LAN_WLAN_MULTISSID, wlanObj_2g.__stack, null, ["MultiSSIDEnable"]);
+        mssidObj_5g = $.act(ACT_GET, LAN_WLAN_MULTISSID, wlanObj_5g.__stack, null, ["MultiSSIDEnable"]);
+        mssidObj_5g_2 = $.act(ACT_GET, LAN_WLAN_MULTISSID, wlanObj_5g_2.__stack, null, ["MultiSSIDEnable"]);
+        vapList_2g = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_2g.__stack, ["Name", "Enable", "SSID", "SSIDAdvertisementEnable", "isolateClients", "BeaconType", "BasicAuthenticationMode", "WEPKeyIndex", "BasicEncryptionModes", "WPAEncryptionModes", "WPAAuthenticationMode", "IEEE11iEncryptionModes", "IEEE11iAuthenticationMode", "PreSharedKey", "GroupKeyUpdateInterval", "RadiusServerIP", "RadiusServerPort", "RadiusServerPassword"]);
+        vapList_5g = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_5g.__stack, ["Name", "Enable", "SSID", "SSIDAdvertisementEnable", "isolateClients", "BeaconType", "BasicAuthenticationMode", "WEPKeyIndex", "BasicEncryptionModes", "WPAEncryptionModes", "WPAAuthenticationMode", "IEEE11iEncryptionModes", "IEEE11iAuthenticationMode", "PreSharedKey", "GroupKeyUpdateInterval", "RadiusServerIP", "RadiusServerPort", "RadiusServerPassword"]);
+        vapList_5g_2 = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj_5g_2.__stack, ["Name", "Enable", "SSID", "SSIDAdvertisementEnable", "isolateClients", "BeaconType", "BasicAuthenticationMode", "WEPKeyIndex", "BasicEncryptionModes", "WPAEncryptionModes", "WPAAuthenticationMode", "IEEE11iEncryptionModes", "IEEE11iAuthenticationMode", "PreSharedKey", "GroupKeyUpdateInterval", "RadiusServerIP", "RadiusServerPort", "RadiusServerPassword"]);
+
+        guestnetObj_2g = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_2g.__stack, null, ["Enable", "Name", "IsModified", "LANAccessEnable", "USBAccessEnable", "TCEnable", "TCMaxUpBW", "TCMinUpBW", "TCMaxDownBW", "TCMinDownBW", "TCRuleID"]);
+        guestnetObj_5g = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_5g.__stack, null, ["Enable", "Name", "IsModified", "LANAccessEnable", "USBAccessEnable", "TCEnable", "TCMaxUpBW", "TCMinUpBW", "TCMaxDownBW", "TCMinDownBW", "TCRuleID"]);
+        guestnetObj_5g_2 = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj_5g_2.__stack, null, ["Enable", "Name", "IsModified", "LANAccessEnable", "USBAccessEnable", "TCEnable", "TCMaxUpBW", "TCMinUpBW", "TCMaxDownBW", "TCMinDownBW", "TCRuleID"]);
+        if (!$.exe()) {
+            $.each(vapList_2g, function(arg, index) {
+                if (this.name == guestnetObj_2g.name)
+                    vapObj_2g = this;
+            });
+            $.each(vapList_5g, function(arg, index) {
+                if (this.name == guestnetObj_5g.name)
+                    vapObj_5g = this;
+            });
+            $.each(vapList_5g_2, function(arg, index) {
+                if (this.name == guestnetObj_5g_2.name)
+                    vapObj_5g_2 = this;
+            });
+            if (guestnetObj_2g.enable == true) {
+                /*                vapObj = vapObj2g;
+                guestnetObj = guestnetObj2G;*/
+            }
+            if (guestnetObj_2g.enable == true) {
+                /*                vapObj = vapObj5g;
+                guestnetObj = guestnetObj_5g;*/
+            }
+        }
+        if (localObj.wirelessPhyBtn == false)
+            disableCfgByWifiBtn();
+
+        initParamShow(vapObj_2g, '_2g');
+        initParamShow(vapObj_5g, '_5g');
+        initParamShow(vapObj_5g_2, '_5g_2');
+        initAdvancedShow(vapObj_2g, guestnetObj_2g);
+        initSecShow(vapObj_2g, '_2g');
+        initSecShow(vapObj_5g, '_5g');
+        initSecShow(vapObj_5g_2, '_5g_2');
+    }
+}
+
+function initParamShow(vapObj, band) {
+    if (vapObj.enable == 1) {
+        $('#wlEn' + band).prop('checked', 'checked');
+    } else {
+        $('#hideGuest' + band).hide('fast');
+    }
+    if (band == '_2g') {
+        if (wlanObj_2g.enable == 0) {
+        $('#wlEn_2g').prop('disabled', true);
+        $('#ssid_2g').prop('disabled', true);
+        $('#hideSSID_2g').prop('disabled', true);
+        $('#noSec_2g').prop('disabled', true);
+        $('#wpaSec_2g').prop('disabled', true);
+        $('#wpa2PersonalPwd_2g').prop('disabled', true);
+        $.errorTip('wlEn_2g', ERR_WLAN_DISABLED);
+        } /*else if ('Basic' == wlanObj_2g.beaconType && "WEPEncryption" == wlanObj_2g.basicEncryptionModes) {
+            $('#wlEn_2g').prop('disabled', true);
+            $('#ssid_2g').prop('disabled', true);
+            $('#hideSSID_2g').prop('disabled', true);
+            $('#noSec_2g').prop('disabled', true);
+            $('#wpaSec_2g').prop('disabled', true);
+            $('#wpa2PersonalPwd_2g').prop('disabled', true);
+            $.errorTip('wlEn_2g', ERR_WLAN_GUESTNETWORK_WEP_CONFLICT);
+        }*/
+    } else if (band == '_5g') {
+        if (wlanObj_5g.enable == 0) {
+        $('#wlEn_5g').prop('disabled', true);
+        $('#ssid_5g').prop('disabled', true);
+        $('#hideSSID_5g').prop('disabled', true);
+        $('#noSec_5g').prop('disabled', true);
+        $('#wpaSec_5g').prop('disabled', true);
+        $('#wpa2PersonalPwd_5g').prop('disabled', true);
+        $.errorTip('wlEn_5g', ERR_WLAN_DISABLED);
+        }/* else if ('Basic' == wlanObj_5g.beaconType && "WEPEncryption" == wlanObj_5g.basicEncryptionModes) {
+            $('#wlEn_5g').prop('disabled', true);
+            $('#ssid_5g').prop('disabled', true);
+            $('#hideSSID_5g').prop('disabled', true);
+            $('#noSec_5g').prop('disabled', true);
+            $('#wpaSec_5g').prop('disabled', true);
+            $('#wpa2PersonalPwd_5g').prop('disabled', true);
+            $.errorTip('wlEn_5g', ERR_WLAN_GUESTNETWORK_WEP_CONFLICT);
+        }*/
+    } else if (band == '_5g_2') {
+        if (wlanObj_5g_2.enable == 0) {
+        $('#wlEn_5g_2').prop('disabled', true);
+        $('#ssid_5g_2').prop('disabled', true);
+        $('#hideSSID_5g_2').prop('disabled', true);
+        $('#noSec_5g_2').prop('disabled', true);
+        $('#wpaSec_5g_2').prop('disabled', true);
+        $('#wpa2PersonalPwd_5g_2').prop('disabled', true);
+        $.errorTip('wlEn_5g_2', ERR_WLAN_DISABLED);
+        }/* else if ('Basic' == wlanObj_5g_2.beaconType && "WEPEncryption" == wlanObj_5g_2.basicEncryptionModes) {
+            $('#wlEn_5g_2').prop('disabled', true);
+            $('#ssid_5g_2').prop('disabled', true);
+            $('#hideSSID_5g_2').prop('disabled', true);
+            $('#noSec_5g_2').prop('disabled', true);
+            $('#wpaSec_5g_2').prop('disabled', true);
+            $('#wpa2PersonalPwd_5g_2').prop('disabled', true);
+            $.errorTip('wlEn_5g_2', ERR_WLAN_GUESTNETWORK_WEP_CONFLICT);
+        }*/
+    }
+
+    $('#ssid' + band).prop('value', vapObj.SSID);
+
+    if (vapObj.SSIDAdvertisementEnable == 0) {
+        $('#hideSSID' + band).prop('checked', 'checked');
+    }
+}
+
+function initAdvancedShow(vapObj, guestnetObj) {
+    if (vapObj.isolateClients == 0) {
+        $('#seeEachOther').prop('checked', 'checked');
+    }
+    if (guestnetObj.LANAccessEnable == 1) {
+        $('#accessLocal').prop('checked', 'checked');
+    }
+    if (guestnetObj.USBAccessEnable == 1) {
+        $('#accessUSB').prop('checked', 'checked');
+    }
+}
+
+function initSecShow(wlanObj, band) {
+    if (initSecType(wlanObj, band) === false) {
+        $('#noSec' + band).prop('checked', true);
+    } else {
+        $('#wpaSec' + band).prop('checked', true);
+        initWpa2Personal(wlanObj, band);
+    }
+
+}
+
+function initSecType(wlanObj, band) {
+    if (wlanObj.beaconType == 'Basic' && wlanObj.basicEncryptionModes == 'None') {
+        return false;
+    } else {
+        if (band == '_2g') {
+            isSec_2g = 1;
+        } else if(band == '_5g'){
+            isSec_5g = 1;
+        }
+        else if(band == '_5g_2'){
+            isSec_5g_2 = 1;
+        }
+        return true;
+    }
+}
+
+function initWpa2Personal(wlanObj, band) {
+    $('#wpa2PersonalPwd' + band).prop('value', wlanObj.preSharedKey);
+}
+
+function check(band) {
+    if (checkSSID(band) == false) {
+        return false;
+    }
+    if (($('#wpaSec' + band).prop('checked')) && (checkPersonal(band) == false)) {
+        return false;
+    }
+}
+
+function clickSave(wlanObj, guestnetObj, band) {
+    var wlSettings = {};
+    var guestSettings = {};
+    var type;
+
+    wlSettings.enable = $('#wlEn' + band).prop('data-checked') ? 1 : 0;
+/*    if (band == '_2g' && wlanObj_2g.enable == 0) {
+        $.errorTip('wlEn_2g', ERR_WLAN_DISABLED);
+        return;
+    } else if (band == '_5g' && wlanObj_5g.enable == 0) {
+        $.errorTip('wlEn_5g', ERR_WLAN_DISABLED);
+        return;
+    }*/
+    wlSettings.SSID = $('#ssid' + band).prop('value');
+    wlSettings.SSIDAdvertisementEnable = $('#hideSSID' + band).prop('data-checked') ? 0 : 1;
+    wlSettings.preSharedKey = $('#wpa2PersonalPwd' + band).prop('value');
+
+    if ((band == '_2g' && isSec_2g == 0 && $('#wpaSec_2g').prop('checked')) ||
+        (band == '_5g' && isSec_5g == 0 && $('#wpaSec_5g').prop('checked')) ||
+        (band == '_5g_2' && isSec_5g_2 == 0 && $('#wpaSec_5g_2').prop('checked'))
+                                                                            ) {
+        wlSettings.beaconType = '11i';
+        wlSettings.IEEE11iAuthenticationMode = 'PSKAuthentication';
+        wlSettings.IEEE11iEncryptionModes = 'TKIPandAESEncryption';
+    } else if ((band == '_2g' && isSec_2g == 1 && $('#noSec_2g').prop('checked')) ||
+               (band == '_5g' && isSec_5g == 1 && $('#noSec_5g').prop('checked')) ||
+               (band == '_5g_2' && isSec_5g_2 == 1 && $('#noSec_5g_2').prop('checked'))
+                                                                                ) {
+        wlSettings.beaconType = 'Basic';
+    }
+    wlSettings.isolateClients = $('#seeEachOther').prop('data-checked') ? 0 : 1;
+
+    guestSettings.LANAccessEnable = $('#accessLocal').prop('data-checked') ? 1 : 0;
+    //guestSettings.USBAccessEnable = $('#accessUSB').prop('data-checked') ? 1 : 0;
+    guestSettings.USBAccessEnable = guestSettings.LANAccessEnable;
+
+    $.act(ACT_SET, LAN_WLAN_MSSIDENTRY, wlanObj.__stack, null, wlSettings);
+
+    $.act(ACT_SET, LAN_WLAN_GUESTNET, guestnetObj.__stack, null, guestSettings);
+
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+
+function disableGuest() {
+    var wlSettings = {};
+    wlSettings.enable = 0;
+    $.act(ACT_SET, LAN_WLAN_MSSIDENTRY, vapObj_2g.__stack, null, wlSettings);
+    $.act(ACT_SET, LAN_WLAN_MSSIDENTRY, vapObj_5g.__stack, null, wlSettings);
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+function disableCfgByWifiBtn () {
+    if(localObj.wirelessPhyBtn == false){
+        $('label').each(function() {
+            $(this).prop('disabled', true);
+            $(this).addClass('disabled');
+        });
+        $('select').each(function() {
+            if(this.name != "regionSel")
+                $(this).prop('disabled', true);
+        });
+
+        $("input[type='checkbox']").each(function() {
+            if (this.id != "seeEachOther" && this.id != "accessLocal")
+                $(this).prop('disabled', true);
+        });
+
+        $("input[type='radio']").each(function() {
+            $(this).prop('disabled', true);
+        });
+        $("input[type='text']").each(function() {
+            $(this).prop('disabled', true);
+        });
+        //$("#save").prop('disabled', true);
+        //$("#wifiBtnOffNote").removeClass('nd');
+    }
+}
+$('#save').on('click.guestBasic', function(e) {
+    $.addLoading($(this));
+        if ($('#wlEn_2g').prop('data-checked')) {
+        if (check('_2g') == false) {
+            return;
+        }
+    } 
+    if ($('#wlEn_5g').prop('data-checked')) {
+        if (check('_5g') == false) {
+            return;
+        }
+    }
+    if ($('#wlEn_5g_2').prop('data-checked')) {
+        if (check('_5g_2') == false) {
+            return;
+        }
+    }
+    clickSave(vapObj_5g_2, guestnetObj_5g_2, '_5g_2');
+    clickSave(vapObj_5g, guestnetObj_5g, '_5g');
+    clickSave(vapObj_2g, guestnetObj_2g, '_2g'); 
+});
+$('#wlEn_2g').on('click.guestNetwork', function(e) {
+    if ($(this).prop('data-checked') == true) {
+        $('#hideGuest_2g').show('fast');
+    } else {
+        $('#hideGuest_2g').hide('fast');
+    }
+});
+$('#wlEn_5g').on('click.guestNetwork', function(e) {
+    if ($(this).prop('data-checked') == true) {
+        $('#hideGuest_5g').show('fast');
+    } else {
+        $('#hideGuest_5g').hide('fast');
+    }
+});
+$('#wlEn_5g_2').on('click.guestNetwork', function(e) {
+    if ($(this).prop('data-checked') == true) {
+        $('#hideGuest_5g_2').show('fast');
+    } else {
+        $('#hideGuest_5g_2').hide('fast');
+    }
+});
+$("#wpaSec_2g").on('click.guestNetwork', function(e) {
+    $("#hideWpaSec_2g").show("fast");
+});
+$("#noSec_2g").on('click.guestNetwork', function(e) {
+    $("#hideWpaSec_2g").hide("fast");
+});
+$("#wpaSec_5g").on('click.guestNetwork', function(e) {
+    $("#hideWpaSec_5g").show("fast");
+});
+$("#noSec_5g").on('click.guestNetwork', function(e) {
+    $("#hideWpaSec_5g").hide("fast");
+});
+$("#wpaSec_5g_2").on('click.guestNetwork', function(e) {
+    $("#hideWpaSec_5g_2").show("fast");
+});
+$("#noSec_5g_2").on('click.guestNetwork', function(e) {
+    $("#hideWpaSec_5g_2").hide("fast");
+});
+</script>
+<h3 id="et">Settings</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b class="l" id="t_see">See each other:</b>
+            <input type="checkbox" id="seeEachOther" />
+            <label id="t_allowsee">Allow guests to see each other</label>
+        </div>
+        <div>
+            <b class="l" id="t_acclocal">Access my local network:</b>
+            <input type="checkbox" id="accessLocal" />
+            <label id="t_lAccess">Allow guests to access to my local network</label>
+        </div>
+        <div class="nd">
+            <b class="l" id="t_usbshare">USB Storage Sharing:</b>
+            <input type="checkbox" id="accessUSB" />
+            <label id="t_uAccess">Allow guests to access my USB Storage Sharing</label>
+        </div>
+
+        <div class="part-separate">
+            <b class="l">2.4GHz:</b>
+            <input type="checkbox" id="wlEn_2g" />
+            <label class="T_wlradioen">Enable Wireless Radio</label>
+        </div>
+        <div id="hideGuest_2g">
+            <div class="inline">
+                <b class="T_wlname l">Name(SSID):</b>
+                <input type="text" maxlength="32" class="xl" id="ssid_2g" />
+            </div>
+            <div class="inline">
+                <input type="checkbox" id="hideSSID_2g" />
+                <label class="T_hidessid">Hide SSID</label>
+            </div>
+            <div>
+                <b class="T_wlsec l">Security:</b>
+                <input type="radio" name="security_2g" id="noSec_2g" />
+                <label class="T_wldissec">No Security</label>
+                <input type="radio" name="security_2g" id="wpaSec_2g" />
+                <label class="T_c_setpwd">Set Password</label>
+            </div>
+            <div id="hideWpaSec_2g">
+                <div class="pure-control-group inline nd">
+                    <b class="T_passwd l">Password:</b>
+                    <input type="text" maxlength="64" class="tp-input-text xl" id="wpa2PersonalPwd_2g" />
+                </div>
+            </div>
+        </div>
+
+        <div class="part-separate">
+            <b class="l">5GHz-1:</b>
+            <input type="checkbox" id="wlEn_5g" />
+            <label class="T_wlradioen">Enable Wireless Radio</label>
+        </div>
+        <div id="hideGuest_5g">
+            <div class="inline">
+                <b class="T_wlname l">Name(SSID):</b>
+                <input type="text" maxlength="32" class="xl" id="ssid_5g" />
+            </div>
+            <div class="inline">
+                <input type="checkbox" id="hideSSID_5g" />
+                <label class="T_hidessid">Hide SSID</label>
+            </div>
+            <div>
+                <b class="T_wlsec l">Security:</b>
+                <input type="radio" name="security_5g" id="noSec_5g" />
+                <label class="T_wldissec">No Security</label>
+                <input type="radio" name="security_5g" id="wpaSec_5g" />
+                <label class="T_c_setpwd">Set Password</label>
+            </div>
+            <div id="hideWpaSec_5g">
+                <div class="pure-control-group inline nd">
+                    <b class="T_passwd l">Password:</b>
+                    <input type="text" maxlength="64" class="tp-input-text xl" id="wpa2PersonalPwd_5g" />
+                </div>
+            </div>
+        </div>
+        <div class="part-separate">
+            <b class="l">5GHz-2:</b>
+            <input type="checkbox" id="wlEn_5g_2" />
+            <label class="T_wlradioen">Enable Wireless Radio</label>
+        </div>
+        <div id="hideGuest_5g_2">
+        <div class="inline">
+                <b class="T_wlname l">Name(SSID):</b>
+                <input type="text" maxlength="32" class="xl" id="ssid_5g_2" />
+        </div>
+        <div class="inline">
+            <input type="checkbox" id="hideSSID_5g_2" />
+                <label class="T_hidessid">Hide SSID</label>
+            </div>
+            <div>
+                <b class="T_wlsec l">Security:</b>
+                <input type="radio" name="security_5g_2" id="noSec_5g_2" />
+                <label class="T_wldissec">No Security</label>
+                <input type="radio" name="security_5g_2" id="wpaSec_5g_2" />
+                <label class="T_c_setpwd">Set Password</label>
+        </div>
+            <div id="hideWpaSec_5g_2">
+                <div class="pure-control-group inline nd">
+                    <b class="T_passwd l">Password:</b>
+            <input type="text" maxlength="64" class="tp-input-text xl" id="wpa2PersonalPwd_5g_2" />
+        </div>
+        </div>
+        </div>
+
+        <button type="submit" class="green T_save" id="save">Save</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+$.tpInit(init);
+</script>

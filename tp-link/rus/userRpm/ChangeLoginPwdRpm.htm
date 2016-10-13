@@ -1,0 +1,145 @@
+<LINK href="../dynaform/css_main.css" rel=stylesheet type="text/css">
+<SCRIPT language="javascript" src="../dynaform/common.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../login/encrypt.js" type="text/JavaScript"></SCRIPT>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<SCRIPT type="text/javascript">
+<!--//
+function CheckUserPswChars(szValue)
+{
+	var reg = /^[\x21-\x7e]+$/;	
+	if(reg.test(szValue))
+	{
+		return true;
+	}	
+	return false;
+}
+
+function doClear()
+{
+	for(var i = 0; i < 5; i ++)
+	{
+		document.forms[0].elements[i].value = "";
+	}
+}
+
+function doSubmit()
+{
+	for(var i = 0; i < 5; i ++)
+	{
+		if(document.forms[0].elements[i].value != "")
+		{
+			if(!CheckUserPswChars(document.forms[0].elements[i].value))
+			{
+				alert(str_pages.ntw_change_login_pwd.js_ill_input);
+				var element = document.forms[0].elements[i];
+				if(element)
+				{
+					element.focus();
+					element.select();
+				}
+				return false;
+			}
+			if(2==i||3==i)
+			{
+				if(!CheckUserPswChars(document.forms[0].elements[i].value))
+				{
+					alert(str_pages.ntw_change_login_pwd.js_illegal_input2);
+					var element = document.forms[0].elements[i];
+					if(element)
+					{
+						element.focus();
+						element.select();
+					}
+					return false;
+				}
+			}
+		}
+		else
+		{
+			alert(str_pages.ntw_change_login_pwd.js_req_field);
+			var element = document.forms[0].elements[i];
+			if(element)
+			{
+				element.focus();element.select();
+			}
+			return false;
+		}
+	}
+	if(document.forms[0].newpassword.value != document.forms[0].newpassword2.value)
+	{
+		alert(str_pages.ntw_change_login_pwd.js_bad_conf_pwd);
+		var element = document.forms[0].newpassword2;
+		if(element)
+		{
+			element.focus();
+			element.select();
+		}
+		return false;
+	}
+	
+	if(LoginPwdInf[2] == 1)
+	{	
+		var strNewPwd = document.forms[0].newpassword.value;
+		var strNewPwd2 = document.forms[0].newpassword2.value;
+		var strOldPwd = document.forms[0].oldpassword.value;
+		document.forms[0].newpassword.value = Base64Encoding(hex_md5(strNewPwd));
+		document.forms[0].newpassword2.value = Base64Encoding(hex_md5(strNewPwd2));
+		document.forms[0].oldpassword.value = Base64Encoding(hex_md5(strOldPwd));
+	}
+	return true;
+}
+//--> 
+</SCRIPT>
+</HEAD>
+<BODY onLoad="LoadHelp('ChangeLoginPwdHelpRpm.htm');setTagStr(document,'ntw_change_login_pwd'); resize(this);" onResize="resize(this);">
+<CENTER>
+  <FORM action="ChangeLoginPwdRpm.htm" enctype="multipart/form-data" method="get" onSubmit="return doSubmit();">
+    <TABLE id="autoWidth">
+      <TR>
+        <TD class=h1 colspan=2 id ="t_title">Password</TD>
+      </TR>
+      <TR>
+        <TD class=blue colspan=2></TD>
+      </TR>
+	  	<TR><TD colspan="2"><SPAN id="t_username_tips" style="color:red">Username and password can contain between 1 - 15 characters and may not incluede spaces.</SPAN></TD><TR>
+      <TR>
+        <TD class=Item id ="t_old_user_name">Old User Name:</TD>
+        <TD><INPUT class="textS" maxlength="15" size="15" value="" name="oldname"></TD>
+      </TR>
+      <TR>
+        <TD class=Item id ="t_old_pwd">Old Password:</TD>
+        <TD><INPUT class="textS" type="password" maxlength="15" size="15" name="oldpassword"></TD>
+      </TR>
+	  <TR><TD></TD><TR>
+      <TR>
+        <TD class=Item id ="t_new_user_name">New User Name:</TD>
+        <TD><INPUT class="textS" maxlength="15" size="15" name="newname"></TD>
+      </TR>
+      <TR>
+        <TD class=Item id ="t_new_pwd">New Password:</TD>
+        <TD><INPUT class="textS" type="password" maxlength="15" size="15" name="newpassword"></TD>
+      </TR>
+      <TR>
+        <TD class=Item id ="t_conf_new_pwd">Confirm New Password:</TD>
+        <TD><INPUT class="textS" type="password" maxlength="15" size="15" name="newpassword2"></TD>
+      </TR>
+      <TR>
+        <TD class=blue colspan=2></TD>
+      </TR>
+      <TR>
+        <TD></TD>
+        <TD>&nbsp;
+          <INPUT class="buttonBig" type="submit" value="Save" name="Save">
+          &nbsp;
+          <INPUT class="buttonBig" type="reset" value="Clear All" name="Clear">		  
+		  </TD>
+      </TR>
+    </TABLE>
+  </FORM>
+</CENTER>
+</BODY>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<META http-equiv="pragma" content="no-cache">
+</HEAD>
+</HTML>

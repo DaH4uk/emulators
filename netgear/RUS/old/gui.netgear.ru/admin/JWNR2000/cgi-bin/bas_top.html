@@ -1,0 +1,69 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../bas_ether.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+<body bgcolor=#ffffff><form>
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(internet_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<TR><script>document.write(hd);</script><a tabindex=-1 href="javascript:selHelpFile('question')"><B><script>document.write(basic_top_info);</script></b></TD></TR>
+<TR><script>document.write(hd);</script><INPUT onclick=doTypeChange(0,0) type=radio name=loginreq value=0><script>document.write(yes_mark);</script></TD></TR>
+<TR><script>document.write(hd);</script><INPUT onclick=doTypeChange(1,0) type=radio name=loginreq value=1><script>document.write(no_mark);</script></TD></TR>
+<script>document.write(bluebar);</script>
+<script language="javascript">
+function selHelpFile(helpitem)
+{
+if(document.forms[0].loginreq[0].checked)
+loadhelp('_BAS_ether',helpitem)
+else
+loadhelp('_BAS_pppoe',helpitem)
+}
+function doTypeChange(newIndex,pppindex)
+{
+ if (newIndex == 1){
+loadhelp('_BAS_ether')
+ parent.bas_buttom.location.href = "bas_ether.html";
+ }
+else
+ {
+ if(pppindex == 0){
+loadhelp('_BAS_pppoe')
+ parent.bas_buttom.location.href = "bas_pppoe.html";
+ }
+else if( pppindex == 1){
+loadhelp('_BAS_pptp')
+ parent.bas_buttom.location.href = "bas_pptp.html";
+ }
+else if( pppindex == 2)
+parent.bas_buttom.location.href = "bas_bpa.html";
+else if( pppindex == 3 && parent.gui_region == "Japanese" )
+parent.bas_buttom.location.href = "bas_mulpppoe.html";
+else if( pppindex == 4){
+loadhelp('_BAS_l2tp')
+ parent.bas_buttom.location.href = "bas_l2tp.html";
+ }
+ }
+ 
+}
+select_basic=parent.select_basic;
+select_type=parent.select_type;
+if (select_basic == "1")
+document.forms[0].loginreq[1].checked =true;
+else
+document.forms[0].loginreq[0].checked =true;
+doTypeChange(select_basic,select_type);
+</script>
+</form>
+</body>
+</html>

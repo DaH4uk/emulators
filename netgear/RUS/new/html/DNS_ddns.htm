@@ -1,0 +1,290 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/DNS_ddns.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "DNS_ddns";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//DDNS
+var G_DDNSEnable = "1";
+var G_DDNS = [];
+var m = 0;
+var buttoncheck=0;
+G_DDNS[m] = ['dyndns.org', //DDNSProvider
+'', //Hostname
+'InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1', //WANConnectionID
+'', //Username
+'', //Password
+'Email', //Email
+'Key', //Key
+'ns1.cammail.net', //DDNSHOST
+'InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.',
+'VEk5b1BVTVRTTUlBQUFSQmNJMDo0OTg1MTg2'];//Hash
+G_DDNSEnable = '0';
+m++;
+//Wan Connection
+var G_WanConns = [];
+var n = 0;
+G_WanConns[n] = ['1_INTERNET_R',
+'InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1'];
+n++;
+function Status_Ddns(){
+window.open ("../html/DNS_ddns_st.htm", "newwindow2", "height=150, width=450, toolbar =no, menubar=no, scrollbars=no, resizable=no, location=no, status=no, left=200, top=200") ;
+}
+function uiOnload(){
+setJSONValue({
+'sysDNSActive' : G_DDNSEnable,
+"sysDNSHost" : G_DDNS[0][1],
+"sysDNSUser" : G_DDNS[0][3],
+"sysDNSPassword" : G_DDNS[0][4],
+"sysDNSHash" : G_DDNS[0][9]
+});
+var tmpDDNSSelectValue=G_DDNS[0][0];
+if(tmpDDNSSelectValue=='dyndns.org')
+document.getElementById("idSelectDyn").selected=true;
+else if(tmpDDNSSelectValue=='3322.org')
+document.getElementById("idSelect3322").selected=true;
+else if(tmpDDNSSelectValue=='oray.cn')
+document.getElementById("idSelectZone").selected=true;
+}
+function OnEnable(){
+return;
+}
+function checkBlank(id)
+{
+if (id.value.length < 1){
+return false;}
+else{
+return true;}
+}
+function checkData()
+{
+if($('sysDNSActive').checked)
+{
+if(checkBlank($('sysDNSHost')) == false ){
+alertError('DNSHostBlank');
+return false;}
+if(checkBlank($('sysDNSUser')) == false){
+alertError('DNSUserBlank');
+return false;}
+if(checkBlank($('sysDNSPassword'))== false){
+alertError('DNSPasswordBlank');
+return false;}
+}
+if ($('sysDNSHost').value.match( /[^\x20-\x7E]/ ))
+{
+alertError('DNSHostWrong');
+return false;
+}
+if ($('sysDNSUser').value.match( /[^\x20-\x7E]/ ))
+{
+alertError('DNSUserWrong');
+return false;
+}
+if ($('sysDNSPassword').value.match( /[^\x20-\x7E]/ ))
+{
+alertError('DNSPasswordWrong');
+return false;
+}
+return true;
+}
+function uiSubmit(){
+var node_ddns = $('sysDNSProviderlist','sysDNSHost','sysDNSUser','sysDNSPassword');
+if(checkData() == false)
+{
+return false;
+}
+var varHash = undefined;
+$H({
+'var:menu' : G_Menu,
+'var:page' : G_Page,
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:errorpage' : G_Page,
+'var:CacheLastData' : ViewState.Save(),
+'obj-action' : 'set',
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.Enable' : Form.Checkbox('sysDNSActive'),
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.DDNSProvider' : node_ddns[0].value,
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.Hostname' : node_ddns[1].value,
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.WANConnectionID': G_WanConns[0][1],
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.Username' : node_ddns[2].value,
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.Password' : node_ddns[3].value,
+':InternetGatewayDevice.X_TWSZ-COM_DDNS.DDNSList.1.Hash' : varHash
+}, true);
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="DNS_ddns.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style>
+<div class="page_title" id="lang_DynamicDNS">Dynamic DNS</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="common_bt" name="Button" type="submit" id="Button" onClick="Status_Ddns()" value="Show Status" />
+<input class="cancel_bt" name="Cancel" type="button" id="Cancel" value="Cancel" />
+<input class="apply_bt" name="cfAlert_Apply" type="button" id="cfAlert_Apply" onClick="uiSubmit()" value="Apply" />
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" colspan="2">
+<div class="div_left"><input name="sysDNSActive" type="checkbox" id="sysDNSActive" value="dnsEnable" onClick="OnEnable()" />&nbsp;<a tabindex=-1 href="javascript:loadhelp('setup')"><b id="lang_DynamicDnsEnable">Use a Dynamic DNS Service</b></a></div>
+<div class="div_right"></div>
+<p class="do bk_black3_black" ></p>
+</td>
+</tr>
+<tr>
+<td nowrap=""><a tabindex=-1 href="javascript:loadhelp('provider')"><b id="lang_ServerAddress">Service Provider</b></a></td>
+<td nowrap="" align="right">
+<select name="sysDNSProviderlist" id="sysDNSProviderlist" size="1">
+<option id="idSelectDyn" value="dyndns.org">DynDNS.org</option>
+<option id="idSelect3322" value="3322.org">3322.org</option>
+<option id="idSelectZone" value="oray.cn">www.oray.cn</option>
+</select>
+</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_Hostname">Host Name</span></td>
+<td nowrap="" align="right"><input name="sysDNSHost" type="text" maxlength="255" id="sysDNSHost" style="width:230px;"/></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_UsernameOrKey">User Name</span></td>
+<td nowrap="" align="right"><input name="sysDNSUser" type="text" style="width:230px;" maxlength="60" id="sysDNSUser" /></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_PasswordOrKey">Password</span></td>
+<td nowrap="" align="right"><input name="sysDNSPassword" type="password" style="width:230px;" maxlength="60" id="sysDNSPassword" /></td>
+</tr>
+<tr id="idFreednsHash" style="display:none;">
+<td nowrap=""><span id="lang_Hash">Hash</span></td>
+<td nowrap="" align="right"><input type="text" id="sysDNSHash" size="32" maxlength="60" /></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("DNS_ddns")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

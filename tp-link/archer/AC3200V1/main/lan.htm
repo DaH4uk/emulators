@@ -1,0 +1,49 @@
+<script type="text/javascript">
+/* This file is from dhcp.htm, for ac3200 */
+var brLanList;
+var brStackList = "";
+var brNameList = "";
+
+var hasGroup;
+
+function initDhcpTableEdit() {
+    if (!$.exe()) {
+		$.loadPage("dhcpEditPage", "lanEdit.htm", function() {}, function() {
+			$("#dhcpEditPage").removeClass('nd');
+		});
+    }
+}
+
+function init() {
+    brLanList = $.act(ACT_GL, L2_BRIDGING_ENTRY, null, null, ["bridgeName"]);
+    if (!$.exe()) {
+        $.each(brLanList, function() {
+            var brParts = (this.__stack).split(",");
+            brStackList += brParts[0] + ",";
+            brNameList += this.bridgeName + ",";
+        });
+    }
+    $("#tableDchp").tpTable(initDhcpTableEdit);
+}
+</script>
+
+<h3 id="t_lanTitle">LAN</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="nd" id="dhcpEditPage"></div>
+        <table id="tableDchp">
+            <thead></thead>
+            <tbody id="tableDchpBody">
+                <tr id="editDHCPCfg" class="nd">
+                    <td colspan="6">
+                        <div id="dhcpTableEditPage"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+$.tpInit(init);
+</script>

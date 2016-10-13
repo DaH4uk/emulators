@@ -1,0 +1,365 @@
+<html>
+<head>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script>
+strHtml='<title>'+fc1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var helpItem 	='Client IP Filters';
+var menuSection	='Fire';
+var menuItem	='Client IP Filters';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else	isAPmode='0';
+
+var entry_num = 6;
+function storeData()
+{
+    var temp_str='';
+    var i;
+    
+    /* check valid */
+    for(i = 1; i<=entry_num; i++)
+    {
+        if(!checkValid(eval("document.tF0.ipRangeLow" + i), eval("document.tF0.ipRangeHigh" + i), eval("document.tF0.portRangeLow" + i), eval("document.tF0.portRangeHigh" + i),eval("document.tF0.filterCheckbox"+i+".checked")))
+            return false;
+        if(eval("document.tF0.whenRadio"+i+"[1].checked"))
+        {
+            if((eval("document.tF0.startDay"+i+".value") == eval("document.tF0.endDay"+i+".value"))
+                && (parseInt(eval("document.tF0.startTime"+i+".value")) > parseInt(eval("document.tF0.endTime"+i+".value")) )
+                )
+            {
+                alert(fcdtm);
+                eval("document.tF0.endTime"+i).focus();
+                return false;
+            }
+        }
+    }
+    
+    /* store data */
+    for(i = 1; i<=entry_num; i++)
+    {
+        if(eval("document.tF0.ipRangeLow"+i+".value")!='')
+        {
+            if(eval("document.tF0.filterCheckbox"+i+".checked")==true)
+                temp_str+='1-';
+            else
+                temp_str+='0-';  
+            
+            temp_str+=eval("document.tF0.ipRangeLow"+i+".value");
+            temp_str+='-'+eval("document.tF0.ipRangeHigh"+i+".value");
+            temp_str+='-'+eval("document.tF0.portRangeLow"+i+".value");
+            temp_str+='-'+eval("document.tF0.portRangeHigh"+i+".value");
+            
+            if(eval("document.tF0.protocol"+i+"[0].checked"))
+                temp_str+='-'+'1';
+            else if(eval("document.tF0.protocol"+i+"[1].checked"))
+                temp_str+='-'+'2';
+            else
+                temp_str+='-'+'3';
+            
+            if(eval("document.tF0.whenRadio"+i+"[0].checked"))
+                temp_str+='-0';
+            else
+                temp_str+='-1';
+            
+            temp_str+='-'+eval("document.tF0.startDay"+i+".value");
+            temp_str+='-'+eval("document.tF0.startTime"+i+".value");
+            temp_str+='-'+eval("document.tF0.endDay"+i+".value");
+            temp_str+='-'+eval("document.tF0.endTime"+i+".value");
+            temp_str+=' ';        
+        }
+    }
+    document.tF0.fi.value=temp_str;
+    
+    return true;
+}
+
+function checkValid(ipRangeLowItem,ipRangeHighItem,portRangeLowItem,portRangeHighItem,checked) 
+{
+    ipRangeLow = ipRangeLowItem.value;
+    ipRangeHigh = ipRangeHighItem.value;
+    portRangeLow = portRangeLowItem.value;
+    portRangeHigh = portRangeHighItem.value;
+    
+    if(checked ||!(isBlank(ipRangeLow)) 
+    || !(isBlank(ipRangeHigh)) || !(isBlank(portRangeLow)) || !(isBlank(portRangeHigh)))
+    {
+        if (isNValidEndIP(ipRangeLow))
+        { 
+            alert(fvipm); 
+            ipRangeLowItem.focus();
+            ipRangeLowItem.select();
+            return false; 
+        }
+        if (isNValidEndIP(ipRangeHigh))
+        { 
+            alert(fvipm); 
+            ipRangeHighItem.focus();
+            ipRangeHighItem.select();
+            return false; 
+        }
+        if( (ipRangeLow == '1') || (ipRangeHigh == '1') )
+		{
+			alert(msg_privateIP_invalid);
+			return false;
+		}
+        if (isNValidPort(portRangeLow))
+        { 
+            alert(fcsm); 
+            portRangeLowItem.focus();
+            portRangeLowItem.select();
+            return false; 
+        }
+        if (isNValidPort(portRangeHigh))
+        { 
+            alert(fcsm); 
+            portRangeHighItem.focus();
+            portRangeHighItem.select();
+            return false; 
+        }
+        if(portRangeLow > 65535) 
+        { 
+            alert(fcsm);
+            portRangeLowItem.focus();
+            portRangeLowItem.select();
+            return false; 
+        }
+        if(portRangeHigh > 65535) 
+        { 
+            alert(fcsm);
+            portRangeHighItem.focus();
+            portRangeHighItem.select();
+            return false; 
+        }
+        if((ipRangeLow - ipRangeHigh) > 0) 
+        { 
+            alert(fcripm); 
+            ipRangeHighItem.focus();
+            ipRangeHighItem.select();
+            return false; 
+        }	 
+        if((portRangeLow - portRangeHigh) > 0)
+        { 
+            alert(fcrm); 
+            portRangeHighItem.focus();
+            portRangeHighItem.select();
+            return false; 
+        }	 	
+    }
+    
+    return true;
+ }
+	
+function alwaysblock()
+{
+	for (i=0; i<entry_num; i++)
+	{
+		if(eval('document.tF0.whenRadio'+(i+1)+'[0]').checked == true)
+		{
+			eval('document.tF0.startDay'+(i+1)).disabled = true;
+			eval('document.tF0.endDay'+(i+1)).disabled = true;
+			eval('document.tF0.startTime'+(i+1)).disabled = true;
+			eval('document.tF0.endTime'+(i+1)).disabled = true;
+		}else{
+			eval('document.tF0.startDay'+(i+1)).disabled = false;
+			eval('document.tF0.endDay'+(i+1)).disabled = false;
+			eval('document.tF0.startTime'+(i+1)).disabled = false;
+			eval('document.tF0.endTime'+(i+1)).disabled = false;
+		}
+	}
+}
+function logoutF()
+{
+	document.tF0.logout.value=1;
+	document.tF0.submit();
+	return true;
+}
+//-->
+</script>
+</head>
+         
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="alwaysblock(); ">
+<form name="tF0" method="post" action="/belkin/3.00.02/En/apply_10_fw_acl.html"> 
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+<input type=hidden name=webpage value=fw_clientip.html>
+<input type=hidden name="lan_ip" value='192.168.2.1'>
+<input type=hidden name="lan_netmask" value='255.255.255.0'>
+<input type=hidden name="action" value="">
+<input type=hidden name="fi" value="">
+<script language="JavaScript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script>dw(fc1);</script> <br><br>
+<table border=0 class="copy_1"><tr><td width=5>&nbsp;</td>
+<td><table border=0 cellspacing=2 cellpadding=0 width=620 class="copy_1">
+<tr height="30" valign="top"> <td nowrap colspan="7" bgcolor="#FFFFFF" align=left class="body"> 
+<script>dw(fc2a);dw('<br>');</script>
+<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#ip_filter','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script>dw(sm1);</script></a> <br><br></td>
+<td nowrap  bgcolor="#FFFFFF">&nbsp;</td></tr>
+<tr bgcolor="#666666" align=center height="20">
+<th nowrap align=center><font color=ffffff><script>dw(IP);</script></font> </th>
+<th nowrap align=center><font color=ffffff><script>dw(Port);</script></font></th>
+<th nowrap align=center><font color=ffffff><script>dw(Type);</script></font></th>
+<th nowrap align=center><font color=ffffff><script>dw(BT);</script></font></th>
+<th nowrap align=center><font color=ffffff><script>dw(Day);</script></font></th>
+<th nowrap align=center><font color=ffffff><script>dw(Tm);</script></font></th>
+<th nowrap align=center><font color=ffffff><script>dw(Enable);</script></font></th>
+</tr>
+<script>
+var strHtml;
+count=1;
+var token= new Array(7);
+token[1]='';
+token[2]='';
+token[3]='';
+token[4]='';
+token[5]='';
+token[6]='';
+var dhcp_start='192.168.2.1';
+j9=dhcp_start.indexOf('.');
+j9=dhcp_start.indexOf('.',(j9+1));
+j9=dhcp_start.indexOf('.',(j9+1));
+while(count<=entry_num)
+{
+	var temp=token[count];
+	if(temp=='')temp='---------';
+	t0=temp.indexOf('-');
+	t1=temp.indexOf('-',t0+1);
+	t2=temp.indexOf('-',t1+1);
+	t3=temp.indexOf('-',t2+1);
+	t4=temp.indexOf('-',t3+1);
+	t5=temp.indexOf('-',t4+1);
+	t6=temp.indexOf('-',t5+1);
+	t7=temp.indexOf('-',t6+1);
+	t8=temp.indexOf('-',t7+1);
+	t9=temp.indexOf('-',t8+1);
+	
+	strHtml='<tr bgcolor="#cccccc" align=center><td nowrap align=center>'+dhcp_start.substring(0,j9)
+	+'.<input type="text" name="ipRangeLow'+count+'" size="3" maxlength="3" value="'+temp.substring(t0+1,t1)+'">'
+	+'~<input type="text" name="ipRangeHigh'+count+'" size="3" maxlength="3" value="'+temp.substring(t1+1,t2)
+	+'"></td><td nowrap align=center>'+'<input type="text" name="portRangeLow'+count+'" size="5" maxlength="5" value="'
+	+temp.substring(t2+1,t3)+'">'+'~<input type="text" name="portRangeHigh'+count+'" size="5" maxlength="5" value="'
+	+temp.substring(t3+1,t4)+'">'+'</td><td nowrap align=left>'+'<input type="radio" value="1" ';
+	document.writeln(strHtml);
+	if(temp.substring(t4+1,t5)=='1')document.writeln('checked');
+	strHtml=' name="protocol'+count+'">TCP<br>'+'<input type="radio" ';
+	document.writeln(strHtml);
+	if(temp.substring(t4+1,t5)=='2')document.writeln('checked');
+	strHtml=' value="2" name="protocol'+count+'">UDP<br>'+'<input type="radio" ';
+	document.writeln(strHtml);
+	if(temp.substring(t4+1,t5)!='1' && temp.substring(t4+1,t5)!='2')document.writeln('checked');
+	strHtml= 'value="3" name="protocol'+count+'">'+BOTH+'</td><td nowrap align=left>'+'<input type="radio" name="whenRadio'
+	+count+'" value="0"  onClick="alwaysblock();"  ';
+	document.writeln(strHtml);
+	if(temp.substring(t5+1,t6)!='1')document.writeln('checked '); 
+	strHtml='  >'+Always+'<br>'+'<input type="radio" name="whenRadio'+count+'" value="1" onClick="alwaysblock();" ';
+	document.writeln(strHtml);
+	if(temp.substring(t5+1,t6)=='1')document.writeln('checked ');
+	strHtml=' >'+Block+'</td><td nowrap align=center>'+'<select name="startDay'+count+'" size="1" style="color: #000000" >'+'<OPTION VALUE=0 ';
+	document.writeln(strHtml);
+	if(temp.substring(t6+1,t7)=='0')document.writeln('selected ');
+	document.writeln(SUN);
+	document.writeln('<OPTION VALUE=1 ');
+	if(temp.substring(t6+1,t7)=='1')document.writeln('selected ');
+	document.writeln(MON);
+	document.writeln('<OPTION VALUE=2 ');
+	if(temp.substring(t6+1,t7)=='2')document.writeln('selected ');
+	document.writeln(TUE);
+	document.writeln('<OPTION VALUE=3 ');
+	if(temp.substring(t6+1,t7)=='3')document.writeln('selected ');
+	document.writeln(WED);
+	document.writeln('<OPTION VALUE=4 ');
+	if(temp.substring(t6+1,t7)=='4')document.writeln('selected ');
+	document.writeln(THU);
+	document.writeln('<OPTION VALUE=5 ');
+	if(temp.substring(t6+1,t7)=='5')document.writeln('selected ');
+	document.writeln(FRI);
+	document.writeln('<OPTION VALUE=6 ');
+	if(temp.substring(t6+1,t7)=='6')document.writeln('selected ');
+	document.writeln(SAT);
+	
+	strHtml='</select><br>'+'<select name="endDay'+count+'" size="1" style="color: #000000">'+'<OPTION VALUE=0 ';
+	document.writeln(strHtml);
+	if(temp.substring(t8+1,t9)=='0')document.writeln('selected ');
+	document.writeln(SUN);
+	document.writeln('<OPTION VALUE=1 ');
+	if(temp.substring(t8+1,t9)=='1')document.writeln('selected ');
+	document.writeln(MON);
+	document.writeln('<OPTION VALUE=2 ');
+	if(temp.substring(t8+1,t9)=='2')document.writeln('selected ');
+	document.writeln(TUE);
+	document.writeln('<OPTION VALUE=3 ');
+	if(temp.substring(t8+1,t9)=='3')document.writeln('selected ');
+	document.writeln(WED);
+	document.writeln('<OPTION VALUE=4 ');
+	if(temp.substring(t8+1,t9)=='4')document.writeln('selected ');
+	document.writeln(THU);
+	document.writeln('<OPTION VALUE=5 ');
+	if(temp.substring(t8+1,t9)=='5')document.writeln('selected ');
+	document.writeln(FRI);
+	document.writeln('<OPTION VALUE=6 ');
+	if(temp.substring(t8+1,t9)=='6')document.writeln('selected ');
+	document.writeln(SAT);
+	strHtml='</select></td><td valign="middle" align="center">'+'<select name="startTime'+count+'" size="1" style="color: #000000">'
+	document.writeln(strHtml);
+	
+	for(i=0; i<24; i++)
+	{
+		ccount=i;
+		ccount=ccount+'';
+		ampm=(i>=12)?PM:AM;
+		clock=i;
+		if(i==0 && PM!=AM) clock=12;
+		if(i>12 && PM!=AM) clock=clock-12;
+		select=(temp.substring(t7+1,t8)==ccount)?' selected':'';
+		strHtml='<OPTION VALUE='+i+select+'>'+ clock+ampm;
+		document.writeln(strHtml);
+	}
+	strHtml='</select><br>'+'<select name="endTime'+count+'" size="1" style="color: #000000">';
+	document.writeln(strHtml);
+	
+	for(i=0; i<24; i++)
+	{
+		ccount=i;
+		ccount=ccount+'';
+		ampm=(i>=12)?PM:AM;
+		clock=i;
+		if(i==0 && PM!=AM) clock=12;
+		if(i>12 && PM!=AM) clock=clock-12;
+		select=(temp.substring(t9+1)==ccount)?' selected':'';
+		strHtml='<OPTION VALUE='+i+select+'>'+ clock+ampm;
+		document.writeln(strHtml);
+	}
+	
+	strHtml='</select></td>'+'<td nowrap align=center>'+'<input type="checkbox" name="filterCheckbox'+count+'" value="1" ';
+	document.writeln(strHtml);
+	
+	if(temp.substring(0,t0)=='1')document.writeln(' checked  ');
+	strHtml=' ></td>'+'<td nowrap align=center bgcolor="#FFFFFF">&nbsp;</td></tr>'
+	document.writeln(strHtml);
+	count++;
+}        
+</script>
+
+<tr align=left><td nowrap class="plaintext_bold">&nbsp;</td><td nowrap class="plaintext_bold">&nbsp;</td><td nowrap class="plaintext_bold">&nbsp;</td>
+<td nowrap class="plaintext_bold" colspan="4"><br><br>
+<script>strHtml='<input type="button"  name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;" onClick="location.href=\'fw_acl.html\'; return true;">&nbsp;&nbsp;';
+dw(strHtml);
+strHtml='<input type="submit" name="itsbutton1" value="'+btn2+'" style="{width:160px;}" class="submitBtn" onClick="return storeData();">';
+dw(strHtml);
+</script>
+</td><td nowrap align=center class="plaintext_bold" bgcolor="#FFFFFF">&nbsp;</td></tr></table></td></tr>
+</table></td>
+<script language="JavaScript">showTail()</script>

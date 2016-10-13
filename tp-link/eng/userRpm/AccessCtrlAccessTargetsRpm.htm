@@ -1,0 +1,155 @@
+<SCRIPT language="javascript" type="text/javascript">
+var access_targets_data_param = new Array(
+1, "TPLINK", "192.168.1.49 - 192.168.1.180/21 - 556/TCP", "", 
+0, "TPLINK_WIRELESS", "", "www.tplink.com", 
+0,0 );
+</SCRIPT>
+<SCRIPT language="javascript" type="text/javascript">
+var access_targets_page_param = new Array(
+1, 0, 2, 4, 2, 
+0,0 );
+</SCRIPT>
+
+<LINK href="../dynaform/css_main.css" rel=stylesheet>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<!--JS-->
+<SCRIPT language="javascript" src="../dynaform/common.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="javascript" type="text/javascript"><!--
+if(window.parent == window){window.location.href="http://192.168.1.1";}
+function Click(){ return false;}
+document.oncontextmenu=Click;
+//--></SCRIPT>
+<SCRIPT type="text/javascript">
+<!--
+var LP = location.pathname;
+function doAll(val){if(val=="DelAll"){if(!confirm(js_del_all_items="Delete all items")) return;} location.href="AccessCtrlAccessTargetsRpm.htm?doAll="+val+"&Page="+curPage;}
+function doAdd(nPage){location.href="AccessCtrlAccessTargetsAdvRpm.htm";}
+function doPage(nPage){location.href="AccessCtrlAccessTargetsRpm.htm?Page="+nPage;}
+function doHelp(){location.href="../help/AccessCtrlAccessTargetsHelpRpm.htm";}
+
+function ResetStatus(strInfo){window.status='';return true;}
+/*
+function enableId(id){
+	var enable;
+	if(document.forms[0].elements['enable'+id].checked == true)
+		enable = 1;
+	else
+		enable = 0;
+	location.href = LP + "?enable=" + enable + "&enableId=" + id +"&Page=" + access_targets_page_param[1];
+}
+*/
+/*
+function doSave()
+{
+	var DF = document.forms[0];
+	var n = DF.elements['arpServer'][1].checked?1:0;
+	location.href = LP + "?arpServer=" + n +"&Page=" + access_targets_page_param[1];
+	return true;
+}
+*/
+//-->
+</SCRIPT>
+</HEAD>
+<BODY onLoad="setTagStr(document,'ntw_acc_ctl_acc_tar');LoadHelp('AccessCtrlAccessTargetsHelpRpm.htm'); resize(this);" onResize="resize(this);">
+<CENTER>
+  <FORM action="AccessCtrlAccessTargetsRpm.htm" enctype="multipart/form-data" method="get"  >
+    <TABLE id="autoWidth" >
+      <TBODY>
+        <TR>
+          <TD class=h1 id = "t_title">Target Settings</TD>
+        </TR>
+        <TR>
+          <TD class=blue></TD>
+        </TR>
+        <TR>
+          <TD><TABLE width="570" border="0" align="center" cellpadding="0" cellspacing="0" class="space">
+              <TR>
+                <TD class=ListB align="center" id="t_id">ID</TD>
+                <TD class=ListB align="center" width="200" id="t_target_desc">Target Description</TD>
+                <TD class=ListB align="center" nowrap id="t_info">Information</TD>
+                <TD class=ListB align="center" nowrap id="t_modify">Modify</TD>
+              </TR>
+              <SCRIPT type="text/javascript">
+if (access_targets_page_param[2] > 0)
+{
+	var row = 0;
+	var idStart = (access_targets_page_param[0] - 1) * 8;
+	for(var i = 0; i < access_targets_page_param[2]; i++)
+	{
+	idStart++;
+	row = i * access_targets_page_param[3];
+
+	document.write('<tr id="tr'+idStart+'"><td align="center">' + idStart + '</td>');
+	document.write('<td align="center">' + access_targets_data_param[row+1] + '</td>');
+	if (access_targets_data_param[row] == 1)
+	document.write('<td align="center">'
+				 + access_targets_data_param[row+2] + '&nbsp;</td>');
+	else
+	document.write('<td align="center">'
+				 + access_targets_data_param[row+3] + '&nbsp;</td>');	
+	document.write('<td align="center"><a href=\"AccessCtrlAccessTargetsAdvRpm.htm' +
+					//<td align="center"><a href=\"AccessCtrlAccessTargetsRpm.htm?Modify=' +
+					//i+'&Page='+access_targets_page_param[0]+
+					'\">Edit</a>&nbsp;<a href=\"AccessCtrlAccessTargetsRpm.htm?Del='+
+					//'\" OnMouseOver=\"return ResetStatus(\'modify\');\">Edit</a>&nbsp;<a href=\"AccessCtrlAccessTargetsRpm.htm?Del='+
+				 	i+'&Page='+access_targets_page_param[0]+
+					'\" OnMouseOver=\"return ResetStatus(\'delete\');\">Delete</a></td></tr>');
+	}
+}
+</SCRIPT>
+            </TABLE></TD>
+        </TR>
+        <TR>
+          <TD><TABLE width="570" align="center" border="0" cellpadding="0" cellspacing="0" class="space">
+              <TR>
+                <TD colspan="3" width="568"><INPUT type="button" value="Add New..." name="Add" class="buttonBig" onClick="doAdd(curPage);">
+                  <!--<input type="button" value="Enalbe All" name="EnAll" class="button" onClick="doAll('EnAll');">-->
+                  <INPUT type="button" value="Delete All" name="DelAll" class="buttonBig" onClick="doAll('DelAll');">
+                  <!--<input type="button" value="Find Item" name="Find" class="button" onClick="location.href=LP + '?Find=Find';">--></TD>
+              </TR>
+            </TABLE></TD>
+        </TR>
+        <TR>
+          <TD class=blue></TD>
+        </TR>
+        <TR>
+          <TD class = "mbtn"><INPUT name="previous" type="button" class="buttonBig" onClick="doPage(prePage);" value="Previous" disabled>
+            &nbsp;
+            <INPUT name="next" type="button" class="buttonBig" onClick="doPage(NextPage);" value="Next" disabled>
+            &nbsp;Page
+            <SELECT onChange="doPage(document.forms[0].selPage.value);" size="1" name="selPage">
+              <SCRIPT type="text/javascript">
+var pageNum = access_targets_page_param[4]/8 + 1;
+var pIndex = 1;
+do
+{
+	document.write("<option value='" + pIndex + "' selected>"+ pIndex +"</option>");
+}while(++pIndex < pageNum)
+</SCRIPT>
+            </SELECT>
+            &nbsp;
+            <INPUT name="Page" type="hidden" value="1"></TD>
+        </TR>
+      </TBODY>
+    </TABLE>
+  </FORM>
+</CENTER>
+<SCRIPT type="text/javascript">
+var curPage = access_targets_page_param[0];
+var prePage = (access_targets_page_param[0] == 1)?1:access_targets_page_param[0]-1;
+var NextPage = access_targets_page_param[0]+1;
+//document.forms[0].arpServer[0].checked = access_targets_page_param[0]?0:1;
+document.forms[0].Page.value = curPage;
+document.forms[0].previous.disabled = (access_targets_page_param[0] < 2)?true:false;
+document.forms[0].next.disabled = (access_targets_page_param[1] >0)?false:true;
+//document.forms[0].EnAll.disabled = (access_targets_page_param[2] >0)?false:true;
+document.forms[0].DelAll.disabled = (access_targets_page_param[2] >0)?false:true;
+//document.forms[0].Find.disabled = (access_targets_page_param[2] >0)?false:true;
+document.forms[0].selPage.value = curPage;
+</SCRIPT>
+</BODY>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<META http-equiv="pragma" content="no-cache">
+</HEAD>
+</HTML>

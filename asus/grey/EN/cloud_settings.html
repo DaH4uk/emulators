@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/cloud_settings.asp by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:33:13 GMT -->
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>ASUS Wireless Router RT-AC66U - AiDisk</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="switcherplugin/jquery.iphone-switch.js"></script>
+<script>
+var $j = jQuery.noConflict();
+function is_logined() { return 1; }
+function login_ip_dec() { return '2785126592'; }
+function login_ip_str() { return '192.168.1.166'; }
+function login_ip_str_now() { return '192.168.1.166'; }
+function login_mac_str() { return '50:e5:49:a2:00:f8'; }
+
+
+var wireless = [["A8:26:D9:31:2B:49", "Yes", "No"], ["98:4B:E1:CB:DA:D6", "Yes", "No"]];	// [[MAC, associated, authorized], ...]
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+var webdav_acc_lock = '0';
+var enable_webdav_lock = '0';
+
+function initial(){
+	show_menu();
+	if(webdav_acc_lock == 1){
+		$("accIcon").src = "images/cloudsync/account_block_icon.png";
+		$("unlockBtn").style.display = "";
+	}
+
+	if(enable_webdav_lock == 0){
+		inputCtrl(document.form.webdav_lock_times, 0);
+		inputCtrl(document.form.webdav_lock_interval, 0);
+	}
+
+	if('' != '1')
+		$("rrsLink").style.display = "none";
+
+	if(aicloudipk_support){
+		document.form.action_script.value = "restart_setting_webdav";
+	}
+}
+
+function applyRule(){
+	validate_number_range(document.form.webdav_lock_times, 1, 10);
+	validate_number_range(document.form.webdav_lock_interval, 1, 60);
+	/*
+	validate_number_range(document.form.webdav_http_port, 1024, 65536); 
+	validate_number_range(document.form.webdav_https_port, 1024, 65536); 
+	*/
+
+	if(isPortConflict_webdav(document.form.webdav_http_port.value)){
+		alert(isPortConflict_webdav(document.form.webdav_http_port.value));
+		document.form.webdav_http_port.focus();
+		return false;
+	}
+	else if(isPortConflict_webdav(document.form.webdav_https_port.value)){
+		alert(isPortConflict_webdav(document.form.webdav_https_port.value));
+		document.form.webdav_https_port.focus();
+		return false;
+	}
+
+	showLoading(3);	
+	//document.form.submit();	
+}
+
+function isPortConflict_webdav(_val){
+	if(_val == '80')
+		return "This port is for HTTP LAN port.";
+	else if(_val == '8081')
+		return "This port is for Download Master.";
+	else if(_val == '8443')
+		return "This port is for [Port of Web Access from WAN(HTTPS)].";
+	else if(_val == '8080')
+		return "This port is for [Port of Web Access from WAN(HTTP)].";
+	else
+		return false;
+}
+
+function unlockAcc(){
+	document.form.webdav_acc_lock.value = 0;
+	showLoading();	
+	document.form.submit();	
+}
+</script>
+</head>
+<body onload="initial();" onunload="return unload_body();">
+<div id="TopBanner"></div>
+<div id="Loading" class="popup_bg"></div>
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0" scrolling="no"></iframe>
+<form method="post" name="form" action="http://admin:admin@192.168.1.1/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="firmver" value="3.0.0.4">
+<input type="hidden" name="current_page" value="cloud_settings.html">
+<input type="hidden" name="next_page" value="cloud_settings.html">
+<input type="hidden" name="action_mode" value="apply">
+<input type="hidden" name="action_script" value="restart_webdav">
+<input type="hidden" name="action_wait" value="3">
+<input type="hidden" name="enable_webdav_lock" value="0">
+<input type="hidden" name="webdav_acc_lock" value="0">
+<table border="0" align="center" cellpadding="0" cellspacing="0" class="content">
+	<tr>
+		<td valign="top" width="17">&nbsp;</td>
+		<!--=====Beginning of Main Menu=====-->
+		<td valign="top" width="202">
+			<div id="mainMenu"></div>
+			<div id="subMenu"></div>
+		</td>
+		<td valign="top">
+			<div id="tabMenu" class="submenuBlock">
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tbody>
+					<tr>
+						<td>
+							<a href="cloud_main.html"><div class="tab"><span>AiCloud</span></div></a>
+						</td>
+						<td>
+							<a href="cloud_sync.html"><div class="tab"><span>Smart Sync</span></div></a>
+						</td>
+						<td>
+							<a id="rrsLink" href="cloud_router_sync.html"><div class="tab"><span>Sync Server</span></div></a>
+						</td>
+						<td>
+							<div class="tabclick"><span>Settings</span></div>
+						</td>
+						<td>
+							<a href="cloud_syslog.html"><div class="tab"><span>Log</span></div></a>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+<!--==============Beginning of hint content=============-->
+			<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+			  <tr>
+					<td align="left" valign="top">
+					  <table width="100%" border="0" cellpadding="5" cellspacing="0" class="FormTitle" id="FormTitle">
+							<tbody>
+							<tr>
+							  <td bgcolor="#4D595D" valign="top">
+									<div>&nbsp;</div>
+									<div class="formfonttitle">AiCloud - Settings</div>
+									<div style="margin-left:5px;margin-top:10px;margin-bottom:10px"><img src="images/New_ui/export/line_export.png"></div>
+
+								  <div class="formfontdesc" style="font-style: italic;font-size: 14px;">
+										Password Protection feature:<br>
+										The Password Protection feature prevents unauthorized access to AiCloud.<br>
+										You can set a limited number of account/password login attempts.<br>
+										For example, a setting of 3 times / 2 mins indicates that the user has three attempts to input the account and password in 2 minutes. Once the specificed number of attempts has been exceeded, the AiCloud account will be locked and administrator access is needed to unlock it.<br>
+									</div>
+
+									<table width="100%" style="border-collapse:collapse;">
+
+									  <tr bgcolor="#444f53">
+									    <td colspan="5" class="cloud_main_radius">
+												<div style="padding:30px;font-size:18px;word-break:break-all;border-style:dashed;border-radius:10px;border-width:1px;border-color:#999;">
+													<div>Enable Password Protection Feature.</div>
+
+													<div align="center" class="left" style="margin-top:-26px;margin-left:320px;width:94px; float:left; cursor:pointer;" id="radio_enable_webdav_lock"></div>
+													<div class="iphone_switch_container" style="height:32px; width:74px; position: relative; overflow: hidden">
+													<script type="text/javascript">
+														$j('#radio_enable_webdav_lock').iphoneSwitch('0',
+															function() {
+																document.form.enable_webdav_lock.value = 1;
+																inputCtrl(document.form.webdav_lock_times, 1);
+																inputCtrl(document.form.webdav_lock_interval, 1);
+															},
+															function() {
+																document.form.enable_webdav_lock.value = 0;
+																inputCtrl(document.form.webdav_lock_times, 0);
+																inputCtrl(document.form.webdav_lock_interval, 0);
+															},
+															{
+																switch_on_container_path: 'switcherplugin/iphone_switch_container_off.png'
+															}
+														);
+													</script>			
+													</div>
+
+													<input type="text" name="webdav_lock_times" class="input_3_table" maxlength="2" onblur="validate_number_range(this, 1, 10);" value="3"> Time in
+													<input type="text" name="webdav_lock_interval" class="input_3_table" maxlength="2" onblur="validate_number_range(this, 1, 60);" value="2"> minutes before the AiCloud account will be locked.
+							            <br/>
+							            <br/>
+													<!--div class="apply_gen" style="background-color:#444F53;">
+														<input style="margin-left:10px;" class="button_gen" onclick="applyRule();" type="button" value="Apply"/>
+							            </div-->
+													<div>
+														<div style="margin-top:10px;">Account Status</div>
+														<img style="margin-top:-30px;margin-left:150px" id="accIcon" width="40px" src="images/cloudsync/account_icon.png">
+														<div style="margin-top:-30px;margin-left:200px;font-size:16px;font-weight:bolder;">admin</div>
+														<input id="unlockBtn" style="margin-top:-28px;margin-left:260px;display:none;" class="button_gen" onclick="unlockAcc();" type="button" value="Unlock"/>
+													</div>
+												</div>
+											</td>
+									  </tr>
+
+									  <tr height="20px">
+											<td colspan="3">
+											</td>
+									  </tr>
+
+									  <tr bgcolor="#444f53">
+									    <td colspan="5" class="cloud_main_radius">
+												<div style="padding:30px;font-size:18px;word-break:break-all;border-style:dashed;border-radius:10px;border-width:1px;border-color:#999;">
+													AiCloud Web access port <input type="text" name="webdav_https_port" class="input_6_table" maxlength="5" onKeyPress="return is_number(this,event);" value="443">
+													<br>
+													<br>
+													AiCloud content streaming port <input type="text" name="webdav_http_port" class="input_6_table" maxlength="5" onKeyPress="return is_number(this,event);" value="8082">
+												</div>
+											</td>
+									  </tr>
+									</table>
+									<div class="apply_gen">
+										<input class="button_gen" onclick="applyRule();" type="button" value="Apply"/>
+			            </div>
+							  </td>
+							</tr>				
+							</tbody>	
+				  	</table>			
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td width="20"></td>
+	</tr>
+</table>
+<div id="footer"></div>
+</form>
+
+</body>
+
+<!-- Mirrored from 192.168.1.1/cloud_settings.asp by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:33:13 GMT -->
+</html>

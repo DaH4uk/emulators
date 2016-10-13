@@ -1,0 +1,463 @@
+var CGI_URL = document.location.protocol + "//" + document.location.host + document.location.pathname,
+    mode_emul = !0,
+    device = new function() {
+        var self = this,
+            $$ = {},
+            UINT_MAX = 4294967295;
+        $$.state = {
+            hold: !1,
+            available: !0,
+            stripping: !1
+        }, $$.tasks = {
+            list: new Array,
+            queue: new Array,
+            limit: UINT_MAX
+        }, $$.subscribers = new Array, $$.filters = new Array, $$.ID = {
+            __N: 0,
+            get: function() {
+                return ++this.__N
+            }
+        }, $$.authData = {}, this.signal = $$.signal = {
+            SUCCESS: "s_success",
+            PROCESS: "s_process",
+            ERROR: "s_error",
+            LOCK: "s_lock",
+            AVAILABLE: "s_available",
+            ABORT: "s_abort"
+        }, this.notify = $$.notify = {
+            AUTH: "n_auth",
+            PASSWD: "n_passwd",
+            SSID: "n_ssid",
+            SSID_5GHz: "n_ssid_5ghz",
+            PASSWDSSID: "n_passwdssid",
+            REBOOT: "n_reboot",
+            SAVE: "n_save",
+            RESET: "n_reset",
+            PIN: "n_pin",
+            SMS: "n_sms",
+            MODE: "n_mode",
+            UPDATE: "n_update",
+            MOUNT: "n_mount",
+            WIFI: "n_wifi",
+            LTESTATUS: "n_ltestatus",
+            WIFI: "n_wifi",
+            HOTWIFI: "n_hotwifi_enable"
+        }, this.info = {}, this.getInfo = function(params) {
+            var params = params || [];
+            if (is.string(params) && (params = params.replace(/[^\w,]|^,|,$/g, "").split(",")), 1 == params.length) return this.info[params[0]];
+            if (params.length > 1) {
+                var res = {};
+                for (var index in params) res[params[index]] = this.info[params[index]];
+                return res
+            }
+            return null
+        }, this.setInfo = function(params) {
+            if (is.object(params))
+                for (var key in params) is.set(params[key]) && (this.info[key] = params[key])
+        }, this.lock = function(__lock) {
+            return is.bool(__lock) ? ($$.state.hold = __lock, $$.emit(this.signal.LOCK, __lock), this) : $$.state.hold
+        }, this.strip = function(__stripping) {
+            return is.bool(__stripping) ? ($$.state.stripping = __stripping, this) : $$.state.stripping
+        }, this.available = function() {
+            return $$.state.available
+        }, this.count = function() {
+            return $$.tasks.list.length + $$.tasks.queue.length
+        }, this.limit = function(__length) {
+            return is.number(__length) ? ($$.tasks.limit = __length > 0 ? __length : UINT_MAX, this) : $$.tasks.limit == UINT_MAX ? 0 : $$.tasks.limit
+        }, this.tokenget = function() {
+            var randomHash = function() {
+                    var letters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+                    return function(len) {
+                        for (var result = "", i = 0; len > i; i++) result += letters[Math.floor(Math.random() * letters.length)];
+                        return result
+                    }
+                }(),
+                session = getCookie("session_num"),
+                token = null;
+            session || (session = randomHash(15), setCookie("session_num", session, 60, "min"));
+            for (var i = 0; i < session.length; i++) token += session[i].charCodeAt();
+            return token.toString()
+        }, $$.parseData = function(__data) {
+            var answer = null;
+            if (is.set(__data)) try {
+                if (eval("answer = " + __data), is.object(answer) && device.setInfo({
+                        defaultConf: answer.defaultConf,
+                        needSave: is.number(answer.getConfigStatus) && 13 == answer.getConfigStatus
+                    }), is.object(answer) && is.set(answer.deviceResponse)) {
+                    if (this.emit(this.notify.AUTH, is.bool(answer.auth) && 1 == answer.auth), this.emit(this.notify.PASSWD, is.number(answer.passwStatus) && 15 == answer.passwStatus, answer.rpcWiFi), this.emit(this.notify.SSID, is.number(answer.ssidStatus) && 16 == answer.ssidStatus, answer.rpcWiFi, answer.rpcWAN), this.emit(this.notify.SSID_5GHz, is.number(answer.ssidStatus_5GHz) && 17 == answer.ssidStatus_5GHz, answer.rpcWiFi, answer.rpcWAN), this.emit(this.notify.PASSWDSSID, is.number(answer.passwStatus) && 15 == answer.passwStatus && (is.number(answer.ssidStatus) && 16 == answer.ssidStatus || is.number(answer.ssidStatus_5GHz) && 17 == answer.ssidStatus_5GHz)), this.emit(this.notify.REBOOT, is.number(answer.getConfigStatus) && 12 == answer.getConfigStatus), this.emit(this.notify.SAVE, is.number(answer.getConfigStatus) && 13 == answer.getConfigStatus), this.emit(this.notify.RESET, is.number(answer.needReset) && 13 == answer.needReset), this.emit(this.notify.PIN, is.number(answer.pinstatus) && answer.pinstatus > 0 && answer.pinstatus < 5, answer.pinstatus), this.emit(this.notify.SMS, is.number(answer.newSmsStatus) && 20 == answer.newSmsStatus), this.emit(this.notify.MODE, is.set(answer.deviceModeChange)), this.emit(this.notify.UPDATE, is.object(answer.autoupdate) && answer.autoupdate.enable && answer.autoupdate.available, answer.autoupdate), this.emit(this.notify.HOTWIFI, is.set(answer.hotWiFiEnable) && answer.hotWiFiEnable), is.number(answer.lteStatus) && 76 == answer.lteStatus) {
+                        var ltestatus = answer.lteStatus,
+                            ltesubnet = null;
+                        is.object(answer.lte_subnet) && answer.lte_subnet.lte_intersected_subnet && (ltesubnet = answer.lte_subnet.lte_intersected_subnet), this.emit(this.notify.LTESTATUS, ltestatus, ltesubnet)
+                    }
+                    if (answer.rpcWiFi) {
+                        var wifiopen = "";
+                        is.object(answer.rpcWiFi) && answer.rpcWiFi.Radio && "OPEN" == answer.rpcWiFi.mbssid[0].AuthMode && "WEP" != answer.rpcWiFi.mbssid[0].EncrypType && (wifiopen += "2.4G"), answer.rpcWiFi["5G_mbssid"] && is.object(answer.rpcWiFi["5G_mbssid"][0]) && answer.rpcWiFi["5G_Radio"] && "OPEN" == answer.rpcWiFi["5G_mbssid"][0].AuthMode && "WEP" != answer.rpcWiFi["5G_mbssid"][0].EncrypType && (wifiopen += "5G"), "" != wifiopen ? this.emit(this.notify.WIFI, !0, wifiopen) : this.emit(this.notify.WIFI, !1, wifiopen)
+                    }
+                    var mounted = !1;
+                    if (answer.usb_volume && answer.usb_volume.usb_storage)
+                        for (var i in answer.usb_volume.usb_storage) {
+                            mounted = !0;
+                            break
+                        }
+                    this.mounted != mounted && (this.mounted = mounted, this.emit(this.notify.MOUNT, mounted, mounted ? answer.usb_volume.usb_storage : {}))
+                }
+            }
+            catch (e) {
+                answer = {
+                    baddata: !0
+                }
+            }
+            return answer
+        }, $$.prepareData = function(__data) {
+            var data = "";
+            if (is.object(__data)) {
+                var auth = $$.authData[__data.res_config_id];
+                auth && (data += "onceauth=y&login=" + auth.login + "&password=" + auth.password + "&");
+                var value;
+                for (var key in __data) value = is.string(__data[key]) ? escape(__data[key]) : is.object(__data[key]) ? $.toJSON(escape(__data[key])) : __data[key], data += key + "=" + value + "&"
+            }
+            else is.string(__data) && (data = __data);
+            return data
+        }, this.request = function(__url, __type, __data, __callback, __id, __options) {
+            var options = __options || {};
+            if ($.ajaxSetup({
+                    headers: {
+                        "X-Csrf-Token": "token"
+                    }
+                }), device.tokenget() && __data && ("string" == typeof __data ? __data += "&tokenget=" + device.tokenget() : "object" == typeof __data && (__data.tokenget = device.tokenget())), !$$.state.hold && $$.filtering(__url, __type, __data, __callback)) {
+                if ($$.state.stripping) {
+                    for (var __dataTemp = $.toJSON(__data), i = 0; i < $$.tasks.list.length; i++)
+                        if ($$.tasks.list[i].stamp[3] === __callback && $.toJSON($$.tasks.list[i].stamp[2]) == __dataTemp) return $$.tasks.list[i].stamp[4];
+                    for (var i = 0; i < $$.tasks.queue.length; i++)
+                        if ($$.tasks.queue[i][3] === __callback && $.toJSON($$.tasks.queue.list[i][2]) == __dataTemp) return $$.tasks.queue[i][4]
+                }
+                var argv = Array.prototype.slice.call(arguments);
+                is.unset(__id) && (__id = argv[4] = $$.ID.get());
+                var __timeout = 18e4,
+                    __preparedData = $$.prepareData(__data);
+                if ($$.tasks.list.length < $$.tasks.limit) {
+                    $.ajax({
+                        url: __url,
+                        type: __type,
+                        data: __preparedData,
+                        cache: !1,
+                        timeout: __timeout,
+                        context: this,
+                        global: !1,
+                        beforeSend: function(jqXHR) {
+                            jqXHR.stamp = argv, jqXHR.callback = __callback, $$.tasks.list.push(jqXHR), $$.emit(this.signal.PROCESS, !0, jqXHR)
+                        },
+                        success: function(data, textStatus, jqXHR) {
+                            jqXHR.answer = $$.parseData(data)
+                        },
+                        error: function(jqXHR) {
+                            jqXHR.answer = null
+                        },
+                        complete: function(jqXHR, textStatus) {
+                            for ($$.tasks.list.splice(indexOf($$.tasks.list, jqXHR), 1), options.ignoreSignals || ($$.state.available = !("error" == textStatus && 0 == jqXHR.readyState && 0 == jqXHR.status), $$.emit(this.signal.PROCESS, !1, jqXHR), $$.emit(this.signal.AVAILABLE, $$.state.available), $$.emit(this.signal.ERROR, "error" == textStatus), $$.emit(this.signal.ABORT, "abort" == textStatus)); $$.tasks.queue.length > 0 && $$.tasks.list.length < $$.tasks.limit;) this.request.apply(this, $$.tasks.queue.shift());
+                            switch (textStatus) {
+                                case "success":
+                                    $$.emit(this.signal.SUCCESS, jqXHR.answer), is.func(jqXHR.callback) && jqXHR.callback(jqXHR.answer);
+                                    break;
+                                case "error":
+                                    break;
+                                case "timeout":
+                                    break;
+                                case "abort":
+                                    break;
+                                case "parsererror":
+                                    break;
+                                case "notmodified":
+                            }
+                        }
+                    })
+                }
+                else $$.tasks.queue.push(argv);
+                return __id
+            }
+            return null
+        }, this.stop = function(__id) {
+            if (is.set(__id)) {
+                for (var i = 0; i < $$.tasks.queue.length;) $$.tasks.queue[i][4] === __id ? $$.tasks.queue[i].splice(i, 1) : i++;
+                for (var i = 0; i < $$.tasks.list.length;) $$.tasks.list[i].stamp[4] === __id ? $$.tasks.list[i].abort() : i++
+            }
+            else
+                for ($$.tasks.queue = new Array; $$.tasks.list.length;) $$.tasks.list[0].abort();
+            return this
+        }, this.hook = function(event, func) {
+            return is.string(event) && is.func(func) && (is.unset($$.subscribers[event]) && ($$.subscribers[event] = new Array), $$.subscribers[event].push(func)), this
+        }, this.unhook = function(event, func) {
+            if (is.string(event) && is.set($$.subscribers[event]))
+                if (is.set(func))
+                    for (var i = 0; i < $$.subscribers[event].length;) $$.subscribers[event][i] === func ? $$.subscribers[event].splice(i, 1) : i++;
+                else delete $$.subscribers[event];
+            return this
+        }, this.filter = function(func) {
+            return is.set(func) && $$.filters.push(func), this
+        }, this.unfilter = function(func) {
+            if (is.set(func))
+                for (var i = 0; i < $$.filters.length;) $$.filters[i] === func ? $$.filters.splice(i, 1) : i++;
+            return this
+        }, this.setAuthData = function(__id, __login, __password) {
+            return $$.authData[__id] = {
+                login: __login,
+                password: __password
+            }, this
+        }, this.clearAuthData = function(__id) {
+            return delete $$.authData[__id], this
+        }, $$.emit = function(event) {
+            if (is.string(event) && is.set($$.subscribers[event]))
+                for (var i = 0; i < $$.subscribers[event].length; i++) $$.subscribers[event][i].apply(this, Array.prototype.slice.call(arguments, 1));
+            return this
+        }, $$.filtering = function() {
+            for (var flag = !0, i = 0; i < $$.filters.length; i++) flag = flag && $$.filters[i].apply(this, arguments);
+            return flag
+        }, this.system = {
+            reboot: callback(this, function(save, __callback) {
+                var cmd = 1 == save ? 8 : 6;
+                return is.func(arguments[0]) && (__callback = arguments[0]), this.request(CGI_URL, "get", {
+                    res_cmd: cmd,
+                    res_cmd_type: "nbl",
+                    rq: "y",
+                    v2: "y",
+                    proxy: "y"
+                }, __callback)
+            }),
+            save: callback(this, function(__callback) {
+                return this.request(CGI_URL, "get", {
+                    res_cmd: 20,
+                    res_cmd_type: "bl",
+                    rq: "y",
+                    v2: "y",
+                    proxy: "y"
+                }, __callback)
+            }),
+            reset: callback(this, function(__callback) {
+                return this.request(CGI_URL, "get", {
+                    res_cmd: 10,
+                    res_cmd_type: "bl",
+                    rq: "y",
+                    v2: "y",
+                    proxy: "y"
+                }, __callback)
+            }),
+            backup: callback(this, function(__callback) {
+                return 20 == this.getInfo("defaultConf") ? (alert(lng("noConfDevice")), null) : this.request(CGI_URL, "get", {
+                    res_cmd: 12,
+                    res_cmd_type: "bl",
+                    rq: "y",
+                    v2: "y",
+                    proxy: "y"
+                }, callback(window, function(__callback) {
+                    document.location.href = CGI_URL + "?v2_action=givemeconfig&proxy=y&tokenget=" + device.tokenget(), is.func(__callback) && __callback.call(window)
+                }, __callback))
+            }),
+            log: callback(this, function(mail) {
+                return 1 == mail || (document.location.href = CGI_URL + "?v2_action=exportlog&proxy=y&tokenget=" + device.tokenget()), self
+            }),
+            restore: callback(this, function() {}),
+            auth: callback(this, function(login, password, __callback) {
+                return this.request(CGI_URL, "post", {
+                    update_login: login,
+                    update_password: password,
+                    check_auth: "y"
+                }, __callback)
+            }),
+            getLang: callback(this, function(__callback) {
+                return this.request(CGI_URL, "post", {
+                    target: "language",
+                    operation: "read"
+                }, __callback)
+            }),
+            setLang: callback(this, function(lang, __callback) {
+                return this.request(CGI_URL, "post", {
+                    target: "language",
+                    operation: "write",
+                    new_lang: lang
+                }, __callback)
+            }),
+            fwupdate: callback(this, function(_handlers) {
+                var _handlers = _handlers || {},
+                    hError = _handlers.error && is.func(_handlers.error) ? _handlers.error : null,
+                    hCancel = _handlers.cancel && is.func(_handlers.cancel) ? _handlers.cancel : null,
+                    hComplite = _handlers.complite && is.func(_handlers.complite) ? _handlers.complite : null,
+                    re = callback(this, function(action, __callback, __options) {
+                        return this.request(CGI_URL, "post", {
+                            target: "fwupdate",
+                            action: action
+                        }, __callback, void 0, __options)
+                    }),
+                    startUpdate = function(offQuest) {
+                        return offQuest || confirm(lng("dofwupdate")) ? (hComplite && hComplite(), re("update", function(data) {
+                            0 != data.error && hError && hError(data)
+                        }, {
+                            ignoreSignals: !0
+                        })) : cancelUpdate(), !1
+                    },
+                    backup = function(__callback) {
+                        window.SAVEME && SAVEME.lock(), device.system.backup(function() {
+                            window.SAVEME && SAVEME.unlock(), __callback && is.func(__callback) && setTimeout(__callback, 7e3)
+                        })
+                    },
+                    cancelUpdate = function() {
+                        return re("clean", function(data) {
+                            hCancel && hCancel(data)
+                        }), !1
+                    };
+                return re("getinfo", function(data) {
+                    var err = data.error || 0;
+                    switch (err) {
+                        case -1:
+                            startUpdate(!0);
+                            break;
+                        case 0:
+                            if (data.answer) {
+                                var current_version = data.answer.current_version,
+                                    new_version = data.answer.new_version;
+                                if (current_version == new_version) startUpdate(!0);
+                                else {
+                                    var vCurrent = current_version.split("."),
+                                        vNew = new_version.split("."),
+                                        defconf = 20 == device.getInfo("defaultConf");
+                                    defconf || vNew[0] == vCurrent[0] ? !defconf && vNew[1] < vCurrent[1] ? confirm(lng("deviceFWUpdateOfferGetConf")) ? backup(startUpdate) : startUpdate() : startUpdate(!0) : (alert(lng("deviceFWUpdateForceGetConf")), backup(startUpdate))
+                                }
+                            }
+                            break;
+                        case 3:
+                            hError && hError(data)
+                    }
+                })
+            })
+        }, this.config = {
+            read: callback(this, function() {
+                var index = "",
+                    Q = {
+                        v2: "y",
+                        proxy: "y"
+                    },
+                    args = new argSchema(arguments);
+                if (args.checkin("array __id", "opt function __callback")) {
+                    index = 0;
+                    var __id = args.__id;
+                    Q.rq = __id.length
+                }
+                else if (args.checkin("number __id", "opt function __callback")) {
+                    var __id = [args.__id];
+                    Q.rq = "y"
+                }
+                for (var i = 0; i < __id.length; i++) Q["res_json" + index] = "y", Q["res_config_action" + index] = 1, Q["res_config_id" + index] = __id[i], Q["res_struct_size" + index] = 0, index += 1;
+                return this.request(CGI_URL, "get", Q, args.__callback)
+            }),
+            write: callback(this, function() {
+                var index = "",
+                    Q = {
+                        v2: "y",
+                        proxy: "y"
+                    },
+                    args = new argSchema(arguments);
+                if (args.checkin("array __id", "opt bool __save", "opt function __callback")) {
+                    index = 0;
+                    var __id = args.__id;
+                    Q.rq = __id.length
+                }
+                else if (args.checkin("number __id", "object __data", "opt number __pos", "opt bool __save", "opt function __callback")) {
+                    var __id = [
+                        [args.__id, args.__data, args.__pos]
+                    ];
+                    Q.rq = "y"
+                }
+                for (var i = 0; i < __id.length; i++) Q["res_json" + index] = "y", Q["res_data_type" + index] = "json", Q["res_config_action" + index] = 3, Q["res_config_id" + index] = __id[i][0], Q["res_buf" + index] = __id[i][1], Q["res_struct_size" + index] = 0, Q["res_pos" + index] = is.number(__id[i][2]) ? __id[i][2] : -1, index += 1;
+                return args.__save && (Q.res_save = "y"), this.request(CGI_URL, "get", Q, args.__callback)
+            }),
+            remove: callback(this, function() {
+                var index = "",
+                    Q = {
+                        v2: "y",
+                        proxy: "y"
+                    },
+                    args = new argSchema(arguments);
+                if (args.checkin("array __id", "opt bool __save", "opt function __callback")) {
+                    index = 0;
+                    var __id = args.__id;
+                    Q.rq = __id.length
+                }
+                else if (args.checkin("number __id", "object __data", "opt number __pos", "opt bool __save", "opt function __callback")) {
+                    var __id = [
+                        [args.__id, args.__data, args.__pos]
+                    ];
+                    Q.rq = "y"
+                }
+                for (var i = 0; i < __id.length; i++) Q["res_json" + index] = "y", Q["res_data_type" + index] = "json", Q["res_delex" + index] = "y", Q["res_config_action" + index] = 2, Q["res_config_id" + index] = __id[i][0], Q["res_buf" + index] = __id[i][1], Q["res_struct_size" + index] = 0, Q["res_pos" + index] = is.number(__id[i][2]) ? __id[i][2] : -1, index += 1;
+                return args.__save && (Q.res_save = "y"), this.request(CGI_URL, "get", Q, args.__callback)
+            }),
+            multi: callback(this, function(__list, __callback) {
+                var index = 0,
+                    Q = {
+                        v2: "y",
+                        proxy: "y",
+                        rq: 0
+                    };
+                if ("remove" in __list) {
+                    for (var i = 0; i < __list.remove.length; i++) Q["res_json" + index] = "y", Q["res_data_type" + index] = "json", Q["res_delex" + index] = "y", Q["res_config_action" + index] = 2, Q["res_config_id" + index] = __list.remove[i][0], Q["res_buf" + index] = __list.remove[i][1], Q["res_struct_size" + index] = 0, Q["res_pos" + index] = is.number(__list.remove[i][2]) ? __list.remove[i][2] : -1, index += 1;
+                    Q.rq += __list.remove.length
+                }
+                if ("write" in __list) {
+                    for (var i = 0; i < __list.write.length; i++) Q["res_json" + index] = "y", Q["res_data_type" + index] = "json", Q["res_config_action" + index] = 3, Q["res_config_id" + index] = __list.write[i][0], Q["res_buf" + index] = __list.write[i][1], Q["res_struct_size" + index] = 0, Q["res_pos" + index] = is.number(__list.write[i][2]) ? __list.write[i][2] : -1, index += 1;
+                    Q.rq += __list.write.length
+                }
+                if ("read" in __list) {
+                    for (var i = 0; i < __list.read.length; i++) Q["res_json" + index] = "y", Q["res_config_action" + index] = 1, Q["res_config_id" + index] = __list.read[i], Q["res_struct_size" + index] = 0, index += 1;
+                    Q.rq += __list.read.length
+                }
+                return this.request(CGI_URL, "get", Q, __callback)
+            }),
+            manual: callback(this, function(__query, __callback) {
+                return this.request(CGI_URL, "get", __query, __callback)
+            })
+        }, this.config.write.and = {
+            save: callback(this, function() {
+                var args = new argSchema(arguments);
+                return args.checkin("array __id", "opt bool __save", "opt function __callback") ? this.config.write(args.__id, !0, args.__callback) : args.checkin("number __id", "object __data", "opt number __pos", "opt bool __save", "opt function __callback") ? this.config.write(args.__id, args.__data, args.__pos, !0, args.__callback) : void 0
+            })
+        }, this.config.remove.and = {
+            save: callback(this, function() {
+                var args = new argSchema(arguments);
+                return args.checkin("array __id", "opt bool __save", "opt function __callback") ? this.config.remove(args.__id, !0, args.__callback) : args.checkin("number __id", "object __data", "opt number __pos", "opt bool __save", "opt function __callback") ? this.config.remove(args.__id, args.__data, args.__pos, !0, args.__callback) : void 0
+            })
+        }, this.utils = {
+            vlan: {},
+            iptv: {},
+            wan: {
+                byContype: {}
+            },
+            wifi: {},
+            grouping: {},
+            snmp: {},
+            qos: {},
+            pmirror: {},
+            roaming: {},
+            sheduler: {},
+            scheduler: {},
+            reservation: {},
+            ifaces: {
+                __helper: {}
+            },
+            firewall: {
+                zones: {},
+                policy: {},
+                rules: {},
+                masq: {},
+                time: {},
+                __helper: {},
+                __validation: {}
+            },
+            routing: {
+                tables: {},
+                routes: {},
+                rules: {}
+            }
+        }, this.funcs = {}
+    };
+$(window).bind("keydown", function(e) {
+    27 == e.keyCode && e.preventDefault()
+}), devu = device.utils, devc = device.config, devsys = device.system, devf = device.funcs;

@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - PPPoE Server</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function checked(F) {
+if (F._pppoeserver_deflate) {
+(F._pppoeserver_deflate.checked == true) ? F.pppoeserver_deflate.value = 1 : F.pppoeserver_deflate.value = 0;
+}
+
+if (F._pppoeserver_bsdcomp) {
+(F._pppoeserver_bsdcomp.checked == true) ? F.pppoeserver_bsdcomp.value = 1 : F.pppoeserver_bsdcomp.value = 0;
+}
+if (F._pppoeserver_lzs) {
+(F._pppoeserver_lzs.checked == true) ? F.pppoeserver_lzs.value = 1 : F.pppoeserver_lzs.value = 0;
+}
+if (F._pppoeserver_mppc) {
+(F._pppoeserver_mppc.checked == true) ? F.pppoeserver_mppc.value = 1 : F.pppoeserver_mppc.value = 0;
+}
+
+if (F._pppoeserver_encryption) {
+(F._pppoeserver_encryption.checked == true) ? F.pppoeserver_encryption.value = 1 : F.pppoeserver_encryption.value = 0;
+}
+}
+function chap_user_add_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "add_chap_user";
+checked(F);
+F.submit();
+}
+function chap_user_remove_submit(F) {
+F.change_action.value="gozila_cgi";
+F.submit_type.value = "remove_chap_user";
+checked(F);
+F.submit();
+}
+function to_submit(F) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+checked(F);
+apply(F);
+}
+function to_apply(F) {
+F.change_action.value = "";
+F.submit_type.value = "";
+F.save_button.value = sbutton.saving;
+checked(F);
+applytake(F);
+}
+var update;
+addEvent(window, "load", function() {
+toggle_layer_ext(document.setup.pppoeradius_enabled, 'idpppoerad', 'idpppoelocal', 0 == 1);
+show_layer_ext(document.setup.pppoeserver_enabled, 'idpppoesrv', 0 == 1);
+
+update = new StatusbarUpdate();
+update.start();
+
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesServices)</script></strong></a></li>
+      <li><a href="FreeRadius.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesRadius)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.servicesPppoesrv)</script></strong></span></li>
+      <li><a href="PPTP.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesPptp)</script></strong></a></li>
+      <li><a href="USB.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesUSB)</script></strong></a></li>
+      <li><a href="NAS.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesNAS)</script></strong></a></li>
+      <li><a href="Hotspot.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesHotspot)</script></strong></a></li>
+      <li><a href="Milkfish.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesMilkfish)</script></strong></a></li>
+      <li><a href="AnchorFree.asp.html"><strong><script type="text/javascript">Capture(bmenu.servicesAnchorFree)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></a></li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form name="setup" action="#" method="post">
+<input type="hidden" name="submit_button" value="PPPoE_Server" />
+<input type="hidden" name="action" value="Apply" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" />
+<input type="hidden" name="commit" value="1" />
+
+<input type="hidden" name="pppoeserver_deflate" />
+<input type="hidden" name="pppoeserver_bsdcomp" />
+<input type="hidden" name="pppoeserver_lzs" />
+<input type="hidden" name="pppoeserver_mppc" />
+<input type="hidden" name="pppoeserver_encryption" />
+<input type="hidden" name="pppoeserver_chaps" />
+
+<h2><script type="text/javascript">Capture(service.pppoesrv_legend)</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(service.pppoesrv_legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_srv)</script></div>
+<input class="spaceradio" type="radio" name="pppoeserver_enabled" value="1"  onclick="show_layer_ext(this, 'idpppoesrv', true)" /><script type="text/javascript">Capture(share.enable)</script>&nbsp;
+<input class="spaceradio" type="radio" name="pppoeserver_enabled" value="0" checked="checked" onclick="show_layer_ext(this, 'idpppoesrv', false)" /><script type="text/javascript">Capture(share.disable)</script>
+</div>
+</fieldset><br />
+
+<div id="idpppoesrv">
+<fieldset>
+<legend><script type="text/javascript">Capture(service.pppoesrv_srvopt)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_interface)</script></div>
+<select name="pppoeserver_interface">
+<option value="br0" selected="selected" >LAN</option>
+</select>
+
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pptp_client)</script></div>
+<input maxlength="19" size="19" name="pppoeserver_pool" onblur="valid_ip_str(this, share.ip)" value="192.168.1.10-100" />
+</div>
+<div class="setting">
+<div class="label">Deflate <script type="text/javascript">Capture(service.pppoesrv_compr)</script></div>
+<input type="checkbox" value="1" name="_pppoeserver_deflate"  />
+</div>
+<div class="setting">
+<div class="label">BSD <script type="text/javascript">Capture(service.pppoesrv_compr)</script></div>
+<input type="checkbox" value="1" name="_pppoeserver_bsdcomp"  />
+</div>
+<div class="setting">
+<div class="label">LZS Stac <script type="text/javascript">Capture(service.pppoesrv_compr)</script></div>
+<input type="checkbox" value="1" name="_pppoeserver_lzs"  />
+</div>
+<div class="setting">
+<div class="label">MPPC <script type="text/javascript">Capture(service.pppoesrv_compr)</script></div>
+<input type="checkbox" value="1" name="_pppoeserver_mppc"  />
+</div>
+<div class="setting">
+<div class="label">MPPE PPPoE <script type="text/javascript">Capture(share.encrypt)</script></div>
+<input type="checkbox" value="1" name="_pppoeserver_encryption"  />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_limit)</script></div>
+<input size="5" maxlength="5" class="num" name="pppoeserver_sessionlimit" value="10" />
+<span class="default"><script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 10)");
+//]]>
+</script></span>
+</div>	
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_lcpei)</script></div>
+<input size="5" maxlength="5" class="num" name="pppoeserver_lcpechoint" value="60" />
+<span class="default"><script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 60)");
+//]]>
+</script></span>
+</div>	
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_lcpef)</script></div>
+<input size="5" maxlength="5" class="num" name="pppoeserver_lcpechofail" value="5" />
+<span class="default"><script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 5)");
+//]]>
+</script></span>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_idlet)</script></div>
+<input size="5" maxlength="5" class="num" name="pppoeserver_idle" value="600" />
+<span class="default"><script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 600)");
+//]]>
+</script></span>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_auth)</script></div>
+<input class="spaceradio" type="radio" name="pppoeradius_enabled" value="1"  onclick="toggle_layer_ext(this, 'idpppoerad', 'idpppoelocal', true)" /><script type="text/javascript">Capture(radius.legend)</script>
+<input class="spaceradio" type="radio" name="pppoeradius_enabled" value="0" checked="checked" onclick="toggle_layer_ext(this, 'idpppoerad', 'idpppoelocal', false)" /><script type="text/javascript">Capture(service.pppoesrv_chaps)</script>
+</div>
+</fieldset><br />
+<div id="idpppoerad">
+<fieldset>
+<legend>Radius <script type="text/javascript">Capture(service.pppoesrv_auth)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_radip)</script></div>
+<input maxlength="15" size="24" name="pppoeserver_authserverip" onblur="valid_ip_str(this, share.ip)" value="192.168.1.1" />
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_radauthport)</script></div>
+<input size="5" maxlength="5" class="num" name="pppoeserver_authserverport" value="1812" />
+<span class="default"><script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 1812)");
+//]]>
+</script></span>
+</div>			
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_radaccport)</script></div>
+<input size="5" maxlength="5" class="num" name="pppoeserver_acctserverport" value="1813" />
+<span class="default"><script type="text/javascript">
+//<![CDATA[
+document.write("(" + share.deflt + ": 1813)");
+//]]>
+</script></span>
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.pppoesrv_radkey)</script></div>
+<input size="20" maxlength="63" type="password" name="pppoeserver_sharedkey" value="d6nw5v1x2pc7st9m" />
+</div>
+</fieldset>
+</div>
+<div id="idpppoelocal">
+<fieldset>
+<legend><script type="text/javascript">Capture(service.pppoesrv_chaps)</script></legend>
+<table class="table center" summary="chap secrets table">
+<tr>
+<th width="30%"><script type="text/javascript">Capture(share.user)</script></th>
+<th width="30%"><script type="text/javascript">Capture(share.passwd)</script></th>
+<th width="30%"><script type="text/javascript">Capture(share.ip)</script></th>
+<th><script type="text/javascript">Capture(share.enable)</script></th>
+</tr>
+<tr>
+<td colspan="4" align="center" valign="middle">- <script type="text/javascript">Capture(share.none)</script> -</td>
+</tr>
+
+</table><br />
+<div class="center">
+<script type="text/javascript">
+//<![CDATA[
+document.write("<input class=\"button\" type=\"button\" name=\"add_button\" value=\"" + sbutton.add + "\" onclick=\"chap_user_add_submit(this.form);\" />");
+document.write("<input class=\"button\" type=\"button\" name=\"del_button\" value=\"" + sbutton.remove + "\" onclick=\"chap_user_remove_submit(this.form);\" />");
+//]]>
+</script>
+</div>
+</fieldset>
+</div>
+</div>
+<br/>
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+submitFooterButton(1,1);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(service.pppoesrv_chaps)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hpppoesrv.right2)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('Hpppoesrv.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:14 up 24 min, load average: 0.07, 0.01, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

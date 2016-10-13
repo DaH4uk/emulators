@@ -1,0 +1,1781 @@
+﻿<script language="javascript" type="text/javascript">
+</script>
+<h3 id="et2">Internet</h3>
+<div id="dslIsp">
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+            <b id="t_ispList">ISP List:</b>
+            <select id="isp" class="xxl"></select>
+            <div id="dslMode" class="nd">
+                <b class="T T_dslmode">DSL Modulation Type:</b>
+                <input type="radio" name="radio_name_dslMode" id="vdslRadio" />
+                <label>VDSL</label>
+                <input type="radio" name="radio_name_dslMode" id="adslRadio" />
+                <label>ADSL</label>
+            </div>
+            <div id="vdslLogicInf" class="nd">
+                <div><b>VLAN ID:</b>
+                    <input type="checkbox" id="vidEn" />
+                    <label class="T_enable">Enable VLAN ID</label>
+                </div>
+                <div id="vid_div" class="nd"><b>VLAN ID (1-4094):</b>
+                    <input type="text" class="xl" maxlength="4" id="vid" value="7" />
+                </div>
+            </div>
+            <div id="adslLogicInf" class="nd">
+                <div><b class="T_vpi">VPI :</b>
+                    <input type="text" class="xl" maxlength="3" id="vpi" />
+                    <span>(0-255)</span>
+                </div>
+                <div><b class="T_vci">VCI :</b>
+                    <input type="text" class="xl" maxlength="5" id="vci" />
+                    <span>(1-65535)</span>
+                </div>
+                <div id="dsl_vlan_add" class="nd">
+                    <div><b>VLAN ID:</b>
+                        <input type="checkbox" id="vlanEn_add" onclick="onVlanClick();" />
+                        <label class="T_enable">Enable VLAN ID</label>
+                    </div>
+                    <div id="vlan_div_add" class="nd"><b>VLAN ID (1-4094):</b>
+                        <input type="text" id="vlanid_add" class="xl" maxlength="4" value="7" onchange="checkVlanIdValid();" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+    <!-- <h3 id="et2">Internet</h3> -->
+    <div class="content-container">
+        <form class="pure-form pure-form-aligned">
+        <div class="inline">
+            <button type="submit" class="blue T_detect" id="detect" value="Detect">Auto Detect</button>
+        </div>
+        <div class="inline">
+            <span id="status" class="blue"></span>
+        </div>
+			<div id="div_detectStatus" class="pure-control-group nd">
+				<b id="t_netstatus">Internet Status:</b>
+				<input type="text" readonly="ture" class="tp-input-text l" style="padding-left:0" id="internetStatus" />
+			</div>
+				<b class="T_conntype">Internet Connection Type:</b>
+				<select id="linkType" class="xl"></select>
+
+            <div id="PPPoEBasic" class="nd">
+                <div><b class="T_pppusr">Username:</b>
+                <input type="text" class="xl" id="usrPPPoE" maxlength="255" />
+                </div>
+                <div><b class="T_ppppwd">Password:</b>
+                <input type="password" class="xl" id="pwdPPPoE" maxlength="255" />
+                </div>
+            </div>
+
+            <div id="PPPoABasic" class="nd">
+                <div><b class="T_pppusr">Username:</b>
+                <input type="text" class="xl" id="usrPPPoA" maxlength="255" />
+                </div>
+                <div><b class="T_ppppwd">Password:</b>
+                <input type="password" class="xl" id="pwdPPPoA" maxlength="255" />
+                </div>
+            </div>
+        <div id="DynamicIpBasic" class="nd">
+            <br/>
+            <div>
+                <input type="radio" name="macClone" id="dftMac" value="disable" />
+                <label id="t_notMacClone">Do NOT clone MAC Address</label>
+            </div>
+            <div>
+                <input type="radio" name="macClone" id="pcMac" value="enable" />
+                <label id="t_doMacClone">Clone Current Computer MAC Address</label>
+            </div>
+        </div>
+            <div id="StaticIpBasic" class="nd">
+                <div><b class="T_ipaddr">IP Address:</b>
+                    <input type="text" class="xl" id="ipStaticIp" />
+                </div>
+                <div><b class="T_netmask">Subnet Mask:</b>
+                    <input type="text" class="xl" id="maskStaticIp" />
+                </div>
+            <div><b class="T_defgw">Default Gateway:</b>
+                    <input type="text" class="xl" id="gwStaticIp" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+                <div><b class="T_dns">Primary DNS:</b>
+                    <input type="text" class="xl" id="priDnsStaticIp" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+                <div><b class="T_secdns">Secondary DNS:</b>
+                    <input type="text" class="xl" id="secDnsStaticIp" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+            </div>
+
+            <div id="IPoABasic" class="nd">
+                <div><b class="T_ipaddr">IP Address:</b>
+                    <input type="text" class="xl" id="ipIPoA" />
+                </div>
+                <div><b class="T_netmask">Subnet Mask:</b>
+                    <input type="text" class="xl" id="maskIPoA" />
+                </div>
+            <div><b class="T_dftgw">Default Gateway:</b>
+                    <input type="text" class="xl" id="gwIPoA" />
+                </div>
+                <div><b class="T_dns">Primary DNS:</b>
+                    <input type="text" class="xl" id="priDnsIPoA" />
+                </div>
+                <div><b class="T_secdns">Secondary DNS:</b>
+                    <input type="text" class="xl" id="secDnsIPoA" />
+                </div>
+            </div>
+
+            <div id="PptpBasic" class="nd">
+                <div><b class="T_username">Username:</b>
+                    <input type="text" class="xl" id="usrPptp" size="15" maxlength="255" />
+                </div>
+                <div><b class="T_passwd">Password:</b>
+                    <input type="password" class="xl" id="pwdPptp" size="15" maxlength="255" />
+                </div>
+                <div>
+                    <b class="t_secondConn">Secondary Connection:</b>
+                <input type="radio" name="dnsModePptp" id="dnsModeDynPptp" checked />
+                    <label class="T_dynip">Dynamic IP</label>
+                <input type="radio" name="dnsModePptp" id="dnsModeStaPptp" />
+                    <label class="T_staip">Static IP</label>
+                </div>
+			<div>
+                    <b class="T_srvIpName">VPN Server IP/Domain Name:</b>
+                <input type="text" class="xl" id="serverIpOrNamePptp" />
+                    </div>
+            <div id="dnsModeParamStaPptp" style="display: none;">
+                    <div><b class="T_ipaddr">IP Address:</b>
+                        <input type="text" class="xl" id="ipPptp" />
+                    </div>
+                    <div><b class="T_netmask">Subnet Mask:</b>
+                        <input type="text" class="xl" id="maskPptp" />
+                    </div>
+                    <div><b class="T_gateway">Default Gateway:</b>
+                        <input type="text" class="xl" id="gwPptp" />
+                    </div>
+                    <div><b class="T_dns">Primary DNS:</b>
+                        <input type="text" class="xl" id="priDnsPptp" />
+                    </div>
+                    <div><b class="T_secdns">Secondary DNS:</b>
+                        <input type="text" class="xl" id="secDnsPptp" />
+                        <span class="T">(optional)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="L2tpBasic" class="nd">
+                <div><b class="T_username">Username:</b>
+                    <input type="text" class="xl" id="usrL2tp" size="15" maxlength="255" />
+                </div>
+                <div><b class="T_passwd">Password:</b>
+                    <input type="password" class="xl" id="pwdL2tp" size="15" maxlength="255" />
+                </div>
+                <div>
+                    <b class="t_secondConn">Secondary Connection:</b>
+                <input type="radio" name="dnsModeL2tp" id="dnsModeDynL2tp" checked />
+                    <label class="T_dynip">Dynamic IP</label>
+                <input type="radio" name="dnsModeL2tp" id="dnsModeStaL2tp" />
+                    <label class="T_staip">Static IP</label>
+                </div>
+			<div>
+                    <b class="T_srvIpName">VPN Server IP/Domain Name:</b>
+                <input type="text" class="xl" id="serverIpOrNameL2tp" />
+                    </div>
+            <div id="dnsModeParamStaL2tp" style="display: none;">               
+                    <div><b class="T_ipaddr">IP Address:</b>
+                        <input type="text" class="xl" id="ipL2tp" />
+                    </div>
+                    <div><b class="T_netmask">Subnet Mask:</b>
+                        <input type="text" class="xl" id="maskL2tp" />
+                    </div>
+                    <div><b class="T_gateway">Default Gateway:</b>
+                        <input type="text" class="xl" id="gwL2tp" />
+                    </div>
+                    <div><b class="T_dns">Primary DNS:</b>
+                        <input type="text" class="xl" id="priDnsL2tp" />
+                    </div>
+                    <div><b class="T_secdns">Secondary DNS:</b>
+                        <input type="text" class="xl" id="secDnsL2tp" />
+                        <span class="T">(optional)</span>
+                    </div>
+                </div>
+            </div>
+            <div id="note" class="steps">
+            	<p class="cfg-line">
+                <span id="t_step1">Note:</span>
+                <span id="t_note1">
+         		If you are not sure which Internet Connection Type you have, use Auto Detect or contact your Internet Service Provider (ISP) for assistance.
+                </span>
+           		</p>
+        	</div>
+        <div id="saveBtnContainer">
+            <button type="submit" class="green T_save" id="saveBtn">Save</button>
+        </div>
+        </form>
+    </div>
+
+<script language="javascript" type="text/javascript">
+(function() {
+    var intfCfgStack;
+	var linkTypeOpt = {
+        "ADSL": "<option value='PPPoE'>PPPoE</option><option value='PPPoA'>PPPoA</option><option value='DynamicIp' text='" + s_str.dynip + "'>" + s_str.dynip + "</option><option value='StaticIp' text='" + s_str.staip + "'>" + s_str.staip + "</option><option value='IPoA'>IPoA</option>",
+        "VDSL": "<option value='PPPoE'>PPPoE</option><option value='DynamicIp' text='" + s_str.dynip + "'>" + s_str.dynip + "</option><option value='StaticIp' text='" + s_str.staip + "'>" + s_str.staip + "</option>",
+    "ETH": "<option value='PPPoE'>PPPoE</option><option value='DynamicIp' text='" + s_str.dynip + "'>" + s_str.dynip + "</option><option value='StaticIp' text='" + s_str.staip + "'>" + s_str.staip + "</option>"
+}
+
+        function initLinkType(sysMode, type) {
+            if (sysMode == "DSL") {
+                sysMode = (curSupXtmType == "PTM") ? "VDSL" : "ADSL";
+            }
+            if (INCLUDE_WAN_VLAN && sysMode == "ADSL" && type != "PPPoA" && type != "IPoA") {
+                $("#dsl_vlan_add").removeClass("nd");
+            }
+            $("#linkType").empty().append(linkTypeOpt[sysMode]);
+            if (sysMode == "ETH") {
+                if (INCLUDE_PPTP) $("#linkType").append("<option value='Pptp'>PPTP</option>");
+                if (INCLUDE_L2TP) $("#linkType").append("<option value='L2tp'>L2TP</option>");
+            }
+    
+    if (type != undefined) {
+        $("#linkType option[value='" + type + "']").prop("selected", "selected");
+    }else{
+                $("#saveBtnContainer").removeClass("nd");
+		$("#linkType option[value='DynamicIp']").prop("selected", "selected");
+    }
+	
+    if ($("#linkType").data('tpSelect')) {
+        $("#linkType").tpSelect({
+            refresh: 1
+        });
+    } else {
+        $("#linkType").tpSelect({
+            refresh: 0
+        });
+    }
+}
+
+function initModuleShow(linkType) {
+    var type = (linkType == null) ? "DynamicIp" : linkType;
+    $("#linkType option[value='" + type + "']").prop("selected", "selected");
+    $("div[id$='Basic']").hide("fast");
+    $("#" + type + "Basic").show("fast");
+}
+
+function initParam(wanParam) {
+            if ($("#isp").data("value") == m_str.other && dslParam && dslParam.wan) {
+                if (gw && gw.name) {
+                    if (INCLUDE_VDSLWAN && (isPTM == 1)) {
+                        $("#vdslRadio").prop("checked", true);
+                        $("#vdslLogicInf").removeClass("nd");
+                        $("#adslLogicInf").addClass("nd");
+                        $("#vidEn").prop("checked", (dslParam.vid == 0) ? false : true);
+                        $("#vidEn").tpCheckbox();
+                        $("#vid").val((dslParam.vid == 0) ? "0" : dslParam.vid);
+                        showVlan();
+                    } else {
+                        $("#adslRadio").prop("checked", true);
+                        $("#adslLogicInf").removeClass("nd");
+                        $("#vdslLogicInf").addClass("nd");
+                        $("#vpi").val(dslParam.vpi);
+                        $("#vci").val(dslParam.vci);
+                    }
+                } else {
+                    if (curSupXtmType == "PTM") {
+                        $("#vdslRadio").prop("checked", true);
+                        $("#vdslLogicInf").removeClass("nd");
+                        $("#adslLogicInf").addClass("nd");
+                    } else {
+                        $("#adslRadio").prop("checked", true);
+                        $("#adslLogicInf").removeClass("nd");
+                        $("#vdslLogicInf").addClass("nd");
+                    }
+                }
+            }
+            if (INCLUDE_WAN_VLAN && curSupXtmType == "ATM") {
+                if (wanParam.X_TP_8021QEnabled == 1) {
+                    $("#vlanEn_add").prop("checked", true);
+                    $("#vlan_div_add").removeClass("nd");
+                    $("#vlanid_add").val(wanParam.X_TP_VlanID);
+                } else {
+                    $("#vlanEn_add").prop("checked", false);
+                    $("#vlanid_add").addClass("nd");
+                }
+            }
+    var type = wanParam.linkType;
+    switch (type) {
+        case "PPPoE":
+        case "PPPoA":
+            $("#usr" + type).val(wanParam.usr);
+            $("#pwd" + type).val(wanParam.pwd);
+            break;
+        case "StaticIp":
+        case "IPoA":
+            $("#ip" + type).val(wanParam.ip);
+            $("#mask" + type).val(wanParam.mask);
+            $("#gw" + type).val(wanParam.gw);
+            $("#priDns" + type).val(wanParam.dns);
+            $("#secDns" + type).val(wanParam.dns2);
+            break;
+        case "Pptp":
+        case "L2tp":
+            $("#usr" + type).val(wanParam.usr);
+            $("#pwd" + type).val(wanParam.pwd);
+            $("#serverIpOrName" + type).val(wanParam.srvAddrName);
+            if (wanParam.addressingType == "DHCP") {
+                $("#dnsModeDyn" + type).prop("checked", true);
+                $("#dnsModeParamSta" + type).fadeOut("fast");
+            } else {
+                $("#dnsModeSta" + type).prop("checked", true);
+                $("#dnsModeParamSta" + type).fadeIn("normal");
+                $("#ip" + type).val(wanParam.ip);
+                $("#mask" + type).val(wanParam.mask);
+                $("#gw" + type).val(wanParam.gw);
+                $("#priDns" + type).val(wanParam.dns);
+                $("#secDns" + type).val(wanParam.dns2);
+            }
+            break;
+        case "DynamicIp":
+            initMacClone(wanParam);
+            break;
+        default:
+            break;
+    }
+}
+
+function showVlan() {
+    if ($("#vidEn").prop("data-checked"))
+        $("#vid_div").show("fast");
+    else
+        $("#vid_div").hide("fast");
+}
+
+$("#vidEn").click(function() {
+    showVlan();
+});
+
+$("#linkType").click(function() {
+        if (!INCLUDE_WAN_VLAN || $("#linkType").data("value") == "IPoA" || $("#linkType").data("value") == "PPPoA") {
+        $("#dsl_vlan_add").addClass("nd");
+      } else {
+        $("#dsl_vlan_add").removeClass("nd");
+    }
+    initModuleShow($("#linkType").data("value"));
+});
+
+$("input[id^='dnsMode']").click(function() {
+    var type = ($(this).attr("id").search("Pptp") != -1) ? "Pptp" : "L2tp";
+    
+    if ($(this).attr("id").search("dnsModeDyn") != -1) {
+        $("#dnsModeParamSta" + type).fadeOut("fast");
+    } else {
+        $("#dnsModeParamSta" + type).fadeIn("normal");
+    }
+});
+
+function paramCheck() {
+    if (!INCLUDE_VDSLWAN || curSupXtmType == "ATM") {
+        if ($.num($("#vpi").val(), [0, 255], true)) {
+        	$.alert(ERR_WAN_VPI_VCI_INVAD);
+            $("#vpi").select().focus();
+            return false;
+        } else if ($.num($("#vci").val(), [1, 65535], true)) {
+        	$.alert(ERR_WAN_VPI_VCI_INVAD);
+            $("#vci").select().focus();
+            return false;
+        }
+    } else {
+        if ($("#vidEn").prop("data-checked") == true && $.num($("#vid").val(), [1, 4094], true)) {
+            $.alert(ERR_WAN_VLAN_ID_INVALID);
+            $("#vid").focus().select();
+            return false;
+        }
+    }
+    return true;
+}
+
+    function doSaveDsl(linkType, wanConnArg) {
+        var vc, vlan, dslType;
+        var index, encap;
+        var ispArrLen = ispList[country] ? ispList[country]["internet"].length : 0;
+        var ispName = $("#isp").data("value");
+
+        if (!INCLUDE_VDSLWAN || curSupXtmType == "ATM") {
+            for (index = 0; index < ispArrLen; index++) {
+                if ((ispList[country]["internet"][index][0] == ispName ||
+                        (!INCLUDE_VDSLWAN && ispList[country]["internet"][index][0].substring(0, ispList[country]["internet"][index][0].indexOf("_ADSL")) == ispName)) &&
+                    ispList[country]["internet"][index][1] == parseInt($("#vpi").val(), 10) &&
+                    ispList[country]["internet"][index][2] == parseInt($("#vci").val(), 10)) {
+                    break;
+                }
+            }
+        } else {
+            for (index = 0; index < ispArrLen; index++) {
+                if (ispList[country]["internet"][index][0] == ispName &&
+                    ispList[country]["internet"][index][1] == parseInt($("#vid").val(), 10)) {
+                    break;
+                }
+            }
+        }
+
+        if (index == ispArrLen) {
+            index = -1;
+        }
+        $.act(ACT_SET, LOCAL, null, null, {
+            ispIndex: index
+        });
+        $.exe();
+
+        getParam();
+
+        if (index == -1 && INCLUDE_VDSLWAN) {
+            $("#dslMode").removeClass("nd");
+        }
+
+        if ($("#dslMode").hasClass("nd")) {
+            if ($("#isp").data("value").indexOf("_VDSL") != -1) {
+                curSupXtmType = "PTM";
+            } else if (($("#isp").data("value").indexOf("_ADSL") != -1) || !INCLUDE_VDSLWAN) {
+                curSupXtmType = "ATM";
+            }
+        } else {
+            if ($("#vdslRadio").prop("checked")) {
+                curSupXtmType = "PTM";
+            } else if ($("#adslRadio").prop("checked")) {
+                curSupXtmType = "ATM";
+            }
+        }
+
+        if (!INCLUDE_VDSLWAN || curSupXtmType == "ATM") {
+            var pvcVal = "PVC:" + parseInt($("#vpi").val(), 10) + "/" + parseInt($("#vci").val(), 10);
+            $.each(dsls, function() {
+                if (this.destinationAddress == pvcVal) vc = this;
+            });
+            dslType = "adsl";
+            for (index = 0; index < ispArrLen; index++) {
+                if (ispList[country]["internet"][index][0] == ispName &&
+                    ispList[country]["internet"][index][1] == parseInt($("#vpi").val(), 10) &&
+                    ispList[country]["internet"][index][2] == parseInt($("#vci").val(), 10)) {
+                    encap = (ispList[country]["internet"][index][4].indexOf("LLC") != -1) ? "LLC" : "VCMUX";
+                    break;
+                }
+            }
+
+            if (!encap) {
+                encap = linkType == "PPPoA" ? "VCMUX" : "LLC";
+            }
+        } else {
+            var vid = parseInt($("#vid").val(), 10);
+            $.each(vdsls, function() {
+                if (($.stkPop(this.__stack) == dslParam.wan) && (this.X_TP_VID == vid)) vlan = this;
+            });
+            dslType = "vdsl";
+            for (index = 0; index < ispArrLen; index++) {
+                if (ispList[country]["internet"][index][0] == ispName &&
+                    ispList[country]["internet"][index][1] == vid) {
+                    break;
+                }
+            }
+        }
+
+
+        if (gw && gw.name) {
+            if (gw.name.indexOf("ppp") != -1) {
+                portMappingList = $.act(ACT_GS, WAN_PPP_CONN_PORTMAPPING, null, gw.__stack);
+                portTriggerList = $.act(ACT_GS, PPP_CONN_PORTTRIGGERING, null, gw.__stack);
+            } else if (gw.name.indexOf("ip") != -1) {
+                portMappingList = $.act(ACT_GS, WAN_IP_CONN_PORTMAPPING, null, gw.__stack);
+                portTriggerList = $.act(ACT_GS, IP_CONN_PORTTRIGGERING, null, gw.__stack);
+            }
+        }
+        $.exe();
+        var wanDslArg = (dslType == "adsl") ? {
+            enable: 1,
+            destinationAddress: pvcVal,
+            linkType: linkType == "PPPoA" && "PPPoA" || linkType == "IPoA" && "IPoA" || "EoA",
+            ATMEncapsulation: encap
+        } : {
+            enable: 1,
+            X_TP_Used: 1,
+            X_TP_VlanEnabled: $("#vidEn").prop("data-checked") ? 1 : 0,
+            X_TP_VID: vid
+        };
+
+        var del = [];
+        if (gw && gw.name) del.push({
+            stack: gw.__stack,
+            type: gw.transportType ? "ppp" : "ip",
+            name: gw.name
+        });
+        if (INCLUDE_VDSLWAN && dslType == "vdsl" && vlan) {
+            $.each(conns, function() {
+                if ($.stkPop(this.__stack) == vlan.__stack && (!gw || this.name != gw.name))
+                    del.push({
+                        stack: this.__stack,
+                        type: this.transportType ? "ppp" : "ip",
+                        name: this.name
+                    });
+            });
+        } else if (vc && (vc.linkType == "IPoA" || vc.linkType == "PPPoA" || linkType == "IPoA" || linkType == "PPPoA" || wanDslArg.ATMEncapsulation != vc.ATMEncapsulation)) {
+            $.each(conns, function() {
+                if ($.stkPop(this.__stack) == vc.__stack && (!gw || this.name != gw.name))
+                    del.push({
+                        stack: this.__stack,
+                        type: this.transportType ? "ppp" : "ip",
+                        name: this.name
+                    });
+            });
+        } else if (!gw && conns.length >= 8) {
+            var gotbr = 0;
+            $.each(conns, function() {
+                if (this.connectionType == "IP_Bridged") {
+                    if (!gotbr) {
+                        gotbr = 1;
+                        del[0] = {
+                            stack: this.__stack,
+                            type: this.transportType ? "ppp" : "ip",
+                            name: this.name
+                        };
+                    } else if (this.__stack > del[0].__stack)
+                        del[0] = {
+                            stack: this.__stack,
+                            type: this.transportType ? "ppp" : "ip",
+                            name: this.name
+                        };
+                } else if (gotbr) return;
+
+                del[0] = {
+                    stack: this.__stack,
+                    type: this.transportType ? "ppp" : "ip",
+                    name: this.name
+                };
+            });
+        }
+
+        var doAdd = function(linkTypeVal, flag) {
+            instance = $.act(ACT_ADD, (linkTypeVal.indexOf("PPP") != -1) ? WAN_PPP_CONN : WAN_IP_CONN, null, stack, wanConnArg);
+            $.exe(function(ret) {
+                if (ret) {
+                    if (flag) {
+                        $.act(ACT_DEL, WAN_CONN_DEVICE, instance.__stack, null);
+                        $.exe();
+                    }
+                    $.removeLoading();
+                    return;
+                }
+                if (linkTypeVal != "Bridge") {
+                    $.act(ACT_SET, L3_FORWARDING, null, null, {
+                        __ifAliasName: instance.name,
+                        __ifName: "",
+                        defaultConnectionService: ""
+                    });
+                    if (portMappingList) {
+                        for (i = 0; i < portMappingList.length; i++)
+                            $.act(ACT_ADD, linkTypeVal.indexOf("PPP") != -1 ? WAN_PPP_CONN_PORTMAPPING : WAN_IP_CONN_PORTMAPPING, null, instance.__stack, portMappingList[i]);
+                    }
+                    if (portTriggerList) {
+                        for (i = 0; i < portTriggerList.length; i++)
+                            $.act(ACT_ADD, linkTypeVal.indexOf("PPP") != -1 ? PPP_CONN_PORTTRIGGERING : IP_CONN_PORTTRIGGERING, null, instance.__stack, portTriggerList[i]);
+                    }
+                    var dslcfg = {
+                        enable: 1,
+                        X_TP_AdslModulationCfg: (curSupXtmType == "PTM") ? "VDSL2" : "Multimode",
+                        X_TP_AnnexType: (curSupXtmType == "PTM") ? "Annex B" : "Annex B/J"
+                    };
+                    if (curSupXtmType != curDslLineType) {
+                        $.act(ACT_SET, WAN_DSL_INTF_CFG, "1,0,0,0,0,0", null, dslcfg);
+                    }
+                    $.exe(function(ret) {
+                        $.removeLoading();
+                        diagType = linkTypeVal;
+                        diagStack = instance.__stack;
+                        diagStep = 0;
+                        diagId = true;
+                        doInternetDiagnostic();
+                    });
+                } else {
+                    $.removeLoading();
+                }
+            }, true);
+        }
+
+        var instance, stack;
+        var flag = 0;
+        if (del.length > 0) {
+            var beDelFlag = true;
+            if (gw && gw.name && wanParam.linkType == linkType) {
+                if ((dslType == "adsl" && ("PVC:" + dslParam.vpi + "/" + dslParam.vci) == wanDslArg.destinationAddress) || (dslType == "vdsl" && (wanDslArg.X_TP_VID == dslParam.vid))) {
+                    $.addLoading($("#saveBtn"));
+                    beDelFlag = false;
+                    $.act(ACT_SET, (linkType.indexOf("PPP") < 0) ? WAN_IP_CONN : WAN_PPP_CONN, gw.__stack, null, wanConnArg);
+                    $.exe(function(ret) {
+                        $.removeLoading();
+                        diagType = linkType;
+                        diagStack = gw.__stack;
+                        diagStep = 0;
+                        diagId = true;
+                        doInternetDiagnostic();
+                    });
+                }
+            }
+            if (beDelFlag) {
+                $.confirm(c_str.del_conflict_conns, function() {
+                    diagId = false;
+                    $.addLoading($("#saveBtn"));
+                    addFlag = 1;
+                    var stacks = [];
+                    var pvcs = [];
+                    while (instance = del.shift()) {
+                        stack = $.stkPop(instance.stack);
+                        $.act(ACT_DEL, instance.type == "ppp" ? WAN_PPP_CONN : WAN_IP_CONN, instance.stack);
+                        if (!$.inArray(stack, stacks)) stacks.push(stack);
+                    }
+                    while (stack = stacks.shift()) pvcs.push($.act(ACT_GET, WAN_CONN_DEVICE, stack));
+                    if ($.exe()) {
+                        $.removeLoading();
+                        return;
+                    }
+                    while (instance = pvcs.shift()) {
+                        if (instance.WANIPConnectionNumberOfEntries == 0 && instance.WANPPPConnectionNumberOfEntries == 0)
+                            $.act(ACT_DEL, WAN_CONN_DEVICE, instance.__stack);
+                    }
+                    $.exe();
+                    flag = 0;
+                    if (!INCLUDE_VDSLWAN || dslType == "adsl") {
+                        var list = $.act(ACT_GL, WAN_DSL_LINK_CFG, null, null, ["destinationAddress"]);
+                        if ($.exe()) return;
+                        $.each(list, function() {
+                            if ((!INCLUDE_VDSLWAN || dslType == "adsl") && this.destinationAddress == pvcVal) {
+                                flag = 1;
+                                stack = this.__stack;
+                                return false;
+                            }
+                        });
+                    }
+
+                    if (!flag) {
+                        if (!INCLUDE_VDSLWAN || dslType == "adsl") {
+                            instance = $.act(ACT_ADD, WAN_CONN_DEVICE, null, dslParam.wan);
+                            $.exe(function(ret) {
+                                if (ret) {
+                                    $.removeLoading();
+                                    return;
+                                }
+                                stack = instance.__stack;
+                                $.act(ACT_SET, WAN_DSL_LINK_CFG, stack, null, wanDslArg);
+                                doAdd(linkType, flag);
+                            }, true);
+                        } else {
+                            instance = $.act(ACT_ADD, WAN_CONN_DEVICE, null, dslParam.wan);
+                            $.exe(function(ret) {
+                                if (ret) {
+                                    $.removeLoading();
+                                    return;
+                                }
+                                stack = instance.__stack;
+                                $.act(ACT_SET, WAN_PTM_LINK_CFG, stack, null, wanDslArg);
+                                doAdd(linkType, flag);
+                            }, true);
+                        }
+                    } else doAdd(linkType, flag);
+                }, function() {
+                    $.removeLoading();
+                    return;
+                });
+            }
+        } else {
+            $.addLoading($("#saveBtn"));
+            flag = 0;
+            if (!INCLUDE_VDSLWAN || dslType == "adsl") {
+                var list = $.act(ACT_GL, WAN_DSL_LINK_CFG, null, null, ["destinationAddress"]);
+                if ($.exe()) return;
+                $.each(list, function() {
+                    if ((!INCLUDE_VDSLWAN || dslType == "adsl") && this.destinationAddress == pvcVal) {
+                        flag = 1;
+                        stack = this.__stack;
+                        return false;
+                    }
+                });
+            }
+
+            if (!flag) {
+                if (!INCLUDE_VDSLWAN || dslType == "adsl") {
+                    instance = $.act(ACT_ADD, WAN_CONN_DEVICE, null, dslParam.wan);
+                    $.exe(function(ret) {
+                        if (ret) {
+                            $.removeLoading();
+                            return;
+                        }
+                        stack = instance.__stack;
+                        $.act(ACT_SET, WAN_DSL_LINK_CFG, stack, null, wanDslArg);
+                        doAdd(linkType, flag);
+                    }, true);
+                } else {
+                    instance = $.act(ACT_ADD, WAN_CONN_DEVICE, null, dslParam.wan);
+                    $.exe(function(ret) {
+                        if (ret) {
+                            $.removeLoading();
+                            return;
+                        }
+                        stack = instance.__stack;
+                        $.act(ACT_SET, WAN_PTM_LINK_CFG, stack, null, wanDslArg);
+                        doAdd(linkType, flag);
+                    }, true);
+                }
+            } else doAdd(linkType, flag);
+        }
+    }
+
+function doSaveEth(linkType, wanConnArg) {
+        diagId = false;
+    $.addLoading($("#saveBtn"));
+    var l3ForwardingObj = {
+        __ifAliasName: ethParam.dynamicIp.name,
+        __ifName: "",
+        defaultConnectionService: ""
+    };
+
+    $.act(ACT_SET, WAN_IP_CONN, ethParam.staticIp.stack, null, ["enable=0"]);
+    $.act(ACT_SET, WAN_IP_CONN, ethParam.dynamicIp.stack, null, ["enable=0"]);
+    $.act(ACT_SET, WAN_PPP_CONN, ethParam.pppoe.stack, null, ["enable=0"]);
+    if (INCLUDE_L2TP) {
+        $.act(ACT_SET, WAN_L2TP_CONN, ethParam.l2tp.stack, null, ["enable=0"]);
+    }
+    if (INCLUDE_PPTP) {
+        $.act(ACT_SET, WAN_PPTP_CONN, ethParam.pptp.stack, null, ["enable=0"]);
+    }
+
+    switch (linkType) {
+        case "PPPoE":
+            l3ForwardingObj.__ifAliasName = ethParam.pppoe.name;
+            $.act(ACT_SET, WAN_PPP_CONN, ethParam.pppoe.stack, null, wanConnArg);
+			diagStack = ethParam.pppoe.stack;
+            break;
+        case "DynamicIp":
+            l3ForwardingObj.__ifAliasName = ethParam.dynamicIp.name;
+            $.act(ACT_SET, WAN_IP_CONN, ethParam.dynamicIp.stack, null, wanConnArg);
+			diagStack = ethParam.dynamicIp.stack;
+            break;
+        case "StaticIp":
+            l3ForwardingObj.__ifAliasName = ethParam.staticIp.name;
+            $.act(ACT_SET, WAN_IP_CONN, ethParam.staticIp.stack, null, wanConnArg);
+			diagStack = ethParam.staticIp.stack;
+            break;
+        case "Pptp":
+            l3ForwardingObj.__ifAliasName = ethParam.pptp.name;
+            $.act(ACT_SET, WAN_PPTP_CONN, ethParam.pptp.stack, null, wanConnArg);
+			diagStack = ethParam.pptp.stack;
+            break;
+        case "L2tp":
+            l3ForwardingObj.__ifAliasName = ethParam.l2tp.name;
+            $.act(ACT_SET, WAN_L2TP_CONN, ethParam.l2tp.stack, null, wanConnArg);
+			diagStack = ethParam.l2tp.stack;
+            break;
+        default:
+            l3ForwardingObj.__ifAliasName = ethParam.dynamicIp.name;
+            $.act(ACT_SET, WAN_IP_CONN, ethParam.dynamicIp.stack, null, wanConnArg);
+			diagStack = ethParam.dynamicIp.stack;
+            break;
+    }
+        diagType = linkType;
+
+    $.act(ACT_SET, L3_FORWARDING, null, null, l3ForwardingObj);
+    $.exe(function(err) {
+        if (!err) {
+            $.removeLoading();
+                diagStep = 0;
+                diagId = true;
+            doInternetDiagnostic();
+        }
+    });
+}
+
+function doSave() {
+    var linkType = $("#linkType").data("value");
+        if ((systemMode == "DSL") && (paramCheck() == false)) {
+            return false;
+        }
+    var wanConnArg = {};
+    switch (linkType) {
+        case "PPPoE":
+        case "PPPoA":
+            wanConnArg = addAttrsPPP(linkType);
+            break;
+        case "StaticIp":
+        case "IPoA":
+            wanConnArg = addAttrsStaIpoa(linkType);
+            break;
+        case "Pptp":
+        case "L2tp":
+            wanConnArg = addAttrsPptpL2tp(linkType);
+            break;
+        case "DynamicIp":
+            wanConnArg = addAttrsDynIp();
+            break;
+        case "Bridge":
+            wanConnArg = {
+                enable: 1,
+                connectionType: "IP_Bridged"
+            };
+            break;
+        default:
+            break;
+    }
+    if (wanConnArg == null) {
+        return false;
+    }
+
+        if (systemMode == "DSL") {
+            wanConnArg.name = "";
+            if (INCLUDE_WAN_VLAN && curSupXtmType == "ATM" && linkType != "IPoA" && linkType != "PPPoA") {
+                wanConnArg.X_TP_8021QEnabled = ($("#vlanEn_add").prop("data-checked") == true ? 1 : 0);
+                wanConnArg.X_TP_VlanID = wanConnArg.X_TP_8021QEnabled ? $("#vlanid_add").val() : 0;
+            }
+            doSaveDsl(linkType, wanConnArg);
+        } else if (systemMode == "ETH") {
+            doSaveEth(linkType, wanConnArg);
+        }
+    return true;
+}
+$("#saveBtn").click(function() {
+    doSave();
+});
+
+function addAttrsPPP(type) {
+    var wanArg = {
+        enable: 1,
+        transportType: type,
+        username: $("#usr" + type).val(),
+        password: $("#pwd" + type).val()
+    };
+    if (wanArg.username == "") {
+        $.alert(ERR_USERNAME_INVAD);
+        $("#usr" + type).focus().select();
+        return null;
+    }
+    return wanArg;
+}
+
+function addAttrsDynIp() {
+    var defaultHostname = $.getDefaultHostname();
+    var wanArg = {
+        enable: 1,
+        connectionType: "IP_Routed",
+        addressingType: "DHCP",
+        NATEnabled: 1,
+        X_TP_Hostname: defaultHostname
+    }
+
+        addMacCloneAttrs(wanArg);
+    return wanArg;
+}
+
+function addAttrsStaIpoa(type) {
+    var temp_ip = $("#ip" + type).val();
+    var temp_mask = $("#mask" + type).val();
+    var temp_gateway = $("#gw" + type).val();
+	
+    if ($.ifip(temp_ip, true)) {
+		$.alert(ERR_STAIP_IP_INVAD);
+        $("#ip" + type).focus().select();
+        return null;
+    }
+    if ($.mask(temp_mask)) {
+        $("#mask" + type).focus().select();
+        return null;
+    }
+    if ($.ipmask(temp_ip, temp_mask)) {
+        $("#mask" + type).focus().select();
+        return null;
+    }
+    if ((temp_gateway != "") && (temp_gateway != "0.0.0.0") && ($.ifip(temp_gateway, true))) {
+        $.alert(ERR_IP_FORMAT);
+        $("#gw" + type).focus().select();
+        return null;
+    }
+    if ((temp_gateway != "") && (temp_gateway != "0.0.0.0") && (!$.isSameLan(temp_gateway, temp_mask, temp_ip, temp_mask))) {
+        $.alert(ERR_GATEWAY_INVAD);
+        $("#gw" + type).focus().select();
+        return null;
+    }
+    var temp_dnsaddr = $("#priDns" + type).val();
+    var temp_secdnsaddr = $("#secDns" + type).val();
+    var temp_dnsServers = "";
+    if ((temp_dnsaddr != "") && (temp_dnsaddr != "0.0.0.0") && ($.ifip(temp_dnsaddr, true))) {
+        $.alert(ERR_WAN_DNSADDR_INVAD);
+        $("#priDns" + type).focus().select();
+        return null;
+    }
+    if ((temp_secdnsaddr != "") && (temp_secdnsaddr != "0.0.0.0") && ($.ifip(temp_secdnsaddr, true))) {
+        $.alert(ERR_WAN_SECDNS_INVAD);
+        $("#secDns" + type).focus().select();
+        return null;
+    }
+    temp_dnsaddr = (temp_dnsaddr) ? $.ip2ip(temp_dnsaddr) : "0.0.0.0";
+    temp_secdnsaddr = (temp_secdnsaddr) ? $.ip2ip(temp_secdnsaddr) : "0.0.0.0";
+    temp_dnsServers = temp_dnsaddr + "," + temp_secdnsaddr;
+
+    var wanArg = {
+        enable: 1,
+        connectionType: "IP_Routed",
+        addressingType: "Static",
+        NATEnabled: 1,
+        externalIPAddress: $.ip2ip(temp_ip),
+        subnetMask: $.ip2ip(temp_mask),
+        defaultGateway: (temp_gateway) ? $.ip2ip(temp_gateway) : "0.0.0.0",
+        DNSOverrideAllowed: (temp_dnsServers == "0.0.0.0,0.0.0.0") ? 0 : 1,
+        DNSServers: temp_dnsServers
+    };
+
+    return wanArg;
+}
+
+function addAttrsPptpL2tp(type) {
+    if ($("#usr" + type).val() == "") {
+        $.alert(ERR_USERNAME_INVAD);
+        $("#usr" + type).focus().select();
+        return null;
+    }
+	/*
+    if ($("#pwd" + type).val() == "") {
+            $.alert(ERR_WAN_PWD_INVAD);
+        $("#pwd" + type).focus().select();
+        return null;
+    }*/
+    var serverIpOrNameTmp = $("#serverIpOrName" + type).val();
+		if (serverIpOrNameTmp == "") {
+        	$.alert(ERR_WAN_DA_SERVER_NAME_EMPTY);
+        $("#serverIpOrName" + type).focus().select();
+        	return null;
+    	}
+        var wanArg;
+    var dnsModes = $("span.radio-click").parent("label");
+    var dnsMode = "";
+    $.each(dnsModes, function() {
+        if ($(this).attr("for").search(type) != -1) {
+            dnsMode = $(this).attr("for");
+            return false;
+        }
+    });
+
+        if (dnsMode == ("dnsModeDyn" + type)) {
+        var defaultHostname = $.getDefaultHostname();
+        wanArg = {
+            enable: 1,
+            connectionTypeIP: "IP_Routed",
+            addressingType: "DHCP",
+            NATEnabled: 1,
+            serverIpOrName: serverIpOrNameTmp,
+            username: $("#usr" + type).val(),
+            password: $("#pwd" + type).val(),
+            hostname: defaultHostname
+        };
+    } else if (dnsMode == ("dnsModeSta" + type)) {
+        var temp_ip = $("#ip" + type).val();
+        var temp_mask = $("#mask" + type).val();
+        var temp_gateway = $("#gw" + type).val();
+		
+		if ($.ifip(temp_ip, true)){
+			$("#ip" + type).focus().select();
+			$.alert(ERR_IP_FORMAT);
+			return null;
+		}
+		
+        if ((!$.mask(temp_mask)) && (!$.ipmask(temp_ip, temp_mask))) {} else {
+            return null;
+        }
+        if ((temp_gateway == "") || (temp_gateway != "0.0.0.0" && $.ifip(temp_gateway, true))) {
+            $.alert(ERR_IP_FORMAT);
+            $("#gw" + type).focus().select();
+            return null;
+        }
+        if ((temp_gateway == "0.0.0.0") || (!$.isSameLan(temp_gateway, temp_mask, temp_ip, temp_mask))) {
+            $.alert(ERR_GATEWAY_INVAD);
+            $("#gw" + type).focus().select();
+            return null;
+        }
+        var temp_dnsaddr = $("#priDns" + type).val();
+        var temp_secdnsaddr = $("#secDns" + type).val();
+        var temp_dnsServers = "";
+
+        if ((temp_dnsaddr != "") && (temp_dnsaddr != "0.0.0.0") && ($.ifip(temp_dnsaddr, true))) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#priDns" + type).focus().select();
+            return null;
+        }
+        if ((temp_secdnsaddr != "") && (temp_secdnsaddr != "0.0.0.0") && ($.ifip(temp_secdnsaddr, true))) {
+            $.alert(ERR_WAN_SECDNS_INVAD);
+            $("#secDns" + type).focus().select();
+            return null;
+        }
+
+        temp_dnsaddr = (temp_dnsaddr) ? $.ip2ip(temp_dnsaddr) : "0.0.0.0";
+        temp_secdnsaddr = (temp_secdnsaddr) ? $.ip2ip(temp_secdnsaddr) : "0.0.0.0";
+        temp_dnsServers = temp_dnsaddr + "," + temp_secdnsaddr;
+
+        if ($.ifip(serverIpOrNameTmp, true) && temp_dnsaddr == "0.0.0.0" && temp_secdnsaddr == "0.0.0.0") {
+            $.alert(ERR_WAN_DA_DNS_EMPTY);
+            $("#priDns" + type).focus().select();
+            return null;
+        }
+        wanArg = {
+            enable: 1,
+            connectionTypeIP: "IP_Routed",
+            addressingType: "Static",
+            NATEnabled: 1,
+            serverIpOrName: serverIpOrNameTmp,
+            username: $("#usr" + type).val(),
+            password: $("#pwd" + type).val(),
+            externalIPAddressIP: $.ip2ip(temp_ip),
+            subnetMaskIP: $.ip2ip(temp_mask),
+            defaultGatewayIP: $.ip2ip(temp_gateway),
+            DNSServersIP: temp_dnsServers
+        };
+    }
+    return wanArg;
+}
+
+    function getParam() {
+        //var realSysMode = $.act(ACT_GET, SYS_MODE, null, null);
+        var wans = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+        var ips = $.act(ACT_GL, WAN_IP_CONN, null, null, ["name", "connectionType", "addressingType", "externalIPAddress", "subnetMask", "defaultGateway", "DNSServers", "X_TP_IPv4Enabled","MACAddressOverride", "X_TP_ClonedMACAddress"]);
+        var ppps = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["name", "transportType", "username", "password", "X_TP_IPv4Enabled"]);
+
+        var l3f = $.act(ACT_GET, L3_FORWARDING, null, null, ["__ifAliasName"]);
+        if (INCLUDE_VDSLWAN) {
+            vdsls = $.act(ACT_GL, WAN_PTM_LINK_CFG, null, null, ["X_TP_Used", "X_TP_VID"]);
+			}
+        if (INCLUDE_L2TP) {
+        var wanL2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name", "addressingType", "transportType", "Username", "Password", "ServerIpOrName", "ExternalIPAddressIP", "SubnetMaskIP", "DefaultGatewayIP", "DNSServersIP"]);
+		}
+        if (INCLUDE_PPTP) {
+        var wanPptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name", "addressingType", "transportType", "Username", "Password", "ServerIpOrName", "ExternalIPAddressIP", "SubnetMaskIP", "DefaultGatewayIP", "DNSServersIP"]);
+	}
+        if ($.exe()) return;
+        //systemMode = realSysMode.mode;
+        systemMode = "ETH";
+        if (INCLUDE_VDSLWAN) {
+            curSupXtmType = (wanDslInfList[0].linkEncapsulationUsed == "G.993.2_Annex_K_PTM") ? "PTM" : "ATM";
+            if (wanDslInfList[0].status == "Up") {
+                curDslLineType = curSupXtmType;
+			}
+		}
+	
+        wanParam = {};
+        conns = [];
+        if (systemMode == "DSL") {
+            $.merge(ips, ppps);
+            $.each(ips, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 2)].WANAccessType === "DSL") {
+                    conns.push(this);
+                    if (this.name === l3f.__ifAliasName || (("NO_INTERFACE" === l3f.__ifAliasName) && (this.name === realSysMode.DSLL3ForwardingName))) {
+                        var obj;
+                        gw = this;
+                        intfCfgStack = $.stkPop(this.__stack, 2);
+                        if (INCLUDE_VDSLWAN) {
+                            isPTM = $.arr2obj(vdsls, "__stack")[$.stkPop(this.__stack)].X_TP_Used;
+                        }
+                        if (INCLUDE_VDSLWAN && isPTM == 1) {
+                            obj = $.arr2obj(vdsls, "__stack")[$.stkPop(this.__stack)];
+                            dslParam = {
+                                vid: obj.X_TP_VID,
+                                wan: $.stkPop(this.__stack, 2)
+                            };
+                            if (this.connectionType == "IP_Routed") {
+                                if (this.addressingType == "Static") {
+                                    dns = this.DNSServers.split(",");
+                                    wanParam = {
+                                        linkType: "StaticIp",
+                                        ip: this.externalIPAddress,
+                                        mask: this.subnetMask,
+                                        gw: this.defaultGateway,
+                                        dns: dns[0],
+                                        dns2: dns[1]
+                                    };
+                                } else {
+                                    wanParam = {
+                                        linkType: "DynamicIp"
+                                    };
+                                }
+                            } else if (this.transportType == "PPPoE") {
+                                wanParam = {
+                                    linkType: "PPPoE",
+                                    usr: this.username,
+                                    pwd: this.password,
+                                    cfm: this.password
+                                };
+                            } else {
+                                wanParam = {
+                                    linkType: "Bridge"
+                                };
+                            }
+                        } else {
+                            obj = $.arr2obj(dsls, "__stack")[$.stkPop(this.__stack)];
+                            var pvcs = obj.destinationAddress.split(":")[1].split("/");
+                            dslParam = {
+                                vpi: pvcs[0],
+                                vci: pvcs[1],
+                                wan: $.stkPop(this.__stack, 2)
+                            };
+                            var type;
+                            if (obj.linkType == "EoA") {
+                                if (this.transportType == "PPPoE")
+                                    type = "PPPoE";
+                                else
+                                    type = (this.addressingType == "Static") ? "StaticIp" : "DynamicIp";
+                            } else {
+                                type = obj.linkType;
+                            }
+   
+                            if ((obj.linkType == "EoA" && this.addressingType == "Static") || (obj.linkType == "IPoA")) {
+                                dns = this.DNSServers.split(",");
+                                wanParam = {
+                                    linkType: type,
+                                    ip: this.externalIPAddress,
+                                    mask: this.subnetMask,
+                                    gw: this.defaultGateway,
+                                    dns: dns[0],
+                                    dns2: dns[1]
+                                };
+                            } else if ((obj.linkType == "EoA" && this.transportType == "PPPoE") || (obj.linkType == "PPPoA")) {
+                                wanParam = {
+                                    linkType: type,
+                                    usr: this.username,
+                                    pwd: this.password
+                                };
+                            } else {
+                                wanParam = {
+                                    linkType: type
+                                };
+                            }
+                            if (INCLUDE_WAN_VLAN) {
+                                wanParam.X_TP_8021QEnabled = this.X_TP_8021QEnabled;
+                                wanParam.X_TP_VlanID = this.X_TP_VlanID;
+                            }
+                        }
+                        return;
+                    }
+                }
+            });
+            if (!dslParam.wan) {
+                dslParam = {};
+                $.each(wans, function() {
+                    if (this.WANAccessType === "DSL") dslParam.wan = this.__stack;
+                })
+            }
+            initIsp();
+        } else if (systemMode == "ETH") {
+        	$.each(ips, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 2)].WANAccessType === "Ethernet" && this.X_TP_IPv4Enabled == 1) {
+				var type;
+                if (this.addressingType == "Static") {
+                    type = "StaticIp";
+                    ethParam.staticIp = {
+                        enable: this.enable,
+                        name: this.name,
+                        stack: this.__stack,
+                        wan: $.stkPop(this.__stack, 2)
+                    };
+                } else if (this.addressingType == "DHCP") {
+                    type = "DynamicIp";
+                    ethParam.dynamicIp = {
+                        enable: this.enable,
+                        name: this.name,
+                        stack: this.__stack,
+                        wan: $.stkPop(this.__stack, 2)
+                    };
+                }
+                if (this.name === l3f.__ifAliasName) {
+                        intfCfgStack = $.stkPop(this.__stack, 2);
+                    if (this.addressingType == "Static") {
+                        dns = this.DNSServers.split(",");
+                        wanParam = {
+                            linkType: type,
+                            ip: this.externalIPAddress,
+                            mask: this.subnetMask,
+                            gw: this.defaultGateway,
+                            dns: dns[0],
+                            dns2: dns[1]
+                        };
+                    } else {
+                        wanParam = {
+                            linkType: "DynamicIp",
+                            MACAddressOverride: this.MACAddressOverride,
+                            X_TP_ClonedMACAddress: this.X_TP_ClonedMACAddress
+                        };
+                    }
+                }
+            }
+        });
+        $.each(ppps, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 2)].WANAccessType === "Ethernet" && this.X_TP_IPv4Enabled == 1) {
+				if (this.transportType == "PPPoE") {
+                    ethParam.pppoe = {
+                        enable: this.enable,
+                        name: this.name,
+                        stack: this.__stack,
+                        wan: $.stkPop(this.__stack, 2)
+                    };
+                    if (this.name === l3f.__ifAliasName) {
+                            intfCfgStack = $.stkPop(this.__stack, 2);
+                        wanParam = {
+                            linkType: this.transportType,
+                            usr: this.username,
+                            pwd: this.password
+                        };
+                    }
+                }
+            }
+        });
+
+        if (INCLUDE_PPTP) {
+            $.each(wanPptpList, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 1)].WANAccessType === "Ethernet") {
+                    ethParam.pptp = {
+                        enable: this.enable,
+                        name: this.name,
+                        stack: this.__stack,
+                        wan: $.stkPop(this.__stack, 1)
+                    };
+                    if (this.name === l3f.__ifAliasName) {
+                            intfCfgStack = $.stkPop(this.__stack, 1);
+                        if (this.addressingType == "Static") {
+                            dns = this.DNSServersIP.split(",");
+                            wanParam = {
+                                linkType: "Pptp",
+                                addressingType: "Static",
+                                usr: this.username,
+                                pwd: this.password,
+                                srvAddrName: this.serverIpOrName,
+                                ip: this.externalIPAddressIP,
+                                mask: this.subnetMaskIP,
+                                gw: this.defaultGatewayIP ? this.defaultGatewayIP : "0.0.0.0",
+                                dns: dns[0],
+                                dns2: dns[1]
+                            };
+                        } else if (this.addressingType == "DHCP") {
+                            wanParam = {
+                                linkType: "Pptp",
+                                addressingType: "DHCP",
+                                usr: this.username,
+                                pwd: this.password,
+                                srvAddrName: this.serverIpOrName
+                            };
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+        if (INCLUDE_L2TP) {
+            $.each(wanL2tpList, function() {
+                if ($.arr2obj(wans, "__stack")[$.stkPop(this.__stack, 1)].WANAccessType === "Ethernet") {
+                    ethParam.l2tp = {
+                        enable: this.enable,
+                        name: this.name,
+                        stack: this.__stack,
+                        wan: $.stkPop(this.__stack, 1)
+                    };
+                    if (this.name === l3f.__ifAliasName) {
+                            intfCfgStack = $.stkPop(this.__stack, 1);
+                        if (this.addressingType == "Static") {
+                            dns = this.DNSServersIP.split(",");
+                            wanParam = {
+                                linkType: "L2tp",
+                                addressingType: "Static",
+                                usr: this.username,
+                                pwd: this.password,
+                                srvAddrName: this.serverIpOrName,
+                                ip: this.externalIPAddressIP,
+                                mask: this.subnetMaskIP,
+                                gw: this.defaultGatewayIP ? this.defaultGatewayIP : "0.0.0.0",
+                                dns: dns[0],
+                                dns2: dns[1]
+                            };
+                        } else if (this.addressingType == "DHCP") {
+                            wanParam = {
+                                linkType: "L2tp",
+                                addressingType: "DHCP",
+                                usr: this.username,
+                                pwd: this.password,
+                                srvAddrName: this.serverIpOrName
+                            };
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+            $("#dslIsp").addClass("nd");
+        }
+        if (!intfCfgStack) {
+            if (systemMode == "DSL") {
+                $.each(wans, function() {
+                    if (this.WANAccessType == "DSL") {
+                        intfCfgStack = this.__stack;
+                        return false;
+                    }
+                });
+            } else if (systemMode == "ETH") {
+                $.each(wans, function() {
+                    if (this.WANAccessType == "ETH") {
+                        intfCfgStack = this.__stack;
+                        return false;
+                    }
+                });
+            }
+        }
+    }
+
+    function init() {
+        getParam();
+
+        if (systemMode == "ETH") {
+            initLinkType(systemMode, wanParam.linkType);
+        }
+        initParam(wanParam);
+    }
+
+function checkVlanIdValid() {
+    var tmpVid = $("#vlanEn_add").prop("data-checked") == true ? $("#vlanid_add").val() : 0;
+
+    if ($("#vlanEn_add").prop("data-checked")) {
+        if ($.num(tmpVid, [0, 4094], true)) {
+            $.alert(ERR_WAN_VLAN_ID_INVALID);
+            $("#vlanid_add").focus().select();
+            return false;
+        }
+    }
+    return true;
+}
+
+function onVlanClick() {
+    if ($("#vlanEn_add").prop("data-checked")) {
+        $('#vlan_div_add').removeClass('nd');
+    } else {
+        $('#vlan_div_add').addClass('nd');
+    }
+}
+
+    $("#vlanEn_add").click(function() {
+        onVlanClick();
+    });
+
+    var diagId = true;
+    var diagTimeout = $.getAsync();
+
+function doInternetDiagnostic() {
+	var notePrefix = n_str["wanBasic"].t_detecting;
+	var notePostfix = "...";
+
+        if (diagId == false || !($.checkAsync(diagTimeout))) {
+            return;
+        }
+	$("#div_detectStatus").removeClass("nd");
+	$("#internetStatus").prop("value", notePrefix + notePostfix.substr(0, diagIndex));
+	diagIndex++;
+	diagIndex &= 3;
+	
+	if (diagIndex & 1 == 0) {		
+            $.timeout(doInternetDiagnostic, 500);
+		return ;
+	}
+
+	switch (diagStep) {
+		case 0:
+            var linkDiagFunc = function(err) {
+                if (err) {
+                    return;
+                }
+                    if (systemMode == "DSL") {
+                        if (dslIntfConfig.status == "Up") {
+                            diagStep++;
+                            $.timeout(doInternetDiagnostic, 500);
+                        } else if (dslIntfConfig.status == "NoSignal" || dslIntfConfig.status == "Disabled") {
+                            $("#internetStatus").prop("value", m_str.disconnected);
+                        } else {
+                            $.timeout(doInternetDiagnostic, 500);
+                        }
+                    } else if (systemMode == "ETH") {
+                        if (ethIntf.status == "Up") {
+                        diagStep++;
+
+                        if (diagType == "Pptp" || diagType == "L2tp") {
+                             $.timeout(doInternetDiagnostic, 5000);
+                        } else {
+                             $.timeout(doInternetDiagnostic, 500);
+                        }
+
+                        } else if (ethIntf.status == "NoLink" || ethIntf.status == "Error" || ethIntf.status == "Disabled") {
+                        $("#internetStatus").prop("value", m_str.disconnected);
+                    } else {
+                            $.timeout(doInternetDiagnostic, 500);
+                    }
+                    }
+                };
+   
+                if (systemMode == "DSL") {
+                    dslIntfConfig = $.act(ACT_GET, WAN_DSL_INTF_CFG, intfCfgStack, null, ["Status"]);
+                    $.exe(linkDiagFunc);
+                } else if (systemMode == "ETH") {
+                    ethIntf = $.act(ACT_GET, WAN_ETH_INTF, intfCfgStack, null, ["Status"]);
+                    $.exe(linkDiagFunc);
+                }
+                break;
+		
+		case 1:
+                if (diagType == "PPPoE" || diagType == "PPPoA")
+                    wanConn = $.act(ACT_GET, WAN_PPP_CONN, diagStack, null, ["LastConnectionError", "ConnectionStatus", "name"]);
+                else if (diagType == "DynamicIp" || diagType == "StaticIp" || diagType == "IPoA")
+                    wanConn = $.act(ACT_GET, WAN_IP_CONN, diagStack, null, ["ConnectionStatus", "name"]);
+                else if (INCLUDE_PPTP && diagType == "Pptp")
+                    wanConn = $.act(ACT_GET, WAN_PPTP_CONN, diagStack, null, ["ConnectionStatus"]);
+                else if (INCLUDE_PPTP && diagType == "L2tp")
+                    wanConn = $.act(ACT_GET, WAN_L2TP_CONN, diagStack, null, ["ConnectionStatus"]);
+                $.exe(function(err) {
+                    if (err) {
+
+                        return;
+                    }
+
+                if (wanConn.connectionStatus == "Connected") {
+                    diagStep++;
+                        $.timeout(doInternetDiagnostic, 500);
+                } else if (wanConn.connectionStatus == "Connecting") {
+					connectingFlag = 1;
+                        $.timeout(doInternetDiagnostic, 500);
+                } else {
+					if (connectingFlag)
+					{
+                    $("#internetStatus").prop("value", m_str.disconnected);
+					}else{
+						diagStep++;
+						$.timeout(doInternetDiagnostic, 500);
+					}
+                }
+            });
+            break;
+		
+		case 2:
+            diagTool = $.act(ACT_GET, DIAG_TOOL, null, null, ["LastResult"]);
+            $.exe(function(err) {
+                if (err) {
+                        
+                    return;
+                }
+
+                if (diagTool.lastResult == 3) {
+                        $.timeout(doInternetDiagnostic, 500);
+                } else {
+                    if (bDiagStart == true) {
+                        if (diagTool.lastResult == 1) {
+                            $("#internetStatus").prop("value", m_str.connected);
+                        }
+						/* luodan add */
+						else if(diagTool.lastResult == 2) /* connected but dns error */
+						{
+							$("#internetStatus").prop("value", m_str.connected);
+						}
+						/* luodan add end */
+						else
+						{
+                            $("#internetStatus").prop("value", m_str.disconnected);
+                        }
+                    } else {
+                        bDiagStart = true;
+                        $.act(ACT_OP, ACT_OP_DIAG_DNSDIAG, diagTool.__stack);
+                        $.exe(function(err) {
+                            if (err) {
+                                    
+                                return;
+                            }
+                                $.timeout(doInternetDiagnostic, 500);
+                        });
+                    }
+                }
+            });
+            break;
+	}
+}
+
+    function initIsp() {
+        var index = 0;
+        var ispArr = [];
+        var ispTmp;
+        var wlanList = $.act(ACT_GL, LAN_WLAN, null, null, ["RegulatoryDomain"]);
+        var localObj = $.act(ACT_GET, LOCAL, null, null, ["ispIndex"]);
+        if (!$.exe()) {
+            ispIndex = localObj.ispIndex;
+            for (var i = 0; i < regionCodeInfo.length; i++) {
+                if (wlanList[0].regulatoryDomain == regionCodeInfo[i][1]) {
+                    country = regionCodeInfo[i][4];
+                    break;
+                }
+            }
+
+            if (country && ispList[country]) {
+                while (ispList[country]["internet"][index]) {
+                    if (curDslLineType == undefined) {
+                        if (!INCLUDE_VDSLWAN) {
+                            if (ispList[country]["internet"][index][0].indexOf("_ADSL") != -1) {
+                                ispArr.push(ispList[country]["internet"][index][0].substring(0, ispList[country]["internet"][index][0].indexOf("_ADSL")));
+                            }
+                        } else {
+                            ispArr.push(ispList[country]["internet"][index][0]);
+                        }
+                    } else if (INCLUDE_VDSLWAN && curDslLineType == "PTM" && ispList[country]["internet"][index][0].indexOf("_VDSL") != -1) {
+                        ispArr.push(ispList[country]["internet"][index][0]);
+                    } else if (curDslLineType == "ATM" && ispList[country]["internet"][index][0].indexOf("_ADSL") != -1) {
+                        ispArr.push(ispList[country]["internet"][index][0]);
+                    }
+                    index++;
+                }
+                ispArr = ispArr.sort().reverse();
+                while ((ispTmp = ispArr.pop())) {
+                    $("#isp").append("<option value='" + ispTmp + "'>" + ispTmp + "</option>");
+                }
+                $("#isp").append("<option value='" + m_str.other + "'>" + m_str.other + "</option>");
+                if (ispIndex == -1) {
+                    $("#isp option[value='" + m_str.other + "']").prop("selected", "selected");
+                } else {
+                    if ((curDslLineType == "PTM" && ispList[country]["internet"][ispIndex][0].indexOf("_ADSL") != -1) || (curDslLineType == "ATM" && ispList[country]["internet"][ispIndex][0].indexOf("_VDSL") != -1)) {
+                        $("#isp option[value='" + ispList[country]["internet"][0][0] + "']").prop("selected", "selected");
+                    } else {
+                        if (!INCLUDE_VDSLWAN) {
+                            $("#isp option[value='" + ispList[country]["internet"][ispIndex][0].substring(0, ispList[country]["internet"][ispIndex][0].indexOf("_ADSL")) + "']").prop("selected", "selected");
+                        } else {
+                            $("#isp option[value='" + ispList[country]["internet"][ispIndex][0] + "']").prop("selected", "selected");
+                        }
+                    }
+                }
+            } else if (ispList[country] == undefined) {
+                $("#isp").append("<option value='" + m_str.other + "'>" + m_str.other + "</option>");
+                $("#isp option[value='" + m_str.other + "']").prop("selected", "selected");
+            } else {
+                $("#isp").addClass("nd");
+            }
+
+            $("#isp").tpSelect();
+            if (curDslLineType != undefined) {
+                $("#dslMode").addClass("nd");
+            }
+        }
+    }
+
+    $("input[id$='dslRadio']").click(function() {
+        if ($("#dslMode").hasClass("nd")) return;
+        if (systemMode == "DSL") {
+            if ($(this).attr("id") == "vdslRadio") {
+                curSupXtmType = "PTM";
+                $("#adslLogicInf").hide("fast");
+                $("#vdslLogicInf").show("fast");
+                initLinkType("VDSL", $("#linkType").data("value"));
+            } else {
+                curSupXtmType = "ATM";
+                $("#vdslLogicInf").hide("fast");
+                $("#adslLogicInf").show("fast");
+                initLinkType("ADSL", $("#linkType").data("value"));
+            }
+        }
+    });
+
+    $("#isp").click(function() {
+        var index = 0;
+        var length = (ispList[country] == undefined) ? 0 : ispList[country]["internet"].length;
+        $("#linkType").attr("disabled", false);
+        $("#linkType").tpSelect({
+            refresh: 1
+        });
+        for (; index < length; index++) {
+            if ($(this).data("value") == ispList[country]["internet"][index][0]) {
+                break;
+            } else if (!INCLUDE_VDSLWAN && $(this).data("value") == ispList[country]["internet"][index][0].substring(0, ispList[country]["internet"][index][0].indexOf("_ADSL"))) {
+                break;
+            }
+        }
+        if (index == length) {
+            if (INCLUDE_VDSLWAN) {
+                $("#dslMode").removeClass("nd");
+            }
+            $("#isp option[value='" + m_str.other + "']").prop("selected", "selected");
+            if (curSupXtmType == "PTM") {
+                $("#vdslRadio").prop("checked", true);
+                $("#vdslRadio").tpRadio({
+                    "refresh": 1
+                });
+                $("#adslRadio").tpRadio({
+                    "refresh": 1
+                });
+            } else {
+                $("#adslRadio").prop("checked", true);
+                $("#adslRadio").tpRadio({
+                    "refresh": 1
+                });
+                $("#vdslRadio").tpRadio({
+                    "refresh": 1
+                });
+            }
+            $("#vid").prop("disabled", false);
+            $("#vpi").prop("disabled", false);
+            $("#vci").prop("disabled", false);
+            initLinkType(systemMode, wanParam.linkType);
+            return;
+        }
+        $("#dslMode").addClass("nd");
+        if ($(this).data("value").indexOf("_VDSL") != -1) {
+            curSupXtmType = "PTM";
+            $("#adslLogicInf").hide("fast");
+            $("#vdslLogicInf").show("fast");
+            initLinkType("VDSL", $("#linkType").data("value"));
+            $("#vidEn").prop("checked", (ispList[country]["internet"][index][1] == 0) ? false : true);
+            $("#vidEn").tpCheckbox();
+            $("#vid").val(ispList[country]["internet"][index][1]);
+            $("#vid").prop("disabled", true);
+            showVlan();
+            var valTmp = ispList[country]["internet"][index][2];
+            if (valTmp == "Dynamic IP") {
+                valTmp = "DynamicIp";
+            } else if (valTmp == "Static IP") {
+                valTmp = "StaticIp";
+            }
+            $("#linkType option[value='" + valTmp + "']").prop("selected", "selected");
+        } else if (($(this).data("value").indexOf("_ADSL") != -1) || !INCLUDE_VDSLWAN) {
+            curSupXtmType = "ATM";
+            $("#vdslLogicInf").hide("fast");
+            $("#adslLogicInf").show("fast");
+            initLinkType("ADSL", $("#linkType").data("value"));
+            $("#vpi").val(ispList[country]["internet"][index][1]);
+            $("#vci").val(ispList[country]["internet"][index][2]);
+            $("#vpi").prop("disabled", true);
+            $("#vci").prop("disabled", true);
+            var valTmp = ispList[country]["internet"][index][3];
+            if (valTmp == "Dynamic IP") {
+                valTmp = "DynamicIp";
+            } else if (valTmp == "Static IP") {
+                valTmp = "StaticIp";
+            }
+            $("#linkType option[value='" + valTmp + "']").prop("selected", "selected");
+        }
+        if (index != length) {
+            $("#linkType").attr("disabled", true);
+        }
+        $("#vlan_div_add").addClass("nd");
+        $("#vlanEn_add").prop("checked", false);
+        $("#vlanEn_add").tpCheckbox({
+            refresh: 1
+        });
+        $("#vlanid_add").val(0);
+        $("#linkType").tpSelect({
+            refresh: 1
+        });
+    });
+
+    function wanDetecting() {
+		var wanTypeObj = $.act(ACT_GET,WAN_DETECT,null,null,["searchState", "detectedConnType"]);
+        if (!$.exe()) {
+			if (wanTypeObj.searchState == 2){ /* STATE_SEARCH_OK = 2, in wanDetect.h */
+                switch (wanTypeObj.detectedConnType) {
+				case "0":
+					$("#status").text("PPPoE");
+					//initModuleShow("PPPoE");
+					initLinkType(systemMode, "PPPoE");
+					break;
+				case "1":	
+					//initModuleShow("DynamicIp");
+					initLinkType(systemMode, "DynamicIp");
+					$("#status").text(s_str.dynip);
+					break;
+				default:
+					//initModuleShow("StaticIp");
+					initLinkType(systemMode, "StaticIp");
+					$("#status").text(s_str.staip);
+					break;
+                }
+				$("#detect").prop("disabled", false);
+            } else
+                $.timeout(function() {
+                    wanDetecting();
+                }, 1500);
+        }
+    }
+
+    $("#detect").click(function() {
+		$("#detect").prop("disabled", true);
+        var wanEthIntfObj = $.act(ACT_GET, WAN_ETH_INTF, intfCfgStack, null, ["status"]);
+        if (!$.exe()) {
+            if (wanEthIntfObj.status == "NoLink") {
+				$("#detect").prop("disabled", false);
+                $("#status").html(m_str.unplugged);
+                return;
+            } else {
+                $.act(ACT_OP, ACT_OP_DO_WAN_DETECT, null);
+
+                if (!$.exe()) {
+                    //$("#status").html(m_str.detecting); /* why ? */
+					$("#status").html(n_str["wanBasic"].t_detecting);
+                    $.timeout(function() {
+                        wanDetecting();
+                    }, 1500);
+                }
+            }
+        }
+    });
+
+    function addMacCloneAttrs(wanArg) {
+        var macAddr;
+        if ($("#dftMac").prop("checked")) {
+            wanArg.MACAddressOverride = 0;
+            return true;
+        } else if ($("#pcMac").prop("checked")) {
+            wanArg.MACAddressOverride = 1;
+            wanArg.X_TP_ClonedMACAddress = pcMacAddr;
+            return true;
+        }
+
+        return true;
+    }
+
+    function initMacClone(wanConn) {
+        $.act(ACT_CGI, "/cgi/info");
+        if ($.exe()) return false;
+        pcMacAddr = clientMac;
+
+        if (wanConn.MACAddressOverride == 1) {
+            if (wanConn.X_TP_ClonedMACAddress == pcMacAddr) {
+                $("#pcMac").prop("checked", true);
+                $("#dftMac").prop("checked", false);
+            } else {
+                $("#pcMac").prop("checked", false);
+                $("#dftMac").prop("checked", false);
+            }
+        } else {
+            $("#pcMac").prop("checked", false);
+            $("#dftMac").prop("checked", true);
+        }
+    }
+
+
+
+    var dsls, systemMode, country, ispIndex;
+    var portMappingList, portTriggerList;
+    var dslParam = {};
+    var wanParam = {};
+    var ethParam = {};
+    if (INCLUDE_VDSLWAN) {
+        var vdsls = {};
+        var isPTM = 0;
+    }
+    var gw = {};
+    var conns = [];
+    var curDslLineType;
+    var curSupXtmType = "ATM";
+    var diagStep = 0;
+    var diagIndex = 0;
+    var bDiagStart = false;
+    var diagType = "";
+    var diagStack = "";
+	var connectingFlag = 0;
+    $.tpInit(init);
+})();
+    </script>

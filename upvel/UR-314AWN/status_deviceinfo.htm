@@ -1,0 +1,127 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./icon/icon.ico" type="image/x-icon">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<meta http-equiv=Content-Type content="text/html; charset=
+iso-8859-1">
+<link rel="stylesheet" href="style.css" tppabs="http://192.168.1.1/css/style.css" type="text/css">
+<script language="JavaScript">
+function doSave()
+{
+location.reload();
+}
+function PPPoEConnect(num)
+{
+document.DvInfo_Form.ManualConnectFlag.value = num;
+location.reload();
+}
+function doLoad(){
+}
+</script>
+</head><body onLoad="doLoad()">
+<FORM METHOD="POST" ACTION="https://192.168.1.1/Forms/status_deviceinfo_1" name="DvInfo_Form"><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td height="5" class="light-orange" colspan="5">&nbsp;</td></tr><tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">Device Information</font></td><td width="10" class="black">&nbsp;</td><td width="170">&nbsp;</td><td width="10" >&nbsp;</td><td width="420" align=right class="tabdata">
+</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"> <div align=right>
+<font color="#000000">Firmware Version</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+UPVEL(LEM_86_N)_A02_(21290_312140)_2M16_1T1R                    </td></tr><!-- add for System up time -->
+<tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">MAC Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+f8:c0:91:01:04:68</td></tr><tr>
+<td class="title-main">
+<font color="#FFFFFF">LAN</font></td><td class="black">&nbsp;</td><td><hr noshade></td><td><hr noshade></td><td><hr noshade></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+192.168.1.1</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">Subnet Mask</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+255.255.255.0</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">DHCP Server</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+Enabled</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">WAN</font></td><td width="10" class="black">&nbsp;</td><td width="170"><hr noshade></td><td width="10" ><hr noshade></td><td width="420" colspan="2"><hr noshade>
+</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">Virtual Circuit</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="2">
+<SELECT NAME="DvInfo_PVC" SIZE="1" onchange="doSave()"><OPTION SELECTED>PVC0
+<OPTION>PVC1
+<OPTION>PVC2
+<OPTION>PVC3
+<OPTION>PVC4
+<OPTION>PVC5
+<OPTION>PVC6
+<OPTION>PVC7
+</SELECT></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Status</font></div></td><td class="tabdata" ><div align=center>:</div></td><td class="tabdata" colspan="2">
+Not Connected</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Connection Type</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" width="140">
+PPPoE</td><td class="tabdata" width="280">
+</td></tr><!-- add for Encaptype -->
+<tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">IP Address</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" width="140">
+0.0.0.0</td><td class="tabdata" width="280">
+</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Subnet Mask</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="2">
+0.0.0.0</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Default Gateway</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="2">
+0.0.0.0</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Primary DNS</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="2">
+0.0.0.0</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Secondary DNS</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="2">
+0.0.0.0</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange">&nbsp;</td><td class="tabdata"><div align=right>
+<font color="#000000">NAT</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata">
+Enabled</td></tr><!-- add for PPPOE/PPPOA username -->
+<!-- add for firewall status -->
+<!-- add for MTU -->
+</table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" class="tabdata">
+<tr>
+<td width="150" height="30" class="title-main">
+<font color="#FFFFFF">ADSL</font></td><td width="10" class="black">&nbsp;</td><td width="170"><hr noshade></td><td width="10" ><hr noshade></td><td colspan="3"><hr noshade></td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">ADSL Firmware Version</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="3">
+ FwVer:3.12.14.0_TC3086 HwVer:T14.F7_6.0</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Line State</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="3">
+Down   </td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Modulation</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="3">
+N/A</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Annex Mode</font></div></td><td class="tabdata"><div align=center>:</div></td><td class="tabdata" colspan="3">
+N/A</td></tr><tr>
+<td class="light-orange">&nbsp;</td><td class="light-orange"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata"><hr noshade class="light-orange-line"></td><td class="tabdata" colspan="3"><hr noshade class="light-orange-line"></td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td class="tabdata"><div align=right></div></td><td class="tabdata"></td><td width="70" align=center class="tabdata">
+<font color="#000000">Downstream</font></td><td width="70" align=center class="tabdata">
+<font color="#000000">Upstream</font></td><td width="280">&nbsp;</td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">SNR Margin</font></div></td><td class="tabdata"><div align=center>:</div></td><td width="70" align=center class="tabdata">
+N/A</td><td width="70" align=center class="tabdata">
+N/A</td><td class="tabdata">db</td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Line Attenuation</font></div></td><td class="tabdata"><div align=center>:</div></td><td width="70" align=center class="tabdata">
+N/A</td><td width="70" align=center class="tabdata">
+N/A</td><td width="280" class="tabdata">db</td></tr><tr>
+<td class="light-orange"></td><td class="light-orange"></td><td class="tabdata"><div align=right>
+<font color="#000000">Data Rate</font></div></td><td class="tabdata"><div align=center>:</div></td><td width="70" align=center class="tabdata">
+N/A</td><td width="70" align=center class="tabdata">
+N/A</td><td width="280" class="tabdata">kbps</td></tr><!-- add for outpower by jqzhou_20090218 -->
+<tr>
+<td class="light-orange"></td><td class="light-orange"></td><td width="170">&nbsp;</td><td width="10">&nbsp;</td><td colspan="3" class="tabdata">&nbsp;</td></tr></table><table width="760" border="0" align=center cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+<tr>
+<td width="160" class="black" height="42" >&nbsp;</td><td width="160" class="orange">&nbsp;</td><td width="440" class="orange">&nbsp;</td></tr></table><INPUT TYPE="HIDDEN" NAME="PVC_or_Renew_or_Release" VALUE="0"><INPUT TYPE="HIDDEN" NAME="ManualConnectFlag" VALUE="0"></form>
+</body></html>

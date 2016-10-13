@@ -1,0 +1,710 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0058)./status.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="https://zyxel.ru/favicon.ico" type="image/x-icon"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<meta name="ndm.abbr" content="Summary">
+<meta name="ndm.abbr" lang="RU" content="Сводка" xml:lang="RU">
+<title>ZyXEL Keenetic - Системный монитор</title>
+<link rel="stylesheet" href="./css/keenetic.css" type="text/css">
+<script src="./js/jquery.js" type="text/javascript">
+<script src="js/constants.js" type="text/javascript"/>
+<script src="l10n.js" type="text/javascript" charset="utf-8"/>
+<script src="js/ndm.js" type="text/javascript"/>
+<style type="text/css">
+div.column {
+	float: left;
+	width: 50%;
+	margin: 0;
+	/*white-space: nowrap;*/	
+}
+p {
+	margin:10px;
+}
+</style>
+<script type="text/javascript">
+    
+var templates = {
+	"L2T": "ppp_template",
+	"PPP": "ppp_template",
+	"PPT": "ppp_template",
+	"VLA": "dc_template",
+	"WiM": "y_template",
+	"Jin": "y_template",
+	"Fas": "dc_template",
+	"Wif": "sta_template",
+	"Usb": "3g_template"
+};
+
+function TimeSpan(seconds) {
+	var days_ = Math.floor(seconds / 86400);
+	seconds -= days_ * 86400;
+
+	this.getDays = function() {
+		return days_.toString();
+	};
+	this.getHMS = function() {
+		var hours_ = Math.floor(seconds / 3600);
+		var minutes_ = Math.floor(seconds / 60) - (hours_ * 60); 
+		var seconds_ = seconds - (hours_ * 3600) - (minutes_ * 60);
+		return hours_ + ":" + ("0" + minutes_).slice(-2) + ":" + ("0" + seconds_).slice(-2);
+	};	
+}
+function Template(e, allowContinue, keepTrack) {
+//private:
+	var id_ = 0;
+	var root_ = 0;
+	var v;
+	ParameterSet.call(this, allowContinue, keepTrack);
+//public:
+	this.clear = function() { 
+		if( root_ && root_.parentNode ) {
+			root_.parentNode.removeChild(root_);
+			root_ = 0;
+		} 
+	};
+	this.getTemplateNode = function(values) {
+		return e || document.getElementById(templates[values["type"].substr(0, 3)]);
+	};
+	this.init = function() { v = new Array(); }
+	this.load = function(node) {
+		if( node.firstChild ) v[node.nodeName] = node.firstChild.nodeValue; 
+	};
+	this.finalize = function() {
+		var tnode = this.getTemplateNode(v);
+		var clone = tnode.cloneNode(true);
+		clone.id = tnode.id + (++id_);
+		clone.style.display = "block";
+		var params_ = tnode.innerHTML.match(/{[^}]+}/g);
+		for( var p = 0; p < params_.length; ++p )
+			clone.innerHTML = clone.innerHTML.replace(
+					params_[p], eval(params_[p].substring(1, params_[p].length - 1)) || "&nbsp;");
+		if( root_ ) {
+			tnode.parentNode.replaceChild(clone, root_);
+		} else {
+			tnode.parentNode.insertBefore(clone, tnode.nextSibling);
+		}
+		root_ = clone;
+	};
+}
+Template.prototype = new ParameterSet();
+
+function WanDetector() {
+//private:
+	var ifName_;
+	var basics_ = new Template();
+	var stats_ = new Template(document.getElementById("stats_template"));
+//public:	
+	this.load = function(node) {
+		if( getNodeValue(node, "destination") == "0.0.0.0/0" ) {
+			ifName_ = getNodeValue(node, "interface");
+			if( !ifName_ ) ifName_ = _WAN;
+		} else {
+			ifName_ = 0;
+		}
+	};
+	this.finalize = function() {
+		if( ifName_ ) {
+			var p = new Packet();
+			p.Command("show interface", {"name": ifName_}, basics_);
+			p.Command("show interface stat", {"name": ifName_}, stats_);
+			p.proceed();
+		} else {
+			basics_.clear();
+			stats_.clear();
+		}
+	};
+}
+WanDetector.prototype = new ParameterSet();
+
+function init() {
+	var leases = new Table(document.getElementById("dhcp_leases"));
+	leases.defineRow("lease");
+	leases.showColumns("hostname", "ip");
+	var associations = new Table(document.getElementById("associations"));
+	associations.defineRow("station");
+	associations.showColumns("mac");
+	var routes = new Table(document.getElementById("routes"));
+	routes.defineRow("route");
+	routes.showColumns("destination", "gateway", "interface");
+	var usb = new Table(document.getElementById("usb"), true, true);
+	usb.defineRow("device");
+	usb.showColumns("subsystem", "name", "tools");
+	usb.drawCell_ = usb.drawCell;
+	usb.drawCell = function(element, value, col, row) {
+		var v = this.getRowValues(row);
+		if( col == "tools" && v["subsystem"] == "storage" ) {
+			var img = new Image();
+			img.src = "img/eject.png";
+			var a = document.createElement("a");
+			a.href = "#";
+			a.onclick = function() {
+				var p = new Packet();
+				p.No("system mount", {"filesystem": v["name"]});
+				p.proceed();
+			}
+			a.appendChild(img);
+			element.appendChild(a);
+		} else {
+			this.drawCell_(element, value, col, row);
+		}
+	}
+	var dns = new Table(document.getElementById("name_servers"), true, true);
+	dns.defineRow("server");
+	dns.showColumns("server");
+
+	var p = new Packet();
+	var aggregator = new Aggregator(new WanDetector(), routes);
+	aggregator.keepTrack(true);
+	p.Command("show ip route", null, aggregator);
+	p.Command("show ip name-server", null, dns);
+	p.Command("show interface", {"name": _LAN}, new Template(document.getElementById("lan_template")));
+	p.Command("show ip dhcp bindings", null, leases);
+	p.Command("show interface", {"name": _MASTER}, new Template(document.getElementById("wifi_template")));
+	p.Command("show interface", {"name": _AP0}, new Template(document.getElementById("ap_template")));
+	p.Command("show associations", {"name": _AP0}, associations);
+	p.Command("show system", null, new Template(document.getElementById("system_template"), true, true));	
+	p.Command("show version", null, new Template(document.getElementById("version_template")));	
+	p.Command("show usb", null, usb);
+	p.proceed(null);
+}
+-->
+</script><style type="text/css">#chromereload_page_informer{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(142, 255, 186, 0.5);
+    height: 24px;
+    padding: 10px 10px 0 10px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #4A4A4A;
+    z-index: 99999;
+    cursor: pointer;
+}</style>
+</head>
+<body onload="init()">
+<noscript>&lt;strong&gt;Please, enable JavaScript support in your browser.&lt;/strong&gt;</noscript>
+<div id="page">
+<div id="topframe">
+<div id="logo">
+<a href="./status.html">
+<img src="./img/logo.gif" border="0">
+</a>
+</div>
+<div id="logoname">Keenetic</div>
+<div id="sysinfo">
+<script type="text/javascript">    
+		function setLang(s) {
+			window.location.assign(window.location.pathname.replace(/.*\//, new FieldValue(s).get())); 
+		}
+			--></script>
+Язык: 
+<select id="lang" onchange="setLang(this)" selected="Русский">
+<option value="/" class="default">Русский</option>
+<option value="/EN/">English</option>
+</select>
+</div>
+</div>
+<div id="menu_position">
+<div id="tabs">
+<ul>
+<li style="background:url(&#39;img/status.png&#39;);" class="selected">
+<a href="./status.html">Монитор</a>
+</li>
+<li style="background:url(&#39;img/broadband-shade.png&#39;);">
+<a href="./globals.html">Интернет</a>
+</li>
+<li style="background:url(&#39;img/home-shade.png&#39;);">
+<a href="./home.html">Домашняя сеть</a>
+</li>
+<li style="background:url(&#39;img/wireless-shade.png&#39;);">
+<a href="./wireless.html">Wi-Fi</a>
+</li>
+<li style="background:url(&#39;img/security-shade.png&#39;);">
+<a href="./statics.html">Безопасность</a>
+</li>
+<li style="background:url(&#39;img/tools-shade.png&#39;);">
+<a href="./log.html">Система</a>
+</li>
+<li style="background:url(&#39;img/usb-shade.png&#39;);">
+<a href="./swap.html">USB</a>
+</li>
+</ul>
+<br>
+</div>
+</div>
+<div id="content" style="height: 504px;">
+<div id="title">
+Монитор
+<div id="subtitle">
+</div>
+<div class="column">
+<div class="dashboard_pane">
+<h1>Подключение к Интернету</h1>
+<div class="dashboard_item">
+<div id="sta_template" style="display: none;">
+<h2>Беспроводное / {v.description||v.ssid}</h2>
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Имя сети (SSID):</td>
+<td>
+<a href="/station.html#{v.ap}">{v.ssid}</a>
+</td>
+</tr>
+<tr>
+<td>Точка доступа:</td>
+<td>
+<a href="/station.html#{v.ap}">{v.ap}</a>
+</td>
+</tr>
+<tr>
+<td>Соединение:</td>
+<td>Мбит/с</td>
+</tr>
+<tr>
+<td>Радиоканал:</td>
+<td> {v.channel}</td>
+</tr>
+<tr>
+<td>Уровень сигнала:</td>
+<td> {v.quality}%</td>
+</tr>
+<tr>
+<td>MAC-адрес:</td>
+<td>{v.mac}</td>
+</tr>
+<tr>
+<td>IP-адрес:</td>
+<td> {v.address}</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>{v.mask}</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="3g_template" style="display: none;">
+<h2>3G-модем / {v.description}</h2>
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Модем:</td>
+<td> {narrow(v.manufacturer + v.product, 25)}</td>
+</tr>
+<tr>
+<td>IP-адрес:</td>
+<td>{v.address}</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>{v.mask}</td>
+</tr>
+<tr>
+<td>Длительность соединения:</td>
+<td>
+ {new TimeSpan(v.uptime).getDays()} 
+<span>дн.</span>
+ {new TimeSpan(v.uptime).getHMS()}
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="y_template" style="display: none;">
+<h2>WiMAX / {v.description||v.ssid}</h2>
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Состояние:</td>
+<td>{v.wimax_state}</td>
+</tr>
+<tr>
+<td>Модем:</td>
+<td> {narrow(v.manufacturer + v.product, 25)}</td>
+</tr>
+<tr>
+<td>Версия ПО:</td>
+<td>{v.fw}</td>
+</tr>
+<tr>
+<td>Уровни сигнала (CINR / RSSI):</td>
+<td> {new Number(v.cinr).toFixed()} / {v.rssi}</td>
+</tr>
+<tr>
+<td>Базовая станция (BSID):</td>
+<td>{v.bssid}</td>
+</tr>
+<tr>
+<td>MAC-адрес:</td>
+<td>{v.mac}</td>
+</tr>
+<tr>
+<td>IP-адрес:</td>
+<td>{v.address}</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>{v.mask}</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="ppp_template" style="display: none;">
+<h2>{v.type} / {v.description}</h2>
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>IP-адрес:</td>
+<td>{v.address}</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>{v.mask}</td>
+</tr>
+<tr>
+<td>Адрес сервера:</td>
+<td>{v.remote}</td>
+</tr>
+<tr>
+<td>Длительность соединения:</td>
+<td>
+ {new TimeSpan(v.uptime).getDays()} 
+<span>дн.</span>
+ {new TimeSpan(v.uptime).getHMS()}
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="dc_template" style="display: none;">
+<h2>Прямое / {v.description}</h2>
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>IP-адрес:</td>
+<td>
+<a href="./broadband.html">{v.address}</a>
+</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>
+<a href="/broadband.html">{v.mask}</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="stats_template" style="display: none;">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Получено:</td>
+<td>
+{(v.rxbytes/1000000).toFixed(2)} 
+<span>Мбайт</span>
+</td>
+</tr>
+<tr>
+<td>Передано:</td>
+<td>
+{(v.txbytes/1000000).toFixed(2)} 
+<span>Мбайт</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<br>
+<table cellspacing="0" style="width:100%; white-space: nowrap;" id="name_servers" class="styled">
+<caption>Серверы DNS:</caption>
+<thead>
+<tr>
+<th>Адрес</th>
+</tr>
+</thead>
+<tbody>
+</tbody></table>
+</div>
+</div>
+<div class="dashboard_pane" style="border-bottom: none;">
+<h1>Домашняя сеть</h1>
+<div class="dashboard_item">
+<div id="lan_template" style="display: none;">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>MAC-адрес:</td>
+<td>{v.mac}</td>
+</tr>
+<tr>
+<td>IP-адрес:</td>
+<td>
+<a href="/home.html">{v.address}</a>
+</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>
+<a href="./home.html">{v.mask}</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="lan_template1" style="display: block">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>MAC-адрес:</td>
+<td>40:4a:03:78:19:72</td>
+</tr>
+<tr>
+<td>IP-адрес:</td>
+<td>
+<a href="./home.html">10.10.0.201</a>
+</td>
+</tr>
+<tr>
+<td>Маска подсети:</td>
+<td>
+<a href="./home.html">255.255.255.0</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<br>
+<table cellspacing="0" style="width:100%; white-space: nowrap;" id="dhcp_leases" class="styled">
+<caption>Узлы в домашней сети:</caption>
+<thead>
+<tr>
+<th>Имя</th>
+<th>IP-адрес</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="col_hostname">nout-dell</td>
+<td class="col_ip">10.10.0.33</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="column">
+<div class="dashboard_pane">
+<h1>Информация о системе</h1>
+<div class="dashboard_item">
+<div id="system_template" style="display: none;">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Использование ЦП:</td>
+<td>{v.cpuload}%</td>
+</tr>
+<tr>
+<td>Занято памяти:</td>
+<td>
+{v.memory} 
+<span>Байт</span>
+</td>
+</tr>
+<tr>
+<td>Файл подкачки:</td>
+<td>
+{v.swap} 
+<span>Байт</span>
+</td>
+</tr>
+<tr>
+<td>Время работы:</td>
+<td>
+ {new TimeSpan(v.uptime).getDays()} 
+<span>дн.</span>
+ {new TimeSpan(v.uptime).getHMS()}
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="system_template2" style="display: block">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Использование ЦП:</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Занято памяти:</td>
+<td>
+12392/28984 
+<span>Байт</span>
+</td>
+</tr>
+<tr>
+<td>Файл подкачки:</td>
+<td>
+0/0 
+<span>Байт</span>
+</td>
+</tr>
+<tr>
+<td>Время работы:</td>
+<td>
+ 0 
+<span>дн.</span>
+ 4:02:17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="version_template" style="display: none;">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Версия базовой системы:</td>
+<td>{v.release}</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="version_template1" style="display: block">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Версия базовой системы:</td>
+<td>v2.00(BFW.0)B47</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="dashboard_pane" style="border-bottom: none;">
+<h1>Беспроводная Точка доступа</h1>
+<div class="dashboard_item">
+<div id="wifi_template" style="display: none;">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Выключатель:</td>
+<td>{v.hwstate}</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="wifi_template1" style="display: block">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Выключатель:</td>
+<td>on</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="ap_template" style="display: none;">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Состояние:</td>
+<td>
+<a href="./wireless.html">{v.state}</a>
+</td>
+</tr>
+<tr>
+<td>Имя сети (SSID):</td>
+<td>
+<a href="./ap.html">{v.ssid}</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="ap_template1" style="display: block">
+<table cellspacing="0" style="width:100%" class="grid">
+<tbody>
+<tr>
+<td>Состояние:</td>
+<td>
+<a href="./wireless.html">up</a>
+</td>
+</tr>
+<tr>
+<td>Имя сети (SSID):</td>
+<td>
+<a href="./ap.html">ZyXEL</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<br>
+<table cellspacing="0" style="width:100%; white-space: nowrap;" id="associations" class="styled">
+<caption>MAC-адреса клиентов:</caption>
+<thead>
+<tr>
+<th>MAC address</th>
+</tr>
+</thead>
+<tbody>
+</tbody></table>
+</div>
+</div>
+<div class="dashboard_pane" style="border-bottom: none;">
+<h1>USB-устройства</h1>
+<div class="dashboard_item">
+<table cellspacing="0" style="width:100%; white-space: nowrap;" id="usb" class="styled">
+<thead>
+<tr>
+<th>Тип</th>
+<th>Имя</th>
+<th width="10px">
+</th></tr>
+</thead>
+<tbody>
+</tbody></table>
+</div>
+</div>
+</div>
+<br style="clear: left;">
+<div class="dashboard_pane" style="border-bottom: none;">
+<h1>Действующие маршруты</h1>
+<div class="dashboard_item">
+<table cellspacing="0" style="width:100%; white-space: nowrap;" id="routes" class="styled">
+<thead>
+<tr>
+<th>Адрес назначения</th>
+<th>Шлюз</th>
+<th>Подключение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="col_destination">10.10.0.0/24</td>
+<td class="col_gateway">0.0.0.0</td>
+<td class="col_interface">Home</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<script src="./js/screensize.js" type="text/javascript">
+<script type="text/javascript">
+		$(document).ready(function() {
+			var lang = window.location.pathname.split("/")[1];
+			if( lang )
+				$("#lang").val("/" + lang + "/");
+			$("#lang .default").text("English");
+		});
+		</script>
+
+</div></body></html>

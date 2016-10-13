@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/Advanced_DHCP_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - DHCP Server</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '33663168'; }
+function login_ip_str() { return '192.168.1.2'; }
+function login_ip_str_now() { return '192.168.1.2'; }
+function login_mac_str() { return '00:1A:92:47:00:02'; }
+
+var wireless = [];	// [[MAC, associated, authorized], ...]
+
+function initial(){
+	show_banner(1);
+	show_menu(5,2,2);
+	show_footer();
+	
+	enable_auto_hint(5, 7);
+
+	load_body();
+}
+
+function applyRule(){
+location.reload(true)
+
+}
+
+function validForm(){
+	 if(!validate_string(document.form.lan_domain))
+	 	return false;
+	
+	if(!validate_ipaddr_final(document.form.dhcp_start, 'dhcp_start') ||
+			!validate_ipaddr_final(document.form.dhcp_end, 'dhcp_end') ||
+			!validate_ipaddr_final(document.form.dhcp_gateway_x, 'dhcp_gateway_x') ||
+			!validate_ipaddr_final(document.form.dhcp_dns1_x, 'dhcp_dns1_x') ||
+			!validate_ipaddr_final(document.form.dhcp_wins_x, 'dhcp_wins_x'))
+		return false;
+	
+	if(!validate_range(document.form.dhcp_lease, 1, 86400))
+		return false;
+	
+	if(intoa(document.form.dhcp_start.value) > intoa(document.form.dhcp_end.value)){
+		tmp = document.form.dhcp_start.value;
+		document.form.dhcp_start.value = document.form.dhcp_end.value;
+		document.form.dhcp_end.value = tmp;
+	}
+	
+	if(!validate_ipaddr(document.form.dhcp_wins_x, 'dhcp_wins_x'))
+		return false;
+	
+	return true;
+}
+
+function done_validating(action){
+	refreshpage();
+}
+</script>
+</head>
+
+<body onload="initial();" onunLoad="disable_auto_hint(5, 7);return unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="#" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" name="form" id="ruleForm" action="https://admin:admin@192.168.1.1/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="productid" value="RT-N16">
+
+<input type="hidden" name="current_page" value="Advanced_DHCP_Content.html">
+<input type="hidden" name="next_page" value="Advanced_GWStaticRoute_Content.html">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="sid_list" value="LANHostConfig;">
+<input type="hidden" name="group_id" value="ManualDHCPList">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+
+<input type="hidden" name="lan_ipaddr" value="192.168.1.1">
+<input type="hidden" name="lan_netmask" value="255.255.255.0">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td width="23">&nbsp;</td>
+	
+	<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div><br />
+
+<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td align="left" valign="top">
+	  <table width="500" border="0" align="center" cellpadding="4" cellspacing="0" class="FormTitle" table>
+		<thead>
+		  <tr>
+			<td>LAN - DHCP Server</td>
+		  </tr>
+		</thead>
+		
+		<tr>
+		  <td bgcolor="#FFFFFF">RT-N16 supports up to 253 IP addresses for your local network. The IP address of a local machine can be assigned manually by the network administrator or obtained automatically from RT-N16 if the DHCP server is enabled.</td>
+		</tr>
+		
+		<tbody>
+		<tr>
+		  <td bgcolor="#FFFFFF">
+			<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+			  <tr>
+				<th width="200"><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,1);">Enable the DHCP Server?</a></th>
+				<td>
+				  <input type="radio" value="1" name="dhcp_enable_x" class="content_input_fd" onClick="return change_common_radio(this, 'LANHostConfig', 'dhcp_enable_x', '1')" checked>Yes</input>
+				  <input type="radio" value="0" name="dhcp_enable_x" class="content_input_fd" onClick="return change_common_radio(this, 'LANHostConfig', 'dhcp_enable_x', '0')" >No</input>
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,2);">RT-N16's Domain Name</a></th>
+				<td>
+				  <input type="text" maxlength="32" class="input" size="32" name="lan_domain" value="" onKeyPress="return is_string(this)">
+				</td>
+			  </tr>
+			  
+			  <tr>
+			  <th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,3);">IP Pool Starting Address</a></th>
+			  <td>
+				<input type="text" maxlength="15" class="input" size="15" name="dhcp_start" value="192.168.1.2" onKeyPress="return is_ipaddr(this);" onKeyUp="change_ipaddr(this);">
+			  </td>
+			  </tr>
+			  
+			  <tr>
+            <th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,4);">IP Pool Ending Address</a></th>
+            <td>
+              <input type="text" maxlength="15" class="input" size="15" name="dhcp_end" value="192.168.1.254" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)">
+            </td>
+			  </tr>
+			  
+			  <tr>
+            <th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,5);">Lease Time</a></th>
+            <td>
+              <input type="text" maxlength="5" size="5" name="dhcp_lease" class="input" value="86400" onKeyPress="return is_number(this)">
+            </td>
+			  </tr>
+			  
+			  <tr>
+            <th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,6);">Default Gateway</a></th>
+            <td>
+              <input type="text" maxlength="15" class="input" size="15" name="dhcp_gateway_x" value="" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)">
+            </td>
+			  </tr>
+			</table>
+		  </td>
+		</tr>
+		
+		<tr>
+		  <td bgcolor="#FFFFFF">
+			<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+			  <thead>
+			  <tr>
+				<td colspan="2">DNS and WINS Server Setting</td>
+			  </tr>
+			  </thead>		
+			  
+			  <tr>
+				<th width="200"><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,7);">DNS Server</a></th>
+				<td>
+				  <input type="text" maxlength="15" class="input" size="15" name="dhcp_dns1_x" value="172.21.128.8" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)">
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(5,8);">WINS Server</a></th>
+				<td>
+				  <input type="text" maxlength="15" class="input" size="15" name="dhcp_wins_x" value="172.21.128.8" onkeypress="return is_ipaddr(this)" onkeyup="change_ipaddr(this)" />
+				</td>
+			  </tr>
+			</table>
+		  </td>
+		</tr>
+		
+		<!-- manually assigned the DHCP List -->
+		<tr>
+		  <td bgcolor="#FFFFFF">
+			<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+			  <thead>
+			  <tr>
+				<td colspan="3" id="GWStatic">Manually Assigned IP around the DHCP List</td>
+			  </tr>
+			  </thead>
+			  
+			  <tr>
+            <th>Enable Manual Assignment?</th>
+            <td colspan="2">
+              <input type="radio" value="1" name="dhcp_static_x"  onclick="return change_common_radio(this, 'LANHostConfig', 'dhcp_static_x', '1')"  />Yes
+      		  <input type="radio" value="0" name="dhcp_static_x"  onclick="return change_common_radio(this, 'LANHostConfig', 'dhcp_static_x', '0')" checked />No
+      		</td>
+			  </tr>
+			  
+			  <tr bgcolor="#FFFFFF">
+		  	<th style="text-align:center;">MAC Address</th>
+            <th style="text-align:center;">IP Address</th>
+            <th width="40"></th>
+			  </tr>
+			  
+			  <tr bgcolor="#FFFFFF">
+            <td align="center"><input type="hidden" name="dhcp_staticnum_x_0" value="0" readonly="1" />
+                <input type="text" maxlength="12" class="input" size="12" name="dhcp_staticmac_x_0" onkeypress="return is_hwaddr()" /></td>
+            <td align="center"><input type="text" maxlength="15" class="input" size="15" name="dhcp_staticip_x_0" onkeypress="return is_ipaddr(this)" onkeyup="change_ipaddr(this)" /></td>
+            <td width="40"><input class="button" type="submit" onclick="return markGroup(this, 'ManualDHCPList', 8, ' Add ');" name="ManualDHCPList2" value="Add" size="12" /></td>
+			  </tr>
+			  
+			  <tr bgcolor="#FFFFFF">
+            <td colspan="2" align="center">
+			  <select class="input" size="4" name="ManualDHCPList_s" multiple="multiple" style="width:100%; font-size:12px; font-family:'fixedsys', Courier, mono;">
+                <option value="-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              </select>
+			</td>
+            <td>
+              <input class="button" type="submit" onclick="return markGroup(this, 'ManualDHCPList', 8, ' Del ');" name="ManualDHCPList" value="Delete" size="12" />
+            </td>
+			  </tr>
+			  
+			  <tr align="right">
+            <td colspan="3">
+              <input type="button" name="button" class="button" onclick="applyRule();" value="Apply"/>
+            </td>
+          	  </tr>
+        	</table>
+      	  </td>
+		</tr>
+		</tbody>
+	  </table>		
+	</td>
+</form>
+
+	<!-- help block -->
+	<td id="help_td" style="width:15px;" valign="top">
+<form name="hint_form"></form>
+	  <div id="helpicon" onClick="openHint(0,0);" title="Click to open AiHelp">
+	  	<img src="images/help.gif" />
+	  </div>
+      
+	  <div id="hintofPM" style="display:none;">
+		<table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:;" onclick="closeHint()" ><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tr>
+			<td valign="top" >
+			  <div class="hint_body2" id="hint_body"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="#" frameborder="0"></iframe>
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	</td>
+	<!--==============Ending of hint content=============-->
+  </tr>
+</table>
+		<!--===================================Ending of Main Content===========================================-->		
+	</td>
+	
+    <td width="10" align="center" valign="top">&nbsp;</td>
+  </tr>
+</table>
+
+<div id="footer"></div>
+</body>
+
+<!-- Mirrored from 192.168.1.1/Advanced_DHCP_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+</html>

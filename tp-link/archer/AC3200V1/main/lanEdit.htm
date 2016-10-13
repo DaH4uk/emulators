@@ -1,0 +1,286 @@
+<script language="javascript" type="text/javascript">
+/* This file is from dhcpEdit.htm, for ac3200 */
+var lanIPv4Cfg;
+var lanIgmpCfg;
+var dhcpCfg;
+var subMask = ["255.255.255.0", "255.255.0.0", "255.0.0.0", n_str.dhcp.t_custom];
+
+var oldLanIp;
+var oldLanMask;
+
+function initEdit(brList, ix) {
+
+    //$.loadPage("ipv6Edit", "lan6.htm");
+
+    lanIPv4Cfg = $.act(ACT_GS, LAN_IP_INTF, null, brList[ix].__stack, ["IPInterfaceIPAddress", "IPInterfaceSubnetMask", "X_TP_MACAddress"]);
+    lanIgmpCfg = $.act(ACT_GET, LAN_IGMP_SNOOP, brList[ix].__stack, null, ["enabled"]);
+    dhcpCfg = $.act(ACT_GET, LAN_HOST_CFG, brList[ix].__stack, null, null);
+
+    if (!$.exe()) {
+        $("#lanMacAddress").prop("value", lanIPv4Cfg[0].X_TP_MACAddress);
+
+        oldLanIp = lanIPv4Cfg[0].IPInterfaceIPAddress ? lanIPv4Cfg[0].IPInterfaceIPAddress : "0.0.0.0";
+        $("#lanIPAddr").val(oldLanIp);
+
+        oldLanMask = lanIPv4Cfg[0].IPInterfaceSubnetMask ? lanIPv4Cfg[0].IPInterfaceSubnetMask : "0.0.0.0";
+
+        for (var ix = 0; ix < subMask.length; ix++) {
+            if (subMask[ix] == oldLanMask) {
+                break;
+            }
+        }
+
+        if (ix >= subMask.length) {
+            $("#lanIPSubMask option[value=" + (ix - 1) + "]").prop("selected", "selected");
+            $("#lanIPSubMaskCustomInput").val(oldLanMask);
+        }
+
+        $("#lanIPSubMask option[value=" + ix + "]").prop("selected", "selected");
+
+        $("#lanIGMPEn").prop("checked", lanIgmpCfg.enabled == 1 ? true : false);
+    }
+}
+
+
+function clickIPv4Save() {
+    var ipv4Settings = {};
+    var igmpSettings = {};
+    if (checkParam() == false) {
+        return false;
+    }
+
+    var bReboot = false;
+    var tmpLanIp = $("#lanIPAddr").val() == "" ? "0.0.0.0" : $.ip2ip($("#lanIPAddr").val());
+
+    var tmpLanMask = $("select#lanIPSubMask").data("text") == n_str.dhcp.t_custom ?
+        $("#lanIPSubMaskCustomInput").val() : $("select#lanIPSubMask").data("text");
+    tmpLanMask = $.ip2ip(tmpLanMask);
+
+    if (($.ip2num(oldLanIp) != $.ip2num(tmpLanIp) || $.ip2num(oldLanMask) != $.ip2num(tmpLanMask))) {
+        bReboot = true;
+    }
+
+    igmpSettings.enabled = $("#lanIGMPEn").prop('data-checked') == true ? 1 : 0;
+
+    if (!bReboot) {
+        $.act(ACT_SET, LAN_IGMP_SNOOP, lanIgmpCfg.__stack, null, igmpSettings);
+
+        // var str = "";
+        // for (var name in dhcpSettings) {
+        //     str += name + "=" + dhcpSettings[name] + "\n";
+        // }
+        // console.log(str);
+
+        if (!$.exe()) {
+            $.removeLoading();
+            $.reload();
+        }
+    } else {
+        $.confirm(c_str.lan_reboot, goExcute, goBack);
+    }
+
+    function goExcute() {
+        ipv4Settings.IPInterfaceIPAddress = tmpLanIp;
+        ipv4Settings.IPInterfaceSubnetMask = tmpLanMask;
+
+        $.act(ACT_SET, LAN_IP_INTF, lanIPv4Cfg[0].__stack, null, ipv4Settings);
+        $.act(ACT_SET, LAN_IGMP_SNOOP, lanIgmpCfg.__stack, null, igmpSettings);
+        if (!$.exe()) {
+            $.guage(["<span class='T T_rebooting'>" + s_str.rebooting + "</span>", "<span class='T T_wait_reboot'>" + s_str.wait_reboot + "</span>"], 100, 1200, 
+            function() {
+                if (window.location.href.search("tplinkmodem.net") == -1) {
+                $.refresh(tmpLanIp);
+                } else {
+                    $.refresh();
+                }
+            });
+        }
+    }
+
+    function goBack() {
+        bReboot = false;
+        return;
+    }
+}
+
+function checkParam() {
+    var element;
+    var lanIp = $("#lanIPAddr").val();
+    var netMask = $("select#lanIPSubMask").data("text") == n_str.dhcp.t_custom ?
+        $("#lanIPSubMaskCustomInput").val() : $("select#lanIPSubMask").data("text");
+
+    if ($.ifip(lanIp, true)) {
+        $.alert(ERR_LAN_IP_INVAD);
+        element = $("#lanIPAddr");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return false;
+    }
+    if ($.mask(netMask, true)) {
+        $.alert(ERR_LAN_MASK_INVAD);
+        element = $("select#lanIPSubMask").data("text") == "custom" ? $("#lanIPSubMaskCustomInput") : $("#lanIPSubMask");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return false;
+    }
+
+    if ($.ipmask(lanIp, netMask, true)) {
+        $.alert(ERR_LAN_IPMASK_INVAD);
+        element = $("#lanIPAddr");
+        if (element) {
+            element.focus();
+            element.select();
+        }
+        return false;
+    }
+    return true;
+}
+
+
+function initDhcpEdit() {
+
+    if (hasGroup) {
+
+        $("#formIPv6").addClass('nd');
+        $("#ipVersion").addClass('nd');
+        $("#cancelIPv4").css('display', 'inline-block');
+
+        if (brLanList[groupEditIndex].bridgeName == "Default") {
+            $("#formIPv6").removeClass('nd');
+            $("#ipVersion").removeClass('nd');
+        }
+        $("#hasGroupBtn").removeClass('nd');
+        $("#noGroupBtn").addClass('nd');
+        initEdit(brLanList, groupEditIndex);
+    } else {
+        $("#cancelIPv4").css('display', 'none');
+        //$("#ipVersion").removeClass('nd');
+        $("#hasGroupBtn").addClass('nd');
+        $("#noGroupBtn").removeClass('nd');
+        initEdit(brLanList, 0);
+    }
+
+}
+
+function changeVersion() {
+    if ($("#ipVer4").prop("checked")) {
+        $("#formIPv4").removeClass("nd");
+        $("#formIPv6").addClass("nd");
+    } else if ($("#ipVer6").prop("checked")) {
+        $("#formIPv4").addClass("nd");
+        $("#formIPv6").removeClass("nd");
+    }
+}
+
+</script>
+<div class="content-container">
+    <div id="ipVersion" class="nd">
+        <b class="xl" id="t_ipVer">IP Version:</b>
+        <input type="radio" name="ipVer" id="ipVer4" checked="checked" />
+        <label id="t_ipVer4">IPv4</label>
+        <input type="radio" name="ipVer" id="ipVer6" />
+        <label id="t_ipVer6">IPv6</label>
+    </div>
+
+    <form class="pure-form pure-form-aligned" id="formIPv4">
+        <div class="pure-control-group">
+            <b class="xl T_macaddr">Mac address:</b>
+            <input type="text" readonly="true" id="lanMacAddress" />
+        </div>
+
+        <div>
+            <b class="xl" id="t_lan4">LAN IPv4:</b>
+            <input type="text" id="lanIPAddr" class="l" required />
+        </div>
+
+        <div class="inline">
+            <b class="xl T_netmask">Subnet Mask:</b>
+            <select id="lanIPSubMask" class="l">
+                <option value="0">255.255.255.0</option>
+                <option value="1">255.255.0.0</option>
+                <option value="2">255.0.0.0</option>
+                <option value="3" id="t_custom">custom</option>
+            </select>
+        </div>
+
+        <div class="nd" id="lanIPSubMaskCustom" style="margin-left:20px">
+            <input type="text" id="lanIPSubMaskCustomInput" class="l" required />
+        </div>
+
+        <div>
+            <b class="xl" id="t_snoop">IGMP Snooping:</b>
+            <input type="checkbox" id="lanIGMPEn" />
+            <label id="t_ensnoop">Enable IGMP Snooping</label>
+        </div>
+
+
+        <div class="inline-btn-right part-separate" id="hasGroupBtn">
+            <button type='submit' class="green inline T_cancel" id="cancelIPv4">Cancel</button>
+            <button type="submit" class="green inline T_ok" id="saveIPv4Hg">OK</button>
+        </div>
+
+        <div id="noGroupBtn">
+            <button type="submit" class="green T_save" id="saveIPv4Ng">Save</button>
+        </div>
+    </form>
+
+
+    <form class="pure-form pure-form-aligned" id="formIPv6">
+        <div id="ipv6Edit"></div>
+    </form>
+</div>
+
+<script type="text/javascript">
+$("#lanIPAddr").on('change', function() {
+    checkParam();
+});
+
+$("#lanIPSubMaskCustomInput").on('change', function() {
+    checkParam();
+});
+
+$('#saveIPv4Hg').on('click', function(e) {
+    $.addLoading($(this));
+    clickIPv4Save();
+});
+
+$('#saveIPv4Ng').on('click', function(e) {
+    $.addLoading($(this));
+    clickIPv4Save();
+});
+
+$('#cancelIPv4').on('click', function(e) {
+    $.reload();
+});
+
+$('#ipVer4').on('click', function(e) {
+    $("#formIPv4").removeClass("nd");
+    $("#formIPv6").addClass("nd");
+});
+
+$('#ipVer6').on('click', function(e) {
+    $("#formIPv4").addClass("nd");
+    $("#formIPv6").removeClass("nd");
+});
+
+$.tpInit(initDhcpEdit);
+
+$("select#lanIPSubMask").click(function() {
+
+    var subMask = $("select#lanIPSubMask").data('text');
+
+    if (subMask == n_str.dhcp.t_custom) {
+        $("#lanIPSubMaskCustom").css('display', 'inline-block');
+    } else {
+        $("#lanIPSubMaskCustom").css('display', 'none');
+        $("#lanIPSubMaskCustomInput").val("");
+        $("#gateway").val(dhcpCfg.IPRouters);
+        checkParam();
+    }
+
+});
+</script>

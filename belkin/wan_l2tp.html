@@ -1,0 +1,420 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wpp16+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Connection Type';
+var menuSection	='WAN';
+var menuItem	='Connection Type';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+function evaltF()
+{
+	if(isBlank(document.wan_form.l2tp_username.value))
+	{
+	 	document.wan_form.l2tp_username.focus();
+	 	document.wan_form.l2tp_username.select();
+		alert(wpp19);
+		return false;
+	}
+	if(!validVisibleStr(document.wan_form.l2tp_username.value))
+    {
+        document.wan_form.l2tp_username.focus();
+	 	document.wan_form.l2tp_username.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+	if(isBlank(document.wan_form.l2tp_password.value))
+	{
+		document.wan_form.l2tp_password.focus();
+		document.wan_form.l2tp_password.select();
+		alert(pm);
+		return false;
+	}
+	if(!validVisibleStr(document.wan_form.l2tp_password.value))
+    {
+        document.wan_form.l2tp_password.focus();
+	 	document.wan_form.l2tp_password.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+	if(isBlank(document.wan_form.l2tp_password_2.value))
+	{
+		document.wan_form.l2tp_password_2.focus();
+		document.wan_form.l2tp_password_2.select();
+		alert(wpp14);
+		return false;
+	}
+	if(document.wan_form.l2tp_password.value!=document.wan_form.l2tp_password_2.value)
+	{
+		document.wan_form.l2tp_password_2.focus();
+		document.wan_form.l2tp_password_2.select();
+		alert(pm);
+		return false;
+	}
+	if(!validVisibleStr(document.wan_form.wan_hostname.value))
+    {
+        document.wan_form.wan_hostname.focus();
+        document.wan_form.wan_hostname.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+
+	if(isNValidSingleFirstIP(document.wan_form.l2tpserviceip1.value))
+	{
+		document.wan_form.l2tpserviceip1.focus();
+	 	document.wan_form.l2tpserviceip1.select();
+		alert(usysipm);
+		return false;
+	}
+	if(isLoopBackFirstIP(document.wan_form.l2tpserviceip1.value))
+	{
+		document.wan_form.l2tpserviceip1.focus();
+	 	document.wan_form.l2tpserviceip1.select();
+		alert(lsipm4);
+		return false;
+	}
+	if(isNValidIP(document.wan_form.l2tpserviceip2.value))
+	{
+		document.wan_form.l2tpserviceip2.focus();
+	 	document.wan_form.l2tpserviceip2.select();
+		alert(usysipm);
+		return false;
+	}
+	if(isNValidIP(document.wan_form.l2tpserviceip3.value))
+	{
+		document.wan_form.l2tpserviceip3.focus();
+	 	document.wan_form.l2tpserviceip3.select();
+		alert(usysipm);
+		return false;
+	}
+	if(isNValidEndIP(document.wan_form.l2tpserviceip4.value))
+	{
+		document.wan_form.l2tpserviceip4.focus();
+	 	document.wan_form.l2tpserviceip4.select();
+		alert(usysipm);
+		return false;
+	}
+
+
+	var cf = document.forms[0];
+	if(cf.ip_mode.value == 1)
+	{
+		if(isNValidSingleFirstIP(document.wan_form.l2tpmyip1.value))
+		{
+			document.wan_form.l2tpmyip1.focus();
+		 	document.wan_form.l2tpmyip1.select();
+			alert(usysipm);
+			return false;
+		}
+		if(isLoopBackFirstIP(document.wan_form.l2tpmyip1.value))
+		{
+			document.wan_form.l2tpmyip1.focus();
+		 	document.wan_form.l2tpmyip1.select();
+			alert(lsipm4);
+			return false;
+		}
+		if(isNValidIP(document.wan_form.l2tpmyip2.value))
+		{
+			document.wan_form.l2tpmyip2.focus();
+		 	document.wan_form.l2tpmyip2.select();
+			alert(usysipm);
+			return false;
+		}
+		if(isNValidIP(document.wan_form.l2tpmyip3.value))
+		{
+			document.wan_form.l2tpmyip3.focus();
+		 	document.wan_form.l2tpmyip3.select();
+			alert(usysipm);
+			return false;
+		}
+		if(isNValidEndIP(document.wan_form.l2tpmyip4.value))
+		{
+			document.wan_form.l2tpmyip4.focus();
+		 	document.wan_form.l2tpmyip4.select();
+			alert(usysipm);
+			return false;
+		}
+		if(isNValidIP(document.wan_form.l2tpsubnet1.value) )
+		{
+			document.wan_form.l2tpsubnet1.focus();
+		 	document.wan_form.l2tpsubnet1.select();
+			alert(sm);
+			return false;
+		}
+		if(isNValidIP(document.wan_form.l2tpsubnet2.value))
+		{
+			document.wan_form.l2tpsubnet2.focus();
+		 	document.wan_form.l2tpsubnet2.select();
+			alert(sm);
+			return false;
+		}
+		if(isNValidIP(document.wan_form.l2tpsubnet3.value))
+		{
+			document.wan_form.l2tpsubnet3.focus();
+		 	document.wan_form.l2tpsubnet3.select();
+			alert(sm);
+			return false;
+		}
+		if(isNValidIP(document.wan_form.l2tpsubnet4.value))
+		{
+			document.wan_form.l2tpsubnet4.focus();
+		 	document.wan_form.l2tpsubnet4.select();
+			alert(sm);
+			return false;
+		}
+
+    	if(badMask(document.wan_form.l2tpsubnet1, document.wan_form.l2tpsubnet2, document.wan_form.l2tpsubnet3, document.wan_form.l2tpsubnet4))
+    	{
+    	    alert(sm);
+    	    return false;
+    	}
+
+    	{ /* check subnet */
+    	    var myIp, subnetMask, serverIp;
+
+    	    myIp = hex(document.wan_form.l2tpmyip1.value)
+    	            + hex(document.wan_form.l2tpmyip2.value)
+    	            + hex(document.wan_form.l2tpmyip3.value)
+    	            + hex(document.wan_form.l2tpmyip4.value);
+
+    	    serverIp = hex(document.wan_form.l2tpserviceip1.value)
+    	                + hex(document.wan_form.l2tpserviceip2.value)
+    	                + hex(document.wan_form.l2tpserviceip3.value)
+    	                + hex(document.wan_form.l2tpserviceip4.value);
+
+    	    subnetMask = hex(document.wan_form.l2tpsubnet1.value)
+    	                  + hex(document.wan_form.l2tpsubnet2.value)
+    	                  + hex(document.wan_form.l2tpsubnet3.value)
+    	                  + hex(document.wan_form.l2tpsubnet4.value);
+
+    	    if((parseInt(myIp, 16) & parseInt(subnetMask, 16)) != (parseInt(serverIp, 16) & parseInt(subnetMask, 16)))
+    	    {
+    	        alert(msg_wan_stat1
+    	                + document.wan_form.l2tpmyip1.value + '.'
+    	                + document.wan_form.l2tpmyip2.value + '.'
+    	                + document.wan_form.l2tpmyip3.value + '.'
+    	                + document.wan_form.l2tpmyip4.value
+    	                + msg_wan_stat2
+    	                + document.wan_form.l2tpserviceip1.value + '.'
+    	                + document.wan_form.l2tpserviceip2.value + '.'
+    	                + document.wan_form.l2tpserviceip3.value + '.'
+    	                + document.wan_form.l2tpserviceip4.value
+    	                + '/'
+    	                + document.wan_form.l2tpsubnet1.value + '.'
+    	                + document.wan_form.l2tpsubnet2.value + '.'
+    	                + document.wan_form.l2tpsubnet3.value + '.'
+    	                + document.wan_form.l2tpsubnet4.value
+    	                + msg_wan_stat3);
+
+    	        return false;
+    	    }
+	    }
+    }
+	if(document.wan_form.l2tp_idle_disconnect_box.checked==true)
+	{
+     	 if((isBlank(document.wan_form.idle_interval.value))||(isNaN(document.wan_form.idle_interval.value))||
+  		 (document.wan_form.idle_interval.value<1||document.wan_form.idle_interval.value>99))
+  		 {
+  		 	alert(idlerangerro);
+  		 	document.wan_form.idle_interval.focus();
+  		 	document.wan_form.idle_interval.select();
+  		 	return false;
+  		 }
+	}
+	dataToHidden(document.forms[0]);
+	return true;
+}
+
+function connect()
+{
+  	if(evaltF())
+  	{
+	   	document.wan_form.submit();
+	   	return true;
+  	}
+  	return false;
+}
+
+function disconnect()
+{
+  	if( evaltF())
+  	{
+	  	document.wan_form.submit();
+		return true;
+  	}
+   	return false;
+}
+
+function submitF()
+{
+  	if( evaltF())
+  	{
+      	alert(ur5);
+	  	return true;
+  	}
+  	
+   	return false;
+}
+function logoutF()
+{
+	document.wan_form.logout.value=1;
+	document.wan_form.submit();
+	return true;
+}
+function nextF()
+{
+    document.wan_form.webpage.value="wan_dns.html";
+    if(!evaltF())
+    {
+        document.wan_form.webpage.value="wan_l2tp.html";
+        return false;
+    }
+   	return true;
+}
+function toggleAutoDLS()
+{
+  	if(document.wan_form.l2tp_idle_disconnect_box.checked)
+  	{
+     		document.wan_form.idle_interval.disabled = false;
+  	}
+  	else
+  	{
+  		document.wan_form.idle_interval.disabled = true;
+    }
+}
+
+function clean_myip()
+{
+	if(document.wan_form.wan_proto.value!="l2tp")
+	{
+		document.wan_form.l2tpmyip1.value="";
+		document.wan_form.l2tpmyip2.value="";
+		document.wan_form.l2tpmyip3.value="";
+		document.wan_form.l2tpmyip4.value="";
+		document.wan_form.l2tpsubnet1.value="";
+		document.wan_form.l2tpsubnet2.value="";
+		document.wan_form.l2tpsubnet3.value="";
+		document.wan_form.l2tpsubnet4.value="";
+	}
+}
+
+
+function setIP()
+{
+    var cf = document.forms[0];
+ 
+    cf.l2tpmyip1.disabled = cf.l2tpmyip2.disabled = cf.l2tpmyip3.disabled = cf.l2tpmyip4.disabled =
+    cf.l2tpsubnet1.disabled = cf.l2tpsubnet2.disabled = cf.l2tpsubnet3.disabled = cf.l2tpsubnet4.disabled =
+    (cf.ip_mode.selectedIndex == 0)
+}
+
+-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="dataToVisible(document.wan_form);clean_myip();toggleAutoDLS();setIP();">
+<form id="wan_form" name="wan_form" method=post action="apply_40.html">
+<input type=hidden name="webpage" value=wan_l2tp.html>
+<input type=hidden name="action" value="">
+<input type=hidden name="wan_access" value="">
+<input type=hidden name="wan_proto" value="">
+<input type=hidden name="et1macaddr" value="">
+<input type=hidden name="m_wan_hostname" value="" >
+
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(wpp16);</script><br><br>
+<table border=0 class="copy_1">
+<tr><td width=5>&nbsp;</td>
+<td><table width=600 border="0" cellspacing="5" cellpadding="0" align=left class="copy_1">
+<tr><td width="36">
+<td><a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#l2tp','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script language="javascript" type="text/javascript">dw(sm1);</script></a><br><br></td>
+</tr>
+<tr><td width="36">&nbsp;</td><td width="174" class="bold_body"><script language="javascript" type="text/javascript">dw(wpp17);</script> &gt;</td>
+<td width="235" class="plaintext_bold"><input type="text" name="l2tp_username" size="25" maxlength="63" value=""></td>
+</tr><tr><td width="36">&nbsp;</td><td width="174" class="bold_body"><script language="javascript" type="text/javascript">dw(wpp18);</script> &gt;</td>
+	<td class="plaintext_bold" width="235">
+	<input type="password" name="l2tp_password" size="25" maxlength="63" value="">
+	</td>
+	</tr><tr><td width="36" height="18">&nbsp;</td><td height="18" width="174" class="bold_body"><script language="javascript" type="text/javascript">dw(wpp4);</script> &gt;</td>
+	<td class="plaintext_bold" height="18" width="235">
+	<input type="password" name="l2tp_password_2" size="25" maxlength="63" value=""></td>
+	</tr>
+
+	<tr>
+	<td width="36">&nbsp;</td><td width="174" class="bold_body"><script language="javascript" type="text/javascript">dw(wppa5);</script> &gt;</td>
+	<td class="plaintext_bold" width="235">
+	<input type="text" name="wan_hostname" size="25" maxlength="39" value=""></td>
+	</tr>
+	<tr><td width="36" height="27">&nbsp;</td>
+	<td width="174" height="27" class="bold_body"><script language="javascript" type="text/javascript">dw(wppa6);</script> &gt;</td><td class="plaintext_bold" width="280" height="27">
+	<input type="text" name="l2tpserviceip1" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpserviceip2" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpserviceip3" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpserviceip4" size="3" maxlength="3" value="">
+	</td></tr>
+	<tr>
+	<td width="36">&nbsp;</td><td width="174" class="bold_body"><script language="javascript" type="text/javascript">dw(wpp20);</script> &gt;</td>
+	<td class="plaintext_bold" width="235">
+	        <select name="ip_mode" onChange="setIP();">
+                  <option value="0">
+                  <script language="javascript" type="text/javascript">dw(wpp21);</script>
+                  </option>
+                  <option value="1">
+                  <script language="javascript" type="text/javascript">dw(wpp22);</script>
+                  </option>
+                </select>
+        </td>
+	</tr>
+	<tr><td width="36" height="27">&nbsp;</td><td width="174" height="27" class="bold_body"><script language="javascript" type="text/javascript">dw(wppa7);</script> &gt;</td>
+	<td class="plaintext_bold" width="280" height="27">
+	<input type="text" name="l2tpmyip1" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpmyip2" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpmyip3" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpmyip4" size="3" maxlength="3" value="">
+	</td></tr>
+	<tr><td width="36" height="27">&nbsp;</td><td width="174" height="27" class="bold_body"><script language="javascript" type="text/javascript">dw(wppa8);</script> &gt;</td>
+	<td class="plaintext_bold" width="280" height="27">
+	<input type="text" name="l2tpsubnet1" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpsubnet2" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpsubnet3" size="3" maxlength="3" value="">.
+	<input type="text" name="l2tpsubnet4" size="3" maxlength="3" value="">
+	</td></tr>
+
+	<tr><td width="5">&nbsp;</td><td class="body" colspan="2">
+	<input type="checkbox" name="l2tp_idle_disconnect_box" value="l2tp_idle" onClick="toggleAutoDLS();"  ><b><script language="javascript" type="text/javascript">dw(wppa10);</script>
+	<input type="text" name="idle_interval" size="10" maxlength="2" value="5"><script language="javascript" type="text/javascript">dw(wppa11);</script></b>&nbsp;<a class="more" href="javascript:void(0);" class="plaintext_bold" onClick="window.open('glossary.html#disconnect','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"><script language="javascript" type="text/javascript">dw(sm1);</script></a></td>
+	</tr>
+	<tr><td width="36">&nbsp;</td><td class="formText" width="409" colspan="2">
+	<div align="center"><a class="more" href="wan_dns.html" onClick="return nextF();"><script language="javascript" type="text/javascript">dw(wppa12);</script></a></div>&nbsp;</td>
+	</tr><tr>
+	<td width="36">&nbsp;</td><td class="plaintext_bold"><div align="right"></div></td>
+	<td align="center"><br><br>
+	<script language="javascript" type="text/javascript">dw('<input type="button" name="cancel" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;" onClick="location.href=\'wan_l2tp.html\'; return true;">&nbsp;&nbsp;');
+	dw('<input type="submit" name="itsbutton1" value="');dw(btn2);dw('" style="{width:160px;}" class="submitBtn" onClick="return submitF();"></td>');</script>
+	</tr></table>
+	</td></tr>
+	</table></td>
+<input type="hidden" name="h_ip_mode" value="0"> 	
+<input type="hidden" name="h_l2tp_idle_disconnect_box" value="disable">  
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

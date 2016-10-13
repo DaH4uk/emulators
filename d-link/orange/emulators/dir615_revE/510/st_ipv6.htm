@@ -1,0 +1,342 @@
+<html><head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script>
+
+	function set_mac_info()
+	{
+		var temp_dhcp_list = get_by_id("dhcp_list").value.split("@");
+		
+		for (var i = 0; i < temp_dhcp_list.length; i++)
+		{	
+			var temp_data = temp_dhcp_list[i].split("/");
+			if(temp_data.length != 0)
+			{		
+				if(temp_data.length > 1)
+				{
+					var temp_ipv6_address = temp_data[2].split(",");
+					if(temp_ipv6_address.length > 1)
+					{
+						for(var j = 0; j < temp_ipv6_address.length;j++)
+						{
+							if(j > 0)
+							{
+								temp_data[1]="";
+								temp_data[0]="";
+							}
+							document.write("<tr><td>" + temp_data[1] + "</td><td>" + temp_data[0] + "</td><td>" + temp_ipv6_address[j] + "</td></tr>")
+						}
+					}
+					else
+						document.write("<tr><td>" + temp_data[1] + "</td><td>" + temp_data[0] + "</td><td>" + temp_data[2] + "</td></tr>")
+				}
+			}
+		}
+	}
+	
+function replace_null_to_none(item){
+	if(item=="(null)")
+		item="none";
+	return item;
+}
+
+
+function xmldoc(){
+	var ipv6_wan_type;
+	var ipv6_network_status;
+	var ipv6_network_status_flag;
+	var ipv6_wan_ip;
+	var ipv6_wan_ip_list;
+	var ipv6_wan_gw;
+	var ipv6_lan_ip;
+	var ipv6_primary_dns;
+	var ipv6_secondary_dns;
+	var link_local;
+	var ipv6_sel_wan = "link_local"; 
+  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) { 	
+	ipv6_wan_type = document.getElementById("connection_ipv6_type");
+	ipv6_network_status = document.getElementById("network_ipv6_status");
+	ipv6_wan_ip = document.getElementById("wan_ipv6_addr");
+	ipv6_wan_gw = document.getElementById("wan_ipv6_gw");
+	ipv6_lan_ip = document.getElementById("lan_ipv6_addr");
+	ipv6_primary_dns = document.getElementById("primary_ipv6_dns");
+	ipv6_secondary_dns = document.getElementById("secondary_ipv6_dns");
+	link_local = document.getElementById("lan_link_local_ip");
+
+	((ipv6_network_status_flag=xmlhttp.responseXML.getElementsByTagName("ipv6_wan_network_status")[0].firstChild.nodeValue)=="connect") ? ipv6_network_status.innerHTML="Connected" : ipv6_network_status.innerHTML="Disconnected";	
+	(ipv6_network_status_flag=="connect")? ipv6_wan_ip_list =replace_null_to_none(xmlhttp.responseXML.getElementsByTagName("ipv6_wan_ip")[0].firstChild.nodeValue).split(","):ipv6_wan_ip_list = "none".split(",");
+	ipv6_lan_ip.innerHTML = replace_null_to_none(xmlhttp.responseXML.getElementsByTagName("ipv6_lan_ip_global")[0].firstChild.nodeValue);
+	link_local.innerHTML = replace_null_to_none(xmlhttp.responseXML.getElementsByTagName("ipv6_lan_ip_local")[0].firstChild.nodeValue);
+	ipv6_wan_gw.innerHTML = replace_null_to_none(xmlhttp.responseXML.getElementsByTagName("ipv6_wan_default_gateway")[0].firstChild.nodeValue);
+  	(ipv6_network_status_flag=="connect")? ipv6_primary_dns.innerHTML = replace_null_to_none(xmlhttp.responseXML.getElementsByTagName("ipv6_wan_primary_dns")[0].firstChild.nodeValue):ipv6_primary_dns.innerHTML ="none";
+  	(ipv6_network_status_flag=="connect")? ipv6_secondary_dns.innerHTML = replace_null_to_none(xmlhttp.responseXML.getElementsByTagName("ipv6_wan_secondary_dns")[0].firstChild.nodeValue):ipv6_secondary_dns.innerHTML = "none";	
+	
+	for (var i = 0; i < ipv6_wan_ip_list.length; i++){
+		if(i==0)
+			ipv6_wan_ip.innerHTML = ipv6_wan_ip_list[i];
+		else{
+			ipv6_wan_ip.innerHTML +="<br>&nbsp;";
+			ipv6_wan_ip.innerHTML += ipv6_wan_ip_list[i];
+		}		
+	}
+		
+	tr_network_ipv6_status.style.display="";
+	tr_wan_ipv6_addr.style.display="";
+	tr_lan_ipv6_addr.style.display="";
+	tr_wan_ipv6_gw.style.display="none";	
+	tr_primary_ipv6_dns.style.display="";
+	tr_secondary_ipv6_dns.style.display="";
+	
+	if(ipv6_sel_wan =="ipv6_static"){
+			ipv6_wan_type.innerHTML = "Static IPv6";
+			tr_wan_ipv6_gw.style.display="";
+	}else if(ipv6_sel_wan =="ipv6_dhcp"){
+			ipv6_wan_type.innerHTML = "DHCPv6";
+	}else if(ipv6_sel_wan =="ipv6_pppoe"){
+		  ipv6_wan_type.innerHTML = "IPv6 over PPPoE";
+	}else if(ipv6_sel_wan =="ipv6_6in4"){
+		  ipv6_wan_type.innerHTML = "IPv6 in IPv4 Tunnel";
+		  tr_wan_ipv6_gw.style.display="";
+	}else if(ipv6_sel_wan =="ipv6_6to4"){
+		  ipv6_wan_type.innerHTML = "6 to 4";
+	}else if(ipv6_sel_wan =="link_local"){
+		  tr_network_ipv6_status.style.display="none";
+		  tr_wan_ipv6_addr.style.display="none";		  
+		  tr_lan_ipv6_addr.style.display="none";
+		  tr_primary_ipv6_dns.style.display="none";
+		  tr_secondary_ipv6_dns.style.display="none";			  
+		  ipv6_wan_type.innerHTML = "Link Local";
+	}else if(ipv6_sel_wan =="ipv6_stateless"){
+		  ipv6_wan_type.innerHTML = "Stateless Autoconfiguration";
+	}	
+  }  	
+}
+
+	
+
+function get_File() {
+	xmlhttp = createRequest(); 
+	if(xmlhttp){
+	var url;
+		var lan_ip="192.168.0.1";
+		var temp_cURL = document.URL.split("/");
+		var mURL = temp_cURL[2];
+		if(mURL == lan_ip){
+				url="http://"+lan_ip+"/device.xml=ipv6_status";
+		}else{
+				url="http://"+mURL+"/device.xml=ipv6_status";
+		}
+		
+	xmlhttp.onreadystatechange = xmldoc; 
+	xmlhttp.open("GET", url, true); 
+	xmlhttp.send(null); 
+	}
+	setTimeout("get_File()",5000);
+}
+	
+
+function createRequest() {
+	var XMLhttpObject = null;
+	try {
+		XMLhttpObject = new XMLHttpRequest();
+	} catch (e) {
+		try {
+			XMLhttpObject = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+				XMLhttpObject = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e) {
+				return null;
+			}
+		}
+	}
+	return XMLhttpObject;
+}		
+</script>
+
+<style type="text/css">
+<!--
+.style3 {font-size: 12px}
+.style4 {
+	font-size: 11px;
+	font-weight: bold;
+}
+.style5 {font-size: 11px}
+-->
+</style>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575"><input id="dhcp_list" name="dhcp_list" value="" 
+type="hidden">
+
+<form id="form1" name="form1" method="post" action="http://www.support.dlink.com/emulators/dir615_revE/510/st_device.cgi">
+
+
+	<input id="ipv6_6to4_tunnel_address" name="ipv6_6to4_tunnel_address" 
+maxlength="80" size="80" value="2002:c0a8:017d::c0a8:017d" type="hidden">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td 
+id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavoff" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavon" height="29"><a
+ href="st_device.htm" onClick="return jump_if();">Status</a></td><td
+ id="topnavoff" height="29"><a href="support_men.htm"
+ onclick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td id="sidenav_container">
+							<div id="sidenav"><ul><li><div><a 
+href="st_device.htm" onClick="return jump_if();">Device
+ Info</a></div></li><li><div><a href="st_log.htm" 
+onclick="return jump_if();">Logs</a></div></li><li><div><a 
+href="st_stats.htm" onClick="return jump_if();">Statistics</a></div></li><li><div><a
+ href="internet_sessions.htm" onClick="return 
+jump_if();">Internet Sessions</a></div></li><li><div><a 
+href="st_routing.htm" onClick="return jump_if();">Routing
+ Table</a></div></li><li><div><a 
+href="st_wireless.htm" onClick="return jump_if();">Wireless</a></div></li><li><div
+ id="sidenavoff">IPv6</div></li></ul></div>
+							<div id="m17n_div" align="center"></div>
+						</td>			
+					</tr>
+				</tbody></table>			
+			</td>
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">
+					<!-- === BEGIN MAINCONTENT === -->
+				  	<div id="box_header"> 
+						<h1 style="text-transform: none;">IPv6 Network Information</h1>
+						All of your IPv6 Internet and network connection details are 
+displayed on this page.
+						<br>
+						<br>
+				  	</div>
+				  	<div class="box">
+						<h2 style="text-transform: none;">IPv6 Connetcion Information</h2>
+						<table border="0" cellpadding="1" cellspacing="1" width="525">
+							<tbody><tr>
+								<td class="duple" align="right" nowrap="nowrap" width="340">IPv6
+ Connection Type :</td>
+								<td width="340">&nbsp;
+									<span id="connection_ipv6_type" nowrap="">Link Local</span>
+								</td>
+							</tr>
+							<tr style="display: none;" id="tr_network_ipv6_status">
+								<td class="duple" align="right" nowrap="nowrap">Network Status :</td>
+								<td width="340">&nbsp;
+								<span id="network_ipv6_status" nowrap="">Disconnected</span>
+								</td>
+							</tr>
+							<tr style="display: none;" id="tr_wan_ipv6_addr" x="">
+								<td class="duple" align="right" nowrap="nowrap">WAN IPv6 Address
+ :</td>
+								<td width="340">&nbsp;
+								<span id="wan_ipv6_addr" nowrap="">none</span>
+								</td>
+							</tr>
+							<tr style="display: none;" id="tr_wan_ipv6_gw">
+								<td class="duple" align="right" nowrap="nowrap">IPv6 Default 
+Gateway :</td>
+								<td width="340">&nbsp;
+								<span id="wan_ipv6_gw" nowrap="">none</span>
+								</td>
+							</tr>
+							<tr style="display: none;" id="tr_lan_ipv6_addr">
+								<td class="duple" align="right" nowrap="nowrap">LAN IPv6 Address
+ :</td>
+								<td width="340">&nbsp; 
+								<span id="lan_ipv6_addr" nowrap="">none</span>
+								</td>
+							</tr>
+							<tr id="tr_lan_link_local_ip">
+								<td class="duple" align="right" nowrap="nowrap">LAN IPv6 
+Link-Local Address :</td>
+								<td width="340">&nbsp;
+								<span id="lan_link_local_ip" nowrap=""> 
+fe80::226:5aff:fef3:7edd/64</span>
+								</td>
+							</tr>
+							<tr style="display: none;" id="tr_primary_ipv6_dns">
+								<td class="duple" align="right" nowrap="nowrap">Primary DNS 
+Address :</td>
+								<td width="340">&nbsp;
+								<span id="primary_ipv6_dns" nowrap="">none</span>
+								</td>
+							</tr>
+							<tr style="display: none;" id="tr_secondary_ipv6_dns">
+								<td class="duple" align="right" nowrap="nowrap">Seccondary DNS 
+Address :</td>
+								<td width="340">&nbsp;
+								<span id="secondary_ipv6_dns" nowrap="">none</span>
+								</td>
+							</tr>
+						</tbody></table>
+				  	</div>
+										
+				  <div class="box">
+					  <h2 style="text-transform: none;">LAN IPv6 Computers</h2>
+						  <table bgcolor="#dfdfdf" border="1" bordercolor="#ffffff" 
+cellpadding="2" cellspacing="1" width="525">
+						  	<tbody><tr>
+								<td>Name (if any)</td>
+								<td>MAC</td>
+								<td>IPv6 Address</td>
+							</tr>
+							
+						  </tbody></table>
+				  </div>
+				  <!-- === END MAINCONTENT === -->
+				</div>				
+			</td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bgcolor="#ffffff" border="0" cellpadding="2" cellspacing="0">
+					<tbody><tr>
+					  <td id="help_text">
+					  </td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table></form>
+
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+</body></html>

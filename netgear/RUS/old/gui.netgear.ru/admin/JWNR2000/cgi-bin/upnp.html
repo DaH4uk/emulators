@@ -1,0 +1,97 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../upnp.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_upnp');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#upnp.html" target=formframe>
+<input type=hidden name=submit_flag value="upnp">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(upnp_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+function loadvalue()
+{
+var cf=document.forms[0];
+if('1' == "1")
+cf.UPnP.checked =true;
+else
+cf.UPnP.checked =false;
+click_upnp('1800','4');
+}
+</script>
+<input type="hidden" name="upnp_onoff">
+<input type="hidden" name="changetime">
+<input type="hidden" name="hidden_advertime" value="">
+<input type="hidden" name="hidden_timetolive" value="">
+<tr><script>document.write(hd2);</script><input type="checkbox" name="UPnP" value="UPnP" onClick="click_upnp('1800','4');"><a tabindex=-1 href="javascript:loadhelp('_upnp','turnon')"><b><script>document.write(adva_upnp_on);</script> <script>document.write(ba);</script></td></tr>
+<tr>
+<script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_upnp','adv')"><b><script>document.write(adva_upnp_advertime);</script> <script>document.write(ba);</script><script>document.write(adva_upnp_min);</script></td>
+ <script>document.write(hd);</script> <input type="text" name="AdverTime" size="8" maxlength="4" onKeyPress="return getkey('num', event)"></td>
+</tr>
+<tr>
+ <script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_upnp','live')"><b><script>document.write(adva_upnp_timetolive);</script><script>document.write(ba);</script><script>document.write(adva_upnp_hops);</script></td>
+ <script>document.write(hd);</script> <input type="text" name="TimeToLive" size="8" maxlength="3" onKeyPress="return getkey('num', event)"></td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_upnp','table')"><b><script>document.write(adva_upnp_table);</script> <script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+ <TR>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(adva_upnp_act);</script></span></TD>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(adva_upnp_pro);</script></span></TD>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(adva_upnp_int);</script></span></TD>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(adva_upnp_ext);</script></span></TD>
+  <script>document.write(hd_center);</script><span class="subhead"><script>document.write(adva_upnp_ip);</script></span></TD>
+ </TR>
+<script>
+var upnp_list_array = new Array(); 
+var upnp_list="";
+var upnp_list_array=upnp_list.split('@#$&*! ');
+var upnp_active_array = new Array(); 
+var upnp_protocal_array = new Array(); 
+var upnp_int_array = new Array(); 
+var upnp_ext_array = new Array(); 
+var upnp_ip_array = new Array(); 
+var p=0;
+if(upnp_list != "")
+for(i=0;i<upnp_list_array.length;i++)
+{
+var each_info=upnp_list_array[i].split(';');
+upnp_active_array[p]=each_info[0];
+upnp_protocal_array[p]=each_info[1];
+upnp_int_array[p]=each_info[2];
+upnp_ext_array[p]=each_info[3];
+upnp_ip_array[p]=each_info[4];
+p++;
+}
+if( upnp_list != "" )
+for(i=0;i<upnp_list_array.length;i++)
+{
+document.write(hd_center+upnp_active_array[i]+'</td>'+hd_center+upnp_protocal_array[i]+'</td>'+hd_center+upnp_int_array[i]+'</td>'+hd_center+upnp_ext_array[i]+'</td>'+hd_center+upnp_ip_array[i]+'</td></tr>');
+}
+</script> 
+</table>
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+ <script>document.write(hd2_center+'<input type="submit" name="cmd" value="'+apply_mark+'" onClick="return checkupnp(document.forms[0]);">');</script>
+<script>document.write("<input type='reset' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"upnp.html\";'>");</script>
+<script>document.write("<input type='button' name='refresh' value='"+refresh_mark+"' onClick='location.href=\"upnp.html\";'>");</script>
+ </td>
+ </tr>
+</table>
+</FORM>
+</body>
+</html>

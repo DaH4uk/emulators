@@ -1,0 +1,89 @@
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+<body onLoad="loadhelp('_attach_device');" bgcolor=#ffffff>
+<form method="post" action="#" >
+<input type=hidden name=submit_flag value="">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(attach_device);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<tr>
+<script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+<tr>
+<script>document.write(hd_center);</script> <span class="subhead"># </span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(wds_ipaddr);</script></span> </td>
+<script>
+if ( ''=='JWNB2100-1ZGNLS' ){
+document.write(hd_center+"<span class='subhead'>"+lan_mark_name+"</span></td>")
+document.write(hd_center+"<span class='subhead'>"+qos_mac+"</span></td></tr>")
+}else{
+document.write(hd_center+"<span class='subhead'>"+qos_mac+"</span></td>")
+document.write(hd_center+"<span class='subhead'>"+lan_mark_name+"</span></td></tr>")
+}
+var cf = document.forms[0];
+var attach_device_list="192.168.1.2 00:00:00:00:00:00 NETGEAR @#$&*!";
+var attach_array=attach_device_list.split(' @#$&*! ');
+var attach_ip_array = new Array(); 
+var attach_mac_array = new Array(); 
+var attach_name_array = new Array(); 
+var p=0;
+if(attach_device_list != "")
+for(i=0;i<attach_array.length;i++)
+{
+var each_info=attach_array[i].split(' ');
+if(each_info.length>2)
+{
+attach_ip_array[p]=each_info[0];
+attach_mac_array[p]=each_info[1];
+if (each_info[2].length>0)
+attach_name_array[p]=each_info[2];
+else
+attach_name_array[p]="----";
+}
+else
+{
+attach_ip_array[p]=each_info[0];
+attach_mac_array[p]=each_info[1];
+attach_name_array[p]="----";
+}
+if(attach_ip_array[p] == "<unknown>")
+attach_ip_array[p]="&lt;unknown&gt;"
+if(attach_mac_array[p] == "<unknown>")
+attach_mac_array[p]="&lt;unknown&gt;"
+if(attach_name_array[p] == "<unknown>")
+attach_name_array[p]="&lt;unknown&gt;"
+p++;
+}
+if ( ''=='JWNB2100-1ZGNLS' ){
+if( attach_device_list != "" )
+for(i=0;i<attach_array.length;i++)
+document.write(hd_center+'<span class="subhead">'+eval(i+1)+'</span></td>'+hd_center+attach_ip_array[i]+'</td>'+
+hd_center+attach_name_array[i]+'</td>'+hd_center+attach_mac_array[i]+'</td></tr>');
+}else{
+if( attach_device_list != "" )
+for(i=0;i<attach_array.length;i++)
+document.write(hd_center+'<span class="subhead">'+eval(i+1)+'</span></td>'+hd_center+attach_ip_array[i]+'</td>'+
+hd_center+attach_mac_array[i]+'</td>'+hd_center+attach_name_array[i]+'</td></tr>');
+}
+</script>
+</table>
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<script>document.write(hd_center+"<input type='button' value='"+refresh_mark+"' onClick='location.href=\"attach_device_wait.html\";'></td></tr>");</script>
+</table>
+</form>
+</body>
+</html>

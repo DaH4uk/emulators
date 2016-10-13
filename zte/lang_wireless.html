@@ -1,0 +1,488 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/wireless_setup.js"></script>
+    <script type="text/javascript" src="./js/boot.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "1";
+        var G_Menu = "wireless";
+        var G_Page = "wireless_setup";
+        var G_SubPage = "-";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = '' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = uiGetPageUrl();
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('0' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+
+
+        var W_Path = ":InternetGatewayDevice.X_TWSZ-COM_Radio.1.";
+        var W_Enable = "1";
+        var W_Channel = "8";
+        var W_Standard = "bgn";
+        var W_RegulatoryDomain = "RU"; //country
+        var W_AutoChannelEnable = "0";
+        var W_OperatingChannelBandwidth = "0";
+        var W_TransmitPower = "100";
+        var W_X_TWSZCOM_MIMO = "1";
+        var W_MaxBitRate = "Auto";
+        var W_GuardInterval = "1";
+
+
+
+        //无线总开关
+        //var G_Wireless_Enable = "1";
+        //无线配置是否已完成
+        var G_ReconfigFinishFlag = "1";
+        //等待页面加载
+        //var G_Reloading = "</get :InternetGatewayDevice.X_TWSZ-COM_WLAN.ReloadDriverFinished/>";
+
+        function uiSubmit() {
+            var VAP_Node = $('INPUT_Enable', 'SELECT_Standard', 'SELECT_Channel', 'SELECT_Speed', 'SELECT_Bandwidth', 'SELECT_Power', 'SELECT_CurrentCountry');
+            $H({
+                ':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Enable': VAP_Node[0].checked ? 1 : 0,
+                'var:menu': 'wireless',
+                'var:page': 'wireless_setup',
+                'getpage': 'html/index.html',
+                'errorpage': 'html/index.html',
+                'obj-action': 'set',
+                'var:errorpage': 'wireless_setup',
+                'var:CacheLastData': ViewState.Save()
+            }, true);
+
+            if (VAP_Node[0].checked) {
+                $F(':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.Enable', '1');
+                $F(W_Path + 'Channel', VAP_Node[2].value);
+                if (VAP_Node[2].value == 0) {
+                    $F(W_Path + 'AutoChannelEnable', '1');
+                }
+                else {
+                    $F(W_Path + 'AutoChannelEnable', '0');
+                }
+            }
+            else {
+                $F(':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.Enable', '0');
+                $F(':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_WDSConfiguration.Enable', '0');
+                $F(W_Path + 'Channel', '0');
+                $F(W_Path + 'AutoChannelEnable', '1');
+            }
+
+
+            $F(W_Path + 'Standard', VAP_Node[1].value);
+            //$F(W_Path + 'Channel',VAP_Node[2].value);
+            $F(W_Path + 'MaxBitRate', VAP_Node[3].value);
+            $F(W_Path + 'TransmitPower', VAP_Node[5].value);
+            $F(W_Path + 'RegulatoryDomain', VAP_Node[6].value);
+
+            if (VAP_Node[1].value == 'bgn' || VAP_Node[1].value == 'ng') {
+                $F(W_Path + 'OperatingChannelBandwidth', VAP_Node[4].value);
+            }
+            $F(W_Path + 'GuardInterval', Form.Checkbox('INPUT_Enable_shortGI'));
+
+            $('uiPostForm').submit();
+        }
+
+        function uiOnload() {
+            //控制页面上的显示
+            $('SELECT_Standard').value = W_Standard;
+            Form.Checkbox('INPUT_Enable_shortGI', W_GuardInterval);
+            if ($('SELECT_Standard').selectedIndex == -1)
+                $('SELECT_Standard').selectedIndex = 2;
+            watchModel(W_OperatingChannelBandwidth);
+            //统一赋值
+            setJSONValue({
+                'INPUT_Enable': W_Enable,
+                //		'SELECT_Standard' : G_wireless[0][1],
+                'SELECT_Channel': W_Channel,
+                'SELECT_Power': W_TransmitPower,
+                'SELECT_Speed': W_MaxBitRate
+            });
+
+            //假如无线正在配置,界面不能进行任何操作
+            ebCtrlDisable();
+            // 返回true G_IsLanOrWan=="lan" 是lan侧 否则返回flase G_IsLanOrWan=="wan" wan侧  
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "lan") //pxm~~~~
+            {
+                var _inputs = document.getElementsByTagName("INPUT");
+                for (var i = 0; i < _inputs.length; i++) {
+                    _inputs[i].disabled = true;
+                }
+                _inputs = document.getElementsByTagName("SELECT");
+                for (var i = 0; i < _inputs.length; i++) {
+                    _inputs[i].disabled = true;
+                }
+            }
+
+            //dcb+ 2012/09/30 hide rate option
+            $('rate').style.display = "none";
+        }
+
+        function watchModel() {
+            var Standard = $('SELECT_Standard').value || W_Standard;
+            var Bandwidth = $('bandwidth');
+
+            createCurrentCountry();
+            createChannel();
+            if (Standard == 'bgn' || Standard == 'ng') {
+                var Index = arguments[0] || W_OperatingChannelBandwidth;
+                $('SELECT_Bandwidth').value = Index;
+                Bandwidth.style.display = "block";
+                $('shortgi').style.display = "block";
+                createRate(Index);
+            }
+            else {
+                Bandwidth.style.display = "none";
+                $('shortgi').style.display = "none";
+                createRate();
+            }
+        }
+
+        //creat channel listbox
+        function createChannel() {
+            var new_options, new_values;
+            var _node = $('SELECT_Standard', 'SELECT_CurrentCountry');
+
+            switch (_node[1].value) {
+                case 'AR':
+                case 'CA':
+                case 'US':
+                    {
+                        new_options = ['Auto', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+                        new_values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+                        break;
+                    }
+                case 'JP2':
+                    {
+                        if (_node[0].value == 'b') {
+                            new_options = ['Auto', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'];
+                            new_values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'];
+                            break;
+                        }
+                    }
+                default:
+                    {
+                        new_options = ['Auto', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
+                        new_values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
+                    }
+            }
+            $S('SELECT_Channel', new_options, new_values);
+            $('SELECT_Channel').value = W_Channel || '0';
+        }
+
+        //creat rate listbox
+        function createRate() {
+            var Standard = $('SELECT_Standard').value || W_Standard;
+            if (arguments[0] != undefined) {
+                $("SELECT_Bandwidth").value = arguments[0];
+            }
+            var shortgi = Form.Checkbox('INPUT_Enable_shortGI');
+
+            var rate_table = [];
+            rate_table['b'] = ['11'];
+            rate_table['bg'] = ['11', '54'];
+
+            if (Standard == 'bgn') {
+                var band_index = $("SELECT_Bandwidth").value == '20' ? 0 : 1;
+                if (W_X_TWSZCOM_MIMO == '0') {
+                    var RateNss1 = [
+                        // 20M bandwidth max rate
+                        [
+                            ['65'], //GI=800
+                            ['72.2'] //GI=400
+                        ],
+                        // 40M bandwidth max rate
+                        [
+                            ['135'], //GI=800
+                            ['150'] //GI=400
+                        ]
+                    ];
+                    rate_table['bgn'] = rate_table['bg'].concat(RateNss1[band_index][shortgi]);
+
+                }
+                else {
+                    var RateNss2 = [
+                        // 20M bandwidth max rate
+                        [
+                            ["130"], //GI=800
+                            ["144.4"] //GI=400
+                        ],
+                        // 40M bandwidth max rate
+                        [
+                            ["270"], //GI=800
+                            ["300"] //GI=400
+                        ]
+                    ];
+                    rate_table['bgn'] = rate_table['bg'].concat(RateNss2[band_index][shortgi]);
+                }
+            }
+            OptionsValue = ['Auto'].concat(rate_table[Standard]);
+            $S('SELECT_Speed', OptionsValue);
+        }
+
+        function createCurrentCountry() {
+            var _text = ['RUSSIA', 'CHINA', 'AMERICA', 'AUSTRALIA', 'CANADA', 'FRANCE', 'GERMANY', 'INDIA', 'JAPAN', 'ARGENTINA'],
+                _value = ['RU', 'CN', 'US', 'AU', 'CA', 'FR', 'DE', 'IN', 'JP2', 'AR'];
+
+            $S('SELECT_CurrentCountry', _text, _value);
+            $('SELECT_CurrentCountry').value = W_RegulatoryDomain;
+        }
+
+        function ebCtrlDisable() {
+            if (G_ReconfigFinishFlag == "1") {
+                return false;
+            }
+
+            var inputs = document.getElementsByTagName("INPUT");
+            var selects = document.getElementsByTagName("SELECT");
+            //input
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].disabled = true;
+            }
+            //select
+            for (var i = 0; i < selects.length; i++) {
+                selects[i].disabled = true;
+            }
+
+            $("Content").style.color = "#AAAAAA";
+            $("pointTo").src = '/html/skin/loading.gif';
+            $('lang_title').innerHTML = data_language.dynamic.wireless_modifing;
+            $("lang_title").style.color = "#DD344F";
+
+            //自动刷新等待配置完成
+            setTimeout('uiPageRefresh()', 3000);
+        }
+
+        function dealWithError() {
+            if (G_Error != 1) {
+                return false;
+            }
+
+            var arrayHint = [];
+            arrayHint['WirelessEnable'] = 'INPUT_Enable';
+            arrayHint['Standard'] = 'SELECT_Standard';
+            arrayHint['OperatingChannelBandwidth'] = 'SELECT_Bandwidth';
+            arrayHint['MaxBitRate'] = 'SELECT_Speed';
+            arrayHint['TransmitPower'] = 'SELECT_Power';
+            arrayHint['Channel'] = 'SELECT_Channel';
+            arrayHint['RegulatoryDomain'] = 'SELECT_CurrentCountry';
+
+            dealErrorMsg(arrayHint, G_Error_Msg);
+        }
+
+        addListeners(uiOnload, dealWithError);
+
+        //]]>
+        //���������Ҽ�
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+                <li class="HidMark"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="on"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="HidMark"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('0' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "/cgi-bin/webproc";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action="/cgi-bin/webproc"></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "/cgi-bin/webproc?logout";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_wireless" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+
+
+            <!-- setup -->
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+            <div class="M1">
+                <p id="up"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wireless&var:page=wireless_setup" id="lang_wireless_setup">无线基本配置</a></p>
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wireless&var:page=multi_ssid" id="lang_wireless_vap">VAP配置</a></p>
+
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wireless&var:page=wireless_advanced" id="lang_wireless_advanced">无线高级配置</a></p>
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wireless&var:page=wireless_repeater" id="lang_wireless_repeater">无线中继</a></p>
+            </div>
+
+            <!-- management -->
+
+        </div>
+
+        <!--  content -->
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go('wireless_setup');"><img id="pointTo" src="/html/skin/helpBook.gif" alt="Help" /></a>
+                <span id="lang_title">无线基本配置</span>
+            </div>
+            <div class="Embody">
+                <div class="div_left" id="lang_enable">启用无线</div>
+                <div class="div_middle">&nbsp;<input type="checkbox" name="INPUT_Enable" id="INPUT_Enable"></div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_mode">无线模式</div>
+                <div class="div_middle">&nbsp;<select name="SELECT_Standard" id="SELECT_Standard" onChange="watchModel();">
+					<option value="b">802.11B </option>
+					<!--<option value="g">802.11G </option>-->
+					<option value="bg">802.11BG </option>
+					<option value="bgn">802.11BGN </option>
+					<!--<option value="ng">802.11N&G </option>-->
+               </select></div>
+                <div class="div_right">&nbsp;</div>
+                <!-- 带宽 -->
+                <div id="bandwidth">
+                    <div class="div_left" id="lang_bandWidth">带宽</div>
+                    <div class="div_middle">&nbsp;<select name="SELECT_Bandwidth" id="SELECT_Bandwidth" onChange="createRate();">
+						<!--<option value="0">Auto</option>  -->
+							<option value="20">20</option>
+							<option value="40">40</option>
+							<option value="0">20/40</option>
+						</select> MHZ</div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <div id="rate">
+                    <div class="div_left" id="lang_speed">速率</div>
+                    <div class="div_middle">&nbsp;<select name="SELECT_Speed" id="SELECT_Speed"></select>Mbps</div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <div class="div_left" id="lang_power">功率</div>
+                <div class="div_middle">&nbsp;<select name="SELECT_Power" id="SELECT_Power">
+						<option value="100" selected>100%</option>
+						<option value="80">80%</option>
+						<option value="60">60%</option>
+						<option value="40">40%</option>
+					</select></div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_currentCountry">国家设置</div>
+                <div class="div_middle">&nbsp;<select name="SELECT_CurrentCountry" id="SELECT_CurrentCountry" onChange="createChannel()"><option> </option></select></div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_channel">信道</div>
+                <div class="div_middle">&nbsp;<select name="SELECT_Channel" id="SELECT_Channel"></select></div>
+                <div class="div_right">&nbsp;</div>
+                <div id="shortgi">
+                    <div class="div_left" id="lang_enable_shortGI">Enable ShortGI</div>
+                    <div class="div_middle">&nbsp;<input type="checkbox" name="INPUT_Enable_shortGI" id="INPUT_Enable_shortGI" onclick="createRate();"></div>
+                    <div class="div_right">&nbsp;</div>
+                </div>
+                <div class="div_button do">
+                    <input type="button" name="submit" id="submit" value="提交" onClick="uiSubmit()"> <input type="button" name="refresh" id="refresh" value="刷新" onClick="uiPageRefresh()">
+                </div>
+            </div>
+            <form name="uiPostForm" id="uiPostForm" method="post" action="webproc"></form>
+        </div>
+
+        <!-- if loading and content will not display-->
+        <div id="Loading">
+        </div>
+    </div>
+</body>
+
+</html>

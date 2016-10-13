@@ -1,0 +1,430 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=iso-8859-1" />
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="lang_pack/english.js"></script>
+		<script type="text/javascript" src="lang_pack/language.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/elegant/style.css" />
+		<!--[if IE]><link type="text/css" rel="stylesheet" href="style/elegant/style_ie.css" /><![endif]-->
+		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/effects.js"></script>
+		<script type="text/javascript" src="js/window.js"></script>
+		<script type="text/javascript" src="js/window_effects.js"></script>
+		<link type="text/css" rel="stylesheet" href="style/pwc/default.css" />
+		<link type="text/css" rel="stylesheet" href="style/pwc/ddwrt.css" />
+		<title>DD-WRT (build 16562) - LAN Status</title>
+
+<script type="text/javascript">
+//<![CDATA[
+function deleteLease(val, val2) {
+document.forms[0].ip_del.value = val;
+document.forms[0].mac_del.value = val2;
+document.forms[0].submit_type.value = "delete";
+document.forms[0].change_action.value="gozila_cgi";
+document.forms[0].submit();
+}
+function deletepptp(val) {
+document.forms[0].if_del.value = val;
+document.forms[0].submit_type.value = "deletepptp";
+document.forms[0].change_action.value="gozila_cgi";
+document.forms[0].submit();
+}
+function setPPTPTable() {
+var val = arguments;
+var table = document.getElementById("pptp_table");
+cleanTable(table);
+if(!val.length) {
+var cell = table.insertRow(-1).insertCell(-1);
+cell.colSpan = 5;
+cell.align = "center";
+cell.innerHTML = "- " + share.none + " -";
+return;
+}
+for(var i = 0; i < val.length; i = i + 5) {
+
+var row = table.insertRow(-1);
+row.style.height = "15px";
+
+row.insertCell(-1).innerHTML = val[i]; 
+
+row.insertCell(-1).innerHTML = val[i+1]; 
+row.insertCell(-1).innerHTML = val[i+2]; 
+row.insertCell(-1).innerHTML = val[i+3]; 
+
+var cell = row.insertCell(-1);
+cell.className = "bin";
+cell.title = errmsg.err581;
+eval("addEvent(cell, 'click', function() { deletepptp('" + val[i + 4] + "') })");
+}
+}
+function setPPPOETable() {
+var val = arguments;
+var table = document.getElementById("pppoe_table");
+cleanTable(table);
+if(!val.length) {
+var cell = table.insertRow(-1).insertCell(-1);
+cell.colSpan = 4;
+cell.align = "center";
+cell.innerHTML = "- " + share.none + " -";
+return;
+}
+for(var i = 0; i < val.length; i = i + 4) {
+
+var row = table.insertRow(-1);
+row.style.height = "15px";
+
+row.insertCell(-1).innerHTML = val[i]; 
+
+row.insertCell(-1).innerHTML = val[i+1]; 
+row.insertCell(-1).innerHTML = val[i+2]; 
+
+var cell = row.insertCell(-1);
+cell.className = "bin";
+cell.title = errmsg.err581;
+eval("addEvent(cell, 'click', function() { deletepptp('" + val[i + 3] + "') })");
+}
+}
+function setDHCPTable() {
+var val = arguments;
+var table = document.getElementById("dhcp_leases_table");
+cleanTable(table);
+if(!val.length) {
+var cell = table.insertRow(-1).insertCell(-1);
+cell.colSpan = 5;
+cell.align = "center";
+cell.innerHTML = "- " + share.none + " -";
+return;
+}
+for(var i = 0; i < val.length; i = i + 5) {
+
+var row = table.insertRow(-1);
+row.style.height = "15px";
+
+row.insertCell(-1).innerHTML = val[i];
+
+row.insertCell(-1).innerHTML = val[i+1];
+
+var cellmac = row.insertCell(-1);
+cellmac.title = share.oui;
+cellmac.style.cursor = "pointer";
+cellmac.style.textDecoration = "underline";
+eval("addEvent(cellmac, 'click', function() { getOUIFromMAC('" + val[i+2] + "') })");
+cellmac.innerHTML = val[i+2];
+var cellbail = row.insertCell(-1);
+cellbail.innerHTML = val[i+3];
+
+var cell = row.insertCell(-1);
+cell.className = "bin";
+cell.title = errmsg.err58;
+eval("addEvent(cell, 'click', function() { deleteLease('" + val[i+1] + "','" + val[i+2] + "') })");
+}
+}
+function setARPTable() {
+var table = document.getElementById("active_clients_table");
+var val = arguments;
+cleanTable(table);
+if(!val.length) {
+var cell = table.insertRow(-1).insertCell(-1);
+cell.colSpan = 4;
+cell.align = "center";
+cell.innerHTML = "- " + share.none + " -";
+return;
+}
+for(var i = 0; i < val.length; i = i + 4) {
+var row = table.insertRow(-1);
+row.style.height = "15px";
+row.insertCell(-1).innerHTML = val[i];
+row.insertCell(-1).innerHTML = val[i+1];
+var cellmac = row.insertCell(-1);
+cellmac.title = share.oui;
+cellmac.style.cursor = "pointer";
+cellmac.style.textDecoration = "underline";
+eval("addEvent(cellmac, 'click', function() { getOUIFromMAC('" + val[i+2] + "') })");
+cellmac.innerHTML = val[i+2];
+
+var cellcount = row.insertCell(-1);
+cellcount.style.textAlign = 'center';
+cellcount.innerHTML = val[i+3];
+
+setMeterBar(row.insertCell(-1), parseInt(val[i+3])/32768*100, "");
+}
+}
+var update;
+addEvent(window, "load", function() {
+setElementContent("dhcp_end_ip", "172.16.1." + (parseInt("100") + parseInt("50") - 1));
+setDHCPTable();
+
+setPPTPTable();
+setElementVisible("pptp", "0" == "1");
+
+
+setPPPOETable();
+setElementVisible("pppoe", "0" == "1");
+
+setARPTable();
+setElementVisible("dhcp_1", "static" == "dhcp");
+setElementVisible("dhcp_2", "static" == "dhcp");
+update = new StatusUpdate("Status_Lan.live.asp", 3);
+update.onUpdate("lan_proto", function(u) {
+setElementVisible("dhcp_1", u.lan_proto == "dhcp");
+setElementVisible("dhcp_2", u.lan_proto == "dhcp");
+});
+update.onUpdate("dhcp_start", function(u) {
+setElementContent("dhcp_start_ip", u.lan_ip_prefix + u.dhcp_start);
+setElementContent("dhcp_end_ip", u.lan_ip_prefix + (parseInt(u.dhcp_start) + parseInt(u.dhcp_num) - 1));
+});
+update.onUpdate("dhcp_leases", function(u) {
+eval('setDHCPTable(' + u.dhcp_leases + ')');
+});
+
+update.onUpdate("pptp_leases", function(u) {
+eval('setPPTPTable(' + u.pptp_leases + ')');
+});
+
+
+update.onUpdate("pppoe_leases", function(u) {
+eval('setPPPOETable(' + u.pppoe_leases + ')');
+});
+
+update.onUpdate("arp_table", function(u) {
+eval('setARPTable(' + u.arp_table + ')');
+});
+update.start();
+});
+addEvent(window, "unload", function() {
+update.stop();
+});
+
+//]]>
+</script>
+</head>
+<body class="gui">
+	
+<div id="wrapper">
+<div id="content">
+<div id="header">
+<div id="logo"><h1>DD-WRT Control Panel</h1></div>
+<div id="menu">
+ <div id="menuMain">
+  <ul id="menuMainList">
+   <li><a href="index.asp.html"><strong><script type="text/javascript">Capture(bmenu.setup)</script></strong></a></li>
+   <li><a href="Wireless_Basic.asp.html"><strong><script type="text/javascript">Capture(bmenu.wireless)</script></strong></a></li>
+   <li><a href="Services.asp.html"><strong><script type="text/javascript">Capture(bmenu.services)</script></strong></a></li>
+   <li><a href="Firewall.asp.html"><strong><script type="text/javascript">Capture(bmenu.security)</script></strong></a></li>
+   <li><a href="Filters.asp.html"><strong><script type="text/javascript">Capture(bmenu.accrestriction)</script></strong></a></li>
+   <li><a href="ForwardSpec.asp.html"><strong><script type="text/javascript">Capture(bmenu.applications)</script></strong></a></li>
+   <li><a href="Management.asp.html"><strong><script type="text/javascript">Capture(bmenu.admin)</script></strong></a></li>
+   <li class="current"><span><strong><script type="text/javascript">Capture(bmenu.statu)</script></strong></span>
+    <div id="menuSub">
+     <ul id="menuSubList">
+      <li><a href="Status_Router.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuRouter)</script></strong></a></li>
+      <li><a href="Status_Internet.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuInet)</script></strong></a></li>
+      <li><span><strong><script type="text/javascript">Capture(bmenu.statuLAN)</script></strong></span></li>
+      <li><a href="Status_Wireless.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuWLAN)</script></strong></a></li>
+      <li><a href="Status_Bandwidth.asp.html"><strong><script type="text/javascript">Capture(bmenu.statuBand)</script></strong></a></li>
+      <li><a href="Info.htm"><strong><script type="text/javascript">Capture(bmenu.statuSysInfo)</script></strong></a></li>
+     </ul>
+    </div>
+    </li>
+  </ul>
+ </div>
+</div>
+
+</div>
+<div id="main">
+<div id="contents">
+<form action="#" method="post">
+<input type="hidden" name="submit_button" value="DHCPTable" />
+<input type="hidden" name="action" />
+<input type="hidden" name="change_action" />
+<input type="hidden" name="submit_type" value="delete" />
+<input type="hidden" name="next_page" value="Status_Lan.asp" />
+
+<input type="hidden" name="if_del" />
+<input type="hidden" name="ip_del" />
+<input type="hidden" name="mac_del" />
+
+<h2><script type="text/javascript">Capture(status_lan.h2)</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(status_lan.legend)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.mac)</script></div>
+<script type="text/javascript">
+//<![CDATA[
+document.write("<span id=\"lan_mac\" style=\"cursor:pointer; text-decoration:underline;\" title=\"" + share.oui + "\" onclick=\"getOUIFromMAC('00:D0:12:F8:EC:23')\" >");
+document.write("00:D0:12:F8:EC:23");
+document.write("</span>");
+//]]>
+</script>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.ip)</script></div>
+<span id="lan_ip">172.16.1.1</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.subnet)</script></div>
+<span id="lan_netmask">255.255.255.0</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.gateway)</script></div>
+<span id="lan_gateway">0.0.0.0</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(share.localdns)</script></div>
+<span id="lan_dns">10.88.193.1</span>&nbsp;
+</div>
+</fieldset><br />
+
+<fieldset>
+<legend><script type="text/javascript">Capture(status_lan.legend4)</script></legend>
+<table class="table center" cellspacing="5" id="active_clients_table" summary="active clients in arp table">
+<tr>
+<th width="25%"><script type="text/javascript">Capture(share.hostname)</script></th>
+<th width="20%"><script type="text/javascript">Capture(share.ip)</script></th>
+<th width="20%"><script type="text/javascript">Capture(share.mac)</script></th>
+<th width="15%"><script type="text/javascript">Capture(status_lan.concount)</script></th>
+<th width="20%"><script type="text/javascript">Capture(status_lan.conratio)</script> [32768]</th>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+var t = new SortableTable(document.getElementById('active_clients_table'), 1000);
+//]]>
+</script>
+</fieldset><br />
+
+<h2><script type="text/javascript">Capture(status_lan.h22)</script></h2>
+<fieldset>
+<legend><script type="text/javascript">Capture(status_lan.legend2)</script></legend>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.dhcp_legend2)</script></div>
+<script type="text/javascript">Capture(share.disabled)</script>&nbsp;
+</div>
+<div id="dhcp_1" style="display:none">
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(service.dhcp_srv)</script></div>
+<span id="dhcp_daemon">DNSMasq</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_start)</script></div>
+<span id="dhcp_start_ip">172.16.1.100</span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_end)</script></div>
+<span id="dhcp_end_ip"></span>&nbsp;
+</div>
+<div class="setting">
+<div class="label"><script type="text/javascript">Capture(idx.dhcp_lease)</script></div>
+<span id="dhcp_lease_time">1440</span> <script type="text/javascript">Capture(share.minutes)</script>&nbsp;
+</div>
+</div>
+</fieldset><br />
+
+<div id="dhcp_2" style="display:none">
+<fieldset>
+<legend><script type="text/javascript">Capture(status_lan.legend3)</script></legend>
+<table class="table center" cellspacing="6" id="dhcp_leases_table" summary="dhcp leases table">
+<tr>
+<th width="25%"><script type="text/javascript">Capture(share.hostname)</script></th>
+<th width="25%"><script type="text/javascript">Capture(share.ip)</script></th>
+<th width="25%"><script type="text/javascript">Capture(share.mac)</script></th>
+<th width="25%"><script type="text/javascript">Capture(idx.dhcp_lease)</script></th>
+<th><script type="text/javascript">Capture(share.del)</script></th>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+var t = new SortableTable(document.getElementById('dhcp_leases_table'), 1000);
+//]]>
+</script>
+</fieldset><br />
+</div>
+
+<div id="pptp" style="display:none">
+<fieldset>
+<legend><script type="text/javascript">Capture(status_lan.legend5)</script></legend>
+<table class="table center" cellspacing="6" id="pptp_table" summary="pptp table">
+<tr>
+<th width="15%"><script type="text/javascript">Capture(share.intrface)</script></th>
+<th width="45%"><script type="text/javascript">Capture(share.usrname)</script></th>
+<th width="20%"><script type="text/javascript">Capture(share.localip)</script></th>
+<th width="20%"><script type="text/javascript">Capture(share.remoteip)</script></th>
+<th><script type="text/javascript">Capture(share.del)</script></th>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+var t = new SortableTable(document.getElementById('pptp_table'), 1000);
+//]]>
+</script>
+</fieldset><br />
+</div>
+
+
+<div id="pppoe" style="display:none">
+<fieldset>
+<legend><script type="text/javascript">Capture(status_lan.legend6)</script></legend>
+<table class="table center" cellspacing="6" id="pppoe_table" summary="pppoe table">
+<tr>
+<th width="15%"><script type="text/javascript">Capture(share.intrface)</script></th>
+<th width="45%"><script type="text/javascript">Capture(share.usrname)</script></th>
+<th width="40%"><script type="text/javascript">Capture(share.localip)</script></th>
+<th><script type="text/javascript">Capture(share.del)</script></th>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+var t = new SortableTable(document.getElementById('pppoe_table'), 1000);
+//]]>
+</script>
+</fieldset><br />
+</div>
+
+<div class="submitFooter">
+<script type="text/javascript">
+//<![CDATA[
+var autoref = sbutton.autorefresh;
+submitFooterButton(0,0,0,autoref);
+//]]>
+</script>
+</div>
+</form>
+</div>
+</div>
+<div id="helpContainer">
+<div id="help">
+<div><h2><script type="text/javascript">Capture(share.help)</script></h2></div>
+<dl>
+<dt class="term"><script type="text/javascript">Capture(share.mac)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_lan.right2)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.ip)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_lan.right4)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.subnet)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_lan.right6)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(idx.dhcp_srv)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_lan.right8)</script></dd>
+<dt class="term"><script type="text/javascript">Capture(share.oui)</script>:</dt>
+<dd class="definition"><script type="text/javascript">Capture(hstatus_lan.right10)</script></dd>
+</dl><br />
+<a href="javascript:openHelpWindow('HStatusLan.asp');"><script type="text/javascript">Capture(share.more)</script></a>
+</div>
+</div>
+<div id="floatKiller"></div>
+<div id="statusInfo">
+<div class="info"><script type="text/javascript">Capture(share.firmware)</script>:
+<script type="text/javascript">
+//<![CDATA[
+document.write("<a title=\"" + share.about + "\" href=\"javascript:openAboutWindow()\">DD-WRT v24-sp2 (03/23/11) std</a>");
+//]]>
+</script>
+</div>
+<div class="info"><script type="text/javascript">Capture(share.time)</script>:  <span id="uptime"> 15:34:17 up 24 min, load average: 0.14, 0.03, 0.00</span></div>
+<div class="info">WAN<span id="ipinfo">&nbsp;IP: 10.88.193.137</span></div>
+</div>
+</div>
+</div>
+</body>
+</html>

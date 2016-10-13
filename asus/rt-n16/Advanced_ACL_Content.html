@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - Wireless MAC Filter</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '0';
+wan_proto = 'dhcp';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '33663168'; }
+function login_ip_str() { return '192.168.1.2'; }
+function login_ip_str_now() { return '192.168.1.2'; }
+function login_mac_str() { return '00:1A:92:47:00:02'; }
+
+var wireless = [];	// [[MAC, associated, authorized], ...]
+
+var client_mac = login_mac_str();
+var wl_macnum_x = '0';
+var smac = client_mac.split(":");
+var simply_client_mac = smac[0] + smac[1] + smac[2] + smac[3] + smac[4] + smac[5];
+
+function applyRule(){
+	if(prevent_lock()){
+		showLoading();  location.href = "as.html";
+		document.form.action_mode.value = " Restart ";
+		document.form.current_page.value = "/as.html";
+		document.form.next_page.value = "";
+		document.form.submit();
+	}
+	else
+		return false;
+}
+
+function done_validating(action){
+	refreshpage();
+}
+
+function prevent_lock(){
+
+	if(document.form.wl_macmode.value == "allow"){
+		if(wl_macnum_x == 0){
+			if(confirm("There is at least one accept address in MAC filter list.\n Do you want to add this login client MAC?")){
+				document.form.wl_maclist_x_0.value = simply_client_mac;
+				markGroup(document.form.ACLList2, 'ACLList', 16, ' Add ');
+				document.form.submit();
+			}
+			else
+				return false;
+		}
+		else
+			return true;
+	}
+	else
+		return true;
+}
+</script>
+</head>
+
+<body onload="show_banner(1); show_menu(5,1,4); show_footer();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" name="form" id="ruleForm" action="/start_apply.htm" target="hidden_frame">
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="23">&nbsp;</td>		
+		<td valign="top" width="202">				
+		<div  id="mainMenu"></div>	
+		<div  id="subMenu"></div>		
+		</td>				
+		
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div>
+	<br />
+		<!--===================================Beginning of Main Content===========================================-->
+<input type="hidden" name="current_page" value="Advanced_ACL_Content.html">
+<input type="hidden" name="next_page" value="Advanced_WSecurity_Content.html">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="sid_list" value="DeviceSecurity11a;">
+<input type="hidden" name="group_id" value="ACLList">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+		
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td valign="top" >
+		
+<table width="500" border="0" align="center" cellpadding="5" cellspacing="0" class="FormTitle">
+	<thead>
+	<tr>
+		<td>Wireless - Wireless MAC Filter</td>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td bgcolor="#FFFFFF">Wireless MAC filter allows you to control packets from devices with specified MAC address in your Wireless LAN.</td>
+	</tr>
+	</tbody>	
+	<tr>
+	  <td bgcolor="#FFFFFF">
+		<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+			<tr>
+				<th width="30%" >
+					<a class="hintstyle" href="javascript:void(0);" onClick="openHint(18,1);">MAC Filter Mode:</a>
+				</th>
+				<td>
+					<select name="wl_macmode" class="input" onChange="return change_common(this, 'DeviceSecurity11a', 'wl_macmode')">
+					<option class="content_input_fd" value="disabled" selected>Disabled</option>
+					<option class="content_input_fd" value="allow" >Accept</option>
+					<option class="content_input_fd" value="deny" >Reject</option>
+					</select>
+				</td>
+			</tr>
+
+          <tr>
+            <th width="30%">MAC address:
+                <input type="hidden" name="wl_macnum_x_0" value="0" readonly="1" /></th>
+			  <td>
+                <input type="text" maxlength="12" class="input" size="14" name="wl_maclist_x_0" onkeypress="return is_hwaddr()" />
+                
+                <input class="button" type="submit" onclick="return markGroup(this, 'ACLList', 32, ' Add ');" name="ACLList2" value="Add" size="12"/>
+                <br/><span>*Please enter the complete MAC address which contains 12 hexadecimal letters.</span>
+              </td>
+          </tr>
+          <tr>
+            <th align="right">MAC filter list:</th>
+            <td>
+			<select size="8" name="ACLList_s" multiple="multiple" class="input" style="font-size:12px; font-weight:bold; vertical-align:middle;">
+              <option value="-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+            </select>
+              <input class="button" type="submit" onClick="return markGroup(this, 'ACLList', 32, ' Del ');" name="ACLList" value="Delete" size="12"></td>
+          </tr>
+          <tr align="right">
+			<td colspan="2"><input class="button" onclick="applyRule()" type="button" value="Apply"/></td>
+		  </tr>
+		</table></td>
+	</tr>
+</table>
+</td>
+</form>
+
+	<td id="help_td" style="width:15px;" valign="top">
+		  
+	  <div id="helpicon" onClick="openHint(0,0);" title="Click to open Help."><img src="images/help.gif" /></div>
+	  <div id="hintofPM" style="display:none;">
+	  	<form name="hint_form"></form>
+	    <table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:;" onclick="closeHint()" ><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tr>				
+			<td valign="top" >
+			  <div class="hint_body2" id="hint_body"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="" frameborder="0"></iframe>
+			</td>
+		  </tr>
+		</table>
+	  </div><!--End of hintofPM-->
+	  
+		  </td>
+        </tr>
+      </table>				
+		<!--===================================Ending of Main Content===========================================-->		
+	</td>
+		
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+
+</body>
+</html>

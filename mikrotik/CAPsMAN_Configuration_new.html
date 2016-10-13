@@ -1,0 +1,1158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <title>Mikrotik - New CAPs Configuration</title>
+ <script type="text/javascript">
+  if (location.pathname == '/webfig') location.href = '/webfig/';
+ </script>
+ <link rel="stylesheet" type="text/css" href="./files/master-078380d0e221.css">
+ <script type="text/javascript" src="./files/engine-085df8ce1d8e.js"></script>
+ <style type="text/css">
+   :root #content>#right>.dose>.dosesingle,
+   :root #content>#center>.dose>.dosesingle {
+   display: none !important;
+  }
+ </style>
+</head>
+
+<body>
+ <div id="startup" style="display: none;">
+  <h1>Loading <img src="./files/progress.gif"></h1>
+ </div>
+ <div id="login" style="display:none">
+  <table>
+   <tbody>
+    <tr>
+     <td colspan="3">
+      <h1>RouterOS WebFig Login</h1>
+     </td>
+    </tr>
+    <tr>
+     <td class="label">Login: </td>
+     <td><input id="name" type="text" tabindex="1" value="cfg1">
+     </td>
+     <td class="toolbar" rowspan="2">
+      <ul class="toolbar">
+       <li><a id="dologin"><span>Login</span></a></li>
+       <li class="sep"></li>
+      </ul>
+     </td>
+    </tr>
+    <tr>
+     <td class="label">Password: </td>
+     <td><input id="password" type="password" tabindex="2">
+     </td>
+    </tr>
+    <tr>
+     <td colspan="3">
+      <div id="error" style="display:none; color:red; padding: 1em 0 0 0;"></div>
+     </td>
+    </tr>
+   </tbody>
+  </table>
+ </div>
+ <div id="page" style="display: block; width: 100%; height: 100%;">
+  <table id="page" border="0" cellspacing="0" cellpadding="0" widht="100%" height="100%">
+   <tbody>
+    <tr>
+     <td valign="top" class="menu">
+      <ul id="menu">
+       <li>
+        <a draggable="false" id="id_Quick_Set" href="./" class="">
+         <div class="icon" style="background-position: -304px 0px;"></div><span>Quick Set</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_CAPsMAN" href="./CAPsMAN_Interfaces.html" class="opened">
+         <div class="icon" style="background-position: -464px 0px;"></div><span>CAPsMAN</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Wireless" href="./Wireless.html">
+         <div class="icon" style="background-position: -464px 0px;"></div><span>Wireless</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Interfaces" href="./Interfaces.html">
+         <div class="icon" style="background-position: -80px 0px;"></div><span>Interfaces</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Bridge" href="./Bridge.html">
+         <div class="icon" style="background-position: -16px 0px;"></div><span>Bridge</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Switch" href="./Switch.html">
+         <div class="icon" style="background-position: -384px 0px;"></div><span>Switch</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_PPP" href="./PPP.html">
+         <div class="icon" style="background-position: -272px 0px;"></div><span>PPP</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Mesh" href="./Mesh.html">
+         <div class="icon" style="background-position: -208px 0px;"></div><span>Mesh</span></a>
+       </li>
+       <li id="IP" class="group">
+        <a draggable="false" id="id_avascript:openGroup(&quot;IP&quot;)" href="javascript:openGroup(&quot;IP&quot;)">
+         <div class="icon" style="background-position: -96px 0px;"></div><span>IP</span></a>
+       </li>
+       <ul id="IPlist" class="group">
+        <li><a draggable="false" id="id_IP:ARP" href="./IP_ARP.html"><span>ARP</span></a></li>
+        <li><a draggable="false" id="id_IP:Accounting" href="./IP_Accounting.html"><span>Accounting</span></a></li>
+        <li><a draggable="false" id="id_IP:Addresses" href="./IP_Addresses.html"><span>Addresses</span></a></li>
+        <li><a draggable="false" id="id_IP:Cloud" href="./IP_Cloud.html"><span>Cloud</span></a></li>
+        <li><a draggable="false" id="id_IP:DHCP_Client" href="./IP_DHCP_Client.html"><span>DHCP Client</span></a></li>
+        <li><a draggable="false" id="id_IP:DHCP_Relay" href="./IP_DHCP_Relay.html"><span>DHCP Relay</span></a></li>
+        <li><a draggable="false" id="id_IP:DHCP_Server" href="./IP_DHCP_Server.html"><span>DHCP Server</span></a></li>
+        <li><a draggable="false" id="id_IP:DNS" href="./IP_DNS"><span>DNS</span></a></li>
+        <li><a draggable="false" id="id_IP:Firewall" href="./IP_Firewall.html"><span>Firewall</span></a></li>
+        <li><a draggable="false" id="id_IP:Hotspot" href="./IP_Hotspot.html"><span>Hotspot</span></a></li>
+        <li><a draggable="false" id="id_IP:IPsec" href="./IP_IPsec.html"><span>IPsec</span></a></li>
+        <li><a draggable="false" id="id_IP:Neighbors" href="./IP_Neighbors.html"><span>Neighbors</span></a></li>
+        <li><a draggable="false" id="id_IP:Packing" href="./IP_Packing.html"><span>Packing</span></a></li>
+        <li><a draggable="false" id="id_IP:Pool" href="./IP_Pool.html"><span>Pool</span></a></li>
+        <li><a draggable="false" id="id_IP:Routes" href="./IP_Routes.html"><span>Routes</span></a></li>
+        <li><a draggable="false" id="id_IP:SMB" href="./IP_SMB.html"><span>SMB</span></a></li>
+        <li><a draggable="false" id="id_IP:SNMP" href="./IP_SNMP.html"><span>SNMP</span></a></li>
+        <li><a draggable="false" id="id_IP:Services" href="./IP_Services.html"><span>Services</span></a></li>
+        <li><a draggable="false" id="id_IP:Settings" href="./IP_Settings.html"><span>Settings</span></a></li>
+        <li><a draggable="false" id="id_IP:Socks" href="./IP_Socks.html"><span>Socks</span></a></li>
+        <li><a draggable="false" id="id_IP:TFTP" href="./IP_TFTP.html"><span>TFTP</span></a></li>
+        <li><a draggable="false" id="id_IP:Traffic_Flow" href="./IP_Traffic_Flow.html"><span>Traffic Flow</span></a></li>
+        <li><a draggable="false" id="id_IP:UPnP" href="./IP_UPnP.html"><span>UPnP</span></a></li>
+        <li><a draggable="false" id="id_IP:Web_Proxy" href="./IP_Web_Proxy.html"><span>Web Proxy</span></a></li>
+       </ul>
+       <li id="MPLS" class="group">
+        <a draggable="false" id="id_avascript:openGroup(&quot;MPLS&quot;)" href="javascript:openGroup(&quot;MPLS&quot;)">
+         <div class="icon" style="background-position: -240px 0px;"></div><span>MPLS</span></a>
+       </li>
+       <ul id="MPLSlist" class="group">
+        <li><a draggable="false" id="id_MPLS:MPLS" href="./MPLS_MPLS.html"><span>MPLS</span></a></li>
+        <li><a draggable="false" id="id_MPLS:Traffic_Eng" href="./MPLS_Traffic_Eng.html"><span>Traffic Eng</span></a></li>
+        <li><a draggable="false" id="id_MPLS:VPLS" href="./MPLS_VPLS.html"><span>VPLS</span></a></li>
+       </ul>
+       <li id="Routing" class="group">
+        <a draggable="false" id="id_avascript:openGroup(&quot;Routing&quot;)" href="javascript:openGroup(&quot;Routing&quot;)">
+         <div class="icon" style="background-position: -352px 0px;"></div><span>Routing</span></a>
+       </li>
+       <ul id="Routinglist" class="group">
+        <li><a draggable="false" id="id_Routing:BFD" href="./Routing_BFD.html"><span>BFD</span></a></li>
+        <li><a draggable="false" id="id_Routing:BGP" href="./Routing_BGP.html"><span>BGP</span></a></li>
+        <li><a draggable="false" id="id_Routing:Filters" href="./Routing_Filters.html"><span>Filters</span></a></li>
+        <li><a draggable="false" id="id_Routing:MME" href="./Routing_MME.html"><span>MME</span></a></li>
+        <li><a draggable="false" id="id_Routing:OSPF" href="./Routing_OSPF.html"><span>OSPF</span></a></li>
+        <li><a draggable="false" id="id_Routing:Prefix_Lists" href="./Routing_Prefix_Lists.html"><span>Prefix Lists</span></a></li>
+        <li><a draggable="false" id="id_Routing:RIP" href="./Routing_RIP.html"><span>RIP</span></a></li>
+       </ul>
+       <li id="System" class="group">
+        <a draggable="false" id="id_avascript:openGroup(&quot;System&quot;)" href="javascript:openGroup(&quot;System&quot;)">
+         <div class="icon" style="background-position: -400px 0px;"></div><span>System</span></a>
+       </li>
+       <ul id="Systemlist" class="group">
+        <li><a draggable="false" id="id_System:Auto_Upgrade" href="./System_Auto_Upgrade.html"><span>Auto Upgrade</span></a></li>
+        <li><a draggable="false" id="id_System:Certificates" href="./System_Certificates.html"><span>Certificates</span></a></li>
+        <li><a draggable="false" id="id_System:Clock" href="./System_Clock.html"><span>Clock</span></a></li>
+        <li><a draggable="false" id="id_System:Console" href="./System_Console.html"><span>Console</span></a></li>
+        <li><a draggable="false" id="id_System:Disks" href="./System_Disks.html"><span>Disks</span></a></li>
+        <li><a draggable="false" id="id_System:Drivers" href="./System_Drivers.html"><span>Drivers</span></a></li>
+        <li><a draggable="false" id="id_System:Health" href="./System_Health.html"><span>Health</span></a></li>
+        <li><a draggable="false" id="id_System:History" href="./System_History.html"><span>History</span></a></li>
+        <li><a draggable="false" id="id_System:Identity" href="./System_Identity.html"><span>Identity</span></a></li>
+        <li><a draggable="false" id="id_System:LEDs" href="./System_LEDs.html"><span>LEDs</span></a></li>
+        <li><a draggable="false" id="id_System:License" href="./System_License.html"><span>License</span></a></li>
+        <li><a draggable="false" id="id_System:Logging" href="./System_Logging.html"><span>Logging</span></a></li>
+        <li><a draggable="false" id="id_System:Packages" href="./System_Packages.html"><span>Packages</span></a></li>
+        <li><a draggable="false" id="id_System:Password" href="./System_Password.html"><span>Password</span></a></li>
+        <li><a draggable="false" id="id_System:Ports" href="./System_Ports.html"><span>Ports</span></a></li>
+        <li><a draggable="false" id="id_System:Reboot" href="./System_Reboot.html"><span>Reboot</span></a></li>
+        <li><a draggable="false" id="id_System:Reset_Configuration" href="./System_Reset_Configuration.html"><span>Reset Configuration</span></a></li>
+        <li><a draggable="false" id="id_System:Resources" href="./System_Resources.html"><span>Resources</span></a></li>
+        <li><a draggable="false" id="id_System:Routerboard" href="./System_Routerboard.html"><span>Routerboard</span></a></li>
+        <li><a draggable="false" id="id_System:SNTP_Client" href="./System_SNTP_Client.html"><span>SNTP Client</span></a></li>
+        <li><a draggable="false" id="id_System:Scheduler" href="./System_Scheduler.html"><span>Scheduler</span></a></li>
+        <li><a draggable="false" id="id_System:Scripts" href="./System_Scripts.html"><span>Scripts</span></a></li>
+        <li><a draggable="false" id="id_System:Shutdown" href="./System_Shutdown.html"><span>Shutdown</span></a></li>
+        <li><a draggable="false" id="id_System:Special_Login" href="./System_Special_Login.html"><span>Special Login</span></a></li>
+        <li><a draggable="false" id="id_System:Users" href="./System_Users.html"><span>Users</span></a></li>
+        <li><a draggable="false" id="id_System:Watchdog" href="./System_Watchdog.html"><span>Watchdog</span></a></li>
+       </ul>
+       <li>
+        <a draggable="false" id="id_Queues" href="./Queues.html">
+         <div class="icon" style="background-position: -288px 0px;"></div><span>Queues</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Files" href="./Files.html">
+         <div class="icon" style="background-position: -32px 0px;"></div><span>Files</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Log" href="./Log.html">
+         <div class="icon" style="background-position: -128px 0px;"></div><span>Log</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Radius" href="./Radius.html">
+         <div class="icon" style="background-position: -320px 0px;"></div><span>Radius</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_New_Terminal" href="./New_Terminal.html">
+         <div class="icon" style="background-position: -256px 0px;"></div><span>New Terminal</span></a>
+       </li>
+       <li id="Tools" class="group">
+        <a draggable="false" id="id_avascript:openGroup(&quot;Tools&quot;)" href="javascript:openGroup(&quot;Tools&quot;)">
+         <div class="icon" style="background-position: -416px 0px;"></div><span>Tools</span></a>
+       </li>
+       <ul id="Toolslist" class="group">
+        <li><a draggable="false" id="id_Tools:BTest_Server" href="./Tools_BTest_Server.html"><span>BTest Server</span></a></li>
+        <li><a draggable="false" id="id_Tools:Bandwidth_Test" href="./Tools_Bandwidth_Test.html"><span>Bandwidth Test</span></a></li>
+        <li><a draggable="false" id="id_Tools:Email" href="./Tools_Email.html"><span>Email</span></a></li>
+        <li><a draggable="false" id="id_Tools:Flood_Ping" href="./Tools_Flood_Ping.html"><span>Flood Ping</span></a></li>
+        <li><a draggable="false" id="id_Tools:Graphing" href="./Tools_Graphing.html"><span>Graphing</span></a></li>
+        <li><a draggable="false" id="id_Tools:IP_Scan" href="./Tools_IP_Scan.html"><span>IP Scan</span></a></li>
+        <li><a draggable="false" id="id_Tools:MAC_Server" href="./Tools_MAC_Server.html"><span>MAC Server</span></a></li>
+        <li><a draggable="false" id="id_Tools:Netwatch" href="./Tools_Netwatch.html"><span>Netwatch</span></a></li>
+        <li><a draggable="false" id="id_Tools:Packet_Sniffer" href="./Tools_Packet_Sniffer.html"><span>Packet Sniffer</span></a></li>
+        <li><a draggable="false" id="id_Tools:Ping" href="./Tools_Ping.html"><span>Ping</span></a></li>
+        <li><a draggable="false" id="id_Tools:Ping_Speed" href="./Tools_Ping_Speed.html"><span>Ping Speed</span></a></li>
+        <li><a draggable="false" id="id_Tools:Profile" href="./Tools_Profile.html"><span>Profile</span></a></li>
+        <li><a draggable="false" id="id_Tools:RoMON" href="./Tools_RoMON.html"><span>RoMON</span></a></li>
+        <li><a draggable="false" id="id_Tools:SMS" href="./Tools_SMS.html"><span>SMS</span></a></li>
+        <li><a draggable="false" id="id_Tools:Telnet" href="./Tools_Telnet.html"><span>Telnet</span></a></li>
+        <li><a draggable="false" id="id_Tools:Torch" href="./Tools_Torch.html"><span>Torch</span></a></li>
+        <li><a draggable="false" id="id_Tools:Traceroute" href="./Tools_Traceroute.html"><span>Traceroute</span></a></li>
+        <li><a draggable="false" id="id_Tools:Traffic_Generator" href="./Tools_Traffic_Generator.html"><span>Traffic Generator</span></a></li>
+        <li><a draggable="false" id="id_Tools:Traffic_Monitor" href="./Tools_Traffic_Monitor.html"><span>Traffic Monitor</span></a></li>
+       </ul>
+       <li>
+        <a draggable="false" id="id_MetaROUTER" href="./MetaROUTER.html">
+         <div class="icon" style="background-position: -224px 0px;"></div><span>MetaROUTER</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Partition" href="./Partition.html">
+         <div class="icon" style="background-position: -16px -16px;"></div><span>Partition</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Make_Supout_rif" href="./Make_Supout_rif.html">
+         <div class="icon" style="background-position: -176px 0px;"></div><span>Make Supout.rif</span></a>
+       </li>
+       <li class="sep"></li>
+       <li>
+        <a draggable="false" id="id_Undo" href="./Undo.html">
+         <div class="icon" style="background-position: -432px 0px;"></div><span>Undo</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Redo" href="./Redo.html">
+         <div class="icon" style="background-position: -336px 0px;"></div><span>Redo</span></a>
+       </li>
+       <li class="sep"></li>
+       <li>
+        <a draggable="false" id="id_HideMenu" href="./HideMenu.html">
+         <div class="icon" style="background-position: -64px 0px;"></div><span>Hide Menu</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_Safemode" href="./Safemode.html">
+         <div class="icon" style="background-position: -368px 0px;"></div><span>Safe Mode</span></a>
+       </li>
+       <li class="sep"></li>
+       <li>
+        <a draggable="false" id="id_ttp://wiki" href="http://wiki.mikrotik.com/wiki/Manual:TOC" target="manual">
+         <div class="icon" style="background-position: -192px 0px;"></div><span>Manual</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_ttp://www" href="http://www.mikrotik.com/download/winbox.exe" target="winbox">
+         <div class="icon" style="background-position: -448px 0px;"></div><span>WinBox</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_graphs" href="http://demo.mt.lv/graphs" target="graphs">
+         <div class="icon" style="background-position: -48px 0px;"></div><span>Graphs</span></a>
+       </li>
+       <li>
+        <a draggable="false" id="id_help/license" href="http://demo.mt.lv/help/license.html" target="license">
+         <div class="icon" style="background-position: -128px 0px;"></div><span>End-User License</span></a>
+       </li>
+       <li class="sep"></li>
+       <li>
+        <a draggable="false" id="id_Logout" href="./Logout">
+         <div class="icon" style="background-position: -160px 0px;"></div><span>Logout</span></a>
+       </li>
+      </ul>
+     </td>
+     <td valign="top" id="right">
+      <table id="rtable" border="0" cellspacing="0" cellpadding="0">
+       <tbody>
+        <tr>
+         <td class="top">
+          <div id="logo"><span id="identity"></span>WebFig
+           <span id="version">v6.36.2 (stable)</span>
+          </div>
+          <div id="top">
+           <ul class="toolbar">
+            <li style="display: none;"><a class="button" draggable="false"><span>Show Menu</span></a></li>
+            <li class="ending"></li>
+           </ul>
+          </div>
+         </td>
+        </tr>
+        <tr>
+         <td class="top">
+          <div id="tabline" class="top">
+           <h1 id="title"><span>New CAPs Configuration</span></h1>
+           <div id="tabs">
+            <ul>
+             <li class="prefix">&nbsp;</li>
+            </ul>
+           </div>
+           <div id="tabend"></div>
+          </div>
+         </td>
+        </tr>
+        <tr>
+         <td valign="top">
+          <div id="content">
+           <div id="toolbar">
+            <ul class="toolbar">
+             <li><a class="button" id="okButton" draggable="false"><span>OK</span></a></li>
+             <li><a class="button" id="cancelButton" draggable="false"><span>Cancel</span></a></li>
+             <li><a class="button" id="applyButton" draggable="false"><span>Apply</span></a></li>
+             <li class="sep"></li>
+             <li class="postfix"></li>
+            </ul>
+           </div>
+           <table id="filter"></table>
+           <table class="list" cellspacing="0" cellpadding="0">
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <h2><span>Wireless</span></h2>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Name</span></td>
+              <td class="extra"></td>
+              <td class="value" colspan="18"><input type="text" value='cfg1'></td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Mode</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="0">ap</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>SSID</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text"  style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Hide SSID</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="checkbox" style="display: none;"><input type="checkbox" ></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Load Balancing Group</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="cbox" style="display: none;"><select size="1" ></select><input type="text"  style="width: 122px; height: 19px;"></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Distance</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="cbox" style="display: none;"><select size="1" ><option value="4294967295">dynamic</option><option value="0">indoors</option></select><input type="text"  style="width: 122px; height: 19px;"></span>km</div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Hw. Retries</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value='0'  style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Hw. Protection Mode</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="2">cts to self</option><option value="0" selected="true">none</option><option value="1">rts cts</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Frame Lifetime</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value='0.00' style="display: none;">s</div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Disconnect Timeout</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="00:00:00" style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Country</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="8">albania</option><option value="12">algeria</option><option value="32">argentina</option><option value="51">armenia</option><option value="533">aruba</option><option value="36">australia</option><option value="40">austria</option><option value="31">azerbaijan</option><option value="44">bahamas</option><option value="48">bahrain</option><option value="50">bangladesh</option><option value="52">barbados</option><option value="112">belarus</option><option value="56">belgium</option><option value="84">belize</option><option value="60">bermuda</option><option value="68">bolivia</option><option value="70">bosnia and herzegovina</option><option value="76">brazil</option><option value="61449">brazil direct</option><option value="61447">brazil-922</option><option value="61456">brazil-anatel</option><option value="96">brunei darussalam</option><option value="100">bulgaria</option><option value="116">cambodia</option><option value="124">canada</option><option value="152">chile</option><option value="156">china</option><option value="170">colombia</option><option value="188">costa rica</option><option value="191">croatia</option><option value="196">cyprus</option><option value="203">czech republic</option><option value="511">debug</option><option value="208">denmark</option><option value="214">dominican republic</option><option value="218">ecuador</option><option value="818">egypt</option><option value="222">el salvador</option><option value="233">estonia</option><option value="61454">etsi 2.4 5.5-5.7</option><option value="61448">etsi 2.4 rb411uahr rb411ar</option><option value="61453">etsi 5.5-5.7 outdoor</option><option value="61460">etsi 5.7-5.8 srd</option><option value="246">finland</option><option value="250">france</option><option value="255">france res</option><option value="254">french guiana</option><option value="258">french polynesia</option><option value="268">georgia</option><option value="276">germany</option><option value="61444">germany 5.8 ap</option><option value="61443">germany 5.8 fixed p-p</option><option value="300">greece</option><option value="304">greenland</option><option value="308">grenada</option><option value="312">guadeloupe</option><option value="316">guam</option><option value="320">guatemala</option><option value="332">haiti</option><option value="340">honduras</option><option value="344">hong kong</option><option value="348">hungary</option><option value="352">iceland</option><option value="356">india</option><option value="360">indonesia</option><option value="61450">indonesia 5.7-5.8</option><option value="61458">indonesia2</option><option value="364">iran</option><option value="372">ireland</option><option value="376">israel</option><option value="380">italy</option><option value="392">japan</option><option value="393">japan1</option><option value="394">japan2</option><option value="395">japan3</option><option value="396">japan4</option><option value="397">japan5</option><option value="399">japan6</option><option value="400">jordan</option><option value="398">kazakhstan</option><option value="404">kenya</option><option value="410">korea republic</option><option value="411">korea republic2</option><option value="412">korea republic3</option><option value="414">kuwait</option><option value="428">latvia</option><option value="422">lebanon</option><option value="438">liechtenstein</option><option value="440">lithuania</option><option value="442">luxembourg</option><option value="446">macau</option><option value="807">macedonia</option><option value="454">malawi</option><option value="458">malaysia</option><option value="470">malta</option><option value="474">martinique</option><option value="175">mayotte</option><option value="484">mexico</option><option value="61451">moldova</option><option value="492">monaco</option><option value="499">montenegro</option><option value="504">morocco</option><option value="524">nepal</option><option value="528">netherlands</option><option value="530">netherlands antilles</option><option value="554">new zealand</option><option value="558">nicaragua</option><option value="0" selected="true">no_country_set</option><option value="408">north korea</option><option value="578">norway</option><option value="61446">norway 5.8 p-p</option><option value="512">oman</option><option value="586">pakistan</option><option value="575">panama</option><option value="598">papua new guinea</option><option value="600">paraguay</option><option value="604">peru</option><option value="608">philippines</option><option value="616">poland</option><option value="620">portugal</option><option value="630">puerto rico</option><option value="634">qatar</option><option value="638">reunion</option><option value="642">romania</option><option value="643">russia</option><option value="61457">russia2</option><option value="646">rwanda</option><option value="682">saudi arabia</option><option value="688">serbia</option><option value="702">singapore</option><option value="703">slovakia</option><option value="705">slovenia</option><option value="710">south africa</option><option value="724">spain</option><option value="144">sri lanka</option><option value="752">sweden</option><option value="756">switzerland</option><option value="760">syria</option><option value="158">taiwan</option><option value="834">tanzania</option><option value="764">thailand</option><option value="780">trinidad and tobago</option><option value="788">tunisia</option><option value="792">turkey</option><option value="800">uganda</option><option value="61442">uk 5.8 fixed</option><option value="804">ukraine</option><option value="784">united arab emirates</option><option value="826">united kingdom</option><option value="840">united states</option><option value="842">united states (public safety)</option><option value="841">united states2</option><option value="61459">united states3</option><option value="858">uruguay</option><option value="61455">us 2.4 5.8</option><option value="61445">us 2.4 crossroads</option><option value="61452">us 2.4 rb951g</option><option value="61441">us 5.8 direct</option><option value="860">uzbekistan</option><option value="862">venezuela</option><option value="704">viet nam</option><option value="887">yemen</option><option value="716">zimbabwe</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Max Station Count</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="1" style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Multicast Helper</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="0">default</option><option value="1">disabled</option><option value="2">full</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>HT Tx Chains</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>0 </span></td>
+                   <td><input type="checkbox"><span>1 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>2 </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>HT Rx Chains</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>0 </span></td>
+                   <td><input type="checkbox"><span>1 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>2 </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>HT Guard Interval</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="0">any</option><option value="1">long</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <h2><span>Channel</span></h2>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Channel</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Frequency</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="0" style="display: none;">MHz</div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Width</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="0" style="display: none;">MHz</div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Band</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="0">2ghz-b</option><option value="2">2ghz-b/g</option><option value="7">2ghz-b/g/n</option><option value="10">2ghz-g/n</option><option value="1">2ghz-onlyg</option><option value="6">2ghz-onlyn</option><option value="3">5ghz-a</option><option value="5">5ghz-a/n</option><option value="8">5ghz-a/n/ac</option><option value="9">5ghz-onlyac</option><option value="4">5ghz-onlyn</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Extension Channel</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="1">Ce</option><option value="3">Ceee</option><option value="0">disabled</option><option value="2">eC</option><option value="4">eCee</option><option value="5">eeCe</option><option value="6">eeeC</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Tx. Power</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="0" style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <h2><span>Rates</span></h2>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Rate</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Basic Rates</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>1Mbps </span></td>
+                   <td><input type="checkbox"><span>2Mbps </span></td>
+                   <td><input type="checkbox"><span>5.5Mbps </span></td>
+                   <td><input type="checkbox"><span>11Mbps </span></td>
+                   <td><input type="checkbox"><span>6Mbps </span></td>
+                   <td><input type="checkbox"><span>9Mbps </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>12Mbps </span></td>
+                   <td><input type="checkbox"><span>18Mbps </span></td>
+                   <td><input type="checkbox"><span>24Mbps </span></td>
+                   <td><input type="checkbox"><span>36Mbps </span></td>
+                   <td><input type="checkbox"><span>48Mbps </span></td>
+                   <td><input type="checkbox"><span>54Mbps </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Supported Rates</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>1Mbps </span></td>
+                   <td><input type="checkbox"><span>2Mbps </span></td>
+                   <td><input type="checkbox"><span>5.5Mbps </span></td>
+                   <td><input type="checkbox"><span>11Mbps </span></td>
+                   <td><input type="checkbox"><span>6Mbps </span></td>
+                   <td><input type="checkbox"><span>9Mbps </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>12Mbps </span></td>
+                   <td><input type="checkbox"><span>18Mbps </span></td>
+                   <td><input type="checkbox"><span>24Mbps </span></td>
+                   <td><input type="checkbox"><span>36Mbps </span></td>
+                   <td><input type="checkbox"><span>48Mbps </span></td>
+                   <td><input type="checkbox"><span>54Mbps </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>HT Basic MCS</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>0 </span></td>
+                   <td><input type="checkbox"><span>1 </span></td>
+                   <td><input type="checkbox"><span>2 </span></td>
+                   <td><input type="checkbox"><span>3 </span></td>
+                   <td><input type="checkbox"><span>4 </span></td>
+                   <td><input type="checkbox"><span>5 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>6 </span></td>
+                   <td><input type="checkbox"><span>7 </span></td>
+                   <td><input type="checkbox"><span>8 </span></td>
+                   <td><input type="checkbox"><span>9 </span></td>
+                   <td><input type="checkbox"><span>10 </span></td>
+                   <td><input type="checkbox"><span>11 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>12 </span></td>
+                   <td><input type="checkbox"><span>13 </span></td>
+                   <td><input type="checkbox"><span>14 </span></td>
+                   <td><input type="checkbox"><span>15 </span></td>
+                   <td><input type="checkbox"><span>16 </span></td>
+                   <td><input type="checkbox"><span>17 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>18 </span></td>
+                   <td><input type="checkbox"><span>19 </span></td>
+                   <td><input type="checkbox"><span>20 </span></td>
+                   <td><input type="checkbox"><span>21 </span></td>
+                   <td><input type="checkbox"><span>22 </span></td>
+                   <td><input type="checkbox"><span>23 </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>HT Supported MCS</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>0 </span></td>
+                   <td><input type="checkbox"><span>1 </span></td>
+                   <td><input type="checkbox"><span>2 </span></td>
+                   <td><input type="checkbox"><span>3 </span></td>
+                   <td><input type="checkbox"><span>4 </span></td>
+                   <td><input type="checkbox"><span>5 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>6 </span></td>
+                   <td><input type="checkbox"><span>7 </span></td>
+                   <td><input type="checkbox"><span>8 </span></td>
+                   <td><input type="checkbox"><span>9 </span></td>
+                   <td><input type="checkbox"><span>10 </span></td>
+                   <td><input type="checkbox"><span>11 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>12 </span></td>
+                   <td><input type="checkbox"><span>13 </span></td>
+                   <td><input type="checkbox"><span>14 </span></td>
+                   <td><input type="checkbox"><span>15 </span></td>
+                   <td><input type="checkbox"><span>16 </span></td>
+                   <td><input type="checkbox"><span>17 </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>18 </span></td>
+                   <td><input type="checkbox"><span>19 </span></td>
+                   <td><input type="checkbox"><span>20 </span></td>
+                   <td><input type="checkbox"><span>21 </span></td>
+                   <td><input type="checkbox"><span>22 </span></td>
+                   <td><input type="checkbox"><span>23 </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>VHT Basic MCS</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;"></table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>VHT Supported MCS</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;"></table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <h2><span>Datapath</span></h2>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Datapath</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Bridge</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Bridge Cost</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="0" style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Bridge Horizon</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="0" style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Local Forwarding</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="checkbox" style="display: none;"><input type="checkbox" ></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Client To Client Forwarding</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="checkbox" style="display: none;"><input type="checkbox" ></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>VLAN Mode</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="2">use service tag</option><option value="1">use tag</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>VLAN ID</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="text" value="1" style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <h2><span>Security</span></h2>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Security</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td colspan="20" class="sep">
+               <hr>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Authentication Type</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>WPA PSK </span></td>
+                   <td><input type="checkbox"><span>WPA2 PSK </span></td>
+                  </tr>
+                 </tbody>
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>WPA EAP </span></td>
+                   <td><input type="checkbox"><span>WPA2 EAP </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Encryption</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;">
+                <table class="checkbox" style="display: none;">
+                 <tbody>
+                  <tr>
+                   <td><input type="checkbox"><span>aes ccm </span></td>
+                   <td><input type="checkbox"><span>tkip </span></td>
+                  </tr>
+                 </tbody>
+                </table>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Group Encryption</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="0">aes ccm</option><option value="1">tkip</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span class="">Passphrase</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><input type="password"  style="display: none;"></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>EAP Methods</span></td>
+              <td class="value" colspan="19">
+               <div>
+                <div>
+                 <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+                </div>
+               </div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>EAP Radius Accounting</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="checkbox" style="display: none;"><input type="checkbox" ></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>TLS Mode</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="1">dont verify certificate</option><option value="2">no certificates</option><option value="0" selected="true">verify certificate</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>TLS Certificate</span></td>
+              <td class="extra">
+               <a class="sbtn" draggable="false"><img src="./files/down.png"></a>
+              </td>
+              <td class="value" colspan="18">
+               <div style="position: relative; left: 0px; top: 0px;"><span class="select" style="display: none;"><select size="1" ><option value="4294967295">none</option></select></span></div>
+              </td>
+             </tr>
+            </tbody>
+            <tbody>
+             <tr>
+              <td class="label" style="min-width: 192px;"><span>Comment</span></td>
+              <td class="extra"></td>
+              <td class="value" colspan="18"><textarea rows="1"></textarea></td>
+             </tr>
+            </tbody>
+           </table>
+          </div>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </td>
+    </tr>
+   </tbody>
+  </table>
+ </div>
+ <iframe id="iframe" src="./files/iframe.html" style="display:none"></iframe>
+
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+
+ <script>
+  // $('.sbtn').parent().next().children().children().slideToggle();
+
+  $('.sbtn').bind('click', function() {
+   $(this).parent().next().children().children().slideToggle(50);
+   $(this).parent().prev().children().css('color', '#00f');
+
+  });
+
+
+  $('#okButton, #cancelButton').bind('click', function() {
+   window.location.replace("./CAPsMAN_Configurations.html");
+  });
+
+  $('#applyButton').bind('click', function() {
+   alert("Будем считать, что настройки применены! (но на самом деле нет)");
+  });
+
+  $('#torchButton').bind('click', function() {
+   window.location.replace('./tools_torch.html');
+   alert("Будем считать, что настройки применены! (но на самом деле нет)");
+  })
+ </script>
+
+</body>
+
+</html>

@@ -1,0 +1,974 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//RU" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/APP_Installation.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:32:39 GMT -->
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png"><title>ASUS Wireless Router RT-AC66U - USB-приложение</title>
+<link rel="stylesheet" type="text/css" href="index_style.css">
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="usp_style.css">
+<link rel="stylesheet" type="text/css" href="app_installation.css">
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="disk_functions.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script>
+var $j = jQuery.noConflict();
+</script>
+<script>
+function is_logined() { return 1; }
+function login_ip_dec() { return '2785126592'; }
+function login_ip_str() { return '192.168.1.166'; }
+function login_ip_str_now() { return '192.168.1.166'; }
+function login_mac_str() { return '50:e5:49:a2:00:f8'; }
+
+wan_route_x = '';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+var apps_array = [["DM2_Utility", "", "2.0.4.0", "no", "no", "http://dlcdnet.asus.com/pub/ASUS/wireless/ASUSWRT", "", "Download tools", "", "", "2.1.0.0+", "", "DM2_2040.zip"],
+["asuslighttpd", "3.1.0.71", "3.1.0.71", "yes", "yes", "http://dlcdnet.asus.com/pub/ASUS/wireless/ASUSWRT", "", "", "pcre, zlib, libstdc++, openssl, spawn-fcgi", "", "1.0.0.2", "", "asuslighttpd_3.1.0.71_arm.ipk"],
+["downloadmaster", "3.1.0.78", "3.1.0.78", "yes", "yes", "http://dlcdnet.asus.com/pub/ASUS/wireless/ASUSWRT", "downloadmaster/index.html", "Download tools", "openssl, zlib, libcurl, libevent, ncurses, libxml2, libstdc++, libsigc++, libpar2, pcre, spawn-fcgi, readline, asuslighttpd, wxbase", "1.0.0.1+", "1.0.0.2+", "", "downloadmaster_3.1.0.78_arm.ipk"],
+["e2fslibs", "", "1.41.12-1", "no", "no", "http://downloads.sourceforge.net/sourceforge/e2fsprogs/e2fsprogs-1.41.12.tar.gz", "", "Ext2 Filesystem Libraries", "", "", "", "", "e2fslibs_1.41.12-1_arm.ipk"],
+["e2fsprogs", "", "1.41.12-1", "no", "no", "http://downloads.sourceforge.net/sourceforge/e2fsprogs/e2fsprogs-1.41.12.tar.gz", "", "Ext2 Filesystem Utilities", "e2fslibs", "", "", "", "e2fsprogs_1.41.12-1_arm.ipk"],
+["expat", "2.0.1-1", "2.0.1-1", "yes", "no", "http://downloads.sourceforge.net/sourceforge/expat/expat-2.0.1.tar.gz", "", "XML Parser library", "", "", "", "", "expat_2.0.1-1_arm.ipk"],
+["ffmpeg", "", "0.svn20080409-3", "no", "no", "ffmpeg-0.svn20080409.tar.html", "", "FFmpeg is an audio/video conversion tool.", "", "", "", "", "ffmpeg_0.svn20080409-3_arm.ipk"],
+["flac", "", "1.2.1-1", "no", "no", "http://downloads.sourceforge.net/sourceforge/flac/flac-1.2.1.tar.gz", "", "FLAC is a free lossless audio codec.  This package contains the codec libraries and the command-line tools flac and metaflac.", "libogg", "", "", "", "flac_1.2.1-1_arm.ipk"],
+["gdbm", "", "1.8.3-4", "no", "no", "ftp://ftp.gnu.org/gnu/gdbm/gdbm-1.8.3.tar.gz", "", "GNU dbm is a set of database routines that use extensible hashing. It works similar to the standard UNIX dbm routines.", "", "", "", "", "gdbm_1.8.3-4_arm.ipk"],
+["libcurl", "7.24.0-1", "7.24.0-1", "yes", "no", "http://curl.haxx.se/download/curl-7.24.0.tar.gz", "", "Curl is a command line tool for transferring files with URL syntax, supporting FTP, FTPS, HTTP, HTTPS, GOPHER, TELNET, DICT, FILE and LDAP. Curl supports HTTPS certificates, HTTP POST, HTTP PUT, FTP uploading, kerberos, HTTP form based upload, proxies, cookies, user+password authentication, file transfer resume, http proxy tunneling and a busload of other useful tricks.", "openssl, zlib", "", "", "", "libcurl_7.24.0-1_arm.ipk"],
+["libevent", "2.0.20-1", "2.0.20-1", "yes", "no", "https://github.com/downloads/libevent/libevent/libevent-2.0.20-stable.tar.gz", "", "libevent to implement an event loop", "", "", "", "", "libevent_2.0.20-1_arm.ipk"],
+["libexif", "", "0.6.19-1", "no", "no", "http://downloads.sourceforge.net/sourceforge/libexif/libexif-0.6.19.tar.bz2", "", "Library to parse EXIF info in JPEG file and read/write the data from those tags.", "", "", "", "", "libexif_0.6.19-1_arm.ipk"],
+["libid3tag", "", "0.15.1b-1", "no", "no", "http://downloads.sourceforge.net/sourceforge/mad/libid3tag-0.15.1b.tar.gz", "", "The library used for ID3 tag reading", "zlib", "", "", "", "libid3tag_0.15.1b-1_arm.ipk"],
+["libjpeg", "", "6b-3", "no", "no", "http://www.ijg.org/files/jpegsrc.v6b.tar.gz", "", "collection of jpeg tools", "", "", "", "", "libjpeg_6b-3_arm.ipk"],
+["libogg", "", "1.2.1-1", "no", "no", "http://downloads.xiph.org/releases/ogg/libogg-1.2.1.tar.gz", "", "Ogg is a multimedia container format.", "", "", "", "", "libogg_1.2.1-1_arm.ipk"],
+["libpar2", "0.2-5", "0.2-5", "yes", "no", "http://downloads.sourceforge.net/sourceforge/parchive/libpar2-0.2.tar.gz", "", "A library for performing common tasks related to PAR recovery sets", "libsigc++", "", "", "", "libpar2_0.2-5_arm.ipk"],
+["libsigc++", "2.2.3-1", "2.2.3-1", "yes", "no", "http://ftp.gnome.org/pub/GNOME/sources/libsigc  /2.2/libsigc  -2.2.3.tar.gz", "", "libsigc++ implements a typesafe callback system for standard C++.", "libstdc++", "", "", "", "libsigc++_2.2.3-1_arm.ipk"],
+["libvorbis", "", "1.3.2-1", "no", "no", "http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.2.tar.gz", "", "Ogg Vorbis compressed audio format.", "libogg", "", "", "", "libvorbis_1.3.2-1_arm.ipk"],
+["libxml2", "2.7.8-1", "2.7.8-1", "yes", "no", "ftp://xmlsoft.org/libxml2/libxml2-2.7.8.tar.gz", "", "Libxml2 is the XML C parser and toolkit developed for the Gnome project.", "zlib (>=1.2.5)", "", "", "", "libxml2_2.7.8-1_arm.ipk"],
+["ncurses", "5.7-3", "5.7-3", "yes", "no", "ftp://invisible-island.net/ncurses/ncurses-5.7.tar.gz", "", "NCurses libraries", "", "", "", "", "ncurses_5.7-3_arm.ipk"],
+["openssl", "0.9.8v-2", "0.9.8v-2", "yes", "no", "http://www.openssl.org/source/openssl-0.9.8v.tar.gz", "", "Openssl provides the ssl implementation in libraries libcrypto and libssl, and is needed by many other applications and libraries.", "", "", "", "", "openssl_0.9.8v-2_arm.ipk"],
+["pcre", "8.31-1", "8.31-1", "yes", "no", "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.31.tar.bz2", "", "Perl-compatible regular expression library", "libstdc++", "", "", "", "pcre_8.31-1_arm.ipk"],
+["spawn-fcgi", "1.6.3-1", "1.6.3-1", "yes", "no", "http://www.lighttpd.net/download/spawn-fcgi-1.6.3.tar.bz2", "", "spawn-fcgi is used to spawn fastcgi applications", "", "", "", "", "spawn-fcgi_1.6.3-1_arm.ipk"],
+["readline", "6.1-2", "6.1-2", "yes", "no", "http://ftp.gnu.org/pub/gnu/readline/readline-6.1.tar.gz", "", "The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in", "ncurses", "", "", "", "readline_6.1-2_arm.ipk"],
+["sqlite", "", "3.7.14.1-1", "no", "no", "http://www.sqlite.org/sqlite-autoconf-3071401.tar.gz", "", "SQLite is a small C library that implements a self-contained, embeddable, zero-configuration SQL database engine.", "readline, ncurses", "", "", "", "sqlite_3.7.14.1-1_arm.ipk"],
+["wxbase", "2.8.12-1", "2.8.12-1", "yes", "no", "http://downloads.sourceforge.net/sourceforge/wxwindows/wxWidgets-2.8.12.tar.bz2", "", "wxbase is a basic (non-windows) part of wxWidget toolkit", "libstdc++, expat, zlib", "", "", "", "wxbase_2.8.12-1_arm.ipk"],
+["zlib", "1.2.5-1", "1.2.5-1", "yes", "no", "http://downloads.sourceforge.net/sourceforge/libpng/zlib-1.2.5.tar.bz2", "", "zlib is a library implementing the 'deflate' compression system.", "", "", "", "", "zlib_1.2.5-1_arm.ipk"]
+];
+var apps_state_upgrade = "";
+var apps_state_update = "";
+var apps_state_remove = "";
+var apps_state_enable = "";
+var apps_state_switch = "5";
+var apps_state_autorun = "";
+var apps_state_install = "5";
+var apps_state_error = "0";
+var apps_download_file = "";
+var apps_download_percent = "";
+var apps_dev = "sda1";
+var apps_download_percent_done = 0;
+var apps_depend_do = "";
+var apps_depend_action = "";
+var apps_depend_action_target = "";
+
+ //trigger apps_action.
+
+var curr_pool_name = "";
+var stoppullstate = 0;
+var isinstall = 0;
+var installPercent = 1;
+var default_apps_array = new Array();
+var appnum = 0;
+var _appname = "";
+var _dm_install;
+var _dm_enable;
+var dm_http_port = '';
+if(dm_http_port == "")
+	dm_http_port = "8081";
+
+var _apps_action = '';
+if(_apps_action == 'cancel')
+	_apps_action = '';
+
+var webs_state_update;
+var webs_state_error;
+var webs_state_info;
+var usb_path1_index;
+var usb_path2_index;
+
+function total_disk_sizes(){
+    return ["7910400"];
+}
+
+function disk_interface_names(){
+    return ["usb"];
+}
+
+function pool_names(){
+    return ["JET_8G"];
+}
+
+function pool_devices(){
+    return ["sda1"];
+}
+
+function pool_types(){
+    return ["ufsd"];
+}
+
+function pool_mirror_counts(){
+    return [0];
+}
+
+function pool_status(){
+    return ["rw"];
+}
+
+function pool_kilobytes(){
+    return [7903948];
+}
+
+function pool_encryption_password_is_missing(){
+    return ["no"];
+}
+
+function pool_kilobytes_in_use(){
+    return [1265068];
+}
+
+function disk_usage(){
+    return [7903948];
+}
+
+function per_pane_pool_usage_kilobytes(pool_num, disk_num){
+    if (pool_num == 0){
+	if (disk_num == 0) {
+	    return [7903948];
+	}
+    }
+}
+
+
+
+function initial(){
+	show_menu();
+
+	default_apps_array = [["AiDisk", "aidisk.html", "Организация общего доступа к файлам на USB-накопителе через Интернет", "Aidisk.png"],
+												["Servers Center", tablink[3][1], "RT-AC66U поддерживает стандарты UPnP. Вы можете включить этот протокол и разрешить доступ к мультимедийным файлам на USB-диске другим UPnP-устройствам, таким как PS3 или цифровой мультимедийный проигрыватель.", "server.png"],
+												["Network Printer Server", "PrinterServer.html", "Сервер печати поддерживает два метода: (1) ASUS EZ (2) LPR", "PrinterServer.png"],
+												["3G/4G", "Advanced_Modem_Content.html", "3G/4G установлен в режим резервирования. Режим 3G/4G включится при изменении WAN.", "modem.png"]];
+	
+	if(!media_support){
+			default_apps_array[1].splice(2,1,"Установка FTP и сетевое окружение (Samba).");						
+	}											
+
+	if(sw_mode == 2 || sw_mode == 3 || sw_mode == 4){
+		default_apps_array.splice(3, 1);
+		default_apps_array.splice(0, 1);
+	}
+
+	if(modem_support == -1)
+		default_apps_array.splice(3, 1);
+
+	trNum = default_apps_array.length;
+	calHeight(0);
+
+	if(_apps_action == '' && 
+		(apps_state_upgrade == 4 || apps_state_upgrade == "") && 
+		(apps_state_enable == 2 || apps_state_enable == "") &&
+		(apps_state_update == 2 || apps_state_update == "") && 
+		(apps_state_remove == 2 || apps_state_remove == "") &&
+		(apps_state_switch == 5 || apps_state_switch == "") && 
+		(apps_state_autorun == 4 || apps_state_autorun == "") && 
+		(apps_state_install == 5 || apps_state_install == "")){
+		show_apps();
+	}
+	else{
+		setTimeout("update_appstate();", 2000);
+	}
+
+	if(nodm_support == -1){
+		addOnlineHelp($("faq"), ["ASUSWRT", "download","master"]);
+		addOnlineHelp($("faq2"), ["ASUSWRT", "download","tool"]);
+	}
+}
+
+function calHeight(_trNum){
+	$("applist_table").style.height = "auto";
+
+	if(_trNum != 0)
+		_trNum = document.getElementById("applist_table").clientHeight;
+
+	var optionHeight = 52;
+	var manualOffSet = 28;
+	menu_height = Math.round(optionHeight*calculate_height - manualOffSet*calculate_height/14 - $("tabMenu").clientHeight) - 18;
+
+	if(menu_height > _trNum)
+		$("applist_table").style.height = menu_height + "px";
+}
+
+function update_appstate(e){
+  $j.ajax({
+    url: '/update_appstate.html',
+    dataType: 'script',
+	
+    error: function(xhr){
+      update_appstate();
+    },
+    success: function(response){
+			if(stoppullstate == 1)
+				return false;
+			else if(!check_appstate()){
+      	setTimeout("update_appstate();", 1000);
+				calHeight(0);
+			}
+			else
+      	setTimeout("update_applist();", 3000);
+		}    
+  });
+}
+
+function update_applist(e){
+  $j.ajax({
+    url: '/update_applist.html',
+    dataType: 'script',
+	
+    error: function(xhr){
+      update_applist();
+    },
+    success: function(response){
+			if(isinstall > 0 && getCookie_help("apps_last") == "downloadmaster"){
+				for(var i = 0; i < apps_array.length; i++){
+					if(apps_array[i][0] == "DM2_Utility")
+						$("DMUtilityLink").href = apps_array[i][5]+ "/" + apps_array[i][12];
+						
+					if(apps_array[i][0] == "downloadmaster"){			//set cookie for help.js	
+						_dm_install = apps_array[i][3];
+						_dm_enable = apps_array[i][4];
+					}	
+				}
+				$("isInstallDesc").style.display = "";
+				setTimeout('divdisplayctrl("none", "none", "none", "");', 100);
+				$("return_btn").style.display = "";
+			}
+			else{
+				setTimeout('show_partition();', 100);
+				setTimeout('show_apps();', 100);
+			}
+		}    
+  });
+}
+
+function check_appstate(){
+	if(_apps_action != "" && apps_state_upgrade == "" && apps_state_enable == "" && apps_state_update == "" && 
+		 apps_state_remove == "" && apps_state_switch == "" && apps_state_autorun == "" && apps_state_install == ""){
+		return false;
+	}
+
+	if((apps_state_upgrade == 4 || apps_state_upgrade == "") && (apps_state_enable == 2 || apps_state_enable == "") &&
+		(apps_state_update == 2 || apps_state_update == "") && (apps_state_remove == 2 || apps_state_remove == "") &&
+		(apps_state_switch == 5 || apps_state_switch == "") && (apps_state_autorun == 4 || apps_state_autorun == "") && 
+		(apps_state_install == 5 || apps_state_install == "")){
+		if(apps_state_install == 5 || apps_state_upgrade == 4){
+			if(installPercent > 1 && installPercent < 95)
+				installPercent = 95;
+			/*else if(installPercent < 98)
+				installPercent = installPercent + 1;*/
+			else
+				return true;
+		}
+		else
+			return true;
+	}
+
+	var errorcode;
+	var proceed = 0.6;
+
+	/*if(apps_state_install == 5 || apps_state_upgrade == 4 || (apps_state_enable == 1 && apps_state_install == 4)){
+		$("apps_state_desc").innerHTML = "[" + getCookie_help("apps_last") + "] " + "Installing... <b>" + Math.round(installPercent) +"</b> <span style='font-size: 16px;'>%</span>";
+	}
+	else */if(apps_state_upgrade != 4 && apps_state_upgrade != ""){ // upgrade error handler
+		errorcode = "apps_state_upgrade = " + apps_state_upgrade;
+		if(apps_state_error == 1)
+			$("apps_state_desc").innerHTML = "Устройство не найдено";
+		else if(apps_state_error == 2)
+			$("apps_state_desc").innerHTML = "Ошибка при монтировании USB-накопителя.";
+		else if(apps_state_error == 4)
+			$("apps_state_desc").innerHTML = "Ошибка при установке приложения.";
+		else if(apps_state_error == 6)
+			$("apps_state_desc").innerHTML = "Удаленный сервер не отвечает.";
+		else if(apps_state_error == 7)
+			$("apps_state_desc").innerHTML = "Ошибка при обновлении приложения. Это может быть вызвано неправильным файлом или ошибкой при передаче.";
+		else if(apps_state_error == 9)
+			$("apps_state_desc").innerHTML = "Ошибка при отключении USB-накопителя.";
+		else if(apps_state_error == 10)
+			$("apps_state_desc").innerHTML = "USB-накопитель не отвечает.";
+		else if(apps_state_upgrade == 0)
+			$("apps_state_desc").innerHTML = "Инициализация, пожалуйста, подождите";
+		else if(apps_state_upgrade == 1){
+			if(apps_download_percent > 0 && apps_download_percent <= 100){
+				$("apps_state_desc").innerHTML = apps_download_file + " is downloading.. " + " <b>" + apps_download_percent + "</b> <span style='font-size: 16px;'>%</span>";
+				apps_download_percent_done = 0;
+			}
+			else if(apps_download_percent_done > 5){
+				if(installPercent > 99)
+					installPercent = 99;
+				$("loadingicon").style.display = "none";
+				$("apps_state_desc").innerHTML = "[" + getCookie_help("apps_last") + "] " + "Installing... <b>" + Math.round(installPercent) +"</b> <span style='font-size: 16px;'>%</span>";
+				installPercent = installPercent + proceed;//*/
+			}
+			else{
+				$("apps_state_desc").innerHTML = "Initializing, please wait...";
+				apps_download_percent_done++;
+			}
+		}
+		else if(apps_state_upgrade == 2)
+			$("apps_state_desc").innerHTML = "Uninstalling app from the USB storage device...";
+		else{
+			if(apps_depend_action_target != "terminated" && apps_depend_action_target != "error"){
+				if(apps_depend_action_target == "")
+					$("apps_state_desc").innerHTML = "<b>[" + getCookie_help("apps_last") + "] " + "Installing... </b>";
+				else
+					$("apps_state_desc").innerHTML = "<b>[" + getCookie_help("apps_last") + "] " + "Installing... </b>"
+							+"<br> <span style='font-size: 16px;'> Installing...："+apps_depend_do+"</span>"
+							+"<br> <span style='font-size: 16px;'>"+apps_depend_action+"  "+apps_depend_action_target+"</span>"
+							;
+			}
+			else{
+				if(installPercent > 99)
+					installPercent = 99;
+				$("loadingicon").style.display = "none";
+				$("apps_state_desc").innerHTML = "[" + getCookie_help("apps_last") + "] " + "Installing... <b>" + Math.round(installPercent) +"</b> <span style='font-size: 16px;'>%</span>";
+				installPercent = installPercent + proceed;
+			}
+		}
+	}
+	else if(apps_state_enable != 2 && apps_state_enable != ""){
+		errorcode = "apps_state_enable = " + apps_state_enable;
+		if(apps_state_error == 1)
+			$("apps_state_desc").innerHTML = "An unknown error occurred during the application upgrade process.";
+		else if(apps_state_error == 2)
+			$("apps_state_desc").innerHTML = "Failed to mount the USB storage device.";
+		else if(apps_state_error == 3)
+			$("apps_state_desc").innerHTML = "Failed to create the swap file.";
+        else if(apps_state_error == 8)
+            $("apps_state_desc").innerHTML = "Enable error!";
+		else{
+			$("loadingicon").style.display = "";
+			$("apps_state_desc").innerHTML = "Please wait...";
+		}
+	}
+	else if(apps_state_update != 2 && apps_state_update != ""){
+		errorcode = "apps_state_update = " + apps_state_update;
+		if(apps_state_error == 1)
+			$("apps_state_desc").innerHTML = "Preparing the application";
+		else if(apps_state_error == 2)
+			$("apps_state_desc").innerHTML = "No Internet connection.";
+		else
+			$("apps_state_desc").innerHTML = "Updating...";
+	}
+	else if(apps_state_remove != 2 && apps_state_remove != ""){
+		errorcode = "apps_state_remove = " + apps_state_remove;
+		$("apps_state_desc").innerHTML = "Uninstalling";
+	}
+	else if(apps_state_switch != 4 && apps_state_switch != 5 && apps_state_switch != ""){
+		errorcode = "apps_state_switch = " + apps_state_switch;
+		if(apps_state_error == 1)
+			$("apps_state_desc").innerHTML = "An unknown error occurred during the application upgrade process.";
+		else if(apps_state_error == 2)
+			$("apps_state_desc").innerHTML = "Failed to mount the USB storage device.";
+		else if(apps_state_switch == 1)
+			$("apps_state_desc").innerHTML = "Stopping the running application";
+		else if(apps_state_switch == 2)
+			$("apps_state_desc").innerHTML = "Stopping the running swap file";
+		else if(apps_state_switch == 3)
+			$("apps_state_desc").innerHTML = "Checking the selected partition";
+		else
+			$("apps_state_desc").innerHTML = "Installing...";
+	}
+	else if(apps_state_autorun != 4 && apps_state_autorun != ""){
+		errorcode = "apps_state_autorun = " + apps_state_autorun;
+		if(apps_state_error == 1)
+			$("apps_state_desc").innerHTML = "An unknown error occurred during the application upgrade process.";
+		else if(apps_state_error == 2)
+			$("apps_state_desc").innerHTML = "Failed to mount the USB storage device.";
+		else if(apps_state_autorun == 1)
+			$("apps_state_desc").innerHTML = "Checking the disk";
+		else if(apps_state_install == 2)
+			$("apps_state_desc").innerHTML = "Creating the swap file";
+		else
+			$("apps_state_desc").innerHTML = "Auto-installing...";
+	}
+	else if(apps_state_install != 5 && apps_state_error > 0){ // install error handler
+		if(apps_state_error == 1)
+			$("apps_state_desc").innerHTML = "Device is not found.";
+		else if(apps_state_error == 2)
+			$("apps_state_desc").innerHTML = "Failed to mount the USB storage device.";
+		else if(apps_state_error == 3)
+			$("apps_state_desc").innerHTML = "Failed to create the swap file.";
+		else if(apps_state_error == 4)
+			$("apps_state_desc").innerHTML = "Failed to install the application.";
+		else if(apps_state_error == 5)
+			$("apps_state_desc").innerHTML = "Failed to connect to the Internet.";
+		else if(apps_state_error == 6)
+			$("apps_state_desc").innerHTML = "The remote server is not responding.";
+		else if(apps_state_error == 7)
+			$("apps_state_desc").innerHTML = "Failed to upgrade the application. This may be caused by an incorrect file or an error in transmission.";
+		else if(apps_state_error == 9)
+			$("apps_state_desc").innerHTML = "Failed to unmount or remove the USB storage device.";
+		else if(apps_state_error == 10)
+			$("apps_state_desc").innerHTML = "USB storage device is not responding.";
+
+		isinstall = 0;
+	}
+	else if(apps_state_install != 5 && apps_state_install != ""){
+		isinstall = 1;
+		errorcode = "_apps_state_install = " + apps_state_install;
+
+		if(apps_state_install == 0)
+			$("apps_state_desc").innerHTML = "Partitioning";
+		else if(apps_state_install == 1)
+			$("apps_state_desc").innerHTML = "Checking the disk";
+		else if(apps_state_install == 2)
+			$("apps_state_desc").innerHTML = "Creating the swap file";
+		else if(apps_state_install == 3){
+			if(apps_download_percent > 0 && apps_download_percent <= 100){
+				$("apps_state_desc").innerHTML = apps_download_file + " is downloading.. " + " <b>" + apps_download_percent + "</b> <span style='font-size: 16px;'>%</span>";
+				apps_download_percent_done = 0;
+			}
+			else if(apps_download_percent_done > 5){
+				if(installPercent > 99)
+					installPercent = 99;
+				$("loadingicon").style.display = "none";
+				$("apps_state_desc").innerHTML = "[" + getCookie_help("apps_last") + "] " + "Установка... <b>" + Math.round(installPercent) +"</b> <span style='font-size: 16px;'>%</span>";
+				installPercent = installPercent + proceed;//*/
+			}
+			else{
+				$("apps_state_desc").innerHTML = "Инициализация, пожалуйста, подождите...";
+				apps_download_percent_done++;
+			}
+		}
+		else{ //apps_state_install == 4
+			if(apps_depend_action_target != "terminated" && apps_depend_action_target != "error"){
+				if(apps_depend_action_target == ""){
+					if(installPercent > 99)
+						installPercent = 99;
+					$("loadingicon").style.display = "none";
+					$("apps_state_desc").innerHTML = "[" + getCookie_help("apps_last") + "] " + "Installing... <b>" + Math.round(installPercent) +"</b> <span style='font-size: 16px;'>%</span>";
+					installPercent = installPercent + proceed;
+				}
+				else
+					$("apps_state_desc").innerHTML = "<b>[" + getCookie_help("apps_last") + "] " + "Installing... </b>"
+							+"<br> <span style='font-size: 16px;'> Installing...："+apps_depend_do+"</span>"
+							+"<br> <span style='font-size: 16px;'>"+apps_depend_action+"  "+apps_depend_action_target+"</span>"
+					;
+			}
+			else{
+				if(installPercent > 99)
+					installPercent = 99;
+				$("loadingicon").style.display = "none";
+				$("apps_state_desc").innerHTML = "[" + getCookie_help("apps_last") + "] " + "Установка... <b>" + Math.round(installPercent) +"</b> <span style='font-size: 16px;'>%</span>";
+				installPercent = installPercent + proceed;
+			}
+		}
+	}
+	else{
+		$("loadingicon").style.display = "";
+		$("apps_state_desc").innerHTML = "Инициализация, пожалуйста, подождите...";
+	}
+	
+	if(apps_state_error != 0){
+		$("return_btn").style.display = "";
+		$("loadingicon").style.display = "none";
+		stoppullstate = 1;
+	}
+	else
+		$("return_btn").style.display = "none";
+
+	$("apps_state_desc").innerHTML += '<span class="app_action" onclick="apps_form(\'cancel\',\'\',\'\');">(Cancel)</span>';
+	return false;
+}
+
+var trNum;
+function show_apps(){
+	$("usbHint").innerHTML = "Для безопасного отключения жесткого диска от роутера, нажмите иконку USB в правом верхнем углу экрана";
+
+	var counter = 0;
+	appnum = 0;
+
+	if(apps_array == "" && (appnet_support != -1 || appbase_support != -1)){
+		apps_array = [["downloadmaster", "", "", "no", "no", "", "", "Download tools", "downloadmaster.html", "", "", ""],
+									["mediaserver", "", "", "no", "no", "", "", "", "mediaserver-2.html", "", "", ""]];
+		if(nodm_support != -1)
+			apps_array[1][0] = "mediaserver2";
+
+		if(aicloudipk_support)
+			apps_array.push(["aicloud", "", "", "no", "no", "", "", "AiCloud utilities", "aicloud.html", "", "", ""]);
+	}
+
+	if(!aicloudipk_support){
+		var aicloud_idx = apps_array.getIndexByValue2D("aicloud");
+		if(aicloud_idx[1] != -1 && aicloud_idx != -1)
+			apps_array.splice(aicloud_idx[0], 1);
+	}
+
+	if(nodm_support != -1){
+		var dm_idx = apps_array.getIndexByValue2D("downloadmaster");
+		if(dm_idx[1] != -1 && dm_idx != -1)
+			apps_array.splice(dm_idx[0], 1);
+	}
+
+	if(media_support || nomedia_support){ // buildin or not support 
+		// remove mediaserver
+		var media_idx = apps_array.getIndexByValue2D("mediaserver");
+		if(media_idx[1] != -1 && media_idx != -1)
+			apps_array.splice(media_idx[0], 1);
+
+		// remove mediaserver2
+		var media2_idx = apps_array.getIndexByValue2D("mediaserver2");
+		if(media2_idx[1] != -1 && media2_idx != -1)
+			apps_array.splice(media2_idx[0], 1);
+	}
+	else{
+		if(nodm_support != -1)
+			var media_idx = apps_array.getIndexByValue2D("mediaserver");
+		else
+			var media_idx = apps_array.getIndexByValue2D("mediaserver2");
+
+		if(media_idx[1] != -1 && media_idx != -1)
+			apps_array.splice(media_idx[0], 1);
+
+		var media_idx = apps_array.getIndexByValue2D("mediaserver");
+		if(nodm_support == -1 && (media_idx == -1 || media_idx[1] == -1)){
+			var apps_len = apps_array.length;
+			apps_array[apps_len] = ["mediaserver", "", "", "no", "no", "", "", "", "mediaserver-2.html", "", "", ""];
+		}
+  }
+
+	// calculate div height
+	htmlcode = '<table class="appsTable" align="center" style="margin:auto;border-collapse:collapse;">';
+	
+	//show default Apps
+	for(var i = 0; i < default_apps_array.length; i++){
+		htmlcode += '<tr><td align="center" class="app_table_radius_left" style="width:85px"><img style="margin-top:0px;" src="http://event.asus.com/2012/nw/dummy_ui/RU/images/New_ui/USBExt/'+&#32;default_apps_array[i][3]&#32;+'" style="cursor:pointer" onclick="location.href=\''+ default_apps_array[i][1] +'\';"></td><td class="app_table_radius_right" style="width:350px;">\n';
+		htmlcode += '<div class="app_name"><a style="text-decoration: underline;" href="http://event.asus.com/2012/nw/dummy_ui/RU/'&#32;+&#32;default_apps_array[i][1]&#32;+&#32;'">' + default_apps_array[i][0] + '</a></div>\n';
+		htmlcode += '<div class="app_desc">' + default_apps_array[i][2] + '</div>\n';
+		htmlcode += '<div style="margin-top:10px;"></div><br/><br/></td></tr>\n';
+	}
+
+	// show all apps
+	for(var i = 0; i < apps_array.length; i++){
+		if(apps_array[i][0] == "DM2_Utility")
+			$("DMUtilityLink").href = apps_array[i][5]+ "/" + apps_array[i][12];
+
+		if(apps_array[i][0] != "downloadmaster" && apps_array[i][0] != "mediaserver" && apps_array[i][0] != "mediaserver2" && apps_array[i][0] != "aicloud") // discard unneeded apps
+			continue;
+		else if((apps_array[i][0] == "downloadmaster" || apps_array[i][0] == "mediaserver" || apps_array[i][0] == "mediaserver2" || apps_array[i][0] == "aicloud") && apps_array[i][3] == "yes" && apps_array[i][4] == "yes"){
+			if(location.host.split(":").length > 1)
+		
+				apps_array[i][6] = "http://" + location.host.split(":")[0] + ":" + dm_http_port;
+			else{
+				apps_array[i][6] = "downloadmaster/task.html" ;
+			}
+			if(apps_array[i][0] == "aicloud") // append URL
+				apps_array[i][6] = "cloud_main.html";
+			else if(apps_array[i][0] == "mediaserver" || apps_array[i][0] == "mediaserver2")
+				apps_array[i][6] += "mediaserverui/mediaserver.html";
+		}
+		appnum++; // cal the needed height of applist table 
+
+		if(apps_array[i][4] == "no" && apps_array[i][3] == "yes")
+			apps_array[i][6] = "";	
+			
+		// apps_icon
+		htmlcode += '<tr style="height: 100px;"><td class="app_table_radius_left" align="center" style="width:85px">\n';
+		if(apps_array[i][4] == "yes" && apps_array[i][3] == "yes"){
+			if(apps_array[i][6] != ""){
+				if(apps_array[i][0] == "mediaserver" || apps_array[i][0] == "mediaserver2")
+					htmlcode += '<img style="margin-top:0px;" src="images/New_ui/USBExt/mediaserver.png" style="cursor:pointer" onclick="location.href=\''+ apps_array[i][6] +'\';"></td>\n';
+				else
+					htmlcode += '<img style="margin-top:0px;" src="http://event.asus.com/2012/nw/dummy_ui/RU/images/New_ui/USBExt/'+&#32;apps_array[i][0]&#32;+'.png" style="cursor:pointer" onclick="location.href=\''+ apps_array[i][6] +'\';"></td>\n';
+			}
+			else
+				htmlcode += '<img style="margin-top:0px;" src="http://event.asus.com/2012/nw/dummy_ui/RU/images/New_ui/USBExt/'+&#32;apps_array[i][0]&#32;+'.png"></td>\n';				
+		}	
+		else{
+			if(apps_array[i][0] == "mediaserver" || apps_array[i][0] == "mediaserver2")
+				htmlcode += '<img style="margin-top:0px;" src="images/New_ui/USBExt/mediaserver.png"></td>\n';			
+			else
+				htmlcode += '<img style="margin-top:0px;" src="http://event.asus.com/2012/nw/dummy_ui/RU/images/New_ui/USBExt/'+&#32;apps_array[i][0]&#32;+'.png"></td>\n';			
+		}
+
+		// apps_name
+		htmlcode += '<td class="app_table_radius_right" style="width:350px;">\n';
+		if(apps_array[i][0] == "downloadmaster")
+			apps_array[i][0] = "Download Master";
+		else if(apps_array[i][0] == "mediaserver" || apps_array[i][0] == "mediaserver2")
+			apps_array[i][0] = "Media Server";
+		else if(apps_array[i][0] == "aicloud")
+			apps_array[i][0] = "AiCloud";
+
+		if(apps_array[i][6] != ""){ // with hyper-link
+			htmlcode += '<div class="app_name">';
+
+			if(apps_array[i][1] == ""){
+				if(apps_array[i][3] == "no")
+					htmlcode += apps_array[i][0] + '</div>\n';
+				else if(apps_array[i][4] == "no" && apps_array[i][3] == "yes") // disable
+					htmlcode += '<a href="http://event.asus.com/2012/nw/dummy_ui/RU/'&#32;+&#32;apps_array[i][6]&#32;+&#32;'" style="color:gray;">' + apps_array[i][0] + '<span class="app_ver" style="color:gray">' + apps_array[i][1] + '</sapn></a></div>\n';
+				else // enable
+					htmlcode += '<a href="http://event.asus.com/2012/nw/dummy_ui/RU/'&#32;+&#32;apps_array[i][6]&#32;+&#32;'" style="text-decoration: underline;">' + apps_array[i][0] + '</a><span class="app_ver">' + apps_array[i][1] + '</sapn></div>\n';		
+			}
+			else{
+				if(apps_array[i][4] == "no" && apps_array[i][3] == "yes") // disable
+					htmlcode += '<a href="http://event.asus.com/2012/nw/dummy_ui/RU/'&#32;+&#32;apps_array[i][6]&#32;+&#32;'" style="color:gray">' + apps_array[i][0] + '<span class="app_ver" style="color:gray">ver. ' + apps_array[i][1] + '</sapn></a></div>\n';
+				else // enable
+					htmlcode += '<a href="http://event.asus.com/2012/nw/dummy_ui/RU/'&#32;+&#32;apps_array[i][6]&#32;+&#32;'" style="text-decoration: underline;">' + apps_array[i][0] + '</a><span class="app_ver">ver. ' + apps_array[i][1] + '</sapn></div>\n';
+			}
+		}
+		else{ // without hyper-link
+			if(apps_array[i][4] == "no" && apps_array[i][3] == "yes")
+				htmlcode += '<div class="app_name" style="color:gray">';
+			else
+				htmlcode += '<div class="app_name">';
+			if(apps_array[i][1] == "")
+				htmlcode += apps_array[i][0] + '<span class="app_ver">' + apps_array[i][1] + '</sapn></div>\n';
+			else
+				htmlcode += apps_array[i][0] + '<span class="app_ver">ver. ' + apps_array[i][1] + '</sapn></div>\n';
+		}
+
+		if(apps_array[i][0] == "Download Master")
+			apps_array[i][0] = "downloadmaster";
+		else if(apps_array[i][0] == "Media Server"){
+			if(nodm_support == -1)
+				apps_array[i][0] = "mediaserver";
+			else
+				apps_array[i][0] = "mediaserver2";
+		}
+		else if(apps_array[i][0] == "AiCloud")
+			apps_array[i][0] = "aicloud";
+
+		// apps_desc
+		if(apps_array[i][4] == "no" && apps_array[i][3] == "yes"){
+			htmlcode += '<div class="app_desc" style="color:gray">' + apps_array[i][7] + '</div>\n';
+			htmlcode += '<div style="margin-top:10px;">\n';		
+		}
+		else{
+			htmlcode += '<div class="app_desc">' + apps_array[i][7] + '</div>\n';
+			htmlcode += '<div style="margin-top:10px;">\n';		
+		}
+
+		// apps_action
+		if(apps_array[i][3] == "yes"){ //installed
+			htmlcode += '<span class="app_action" onclick="apps_form(\'remove\',\''+ apps_array[i][0] +'\',\'\');">Uninstall</span>\n';
+			if(apps_array[i][4] == "yes")		//enable
+				htmlcode += '<span class="app_action" onclick="apps_form(\'enable\',\''+ apps_array[i][0] +'\',\'no\');">Disable</span>\n';
+			else
+				htmlcode += '<span class="app_action" onclick="apps_form(\'enable\',\''+ apps_array[i][0] +'\',\'yes\');">Enable</span>\n';
+		}
+		else{
+			if(apps_array[i][0] == "downloadmaster" || apps_array[i][0] == "mediaserver" || apps_array[i][0] == "aicloud" || apps_array[i][0] == "mediaserver2")
+				htmlcode += '<span class="app_action" onclick="_appname=\''+apps_array[i][0]+'\';divdisplayctrl(\'none\', \'\', \'none\', \'none\');location.href=\'#\';">Install</span>\n';
+			else
+				htmlcode += '<span class="app_action" onclick="apps_form(\'install\',\''+ apps_array[i][0] +'\',\''+ partitions_array[i] +'\');">Install</span>\n';
+		}
+
+		if(apps_array[i][0] == "downloadmaster"){
+			if(apps_array[i][3] == "yes"){
+				htmlcode += '<span class="app_action" onclick="divdisplayctrl(\'none\', \'none\', \'none\', \'\');">Help</span>\n';
+			}
+
+			cookie_help.set("dm_install", apps_array[i][3], 1000);
+			cookie_help.set("dm_enable", apps_array[i][4], 1000);
+		}
+
+		if(parseInt(apps_array[i][2].replace(/[.]/gi,"")) > parseInt(apps_array[i][1].replace(/[.]/gi,"")))
+			htmlcode += '</div><div style="color:#FC0;margin-top:10px;"><span class="app_action" onclick="apps_form(\'upgrade\',\''+ apps_array[i][0] +'\',\'\');">Доступно обновление</span>\n';
+		
+		htmlcode += '</div><br/><br/></td></tr>\n';
+	
+		// setCookie
+		if(apps_array[i][0] == "downloadmaster"){ // set Cookie
+			//set cookie for help.js		
+			_dm_install = apps_array[i][3];
+			_dm_enable = apps_array[i][4];
+		}
+	}
+
+	htmlcode += '</table>\n';
+	$("app_table").innerHTML = htmlcode;
+	divdisplayctrl("", "none", "none", "none");
+	stoppullstate = 1;
+	calHeight(1);
+	cookie_help.set("hwaddr", '74:D0:2B:64:F0:B0', 1000);
+}
+
+var partitions_array = "";
+function show_partition(){
+	var htmlcode = "";
+	var mounted_partition = 0;
+
+	if(pool_names() != "") //  avoid no_disk error
+		partitions_array = pool_devices(); 
+	
+	$("app_table").style.display = "none";
+	htmlcode += '<table align="center" style="margin:auto;border-collapse:collapse;">';
+
+	for(var i = 0; i < partitions_array.length; i++){
+		var all_accessable_size = simpleNum(pool_kilobytes()[i]-pool_kilobytes_in_use()[i]);
+		var all_total_size = simpleNum(pool_kilobytes()[i]);
+
+		if(pool_status()[i] == "unmounted")
+			continue;
+
+		if(apps_dev == partitions_array[i]){
+			curr_pool_name = pool_names()[i];
+			if(all_accessable_size > 1)
+				htmlcode += '<tr><td class="app_table_radius_left"><div class="iconUSBdisk" onclick="apps_form(\'install\',\''+ _appname +'\',\''+ partitions_array[i] +'\');"></div></td><td class="app_table_radius_right" style="width:200px;">\n';
+			else
+				htmlcode += '<tr><td class="app_table_radius_left"><div class="iconUSBdisk_noquota"></div></td><td class="app_table_radius_right" style="width:200px;">\n';
+			htmlcode += '<div class="app_desc"><b>'+ pool_names()[i] + ' (active)</b></div>';
+		}
+		else{
+			if(all_accessable_size > 1)
+				htmlcode += '<tr><td class="app_table_radius_left"><div class="iconUSBdisk" onclick="apps_form(\'switch\',\''+_appname+'\',\''+partitions_array[i]+'\');"></div></td><td class="app_table_radius_right" style="width:200px;">\n';
+			else
+				htmlcode += '<tr><td class="app_table_radius_left"><div class="iconUSBdisk_noquota"></div></td><td class="app_table_radius_right" style="width:200px;">\n';
+			htmlcode += '<div class="app_desc"><b>'+ pool_names()[i] + '</b></div>'; 
+		}
+
+		if(all_accessable_size > 1)
+			htmlcode += '<div class="app_desc">Доступный объем: <b>'+ all_accessable_size+" GB" + '</b></div>'; 
+		else
+			htmlcode += '<div class="app_desc">Доступный объем: <b>'+ all_accessable_size+" GB <span style=\'color:#FFCC00\'>(Disk quota can not less than 1GB)" + '</span></b></div>'; 
+
+		htmlcode += '<div class="app_desc">Общий объем: <b>'+ all_total_size+" GB" + '</b></div>'; 
+		htmlcode += '</div><br/><br/></td></tr>\n';
+		mounted_partition++;
+	}
+
+	if(mounted_partition == 0)
+		htmlcode += '<tr height="360px"><td colspan="2"><span class="app_name" style="line-height:100%">USB-накопитель не обнаружен</span></td></tr>\n';
+
+	$("partition_div").innerHTML = htmlcode;
+	$("usbHint").innerHTML = "Пожалуйста, выберите USB-накопитель, к которому Вы хотите получить доступ.";
+	calHeight(1);
+}
+
+var mounted_partition_old = 0;
+function detectUSBStatusApp(){
+	var mounted_partition = 0;
+	$j.ajax({
+    		url: '/update_diskinfo.html',
+    		dataType: 'script',
+    		error: function(xhr){
+    			detectUSBStatusApp();
+    		},
+    		success: function(){
+					for(i=0; i<foreign_disk_interface_names().length; i++){
+						if(foreign_disk_total_mounted_number()[i] != 0){
+							mounted_partition += foreign_disk_total_mounted_number()[i];
+						}
+					}
+					if(mounted_partition != mounted_partition_old){
+						show_partition();
+					}
+					mounted_partition_old = mounted_partition;
+					setTimeout("detectUSBStatusApp();", 1000);
+  			}
+  });
+}
+
+function apps_form(_act, _name, _flag){
+	cookie_help.set("apps_last", _name, 1000);
+
+	document.app_form.apps_action.value = _act;
+	document.app_form.apps_name.value = _name;
+	document.app_form.apps_flag.value = _flag;
+	document.app_form.submit();
+}
+
+function divdisplayctrl(flag1, flag2, flag3, flag4){
+	$("app_table").style.display = flag1;
+	$("partition_div").style.display = flag2;
+	$("app_state").style.display = flag3;
+	$("DMDesc").style.display = flag4;
+
+	if(flag1 != "none"){ // app list
+		$("return_btn").style.display = "none";
+	}
+	else if(flag2 != "none"){ // partition list
+		detectUSBStatusApp();
+		show_partition()
+		$("return_btn").style.display = "";
+		calHeight(1);
+	}
+	else if(flag4 != "none"){ // help
+		if(location.host.split(":").length > 1)
+			var _quick_dmlink = "http://" + location.host.split(":")[0] + ":" + dm_http_port;
+		else
+			var _quick_dmlink = "http://" + location.host + ":" + dm_http_port;
+
+		if(_dm_enable == "yes")
+			$("quick_dmlink").onclick = function(){location.href=_quick_dmlink;}
+		else
+			$("quick_dmlink").onclick = function(){alert(Untranslated.DM_DisableHint)}
+
+		$("return_btn").style.display = "";
+		calHeight(1);
+	}
+	else{ // status
+		calHeight(0);
+ 	}
+
+	if(flag4 == "none")
+		$("usbHint").style.display = "";
+	else
+		$("usbHint").style.display = "none";
+}
+
+function reloadAPP(){
+	document.app_form.apps_action.value = "";
+	document.app_form.apps_name.value = "";
+	document.app_form.apps_flag.value = "";
+	location.href = "APP_Installation.html";
+}
+</script>
+</head>
+
+<body onload="initial();" onunload="unload_body();">
+<div id="TopBanner"></div>
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0" scrolling="no"></iframe>
+<form method="post" name="app_form" action="http://admin:admin@192.168.1.1/APP_Installation.html">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="RU" disabled>
+<input type="hidden" name="firmver" value="3.0.0.4" disabled>
+<input type="hidden" name="apps_action" value="">
+<input type="hidden" name="apps_path" value="">
+<input type="hidden" name="apps_name" value="">
+<input type="hidden" name="apps_flag" value="">
+</form>
+<form method="post" name="form" action="http://admin:admin@192.168.1.1/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="RU">
+<input type="hidden" name="firmver" value="3.0.0.4">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="action_wait" value="">
+<input type="hidden" name="current_page" value="APP_Installation.html">
+</form>
+
+<table class="content" align="center" cellspacing="0" style="margin:auto;">
+  <tr>
+	<td width="17">&nbsp;</td>
+	
+	<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+    <td valign="top">
+		<div id="tabMenu" style="*margin-top: -160px;"></div>
+		<br>
+<!--=====Beginning of Main Content=====-->
+<div class="app_table" id="applist_table">
+<table>
+
+  <tr>
+  	<td class="formfonttitle"><!--#Menu_usb_application#>
+			<img id="return_btn" onclick="show_apps();" align="right" style="cursor:pointer;margin-right:10px;margin-top:-10px" title="Back to USB Extension" src="images/backprev.png" onMouseOver="this.src='images/backprevclick.png'" onMouseOut="this.src='images/backprev.png'"-->
+
+				<div style="width:730px">
+					<table width="730px">
+						<tr>
+							<td align="left">
+								<span class="formfonttitle">USB application</span>
+							</td>
+							<td>
+								<img id="return_btn" onclick="reloadAPP();" align="right" style="cursor:pointer;position:absolute;margin-left:-30px;margin-top:-25px;" title="Back to USB Extension" src="images/backprev.png" onMouseOver="this.src='images/backprevclick.png'" onMouseOut="this.src='images/backprev.png'">
+							</td>
+						</tr>
+					</table>
+				</div>
+		</td>
+  </tr> 
+  <tr>
+  	<td class="line_export"><img src="images/New_ui/export/line_export.png" /></td>
+  </tr>
+  <tr>
+   	<td>
+			<div class="formfontdesc" id="usbHint">To remove the hard disk from the router, click the USB icon at the upper right corner of your screen.</div>
+		</td> 
+  </tr>
+
+  <tr>
+   	<td valign="top">
+		<div id="partition_div"></div>
+		<div id="app_state" class="app_state">
+			<span style="margin-left:15px;" id="apps_state_desc">Loading APP list...</span>
+			<img id="loadingicon" style="margin-left:10px" src="images/InternetScan.gif">
+		</div>
+		<div id="DMDesc" style="display:none;">
+			<div style="margin-left:10px;" id="isInstallDesc">
+				<h2>Download Master install success!</h2>
+				<div class="top-heading" style="cursor:pointer;" id="quick_dmlink">
+					<table><tr><td><b style="text-decoration:underline;color:#FC0;font-size:16px;">Launch Download Master now</b></td><td><img style="margin-left:10px;" src="images/New_ui/aidisk/steparrow.png" /></td></tr></table>
+				</div>
+			</div>
+			<br/>
+			<div><img src="images/New_ui/export/line_export.png" /></div>
+			<table class="" cellspacing="0" cellpadding="0">
+				<tbody>
+					<tr valign="top">
+					<td>
+						<ul style="margin-left:10px;">
+							<br>
+							<li>
+								<a id="faq" href="APP_Installation.html#" target="_blank" style="text-decoration:underline;font-size:14px;font-weight:bolder;color:#FFF">Download Master FAQ</a>
+							</li>
+							<li style="margin-top:10px;">
+								<a id="faq2" href="APP_Installation.html#" target="_blank" style="text-decoration:underline;font-size:14px;font-weight:bolder;color:#FFF">Download Master Tool FAQ</a>
+							</li>
+							<li style="margin-top:10px;">
+								<a id="DMUtilityLink" href="http://dlcdnet.asus.com/pub/ASUS/wireless/ASUSWRT/DM2_2037.zip" style="text-decoration:underline;font-size:14px;font-weight:bolder;color:#FFF">Download Download Master now</a>
+							</li>
+							<li style="margin-top:10px;">
+								<a target="_blank" style="font-weight: bolder; cursor:pointer;text-decoration: underline;" href="http://www.youtube.com/v/Em6Hddyytlw">Click to open the tutorial video. </a>
+							</li>
+						</ul>
+					</td>
+					</tr>
+				</tbody>
+			</table>													
+   	</td> 
+  </tr>  
+	   
+  <tr>
+   	<td valign="top" id="app_table_td" height="0px">
+				<div id="app_table"></div>
+   	</td> 
+  </tr>  
+</table>
+</div>
+<!--=====End of Main Content=====-->
+		</td>
+
+		<td width="20" align="center" valign="top"></td>
+	</tr>
+</table>
+</div>
+
+<div id="footer"></div>
+</body>
+
+<!-- Mirrored from 192.168.1.1/APP_Installation.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 14 Jun 2013 17:32:42 GMT -->
+</html>
+

@@ -1,0 +1,790 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+fv1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Virtual Servers';
+var menuSection	='Fire';
+var menuItem	='Virtual Servers';
+var isRouter	='1' ? '1' : '0';
+var	isPS	='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else isAPmode='0';
+
+var vs_num =20;
+
+function storeData()
+{
+	var temp_str='';
+	var temp_des_str='';
+	var first = 1;
+	i=1;
+	while(i<=vs_num)
+	{
+		if(eval("document.tF0.private_ip_"+i+".value")!='')
+		{
+			if(eval("document.tF0.enable_"+i+".checked")==true)
+				temp_str+='1';
+			else	temp_str+='0';
+			var temp_des=eval("document.tF0.description_"+i+".value");
+			t1=temp_des.indexOf(' ');
+			while(t1!=-1)
+			{
+				temp_des=temp_des.replace(' ','__');
+				t1=temp_des.indexOf(' ');
+			}
+			temp_str+='-x';
+			if(temp_des!='')
+				temp_des_str+=temp_des+" ";
+			else temp_des_str+="__ ";
+			temp_str+='-'+eval("document.tF0.inbound_port_low_"+i+".value");
+			temp_str+='-'+eval("document.tF0.inbound_port_high_"+i+".value");
+			temp_str+='-'+eval("document.tF0.type_"+i+".value");
+			temp_str+='-'+eval("document.tF0.private_ip_"+i+".value");
+			temp_str+='-'+eval("document.tF0.private_port_low_"+i+".value");
+			temp_str+='-'+eval("document.tF0.private_port_high_"+i+".value");
+			temp_str+=' ';
+		}
+		i++;
+	}
+	document.tF0.fwi.value=temp_str;
+	document.tF0.fwi_des.value=temp_des_str;
+
+	return true;
+}
+
+function evaltF() 
+{
+    var tmp, i;
+    
+    /* check data validity */
+	for(tmp=1;tmp<=vs_num;tmp++)
+	{
+		if(!(isBlank(eval("document.tF0.private_ip_"+tmp+".value"))) 
+		|| !(isBlank(eval("document.tF0.private_port_low_"+tmp+".value")))
+		|| !(isBlank(eval("document.tF0.inbound_port_low_"+tmp+".value")))
+		|| !(isBlank(eval("document.tF0.private_port_high_"+tmp+".value")))
+		|| !(isBlank(eval("document.tF0.inbound_port_high_"+tmp+".value"))) 
+		|| eval("document.tF0.enable_"+tmp+".checked"))
+		{
+			if(!validVisibleStr(eval("document.tF0.description_"+tmp+".value")))
+			{
+			    alert(msg_invalid_char);
+			    eval("document.tF0.description_"+tmp).focus();
+			    eval("document.tF0.description_"+tmp).select();
+			    return false;
+			}
+			if (isNValidEndIP(eval("document.tF0.private_ip_"+tmp+".value")))
+			{ 
+			    alert(fvipm); 
+			    eval("document.tF0.private_ip_"+tmp).focus();
+			    eval("document.tF0.private_ip_"+tmp).select();
+			    return false; 
+			}
+			if(eval("document.tF0.private_ip_"+tmp).value == '1')
+			{
+			    alert(msg_privateIP_invalid);
+			    return false;
+			}
+			if (isNValidPort(eval("document.tF0.private_port_low_"+tmp+".value")))
+			{ 
+			    alert(fcsm);
+			    eval("document.tF0.private_port_low_"+tmp).focus();
+			    eval("document.tF0.private_port_low_"+tmp).select();
+			    return false; 
+			}
+			if(isNValidPort(eval("document.tF0.inbound_port_low_"+tmp+".value")))
+			{
+			    { 
+			    alert(fcsm);
+			    eval("document.tF0.inbound_port_low_"+tmp).focus();
+			    eval("document.tF0.inbound_port_low_"+tmp).select();
+			    return false; 
+			}
+			}
+			if (isNValidPort(eval("document.tF0.private_port_high_"+tmp+".value")))
+			{ 
+			    alert(fcsm);
+			    eval("document.tF0.private_port_high_"+tmp).focus();
+			    eval("document.tF0.private_port_high_"+tmp).select();
+			    return false; 
+			}
+			if(isNValidPort(eval("document.tF0.inbound_port_high_"+tmp+".value")))
+			{
+			    alert(fcsm);
+			    eval("document.tF0.inbound_port_high_"+tmp).focus();
+			    eval("document.tF0.inbound_port_high_"+tmp).select();
+			    return false; 
+			}
+			if (parseInt(eval("document.tF0.inbound_port_low_"+tmp+".value")) > parseInt(eval("document.tF0.inbound_port_high_"+tmp+".value")))
+			{ 
+    			alert(fvipr); 
+    			eval("document.tF0.inbound_port_low_"+tmp).focus();
+			    eval("document.tF0.inbound_port_low_"+tmp).select();
+    			return false; 
+			}
+			if (parseInt(eval("document.tF0.private_port_low_"+tmp+".value")) > parseInt(eval("document.tF0.private_port_high_"+tmp+".value")))
+			{ 
+    			alert(fvppr); 
+    			eval("document.tF0.private_port_low_"+tmp).focus();
+			    eval("document.tF0.private_port_low_"+tmp).select();
+    			return false; 
+			}
+			if ( (parseInt(eval("document.tF0.inbound_port_low_"+tmp+".value")) <= parseInt(document.tF0.ValueOfRemote.value) 
+			    && parseInt(eval("document.tF0.inbound_port_high_"+tmp+".value")) >= parseInt(document.tF0.ValueOfRemote.value)) 
+			    && (eval("document.tF0.enable_"+tmp+".checked") == true )
+			    && /* TCP */ 0 == eval("document.tF0.type_"+tmp+".selectedIndex"))
+			{ 
+    			alert(fvrm); 
+    			eval("document.tF0.inbound_port_low_"+tmp).focus();
+			    eval("document.tF0.inbound_port_low_"+tmp).select();
+    			return false; 
+			}
+			if( (parseInt(eval("document.tF0.private_port_high_"+tmp+".value")) - parseInt(eval("document.tF0.private_port_low_"+tmp+".value")) )
+			    != (parseInt(eval("document.tF0.inbound_port_high_"+tmp+".value")) - parseInt(eval("document.tF0.inbound_port_low_"+tmp+".value")))
+			    )
+			{
+			    alert(fvippnm);
+			    eval("document.tF0.inbound_port_high_"+tmp).focus();
+			    eval("document.tF0.inbound_port_high_"+tmp).select();
+			    return false;
+			}
+		}
+	}
+	
+	/* check inbound ports' singleness */
+	for(tmp=1;tmp<=vs_num;tmp++)
+	{
+	    if(!eval("document.tF0.enable_"+tmp+".checked"))
+	        continue;
+	        
+	    if(!(isBlank(eval("document.tF0.private_ip_"+tmp+".value"))) || !(isBlank(eval("document.tF0.private_port_low_"+tmp+".value"))) || !(isBlank(eval("document.tF0.inbound_port_low_"+tmp+".value"))) || !(isBlank(eval("document.tF0.private_port_high_"+tmp+".value"))) || !(isBlank(eval("document.tF0.inbound_port_high_"+tmp+".value"))) )
+	    {
+    	    for(i = 1; i < tmp; i++)
+    	    {
+    	        if(!eval("document.tF0.enable_"+i+".checked"))
+	                continue;
+	                
+    	        if(!(isBlank(eval("document.tF0.private_ip_"+i+".value"))) || !(isBlank(eval("document.tF0.private_port_low_"+i+".value"))) || !(isBlank(eval("document.tF0.inbound_port_low_"+i+".value"))) || !(isBlank(eval("document.tF0.private_port_high_"+i+".value"))) || !(isBlank(eval("document.tF0.inbound_port_high_"+i+".value"))) )
+    	        {
+        	        if(parseInt(eval("document.tF0.type_"+i+".value")) == parseInt(eval("document.tF0.type_"+tmp+".value")) 
+        	            || 2 == parseInt(eval("document.tF0.type_"+i+".value")) 
+        	            || 2 == parseInt(eval("document.tF0.type_"+tmp+".value")))
+        	        {
+            	        if( (parseInt(eval("document.tF0.inbound_port_low_"+i+".value")) <= parseInt(eval("document.tF0.inbound_port_low_"+tmp+".value"))
+            	            && parseInt(eval("document.tF0.inbound_port_low_"+tmp+".value")) <= parseInt(eval("document.tF0.inbound_port_high_"+i+".value")))
+            	            ||
+            	            (parseInt(eval("document.tF0.inbound_port_low_"+tmp+".value")) <= parseInt(eval("document.tF0.inbound_port_low_"+i+".value"))
+            	            && parseInt(eval("document.tF0.inbound_port_high_"+i+".value")) <= parseInt(eval("document.tF0.inbound_port_high_"+tmp+".value")))
+            	            )
+            	        {
+            	            alert(fcnsm);
+            	            eval("document.tF0.inbound_port_low_"+tmp).focus();
+			                eval("document.tF0.inbound_port_low_"+tmp).select();
+            	            return false;
+            	        }
+            	        
+            	        if(parseInt(eval("document.tF0.inbound_port_low_"+i+".value")) <= parseInt(eval("document.tF0.inbound_port_high_"+tmp+".value"))
+            	            && parseInt(eval("document.tF0.inbound_port_high_"+tmp+".value")) <= parseInt(eval("document.tF0.inbound_port_high_"+i+".value")))
+        	            {
+        	                alert(fcnsm);
+        	                eval("document.tF0.inbound_port_high_"+tmp).focus();
+			                eval("document.tF0.inbound_port_high_"+tmp).select();
+			                return false;
+        	            }
+            	    }
+            	}
+    	    }
+    	}
+	}
+	dataToHidden(document.forms[0]);
+	if(storeData()==false)return false;
+	return true;
+}
+
+function init()
+{
+    dataToVisible(document.forms[0]);    
+}
+  
+function logoutF()
+{
+	document.tF0.logout.value=1;
+	document.tF0.submit();
+	return true;
+}
+//-->
+</script>
+<script language="JavaScript" src="fwvirt.js"></script>
+<script language="JavaScript" src="fwvirt2.js"></script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="init();" >
+<form name="tF0" method="post" action="/belkin/3.00.02/En/apply_10_fw_virt.html">
+<input type="hidden" name="ValueOfRemote" value="0">
+<input type="hidden" name="page" value="fw_virtual_server">
+<input type="hidden" name="logout" value="2">
+<input type=hidden name="lan_ip" value="192.168.2.1">
+<input type=hidden name="lan_netmask" value="255.255.255.0">
+<input type=hidden name="action" value="Apply">
+<input type=hidden name="fwi" value="">
+<input type=hidden name="fwi_des" value="">
+<input type=hidden name=webpage value=fw_virt.html >
+<input type=hidden name=end value=nothing >
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(fv1);</script> <br><br>
+<table border=0 class="copy_1"><tr><td width=5>&nbsp;</td><td>
+<table width="580" border="0" cellspacing="0" cellpadding="0" class="copy_1">
+<tr><td width=35>&nbsp;</td>
+<td class="body"><script language="javascript" type="text/javascript">dw(fv2);</script> 
+<a href="javascript:void(0);" class="more" onClick="window.open('glossary.html#virtual_server','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script language="javascript" type="text/javascript">dw(sm1);</script></font></a> </td></tr></table>
+<br><table border=0 cellspacing=1 cellpadding=5 width="680" align="left" class="copy_1" align=center>
+<tr><td colspan="2" align=center nowrap class="formText">&nbsp;</td>
+<td colspan="4" class="plaintext_bold">
+<table border=0 class="copy_1">
+<tr align="center"><td colspan="3">
+<script language="javascript" type="text/javascript">strHtml='<input type="reset" name="reset" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;';
+dw(strHtml);
+strHtml='<input type="submit" name="submit" value="'+btn2+'" style="{width:160px;}" class="submitBtn" onClick="return evaltF();">';
+dw(strHtml);</script>
+</td></tr><tr><td class="bold_body"><script language="javascript" type="text/javascript">dw(Add);</script>&nbsp;<span class="body"><select name="virtual_server_list"><script language="javascript" type="text/javascript">
+dw('<option value="Active Worlds">' + fv3 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Age of Empires">' + fv4 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Age of Empires Expansion: The Rise of Rome">' + fv5 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Age of Empires II Expansion: The Conquerors">' + fv6 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Age of Empires II: The Age of Kings">' + fv7 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Age of Kings">' + fv8 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Age of Wonders">' + fv9 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Aliens vs. Predator">' + fv10 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Anarchy Online (BETA)">' + fv11 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="AOL Instant Messenger">' + fv12 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Audiogalaxy Satellite">' + fv13 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Baldurs Gate">' + fv14 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="BattleCom">' + fv15 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Battlefield Communicator">' + fv16 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Black and White">' + fv17 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Blizzard Battle.net">' + fv18 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Buddy Phone">' + fv19 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Bungie.net">' + fv20 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Camerades">' + fv21 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="CART Precision Racing">' + fv22 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Close Combat for Windows">' + fv23 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Close Combat III: The Russian Front">' + fv24 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Close Combat: A Bridge Too Far">' + fv25 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Combat Flight Simulator 2: WWII Pacific Theater">' + fv26 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Combat Flight Simulator: WWII Europe Series">' + fv27 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Crimson Skies">' + fv28 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="CuSeeMe">' + fv142 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Dark Reign">' + fv29 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Dark Reign 2">' + fv30 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Delta Force 2">' + fv31 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Delta Three PC to Phone">' + fv32 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Descent 3">' + fv33 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Descent Freespace">' + fv34 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Diablo (1.07+)">' + fv35 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Diablo I">' + fv36 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Diablo II">' + fv37 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="DialPad.Com">' + fv38 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="DirectX 7 Games">' + fv39 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="DirectX 8 Games">' + fv40 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Domain Name Server (DNS)">' + fv41 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Doom">' + fv42 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Dune 2000">' + fv43 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Dwyco Video Conferencing">' + fv44 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Elite Force">' + fv45 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Everquest">' + fv46 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="F-16">' + fv47 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="F-22 Lightning 3">' + fv48 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="F-22 Raptor">' + fv49 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="F22 Raptor (Novalogic)">' + fv50 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Falcon 4.0">' + fv51 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Fighter Ace II">' + fv52 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Flight Simulator 2000">' + fv53 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Flight Simulator 98">' + fv54 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Freetel">' + fv55 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="FTP Server">' + fv56 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="GNUtella">' + fv57 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Golf 1998 Edition">' + fv58 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Golf 1999 Edition">' + fv59 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Golf 2001 Edition">' + fv60 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Go2Call">' + fv61 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Half Life">' + fv62 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Half Life Server">' + fv63 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Heretic II Server">' + fv64 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="I76">' + fv65 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="ICUII Client">' + fv143 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Ivisit">' + fv66 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="IRC">' + fv67 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="IStreamVideo2HP">' + fv68 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="KaZaA">' + fv69 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Kohan Immortal Sovereigns">' + fv70 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="LapLink Gold">' + fv71 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Links 2001">' + fv72 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Lotus Notes Server">' + fv73 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Mail (POP3)">' + fv74 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Mail (SMTP)">' + fv75 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="MechCommander 2.0">' + fv76 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="MechWarrior 3">' + fv77 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="MechWarrior 4">' + fv78 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Media Player 7">' + fv79 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Midtown Madness">' + fv80 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Midtown Madness 2">' + fv81 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Mig 29">' + fv82 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Monster Truck Madness">' + fv83 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Monster Truck Madness 2">' + fv84 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Motocross Madness">' + fv85 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Motocross Madness 2">' + fv86 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Motorhead Server">' + fv87 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="MSN Gaming Zone">' + fv88 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="MSN Messenger">' + fv89 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Myth">' + fv90 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Myth II Server">' + fv91 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Myth: The Fallen Lords">' + fv92 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Need for Speed">' + fv93 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="NetMech">' + fv94 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Netmeeting 2.0, 3.0, Intel Video Phone">' + fv140 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Network Time Protocol (NTP)">' + fv95 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="News Server (NNTP)">' + fv96 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="OKWeb">' + fv97 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="OKWin">' + fv98 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Outlaws">' + fv99 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Pal Talk">' + fv137 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="pcAnywhere v7.5">' + fv100 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="PhoneFree">' + fv101 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Polycom ViaVideo H.323">' + fv102 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Polycom ViaVideo H.324">' + fv103 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Quake">' + fv104 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Quake II (Client and Server)">' + fv105 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Quake III">' + fv106 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="RealAudio">' + fv139 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Real Player 8 Plus">' + fv138 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Red Alert">' + fv107 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Rise of Rome">' + fv108 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Roger Wilco">' + fv109 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Rogue Spear">' + fv110 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Secure Shell Server (SSH)">' + fv111 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Secure Web Server (HTTPS)">' + fv112 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="ShoutCast">' + fv113 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="SNMP">' + fv114 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="SNMP Trap">' + fv115 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Speak Freely">' + fv116 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="StarCraft">' + fv117 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Starfleet Command">' + fv118 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="StarLancer">' + fv119 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="SWAT3">' + fv120 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Telnet Server">' + fv121 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="The 4th Coming">' + fv122 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Tiberian Sun: C&C">' + fv123 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Tiberian Sun: C&C III">' + fv124 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Total Annihilation">' + fv125 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Ultima">' + fv126 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Unreal Tournament">' + fv127 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Urban Assault">' + fv128 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="VoxPhone 3.0">' + fv129 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Warbirds 2">' + fv130 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Web Server (HTTP)">' + fv131 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="WebPhone 3.0">' + fv132 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Westwood Online">' + fv141 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Windows 2000 Terminal Server">' + fv133 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="X Windows">' + fv134 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Yahoo Pager">' + fv135 + '</option>');
+</script>
+<script language="javascript" type="text/javascript">
+dw('<option value="Yahoo Messenger Chat">' + fv136 + '</option>');
+</script>
+</select>
+</td><td clospan=2>&nbsp;</td>
+<td><script language="javascript" type="text/javascript">strHtml='<input type="button" name="add_btn" value=" '+Add+' " style="{width:60px;}"  class="submitBtn" onClick="AddVirtualServer(document.tF0.virtual_server_list.value);">';
+dw(strHtml);</script>
+</td></tr><tr><td class="bold_body"><script language="javascript" type="text/javascript">dw(fv200);</script>&nbsp;<select name="clear_entry_list">
+<script language="javascript" type="text/javascript">
+count = 1;
+while(count<=vs_num)
+{
+    dw('<option value=' + count + '>' + count + '</option>');
+    count++;
+}
+dw('<option value="all">all</option>');
+</script>
+</select>
+</td><td>&nbsp;</td><td><script language="javascript" type="text/javascript">strHtml='<input type="button" name="clear_btn" value="'+Clear+' " style="{width:60px;}" class="submitBtn" onClick="ClearEntry(document.tF0.clear_entry_list.value)">';
+dw(strHtml);</script>
+</td></tr></table></td></tr>
+<tr bgcolor="#666666"><td align=center nowrap>&nbsp;</td>
+<th nowrap class="formText"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(Enable);</script></font></th>
+<th nowrap class="formText"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(Description);</script></font></th>
+<th nowrap class="formText"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(Inb);</script></font></th>
+<th nowrap class="formText"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(Type);</script></font></th>
+<th nowrap class="formText"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(Pipa);</script></font></th>
+<th nowrap class="formText"><font color="#ffffff"> &nbsp;<script language="javascript" type="text/javascript">dw(Pport);</script>&nbsp;</font></th>
+</tr>
+<script language="javascript" type="text/javascript">
+var strHtml;
+count=1;
+var token= new Array('','','','','','','','','','','','','','','','','','','','','');
+var token_des= new Array('','','','','','','','','','','','','','','','','','','','','');
+
+while(count<=vs_num)
+{
+var temp=token[count];
+if(temp=='')
+	temp='-------';
+t1=temp.indexOf('-');
+t2=temp.indexOf('-',t1+1);
+t3=temp.indexOf('-',t2+1);
+t4=temp.indexOf('-',t3+1);
+t5=temp.indexOf('-',t4+1);
+t6=temp.indexOf('-',t5+1);
+t7=temp.indexOf('-',t6+1);
+var dhcp_start='192.168.2.1';
+t9=dhcp_start.indexOf('.');
+t9=dhcp_start.indexOf('.',(t9+1));
+t9=dhcp_start.indexOf('.',(t9+1));
+strHtml='<tr align=left bgcolor="#cccccc" class="copy_1"><td nowrap class="plaintext">'
+	+count+'.<input type="hidden" name="name_'+count
+	+'"></td><td align="center" nowrap class="plaintext">'
+	+'<input type="checkbox" name="enable_'+count+'" id="enable_'+count
+	+'" value="0" ';
+document.writeln(strHtml);
+if(temp.substring(0,t1)=='1')document.writeln('checked');
+var temp_des=token_des[count];
+t99=temp_des.indexOf('__');
+while(t99!=-1)
+{
+	temp_des=temp_des.replace('__',' ');
+	t99=temp_des.indexOf('__');
+}
+strHtml=' ></td><td nowrap class="plaintext">'+'<input type="text" name="description_'+count
+	+'" id="description_'+count+'" size="10" maxlength="43" value="'
+	+temp_des+'" >'+'</td><td nowrap class="plaintext" >'
+	+'<input type="text" name="inbound_port_low_'+count+'" id="inbound_port_low_'+count
+	+'" size="3" maxlength="5" value="'+temp.substring(t2+1,t3)+'"> - '
+	+'<input type="text" name="inbound_port_high_'+count+'" id="inbound_port_high_'+count
+	+'" size="3" maxlength="5" value="'+temp.substring(t3+1,t4)+'"></td><td width="70">'
+	+'<select name="type_'+count+'" id="type_'+count
+	+'"><OPTION VALUE=1 ';
+document.writeln(strHtml);
+if(temp.substring(t4+1,t5)=='1') document.writeln('selected');
+document.writeln(' >TCP<OPTION VALUE=0 ');
+if(temp.substring(t4+1,t5)=='0') document.writeln('selected');
+document.writeln(' >UDP<OPTION VALUE=2 ');
+if(temp.substring(t4+1,t5)=='2' || temp=='-------') document.writeln('selected');
+
+strHtml=' >';
+document.writeln(strHtml);
+document.writeln(BOTH);
+strHtml='</select>'+'</td><td width="110"><span class="plaintext">'
+	+dhcp_start.substring(0,t9)+'.<input type="text" name="private_ip_'+count
+	+'" id="private_ip_'+count+'" size="2" maxlength="3" value="'+temp.substring(t5+1,t6)
+	+'"></span></td>'+'<td nowrap class="plaintext"><span class="plaintext">'
+	+'<input type="text" name="private_port_low_'+count+'" id="private_port_low_'+count
+	+'" size="3" maxlength="5" value="'+temp.substring(t6+1,t7)+'"> - '
+	+'<input type="text" name="private_port_high_'+count+'" id="private_port_high_'+count
+	+'" size="3" maxlength="5" value="'+temp.substring(t7+1)+'"></span></td></tr>';
+document.writeln(strHtml);
+
+count++;
+}//while
+</script>
+</td></tr></table>
+<tr align="center"><td colspan="3">
+<script language="javascript" type="text/javascript">strHtml='<input type="reset" name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;';
+dw(strHtml);
+strHtml='<input type="submit" name="itsbutton1" value="'+btn2+'" style="{width:160px;}" class="submitBtn" onClick="return evaltF();">';
+dw(strHtml);</script>
+</td></tr></table></td>
+
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

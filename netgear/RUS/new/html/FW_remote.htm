@@ -1,0 +1,437 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/FW_remote.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "FW_remote";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//Remote Management
+var G_EbAddress = "1";
+var G_IPAddress = "192.168.1.1";
+var G_SubAddress = "255.255.255.0";
+var G_IPRouters = "192.168.1.1";
+var G_SubnetMask = "255.255.255.0";
+var G_AllowOtherGateway = "0";
+var G_RACL = [];
+var m = 0;
+G_RACL[0]=new Array();
+G_RACL[0][0]="InternetGatewayDevice.X_TWSZ-COM_ACL.RACL.$00.Service.2.";//path
+G_RACL[0][1]='0.0.0.0';//SrcIP
+G_RACL[0][2]='0.0.0.0';//EndSrcIP
+G_RACL[0][3]='8080';//ExtPort
+G_RACL[0][4]='0';//Enable
+G_RACL[m] = ["InternetGatewayDevice.X_TWSZ-COM_ACL.RACL.1.Service.2.",//Path
+"0.0.0.0",//SrcIP
+"255.255.255.255",//EndSrcIP
+"8080",//ExternalPort
+"0" //Enable
+];
+m++;
+//Wan
+var G_WanConns = [];
+G_WanConns['ExternalIPAddress'] = "";
+//总开关:Enable
+//var G_Enable = "1";
+var tmpRemoteIP=G_WanConns['ExternalIPAddress'];
+if(tmpRemoteIP=='')
+{
+tmpRemoteIP='0.0.0.0';
+}
+function uiOnload()
+{
+//Remote IP Address
+$('SPAN_Remote_Addr').innerHTML = 'http://' + tmpRemoteIP + (G_RACL[0][3] != '0' ? (':' + G_RACL[0][3]) : '8080');
+//Enable
+var i = 0;
+Form.Checkbox('remote_mg_enable',G_RACL[0][4]);
+//Radio Ctrl
+var value_radio = 'ip_single';
+//Only Computer
+if(G_RACL[0][1] != '0.0.0.0' && (G_RACL[0][1] == G_RACL[0][2]))
+{
+//$('INPUT_0nly_IP').value = G_RACL[0][1];
+OnloadIP4hops(G_RACL[0][1] || '','local_ip_1','local_ip_2','local_ip_3','local_ip_4');
+value_radio = 'ip_single';
+}
+//IP Address Range
+else if(G_RACL[0][1] != '0.0.0.0' && (G_RACL[0][1] != G_RACL[0][2]))
+{
+//$('INPUT_IP_Start').value = G_RACL[i][1];
+//$('INPUT_IP_End').value = G_RACL[i][2];
+OnloadIP4hops(G_RACL[i][1] || '','start_ip_1','start_ip_2','start_ip_3','start_ip_4');
+OnloadIP4hops(G_RACL[i][2] || '','fin_ip_1','fin_ip_2','fin_ip_3','fin_ip_4');
+value_radio = 'ip_range';
+}
+//Everyone
+else if(G_RACL[0][1] == '0.0.0.0' && G_RACL[0][2] == '255.255.255.255')
+{
+value_radio = "all";
+}
+Form.Radio('rm_access', value_radio);
+onClkRadio();
+//Port Number
+$('http_rmport').value = G_RACL[0][3];
+}
+function onClkRadio()
+{
+var i = 0;
+var value_radio = Form.Radio('rm_access');
+var _1 = _2 = _3 = true;
+//Only Computer
+if(value_radio == 'ip_single')
+{
+_1 = false;
+_2 = true;
+_3 = true;
+//clear input
+//$('INPUT_0nly_IP').value = G_RACL[i][1] != '0.0.0.0' && (G_RACL[i][1] == G_RACL[i][2]) ? G_RACL[i][1] : '';
+//$('INPUT_IP_Start').value = '';
+//$('INPUT_IP_End').value = '';
+OnloadIP4hops((G_RACL[i][1] != '0.0.0.0' && (G_RACL[i][1] == G_RACL[i][2]) ? G_RACL[i][1] : '') || '','local_ip_1','local_ip_2','local_ip_3','local_ip_4');
+OnloadIP4hops('','start_ip_1','start_ip_2','start_ip_3','start_ip_4');
+OnloadIP4hops('','fin_ip_1','fin_ip_2','fin_ip_3','fin_ip_4');
+}
+//IP Address Range
+else if(value_radio == 'ip_range')
+{
+_1 = true;
+_2 = false;
+_3 = false;
+//clear input
+var _temp_bool = G_RACL[i][1] != '0.0.0.0' && (G_RACL[i][1] != G_RACL[i][2]);
+//$('INPUT_0nly_IP').value = '';
+//$('INPUT_IP_Start').value = _temp_bool ? G_RACL[i][1] : '';
+//$('INPUT_IP_End').value = _temp_bool ? G_RACL[i][2] : '';
+OnloadIP4hops('','local_ip_1','local_ip_2','local_ip_3','local_ip_4');
+OnloadIP4hops((_temp_bool ? G_RACL[i][1] : '')||'','start_ip_1','start_ip_2','start_ip_3','start_ip_4');
+OnloadIP4hops((_temp_bool ? G_RACL[i][2] : '')||'','fin_ip_1','fin_ip_2','fin_ip_3','fin_ip_4');
+}
+//Everyone
+else if(value_radio == 'all')
+{
+//clear input
+//$('INPUT_0nly_IP').value = '';
+//$('INPUT_IP_Start').value = '';
+//$('INPUT_IP_End').value = '';
+OnloadIP4hops('','local_ip_1','local_ip_2','local_ip_3','local_ip_4');
+OnloadIP4hops('','start_ip_1','start_ip_2','start_ip_3','start_ip_4');
+OnloadIP4hops('','fin_ip_1','fin_ip_2','fin_ip_3','fin_ip_4');
+}
+//INPUT Disable
+$('local_ip_1').disabled = _1;
+$('local_ip_2').disabled = _1;
+$('local_ip_3').disabled = _1;
+$('local_ip_4').disabled = _1;
+$('start_ip_1').disabled = _2;
+$('start_ip_2').disabled = _2;
+$('start_ip_3').disabled = _2;
+$('start_ip_4').disabled = _2;
+$('fin_ip_1').disabled = _3;
+$('fin_ip_2').disabled = _3;
+$('fin_ip_3').disabled = _3;
+$('fin_ip_4').disabled = _3;
+}
+function uiSubmit()
+{
+if($('ip_single').checked)
+{
+var local_ip = $('local_ip_1').value+'.'+ $('local_ip_2').value+'.'+ $('local_ip_3').value+'.'+ $('local_ip_4').value;
+if (checkipaddr(local_ip)==false)
+{
+alertError('BKS_InvalidIP');
+return false;
+}
+if(isSameSubNet(local_ip,G_SubAddress,G_IPAddress,G_SubAddress) == true)
+{
+alertError('FW_Checksubnet');
+return false;
+}
+if (isSameIp(local_ip,tmpRemoteIP)==true)
+{
+alertError('FW_Checksameip');
+return false;
+}
+}else if($('ip_range').checked)
+{
+var start_ip = $('start_ip_1').value+'.'+ $('start_ip_2').value+'.'+ $('start_ip_3').value+'.'+ $('start_ip_4').value;
+var end_ip= $('fin_ip_1').value+'.'+ $('fin_ip_2').value+'.'+ $('fin_ip_3').value+'.'+ $('fin_ip_4').value;
+if (checkipaddr(start_ip)==false)
+{
+alertError('BKS_InvalidIP');
+return false;
+}
+if (checkipaddr(end_ip)==false)
+{
+alertError('BKS_InvalidIP');
+return false;
+}
+if(cp_ip2(start_ip,end_ip)==false)
+{
+alertError('FW_Checkiprang');
+return false;
+}
+if(isSameSubNet(start_ip,G_SubAddress,G_IPAddress,G_SubAddress) == true)
+{
+alertError('FW_Checksubnet');
+return false;
+}
+if(isSameSubNet(end_ip,G_SubAddress,G_IPAddress,G_SubAddress) == true)
+{
+alertError('FW_Checksubnet');
+return false;
+}
+var startipNum=ipNum(start_ip);
+var endipNum=ipNum(end_ip);
+var wanipNum=ipNum(tmpRemoteIP);
+var lanipNum=ipNum(G_IPAddress);
+if(lanipNum >= startipNum && lanipNum <= endipNum )
+{
+alertError('BKS_InvalidIP');
+return false;
+}
+if(wanipNum >= startipNum && wanipNum <= endipNum )
+{
+alertError('FW_Checksameip');
+return false;
+}
+}
+var value_radio = Form.Radio('rm_access');
+$H({
+//Enable
+//':InternetGatewayDevice.X_TWSZ-COM_ACL.RACLEnable' : Form.Checkbox('INPUT_Enable'),
+//Gobal Property
+'var:menu' : G_Menu,
+'var:page' : G_Page,
+'var:subpage' : G_SubPage,
+'var:errorpage': G_SubPage,
+'obj-action' : 'set',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+var tmpPortNumber=$('http_rmport').value;
+if((Number(tmpPortNumber)<1024)||(Number(tmpPortNumber)>65534)||isNaN(tmpPortNumber))
+{
+alertError('InvPortNumber');
+return;
+}
+//Only Computer
+$F(':' + G_RACL[0][0] + 'Enable' , Form.Checkbox('remote_mg_enable'));
+if(value_radio == 'ip_single')
+{
+$F(':' + G_RACL[0][0] + 'SrcIP' , $('local_ip_1').value+'.'+ $('local_ip_2').value+'.'+ $('local_ip_3').value+'.'+ $('local_ip_4').value || '0.0.0.0');
+$F(':' + G_RACL[0][0] + 'EndSrcIP' , $('local_ip_1').value+'.'+ $('local_ip_2').value+'.'+ $('local_ip_3').value+'.'+ $('local_ip_4').value || '0.0.0.0');
+}
+//IP Address Range
+else if(value_radio == 'ip_range')
+{
+$F(':' + G_RACL[0][0] + 'SrcIP' , $('start_ip_1').value+'.'+ $('start_ip_2').value+'.'+ $('start_ip_3').value+'.'+ $('start_ip_4').value || '0.0.0.0');
+$F(':' + G_RACL[0][0] + 'EndSrcIP' , $('fin_ip_1').value+'.'+ $('fin_ip_2').value+'.'+ $('fin_ip_3').value+'.'+ $('fin_ip_4').value || '0.0.0.0');
+}
+//Everyone
+else if(value_radio == 'all')
+{
+$F(':' + G_RACL[0][0] + 'SrcIP' , '0.0.0.0');
+$F(':' + G_RACL[0][0] + 'EndSrcIP' , '255.255.255.255');
+}
+$F(':' + G_RACL[0][0] + 'ExternalPort' , $('http_rmport').value);
+$('uiPostForm').submit();
+}
+function dealWithError()
+{
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="FW_remote.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style><!-- config -->
+<div class="page_title" id="lang_Remo_Mana">Remote Management</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type='button' name="Cancel" value="Cancel" id="Cancel" />
+<input class="apply_bt" type='button' id = "Apply" name="Apply" value="Apply" onclick='uiSubmit()' />
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody>
+<tr >
+<td nowrap="" align="left" colspan="2" >
+<input type="checkbox" name="remote_mg_enable" value="remote_mg" id="remote_mg_enable" /><a tabindex=-1 href="javascript:loadhelp('turnon')"><b><span id="lang_TurnOn">Turn Remote Management On</span></b></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<!-- Remote Management Address -->
+<tr>
+<td nowrap="" width="%40"><a tabindex=-1 href="javascript:loadhelp('address')"><b id="lang_RemManAddr">Remote Management Address :</b></a></td>
+<td nowrap=""><span id="SPAN_Remote_Addr"></span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" align="left" colspan="2" >
+<a tabindex=-1 href="javascript:loadhelp('access')"><b id="lang_AllowAccessBy">Allow Remote Access By :</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap=""><input type="radio" name="rm_access" id="ip_single" value="ip_single" onClick="onClkRadio();" /><span id="lang_ThisComputer">Only This Computer :</span></td>
+<td nowrap="" align="right"><input type='text' id="local_ip_1" size="4" maxlength="3" name="local_ip_1" value="" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);"/>.
+<input type='text' id="local_ip_2" size="4" maxlength="3" name="local_ip_2" value="" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="local_ip_3" size="4" maxlength="3" name="local_ip_3" value="" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="local_ip_4" size="4" maxlength="3" name="local_ip_4" value="" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" /></td>
+</tr><tr>
+<td nowrap=""><input type="radio" name="rm_access" value="ip_range" id="ip_range" onClick="onClkRadio();" /><span id="lang_IpAddressRange">IP Address Range :</span></td>
+<td nowrap="" align="right"><span id="lang_Form">From </span>
+<input type='text' id="start_ip_1" size="4" maxlength="3" name="start_ip_1" value="" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="start_ip_2" size="4" maxlength="3" name="start_ip_2" value="" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="start_ip_3" size="4" maxlength="3" name="start_ip_3" value="" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="start_ip_4" size="4" maxlength="3" name="start_ip_4" value="" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" /></td>
+</tr><tr>
+<td nowrap="">&nbsp;</td>
+<td nowrap="" align="right"><span id="lang_To">To </span>
+<input type='text' id="fin_ip_1" size="4" maxlength="3" name="fin_ip_1" value="" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="fin_ip_2" size="4" maxlength="3" name="fin_ip_2" value="" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="fin_ip_3" size="4" maxlength="3" name="fin_ip_3" value="" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="fin_ip_4" size="4" maxlength="3" name="fin_ip_4" value="" onfocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" /></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div class="div_left"><input type="radio" name="rm_access" value="all" onClick="onClkRadio();" /><span id="lang_Everyone">Everyone</span></div><div class="div_right_2"></div></td>
+</tr>
+<!-- Port Number -->
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><a tabindex=-1 href="javascript:loadhelp('port')"><b id="lang_PortNumber">Port Number :</b></a></td>
+<td nowrap="" ><input type="text" id="http_rmport" name="http_rmport" value="8080" size=6 maxlength=5 onKeyPress="return getkey('num',event);"></td>
+</tr>
+<!--Button-->
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!--<form name="uiPostForm" id="uiPostForm" method="post" action=""></form>-->
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("FW_remote")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

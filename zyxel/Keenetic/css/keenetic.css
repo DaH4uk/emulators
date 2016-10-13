@@ -1,0 +1,533 @@
+@CHARSET "UTF-8";
+html { height: 100%; }
+body {
+	height: 100%;
+	margin: 0;
+	background: #262628 url('img/backgrounds/bg.jpg');
+	overflow-y: hidden;
+}
+body,div,form,label,input,td,th {
+	font: 12px arial, sans-serif;
+	color: #000;
+}
+a { 
+	/*text-decoration: none;*/
+	color: #00539B;
+}
+/*a:hover { text-decoration: underline; }*/
+a img {
+	border: none;
+	margin: 0px;
+}
+.nobr {
+	white-space: nowrap;
+}
+
+#topframe {
+	position: relative;
+	height: 70px;
+	background: #153e71 url('img/backgrounds/top_style_bg.jpg') left top no-repeat;
+	border: 4px solid #147fbf;
+	border-bottom: 0px;
+	margin-top: 0px;
+}
+#logo {
+	float: left;
+	position: absolute;
+	top: 18px;
+	left: 40px;
+}
+#logoname {
+	color: #ffffff;
+	font-size: 15px;
+	font-weight: bold;
+	float: left;
+	top: 30px;
+	left: 155px;
+	position: absolute;
+}
+#sysinfo {
+	color: #ccc;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 5px 40px 0 0;
+	float: right;
+	text-align: right;
+}
+#sysinfo p {
+	margin: 0px 0px 5px 0px;
+	font-weight: normal;
+}
+#page {
+	position: relative;
+	min-width: 800px;
+	width: 800px;
+	height: 100%;
+	margin: 30px auto 10px auto;
+	border: solid 0px green;
+}
+#menu_position {
+	position: absolute;
+	bottom: 50px;
+	left: 0px;
+	height: 89px;
+	width: 792px;
+	padding: 0px;
+	margin: 0px;
+	border: 4px solid #147fbf;
+	border-top: 0px;
+	background: #747474 url('img/backgrounds/menu_bg.jpg') repeat-x;
+}
+
+#tabs {
+	margin: 0px auto;
+	padding: 0px;
+	height: 89px;
+	width: 770px;
+}
+#tabs ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+}
+#tabs ul li {
+	width: 109px;
+	margin: 0px;
+	float: left;
+	border-left: 1px solid #4c4d4c;
+}
+#tabs ul li:first-child {
+	border-left: 0px
+}
+#tabs ul li.selected { background-color: #e6e7e8; }
+#tabs ul li img {
+	width: 109px;
+	height: 89px;
+}
+#tabs br { clear: left; }
+#tabs li a {
+	display: block;
+	width: 109px;
+	background-repeat: no-repeat;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 12px;
+	text-align: center;
+	line-height: 12px;
+	height: 30px;
+	padding-top: 59px;
+	color: #000;
+}
+#tabs li a:hover {
+	background: #000;
+	filter: alpha(Opacity = 70);
+	-moz-opacity: 0.7;
+	opacity: 0.7;
+	color: #999;
+	font-weight: bold;
+}
+#tabs li.selected a { color: #fff; }
+/* root element for tabs  */
+ul.tabs {
+	height: 30px;
+	font-size: 12px;
+	font-weight: bold;
+	width: 100%;
+	position: relative;
+	padding: 0;
+	margin: 0;
+	margin-top: 5px;
+	min-width: 620px;
+	list-style: none;
+	clear: both;
+}
+/* single tab */
+ul.tabs li {
+	float: left;
+	text-indent: 0;
+	padding: 0;
+	margin: 0 ! mportant;
+	list-style-image: none !important;
+}
+/* link inside the tab. uses a background image */
+ul.tabs a {
+	background: url('img/tab.gif') top left no-repeat;
+	line-height: 30px;
+	text-decoration: none;
+	color: #333;
+	padding: 0px;
+	margin: 0px;
+	position: relative;
+	top: 1px;
+	padding-top: 8px;
+	padding-bottom: 7px;
+}
+/* IE6 image */
+*html ul.tabs a {
+	background: url('img/tab.gif') top left no-repeat;
+	line-height: 29px;
+	text-decoration: none;
+	color: #333;
+	padding: 0px;
+	margin: 0px;
+	position: relative;
+	top: 1px;
+	padding-top: 8px;
+	padding-bottom: 7px;
+}
+/* when mouse enters the tab move the background image */
+ul.tabs a:hover {
+	background-position: -420px -31px;
+	color: #000;
+}
+/* active tab uses a class name "current". it's highlight is also done by moving the background image. */
+ul.tabs a.current,ul.tabs a.current:hover,ul.tabs li.current a {
+	background-position: -420px -62px;
+	cursor: default !important;
+	color: #fff !important;
+}
+/* tab width */
+ul.tabs a {
+	background-position: 0 -0px;
+	padding-left: 11px;
+}
+ul.tabs a span {
+	background-position: 0 -0px;
+	padding-right: 11px;
+}
+ul.tabs a:hover { background-position: 0 -31px; }
+ul.tabs a.current,ul.tabs a.current:hover {
+	background-position: 0 -62px;
+	padding-top: 8px;
+	padding-bottom: 7px;
+}
+ul.tabs a.current span,ul.tabs a.current:hover span {
+	background-image: url('img/tab.gif');
+	background-position: bottom right;
+	height: 30px;
+	padding-top: 8px;
+	padding-bottom: 7px;
+}
+*html ul.tabs a span { margin-left: 15px; }
+*html ul.tabs a.current {
+	background-position: 0 -62px;
+	padding-top: 0px;
+}
+*html ul.tabs a.current:hover {
+	background-position: 0 -62px;
+	padding-top: 0px;
+}
+
+#title {
+	font: bold 14px verdana, arial, sans-serif;
+	color: #ffffff;
+	margin-bottom: 15px;
+}
+#subtitle {
+	font-size: 12px;
+	color: #bbb;
+	margin-bottom: 3px;
+}
+#content {
+	width: 712px;
+	height: 100%;
+	margin: 0px;
+	padding: 0px 40px 10px;
+	overflow: auto;
+	background: #ffffff;
+	border-left: 4px solid #147fbf;
+	border-right: 4px solid #147fbf;
+	background: #144580 url('img/backgrounds/center_bg.gif') repeat-x;
+	overflow-x: hidden;
+}
+
+#busy {
+	background: url('img/backgrounds/transparent-fill.png');
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10;
+	/* -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; IE8 */
+	/* filter:progid:DXImageTransform.Microsoft.Alpha(opacity = 50); IE5+ */
+	/* filter: alpha(opacity=50); IE4- */
+}
+#popup {
+	position: absolute;
+	left: 20%;
+	top: 30%;
+	z-index: 100;
+	width: 50%;
+	padding: 50px;
+	text-align: center;
+	background: white;
+	border: 1px solid #ccc;
+}
+#popup #progress { background: #eee; }
+#popup #progress_bar {
+	height: 22px;
+	background: blue url('img/progress-bar.gif');
+}
+
+form {
+	/* white-space: nowrap; */
+	margin: 0;
+	padding: 0;
+}
+form fieldset {
+	border: none; /* 1px solid #000; */
+	padding: 10px 0 10px 0;
+	margin: 0;
+}
+form fieldset legend,h1,h2 {
+	font: bold 14px verdana, arial, sans-serif;
+	color: #000;
+	margin: 5px;
+}
+form label {
+	display: block;
+	float: left;
+	width: 200px;
+	min-height: 16px;
+	overflow: hidden;
+	padding: 0;
+	margin: 3px 10px 0 0;
+	text-align: right;
+}
+form input,form select,form textarea,form button {
+	width: auto;
+	margin: 3px;
+}
+button { font-weight: bold; }
+textarea { overflow: auto; }
+form br { clear: left; }
+
+.block {
+	width: 660px;
+	padding: 10px;
+	border-top: 4px solid #d02f32;
+	background: #ffffff;
+}
+.rounded {
+	background: #f1f1f1 none repeat scroll 0 0;
+	border: 1px solid #bababa;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	padding: 5px;
+	margin: 5px 0px 5px 0px;
+}
+.rounded p {
+	margin: 5px;
+}
+form .rounded {
+	margin: 5px;
+}
+.logger {
+	background: #f1f1f1 none repeat scroll 0 0;
+	border: 1px solid #bababa;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	color: black;
+	padding: 10px;
+	position: absolute;
+	bottom: 159px;
+	right: 20px;
+	width: 250px;
+	display: none;
+	font-size: 11px;
+	z-index: 100;
+}
+#logger_close {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	background-image: url('img/logger_close.gif');
+	width: 14px;
+	height: 14px;
+}
+input.invalid { background: #fdbebb; }
+span.floating {
+	position: absolute;
+	background-color: white;
+	border: 1px solid #ccc;
+	padding: 3px;
+	max-width: 200px;
+	white-space: normal;
+}
+span.error {
+	margin-left: 5px;
+	color: red;
+}
+span.message {}
+
+#log_pane {
+	padding: 0 10px 0 10px;
+	height: 200px;
+	overflow: auto;
+}
+#log_pane .entry {
+	clear: right;
+	border-top: 1px solid #eee;
+}
+#log_pane .entry div {
+	float: right;
+	width: 450px;
+	text-align: left;
+}
+#log_pane .entry .ident { color: green; }
+#log_pane .entry div.Debug { color: grey; }
+#log_pane .entry div.Info { color: black; }
+#log_pane .entry div.Warning { color: green; }
+#log_pane .entry div.Error { color: red; }
+#log_pane .entry div.Critical { color: red; }
+
+.dashboard_pane {
+	background-color: white;
+	border: 1px solid silver;
+	margin: 5px 4px;
+}
+.dashboard_item { 
+	padding: 3px 7px;
+}
+
+table.styled { /* border-collapse: collapse; */
+	background-color: white;
+	border: 1px solid silver;
+	margin: 5px 0px 5px 0;
+}
+table.styled caption {
+	text-align: left;
+	margin: 0 0 8px 5px;
+	padding: 0;
+}
+table.styled th,.dashboard_pane h1 {
+	height: 25px;
+	padding: 0 5px 0 5px;
+	background: url('img/backgrounds/table_top.gif');
+	border-right: 1px solid #9e9e9e;
+	text-align: left;
+	font: 12px arial, sans-serif;
+	font-weight: bold;
+	white-space: nowrap;
+	color: #fff;
+}
+.dashboard_pane h1 {
+	height: 21px;
+	padding: 5px 5px 0 8px;
+	border-bottom: 1px solid #9e9e9e;
+	margin: 0;
+}
+/* tr:nth-child(even) { background-color: #e0e8f5; } */
+table.grid td {
+	width: 50%;
+	padding: 0 5px 1px 5px;
+	border-bottom: 1px solid #e5e5e5;
+}
+table.styled td {
+	height: 22px;
+	text-align: left;
+	padding: 0 5px 1px 5px;
+	border-top: 1px solid #e5e5e5;
+}
+table.styled tr.highlight {
+	background-color: #d4e4e4;
+	cursor: pointer; }
+table.styled td.editor { background-color: #fafafa; }
+table.styled td.section {
+	border-bottom: 2px solid silver;
+/*	vertical-align: bottom;*/
+}
+table.styled td.section h1 {
+	display: inline;
+	font-size: 11px;
+	padding: 0 10px 2px;
+}
+.dashboard_pane table.styled th {
+	background: url('img/backgrounds/i_wps_top.jpg');
+	color: #000;
+}
+
+.row {
+	border-top: 1px solid #e5e5e5;
+	padding: 5px;
+	display: none;
+}
+
+.apply {
+	height: 23px;
+	margin: 10px 5px 0 0;
+	vertical-align: middle;
+}
+.apply:hover {  }
+.cancel {
+	height: 23px;
+	margin: 10px 5px 0 0;
+	vertical-align: middle;
+}
+.cancel:hover {  }
+
+#help {
+	position: relative;
+	top: -100px;
+	left: 60px;
+	width: 160px;
+}
+#help ul {
+	list-style: none;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	width: 160px;
+}
+#help ul li {
+	width: 160px;
+	margin: 5px 0;
+}
+
+td.editor form {
+	position: absolute;
+	width: 750px;
+	top: 100px;
+	left: 20px;
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+	border: 1px dotted #ACA9A9;
+	background: #D5D5D5; 
+	z-index: 100;
+}
+td.editor form div.header {
+	width: 733px;
+	height: 35px;
+	margin: 0;
+	padding: 0 3px 3px 12px;
+	background-image: url('img/backgrounds/top_bg.gif');
+	border: 1px solid #0D6BA1;
+	border-radius: 2px;
+	position: relative;
+}
+div.header h1 {
+	color: white;
+	font: 13px arial, sans-serif;
+	font-weight: bold;
+	line-height: 35px;
+	vertical-align: baseline;
+}
+td.editor form div.close_button {
+	position: absolute;
+	right: 5px;
+	top: 8px;
+}
+td.editor form div.controls {
+	background-color: white;
+	width: 740px;
+	padding: 12px 0;
+	margin: 0 5px 5px;
+	min-height: 200px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}

@@ -1,0 +1,908 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/RST_status.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "RST_status";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+/*******************************************all device info***************************************************/
+var G_HarewareVersion = "WNR612v3";
+var G_ModemFirmwareVersion = "1.0.0.14";
+var G_GuiLanguageVersion = "1.0.0.14";
+var G_CurrentLocalTime = "2011-01-01T17:49:05";
+var G_DHCPServerEnable = "1";
+/**************************************all wan info***********************************************************/
+//Wan Conns List
+var G_wanConnction = [];
+var m = 0;
+var reg=new RegExp(",","g");
+G_wanConnction[m] = ["InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.", //Path
+"Disconnected", //ConnectionStatus
+"1_INTERNET_R", //name
+"1", //enalbe
+"IP_Routed", //ConnectionType
+"DHCP", //AddressingType
+"", //igmp
+"Enable", //qos
+"", //ip addr
+"", //default gw
+"0", // dnsoverride
+("").replace(reg,"<br>"), // dnsserver
+(("").delcomma()).replace(reg,"<br>"), //user dns
+"" //mask
+];
+++m;
+/*************************************************************************************************************/
+/*********************** get igmp info ************************************************************/
+/*****************************************All Wlan device info************************************************/
+var G_Wlan_Info = [];
+var t = 0;
+G_Wlan_Info[t] = [];
+G_Wlan_Info[t][0] = "InternetGatewayDevice.LANDevice.1.WLANConfiguration.1";
+G_Wlan_Info[t][1] = "NETGEAR95";//SSID
+G_Wlan_Info[t][2] = "00:00:00:00:00:00";//BSSID
+G_Wlan_Info[t][3] = "11i";//BeaconType
+G_Wlan_Info[t][4] = "0";//TotalAssociations
+G_Wlan_Info[t][5] = "1";//Enable
+G_Wlan_Info[t][6] = "0";//Channel
+G_Wlan_Info[t][7] = "bgn";//Standard
+G_Wlan_Info[t][8] = "WEPEncryption";//BasicEncryptionModes
+G_Wlan_Info[t][9] = "1";//W_SSIDEnable
+G_Wlan_Info[t][10] = "0";//APIsolate
+t++;
+G_Wlan_Info[t] = [];
+G_Wlan_Info[t][0] = "InternetGatewayDevice.LANDevice.1.WLANConfiguration.2";
+G_Wlan_Info[t][1] = "NETGEAR-Guest";//SSID
+G_Wlan_Info[t][2] = "00:00:00:00:00:00";//BSSID
+G_Wlan_Info[t][3] = "None";//BeaconType
+G_Wlan_Info[t][4] = "0";//TotalAssociations
+G_Wlan_Info[t][5] = "0";//Enable
+G_Wlan_Info[t][6] = "0";//Channel
+G_Wlan_Info[t][7] = "bgn";//Standard
+G_Wlan_Info[t][8] = "";//BasicEncryptionModes
+G_Wlan_Info[t][9] = "1";//W_SSIDEnable
+G_Wlan_Info[t][10] = "0";//APIsolate
+t++;
+G_Wlan_Info[t] = [];
+G_Wlan_Info[t][0] = "InternetGatewayDevice.LANDevice.1.WLANConfiguration.3";
+G_Wlan_Info[t][1] = "NetGear-003";//SSID
+G_Wlan_Info[t][2] = "00:00:00:00:00:00";//BSSID
+G_Wlan_Info[t][3] = "None";//BeaconType
+G_Wlan_Info[t][4] = "0";//TotalAssociations
+G_Wlan_Info[t][5] = "0";//Enable
+G_Wlan_Info[t][6] = "0";//Channel
+G_Wlan_Info[t][7] = "bgn";//Standard
+G_Wlan_Info[t][8] = "";//BasicEncryptionModes
+G_Wlan_Info[t][9] = "1";//W_SSIDEnable
+G_Wlan_Info[t][10] = "0";//APIsolate
+t++;
+G_Wlan_Info[t] = [];
+G_Wlan_Info[t][0] = "InternetGatewayDevice.LANDevice.1.WLANConfiguration.4";
+G_Wlan_Info[t][1] = "NetGear-004";//SSID
+G_Wlan_Info[t][2] = "00:00:00:00:00:00";//BSSID
+G_Wlan_Info[t][3] = "None";//BeaconType
+G_Wlan_Info[t][4] = "0";//TotalAssociations
+G_Wlan_Info[t][5] = "0";//Enable
+G_Wlan_Info[t][6] = "0";//Channel
+G_Wlan_Info[t][7] = "bgn";//Standard
+G_Wlan_Info[t][8] = "";//BasicEncryptionModes
+G_Wlan_Info[t][9] = "1";//W_SSIDEnable
+G_Wlan_Info[t][10] = "0";//APIsolate
+t++;
+G_Wlan_Info[t] = [];
+G_Wlan_Info[t][0] = "InternetGatewayDevice.LANDevice.1.WLANConfiguration.5";
+G_Wlan_Info[t][1] = "NetGear-005";//SSID
+G_Wlan_Info[t][2] = "00:00:00:00:00:00";//BSSID
+G_Wlan_Info[t][3] = "None";//BeaconType
+G_Wlan_Info[t][4] = "0";//TotalAssociations
+G_Wlan_Info[t][5] = "0";//Enable
+G_Wlan_Info[t][6] = "0";//Channel
+G_Wlan_Info[t][7] = "bgn";//Standard
+G_Wlan_Info[t][8] = "";//BasicEncryptionModes
+G_Wlan_Info[t][9] = "1";//W_SSIDEnable
+G_Wlan_Info[t][10] = "0";//APIsolate
+t++;
+var G_Radio_Info = [];
+G_Wlan_Info[0][6]="0"; // this is get the true value
+G_Wlan_Info[0][7]="bgn"; // this is get the true value
+G_Radio_Info[0]="0";
+G_Radio_Info[1]="20";
+G_Radio_Info[2]="1";
+/*************************************************************************************************************/
+/*********************** wireless_guest info ************************************************************/
+/***************************************** wireless_guest info ************************************************/
+var g_m=0;
+var W_Enable=[];
+var W_SSID=[];
+var W_BeaconType=[];
+var W_BasicEncryptionModes=[];
+var W_BasicAuthenticationMode=[];
+var W_SSIDAdvertisementEnabled=[];
+var W_APIsolate=[];
+var W_EnableAccessLocal=[];
+W_Enable[g_m]="1";//Enable
+W_SSID[g_m]="NETGEAR95";
+W_BeaconType[g_m]="11i";
+W_BasicEncryptionModes[g_m]="WEPEncryption";
+W_BasicAuthenticationMode[g_m]="None";
+W_SSIDAdvertisementEnabled[g_m]="1";
+W_APIsolate[g_m]="0";
+W_EnableAccessLocal[g_m]="1";
+g_m++;
+W_Enable[g_m]="0";//Enable
+W_SSID[g_m]="NETGEAR-Guest";
+W_BeaconType[g_m]="None";
+W_BasicEncryptionModes[g_m]="";
+W_BasicAuthenticationMode[g_m]="None";
+W_SSIDAdvertisementEnabled[g_m]="1";
+W_APIsolate[g_m]="0";
+W_EnableAccessLocal[g_m]="0";
+g_m++;
+W_Enable[g_m]="0";//Enable
+W_SSID[g_m]="NetGear-003";
+W_BeaconType[g_m]="None";
+W_BasicEncryptionModes[g_m]="";
+W_BasicAuthenticationMode[g_m]="None";
+W_SSIDAdvertisementEnabled[g_m]="1";
+W_APIsolate[g_m]="0";
+W_EnableAccessLocal[g_m]="0";
+g_m++;
+W_Enable[g_m]="0";//Enable
+W_SSID[g_m]="NetGear-004";
+W_BeaconType[g_m]="None";
+W_BasicEncryptionModes[g_m]="";
+W_BasicAuthenticationMode[g_m]="None";
+W_SSIDAdvertisementEnabled[g_m]="1";
+W_APIsolate[g_m]="0";
+W_EnableAccessLocal[g_m]="0";
+g_m++;
+W_Enable[g_m]="0";//Enable
+W_SSID[g_m]="NetGear-005";
+W_BeaconType[g_m]="None";
+W_BasicEncryptionModes[g_m]="";
+W_BasicAuthenticationMode[g_m]="None";
+W_SSIDAdvertisementEnabled[g_m]="1";
+W_APIsolate[g_m]="0";
+W_EnableAccessLocal[g_m]="0";
+g_m++;
+/***********************************repeating mac*********************************************************************************/
+var k=0;
+var WDS_ReMACAddress=[];
+WDS_ReMACAddress[k]= "";
+k++;
+WDS_ReMACAddress[k]= "";
+k++;
+WDS_ReMACAddress[k]= "";
+k++;
+WDS_ReMACAddress[k]= "";
+k++;
+/**********************************************all lan info***************************************************/
+//all lan info
+var G_lan_ip_addr = "192.168.1.1";
+var G_lan_mask = "255.255.255.0";
+var G_lan_mac = "00:00:00:00:00:00".toUpperCase();
+var G_wan_mac = "00:00:00:00:00:00".toUpperCase();
+/*************************************************************************************************************/
+var G_Wlan_Regulatory = "RU"
+var G_Wlan_WPSEnable = "1"
+var G_ChannelsInUse = "4"
+var G_RepeaterBaseMACAddress = ""
+var WDS_Enable="0";
+var WDS_WDSMode="";
+/*use for russia, begin*/
+var G_DualAccess_Enable = '0';
+var G_DualAccess_IPAddress = '';
+var G_DualAccess_SubnetMask = '';
+var G_DualAccess_AddressType = 'DHCP';
+var G_DualAccess_ConnectionType = 'DHCP';
+var G_Region = 'RU';
+var G_ApplyRegion = 'RU';
+/*use for russia, end*/
+/*********************************** wan process***************************************/
+function getPrototype(){
+var _prototype = 'Unknown';
+if(G_wanConnction[0][0].indexOf('IP') > 0){
+return G_wanConnction[0][5];
+} else {
+return G_wanConnction[0][4];
+}
+}
+function System_Info_Table_Create(){
+supplyValue('system_gui_language',G_GuiLanguageVersion);
+supplyValue('system_info_firmware',G_ModemFirmwareVersion);
+supplyValue('TD_Hardware_platform',"TBS" || '&nbsp;');
+//supplyValue('system_info_model_name',G_ModelName);
+supplyValue('system_info_time',G_CurrentLocalTime.replace('T',' '));
+supplyValue('td_Hardware_version',G_HarewareVersion);
+}
+function Wan_Port_Info_Table_Create(){
+supplyValue('td_wan_default_mac',G_wan_mac || '&nbsp;');
+if(G_wanConnction[0][1]=='Disconnected')
+G_wanConnction[0][1]= G_deviceinfo_connect[1];
+else
+G_wanConnction[0][1]= G_deviceinfo_connect[0];
+if(getPrototype()=='IP_Routed')
+supplyValue('internet_connection_status', 'PPPOE' || '&nbsp;');
+else if(getPrototype()=='PPTP_Relay'){
+supplyValue('internet_connection_status', 'PPTP' || '&nbsp;');
+}
+else if(getPrototype()=='L2TP_Relay'){
+supplyValue('internet_connection_status', 'L2TP'|| '&nbsp;');
+}
+else{
+supplyValue('internet_connection_status', getPrototype() || '&nbsp;');
+}
+//alert(getPrototype());
+//if(getPrototype()=='Static'||getPrototype()=='DHCP'){
+supplyValue('internet_DNS', (G_wanConnction[0][8] == "") ? '0.0.0.0' : (G_wanConnction[0][10]=="1" ? ((G_wanConnction[0][12]=="")?'0.0.0.0':G_wanConnction[0][12]) : ((G_wanConnction[0][11]=="")?'0.0.0.0':G_wanConnction[0][11])) );
+if (G_wanConnction[0][8] == "") {
+G_wanConnction[0][8] = '0.0.0.0';
+G_wanConnction[0][13] = '0.0.0.0'; // WAN IP is empty, netmask also set to empty.
+}
+supplyValue('internet_IP_address',G_wanConnction[0][8] || '&nbsp;');
+supplyValue('internet_IP_mask',G_wanConnction[0][13] || '&nbsp;');
+supplyValue('internet_Default_gw',((G_wanConnction[0][9]=="")?'0.0.0.0':G_wanConnction[0][9]) || '&nbsp;');
+}
+function Guest_Network_Table_Create(){
+supplyValue('Device_SSIDName',W_SSID[1]);
+supplyValue('Device_WirelessAp',(W_Enable[1]=='1'?lang_OnOff[0]:lang_OnOff[1]));
+supplyValue('Device_EnableSSIDBroadcast',(W_SSIDAdvertisementEnabled[1]=='1'?lang_OnOff[0]:lang_OnOff[1]));
+supplyValue('Device_EnableIsolation',(W_APIsolate[1]=='1'?lang_OnOff[0]:lang_OnOff[1]));
+supplyValue('Device_MyLanAccess',(W_EnableAccessLocal[1]=='1'?lang_OnOff[0]:lang_OnOff[1]));
+}
+function Lan_port_Info_Table_Create(){
+supplyValue('local_mac_address',G_lan_mac);
+supplyValue('local_ip_address',G_lan_ip_addr);
+supplyValue('local_netmask',G_lan_mask);
+supplyValue('dhcp_server_enable',(G_DHCPServerEnable=='1'?lang_OnOff[0]:lang_OnOff[1]));
+}
+var arrRegion = ['ZA','VN','AU','CA','CN','DE','IL','JP','KR','MX','IQ','RU','CO','US'];
+function Wlan_Table_Create(){
+var bgnmode;
+//supplyValue('TD_wlan_radio',G_Wlan_Info[0][5] == '1' ? 'Enabled' : 'Disabled');
+supplyValue('td_wlan_ssid',G_Wlan_Info[0][1]);
+for(var _r=0; _r < arrRegion.length; _r++)
+{
+if(arrRegion[_r]==G_Wlan_Regulatory)
+{
+supplyValue('td_wlan_Regulatory',lang_arrRegion[_r]);
+break;
+}
+}
+if(0==G_Wlan_Info[0][6]){
+supplyValue('td_wlan_channel',G_deviceinfo_auto[0] + '(' + G_ChannelsInUse + ')' || '&nbsp;');
+}
+else if(14==G_Wlan_Info[0][6]){
+supplyValue('td_wlan_channel','14');
+}
+else{
+supplyValue('td_wlan_channel',G_Wlan_Info[0][6]);
+}
+if(G_Wlan_Info[0][7]=="bg"){
+bgnmode="54Mbps";
+}
+else if(G_Wlan_Info[0][7]=="bgn"){
+if(G_Radio_Info[0]=='1'){
+if(G_Radio_Info[1]=="20")
+bgnmode="150Mbps";
+else if(G_Radio_Info[1]=="40")
+bgnmode="300Mbps";
+}
+else if(G_Radio_Info[0]=='0'){
+if(G_Radio_Info[1]=="20")
+bgnmode="65Mbps";
+else if(G_Radio_Info[1]=="40")
+bgnmode="150Mbps";
+}
+}
+supplyValue('td_wlan_mode',bgnmode);
+if(1==G_Radio_Info[2]&&1==G_Wlan_Info[0][5]){
+supplyValue('td_wlan_radio',G_deviceinfo_enable[0]);
+}
+else{
+supplyValue('td_wlan_radio',G_deviceinfo_enable[1]);
+}
+supplyValue('td_wlan_SSIDBroad',(G_Wlan_Info[0][9]=='1'?lang_OnOff[0]:lang_OnOff[1]));
+supplyValue('td_wlan_APIsolate',(G_Wlan_Info[0][10]=='1'?lang_OnOff[0]:lang_OnOff[1]));
+supplyValue('td_wlan_WPSEnable',(G_Wlan_WPSEnable=='1'?lang_OnOff[0]:lang_OnOff[1]));
+if(getSecMode()=='None')
+supplyValue('td_wlan_securitymode',G_deviceinfo_none[0]);
+else
+supplyValue('td_wlan_securitymode',getSecMode());
+}
+/*When WAN is static,it changes button css. by pengfei*/
+function load_static_display()
+{
+var lang_ShowStatistics = document.getElementById("lang_ShowStatistics")
+if(getPrototype()=='Static')
+{
+lang_ShowStatistics.className = "common_bt";
+}else{
+lang_ShowStatistics.className = "middle_common_bt";
+}
+}
+function Repeater_Table_Create()
+{
+supplyValue('WR_BaseStationAddress',G_RepeaterBaseMACAddress);
+}
+function BaseStation_Table_Create()
+{
+supplyValue('WR_Repeater1Address',WDS_ReMACAddress[0]);
+supplyValue('WR_Repeater2Address',WDS_ReMACAddress[1]);
+supplyValue('WR_Repeater3Address',WDS_ReMACAddress[2]);
+supplyValue('WR_Repeater4Address',WDS_ReMACAddress[3]);
+}
+var Interport = ['InternetPort_hide1','InternetPort_hide2','InternetPort_hide3','InternetPort_hide4','InternetPort_hide5','InternetPort_hide6','InternetPort_hide7'];
+var WirelessRepeating = ['WirelessRepeating_hide1','WirelessRepeating_hide2'];
+var Profile1 = ['Device_Profile1_hide1','Device_Profile1_hide2','Device_Profile1_hide3','Device_Profile1_hide4','Device_Profile1_hide5'];
+var Profile2 = ['Device_Profile2_hide1','Device_Profile2_hide2','Device_Profile2_hide3','Device_Profile2_hide4','Device_Profile2_hide5'];
+var Profile3 = ['Device_Profile3_hide1','Device_Profile3_hide2','Device_Profile3_hide3','Device_Profile3_hide4','Device_Profile3_hide5'];
+var Profile4 = ['Device_Profile4_hide1','Device_Profile4_hide2','Device_Profile4_hide3','Device_Profile4_hide4','Device_Profile4_hide5'];
+function displayid(flag,id_select)
+{
+var _tmpProfile
+if(1==id_select)
+{
+for(var _f=0 ; _f < Profile1.length; _f++)
+{
+_tmpProfile = document.getElementById(Profile1[_f]);
+_tmpProfile.style.display=flag;
+}
+}
+else if(2==id_select)
+{
+for(var _f=0 ; _f < Profile2.length; _f++)
+{
+_tmpProfile = document.getElementById(Profile2[_f]);
+_tmpProfile.style.display=flag;
+}
+}
+else if(3==id_select)
+{
+for(var _f=0 ; _f < Profile3.length; _f++)
+{
+_tmpProfile = document.getElementById(Profile3[_f]);
+_tmpProfile.style.display=flag;
+}
+}
+else if(4==id_select)
+{
+for(var _f=0 ; _f < Profile4.length; _f++)
+{
+_tmpProfile = document.getElementById(Profile4[_f]);
+_tmpProfile.style.display=flag;
+}
+}
+}
+function getSecMode(){
+var _mode = G_Wlan_Info[0][3] == 'Basic' && G_Wlan_Info[0][8] == 'None' ? 'None' : (G_Wlan_Info[0][3] || 'None');
+return _mode == 'Basic' ? 'WEP' : _mode == 'WPA' ? 'WPA-PSK[TKIP]' : _mode == '11i' ? 'WPA2-PSK[AES]' : _mode == 'WPAand11i' ? 'WPA-PSK[TKIP]+WPA2-PSK[AES]' : 'None';
+}
+function ShowStatistics()
+{
+window.open ("../html/status_statistics.htm", "newwindow1", "height=300, width=820, toolbar =no, menubar=no, scrollbars=no, resizable=no, location=no, status=no") ;
+}
+/**************************************************************************************/
+function Connect_Status()
+{
+window.open ("../html/status_connect.htm", "newwindow2", "height=400, width=400, toolbar =no, menubar=no, scrollbars=no, resizable=no, location=no, status=no") ;
+}
+function click_direct(str1,str2)
+{
+var sub_name= str1+"_sub";
+if(top.document.getElementById(sub_name).style.display == "none")
+parent.open_or_close_sub(str1);
+parent.click_adv_action(str2);
+}
+function RebootConfig()
+{
+$G('../html/Reboot.htm',{
+'var:page': 'Reboot',
+'var:errorpage' : 'Reboot',
+'getpage': '../html/Reboot.htm',
+'errorpage': '../html/Reboot.htm'
+});
+}
+/*use for russia, begin*/
+function dualAccessDisplay()
+{
+if(G_Region == G_ApplyRegion)
+{
+if(G_DualAccess_Enable == '1')
+{
+hideChForWep('DualInternetPort_hide',4,'');
+if (G_DualAccess_IPAddress == "") {
+G_DualAccess_IPAddress = '0.0.0.0';
+}
+if(G_DualAccess_SubnetMask == ""){
+G_DualAccess_SubnetMask = '0.0.0.0';
+}
+if(G_DualAccess_AddressType == "Static"){
+G_DualAccess_AddressType = "Fixed IP";
+}
+supplyValue('Dual_internet_IP_address',G_DualAccess_IPAddress || '&nbsp;');
+supplyValue('Dual_internet_IP_mask',G_DualAccess_SubnetMask || '&nbsp;');
+//supplyValue('Dual_internet_connection_status', G_DualAccess_AddressType || '&nbsp;');
+}
+else
+{
+if((G_DualAccess_ConnectionType == 'PPTP') || (G_DualAccess_ConnectionType == 'L2TP'))
+{
+hideChForWep('DualInternetPort_hide',4,'');
+if (G_DualAccess_IPAddress == "") {
+G_DualAccess_IPAddress = '0.0.0.0';
+if(G_wanConnction[0][14] != "")
+G_DualAccess_IPAddress = G_wanConnction[0][14];
+}
+if(G_DualAccess_SubnetMask == ""){
+G_DualAccess_SubnetMask = '0.0.0.0';
+if(G_wanConnction[0][15] != "")
+G_DualAccess_SubnetMask = G_wanConnction[0][15];
+}
+if(G_DualAccess_AddressType == "Static"){
+G_DualAccess_AddressType = "Fixed IP";
+}
+supplyValue('Dual_internet_IP_address',G_DualAccess_IPAddress || '&nbsp;');
+supplyValue('Dual_internet_IP_mask',G_DualAccess_SubnetMask || '&nbsp;');
+//supplyValue('Dual_internet_connection_status', G_DualAccess_AddressType || '&nbsp;');
+}
+else
+{
+hideChForWep('DualInternetPort_hide',4,'none');
+}
+}
+}
+else
+{
+hideChForWep('DualInternetPort_hide',4,'none');
+}
+}
+/*use for russia, end*/
+function CheckSsidLength()
+{
+var value1;
+var value2;
+var s = G_Wlan_Info[0][1];
+var ssidGuest=W_SSID[1];
+if(G_Wlan_Info[0][1].length > 16)
+{
+value1 = s.substr(0,16);
+value2 = s.substr(16,s.length);
+G_Wlan_Info[0][1] = value1+'<br>'+value2;
+}
+if(W_SSID[1].length > 16)
+{
+value1 = ssidGuest.substr(0,16);
+value2 = ssidGuest.substr(16,ssidGuest.length);
+W_SSID[1] = value1+'<br>'+value2;
+}
+}
+function uiOnload(){
+CheckSsidLength();
+Wan_Port_Info_Table_Create();
+System_Info_Table_Create();
+Lan_port_Info_Table_Create();
+Repeater_Table_Create();
+Wlan_Table_Create();
+Guest_Network_Table_Create();
+BaseStation_Table_Create();
+load_static_display();
+/*use for russia, begin*/
+dualAccessDisplay();
+/*use for russia, end*/
+if('1'==WDS_Enable&&'Repeater'==WDS_WDSMode)
+{
+document.getElementById("icon1").style.display="inline";
+document.getElementById("icon2").style.display="none";
+document.getElementById("wds_repeater").style.display="";
+}
+else
+{
+document.getElementById("icon1").style.display="inline";
+document.getElementById("icon2").style.display="";
+document.getElementById("wds_repeater").style.display="none";
+}
+if('1'==WDS_Enable&&'BaseStation'==WDS_WDSMode)
+{
+document.getElementById("wds_BaseStation").style.display="";
+document.getElementById("pl_3").style.display="";
+}
+else
+{
+document.getElementById("wds_BaseStation").style.display="none";
+document.getElementById("pl_3").style.display="none";
+}
+if(getPrototype()=='Static')
+{
+document.getElementById("Connect_Status").style.display="none";
+}else{
+document.getElementById("Connect_Status").style.display="";
+}
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="RST_status.htm"></form>
+<style type="text/css"><!--
+BODY {
+FONT-SIZE: 12px; MARGIN: 6px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+.reboot_div{ position: relative; width: 100%; height: 40px;}
+#content_icons { width: 622px; height:100%; overflow-y: auto; position: absolute; top: 0; left: 0; bottom: 0; }
+.adv_icon{float:left; margin-left: 5px; width: 295px; height: 270px; background-image: url(skin/image/icon/advanced-back.gif); background-repeat: no-repeat;}
+.adv_icon .title{ width: 295px; height: 34px; background-image: url(skin/image/icon/advanced-title.gif); background-repeat: no-repeat;}
+.adv_icon .title img{margin: 7px 4px auto 4px; float:left;}
+.adv_icon .info_div{width: 100%; height:192px;}
+.adv_icon .title b{position:relative; top: 8px; font-family: Arial; font-size: 14px; color: #e5e5e5; text-decoration: underline;}
+.page_line{ margin-top:10px; margin-bottom: 10px;}
+.reboot{ position: relative; margin: 9px 57px; width: 180px; height: 22px; background: transparent url(skin/image/button/advanced_home_button.gif) left bottom no-repeat; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 12px; text-align: center; line-height: 22px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
+.common_bt{width:147px; background: url(skin/image/button/button.gif) no-repeat;}
+--></style>
+<div id="content_icons">
+<div id="icon1" class="adv_icon">
+<div class="title">
+<img src="skin/image/icon/advanced-status-good.gif" />
+<b id="lang_deviceinfo">Router Information</b>
+</div>
+<table width=100% border=0 cellpadding=0 cellspacing=1>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_HardwareVersion" style="font-weight:bold" width="60%">Hardware Version</td>
+<td id="td_Hardware_version"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_SysFirmwareVersion" style="font-weight:bold">Firmware Version</td>
+<td id="system_info_firmware"></td>
+</tr>
+<tr style="display:none">
+<td id="lang_HardwarePlatform" style="font-weight:bold">Hardware Platform</td>
+<td id="td_Hardware_platform"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr style="display:none">
+<td id="lang_SysTimeAndDate" style="font-weight:bold;">Time and Date</td>
+<td id="system_info_time"></td>
+</tr>
+<tr>
+<td id="lang_GuiLanguage" style="font-weight:bold;" width="60%">GUI Language Version</td>
+<td id="system_gui_language"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id=ap2>
+<td colspan=2><span class="subhead_blue" id="lang_lanport">LAN Port</span></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_LanMACAddress" style="font-weight:bold" width="60%">MAC Address</td>
+<td id="local_mac_address"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_LanIPAddress" style="font-weight:bold">IP Address</td>
+<td id="local_ip_address"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_DhcpServer" style="font-weight:bold; ">Dhcp Server</td>
+<td id="dhcp_server_enable"></td>
+</tr>
+</table>
+<div>
+<input type="button" id="reboot" class="reboot" value="Reboot">
+</div>
+</div>
+<div id="icon2" class="adv_icon" style="display:none;">
+<div id="icon2_title" class="title" onclick='click_direct("setup","internet");' style="cursor:pointer">
+<script>
+if(G_wanConnction[0][1]!='Disconnected')
+document.write('<img src="skin/image/icon/advanced-status-good.gif" />');
+else
+document.write('<img src="skin/image/icon/advanced-status-error.gif" />');
+document.write('<b id="lang_InternetPort">Internet Port</b>');
+</script>
+</div>
+<div class="info_div" id="ap_wan_port">
+<table class="icon_table" width=100% border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WanFacDefMACAddr" style="font-weight:bold">MAC Address</td>
+<td id="td_wan_default_mac"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="InternetPort_hide3">
+<td id="lang_WanIPAddress" style="font-weight:bold">IP address</td>
+<td id="internet_IP_address"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="InternetPort_hide4">
+<td id="lang_WanNetLink" style="font-weight:bold">Connection</td>
+<td id="internet_connection_status"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="InternetPort_hide5">
+<td id="lang_WanSubnetMask" style="font-weight:bold">IP Subnet mask</td>
+<td id="internet_IP_mask"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="InternetPort_hide6">
+<td id="lang_WanDomainNameServer" style="font-weight:bold;">Domain Name Server</td>
+<td id="internet_DNS"></td>
+</tr>
+<!--use for russia, begin-->
+<tr style="display:none" id="DualInternetPort_hide1"><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="DualInternetPort_hide2" >
+<td id="lang_DualWanIPAddress" style="font-weight:bold">IP address</td>
+<td id="Dual_internet_IP_address"></td>
+</tr>
+<!--<tr style="display:none" id="DualInternetPort_hide3"><td colspan=2><img src="../html/skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="DualInternetPort_hide4">
+<td id="lang_DualWanNetLink" style="font-weight:bold">Connection</td>
+<td id="Dual_internet_connection_status"></td>
+</tr>-->
+<tr style="display:none" id="DualInternetPort_hide3"><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="DualInternetPort_hide4">
+<td id="lang_DualWanSubnetMask" style="font-weight:bold">IP Subnet mask</td>
+<td id="Dual_internet_IP_mask"></td>
+</tr>
+<!--use for russia, end-->
+</table>
+</div>
+<div class="button_div" >
+<table class="icon_table" width="295px" border=0 cellpadding=0 cellspacing=3>
+<tr>
+<td nowrap colspan=2 align=center >
+<input class="middle_common_bt" id="lang_ShowStatistics" type="button" name="Show Statistics" value="Show Statistics"onClick="ShowStatistics();">
+<input class="common_bt" id="Connect_Status" type="button" name="Connection Status" value="Connection Status" onClick="Connect_Status();">
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="wds_repeater" class="adv_icon" >
+<div id="wds_title" class="title" >
+<img src="skin/image/icon/advanced-status-good.gif" />
+<b id="lang_wirelessrep">Wireless Repeater</b>
+</div>
+<table class="icon_table" width="295px" border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_BaseStationAddress" style="font-weight:bold;">Base Station Address</td>
+<td id="WR_BaseStationAddress"></td>
+</tr>
+</table>
+</div>
+<img id="pl_1" class="page_line" src="skin/image/icon/advanced_page_line.gif"/>
+<div id="title_bgn" class="adv_icon">
+<div id="words_title" class="title" onclick='click_direct("setup","wireless");' style="cursor:pointer">
+<script>
+if ( G_Radio_Info[2] == '0')
+document.write('<img src="skin/image/icon/advanced-status-error.gif" />');
+else
+{
+if ( G_Wlan_Info[0][3] == 'None')
+document.write('<img src="skin/image/icon/advanced-status-warning.gif" />');
+else
+document.write('<img src="skin/image/icon/advanced-status-good.gif" />');
+}
+</script>
+<b id="lang_WirelessPort">Wireless Settings</b>
+</div>
+<table class="icon_table" width="295px" border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessNetworkName" style="font-weight:bold">Wireless Network Name (SSID)</td>
+<td id="td_wlan_ssid"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessRegulatory" style="font-weight:bold">Region</td>
+<td id="td_wlan_Regulatory"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessChannel" style="font-weight:bold">Wireless Channel</td>
+<td id="td_wlan_channel"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_Mode" style="font-weight:bold"> Mode :</td>
+<td ><span id="lang_upto">Up to&nbsp;</span><span id="td_wlan_mode"></span></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessRadio" style="font-weight:bold">Wireless Radio</td>
+<td id="td_wlan_radio"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessSSIDBroad" style="font-weight:bold">Broadcast Name</td>
+<td id="td_wlan_SSIDBroad"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessAPIsolate" style="font-weight:bold">Wireless Isolation</td>
+<td id="td_wlan_APIsolate"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr>
+<td id="lang_WirelessWPSEnable" style="font-weight:bold">Wi-Fi Protected Setup</td>
+<td id="td_wlan_WPSEnable"></td>
+</tr>
+</table>
+</div>
+<div id="wl_head_an" class="adv_icon">
+<div id="guest_an" class="title" onclick='click_direct("setup","guest");' style="cursor:pointer">
+<script>
+if ( G_Radio_Info[2] == '0' )
+document.write('<img src="skin/image/icon/advanced-status-error.gif" />');
+else
+{
+if (W_Enable[1] == "0" || (W_Enable[1] == "1" && W_BeaconType[1]== 'None' ))
+document.write('<img src="skin/image/icon/advanced-status-warning.gif" />');
+else
+document.write('<img src="skin/image/icon/advanced-status-good.gif" />');
+}
+</script>
+<b id="lang_guestnetwork">Guest Network</b>
+</div>
+<table class="icon_table" width="295px" border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="Device_Profile2_hide1">
+<td id="lang_Name" style="font-weight:bold">Name (SSID)</td>
+<td id="Device_SSIDName"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="Device_Profile2_hide2">
+<td id="lang_wirelessap" style="font-weight:bold">Wireless AP</td>
+<td id="Device_WirelessAp"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="Device_Profile2_hide3">
+<td id="lang_SSIDBroadcast" style="font-weight:bold">Broadcast Name</td>
+<td id="Device_EnableSSIDBroadcast"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="Device_Profile2_hide4">
+<td id="lang_WirelessIsolation" style="font-weight:bold">Wireless Isolation</td>
+<td id="Device_EnableIsolation"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="Device_Profile2_hide5">
+<td id="lang_MyLANaccess" style="font-weight:bold;word-break:break-all;">Allow guest to access My Local Network</td>
+<td id="Device_MyLanAccess"></td>
+</tr>
+</table>
+</div>
+<img id="pl_3" style="display:none;" class="page_line" src="skin/image/icon/advanced_page_line.gif"/>
+<div id="wds_BaseStation" class="adv_icon" style="display:none;">
+<div id="wds_BaseStationtitle" class="title" >
+<img src="skin/image/icon/advanced-status-good.gif" />
+<b id="lang_wirelessrep1">Wireless Repeater</b>
+</div>
+<table class="icon_table" width="295px" border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="WirelessBasicStation_hide2">
+<td id="lang_Repeater1Address" style="font-weight:bold;">Repeater 1 Address</td>
+<td id="WR_Repeater1Address"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="WirelessBasicStation_hide3">
+<td id="lang_Repeater2Address" style="font-weight:bold;">Repeater 2 Address</td>
+<td id="WR_Repeater2Address"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="WirelessBasicStation_hide4">
+<td id="lang_Repeater3Address" style="font-weight:bold;">Repeater 3 Address</td>
+<td id="WR_Repeater3Address"></td>
+</tr>
+<tr><td colspan=2><img src="skin/image/icon/advanced_icon_line.gif" /></td></tr>
+<tr id="WirelessBasicStation_hide5">
+<td id="lang_Repeater4Address" style="font-weight:bold; padding-bottom:8px">Repeater 4 Address</td>
+<td id="WR_Repeater4Address"></td>
+</tr>
+</table>
+</div>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("RST_status")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+</body>

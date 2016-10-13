@@ -1,0 +1,270 @@
+function __UrlFilterForm() {
+    __UrlFilterForm.superclass.constructor.call(this);
+    var $$ = {
+        wID: "#winMiscSettings.window",
+        favicon: null
+    };
+    this.add(new nodetext("urlfAddress", "", {
+        mandatory: !0
+    }), "url"), this.updateModel = function(status) {
+        this.status = status
+    }, this.show = function(urllist, index, url) {
+        DIALOG.caption($$.wID, "menu_urlfilter").show($$.wID), this.buttonBar($($$.wID + ">.footer>.toolbar")).deep.updateView($($$.wID + ">.body>.content")).cleanButtonBar(), is.set(index) ? (this.child(0).val(url), this.addButton("button_save").getButton("button_save").bind("click.button", callback(this, function(urllist) {
+            if (this.deep.updateModel(), !this.status.error) {
+                var duburl, url = this.child(0).val(),
+                    isurlavial = !1,
+                    isduburlavial = !1,
+                    patt = /^www.+$/;
+                duburl = patt.test(url) ? url.substring(4) : "www." + url;
+                for (var i = 0; i < urllist.length; i++) urllist[i].url == url && (isurlavial = !0), urllist[i].url == duburl && (isduburlavial = !0);
+                isurlavial ? alert(lng("dup")) : (__URLFILTER.edit(index, url), isduburlavial || __URLFILTER.add(duburl), this.hide())
+            }
+        }, urllist))) : this.addButton("button_save").getButton("button_save").bind("click.button", callback(this, function(urllist) {
+            if (this.deep.updateModel(), !this.status.error) {
+                var duburl, url = this.child(0).val(),
+                    isurlavial = !1,
+                    isduburlavial = !1,
+                    patt = /^www.+$/;
+                duburl = patt.test(url) ? url.substring(4) : "www." + url;
+                for (var i = 0; i < urllist.length; i++) urllist[i].url == url && (isurlavial = !0), urllist[i].url == duburl && (isduburlavial = !0);
+                isurlavial ? alert(lng("dup")) : (__URLFILTER.add(url), isduburlavial || __URLFILTER.add(duburl), this.hide())
+            }
+        }, urllist)), $$.favicon = $("			<div class='favicon unselectable'></div>		").appendTo(this.child(0).pluginInput), this.child(0).pluginInput.find(":input").bind("keyup", callback(this, function(e) {
+            var url = $(e.target).val();
+            $$.favicon.css({
+                "background-image": "url(http://" + url + "favicon.ico)"
+            })
+        })), this.$box.find(".edit .error").remove(), $($$.wID).unbind("close.dialog").bind("close.dialog", callback(this, this.hide))
+    }, this.hide = function() {
+        DIALOG.hide($$.wID, callback(this, function() {
+            $($$.wID + ">.footer>.toolbar, " + $$.wID + ">.body>.content").find("*").unbind().remove()
+        }))
+    }
+}
+
+function __WiFilterForm() {
+    __WiFilterForm.superclass.constructor.call(this);
+    var $$ = {
+        wID: "#winMiscSettings.window",
+        lanClients: [],
+        wifilter: []
+    };
+    this.add(new nodeComboMAC("hwaddr", "", {
+        header: [{
+            index: "ip",
+            name: "IP"
+        }, {
+            index: "mac",
+            name: "MAC"
+        }, {
+            index: "host",
+            name: "Host"
+        }],
+        index: "mac",
+        mandatory: !0
+    }), "mac"), this.add(new nodetext("statDhcpHost", "", {
+        maxLength: 20
+    }), "host"), this.add(new nodeCheckBox("full_on", !1), "active"), this.updateModel = function(status) {
+        this.status = status
+    }, this.show = function(lanClients, wifilter) {
+        $$.lanClients = lanClients, $$.wifilter = wifilter, this.child("mac").val(""), this.child("host").val(""), this.child("active").val(!1), DIALOG.caption($$.wID, "menu_macfilter").show($$.wID), this.buttonBar($($$.wID + ">.footer>.toolbar")).deep.updateView($($$.wID + ">.body>.content")).cleanButtonBar().addButton("button_save").getButton("button_save").bind("click.button", callback(this, function() {
+            if (this.deep.updateModel(), !this.status.error) {
+                var MacFilterList = {
+                    mac: this.child("mac").val(),
+                    hostname: this.child("host").val(),
+                    active: this.child("active").val()
+                };
+                __WIFILTER.add(MacFilterList, wifilter)
+            }
+        })), this.$box.find(".edit .error").remove(), $($$.wID).unbind("close.dialog").bind("close.dialog", callback(this, this.hide))
+    }, this.hide = function() {
+        DIALOG.hide($$.wID, callback(this, function() {
+            $($$.wID + ">.footer>.toolbar, " + $$.wID + ">.body>.content").find("*").unbind().remove()
+        }))
+    }, this.updateView = function(phase) {
+        if (__WiFilterForm.superclass.updateView.apply(this, arguments), "back" == phase)
+            for (var mac = this.child("mac"), i = 0; i < $$.lanClients.length; i++) obj = $$.lanClients[i], "WLAN" == obj.name && mac.addRow(obj.ip, obj.mac, obj.hostname)
+    }
+}
+
+function __IPFilterForm() {
+    __IPFilterForm.superclass.constructor.call(this);
+    var $$ = {
+            wID: "#winMiscSettings.window",
+            form: null
+        },
+        ipfltProtoNames = ["TCP/UDP", "TCP", "UDP", "ICMP", "all_"],
+        ipfltActions = ["macfAccept", "macfDrop"];
+    this.show = function(iftree, lanClients, ipfilter, rule, index) {
+        DIALOG.caption($$.wID, "menuIPFilter").show($$.wID), $$.form = new ruleIPFilters(iftree, lanClients, ipfilter, ipfltProtoNames, ipfltActions, rule), $$.form.buttonBar($($$.wID + ">.footer>.toolbar")).deep.updateView($($$.wID + ">.body>.content")).cleanButtonBar().addButton("button_save").getButton("button_save").bind("click.button", callback(this, function() {
+            $$.form.deep.updateModel(), $$.form.status.error || (is.set(index) ? __FIREWALL.edit($$.form.rule, index) : __FIREWALL.add($$.form.rule), this.hide())
+        })), $$.form.$box.find(".edit .error").remove(), $$.form.emit("updaterq"), $($$.wID).unbind("close.dialog").bind("close.dialog", callback(this, this.hide))
+    }, this.hide = function() {
+        DIALOG.hide($$.wID, callback(this, function() {
+            $($$.wID + ">.footer>.toolbar, " + $$.wID + ">.body>.content").find("*").unbind().remove()
+        })), delete $$.form
+    }
+}
+
+function jsSpecialPreMasterController(ready) {
+    jsSpecialPreMasterController.superclass.constructor.call(this), this.ready = ready, this.ifaceTypes.client = {
+        type: jsSpecialPreMasterClientView,
+        options: {
+            inputPadding: "200px"
+        }
+    }, this.addChild(new jsPreMasterController, "inet"), this.addEventHandler("updaterq", function() {
+        return this.getChild("inet").event("updaterq"), !1
+    }), this.addEventHandler("modeswitch", function(value) {
+        return this.getChild("inet").event("modeswitch", value), !1
+    }), this.addEventHandler("reloadrq", function() {
+        return this.ready.call(this), !1
+    })
+}
+
+function jsSpecialPreMasterClientView(ctrl, viewInx, options) {
+    options.nothing = !0, options.simple = !0, ctrl.getChild("inet").ifaceTypes.client.options.buttonsInline = !1, jsSpecialPreMasterClientView.superclass.constructor.call(this, ctrl, viewInx, options)
+}
+
+function jsWanParent(data, ifname, srvname, tnlname, devicemac) {
+    jsWanParent.superclass.constructor.call(this), this.onsaverq = function() {
+        var general = wanCtrl.getChild("general"),
+            model = general.model,
+            contype = model.ifnode.contype;
+        if ("statpppoe" == contype || "dynpppoe" == contype) {
+            var service2 = $.extend(!0, {}, getObjectFirstChild(model.service.tunnels)),
+                srvname2 = getObjectFirstKey(model.service.tunnels);
+            delete model.service.tunnels;
+            var blankConn2 = $.extend(!0, {}, model.blankConn),
+                services = getObjectFirstChild(blankConn2).services = {};
+            services[srvname2] = service2
+        }
+        this.step1 = function() {
+            model.ifnode.needDelete instanceof Array ? device.config.remove(1, model.ifnode.needDelete, callback(this, function() {
+                delete model.ifnode.needDelete, this.step2()
+            })) : this.step2()
+        }, this.step2 = function() {
+            var res_buf = $.toJSON(general.model.blankConn);
+            res_buf = res_buf.replace(/%/g, "%25"), res_buf = res_buf.replace(/#/g, "%23"), res_buf = res_buf.replace(/&/g, "%26"), res_buf = JSON.parse(res_buf), device.config.write(1, res_buf, callback(this, function() {
+                this.step3()
+            }))
+        }, this.step3 = function() {
+            is.object(blankConn2) ? (res_buf = $.toJSON(blankConn2), res_buf = res_buf.replace(/%/g, "%25"), res_buf = res_buf.replace(/#/g, "%23"), res_buf = res_buf.replace(/&/g, "%26"), res_buf = JSON.parse(res_buf), device.config.write(1, res_buf, callback(this, function() {
+                this.step4()
+            }))) : this.step4()
+        }, this.step4 = function() {
+            wanCtrl.model.enIGMPGlobal ? device.config.write(68, {
+                enable: !0,
+                version: 2
+            }, callback(this, function() {
+                this.final()
+            })) : this.final()
+        }, this.final = function() {
+            WAITER.stop(), LOGIC.start()
+        }, LOGIC.stop(), PAGE.close(), WAITER.start(), this.step1()
+    };
+    var wanCtrl = this.addChild(new jsConnsMainTabController(data.iftree, ifname, srvname, tnlname, null, null, null, devicemac), "wanCtrl");
+    wanCtrl.model.lanClients = data.lanClients, wanCtrl.model.jsonIGMP = data.igmp, wanCtrl.model.devicemac = data.devicemac, wanCtrl.nextIface = "client";
+    var wanView = wanCtrl.views[wanCtrl.addIface()];
+    wanView.options.viewBoxSel = wID + "> .body > #pageGeneral", wanView.viewBoxSel = wID + " > .body > #pageGeneral", wanView.options.buttonBarSel = "#winPageToolbarButtons", wanView.buttonBarSel = "#winPageToolbarButtons", wanView.drawView(), this.addEventHandler("saverq", this.onsaverq)
+}
+
+function jsWanCreate() {
+    jsWanCreate.superclass.constructor.call(this);
+    var ifname = null,
+        srvname = null,
+        tnlname = null;
+    this.updateView = function(phase) {
+        if (jsWanCreate.superclass.updateView.apply(this, arguments), "forward" == phase) {
+            for (var i in this.iftree) {
+                this.iftree[i].ifname = i;
+                for (var i2 in this.iftree[i].services) this.iftree[i].services[i2].ifname = i2
+            }
+            new jsWanParent(this, ifname, srvname, tnlname, this.devicemac)
+        }
+        DIALOG.loading("#winPage.window", !1)
+    }, this.update = function() {
+        DIALOG.loading("#winPage.window", !0), device.config.read([1, 46, 68, 67], context(this).callback(function(data) {
+            this.iftree = data.rq[0].resident.iface_names, this.lanClients = data.rq[1].resident, this.igmp = data.rq[2].resident, this.devicemac = data.rq[3].resident.factory_wan_mac, this.deep.updateView()
+        }))
+    }, this.bind("updaterq", this.update)
+}
+window.PAGE = {
+    _group: null,
+    _item: null,
+    _tab: null,
+    _form: null,
+    clear: function() {
+        this._form && this._form.event && this._form.event("stoprefreshrq"), this._form && this._form.emit && this._form.emit("stoprefreshrq"), delete this._form, this._group = null, this._item = null, this._tab = null, $(wID + ">.body>#pageGeneral.content>div, " + wID + " #winPageToolbarButtons, #pageToolbarMisc").find("*").unbind().remove()
+    },
+    open: function(group, item, tab, switching, wID) {
+        if (window.wID = wID, this.clear(), DIALOG.show(wID), $(wID).find(".header .icon>img").attr("src", "image/icon/" + group.icon), $(wID).find(".header .caption").html($("				<span class='_group' langkey='" + group.name + "'>" + lng(group.name) + "</span>				<span>»</span>				<span class='_page' langkey='" + item.item + "'>" + lng(item.item) + "</span>			")), this._group = group, this._item = item, this._tab = tab, item.page instanceof Function) {
+            this._form = new item.page, this._form.nextIface = "client", this._form.ifaceTypes.client.options = {
+                viewBoxSel: wID + ">.body>#pageGeneral.content>div",
+                buttonBarSel: "#winPageToolbarButtons"
+            };
+            var curViewInx = this._form.addIface();
+            this._form.views[curViewInx].options.pageTitle = item.item, this._form.views[curViewInx].options.buttonsInline = !1, this._form.views[curViewInx].drawView(), this._form.event("updaterq")
+        }
+        else {
+            var tablist = new Array;
+            if (item.tabs)
+                for (var i = 0; i < item.tabs.length; i++) tablist.push({
+                    caption: item.tabs[i].subitem,
+                    page: item.tabs[i].page,
+                    alias: item.tabs[i].alias
+                });
+            else tablist.push({
+                caption: item.item,
+                page: item.page,
+                alias: item.alias
+            });
+            $("#pageTabs").find("*").unbind().remove();
+            for (var tabindex = 0, i = 0; i < tablist.length; i++) {
+                var tabitem = tablist[i],
+                    tabalias = item.page != tabitem.page ? "/" + tabitem.alias : "";
+                tab && tab.alias == tabitem.alias && (tabindex = i); {
+                    $("						<div class='pageTab'>							<a href='#" + group.alias + "/" + item.alias + tabalias + "' langkey='" + tabitem.caption + "'>" + lng(tabitem.caption) + "</a>						</div>					").appendTo($("#pageTabs"))
+                }
+            }
+            var curtab = tablist[tabindex];
+            this._form = curtab.page, this._form.locate(wID + ">.body>#pageGeneral.content>div"), this._form.$buttonBar = $("#winPageToolbarButtons"), this._form.emit("updaterq"), $("#pageTabs>.pageTab").removeClass("active").eq(tabindex).addClass("active");
+            var curtabalias = item.page != curtab.page ? "/" + curtab.alias : "";
+            setCookie("url_hash", group.alias + "/" + item.alias + curtabalias)
+        }
+        return switching = is.set(switching) ? switching : !0, !switching || $switcher.find(">.item.active").hasClass("SEARCH") || $switcher.find(">.item.active").hasClass("SETTINGS") || $switcher.find(">.item.SETTINGS").trigger("click"), $(wID).unbind("close.dialog").bind("close.dialog", callback(this, this.close)), this._form
+    },
+    close: function() {
+        DIALOG.hide(wID, callback(this, function() {
+            $(wID + ">.footer>.toolbar, " + wID + ">.body>.content").find("*").unbind().remove()
+        }))
+    }
+}, extend(__UrlFilterForm, node), extend(__WiFilterForm, node), hideFlag(88) || modeAP() || extend(__IPFilterForm, pageIPFilters), extend(jsSpecialPreMasterController, jsFieldSetController), extend(jsSpecialPreMasterClientView, jsFieldSetClientView), extend(jsWanParent, jsFieldSetController), extend(jsWanCreate, node);
+var wzInet = new function() {
+        var $$ = {
+                wID: "#winPage.window",
+                wizard: null
+            },
+            group = {
+                name: "menu_net",
+                alias: "network",
+                icon: "network.png",
+                list: [{
+                    item: "WAN",
+                    page: new jsWanCreate,
+                    description: "",
+                    alias: "wan"
+                }]
+            };
+        this.show = function() {
+            var form = PAGE.open(group, group.list[0], null, !1, $$.wID);
+            DIALOG.show($$.wID), form.ready = callback(this, this.hide), $($$.wID).unbind("close.dialog").bind("close.dialog", callback(this, this.hide))
+        }, this.hide = function() {
+            DIALOG.hide($$.wID, callback(this, function() {})), delete $$.form
+        }
+    },
+    UrlFilterForm = null,
+    WiFilterForm = null,
+    IPFilterForm = null;
+$(document).bind("ready", function() {
+    UrlFilterForm = new __UrlFilterForm, WiFilterForm = new __WiFilterForm, hideFlag(88) || modeAP() || (IPFilterForm = new __IPFilterForm)
+});

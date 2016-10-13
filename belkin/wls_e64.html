@@ -1,0 +1,305 @@
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showMenu.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wle1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var helpItem 	='Security';
+var menuSection	='WLAN';
+var menuItem	='Security';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else	isAPmode='0';
+
+function init()
+{
+    dataToVisible(document.tF);  
+    document.tF.tx_key[parseInt(document.tF.h_tx_key.value,10)].checked = true;
+}
+function submitF() {
+	if (isBlank(document.tF.passphrase_64.value)){ alert(errm); return false; }
+	document.tF.generate_flag.value=1;
+ 	document.tF.submit();
+ 	return true;
+}
+
+function submitF1() {
+	if (isBlank(document.tF.passphrase_64.value)){ alert(errm); return false; }
+	document.tF.generate_flag.value=2;
+ 	document.tF.submit();
+ 	return true;
+}
+
+function GURL(x){location=x}
+
+function logoutF()
+{
+	document.tF.logout.value=1;
+	document.tF.submit();
+	return true;
+}
+
+function ChangeSecMode(wl0_sec_mode)
+{
+	if(wl0_sec_mode.value == "0")
+		GURL('wls_enno.html');
+	else if(wl0_sec_mode.value == "psk")
+		GURL('wls_psk.html');	
+	else if(wl0_sec_mode.value == "128")
+		GURL('wls_e128.html');	
+	else if(wl0_sec_mode.value == "64")
+		GURL('wls_e64.html');
+}
+
+function genwep()
+{
+    if(document.tF.passphrase_64.value.length < 1)   
+    {   
+        alert(errm);   
+        return false;   
+    }
+	document.tF.page.value = '1';
+	return true;
+}
+function checkForm()
+{}
+function storeData()
+{
+    var i; 
+	if (document.tF.tx_key[0].checked==true || !isBlank(document.tF.ENC11.value) || !isBlank(document.tF.ENC12.value) || !isBlank(document.tF.ENC13.value) || !isBlank(document.tF.ENC14.value))	
+  	if ( isNValid(document.tF.ENC11.value) || isNValid(document.tF.ENC12.value) || isNValid(document.tF.ENC13.value)
+  		||isNValid(document.tF.ENC14.value) || isNValid(document.tF.ENC15.value) )
+	{
+  		alert(fmcipm); 
+  		alert(wle11+keym2);
+  		return false; 
+  	}
+  	if (document.tF.tx_key[1].checked==true || !isBlank(document.tF.ENC21.value) || !isBlank(document.tF.ENC22.value) || !isBlank(document.tF.ENC23.value) || !isBlank(document.tF.ENC24.value))	
+  	if ( isNValid(document.tF.ENC21.value) || isNValid(document.tF.ENC22.value) || isNValid(document.tF.ENC23.value)
+  		||isNValid(document.tF.ENC24.value) || isNValid(document.tF.ENC25.value) )
+	{
+  		alert(fmcipm); 
+  		alert(wle12+keym2);
+  		return false; 
+  	}
+  	if (document.tF.tx_key[2].checked==true || !isBlank(document.tF.ENC31.value) || !isBlank(document.tF.ENC32.value) || !isBlank(document.tF.ENC33.value) || !isBlank(document.tF.ENC34.value))	
+  	if ( isNValid(document.tF.ENC31.value) || isNValid(document.tF.ENC32.value) || isNValid(document.tF.ENC33.value)
+  		||isNValid(document.tF.ENC34.value) || isNValid(document.tF.ENC35.value) )
+	{
+  		alert(fmcipm); 
+  		alert(wle13+keym2);
+  		return false; 
+  	}
+  	if (document.tF.tx_key[3].checked==true || !isBlank(document.tF.ENC41.value) || !isBlank(document.tF.ENC42.value) || !isBlank(document.tF.ENC43.value) || !isBlank(document.tF.ENC44.value))	
+  	if ( isNValid(document.tF.ENC41.value) || isNValid(document.tF.ENC42.value) || isNValid(document.tF.ENC43.value)
+  		||isNValid(document.tF.ENC44.value) || isNValid(document.tF.ENC45.value) )
+	{
+  		alert(fmcipm); 
+  		alert(wle14+keym2);
+  		return false; 
+  	}
+
+  document.tF.wl0_key1.value=document.tF.ENC11.value+document.tF.ENC12.value+document.tF.ENC13.value+document.tF.ENC14.value+document.tF.ENC15.value;
+  document.tF.wl0_key2.value=document.tF.ENC21.value+document.tF.ENC22.value+document.tF.ENC23.value+document.tF.ENC24.value+document.tF.ENC25.value;
+  document.tF.wl0_key3.value=document.tF.ENC31.value+document.tF.ENC32.value+document.tF.ENC33.value+document.tF.ENC34.value+document.tF.ENC35.value;
+  document.tF.wl0_key4.value=document.tF.ENC41.value+document.tF.ENC42.value+document.tF.ENC43.value+document.tF.ENC44.value+document.tF.ENC45.value;
+  if(document.tF.wl0_key1.value.length!=0 && document.tF.wl0_key1.value.length!=10)
+  {
+  	alert(wle11+keym1);
+  	return false;
+  }
+  if(document.tF.wl0_key2.value.length!=0 && document.tF.wl0_key2.value.length!=10)
+  {
+  	alert(wle12+keym1);
+  	return false;
+  }
+  if(document.tF.wl0_key3.value.length!=0 && document.tF.wl0_key3.value.length!=10)
+  {
+  	alert(wle13+keym1);
+  	return false;
+  }
+  if(document.tF.wl0_key4.value.length!=0 && document.tF.wl0_key4.value.length!=10)
+  {
+  	alert(wle14+keym1);
+  	return false;
+  }
+  document.tF.page.value = '2';
+  
+  dataToHidden(document.forms[0]); 
+  document.tF.h_tx_key.value = 0;
+  for(i = 0; i < 4; i++)
+  {
+    if(document.tF.tx_key[i].checked == true)
+        document.tF.h_tx_key.value = i;
+  }
+  return true;
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="init();" >
+
+<form action="/belkin/3.00.02/En/wls_e64.cgi" name="wpa_wep_cgi" method="post">
+<input type=hidden name=webpage value=wls_e64.html >
+<input type=hidden name=gen_wep value=64>
+<input type=hidden name=wep_str value="">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+</script>
+<script language="javascript" type="text/javascript">
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+</form>
+<form action="/belkin/3.00.02/En/apply_wls_e64.html" name="tF" method="post">
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+<input type="hidden" name="generate_flag" value="">
+<input type=hidden name="h_tx_key" value="0" >
+<input type=hidden name="wl0_key1" value="">
+<input type=hidden name="wl0_key2" value="">
+<input type=hidden name="wl0_key3" value="">
+<input type=hidden name="wl0_key4" value="">
+<input type=hidden name="wl0_auth_mode" value="">
+<input type=hidden name="action" value="">
+
+<td valign="top" width="99%" class="head_bold">
+<br>
+&nbsp;&nbsp; <script language="javascript" type="text/javascript">dw(wle1);</script><br><br>     
+<table border=0>
+<tr>
+<td width=5>&nbsp;</td> 
+<td>
+<table width="600" border="0" cellspacing="10" cellpadding="0" align=center class="body">
+<tr>
+<td width="26%">
+<b><script language="javascript" type="text/javascript">dw(wle2);</script></b>
+</td>
+
+<td>
+<select name="wl0_sec_mode" onChange="ChangeSecMode(this)"> 
+<option value="0"><script language="javascript" type="text/javascript">dw(wle2a);</script></option>
+<option value="psk"><script language="javascript" type="text/javascript">dw(wle2b);</script></option>
+<option value="128"><script language="javascript" type="text/javascript">dw(wle2c);</script></option>
+<option value="64" selected><script language="javascript" type="text/javascript">dw(wle2d);</script></option>
+</select>
+</td>                                    
+</tr>   
+                               
+
+<tr>
+<td align=right>
+<input type="radio" name="tx_key" value="1"  >
+<b><script language="javascript" type="text/javascript">dw(wle11);</script> </b>  
+</td>         
+<td align=left>
+<input type="text" name="ENC11" size="3" maxlength="2" value="">
+<input type="text" name="ENC12" size="3" maxlength="2" value="">
+<input type="text" name="ENC13" size="3" maxlength="2" value="">
+<input type="text" name="ENC14" size="3" maxlength="2" value="">
+<input type="text" name="ENC15" size="3" maxlength="2" value="">
+<br>
+</td>
+</tr>
+
+
+<tr>
+<td align=right>				     
+<input type="radio" name="tx_key" value="2"  >
+<b><script language="javascript" type="text/javascript">dw(wle12);</script> </b>
+</td>
+<td align=left>
+<input type="text" name="ENC21" size="3" maxlength="2" value="">
+<input type="text" name="ENC22" size="3" maxlength="2" value="">
+<input type="text" name="ENC23" size="3" maxlength="2" value="">
+<input type="text" name="ENC24" size="3" maxlength="2" value="">
+<input type="text" name="ENC25" size="3" maxlength="2" value="">
+<br>
+</td>
+</tr>
+
+<tr>
+<td align=right>	    				      
+<input type="radio" name="tx_key" value="3"  >
+<b><script language="javascript" type="text/javascript">dw(wle13);</script> </b>
+</td>
+<td align=left>
+<input type="text" name="ENC31" size="3" maxlength="2" value="">
+<input type="text" name="ENC32" size="3" maxlength="2" value="">
+<input type="text" name="ENC33" size="3" maxlength="2" value="">
+<input type="text" name="ENC34" size="3" maxlength="2" value="">
+<input type="text" name="ENC35" size="3" maxlength="2" value="">
+<br>
+</td>
+</tr>
+
+<tr>
+<td align=right>	    				      
+<input type="radio" name="tx_key" value="4"  >
+<b><script language="javascript" type="text/javascript">dw(wle14);</script> </b>
+</td>
+<td align=left>
+<input type="text" name="ENC41" size="3" maxlength="2" value="">
+<input type="text" name="ENC42" size="3" maxlength="2" value="">
+<input type="text" name="ENC43" size="3" maxlength="2" value="">
+<input type="text" name="ENC44" size="3" maxlength="2" value="">
+<input type="text" name="ENC45" size="3" maxlength="2" value="">
+</td>
+</tr>
+
+<tr> 
+  <td>&nbsp;</td>
+  <td><b><script language="javascript" type="text/javascript">dw(wle15);</script></b></td>
+</tr>                                				    
+       
+<tr> 
+  <td align=right><script language="javascript" type="text/javascript">dw(wle9);</script>  </td>
+  <td align=left><script language="javascript" type="text/javascript">dw(wle10);</script><br>
+  <a class="more" href="javascript:void(0);" class="plaintext_bold" onClick="window.open('glossary.html#wireless_security','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script language="javascript" type="text/javascript">dw(sm1);</script></a>
+  </td>
+</tr>                                                  				    
+
+<tr>
+<td align="right">
+<b><script language="javascript" type="text/javascript">dw(PP);</script></b>
+</td>
+<td align=left>
+<input type="text" name="passphrase_64" size="30" maxlength="30" value="">
+<script language="javascript" type="text/javascript"></script>
+<input type="button" style="{width:80px;}" value="generate" class="submitBtn" noctl="true" onclick="window.location.href='wls_e64_gen.html'">  			
+</td>				    
+</tr>
+
+<tr> 
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  </td>
+</tr>
+
+
+<tr> 
+   <td colspan="2" align="center"> 
+    <script language="javascript" type="text/javascript">dw('<input type="button" name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;" onClick="location.href=\'wls_e64.html\'; return true;">&nbsp;&nbsp;');</script>
+ 	<script language="javascript" type="text/javascript">dw('<input type="submit" name="save" style="{width:150px;}" class="submitBtn" value="'+btn2+'" onclick="return storeData();">');</script>	  			
+  </td>
+</tr>
+</table>
+
+ </td>
+</tr>
+</table>     				
+</td>
+<input type="hidden" name="h_wl0_sec_mode" value="64">                 
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>

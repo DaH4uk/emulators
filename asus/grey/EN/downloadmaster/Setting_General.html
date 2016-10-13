@@ -1,0 +1,547 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>General Setting</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="NM_style.css">
+<link rel="stylesheet" type="text/css" href="other.css">
+<link rel="stylesheet" type="text/css" href="routercss.css">
+<link rel="stylesheet" type="text/css" href="ext/css/ext-all.css">
+<!--<link href="multiLanguageCss/english.css" rel="stylesheet" type="text/css" id="languageCss" />
+<link href="multiLanguageCss/english_1.css" rel="stylesheet" type="text/css" id="languageCss_1" />-->
+<script type="text/javascript" src="jquery.js"></script>
+<script>
+var $j = jQuery.noConflict();
+var multi_INT = 0;
+var fw_enable = 1;
+var generalSetting_data_tmp;
+	var url = "dm_apply.cgi";
+	var action_mode = "initial";
+	var type = "General";
+	url += "?action_mode=" + action_mode + "&download_type=" +type+ "&t=" +Math.random();
+	$j.ajax({url: url,
+			async: false,
+			success: function(data){initial_multi_INT_status(data)}
+			});
+function initial_multi_INT_status(data){
+	var array = new Array();
+	eval("array="+data);
+	generalSetting_data_tmp = data;
+	if( array[23]== "0")
+	{
+	   fw_enable = 0;	
+	}
+	var lang = array[14];
+	if(lang == "EN")
+	multi_INT = 0;
+	else if(lang == "TW")
+	multi_INT = 1;
+	else if(lang == "CN")
+	multi_INT = 2;
+	else if(lang == "RU")
+	multi_INT = 3;
+	else if(lang == "FR")
+	multi_INT = 4;
+	else if(lang == "DE")
+	multi_INT = 5;
+	else if(lang == "BR")
+	multi_INT = 6;
+	else if(lang == "CZ")
+	multi_INT = 7;
+	else if(lang == "DA")
+	multi_INT = 8;
+	else if(lang == "FI")
+	multi_INT = 9;
+	else if(lang == "MS")
+	multi_INT = 10;
+	else if(lang == "NO")
+	multi_INT = 11;
+	else if(lang == "PL")
+	multi_INT = 12;
+	else if(lang == "SV")
+	multi_INT = 13;
+	else if(lang == "TH")
+	multi_INT = 14;
+	else if(lang == "TR")
+	multi_INT = 15;
+	else
+	multi_INT = 0;
+	}
+</script>
+<script type="text/javascript" src="multiLanguage_setting.js"></script>
+<script type="text/javascript" src="multiLanguage_all.js"></script>
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<!--<script type="text/javascript" src="/help.js"></script>-->
+<script type="text/javascript" src="detect.js"></script>
+<script type="text/javascript" src="ext/ext-base.js"></script>
+<script type="text/javascript" src="ext/ext-all.js"></script>
+<script type="text/javascript" src="plugin/jquery.iphone-switch.js"></script>
+<script type="text/javascript" src="Setting.js"></script>
+<style type="text/css">
+a:focus{outline:none;}
+.color_red{
+	color:#F00;
+	}
+.color_white{
+	color:#FFF;
+	}
+.mask_bg{
+	position:absolute;	
+	margin:auto;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:100;
+	/*background-color: #FFF;*/
+	background:url(images/popup_bg2.gif);
+	background-repeat: repeat;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);
+	-moz-opacity: 0.6;
+	display:none;
+	/*visibility:hidden;*/
+	overflow:hidden;
+}
+.switch_disable_on{
+	z-index:100;
+	background:url(plugin/iphone_switch.png);
+	overflow:hidden;
+	background-position:left;
+	}
+.switch_disable_off{
+	z-index:100;
+	background:url(plugin/iphone_switch.png);
+	overflow:hidden;
+	background-position:right;
+	}
+.mask_floder_bg{
+	position:absolute;	
+	margin:auto;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:300;
+	/*background-color: #FFF;*/
+	background:url(images/popup_bg2.gif);
+	background-repeat: repeat;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);
+	-moz-opacity: 0.6;
+	display:none;
+	/*visibility:hidden;*/
+	overflow:hidden;
+}
+.panel{
+	width:450px;
+	position:absolute;
+	margin-top:-8%;
+	margin-left:35%;
+	z-index:200;
+	display:none;
+}
+.floder_panel{
+	background-color:#999;	
+	border:2px outset #CCC;
+	font-size:15px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#333333;
+	width:450px;
+	position:absolute;
+	margin-top:-8%;
+	margin-left:35%;
+	z-index:400;
+	display:none;
+}
+</style>
+
+<script>
+function Download_Schedule(a){
+	if(a==1){
+			document.getElementById("from_hour").disabled = false;
+			document.getElementById("from_minute").disabled = false;
+			document.getElementById("to_hour").disabled = false;
+			document.getElementById("to_minute").disabled = false;
+			document.getElementById("on_day").disabled = false;
+			$j("#Time_Schedule").show();
+		}
+		else{
+				document.getElementById("from_hour").disabled = true;
+				document.getElementById("from_minute").disabled = true;
+				document.getElementById("to_hour").disabled = true;
+				document.getElementById("to_minute").disabled = true;
+				document.getElementById("on_day").disabled = true;
+				$j("#Time_Schedule").hide();
+			}
+	}
+	
+function initial(){
+	show_menu();
+	document.getElementById("select_lang_"+multi_INT).selected = true;
+	initial_general_status(generalSetting_data_tmp);
+	//get_Refresh_time();
+}
+
+function judgeDigit(){
+	var digit = /^\d*$/
+	var port = document.getElementById("DM_port").value;
+	if(!digit.test(port)){
+		Ext.MessageBox.alert(multiLanguage_setting_array[multi_INT][39],"Please key in a port use digit!");
+		document.getElementById("DM_port").value = "";
+	}
+	}
+</script>
+</head>
+
+<body onload="initial();" onunLoad="return unload_body();">
+
+<div id="TopBanner"></div>
+<div id="DM_mask" class="mask_bg"></div>
+
+<div id="panel_add" class="panel" >
+	<div id="tree"></div>
+	<!--<div><input type="button" onclick="hidePanel();" /></div>-->
+</div>
+<!--start of add floder div-->
+<div id="DM_mask_floder" class="mask_floder_bg"></div>
+<div id="panel_addFloder" class="floder_panel">
+<span style="margin-left:95px;"><b id="multiSetting_0"></b></span><br /><br />
+<span style="margin-left:8px;margin-right:8px;"><b id="multiSetting_1"></b></span>
+<input type="text" id="newFloder" class="input_15_table" value="" /><br /><br />
+<input type="button" name="AddFloder" id="multiSetting_2" value="" style="margin-left:100px;" onclick="AddFloderName();">
+&nbsp;&nbsp;
+<input type="button" name="Cancel_Floder_add" id="multiSetting_3" value="" onClick="hide_AddFloder();">
+</div>
+<!--end of add floder div-->
+
+<div id="hiddenMask" class="popup_bg">
+	<table cellpadding="5" cellspacing="0" id="dr_sweet_advise" class="dr_sweet_advise" align="center">
+		<tr>
+		<td>
+			<div class="drword" id="drword" style="height:110px;">
+	    </div>
+		  <div class="drImg"><img src="images/alertImg.gif"></div>
+			<div style="height:70px;"></div>
+		</td>
+		</tr>
+	</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+
+<div id="Loading" class="popup_bg"></div>
+
+
+<iframe name="hidden_frame" id="hidden_frame" src="Setting_General.html" width="0" height="0" frameborder="0"></iframe>
+
+<form method="get" name="form" id="Setting_General_form" action="http://event.asus.com/2012/nw/dummy_ui/EN/downloadmaster/dm_apply.cgi" target="hidden_frame">
+<input type="hidden" name="action_mode" value="DM_APPLY" />
+<input type="hidden" name="download_type" value="General" />
+<input type="hidden" name="Lan_ip" id="Lan_ip" value="" />
+<input type="hidden" name="Base_path" id="Base_path" value=""/>
+<input type="hidden" id="Download_dir"  value="Download2" name="Download_dir" />
+<input type="hidden" id="DM_port_renew" name="DM_port_renew" value="" />
+<input type="hidden" id="MISCR_HTTP_X" name="MISCR_HTTP_X" value="" />
+<input type="hidden" id="DM_language" name="DM_language" value="" />
+<input type="hidden" id="MISCR_HTTPPORT_X" name="MISCR_HTTPPORT_X" value="" />
+<input type="hidden" id="Productid" name="Productid" value="" />
+<input type="hidden" id="APPS_DEV" name="APPS_DEV" value="" />
+<input type="hidden" id="WAN_IP" name="WAN_IP" value="" />
+<input type="hidden" id="DDNS_ENABLE_X" name="DDNS_ENABLE_X" value="" />
+<input type="hidden" id="DDNS_HOSTNAME_X" name="DDNS_HOSTNAME_X" value="" />
+<input type="hidden" id="MAX_ON_HEAVY" name="MAX_ON_HEAVY" value="" />
+<input type="hidden" id="MAX_QUEUES" name="MAX_QUEUES" value="" />
+<input type="hidden" id="MAX_ON_ED2K" name="MAX_ON_ED2K" value="" />
+<input type="hidden" id="RFW_ENABLE_X" name="RFW_ENABLE_X" value="" />
+<!--<input type="hidden" class="input_12_table" maxlength="12" name="Base_path" id="Base_path" />-->
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td width="17">&nbsp;</td>
+	<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+	<td valign="top" align="left">
+	  <!--  delete by alan <div id="tabMenu" class="submenuBlock"></div>-->
+	  
+	  <!--===================================Beginning of Main Content===========================================-->
+      
+      <div style="margin-top:-150px; padding-left:0px;">   
+<table width="98%" border="0" align="left" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="left" valign="top">
+			<table width="760" border="0" cellspacing="0" class="FormTitle" id="FormTitle">			
+			<tbody valign="top">
+				<tr>
+		  			<td bgcolor="#4D595D">
+		  			<div>&nbsp;</div>
+		  			<!--<div class="formfonttitle"><#menu5_3#> - <#menu5_3_1#></div>    delete by alan-->
+                    <div class="formfonttitle" id="multiSetting_4"></div>   <!-- add by alan -->
+		  			<div style="margin-left:5px;margin-top:10px;margin-bottom:10px"><img src="images/New_ui/export/line_export.png"></div>
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#4D595D" id="ip_sect">
+						<table  width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+							<thead>
+							<tr>
+								<!--<td colspan="2"><#IPConnection_ExternalIPAddress_sectionname#></td>  delete by alan-->
+                                <td colspan="2">Download Schedule</td>  <!-- add by alan -->
+							</tr>
+             <!-- add by alan -->               <tr>
+                            	<td colspan="2"><input name="Enable_time" type="radio" class="input" value="0" id="Enable_time0" onclick="Download_Schedule(this.value);" checked="true"/>Immediately
+                                <input name="Enable_time" type="radio" class="input" value="1" id="Enable_time1" onclick="Download_Schedule(this.value);"/>Scheduled times</td>
+                            </tr>
+                            </thead>
+                            <tbody style="display:none;" id="Time_Schedule">
+                            <tr>
+                            	<th class="hintstyle_download">From</th>
+                            	<td>
+                                	<select class="input_option" onchange="" disabled="disabled" id="from_hour" name="Start_hour">
+                                    	<option value="0" id="from_hour0">00</option>
+                                        <option value="1" id="from_hour1">01</option>
+                                        <option value="2" id="from_hour2">02</option>
+                                        <option value="3" id="from_hour3">03</option>
+                                        <option value="4" id="from_hour4">04</option>
+                                        <option value="5" id="from_hour5">05</option>
+                                        <option value="6" id="from_hour6">06</option>
+                                        <option value="7" id="from_hour7">07</option>
+                                        <option value="8" id="from_hour8">08</option>
+                                        <option value="9" id="from_hour9">09</option>
+                                        <option value="10" id="from_hour10">10</option>
+                                        <option value="11" id="from_hour11">11</option>
+                                        <option value="12" id="from_hour12">12</option>
+                                        <option value="13" id="from_hour13">13</option>
+                                        <option value="14" id="from_hour14">14</option>
+                                        <option value="15" id="from_hour15">15</option>
+                                        <option value="16" id="from_hour16">16</option>
+                                        <option value="17" id="from_hour17">17</option>
+                                        <option value="18" id="from_hour18">18</option>
+                                        <option value="19" id="from_hour19">19</option>
+                                        <option value="20" id="from_hour20">20</option>
+                                        <option value="21" id="from_hour21">21</option>
+                                        <option value="22" id="from_hour22">22</option>
+                                        <option value="23" id="from_hour23">23</option>
+                                    </select>&nbsp;:&nbsp;
+                                   <select class="input_option" onchange="" disabled="disabled" id="from_minute" name="Start_minute">
+                                    	<option value="0" id="from_minute0">00</option>
+                                        <option value="5" id="from_minute5">05</option>
+                                        <option value="10" id="from_minute10">10</option>
+                                        <option value="15" id="from_minute15">15</option>
+                                        <option value="20" id="from_minute20">20</option>
+                                        <option value="25" id="from_minute25">25</option>
+                                        <option value="30" id="from_minute30">30</option>
+                                        <option value="35" id="from_minute35">35</option>
+                                        <option value="40" id="from_minute40">40</option>
+                                        <option value="45" id="from_minute45">45</option>
+                                        <option value="50" id="from_minute50">50</option>
+                                        <option value="55" id="from_minute55">55</option>
+                                        <option value="59" id="from_minute59">59</option>
+                                   </select>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th class="hintstyle_download">To</th>
+                            	<td>
+                                	<select class="input_option" onchange="" disabled="disabled" id="to_hour" name="End_hour">
+                                    	<option value="0" id="to_hour0">00</option>
+                                        <option value="1" id="to_hour1">01</option>
+                                        <option value="2" id="to_hour2">02</option>
+                                        <option value="3" id="to_hour3">03</option>
+                                        <option value="4" id="to_hour4">04</option>
+                                        <option value="5" id="to_hour5">05</option>
+                                        <option value="6" id="to_hour6">06</option>
+                                        <option value="7" id="to_hour7">07</option>
+                                        <option value="8" id="to_hour8">08</option>
+                                        <option value="9" id="to_hour9">09</option>
+                                        <option value="10" id="to_hour10">10</option>
+                                        <option value="11" id="to_hour11">11</option>
+                                        <option value="12" id="to_hour12">12</option>
+                                        <option value="13" id="to_hour13">13</option>
+                                        <option value="14" id="to_hour14">14</option>
+                                        <option value="15" id="to_hour15">15</option>
+                                        <option value="16" id="to_hour16">16</option>
+                                        <option value="17" id="to_hour17">17</option>
+                                        <option value="18" id="to_hour18">18</option>
+                                        <option value="19" id="to_hour19">19</option>
+                                        <option value="20" id="to_hour20">20</option>
+                                        <option value="21" id="to_hour21">21</option>
+                                        <option value="22" id="to_hour22">22</option>
+                                        <option value="23" id="to_hour23">23</option>
+                                    </select>&nbsp;:&nbsp;
+                                    <select class="input_option" onchange="" disabled="disabled" id="to_minute" name="End_minute">
+                                    	<option value="0" id="to_minute0">00</option>
+                                        <option value="5" id="to_minute5">05</option>
+                                        <option value="10" id="to_minute10">10</option>
+                                        <option value="15" id="to_minute15">15</option>
+                                        <option value="20" id="to_minute20">20</option>
+                                        <option value="25" id="to_minute25">25</option>
+                                        <option value="30" id="to_minute30">30</option>
+                                        <option value="35" id="to_minute35">35</option>
+                                        <option value="40" id="to_minute40">40</option>
+                                        <option value="45" id="to_minute45">45</option>
+                                        <option value="50" id="to_minute50">50</option>
+                                        <option value="55" id="to_minute55">55</option>
+                                        <option value="59" id="to_minute59">59</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th class="hintstyle_download">On</th>
+                            	<td>
+                                	<select class="input_option" onchange="" disabled="disabled" id="on_day" name="Day">
+                                    	<option value="7" id="on_day7">Everyday</option>
+                                        <option value="8" id="on_day8">Weekdays</option>
+                                        <option value="9" id="on_day9">Weekends</option>
+                                        <option value="0" id="on_day0">Sunday</option>
+                                        <option value="1" id="on_day1">Monday</option>
+                                        <option value="2" id="on_day2">Tuesday</option>
+                                        <option value="3" id="on_day3">Wednesday</option>
+                                        <option value="4" id="on_day4">Thursday</option>
+                                        <option value="5" id="on_day5">Friday</option>
+                                        <option value="6" id="on_day6">Saturday</option>
+                                    </select>
+                                </td>
+                           <!-- add by alan --> </tr> 
+						</tbody>
+                        </table>
+					</td>
+	  		</tr>
+	  <tr>
+	    <td bgcolor="#4D595D" id="isp_sect">
+		<table width="100%" border="1" style="border-top:hidden;" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+			<!--<thead>
+				<tr>-->
+            <!--<td colspan="2"><#PPPConnection_x_HostNameForISP_sectionname#></td> delete by alan -->
+            <!--<td colspan="2">Other</td>
+            </tr>
+		</thead>-->
+        <tr>
+          <th class="hintstyle_download" id="multiSetting_5"></th>
+          <td>
+          <input type="text" id="PATH" class="input_25_table" value="Download2/Complete" name="Download_dir" readonly="readonly" />
+          <input type="button" class="button_gen" id="multiSetting_6" value="" onclick="showPanel();"/>
+          </td>
+        </tr>
+        <tr>
+          <th class="hintstyle_download" id="multiSetting_7"></th>
+          <td><input type="text" class="input_12_table" maxlength="12" name="Refresh_rate" id="Refresh_rate" value="5" />
+          <span id="multiSetting_8" style="color:#FFF;"></span>
+          </td>
+        </tr>
+          <tr>
+          <th class="hintstyle_download" id="multiSetting_11"></th>
+          <td><input type="text" class="input_6_table" maxlength="5" name="DM_port" id="DM_port" onkeyup="judgeDigit();" value="8081" /></td>
+        </tr>
+         <tr>
+                <th class="hintstyle_download" id="multiSetting_9"></th>
+                    <td>
+                    <div class="left" style="width: 74px;height: 32px;" id="misc_http_x_1" title="">
+						<script type="text/javascript">
+						$j('#misc_http_x_1').iphoneSwitch('1', 
+							 function() {
+								//document.internetForm.wan_enable.value = "1";
+								//showtext($j("#gateway")[0], wangateway);
+								//showtext($j("#WANIP")[0], wanip);
+								//parent.flag_internet = 1;
+							//	parent.showLoading(5);
+								//document.internetForm.submit();	
+								return true;
+							 },
+							 function() {
+								//document.internetForm.wan_enable.value = "0";
+								//showtext($j("#gateway")[0], "0.0.0.0");
+								//showtext($j("#WANIP")[0],  "0.0.0.0");
+								//parent.showLoading(5);
+								//parent.flag_internet = 0;
+								//document.internetForm.submit();	
+								return true;
+							 },
+							 {
+								switch_on_container_path: 'plugin/iphone_switch_container_off.png'
+							 }
+						);
+				</script>
+					
+					
+					
+					</div>
+                    <div style="position:absolute; margin-left:100px; margin-top:-25px;">
+                    <span id="multiSetting_10"></span>
+                    </div><input type="hidden" name="Misc_http_x" id="Misc_http_x" value="" />					
+                    </td>
+                </tr>
+      </table>
+      <div id="WAN_explain_1" style="display:none;">
+      &nbsp;<span> The Download master can be accessed from the Internet via </span>
+      <a href="javascript:void(0);" style="color:#FF9900;" id="WANforDM">http://<span id="DDNSname"></span>:<span id="DMport"></span></a><br />
+      </div>
+      <div id="WAN_explain_2" style="display:none;">
+      &nbsp;<span> You can click </span>
+      <a href="javascript:void(0);" id="to_DDNS" style="color:#FF9900;">here</a>
+      <span> to setup the DDNS. DDNS is a service that allow network clients to connect to the wireless router,</span><br />
+      &nbsp;<span> even with a dynamic public IP address, through its registered domain name.</span>
+      </div>
+      
+		<div class="apply_gen"> 
+			<!-- delete by alan  <input class="button_gen" onclick="applyRule();" type="button" value="<#CTL_apply#>"/> delete by alan -->
+			<input id="multiSetting_12" class="button_gen" onclick="setTimeout('GeneralapplyRule()',500);" type="button" value=""/>
+			<!-- add by alan -->
+		</div>
+      
+      </td>
+	</tr>
+</tbody>
+
+</table>
+</td>
+</form>
+
+				</tr>
+			</table> 
+		</div>
+        </td>
+        
+		<!--===================================Ending of Main Content===========================================-->
+	
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+<script>
+$j("#multiSetting_0").html(multiLanguage_setting_array[multi_INT][0]);
+$j("#multiSetting_1").html(multiLanguage_setting_array[multi_INT][1]);
+$j("#multiSetting_2").attr("value",multiLanguage_setting_array[multi_INT][2]);
+$j("#multiSetting_3").attr("value",multiLanguage_setting_array[multi_INT][3]);
+$j("#multiSetting_4").html(multiLanguage_setting_array[multi_INT][4]);
+$j("#multiSetting_5").html(multiLanguage_setting_array[multi_INT][5]);
+$j("#multiSetting_6").attr("value",multiLanguage_setting_array[multi_INT][6]);
+$j("#multiSetting_7").html(multiLanguage_setting_array[multi_INT][7]);
+$j("#multiSetting_8").html(multiLanguage_setting_array[multi_INT][8]);
+$j("#multiSetting_9").html(multiLanguage_setting_array[multi_INT][9]);
+if(fw_enable==0){
+$j("#multiSetting_10").html("Off the firewall, remote access is not restriced!");
+$j("#multiSetting_10").attr("class","color_red");
+}else{
+$j("#multiSetting_10").html(multiLanguage_setting_array[multi_INT][10]);
+$j("#multiSetting_10").attr("class","color_white");
+}
+$j("#multiSetting_11").html(multiLanguage_setting_array[multi_INT][11]);
+$j("#multiSetting_12").attr("value",multiLanguage_setting_array[multi_INT][2]);
+</script>
+</body>
+</html>

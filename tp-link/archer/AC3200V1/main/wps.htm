@@ -1,0 +1,492 @@
+﻿<script type="text/javascript">
+var wlanObj_2g, wlanObj_5g, wlanObj_5g_2, wpsObj_2g, wpsObj_5g, wpsObj_5g_2, wlanEn_2g, wlanChanged_2g, devPIN_2g, qssEnable_2g, SSIDAdvEnabled_2g, setupLock_2g, wlanEn_5g, wlanChanged_5g, devPIN_5g, qssEnable_5g, SSIDAdvEnabled_5g, setupLock_5g;
+var time = undefined;
+var localObj = undefined;
+
+function clickOnOff(isEnable, wlanObj, band) {
+    $.act(ACT_SET, LAN_WLAN_WPS, wlanObj.__stack, null, ["Enable=" + isEnable,
+        "DevicePassword=" + $('#pinNum' + band).prop('value')
+    ]);
+    
+    if (isEnable == 1 ) {
+        $.act(ACT_SET, LAN_WLAN, wlanObj.__stack, null, ["SSIDAdvertisementEnabled=1"]);
+        $('#wpsWizard' + band).removeClass('nd');
+    } else {
+        $('#wpsWizard' + band).addClass('nd');
+    }
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+
+function pinOnOff(isEnable, wpsObj, band) {
+    $.act(ACT_SET, LAN_WLAN_WPS, wpsObj.__stack, null, ["SetupLock=" + isEnable]);
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+
+function checkPIN(pinStr) {
+    if (pinStr.length == 0) {
+        $.alert(ERR_WLAN_PIN_EMPTY);
+    } else if (ret = $.num(pinStr, [0, 99999999], true)) {
+        if (ret == ERR_NUM_INVAD) {
+            $.alert(ERR_WLAN_PIN_INVALID);
+        } else {
+            $.alert(ERR_WLAN_PIN_LEGNTH_INVALID);
+        }
+        if (pinStr.length < 8) {
+            $.alert(ERR_WLAN_PIN_LEGNTH_INVALID);
+        }
+    } else if (false == pinCheckSum(pinStr)) {
+        $.alert(ERR_WLAN_PIN_CHECKSUM_FAIL);
+    } else {
+        return true;
+    }
+
+    return false;
+}
+
+function pinCheckSum(pinStr) {
+    var pinNum = parseInt(pinStr, 10);
+    if (pinNum == 0) {
+        return false;
+    }
+    var accum = 0;
+    accum += 3 * (Math.floor((pinNum / 10000000)) % 10);
+    accum += 1 * (Math.floor((pinNum / 1000000)) % 10);
+    accum += 3 * (Math.floor((pinNum / 100000)) % 10);
+    accum += 1 * (Math.floor((pinNum / 10000)) % 10);
+    accum += 3 * (Math.floor((pinNum / 1000)) % 10);
+    accum += 1 * (Math.floor((pinNum / 100)) % 10);
+    accum += 3 * (Math.floor((pinNum / 10)) % 10);
+    accum += 1 * (pinNum % 10);
+    if (accum % 10 == 0)
+        return true;
+    else
+        return false;
+}
+
+
+$('#pbc_2g').on('click.wps', function(e) {
+    $('#hidePIN_2g').hide();
+    $('#hidePBC_2g').show();
+});
+$('#pin_2g').on('click.wps', function(e) {
+    $('#hidePBC_2g').hide();
+    $('#hidePIN_2g').show();
+});
+
+
+function addWpsLoading(obj, band) {
+    $.addLoading(obj, null, null, 1);
+}
+
+function removeWpsLoading(band) {
+    $('#wps' + band).find("span.load").closest('div').remove();
+}
+
+function connect(wpsObj, band) {
+    var pinNum = 0;
+    if ($('#pin' + band).prop('checked')) {
+        if (true === checkPIN($('#clientPin' + band).prop('value'))) {
+            pinNum = parseInt($('#clientPin' + band).prop('value'), 10);
+        } else {
+            $("#clientPin" + band).focus();
+            $("#clientPin" + band).select();
+            return;
+        }
+    }
+    $.act(ACT_SET, LAN_WLAN_WPS, wpsObj.__stack, null, ["X_TP_State=InProgress", "X_TP_PeerPassword=" + pinNum]);
+    $.exe(function(ret) {
+        if (!ret) {}
+    });
+}
+
+function wpsTimeout() {
+
+    clearTimeout(time);
+
+    wpsObjNew_2g = $.act(ACT_GET, LAN_WLAN_WPS, wpsObj_2g.__stack, null, ["Enable", "X_TP_State", "X_TP_PeerPassword"]);
+    wpsObjNew_5g = $.act(ACT_GET, LAN_WLAN_WPS, wpsObj_5g.__stack, null, ["Enable", "X_TP_State", "X_TP_PeerPassword"]);
+    wpsObjNew_5g_2 = $.act(ACT_GET, LAN_WLAN_WPS, wpsObj_5g_2.__stack, null, ["Enable", "X_TP_State", "X_TP_PeerPassword"]);
+    if(!$.exe()) {
+    wpsStateShow(wpsObjNew_2g, '_2g');
+    wpsStateShow(wpsObjNew_5g, '_2g');
+    wpsStateShow(wpsObjNew_5g_2, '_2g');
+}
+}
+function wpsStateShow(wpsObj, band) {
+    if (wpsObj.enable == 0 && time !== undefined) {
+        clearTimeout(time);
+        return;
+    }
+    var wpsState = wpsObj.X_TP_State;
+    var wpsPeerPw = wpsObj.X_TP_PeerPassword;
+    if ("Idle" == wpsState) {
+        $('span#pbcConnSt' + band).html('');
+        removeWpsLoading(band);
+        $('#pbcConn' + band).prop('disabled', false);
+        $('#pinConn' + band).prop('disabled', false);
+    } else {
+        var htmlStr;
+        if ("InProgress" == wpsState) {
+            htmlStr = m_str.connecting;
+            $('#pbcConn' + band).prop('disabled', true);
+            $('#pinConn' + band).prop('disabled', true);
+            clearTimeout(time);
+            time = $.timeout(wpsTimeout, 5000);
+            if (wpsPeerPw > 0) {
+                addWpsLoading($('#pinConn' + band), band);
+            } else {
+                addWpsLoading($('#pbcConn' + band), band);
+            }
+        } else if ("Success" == wpsState) {
+            $('#pbcConn' + band).prop('disabled', false);
+            $('#pinConn' + band).prop('disabled', false);
+            removeWpsLoading(band);
+            htmlStr = s_str.qss_ok;
+        } else {
+            $('#pbcConn' + band).prop('disabled', false);
+            $('#pinConn' + band).prop('disabled', false);
+            removeWpsLoading(band);
+            htmlStr = s_str.qss_fail;
+        }
+
+        if (wpsPeerPw > 0) {
+            $('span#pinConnSt' + band).html(htmlStr);
+            $('span#pbcConnSt' + band).html('');
+        } else {
+            $('span#pbcConnSt' + band).html(htmlStr);
+            $('span#pinConnSt' + band).html('');
+        }
+
+    }
+}
+
+function pinChange(devicePassword) {
+    var pinStr = devicePassword.toString();
+    var hasFrontZero = "";
+    for (var i = pinStr.length + 1; i <= 8; i++) {
+        hasFrontZero += "0";
+    }
+    hasFrontZero += pinStr;
+    return hasFrontZero;    
+}
+
+function genNewPin(wpsObj, band) {
+    $.act(ACT_OP, ACT_OP_WLAN_GET_NEW_PIN, wpsObj.__stack);
+    $.exe(function(ret) {
+        if (!ret) {
+            var wpsObjNew = $.act(ACT_GET, LAN_WLAN_WPS, wpsObj.__stack, null, ["DevicePassword"]);
+            $.exe(function(ret) {
+                if (!ret) {
+                    var tempPin = pinChange(wpsObjNew.devicePassword);
+                    $('#pinNum' + band).prop('value', tempPin);
+                }
+                $.removeLoading();
+            });
+        }
+    });
+}
+
+function defaultPin(wpsObj, band) {
+    $.act(ACT_OP, ACT_OP_WLAN_RESTORE_PIN, wpsObj.__stack);
+    $.exe(function(ret) {
+        if (!ret) {
+            var wpsObjNew = $.act(ACT_GET, LAN_WLAN_WPS, wpsObj.__stack, null, ["DevicePassword"]);
+            $.exe(function(ret) {
+                if (!ret) {
+                    var tempPin = pinChange(wpsObjNew.devicePassword);
+                    $('#pinNum' + band).prop('value', tempPin);
+                }
+                $.removeLoading($(this));
+            });
+        }
+    });
+}
+
+function initWPSShow(wpsObj, wlanObj, band) {
+    var wpsPeerPw = wpsObj.X_TP_PeerPassword;
+
+    if (wpsObj.X_TP_State == 'Idle');
+
+    if (wpsPeerPw > 0) {
+        var tempPIN = "";
+        var pinStr = wpsPeerPw.toString();
+        for (var i = pinStr.length + 1; i <= 8; i++) {
+            tempPIN += "0";
+        }
+        tempPIN += pinStr;
+        $('#pin' + band).prop('checked', true);
+        $('#clientPin' + band).prop('value', tempPIN);
+    }
+    var tempPIN = pinChange(wpsObj.devicePassword);
+    $('#pinNum' + band).prop('value', tempPIN);
+    if (wpsObj.setupLock == 0) {
+        $('#pinEn' + band).addClass('selected');
+    } else {
+        $('#pinDis' + band).addClass('selected');
+    }
+
+    if (localObj.wirelessPhyBtn == false){
+        $('#hideWps').addClass('nd');
+        $('#wifiBtnOffNote').removeClass('nd');
+        $('#routePin').addClass('disabled'); 
+        $('#t_genPin_2g').prop('disabled', true);
+        $('#t_defPin_2g').prop('disabled', true);
+        $.errorTip('wpsSwitch' + band, ERR_WLAN_DISABLED);
+    }else{
+    if (((0 == wlanObj_2g.enable) && (0 == wlanObj_5g.enable) && (0 == wlanObj_5g_2.enable))) {
+        $('#hideWps').addClass('nd');
+        $('#wpsDisNote').removeClass('nd');
+        $('#wirelessOffNote').removeClass('nd');
+  
+        $('#routePin').addClass('disabled'); 
+
+        $.errorTip('wpsSwitch' + band, ERR_WLAN_DISABLED);
+    }
+ /* if (0 == wlanObj.enable) {
+        $('#wpsWizard' + band).addClass('nd');
+        $('#wpsSwitch' + band).addClass('disabled');
+        $.errorTip('wpsSwitch' + band, ERR_WLAN_DISABLED);
+    }*/
+    if (wpsObj.enable == 0) {
+        $('#hideWps').addClass('nd');
+        $('#wpsDisNote').removeClass('nd');
+        $('#routePin').addClass('disabled'); 
+        $('#t_genPin_2g').prop('disabled', true);
+        $('#t_defPin_2g').prop('disabled', true);
+        $.errorTip('wpsSwitch' + band, ERR_WLAN_DISABLED);
+    }
+    }
+    
+
+
+    if ("Basic" == wlanObj.beaconType) {
+        if ("WEPEncryption" == wlanObj.basicEncryptionModes) {
+            $('#wpsSwitch' + band).addClass('disabled');
+            $.errorTip('wpsSwitch' + band, ERR_WLAN_QSS_CONFLICT);
+        }
+    } else if ("WPA" == wlanObj.beaconType) {
+        if ("PSKAuthentication" != wlanObj.WPAAuthenticationMode || wlanObj.WPAEncryptionModes == "TKIPEncryption") {
+            $('#wpsSwitch' + band).addClass('disabled');
+            $.errorTip('wpsSwitch' + band, ERR_WLAN_QSS_CONFLICT);
+        }
+    } else if ("11i" == wlanObj.beaconType || "WPAand11i" == wlanObj.beaconType) {
+        if ("PSKAuthentication" != wlanObj.IEEE11iAuthenticationMode || wlanObj.IEEE11iEncryptionModes == "TKIPEncryption") {
+            $('#wpsSwitch' + band).addClass('disabled');
+            $.errorTip('wpsSwitch' + band, ERR_WLAN_QSS_CONFLICT);
+        }
+    }
+
+   
+}
+
+function init() {
+    $('#wpsEn_2g').on('click.wps', function(e) {
+        $.addLoading($(this));
+        clickOnOff(1, wlanObj_2g, '_2g');
+        clickOnOff(1, wlanObj_5g, '_2g');
+        clickOnOff(1, wlanObj_5g_2, '_2g');
+    });
+
+    $('#wpsDis_2g').on('click.wps', function(e) {
+        $.addLoading($(this));
+        clickOnOff(0, wlanObj_2g, '_2g');
+        clickOnOff(0, wlanObj_5g, '_2g');
+        clickOnOff(0, wlanObj_5g_2, '_2g');
+    });
+
+    $('#pinEn_2g').on('click.wps', function(e) {
+        $.addLoading($(this));
+        pinOnOff(0, wpsObj_2g, '_2g');
+        pinOnOff(0, wpsObj_5g, '_2g');
+        pinOnOff(0, wpsObj_5g_2, '_2g');
+    });
+
+    $('#pinDis_2g').on('click.wps', function(e) {
+        $.addLoading($(this));
+        pinOnOff(1, wpsObj_2g, '_2g');
+        pinOnOff(1, wpsObj_5g, '_2g');
+        pinOnOff(1, wpsObj_5g_2, '_2g');
+    });
+
+    $('#pbcConn_2g').on('click.wps', function(e) {
+        addWpsLoading($(this));
+        $('#pbcConnSt_2g').html(m_str.connecting);
+        $(this).prop('disabled', 'true');
+        connect(wpsObj_2g, '_2g');
+        connect(wpsObj_5g, '_2g');
+        connect(wpsObj_5g_2, '_2g');
+        $(pbcConnSt_2g).closest('.button-container').find('div span.load').addClass('wpsload');
+        wpsTimeout();
+    });
+    $('#pinConn_2g').on('click.wps', function(e) {
+        addWpsLoading($(this));
+        $('#pinConnSt_2g').html(m_str.connecting);
+        $(this).prop('disabled', 'true');
+        connect(wpsObj_2g, '_2g');
+        connect(wpsObj_5g, '_2g');
+        connect(wpsObj_5g_2, '_2g');
+        $(this).closest('.button-container').find('div span.load').addClass('wpsload');
+        wpsTimeout();
+    });
+
+    $('#t_genPin_2g').on('click.wps', function(e) {
+        $.addLoading($('#t_defPin_2g'));
+        //be carefull, in data model ,only 2.4GHz pin is set, 5GHz is always 12345670
+        //we actually use pin in nvram, not in the data model
+        genNewPin(wpsObj_2g, '_2g');
+
+
+    });
+
+    $('#t_defPin_2g').on('click.wps', function(e) {
+        $.addLoading($(this));
+        defaultPin(wpsObj_2g, '_2g');
+
+
+    });
+
+    var wlanList = $.act(ACT_GL, LAN_WLAN, null, null, ["name",
+        "Enable",
+        //wxl
+        "subBand",
+        "SSIDAdvertisementEnabled",
+        "X_TP_Configuration_Modified",
+        "BeaconType",
+        "WPAAuthenticationMode",
+        "WPAEncryptionModes",
+        "IEEE11iEncryptionModes",
+        "IEEE11iAuthenticationMode",
+        "BasicEncryptionModes",
+        "X_TP_Band"
+    ]);
+
+    if (!$.exe()) 
+    {
+        $.each(wlanList, function() 
+        {
+            if ("2.4GHz" == this.X_TP_Band) 
+            {
+                wlanObj_2g = this;
+            } 
+            else if (INCLUDE_LAN_WLAN_DUALBAND && "5GHz" == this.X_TP_Band)
+            {
+                //wxl
+                if (1 == this.subBand) 
+                {
+                    wlanObj_5g = this;
+                } 
+                else if(4 == this.subBand)
+                {
+                    wlanObj_5g_2 = this;
+                }
+            }
+            
+        });
+
+        localObj = $.act(ACT_GET, LOCAL, null, null, ["WirelessPhyBtn"]);
+
+        wpsObj_2g = $.act(ACT_GET, LAN_WLAN_WPS, wlanObj_2g.__stack, null, ["Enable", "DevicePassword", "SetupLock", "X_TP_State", "X_TP_PeerPassword"]);
+        if (!$.exe()) {}
+        wpsObj_5g = $.act(ACT_GET, LAN_WLAN_WPS, wlanObj_5g.__stack, null, ["Enable", "DevicePassword", "SetupLock", "X_TP_State", "X_TP_PeerPassword"]);
+        if (!$.exe()) {}
+        wpsObj_5g_2 = $.act(ACT_GET, LAN_WLAN_WPS, wlanObj_5g_2.__stack, null, ["Enable", "DevicePassword", "SetupLock", "X_TP_State", "X_TP_PeerPassword"]);
+        if (!$.exe()) {}
+
+    }
+
+    initWPSShow(wpsObj_2g, wlanObj_2g, '_2g');
+    time = $.timeout(wpsTimeout, 100);
+}
+</script>
+
+<h3 id="t_routerpin">Router's PIN</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <p class="cfg-line T_c_notePIN">The other device can connect to this Router by WPS with the Router's PIN Number.</p>
+        <div id="routePin" class="button-group-container">
+            <b class="T_c_enablepin">Enable Router's PIN:</b>
+            <ul>
+                <li>
+                    <button id="pinEn_2g" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="pinDis_2g" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+            <span id="wirelessOffNote" class="nd" style="margin-left:50px">Your wireless function is disabled.</span>
+        </div>
+        <div class="inline">
+            <b class="T_c_curpin">Current PIN:</b>
+            <input type="text" disabled="disabled" id="pinNum_2g" class="m" />
+        </div>
+        <div class="inline" style="margin-left: 50px;">
+            <button type="submit" class="blue inline l" id="t_genPin_2g">Generate</button>
+            <button type="submit" class="blue inline l" id="t_defPin_2g">Default</button>
+        </div>
+    </form>
+</div>
+
+<div class="part-separate"></div>
+<div id="wpsDisNote" class='nd'>
+    <span style="color: #0094bc">Note:</span><span> To use WPS Wizard, you should configure the right wireless parameters first.</span>
+</div> 
+<div id="wifiBtnOffNote" class='nd'>
+    <span style="color: #0094bc">Note:</span><span> To use WPS, you should turn on wireless function first.</span>
+</div> 
+<div id="hideWps" class="">
+<h3 id="t_wizard">WPS Wizard</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned" id='wps_2g'>
+        <!-- <div class="button-group-container" id="wpsSwitch_2g">
+            <b class="T_c_enablewps">Enable WPS:</b>
+            <ul>
+                <li>
+                    <button id="wpsEn_2g" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="wpsDis_2g" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div> -->
+        <div class="part-separate" id="wpsWizard_2g">
+            <p class="cfg-line T_c_noteSetup">Select a setup method:</p>
+            <div>
+                <input type="radio" name="setupMethod_2g" id="pbc_2g" checked="checked" />
+                <label class="T_c_pbc">Push Button (Recommended)</label>
+            </div>
+            <div class="nd" id="hidePBC_2g">
+                <p class="cfg-line T_c_notePBC">Press the physical push button on the router or click the software push button on this screen.</p>
+                <div>
+                    <button type="submit" class="blue inline left T_conn" id="pbcConn_2g">Connect</button>
+                    <div class='inline' style="margin-left: 25px;">
+                        <span id='pbcConnSt_2g'></span>
+                    </div>
+                </div>
+            </div>
+            <div class="part-separate">
+                <input type="radio" name="setupMethod_2g" id="pin_2g" />
+                <label class="T_c_pinnum">PIN Number</label>
+            </div>
+            <div class="nd" id="hidePIN_2g">
+                <b class="T_c_clinetpin">Enter the client's PIN:</b>
+                <input type="text" id="clientPin_2g" />
+                <div>
+                    <button type="submit" class="blue inline left T_conn" id="pinConn_2g">Connect</button>
+                    <div class='inline' style="margin-left: 25px;">
+                        <span id='pinConnSt_2g'></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+<script type="text/javascript">
+$.tpInit(init);
+</script>

@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - Firmware Upgrade</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<style>
+.Bar_container{
+	width:85%;
+	height:21px;
+	border:2px inset #999;
+	margin:0 auto;
+	background-color:#FFFFFF;
+	z-index:100;
+}
+#proceeding_img_text{
+	position:absolute; z-index:101; font-size:11px; color:#000000; margin-left:110px; line-height:21px;
+}
+#proceeding_img{
+ 	height:21px;
+	background:#C0D1D3 url(http://event.asus.com/images/proceeding_img.gif);
+}
+</style>
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '0';
+wan_proto = 'dhcp';
+
+var varload = 0;
+
+function initial(){
+	show_banner(1);
+	show_menu(5, 6, 3);
+	show_footer();
+}
+</script>
+</head>
+
+<body onload="initial();">
+<div id="TopBanner"></div>
+
+<div id="LoadingBar" class="popup_bar_bg" style="background-image: url(http://event.asus.com/images/popup_bg2.gif);">
+<table cellpadding="5" cellspacing="0" id="loadingBarBlock" class="loadingBarBlock" align="center">
+	<tr>
+		<td height="80">
+		<div class="Bar_container">
+			<span id="proceeding_img_text" ></span>
+			<div id="proceeding_img"></div>
+		</div>
+		<div style="margin:5px auto; width:85%;">Firmware is upgrading. Please wait about 3 minutes.</div>
+		</td>
+	</tr>
+</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+<div id="Loading" class="popup_bg"></div><!--for uniform show, useless but have exist-->
+
+<iframe name="hidden_frame" id="hidden_frame" src="Advanced_FirmwareUpgrade_Content.html" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" action="http://event.asus.com/2009/networks/dummy_ui/rt-n16/upgrade.cgi" name="form" target="hidden_frame" enctype="multipart/form-data">
+<input type="hidden" name="current_page" value="Advanced_FirmwareUpgrade_Content.asp">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="23">&nbsp;</td>
+		
+		<td valign="top" width="202">				
+		<div id="mainMenu"></div>	
+		<div id="subMenu"></div>		
+		</td>				
+		
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div><br />
+		<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="left" valign="top" >
+          
+		<table width="500" border="0" align="center" cellpadding="5" cellspacing="0" class="FormTitle">
+			<thead>
+			<tr>
+				<td>Administration - Firmware Upgrade</td>
+			</tr>
+			</thead>	
+            <tr>
+              <td bgcolor="#FFFFFF">Follow instructions listed below:
+				<ol>
+				<li>Check if any new version of firmware is available on <a href="http://support.asus.com/download/download.aspx?SLanguage=en-us&product=11&model=RT-N16" target="blank">ASUS website</a>.</li>
+				<li>Download a proper version to your local machine.</li>
+				<li>Specify the path of and name of the downloaded file in the [New Firmware File]. </li>
+				<li>Click [Upload] to upload the file to RT-N16. Uploading process takes about three minutes.</li>
+				<li>After receiving a correct firmware file, RT-N16 will automatically start the upgrade process. The system reboots after the upgrading process is finished.</li>
+				</ol>	  
+			  </td>
+            </tr>
+            <tr>
+				<td bgcolor="#FFFFFF">
+		<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+			<tr>
+				<th width="200">Product ID:</th>
+				<td><input type="text" class="input" value="RT-N16" readonly="1"></td>
+			</tr>
+			<tr>
+				<th>Firmware Version:</th>
+				<td><input type="text" name="firmver" class="input" value="9.9.3.7" readonly="1"></td>
+			</tr>
+			<tr>
+				<th>New Firmware File:</th>
+				<td>
+				<input type="file" name="file" class="input" style="cursor:pointer;" size="20">
+				</td>
+			</tr>
+			<tr align="center">
+			  <td colspan="2"><input type="button" name="button" class="button" onclick="onSubmitCtrlOnly(this, 'Upload1');" value="Upload" /></td>
+			  </tr>
+			<tr>
+				<td colspan="2">
+				<strong>Note:</strong>
+				<ol>
+				<li>For a configuration parameter existing both in the old and new firmware, its setting will be kept during the upgrade process.</li>
+				<li>In case the upgrade process fails, RT-N16  enters the emergency mode automatically. The LED signals at the front of RT-N16 will indicate such situation. Use the Firmware Restoration utility on the CD to do system recovery.</li>
+				</ol>
+				</td>
+			</tr>															
+		</table>
+			  </td>
+              </tr>
+            </table>
+		  </td>
+	<td id="help_td" style="width:15px;" valign="top">
+		  
+	  <div id="helpicon" onClick="openHint(0,0);" title="Click to open Help."><img src="images/help.gif" /></div>
+	  <div id="hintofPM" style="display:none;">
+	    <table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:;" onclick="closeHint()" ><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tr>				
+			<td valign="top" >
+			  <div class="hint_body2" id="hint_body"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="Advanced_FirmwareUpgrade_Content.html" frameborder="0"></iframe>
+			</td>
+		  </tr>
+		</table>
+	  </div><!--End of hintofPM-->
+		  </td>
+        </tr>
+      </table>				
+		<!--===================================Ending of Main Content===========================================-->		
+	</td>
+		
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+</form>
+<form name="hint_form"></form>
+</body>
+</html>
