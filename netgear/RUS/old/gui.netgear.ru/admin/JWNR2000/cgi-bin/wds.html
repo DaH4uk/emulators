@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -259,3 +260,266 @@ var model="";
 </form>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../wds.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_wds');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#wds.html" target=formframe>
+<input type=hidden name=submit_flag value="wds">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(wds_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+function loadvalue()
+{
+ wdsWaring();
+var cf=document.forms[0];
+ 
+if( "0" == "1")
+cf.enable_wds_fun.checked = true;
+else
+{
+cf.enable_wds_fun.checked = false;
+click_endis_wds();
+}
+if( "" != "" && "" != "0.0.0.0" )
+ {
+ var repeater_ip=""
+ var ip_array=repeater_ip.split('.');
+ cf.re_ip1.value=ip_array[0];
+ cf.re_ip2.value=ip_array[1];
+ cf.re_ip3.value=ip_array[2];
+ cf.re_ip4.value=ip_array[3];
+ }
+ else
+ {
+ var repeater_ip="192.168.1.1"
+ var ip_array=repeater_ip.split('.');
+ cf.re_ip1.value=ip_array[0];
+ cf.re_ip2.value=ip_array[1];
+ cf.re_ip3.value=ip_array[2];
+ cf.re_ip4.value="";
+ }
+if("0"=="1")
+cf.wds_repeater_basic[1].checked=true;
+else
+cf.wds_repeater_basic[0].checked=true;
+if("0" == "1" && "0"=="0")
+{
+}
+else
+{
+ if(top.contents.location.pathname != "menu.html")
+top.contents.location.href="menu.html";
+}
+var repeater_mac1="";
+var repeater_mac2="";
+var repeater_mac3="";
+var repeater_mac4="";
+var basic_station_mac=""
+
+if("0"=="1")
+cf.disable_ip_client.checked = true;
+else
+cf.disable_ip_client.checked = false;
+if(cf.wds_repeater_basic[0].checked == true)
+{
+
+if(""!="")
+{
+var mac_array=new Array();
+cf.mac_addr.value=basic_station_mac;
+/*
+mac_array=basic_station_mac.split(':');
+cf.mac_addr1.value = mac_array[0];
+cf.mac_addr2.value = mac_array[1];
+cf.mac_addr3.value = mac_array[2];
+cf.mac_addr4.value = mac_array[3];
+cf.mac_addr5.value = mac_array[4];
+cf.mac_addr6.value = mac_array[5];*/
+}
+}
+else if(cf.wds_repeater_basic[1].checked == true)
+{
+if(repeater_mac1!="")
+{
+var mac1_array=new Array();
+cf.mac1_addr.value=repeater_mac1;
+/*
+mac1_array=repeater_mac1.split(':');
+cf.mac1_addr1.value = mac1_array[0];
+cf.mac1_addr2.value = mac1_array[1];
+cf.mac1_addr3.value = mac1_array[2];
+cf.mac1_addr4.value = mac1_array[3];
+cf.mac1_addr5.value = mac1_array[4];
+cf.mac1_addr6.value = mac1_array[5];*/
+}
+if(repeater_mac2!="")
+{
+var mac2_array=new Array();
+cf.mac2_addr.value=repeater_mac2;
+/*
+mac2_array=repeater_mac2.split(':');
+cf.mac2_addr1.value = mac2_array[0];
+cf.mac2_addr2.value = mac2_array[1];
+cf.mac2_addr3.value = mac2_array[2];
+cf.mac2_addr4.value = mac2_array[3];
+cf.mac2_addr5.value = mac2_array[4];
+cf.mac2_addr6.value = mac2_array[5];*/
+}
+if(repeater_mac3!="")
+{
+var mac3_array=new Array();
+cf.mac3_addr.value=repeater_mac3;
+/*
+mac3_array=repeater_mac3.split(':');
+cf.mac3_addr1.value = mac3_array[0];
+cf.mac3_addr2.value = mac3_array[1];
+cf.mac3_addr3.value = mac3_array[2];
+cf.mac3_addr4.value = mac3_array[3];
+cf.mac3_addr5.value = mac3_array[4];
+cf.mac3_addr6.value = mac3_array[5];*/
+}
+if(repeater_mac4!="")
+{
+var mac4_array=new Array();
+cf.mac4_addr.value=repeater_mac4;
+/*
+mac4_array=repeater_mac4.split(':');
+cf.mac4_addr1.value = mac4_array[0];
+cf.mac4_addr2.value = mac4_array[1];
+cf.mac4_addr3.value = mac4_array[2];
+cf.mac4_addr4.value = mac4_array[3];
+cf.mac4_addr5.value = mac4_array[4];
+cf.mac4_addr6.value = mac4_array[5];*/
+}
+}
+if(cf.enable_wds_fun.checked)
+click_repeater_basic();
+}
+var security_mode="1";
+var wlan_channel="0";
+var old_lanip="lan_get_ip";
+var old_wds_endis_fun="0";
+var old_repeater_ip=""
+var old_wds_repeater_basic="0"
+var endis_wl_radio='1';
+var the_mac,the_mac1,the_mac2,the_mac3,the_mac4;
+var wl_channel='0';
+var model="";
+</script>
+<input type="hidden" name="basic_station_mac">
+<input type="hidden" name="repeater_mac1">
+<input type="hidden" name="repeater_mac2">
+<input type="hidden" name="repeater_mac3">
+<input type="hidden" name="repeater_mac4">
+<input type="hidden" name="wds_endis_mac_client">
+<input type="hidden" name="wds_endis_ip_client">
+<input type="hidden" name="wds_endis_fun">
+<input type="hidden" name="change_ip_flag">
+<input type="hidden" name="repeater_ip">
+<TR><script>document.write(hd2);</script> <input type="checkbox" name="enable_wds_fun" value="1" onclick="click_endis_wds()"><a tabindex=-1 href="javascript:loadhelp('_wds','en_repeat')"><b><script>document.write(wds_enable);</script></b></a></TD></TR>
+<TR><TD>&nbsp;</TD></TR>
+<TR><script>document.write(hd2);</script> <script>document.write(spacebar);</script><input type="checkbox" name="disable_ip_client" value="1"><script>document.write(wds_dis_client);</script></TD></TR>
+<TR><script>document.write(hd2);</script> <script>document.write(spacebar);</script><script>document.write(wds_mac);</script><b> 00:00:00:00:00:00 </b></TD></TR>
+<TR><TD>&nbsp;</TD></TR>
+<TR><script>document.write(hd2);</script> <script>document.write(spacebar);</script><input type="radio" name="wds_repeater_basic" value="0" onclick="click_repeater_basic();"><a tabindex=-1 href="javascript:loadhelp('_wds','repeat')"><b><script>document.write(wds_repeater);</script></b></a></TD></TR>
+<TR>
+<script>document.write(hd);</script> <script>document.write(spacebar+spacebar);</script><script>document.write(wds_repeater_ip);</script></TD>
+<script>document.write(hd_r);</script> 
+ <input type="text" name="re_ip1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+ <input type="text" name="re_ip2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="re_ip3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="re_ip4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+</td>
+</tr>
+<TR>
+<script>document.write(hd);</script> <script>document.write(spacebar+spacebar);</script><script>document.write(wds_base_mac);</script></TD>
+<script>document.write(hd_r);</script> 
+<input type="text" value="" name="mac_addr" maxlength="17" size=16 onKeyPress="return getkey('mac',event)">
+<!--
+<input type="text" value="" name="mac_addr1" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac_addr2" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac_addr3" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac_addr4" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac_addr5" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac_addr6" maxlength="2" size=1 onKeyPress="return getkeya(event)"> -->
+</td>
+</tr>
+<TR><script>document.write(hd2);</script> <script>document.write(spacebar);</script><input type="radio" name="wds_repeater_basic" value="1" onclick="click_repeater_basic();"><a tabindex=-1 href="javascript:loadhelp('_wds','base')"><b><script>document.write(wds_base_station);</script></b></a></TD></TR>
+<TR>
+<script>document.write(hd);</script> <script>document.write(spacebar+spacebar);</script><script>document.write(wds_repeater_mac1);</script></TD>
+<script>document.write(hd_r);</script> 
+<input type="text" value="" name="mac1_addr" maxlength="17" size=16 onKeyPress="return getkey('mac',event)">
+<!--
+<input type="text" value="" name="mac1_addr1" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac1_addr2" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac1_addr3" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac1_addr4" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac1_addr5" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac1_addr6" maxlength="2" size=1 onKeyPress="return getkeya(event)"> -->
+</td>
+</tr>
+<TR>
+<script>document.write(hd);</script> <script>document.write(spacebar+spacebar);</script><script>document.write(wds_repeater_mac2);</script></TD>
+<script>document.write(hd_r);</script> 
+<input type="text" value="" name="mac2_addr" maxlength="17" size=16 onKeyPress="return getkey('mac',event)">
+<!--
+<input type="text" value="" name="mac2_addr1" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac2_addr2" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac2_addr3" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac2_addr4" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac2_addr5" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac2_addr6" maxlength="2" size=1 onKeyPress="return getkeya(event)"> -->
+</td>
+</tr>
+<TR>
+<script>document.write(hd);</script> <script>document.write(spacebar+spacebar);</script><script>document.write(wds_repeater_mac3);</script></TD>
+<script>document.write(hd_r);</script>
+<input type="text" value="" name="mac3_addr" maxlength="17" size=16 onKeyPress="return getkey('mac',event)">
+<!--
+<input type="text" value="" name="mac3_addr1" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac3_addr2" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac3_addr3" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac3_addr4" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac3_addr5" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac3_addr6" maxlength="2" size=1 onKeyPress="return getkeya(event)"> -->
+</td>
+</tr>
+<TR>
+<script>document.write(hd);</script> <script>document.write(spacebar+spacebar);</script><script>document.write(wds_repeater_mac4);</script></TD>
+<script>document.write(hd_r);</script> 
+<input type="text" value="" name="mac4_addr" maxlength="17" size=16 onKeyPress="return getkey('mac',event)">
+<!--
+<input type="text" value="" name="mac4_addr1" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac4_addr2" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac4_addr3" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac4_addr4" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac4_addr5" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
+<input type="text" value="" name="mac4_addr6" maxlength="2" size=1 onKeyPress="return getkeya(event)"> -->
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd2_center+'<input type="button" name="cmd" value="'+apply_mark+'" onClick="check_wds(document.forms[0]);">');</script>
+<script>document.write("<input type='reset' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"wds.html\";'>");</script>
+ </td>
+</tr>
+</table>
+</form>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

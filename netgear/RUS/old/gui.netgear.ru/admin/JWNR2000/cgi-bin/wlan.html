@@ -1,5 +1,6 @@
 <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<<<<<<< HEAD
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="../form.css">
 <Meta http-equiv="Pragma" Content="no-cache">
@@ -482,3 +483,487 @@ var lan_ip='';
 </script>
 </body>
 </html>
+=======
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../wlan.js"></script>
+<script>window.document.title=device_title</script>
+<title>NETGEAR Router</title>
+</head>
+<body onLoad="loadhelp('_wlan');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#wlan.html" target=formframe>
+<input type=hidden name=submit_flag value="wlan">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+ <TR><TD colSpan=2><H1><script>document.write(wlan_mark_ws);</script></H1></TD></TR>
+ <TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+ 
+<script>
+/*var wl_key1="";
+var wl_key2="";
+var wl_key3="";
+var wl_key4="";*/
+var wep_64_key1="";
+var wep_64_key2="";
+var wep_64_key3="";
+var wep_64_key4="";
+var wep_128_key1="";
+var wep_128_key2="";
+var wep_128_key3="";
+var wep_128_key4="";
+var get_wpa1="12345678";
+var get_wpa2="12345678";
+var get_wpas="12345678";
+/*
+var radius_get_ip="";
+var radius_get_port="";
+var radius_get_key="";
+var lan_get_ip="";
+*/
+var str_none="";
+var str_wep="";
+var str_wpa="";
+var str_wpa2="";
+var str_wpas="";
+var str_8021x="";
+var wds_endis_fun="0";
+var old_ssid="NETGEAR";
+var ssid_2="NETGEAR_Guest1"
+var ssid_3="NETGEAR_Guest2"
+var ssid_4="NETGEAR_Guest3"
+var ssid_5="NETGEAR_Guest4"
+var old_sectype="1";
+var firmware_region="RU"
+var model="";
+var StartChannel = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1); 
+var FinishChannel = new Array(11,13,13,13,13,11,13, 13 ,13,13,13,13,11,13,13,13,11); 
+</script>
+<input type="hidden" name="hidden_wlan_mode">
+<input type="hidden" name="generate_flag">
+<input type="hidden" name="old_length">
+<input type="hidden" name="sec_wpaphrase_len">
+<input type="hidden" name="hidden_wpa_psk">
+<input type="hidden" name="hidden_sec_type">
+<input type="hidden" name="wep_press_flag">
+<input type="hidden" name="wpa1_press_flag" value=0>
+<input type="hidden" name="wpa2_press_flag" value=0>
+<input type="hidden" name="wpas_press_flag" value=0>
+<input type="hidden" name="radius_ip">
+<input type="hidden" name="lan_ip">
+ <tr> 
+ <script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_wlan','network')"><b><script>document.write(wlan_network_mark);</script> <script>document.write(ba);</script></td>
+ </tr>
+ <tr> 
+ <td nowrap width=35%> <script>document.write(wlan_mark_ssid);</script></td>
+ <script>document.write(hd);</script> <input type="text" id="ESSID" name="wlan_ssid" value="" size="20" maxlength="32"></td>
+ </tr>
+ <tr> 
+ <td nowrap width=35%> <script>document.write(wlan_mark_reg);</script></td>
+ <script>document.write(hd);</script> 
+ <SELECT name="wlan_coun" size="1" onChange="setChannel(0)">
+ <option value=0><script>document.write(coun_select1);</script></option>
+ <option value=1><script>document.write(coun_af);</script></option>
+ <option value=2><script>document.write(coun_as);</script></option>
+ <option value=3><script>document.write(coun_au);</script></option>
+ <option value=4><script>document.write(coun_br);</script></option>
+ <option value=5><script>document.write(coun_ca);</script></option>
+ <option value=6><script>document.write(coun_pr);</script></option>
+ <option value=7><script>document.write(coun_eu);</script></option>
+ <option value=8><script>document.write(coun_in);</script></option>
+ <option value=9><script>document.write(coun_is);</script></option>
+ <option value=10><script>document.write(coun_jp);</script></option>
+ <option value=11><script>document.write(coun_ko);</script></option>
+ <option value=12><script>document.write(coun_mx);</script></option>
+ <option value=13><script>document.write(coun_middle_east);</script></option>
+ <option value=14><script>document.write(coun_ru);</script></option>
+ <option value=15><script>document.write(coun_sa);</script></option>
+ <option value=16><script>document.write(coun_us);</script></option>
+ 
+ </SELECT>
+ </tr>
+ <tr> 
+ <td nowrap width=35%> <script>document.write(wlan_mark_chan);</script></td>
+ <script>document.write(hd);</script> 
+<select name="wlan_chan" size="1" onchange = restore()>
+<option selected>Auto</option><option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option>
+</select></td>
+ </tr>
+ <tr> 
+ <td nowrap width=35%> <script>document.write(wlan_mark_mode);</script> </td>
+ <script>document.write(hd);</script> 
+ <SELECT name="wlan_mode" size="1">
+<option value="1"><script>document.write(wlan_mode_54);</script></option>
+<option value="2"><script>document.write(wlan_mode_145);</script></option>
+<option value="3"><script>document.write(wlan_mode_300);</script></option>
+ </SELECT>
+ </tr>
+</table>
+<!--
+<div id=wlan_chan_width style='display:none;'>
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+ <tr>
+ <td nowrap width=35%> <script>document.write(wlan_chan_width);</script></td>
+ <script>document.write(hd);</script>
+ <SELECT name='wlan_width' size='1' onChange="set_channel(document.forms[0], false);">
+<option value='3'><script>document.write(wlan_chan_20);</script>
+<option value='4'><script>document.write(wlan_chan_40plus);</script>
+<option value='5' ><script>document.write(wlan_chan_40MINUS);</script>
+ </SELECT>
+</td>
+<tr>
+</table>
+</div>
+--> 
+<script>document.write(bluebar);</script>
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr><script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_wlan','security')"><b><script>document.write(sec_type);</script> <script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="sec_type" value="1" onClick=setSecurity(1)><script>document.write(sec_off);</script><td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="sec_type" value="2" onClick=setSecurity(2)><script>document.write(sec_wep);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="sec_type" value="3" onClick=setSecurity(3) ><script>document.write(sec_wpa);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="sec_type" value="4" onClick=setSecurity(4) ><script>document.write(sec_wpa2);</script></td></tr>
+<tr><script>document.write(hd2);</script><input type="radio" name="sec_type" value="5" onClick=setSecurity(5) ><script>document.write(sec_wpas);</script></td></tr>
+<!--<tr><script>document.write(hd2);</script><input type="radio" name="sec_type" value="6" onClick=setSecurity(6) ><script>document.write(sec_8021x);</script></td></tr>-->
+</table>
+<div id=view>
+</div>
+<!------ none DIV Start ------>
+<div align="center" ID="none" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script><tr><script>document.write(hd2);</script> </td></tr></table>
+</div> 
+<!------ none DIV End ------>
+<!------ WEP DIV Start ------>
+<div align="center" ID="wep" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_wlan','wep_auth')"><b><script>document.write(sec_enc_head);</script><script>document.write(ba);</script></td>
+</tr>
+<TR>
+ <script>document.write(hd);</script> <script>document.write(sec_auth);</script></TD>
+ <script>document.write(hd);</script> 
+ <select NAME="sec_auth" size="1">
+ <!--option value=0 ><script>document.write(sec_open);</script></option-->
+ <option value=1 ><script>document.write(sec_share);</script></option>
+ <option value=2 SELECTED><script>document.write(sec_auto);</script></option>
+ </select></TD>
+</TR>
+<TR>
+ <script>document.write(hd);</script> <script>document.write(sec_enc);</script></TD>
+ <script>document.write(hd);</script> 
+ <select NAME="sec_keylen" size="1" onChange="changekeylen(document.forms[0]);">
+ <option value=5 SELECTED><script>document.write(sec_64);</script></option>
+ <option value=13 ><script>document.write(sec_128);</script></option>
+ </select></TD>
+</TR>
+<script>document.write(bluebar);</script>
+<tr>
+ <script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_wlan','wepkey')"><b><script>document.write(sec_key);</script><script>document.write(ba);</script></td>
+</tr>
+<tr>
+ <script>document.write(hd2+sec_phr);</script>
+ <input type="text" size="16" maxlength="32" NAME="weppassphrase" VALUE="" >&nbsp;&nbsp;
+ <script>document.write("<input type='button' name='gen' VALUE='"+generate_mark+"' OnClick='clickgenerate(document.forms[0])'>");</script></td>
+</tr>
+<TR>
+ <script>document.write(hd2);</script>
+ <table>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(sec_key1);</script><input type=radio NAME=wepkeyno checked value="1"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey1" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(sec_key2);</script><input type=radio NAME=wepkeyno value="2"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey2" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></TD> 
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(sec_key3);</script><input type=radio NAME=wepkeyno value="3"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey3" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(sec_key4);</script><input type=radio NAME=wepkeyno value="4"></TD>
+ <script>document.write(hd);</script> <input TYPE="TEXT" SIZE="document.forms[0].sec_keylen.value*2+2" MAXLENGTH="32" NAME="wepkey4" VALUE="" OnFocus="this.maxLength=document.forms[0].sec_keylen.value*2;this.size=document.forms[0].sec_keylen.value*2+2;" onKeyPress="return getkey('wep', event)"></td>
+ </tr>
+ </table>
+ </td>
+</TR>
+</table>
+</div>
+<!------ WEP DIV End ------>
+<!------ PSK DIV Start ------>
+<div align="center" ID="wpa" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_wlan','wpa-psk')"><b><script>document.write(sec_pr_wpa);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(sec_phr);</script></td>
+ <script>document.write(hd);</script> <input type="text" id="textWpaPwdPhrase" size="20" maxlength="64" name="sec_wpaphrase" value="" onFocus="document.forms[0].wpa1_press_flag.value=1" onKeyPress="document.forms[0].wpa1_press_flag.value=1"> <span class="optiondesc" id="wpaPwdPhrExtText"><script>document.write(sec_863_or_64h);</script></span></td>
+ </tr>
+</table>
+</div>
+<!------ PSK DIV End ------>
+<!------ WPA2 DIV Start ------> 
+<div align="center" ID="wpa2" style="position:absolute;top:0;left:0;visibility:hidden"> 
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+ <tr><script>document.write(hd2);</script> <a tabindex=-1 href="javascript:loadhelp('_wlan','wpa2-psk')"><b><script>document.write(sec_pr_wpa2);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <span class="optiondesc" id="wpaPwdPhraseText"><script>document.write(sec_phr);</script></span></td>
+ <script>document.write(hd);</script> <input type="text" id="textWpaPwdPhrase" maxlength="64" size="20" name="sec_wpaphrase" value="" onFocus="document.forms[0].wpa2_press_flag.value=1" onKeyPress="document.forms[0].wpa2_press_flag.value=1"><span class="optiondesc" id="wpaPwdPhrExtText"><script>document.write(sec_863_or_64h);</script></span></td>
+</tr>
+</table>
+</div>
+<!------ WPA2 DIV End ------>
+<!------ WPA2 Mixed DIV Start ------> 
+<div align="center" ID="wpas" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_wlan','wpa-psk+wpa2-psk')"><b><script>document.write(sec_pr_wpas);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <span class="optiondesc" id="wpaPwdPhraseText"><script>document.write(sec_phr);</script></span></td>
+ <script>document.write(hd);</script> <input type="text" id="textWpaPwdPhrase" size="20" maxlength="64" name="sec_wpaphrase" value="" onFocus="document.forms[0].wpas_press_flag.value=1" onKeyPress="document.forms[0].wpas_press_flag.value=1"> <span class="optiondesc" id="wpaPwdPhrExtText"><script>document.write(sec_863_or_64h);</script></span></td> 
+ </tr>
+</table>
+</div>
+<!------ WPA2 Mixed DIV End ------>
+<!------ 802.1x DIV Start ------> 
+<!--<div align="center" ID="w8021x" style="position:absolute;top:0;left:0;visibility:hidden">
+<script>document.write(table_bolder0);</script>
+ <script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_wlan','radius')"><b><script>document.write(sec_pr_8021x);</script><script>document.write(ba);</script></td></tr>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(sec_8021x_auth);</script></TD>
+ <script>document.write(hd);</script> 
+ <select NAME="sec_1x_auth" size="1">
+ <option value=0 ><script>document.write(w8021x_wpa);</script></option>
+ <option value=1 ><script>document.write(w8021x_wpa2);</script></option>
+ <option value=2 SELECTED><script>document.write(w8021x_wpas);</script></option>
+ </select></TD>
+ </tr>
+ <tr>
+<script>document.write(hd);</script> <script>document.write(sec_8021x_ip);</script></TD>
+<script>document.write(hd);</script> 
+ <input type="text" name="sec_1x_ip1" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="sec_1x_ip2" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="sec_1x_ip3" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+ <input type="text" name="sec_1x_ip4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+</td>
+</tr>
+<tr>
+ <script>document.write(hd);</script> <script>document.write(sec_8021x_port);</script></td>
+ <script>document.write(hd);</script> <input type="text" size="12" maxlength="5" name="w8021x_port" value="" ></td> 
+</tr>
+<tr>
+ <script>document.write(hd);</script> <script>document.write(sec_8021x_key);</script></td>
+ <script>document.write(hd);</script> <input type="text" size="20" maxlength="128" name="w8021x_key" value="" ></td> 
+</tr>
+</table>
+</div>-->
+<!------ 802.1x DIV End ------>
+<script>document.write(table_bolder0);</script>
+<script>document.write(bluebar);</script>
+ <tr> 
+ <script>document.write(hd2_center);</script>
+<script>document.write("<input type='submit' value='"+apply_mark+"' onclick='return check_wlan()'>&nbsp;&nbsp;&nbsp;");</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"wlan.html\";'></td>");</script>
+ </tr>
+</table>
+</FORM>
+<script>
+function getObj(name)
+{
+ if (document.getElementById)
+ {
+ return document.getElementById(name);
+ }
+ else if (document.all)
+ {
+ return document.all[name];
+ }
+ else if (document.layers)
+ {
+ return document.layers[name];
+ }
+}
+function changekeylen(form)
+{
+ if(form.sec_keylen.options[0].selected == true)
+ {
+ form.wepkey1.size=form.wepkey2.size=form.wepkey3.size=form.wepkey4.size=12;
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = "";
+ }
+ else
+ {
+ form.wepkey1.size=form.wepkey2.size=form.wepkey3.size=form.wepkey4.size=28;
+ form.wepkey1.value = "";
+ form.wepkey2.value = "";
+ form.wepkey3.value = "";
+ form.wepkey4.value = "";
+ }
+ form.generate_flag.value=0;
+}
+function setSecurity(num)
+{
+var form=document.forms[0];
+form.wpa1_press_flag.value=0;
+form.wpa2_press_flag.value=0;
+form.wpas_press_flag.value=0;
+if(num==2)
+{
+getObj("view").innerHTML=str_wep;
+var form=document.forms[0];
+ var keyno='1';
+ var keylength='5';
+ form.wepkeyno[eval(keyno)-1].checked = true;
+ changekeylen(document.forms[0]);
+ /*form.wepkey1.value=wl_key1;
+ form.wepkey2.value=wl_key2;
+ form.wepkey3.value=wl_key3;
+ form.wepkey4.value=wl_key4;*/
+ form.old_length.value=keylength;
+}
+else if(num==3)
+{
+getObj("view").innerHTML=str_wpa;
+ form.sec_wpaphrase.value=get_wpa1;
+}
+else if(num==4)
+{
+getObj("view").innerHTML=str_wpa2;
+ form.sec_wpaphrase.value=get_wpa2;
+}
+else if(num==5)
+{
+getObj("view").innerHTML=str_wpas;
+ form.sec_wpaphrase.value=get_wpas;
+}
+/*else if(num==6)
+{
+getObj("view").innerHTML=str_8021x;
+var form=document.forms[0];
+var radius_port='';
+var radius_ip='';
+var radius_key='';
+var lan_ip='';
+ var ip_array=radius_ip.split('.');
+ form.sec_1x_ip1.value=ip_array[0];
+ form.sec_1x_ip2.value=ip_array[1];
+ form.sec_1x_ip3.value=ip_array[2];
+ form.sec_1x_ip4.value=ip_array[3];
+ form.w8021x_port.value=radius_port;
+ form.w8021x_key.value=radius_key;
+}*/
+else
+getObj("view").innerHTML=str_none;
+}
+function loadvalue()
+{
+top.contents.location.reload();
+var form=document.forms[0];
+ form.wlan_ssid.value="NETGEAR";
+var channel='0';
+var mode='2';
+if ( mode >= 3 )
+mode=3;
+if( mode == '1')
+form.wlan_mode.options[0].selected = true;
+else if(mode == '2')
+form.wlan_mode.options[1].selected = true;
+else
+form.wlan_mode.options[2].selected = true;
+if(firmware_region == "NA")
+{
+ form.wlan_coun.disabled=true;
+form.wlan_coun.value=16;
+}
+else if(model == "JWNB2100-1ZGNLS")
+{
+ form.wlan_coun.disabled=true;
+form.wlan_coun.value=7;
+
+}
+else
+ form.wlan_coun.value=14;
+if(wds_endis_fun=="0")
+form.wlan_chan.options[eval(channel)].selected = true;
+ else if(channel=="0")
+form.wlan_chan.options[0].selected = true;
+ else 
+form.wlan_chan.options[eval(channel)].selected = true;
+//setChannel();
+if ( '0' == '1' ) setChannel(1);
+else setChannel(0);
+ str_none=getObj("none").innerHTML;
+str_wep=getObj("wep").innerHTML;
+str_wpa=getObj("wpa").innerHTML;
+str_wpa2=getObj("wpa2").innerHTML;
+str_wpas=getObj("wpas").innerHTML;
+//str_8021x=getObj("w8021x").innerHTML;
+getObj("none").innerHTML='';
+getObj("wep").innerHTML='';
+getObj("wpa").innerHTML='';
+getObj("wpa2").innerHTML='';
+getObj("wpas").innerHTML='';
+//getObj("w8021x").innerHTML='';
+setSecurity('1');
+var sectype='1';
+if ( '0' == '0' || '1' == '0' ){
+//setDisabled(false,form.sec_type[2],form.sec_type[3],form.sec_type[4],form.sec_type[5]);
+setDisabled(false,form.sec_type[2],form.sec_type[3],form.sec_type[4]);
+}
+else{
+//setDisabled(true,form.sec_type[2],form.sec_type[3],form.sec_type[4],form.sec_type[5]);
+setDisabled(true,form.sec_type[2],form.sec_type[3],form.sec_type[4]);
+}
+form.sec_type[parseInt(sectype)-1].checked=true;
+if('1' == '2')
+{
+var form=document.forms[0];
+var keyno='1';
+var keylength='5';
+changekeylen(document.forms[0]);
+form.wepkeyno[eval(keyno)-1].checked = true;
+/*form.wepkey1.value=wl_key1;
+ form.wepkey2.value=wl_key2;
+ form.wepkey3.value=wl_key3;
+ form.wepkey4.value=wl_key4;*/
+form.old_length.value=keylength;
+}
+else if('1'=='3')
+{
+ form.sec_wpaphrase.value=get_wpa1;
+}
+else if('1'=='4')
+{
+form.sec_wpaphrase.value=get_wpa2;
+}
+else if('1'=='5')
+{
+form.sec_wpaphrase.value=get_wpas;
+}
+/*else if('1'=='6')
+{
+var radius_port='';
+var radius_ip='';
+var radius_key='';
+var lan_ip='';
+ var ip_array=radius_ip.split('.');
+ form.sec_1x_ip1.value=ip_array[0];
+ form.sec_1x_ip2.value=ip_array[1];
+ form.sec_1x_ip3.value=ip_array[2];
+ form.sec_1x_ip4.value=ip_array[3];
+ form.w8021x_port.value=radius_port;
+ form.w8021x_key.value=radius_key;
+}*/
+}
+</script>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

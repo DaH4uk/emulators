@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -105,3 +106,112 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 </td>       
 </form>
 <script language="javascript" type="text/javascript">showTail()</script>
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+fs1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Security Log';
+var menuSection	='Fire';
+var menuItem	='Security Log';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else	isAPmode='0';
+
+function GURL(x){location=x}
+
+function logoutF()
+{
+	document.tF2.logout.value=1;
+	document.tF2.submit();
+	return true;
+}
+
+function checkFlag(x)
+{
+	var cf = document.forms[0];
+	if(x == 1)
+		cf.page.value = '1';
+
+	else if(x == 0)
+		cf.page.value = '0';
+}
+//-->
+</script>
+</head>
+
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<form id="tF2" name="tF2" method="post" action="/belkin/3.00.02/En/fw_sec_clear.html">
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+ <br>
+    &nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(fs1);</script> <br><br>
+    <table border=0 class="copy_1">
+	<tr>
+    	<td width=5>&nbsp;</td> 
+    	<td>
+	<table width=600 border="0" cellspacing="0" cellpadding="0" align="left" class="copy_1">
+		<tr>
+			<td class="body"><script language="javascript" type="text/javascript">dw(fs2);</script></td>
+  		</tr>
+		<tr>
+			<td valign="top" height="452"><br>
+			<table border="0" cellspacing="1" cellpadding="5" width="80%" align="center">
+				<tr align="left">
+				<td width="35%" bgcolor="#666666" colspan=3> 
+				<b><font face="Arial, Helvetica, sans-serif" size="2" color="ffffffC"><script language="javascript" type="text/javascript">dw(fs3);</script> </font></b> 
+				</td>
+				</tr>
+				<tr align="left"  height="20" >
+				<td width="80%" bgcolor="#cccccc" colspan=3>
+					<font face="Arial, Helvetica, sans-serif" size="2"> 
+                   			<table><font color="blue"><script language="javascript" type="text/javascript">dw(System_log);</script></font><br>Jan 1 00:00:02 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:00:07 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:00:18 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:00:37 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:01:20 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:01:25 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:01:37 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:01:53 2000 00:08:74:b2:e4:92(belkinuk-nathan) get IP 192.168.2.2<br>Jan 1 00:01:55 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:02:38 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:02:44 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:02:55 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:03:08 2000 192.168.2.2(belkinuk-nathan)  login<br>Jan 1 00:03:13 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:03:57 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:04:02 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:04:13 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:04:31 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:05:15 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:05:20 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:05:31 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:05:49 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:06:33 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:06:38 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:06:49 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:07:07 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:07:51 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:07:56 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:08:07 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:08:25 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:09:09 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:09:14 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:09:25 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:09:43 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:10:27 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:10:32 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:10:43 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:11:01 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:11:45 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:11:50 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:12:01 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:12:19 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:13:03 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:13:08 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:13:19 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:13:38 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:14:21 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:14:26 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:14:38 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:14:49 2000 00:08:74:b2:e4:92(Nathans) get IP 192.168.2.2<br>Jan 1 00:14:56 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:15:39 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:15:45 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:15:56 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:16:14 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:16:58 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:17:03 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:17:14 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:17:32 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:18:16 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:18:21 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:18:32 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:18:50 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:19:34 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:19:39 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:19:50 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:20:08 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:20:20 2000 192.168.2.2(Nathans)  login<br>Jan 1 00:20:20 2000 192.168.2.2(Nathans) logout<br>Jan 1 00:20:42 2000 192.168.2.2(Nathans)  login<br>Jan 1 00:20:52 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:20:57 2000 WAN DHCP client send DHCP Discover<br>Jan 1 00:21:08 2000 WAN DHCP client send DHCP Discover<br><br><br><font color="blue"><script language="javascript" type="text/javascript">dw(Firewall_log);</script></font><br><br></table>
+					</font>
+		  		</td>
+				</tr>
+	  			<tr><br><br>
+		  		<td width="33%" align=center>
+		  			<script language="javascript" type="text/javascript">strHtml='<input type="button" name="Save" style="{width:120px;}" class="submitBtn"  value="'+Save+'" onclick="location.href=(\'sys_log.log\');checkFlag(0);"></td>';
+		  			dw(strHtml);</script>
+                </td>
+
+		  		<td width="33%" align=center>
+                    <input type="hidden" name="webpage" value="">
+                    <input type="hidden" name="action" value="">
+		  			<script language="javascript" type="text/javascript">strHtml='<input type="submit" name="clear" style="{width:120px;}" class="submitBtn"  value="'+Clear+'" onclick="checkFlag(1);"></td>';
+		  			dw(strHtml);</script>
+				</td>
+				
+		  		<td width="34%" align=center>
+		  			<script language="javascript" type="text/javascript">strHtml='<input type="button" name="itsbutton0" style="{width:120px;}" class="submitBtn"  value="'+Refresh+'" onclick="GURL(\'fw_sec.html\')"></td>';
+		  			dw(strHtml);</script>
+
+				</tr>
+	  		</table>
+			</td>
+  		</tr>
+	</table>
+	</td>
+	</tr>
+</table>
+</td>       
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

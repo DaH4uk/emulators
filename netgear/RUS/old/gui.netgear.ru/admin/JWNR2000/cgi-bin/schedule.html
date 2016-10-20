@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -151,3 +152,158 @@ BlockAllClickCheck(cf);
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../schedule.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_FW_schedule');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#schedule.html" target=formframe>
+<input type=hidden name=submit_flag value="schedule">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(schedule_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+function loadvalue()
+{
+var cf=document.forms[0];
+var day_to_block='everyday';
+if( day_to_block != '')
+{
+if( day_to_block == 'everyday' )
+cf.checkboxNameAll.checked = true;
+else
+{
+var day_array=day_to_block.split(',');
+for(i=0;i<day_array.length;i++)
+{
+if(day_array[i] == "0")
+cf.checkboxNameSun.checked = true;
+else if(day_array[i] == "1")
+cf.checkboxNameMon.checked = true;
+else if(day_array[i] == "2")
+cf.checkboxNameTue.checked = true;
+else if(day_array[i] == "3")
+cf.checkboxNameWed.checked = true;
+else if(day_array[i] == "4")
+cf.checkboxNameThu.checked = true;
+else if(day_array[i] == "5")
+cf.checkboxNameFri.checked = true;
+else if(day_array[i] == "6")
+cf.checkboxNameSat.checked = true;
+}
+}
+}
+if('1' == '1')
+{
+cf.checkboxNamehours.checked =true;
+ClearData1();
+}
+if('00:00'!='')
+{var start='00:00';
+start_array=start.split(':');
+ cf.starthour.value=start_array[0];
+ cf.startminute.value=start_array[1];
+}
+if('24:00'!='')
+{
+var end='24:00';
+end_array=end.split(':');
+cf.endhour.value=end_array[0];
+cf.endminute.value=end_array[1];
+}
+BlockAllClickCheck(cf);
+
+}
+</script>
+<input type="hidden" name="days_to_block">
+<input type="hidden" name="start_block_time">
+<input type="hidden" name="end_block_time">
+<input type="hidden" name="all_day">
+ <tr>
+<script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_FW_schedule','blocksch')"><b><script>document.write(schedule_days);</script><script>document.write(ba);</script></td>
+ </tr>
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name="checkboxNameAll" onclick="BlockAllClickCheck(document.forms[0])"; type="checkbox" value=1><script>document.write(schedule_everyday);</script>
+</td>
+ </tr>
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameSun type=checkbox value=1><script>document.write(schedule_sun);</script>
+</td>
+ </tr> 
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameMon type=checkbox value=1><script>document.write(schedule_mon);</script>
+</td>
+ </tr> 
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameTue type=checkbox value=1><script>document.write(schedule_tue);</script>
+</td>
+ </tr> 
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameWed type=checkbox value=1><script>document.write(schedule_wed);</script>
+</td>
+ </tr> 
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameThu type=checkbox value=1><script>document.write(schedule_thu);</script>
+</td>
+ </tr> 
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameFri type=checkbox value=1><script>document.write(schedule_fri);</script>
+</td>
+ </tr> 
+ <tr>
+<script>document.write(hd);</script> 
+<INPUT name=checkboxNameSat type=checkbox value=1><script>document.write(schedule_sat);</script>
+</td>
+ </tr> 
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_FW_schedule','blocksch')"><b><script>document.write(schedule_time);</script><script>document.write(ba);</script> <script>document.write(schedule_24hour);</script></td>
+ </tr>
+ <TR>
+<script>document.write(hd2);</script>
+ <INPUT name="checkboxNamehours" onclick="BlockPeriodClick(document.forms[0])"; type="checkbox" value=1><script>document.write(schedule_allday);</script>
+</TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(schedule_start);</script></TD>
+ <script>document.write(hd);</script> 
+ <INPUT maxLength=2 name=starthour size=3 onKeyPress="return getkey('num', event)"><script>document.write(schedule_hour);</script>
+ <INPUT maxLength=2 name=startminute size=3 onKeyPress="return getkey('num', event)"><script>document.write(schedule_min);</script>
+</TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(schedule_end);</script></TD>
+ <script>document.write(hd);</script> 
+ <INPUT maxLength=2 name=endhour size=3 onKeyPress="return getkey('num', event)"><script>document.write(schedule_hour);</script>
+ <INPUT maxLength=2 name=endminute size=3 onKeyPress="return getkey('num', event)"><script>document.write(schedule_min);</script>
+</TD>
+ </TR>
+<script>document.write(bluebar);</script> 
+ <TR>
+ <script>document.write(hd2_center+'<input type="submit" value="'+apply_mark+'" onClick="return check_schedule_apply(document.forms[0])">&nbsp;&nbsp;');</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"schedule.html\";'></TD>");</script>
+ </TR>
+</TABLE>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

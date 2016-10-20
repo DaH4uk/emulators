@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <title>Мост (Bridge) </title>
+ <script>
+  function resetClick() {
+   document.bridge.reset;
+  }
+
+
+  function saveChanges() {
+   if (document.bridge.ageingTime.value == "") {
+    alert("Время жизни не может быть пустым! ");
+    document.bridge.ageingTime.value = document.bridge.ageingTime.defaultValue;
+    document.bridge.ageingTime.focus();
+    return false;
+   }
+   if (validateKey(document.bridge.ageingTime.value) == 0) {
+    alert("Неверное значение времени жизни. Оно должно быть десятичным числом.");
+    document.bridge.ageingTime.value = document.bridge.ageingTime.defaultValue;
+    document.bridge.ageingTime.focus();
+    return false;
+   }
+   if (!checkDigitRange(document.bridge.ageingTime.value, 1, 0, 65535)) {
+    alert('Неверное значение времени жизни. Оно должно быть в диапазоне 0-65535.');
+    document.bridge.ageingTime.value = document.bridge.ageingTime.defaultValue;
+    document.bridge.ageingTime.focus();
+    return false;
+   }
+   return true;
+  }
+
+  function fdbClick(url) {
+   var wide = 600;
+   var high = 400;
+   if (document.all)
+    var xMax = screen.width,
+     yMax = screen.height;
+   else if (document.layers)
+    var xMax = window.outerWidth,
+     yMax = window.outerHeight;
+   else
+    var xMax = 640,
+     yMax = 480;
+   var xOffset = (xMax - wide) / 2;
+   var yOffset = (yMax - high) / 3;
+
+   var settings = 'width=' + wide + ',height=' + high + ',screenX=' + xOffset + ',screenY=' + yOffset + ',top=' + yOffset + ',left=' + xOffset + ', resizable=yes, toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes';
+
+   window.open(url, 'FDBTbl', settings);
+  }
+ </script>
+
+</head>
+
+
+<body>
+
+
+  <div class="intro_main ">
+
+   <p class="intro_title">Мост (Bridge)</p>
+   <p class="intro_content"> Страница используется для настройки параметров моста. Вы можете изменить настройки или посмотреть информацию о мосте и соответствующих портах.</p>
+  </div>
+
+  <div class="data_common data_common_notitle" id="security_data">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th>Время жизни:</th>
+      <td>
+
+       <input name="ageingTime" size="15" maxlength="15" value="300" type="text">(секунды)
+      </td>
+
+     </tr>
+
+     <tr>
+      <th>802.1d Spanning Tree:</th>
+      <td>
+       <input value="0" name="stp" checked="checked" type="radio">Откл.&nbsp;&nbsp;
+       <input value="1" name="stp" type="radio">Вкл.
+      </td>
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="btn_ctl">
+
+   <input class="link_bg" name="submit.htm?bridging.htm" value="Send" type="hidden">
+
+   <input class="link_bg" value="Применить" name="save" onclick="return saveChanges()" type="submit">&nbsp;&nbsp;
+   <input class="link_bg" value="Отменить" name="reset" onclick="resetClick()" type="reset">
+   <input class="link_bg" value="Отобразить MAC-адреса" name="fdbTbl" onclick="fdbClick('/fdbtbl.htm')" type="button">
+   <div>
+
+
+
+
+
+
+
+
+
+
+   </div>
+  </div>
+</body>
+
+</html>

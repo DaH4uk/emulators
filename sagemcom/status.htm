@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Статус роутера</title>
+
+
+
+    <script>
+        function modifyClick(url) {
+            var wide = 600;
+            var high = 400;
+            if (document.all)
+                var xMax = screen.width,
+                    yMax = screen.height;
+            else if (document.layers)
+                var xMax = window.outerWidth,
+                    yMax = window.outerHeight;
+            else
+                var xMax = 640,
+                    yMax = 480;
+            var xOffset = (xMax - wide) / 2;
+            var yOffset = (yMax - high) / 3;
+
+            var settings = 'width=' + wide + ',height=' + high + ',screenX=' + xOffset + ',screenY=' + yOffset + ',top=' + yOffset + ',left=' + xOffset + ', resizable=yes, toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes';
+
+            window.open(url, 'Status_Modify', settings);
+        }
+
+        function submitPPPoe(form, pppoenum, connect) {
+            form.pppoenum.value = pppoenum;
+            form.connect.value = connect;
+            form.submit();
+        }
+
+        function onload() {
+
+
+
+
+        }
+    </script>
+
+</head>
+
+<body id="device_info" onload="onload();">
+
+    <div class="intro_main ">
+
+
+
+
+
+        <p class="intro_title">Статус роутера</p>
+
+
+        <p class="intro_content">На странице отображается статус и некоторые основные настройки роутера.</p>
+    </div>
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Система</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common">
+
+            <table>
+
+                <tbody>
+                    <tr style="
+
+display: table-row;
+  ">
+
+                        <th width="30%">Наименование</th>
+
+
+
+                        <td>
+
+                            F@st 2304 ER
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>Версия аппаратной платформы</th>
+                        <td>
+
+                            F1744R_20E_416_NU
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>Время работы</th>
+                        <td>
+
+                            2 5:11:59
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Дата/Время</th>
+                        <td>
+
+                            Чт Окт 20 16:6:43 2016
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Версия ПО</th>
+                        <td>
+
+                            F2304R_V1.45_ER_20E
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Дата создания ПО</th>
+                        <td>
+
+                            Jan 21 2016 10:08:13
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Серийный номер</th>
+                        <td>
+
+                            N7162492M017216
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>MAC-адрес</th>
+                        <td>
+
+                            24:7F:20:6A:68:85
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Кол-во NAPT сессий</th>
+                        <td>
+
+                            284
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="column" id="cwmpStatus" style="">
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Статус CWMP</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Статус Inform</th>
+                        <td>
+
+                            Информ-сообщение отправлено успешно
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Статус Connecion Request</th>
+                        <td>
+
+                            Входящий запрос успешен
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Серверы DNS</th>
+                        <td>
+
+                            109.195.96.1 109.195.97.1
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Конфигурация LAN</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">IP-адрес</th>
+                        <td>
+
+                            192.168.0.1
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Маска подсети</th>
+                        <td>
+
+                            255.255.255.0
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>IPv6-адрес</th>
+                        <td>
+
+                            fe80::267f:20ff:fe6a:6885
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>DHCP-сервер</th>
+                        <td>
+
+                            Вкл.
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>MAC-адрес</th>
+                        <td>
+
+                            24:7F:20:6A:68:85
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>WLAN Configuration</p>
+
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">SSID</th>
+
+                        <td>
+
+                            WiFi-DOM.ru-6533
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Channel</th>
+
+                        <td>
+
+                            1 Авто
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Encryption</th>
+
+                        <td>
+
+                            WPA2 Mixed
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Статус DNS</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Режим DNS</th>
+                        <td>
+
+                            Авто
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Серверы DNS</th>
+                        <td>
+
+                            109.195.96.1 109.195.97.1
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Режим DNS IPv6</th>
+                        <td>
+
+                            Авто
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Серверы DNS IPv6</th>
+                        <td>
+
+                            &nbsp;
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+
+        <input name="pppoenum" value="" type="HIDDEN">
+
+        <input name="connect" value="" type="HIDDEN">
+
+        <div class="column">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Интерфейс WAN Ethernet</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="5">Интерфейс</th>
+                            <th width="5">VID</th>
+
+                            <th width="10">Режим</th>
+                            <th width="5">Шлюз по умолчанию</th>
+                            <th width="5">Протокол</th>
+                            <th width="20">IP-адрес</th>
+                            <th width="20">Шлюз</th>
+                            <th width="20">Маска подсети</th>
+                            <th width="5">Статус</th>
+                        </tr>
+
+                        <tr>
+
+
+                        </tr>
+                        <tr>
+                            <td>pppoe1</td>
+                            <td>&nbsp;</td>
+                            <td>TR069_INTERNET</td>
+                            <td>Вкл.</td>
+                            <td>PPPoE</td>
+                            <td>188.234.105.2</td>
+                            <td>10.84.255.126</td>
+                            <td>255.255.255.255</td>
+                            <td>up 2 дн 5:9:59 / 2 дн 5:9:59
+                                <input name="connect_chg" value="откл." onclick="submitPPPoe(this.form,'1','disconnect');" type="button"> </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
+
+
+            </div>
+
+        </div>
+
+        <div class="column">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Конфигурация WAN Ethernet IPv6</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table style="table-layout:fixed; word-wrap:break-word; overflow:hidden;">
+
+                    <tbody>
+                        <tr>
+
+                            <th width="8">Интерфейс</th>
+                            <th width="5">VID</th>
+
+                            <th width="10">Режим</th>
+                            <th width="5">Шлюз по умолчанию</th>
+                            <th width="6">Протокол</th>
+                            <th width="20">IPv6-адрес</th>
+                            <th width="15">Префикс</th>
+                            <th width="15">Шлюз</th>
+                            <th width="5">Статус</th>
+                        </tr>
+
+                        <tr>
+
+
+                        </tr>
+                        <tr>
+                            <td>pppoe1</td>
+                            <td>&nbsp;</td>
+                            <td>TR069_INTERNET</td>
+                            <td> Yes</td>
+                            <td>PPPoE</td>
+                            <td>&nbsp;</td>
+                            <td>2a02:2698:1823:ae19::/64<br>
+                            </td>
+                            <td>fe80::a2f3:e4ff:fe5c:3e30<br>
+                            </td>
+                            <td>Up</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
+
+
+            </div>
+
+        </div>
+
+
+
+        <div class="btn_ctl">
+
+            <input class="link_bg" name="refresh" value="Обновить" type="submit">
+            <input name="submit.htm?status.htm" value="Send" type="hidden">
+
+        </div>
+
+
+
+
+    <script>
+        var superprivilege = 1;
+
+        if (superprivilege == 1)
+            document.getElementById('cwmpStatus').style.display = "";
+    </script>
+
+
+
+
+
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script language="javascript" type="text/javascript">
 var stk;
 var stk5G;
@@ -457,3 +458,464 @@ $("#load_5g_2").on("click", function(e) {
 <script language="javascript" type="text/javascript">
 $.tpInit(init);
 </script>
+=======
+<script language="javascript" type="text/javascript">
+var stk;
+var stk5G;
+var stk5G_2;
+var taskSche = {};
+var taskSche5G = {};
+var taskSche5G_2 = {};
+var tmpWeek;
+var tmpWeek5G;
+var tmpWeek5G_2;
+var tpGridSelect;
+var tpGridSelect5G;
+var tpGridSelect5G_2;
+var wlanObj;
+var wlanObj5G;
+var wlanObj5G_2;
+
+function initSche() {
+    $("#timeTbl").after('<div class="inline-btn-right"><div class="table-btn"><button type="submit" class="green xl" id="restoreTimePicker">' + m_str.restore + '</button></div><div class="table-btn"><button type="submit" class="green xl" id="saveTimePicker">' + m_str.save + '</button></div></div>');
+    $("#restoreTimePicker").css("margin", "3px");
+    $("#saveTimePicker").css("margin", "3px");
+    tpGridSelect = $("#timeTbl").tpGridSelect();
+    tpGridSelect.startGridSelect();
+
+    //    5G
+    $("#timeTbl5G").after('<div class="inline-btn-right"><div class="table-btn"><button type="submit" class="green xl" id="restoreTimePicker5G">' + m_str.restore + '</button></div><div class="table-btn"><button type="submit" class="green xl" id="saveTimePicker5G">' + m_str.save + '</button></div></div>');
+    $("#restoreTimePicker5G").css("margin", "3px");
+    $("#saveTimePicker5G").css("margin", "3px");
+    tpGridSelect5G = $("#timeTbl5G").tpGridSelect();
+    tpGridSelect5G.startGridSelect();
+
+    //    5G_2
+    $("#timeTbl5G_2").after('<div class="inline-btn-right"><div class="table-btn"><button type="submit" class="green xl" id="restoreTimePicker5G_2">' + m_str.restore + '</button></div><div class="table-btn"><button type="submit" class="green xl" id="saveTimePicker5G_2">' + m_str.save + '</button></div></div>');
+    $("#restoreTimePicker5G_2").css("margin", "3px");
+    $("#saveTimePicker5G_2").css("margin", "3px");
+    tpGridSelect5G_2 = $("#timeTbl5G_2").tpGridSelect();
+    tpGridSelect5G_2.startGridSelect();
+}
+
+function init() {
+    initSche();
+    idIndex = [];
+    var wlanList = $.act(ACT_GL, LAN_WLAN, null, null, ["X_TP_Band", "subBand", "smartConnect"]);
+    
+    if (!$.exe()) {
+        $.each(wlanList, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                wlanObj = this;
+            }
+            else if ("5GHz" == this.X_TP_Band) { //    5G
+                if (1 == this.subBand)
+                    wlanObj5G = this;
+                else if (4 == this.subBand)
+                    wlanObj5G_2 = this;
+            }
+        });
+    }
+    var basicList = $.act(ACT_GS, LAN_WLAN_TASK_SCHEDULE, null, wlanObj.__stack, ["enable", "timeDot", "monAm", "monPm", "tueAm", "tuePm", "wedAm", "wedPm", "thuAm", "thuPm", "friAm", "friPm", "satAm", "satPm", "sunAm", "sunPm"]);
+    //    5G
+    var basicList5G = $.act(ACT_GS, LAN_WLAN_TASK_SCHEDULE, null, wlanObj5G.__stack, ["enable", "timeDot", "monAm", "monPm", "tueAm", "tuePm", "wedAm", "wedPm", "thuAm", "thuPm", "friAm", "friPm", "satAm", "satPm", "sunAm", "sunPm"]);
+    //    5G_2
+    var basicList5G_2 = $.act(ACT_GS, LAN_WLAN_TASK_SCHEDULE, null, wlanObj5G_2.__stack, ["enable", "timeDot", "monAm", "monPm", "tueAm", "tuePm", "wedAm", "wedPm", "thuAm", "thuPm", "friAm", "friPm", "satAm", "satPm", "sunAm", "sunPm"]);
+    if (!$.exe()) {
+        var scheCfg = basicList[0];
+        stk = scheCfg.__stack;
+        //    5G
+        var scheCfg5G = basicList5G[0];
+        stk5G = scheCfg5G.__stack;
+        //    5G_2
+        var scheCfg5G_2 = basicList5G_2[0];
+        stk5G_2 = scheCfg5G_2.__stack;
+
+        if (1 == scheCfg.enable) {
+            $("#schedule-form-container").removeClass("nd");
+            $("#enableWirelessScheduleOn").addClass("selected");
+        } else {
+            $("#schedule-form-container").addClass("nd");
+            $("#enableWirelessScheduleOff").addClass("selected");
+        }
+
+        if (1 == scheCfg5G.enable) {
+            $("#schedule-form-container5G").removeClass("nd");
+            $("#enableWirelessScheduleOn5G").addClass("selected");
+        } else {
+            $("#schedule-form-container5G").addClass("nd");
+            $("#enableWirelessScheduleOff5G").addClass("selected");
+        }
+
+        if (1 == scheCfg5G_2.enable) {
+            $("#schedule-form-container5G_2").removeClass("nd");
+            $("#enableWirelessScheduleOn5G_2").addClass("selected");
+        } else {
+            $("#schedule-form-container5G_2").addClass("nd");
+            $("#enableWirelessScheduleOff5G_2").addClass("selected");
+        }
+
+        tmpWeek = [];
+        tmpWeek5G = [];
+        tmpWeek5G_2 = [];
+        for (var i = 0; i < 7; i++) {
+            tmpWeek[i] = "";
+            tmpWeek5G[i] = "";
+            tmpWeek5G_2[i] = "";
+        }
+
+        var createGridValue = function(dayTime, tmpWeek, tIndex) {
+            var count = 0;
+            while (dayTime > 0) {
+                if (dayTime % 4 == 3)
+                    tmpWeek[tIndex] += "1";
+                else if (dayTime % 4 == 0)
+                    tmpWeek[tIndex] += "0";
+                count++;
+                dayTime = Math.floor(dayTime / 4);
+            }
+            while (count < 12) {
+                tmpWeek[tIndex] += "0";
+                count++;
+            }
+        }
+
+        createGridValue(scheCfg.sunAm, tmpWeek, 0);
+        createGridValue(scheCfg.sunPm, tmpWeek, 0);
+        createGridValue(scheCfg.monAm, tmpWeek, 1);
+        createGridValue(scheCfg.monPm, tmpWeek, 1);
+        createGridValue(scheCfg.tueAm, tmpWeek, 2);
+        createGridValue(scheCfg.tuePm, tmpWeek, 2);
+        createGridValue(scheCfg.wedAm, tmpWeek, 3);
+        createGridValue(scheCfg.wedPm, tmpWeek, 3);
+        createGridValue(scheCfg.thuAm, tmpWeek, 4);
+        createGridValue(scheCfg.thuPm, tmpWeek, 4);
+        createGridValue(scheCfg.friAm, tmpWeek, 5);
+        createGridValue(scheCfg.friPm, tmpWeek, 5);
+        createGridValue(scheCfg.satAm, tmpWeek, 6);
+        createGridValue(scheCfg.satPm, tmpWeek, 6);
+
+        tpGridSelect.initGridSelectVal(tmpWeek);
+        //    5G
+        createGridValue(scheCfg5G.sunAm, tmpWeek5G, 0);
+        createGridValue(scheCfg5G.sunPm, tmpWeek5G, 0);
+        createGridValue(scheCfg5G.monAm, tmpWeek5G, 1);
+        createGridValue(scheCfg5G.monPm, tmpWeek5G, 1);
+        createGridValue(scheCfg5G.tueAm, tmpWeek5G, 2);
+        createGridValue(scheCfg5G.tuePm, tmpWeek5G, 2);
+        createGridValue(scheCfg5G.wedAm, tmpWeek5G, 3);
+        createGridValue(scheCfg5G.wedPm, tmpWeek5G, 3);
+        createGridValue(scheCfg5G.thuAm, tmpWeek5G, 4);
+        createGridValue(scheCfg5G.thuPm, tmpWeek5G, 4);
+        createGridValue(scheCfg5G.friAm, tmpWeek5G, 5);
+        createGridValue(scheCfg5G.friPm, tmpWeek5G, 5);
+        createGridValue(scheCfg5G.satAm, tmpWeek5G, 6);
+        createGridValue(scheCfg5G.satPm, tmpWeek5G, 6);
+
+        tpGridSelect5G.initGridSelectVal(tmpWeek5G);
+        //    5G_2
+        createGridValue(scheCfg5G_2.sunAm, tmpWeek5G_2, 0);
+        createGridValue(scheCfg5G_2.sunPm, tmpWeek5G_2, 0);
+        createGridValue(scheCfg5G_2.monAm, tmpWeek5G_2, 1);
+        createGridValue(scheCfg5G_2.monPm, tmpWeek5G_2, 1);
+        createGridValue(scheCfg5G_2.tueAm, tmpWeek5G_2, 2);
+        createGridValue(scheCfg5G_2.tuePm, tmpWeek5G_2, 2);
+        createGridValue(scheCfg5G_2.wedAm, tmpWeek5G_2, 3);
+        createGridValue(scheCfg5G_2.wedPm, tmpWeek5G_2, 3);
+        createGridValue(scheCfg5G_2.thuAm, tmpWeek5G_2, 4);
+        createGridValue(scheCfg5G_2.thuPm, tmpWeek5G_2, 4);
+        createGridValue(scheCfg5G_2.friAm, tmpWeek5G_2, 5);
+        createGridValue(scheCfg5G_2.friPm, tmpWeek5G_2, 5);
+        createGridValue(scheCfg5G_2.satAm, tmpWeek5G_2, 6);
+        createGridValue(scheCfg5G_2.satPm, tmpWeek5G_2, 6);
+
+        tpGridSelect5G_2.initGridSelectVal(tmpWeek5G_2);
+
+    }
+
+
+
+    $("#restoreTimePicker").click(function() {
+        tpGridSelect.resetGridValue();
+    });
+
+    $("#saveTimePicker").click(function() {
+        $("#mask").hide();
+        $.addLoading($(this));
+        doSave(tpGridSelect, stk, taskSche);
+    });
+
+    $("#enableWirelessScheduleOn").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk, null, ["enable=1", "isUsrCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                //                $.reload();
+                $("#schedule-form-container").removeClass("nd");
+            }
+        });
+    });
+
+    $("#enableWirelessScheduleOff").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk, null, ["enable=0", "isUsrCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                //                $.reload();
+                $("#schedule-form-container").addClass("nd");
+            }
+        });
+    });
+    //    5G
+    $("#restoreTimePicker5G").click(function() {
+        tpGridSelect5G.resetGridValue();
+    });
+
+    $("#saveTimePicker5G").click(function() {
+
+        $("#mask").hide();
+        $.addLoading($(this));
+        doSave(tpGridSelect5G, stk5G, taskSche5G);
+    });
+
+    $("#enableWirelessScheduleOn5G").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk5G, null, ["enable=1", "isUsrCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                //                $.reload();
+                $("#schedule-form-container5G").removeClass("nd");
+            }
+        });
+    });
+
+    $("#enableWirelessScheduleOff5G").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk5G, null, ["enable=0", "isUsrCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                //                $.reload();
+                $("#schedule-form-container5G").addClass("nd");
+            }
+        });
+    });
+
+    //    5G_2
+    $("#restoreTimePicker5G_2").click(function() {
+        tpGridSelect5G_2.resetGridValue();
+    });
+
+    $("#saveTimePicker5G_2").click(function() {
+
+        $("#mask").hide();
+        $.addLoading($(this));
+        doSave(tpGridSelect5G_2, stk5G_2, taskSche5G_2);
+    });
+
+    $("#enableWirelessScheduleOn5G_2").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk5G_2, null, ["enable=1", "isUsrCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                //                $.reload();
+                $("#schedule-form-container5G_2").removeClass("nd");
+            }
+        });
+    });
+
+    $("#enableWirelessScheduleOff5G_2").on("click", function() {
+        $.addLoading($(this));
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk5G_2, null, ["enable=0", "isUsrCtrl=0"]);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.removeLoading();
+                //                $.reload();
+                $("#schedule-form-container5G_2").addClass("nd");
+            }
+        });
+    });
+
+    //added by jy
+    if (wlanObj.smartConnect == true)
+    {
+        $("#hideModeChange").addClass("nd");
+    }
+}
+
+function doSave(grid, stk, taskSche) {
+    var gridList = grid.getGridSelectVal();
+    var dayList = [];
+    for (var i = 0; i < 7; i++) {
+        dayList[i] = "";
+        for (var j = 23; j >= 0; j--) {
+            if ("1" === gridList[i].charAt(j)) {
+                dayList[i] += "3";
+            } else {
+                dayList[i] += "0"
+            }
+        }
+    }
+    taskSche.sunAm = parseInt(dayList[0].substr(12), 4);
+    taskSche.sunPm = parseInt(dayList[0].substr(0, 12), 4);
+    taskSche.monAm = parseInt(dayList[1].substr(12), 4);
+    taskSche.monPm = parseInt(dayList[1].substr(0, 12), 4);
+    taskSche.tueAm = parseInt(dayList[2].substr(12), 4);
+    taskSche.tuePm = parseInt(dayList[2].substr(0, 12), 4);
+    taskSche.wedAm = parseInt(dayList[3].substr(12), 4);
+    taskSche.wedPm = parseInt(dayList[3].substr(0, 12), 4);
+    taskSche.thuAm = parseInt(dayList[4].substr(12), 4);
+    taskSche.thuPm = parseInt(dayList[4].substr(0, 12), 4);
+    taskSche.friAm = parseInt(dayList[5].substr(12), 4);
+    taskSche.friPm = parseInt(dayList[5].substr(0, 12), 4);
+    taskSche.satAm = parseInt(dayList[6].substr(12), 4);
+    taskSche.satPm = parseInt(dayList[6].substr(0, 12), 4);
+    taskSche.enable = 1;
+    taskSche.isUsrCtrl = 0;
+
+    $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk, null, taskSche);
+    if (wlanObj.smartConnect == true)
+    {  
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk5G, null, taskSche);
+        $.act(ACT_SET, LAN_WLAN_TASK_SCHEDULE, stk5G_2, null, taskSche);
+    }
+
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            //            $.reload();
+        }
+    });
+
+}
+
+$("#load_2g").on("click", function(e) {
+    if ($(this).hasClass('mode-select')) {
+        return;
+    } else {
+        $("#wireless-schedule-24g").show();
+        $("#wireless-schedule-5g").hide();
+        $("#wireless-schedule-5g_2").hide();
+        $(this).siblings('span.mode-select').removeClass('mode-select');
+        $(this).addClass('mode-select');
+    }
+});
+
+$("#load_5g").on("click", function(e) {
+    if ($(this).hasClass('mode-select')) {
+        return;
+    } else {
+        $("#wireless-schedule-5g").show();
+        $("#wireless-schedule-24g").hide();
+        $("#wireless-schedule-5g_2").hide();
+        $(this).siblings('span.mode-select').removeClass('mode-select');
+        $(this).addClass('mode-select');
+    }
+});
+
+$("#load_5g_2").on("click", function(e) {
+    if ($(this).hasClass('mode-select')) {
+        return;
+    } else {
+        $("#wireless-schedule-5g_2").show();
+        $("#wireless-schedule-24g").hide();
+        $("#wireless-schedule-5g").hide();
+        $(this).siblings('span.mode-select').removeClass('mode-select');
+        $(this).addClass('mode-select');
+    }
+});
+</script>
+
+<body>
+    <h3 id="et">Task Schedule</h3>
+    <div class="content-container">
+        <div class="mode-change mode-3 load-page" id="hideModeChange">
+            <span class="mode-select T_modeghz24" id="load_2g">2.4GHz</span>
+            <span class="T_modeghz5" id="load_5g">5GHz-1</span>
+            <span class="T_modeghz5_2" id="load_5g_2">5GHz-2</span>
+        </div>
+        <p class="cfg-line" id="t_tip1">Drag the schedule table to choose the period on which you need the wireless off automatically!</p>
+        <p class="cfg-line" id="t_tip2">The Effective Time Schedule is based on the time of the Router. The time can be set in "System Tools -> Time Settings"</p>
+    </div>
+    <div id="wireless-schedule-24g">
+        <div class="content-container">
+            <form class="pure-form pure-form-aligned">
+                <div class="button-group-container">
+                    <b class="T_c_en">Enable Wireless Schedule:</b>
+                    <ul>
+                        <li>
+                            <button id="enableWirelessScheduleOn" class="fst" value="on">On</button>
+                        </li>
+                        <li>
+                            <button id="enableWirelessScheduleOff" class="lst" value="off">Off</button>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div id="schedule-form-container" class="content-container">
+            <div id="timeTbl">
+            </div>
+        </div>
+    </div>
+
+    <div id="wireless-schedule-5g" class="nd">
+        <div class="content-container">
+            <form class="pure-form pure-form-aligned">
+                <div class="button-group-container">
+                    <b class="T_c_en">Enable Wireless Schedule:</b>
+                    <ul>
+                        <li>
+                            <button id="enableWirelessScheduleOn5G" class="fst" value="on">On</button>
+                        </li>
+                        <li>
+                            <button id="enableWirelessScheduleOff5G" class="lst" value="off">Off</button>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div id="schedule-form-container5G" class="content-container">
+            <div id="timeTbl5G">
+            </div>
+        </div>
+    </div>
+
+    <div id="wireless-schedule-5g_2" class="nd">
+        <div class="content-container">
+            <form class="pure-form pure-form-aligned">
+                <div class="button-group-container">
+                    <b class="T_c_en">Enable Wireless Schedule:</b>
+                    <ul>
+                        <li>
+                            <button id="enableWirelessScheduleOn5G_2" class="fst" value="on">On</button>
+                        </li>
+                        <li>
+                            <button id="enableWirelessScheduleOff5G_2" class="lst" value="off">Off</button>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div id="schedule-form-container5G_2" class="content-container">
+            <div id="timeTbl5G_2">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

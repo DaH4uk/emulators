@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -494,4 +495,502 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/WLG_adv.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "WLG_adv";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+var W_RadioEnable="1";
+var W_WdsEnable="0";
+var W_MACAcllist = [];
+var m = 0;
+var G_del_flag = 0;
+var ajax;
+var W_RCSCTSThreshlod="2346";
+var W_FRAGLEN="2346";
+var W_GuardInterval="0";
+var W_TransmitPower="100";
+var W_Enableac="1";
+var W_WPSEnable="1"; // WPS enable
+var W_WPSDevicePassword="97032441";//default PIN
+var W_WPSPeerPassword=""; // Client Pin
+var W_WPSGeneratePinEnable="1";
+var W_WPSConfigurationState="Configured";//没有用到
+var W_WPSWpsSessionStatus="";
+var W_WPSSetupMethod="None"; // 1 for PBC; 2 for PIN
+var WDS_Enable="0";
+var WDS_WDSMode="";
+var Wireless_BeaconType="11i";
+var Wireless_BasicAuthenticationMode="None";
+var W_ScheduleList = [];
+var W_ScheduleListEnable="0";
+var Array_For_repeater = ['ForRe1','ForRe2','ForRe3','ForRe4','lang_routerpin','INPUT_CurrentPin','CHECKBOX_EnableWPS','pin_disable','wsc_config'];
+function DisWpaForRepeater(_A,_Bool)
+{
+//if('1'==WDS_Enable&&'Repeater'==WDS_WDSMode)
+if(_Bool)
+{
+for(var _num=0; _num < _A.length; _num++)
+{
+$(_A[_num]).disabled=_Bool;
+$(_A[_num]).style.color='#808080';
+}
+}
+else
+{
+for(var _num=0; _num < _A.length; _num++)
+{
+$(_A[_num]).disabled=_Bool;
+$(_A[_num]).style.color='#000000';
+}
+}
+}
+function uiOnload()
+{
+createTable();
+menu_wps_default();
+$("schedule_button").checked=(W_ScheduleListEnable=='1'?true:false);
+$("enable_ac").checked=(W_Enableac=='1'?true:false);
+$("enable_ap").checked=(W_RadioEnable=='1'?true:false);
+$("CHECKBOX_EnableWPS").checked=(W_WPSEnable=='1'?true:false);
+$("pin_disable").checked=(W_WPSGeneratePinEnable=='0'?true:false);
+$("wsc_config").checked=(W_WPSConfigurationState=='Configured'?true:false);
+setJSONValue({
+'enable_shortpreamble':W_GuardInterval,
+'frag':W_FRAGLEN,
+'rts':W_RCSCTSThreshlod,
+'SELECT_PowerMode':W_TransmitPower,
+'INPUT_CurrentPin':W_WPSDevicePassword
+});
+DisWpaForRepeater(Array_For_repeater,'1'==WDS_Enable&&('Repeater'==WDS_WDSMode||'BaseStation'==WDS_WDSMode));
+DisablePIN();
+}
+function createTable()
+{
+var array_value = [];
+for(var k = 0,i = 0; k < W_ScheduleList.length; k++){
+array_value[k] = [];
+array_value[k].push('<input type="radio" id="ScheduleSelect'+i+'" name="ScheduleSelect" value="'+i+'"/>');
+array_value[k].push(W_ScheduleList[k][3]); //StartTime
+array_value[k].push(W_ScheduleList[k][4]); //EndTime
+array_value[k].push((W_ScheduleList[k][0] == '1') ? daily[0] : daily[1]);
+i++;
+}
+$T('Table_ScheduleList',array_value);
+}
+function menu_wps_default()
+{
+var menu_div;
+var content_length;
+menu_div = top.document.getElementById("wps");
+/*在basic_menu下没有wps,这里为空.会导致出错*/
+if(menu_div == null)
+return false;
+content_length = menu_div.getElementsByTagName("span")[0].innerHTML.length;
+if(W_WPSEnable=='0')
+{
+top.enabled_wps = 0;
+settingClass(menu_div, content_length, "advanced_grey_button");
+}
+else
+{
+top.enabled_wps = 1;
+settingClass(menu_div, content_length, "advanced_black_button");
+}
+}
+function DisablePIN()
+{
+if($("pin_disable").checked == true)
+$("INPUT_CurrentPin").style.color ='#AAAAAA';
+else
+$("INPUT_CurrentPin").style.color ='#000000';
+}
+function uiSubmit()
+{
+if((2347<$('rts').value) || ($('rts').value<1))
+{
+alertError('BKS_InvalidFrag');
+return false;
+}
+if((2346<$('frag').value) || ($('frag').value<256))
+{
+alertError('BKS_InvalidRts');
+return false;
+}
+//others
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Enable': $('enable_ap').checked==true?'1':'0',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.Enableac': $('enable_ac').checked==true?'1':'0',
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.RCSCTSThreshlod': $('rts').value,
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.FRAGLEN': $('frag').value,
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.GuardInterval': $('enable_shortpreamble').value,
+':InternetGatewayDevice.X_TWSZ-COM_Radio.1.TransmitPower': $('SELECT_PowerMode').value,
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_ScheduleListEnable': $('schedule_button').checked==true?'1':'0',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.Enable': $('enable_ap').checked==true?'1':'0', //add by wuyouhui at 2012-02-07
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.X_TWSZ-COM_GeneratePinEnable':$('pin_disable').checked==true?'0':'1',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.ConfigurationState':$('wsc_config').checked==true?'Configured':'Not configured',
+':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.WPS.Enable':$('enable_ap').checked==true?'1':'0',
+'obj-action' : 'set',
+'var:page' : 'WLG_adv',
+'var:errorpage': 'WLG_adv',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function JumpToAddPage()
+{
+$G('../html/WLG_schedule.htm',{
+'var:page' : 'WLG_adv',
+'var:subpage' : 'WLG_schedule',
+'getpage' : '../html/WLG_schedule.htm',
+'errorpage' : '../html/WLG_schedule.htm'
+});
+}
+function JumpToEditPage()
+{
+var tmpIndex=FindRadioValue();
+if(tmpIndex==-1)
+{
+alertError('pleasechooseanitemedit');
+return;
+}
+var Path2 = ':InternetGatewayDevice.LANDevice.1.WLANConfiguration.1' + W_ScheduleList[tmpIndex][5];
+var _split2 = Path2.split('.');
+$G('../html/WLG_schedule.htm',{
+'var:nodeIndex':_split2[_split2.length -2],
+'var:menu': G_Menu,
+'var:page': G_Page,
+'var:subpage': 'WLG_schedule',
+'getpage': '../html/WLG_schedule.htm',
+'errorpage': '../html/WLG_schedule.htm'
+});
+}
+function FindRadioValue()
+{
+var tmpid;
+for (var i = 0; i < W_ScheduleList.length; i++)
+{
+tmpid = "ScheduleSelect" + i;
+if (Form.Checkbox(tmpid) == 1)
+return i;
+}
+if(i == W_ScheduleList.length)
+{
+return -1;
+}
+}
+function JumpToListPage()
+{
+$G('../html/WLG_acl.htm',{
+'var:page' : 'WLG_adv',
+'var:subpage' : 'WLG_acl',
+'getpage' : '../html/WLG_acl.htm',
+'errorpage' : '../html/WLG_acl.htm'
+});
+}
+var G_DelIdx;
+function uiDelete()
+{
+G_DelIdx=FindRadioValue();
+if(G_DelIdx==-1)
+{
+alertError('pleasechooseanitemedelete');
+return;
+}
+uiDeleteAjax();
+}
+var G_I=1;
+function uiDeleteAjax()
+{
+var prePath='InternetGatewayDevice.LANDevice.1.WLANConfiguration.';
+var tmpPath=prePath+G_I+W_ScheduleList[G_DelIdx][5];
+$H({
+'del-obj' : tmpPath,
+'obj-action' : 'del',
+'errorpage' : '',
+'var:page' : G_Page,
+'var:CacheLastData': ViewState.Save()
+});
+var _url = "";
+var ajax = Ajax.getInstance(_url, "", 0, uiDeleteAjax_handler);
+/*页面跳转采用超时机制*/
+ajax.post($('uiPostForm'));
+}
+function uiDeleteAjax_handler()
+{
+if(G_I==2)
+{
+G_I=1;
+window.location.reload();
+return;
+}
+G_I++;
+uiDeleteAjax();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+//arrayHint['MACAddress'] = 'INPUT_macaddress';
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload,dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="WLG_adv.htm"></form>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/advanced.js"></script>
+<style type="text/css">
+<!--
+.div_left { padding-left:0px; padding-top:2px;width:500px;}
+.div_right { height:27px; font-size:11px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+input[type=text] {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+letter-spacing:1px;
+}
+-->
+</style>
+<div class="page_title" id="lang_AdvancedWireless">Advanced Wireless Settings</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class='cancel_bt' type='button' name="Cancel" value='Cancel' id="Cancel" >&nbsp;&nbsp;
+<input class="apply_bt" type="button" name="Apply" value="Apply" id="Apply" onClick="uiSubmit();">
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;" leftmargin=0>
+<tr>
+<form name="vsFrm" id="uiPostForm" method="post" action="WLG_adv.htm">
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3" >
+<tr>
+<td colspan="2">
+<a tabindex=-1 href="javascript:loadhelp('settings')"><b id="lang_disc" width=102%>
+Configure the advanced wireless settings here, including WMM function, fragmentation length and etc.
+</b></a>
+<div style="display:none">
+<div class="div_left"><input type="checkbox" id="INPUT_ssidbroadcast"><span id="lang_EnableSsidBroadcast">Enable SSID Broadcast</span></div>
+<div class="div_right"></div>
+<div class="div_left"><input type="checkbox" id="INPUT_enablewmm"><span id="lang_EnableWmm">Enable WMM</span></div>
+<div class="div_right"></div>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" width="40%" ><input type="checkbox" id="enable_ap" name="enable_ap" value="enable_ap" ><span id="lang_EnableWireless">Enable Router Wireless Radio</span></td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap="" width="40%" ><input type="checkbox" id="enable_ac" name="enable_ac" value="enable_ac" ><span id="lang_Coexistence">Enable 20/40 MHZ Coexistence</span></td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_FragmentationLength">Fragmentation Length(256-2346) :</span></td>
+<td nowrap=""><input type="text" maxLength=4 size=5 id="frag" name="frag" value="2346" onFocus="this.select();" onKeyPress="return getkey('num', event)"></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_CTS_RTS_Threshold">CTS/RTS Threshold(1-2347) :</span></td>
+<td nowrap=""><input type="text" maxLength=4 size=5 id="rts" name="rts" value="2347" onFocus="this.select();" onKeyPress="return getkey('num', event)"></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_PreambleMode">Preamble Mode :</span></td>
+<td nowrap="">
+<select id="enable_shortpreamble" name="enable_shortpreamble">
+<!--<option value="auto">Automatic</option>-->
+<option value="0" id="idShortPreamble">Short Preamble</option>
+<option value="1" id="idLongPreamble">Long preamble</option>
+</select>
+</td>
+</tr>
+<tr>
+<td nowrap=""><span id="langPower">Transmit Power Control</span></td>
+<td nowrap="">
+<select id="SELECT_PowerMode">
+<option value="100" selected="selected">100%</option>
+<option value="75">75%</option>
+<option value="50">50%</option>
+<option value="25">25%</option>
+</select>
+</td>
+</tr>
+<!--schedule-->
+<tr>
+<td nowrap="" class="do bk_black3_black" colspan="3"><input type="checkbox" id="schedule_button"><b id="lang_ScheduleOff">Trun off wireless signal by schedule</b></td>
+</tr>
+<tr>
+<td nowrap=""><b id="langSchedule">The wireless signal is scheduled to turn off during the following time period:</b></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<table cellspacing="0" cellpadding="2" border="0" width="100%" class="td_table_s3" id="Table_ScheduleList">
+<tbody>
+<tr class="table_header">
+<td nowrap="" align="center" width="20%" id="td_scheduleClients_head1">Period</td>
+<td nowrap="" align="center" width="30%" id="td_scheduleClients_head2">Start</td>
+<td nowrap="" align="center" width="30%" id="td_scheduleClients_head3">End</td>
+<td nowrap="" align="center" width="20%" id="td_scheduleClients_head4">Recurrence pattern</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3">
+<div style="text-align: center; margin-bottom: 5px;" id="addeditdelete">
+<input type="button" id="Add" onClick="JumpToAddPage()" value="Add" name="Add" class="add_bt">
+<input type="button" id="Edit" onClick="JumpToEditPage()" value="Edit" name="Edit" class="edit_bt">
+<input type="button" id="Delete" onClick="uiDelete()" value="Delete" name="Delete" class="delete_bt">
+</div>
+</td>
+</tr>
+<!--WPS-->
+<tr>
+<td colspan="2">
+<a tabindex=-1 href="javascript:loadhelp('turbog')"><p class="do bk_black3_black" id="lang_wps_disc">WPS Settings</p></a>
+</td>
+</tr>
+<tr id="ForRe1">
+<td nowrap="" width="40%"><span id="lang_routerpin">Router&#39;s PIN:</span></td>
+<td nowrap=""><b><span id="INPUT_CurrentPin"></span></b></td>
+</tr>
+<tr>
+<td colspan="2">
+<div class="div_left" id="ForRe2" style="display:none"><input type="checkbox" id="CHECKBOX_EnableWPS" /><span id="langEnableWPS">Enable WPS</span></div><div class="div_right" style="display:none"></div>
+<div class="div_left" id="ForRe3"><input type="checkbox" id="pin_disable" name="pin_disable" onChange="DisablePIN();"/><span id="langDisablePIN">Disable Router&#39;s PIN</span></div><div class="div_right"></div>
+<div class="div_left" id="ForRe4"><input type="checkbox" id="wsc_config" name="wsc_config"/><span id="langKeepSettings">Keep Existing Wireless Settings</span></div><div class="div_right"></div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><a tabindex=-1 href="javascript:loadhelp('access')"><b id="lang_list_disc">Wireless Card Access List</b></a></td>
+<td><span class="common_bt2"><input class="common_bt1" type="button" id="access" name="access" onClick="JumpToListPage()" value="Setup Access" /></span>
+</td>
+</tr>
+</table>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</div>
+</td>
+</form>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("WLG_adv")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

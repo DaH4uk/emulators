@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="files/reset.css" rel="stylesheet" type="text/css">
+<link href="files/base.css" rel="stylesheet" type="text/css">
+<link href="files/style.css" rel="stylesheet" type="text/css">
+<script src="files/share.js" type="text/javascript">
+</script>
+
+ <title>Маршрутизация IPv6 </title>
+ <script>
+
+
+ function addClick() {
+     if (document.route.destNet.value == "") {
+         alert("Пожалуйста, укажите адрес назначения!");
+         document.route.destNet.focus();
+         return false;
+     }
+
+     if (!isIpv6Address(document.route.destNet.value)) {
+         alert("Неверный адрес назначения");
+         document.route.destNet.focus();
+         return false;
+     }
+
+     if (document.route.prefixLen.value == "") {
+         alert("Задайте знаечние Длины Префикса!");
+         document.route.prefixLen.focus();
+         return false;
+     }
+
+     if (validateKey(document.route.prefixLen.value) == 0) {
+         alert("Неверное значение Длины Префикса!");
+         document.route.prefixLen.focus();
+         return false;
+     }
+
+     var prefixlen = getDigit(document.route.prefixLen.value, 1);
+     if (prefixlen > 128 || prefixlen < 0) {
+         alert("Неверное значение Длины Префикса!");
+         document.route.prefixLen.focus();
+         return false;
+     }
+
+     if (document.route.nextHop.value != "") {
+
+         if (!isIpv6Address(document.route.nextHop.value)) {
+             alert("Неверное значение Next Hop адреса");
+             document.route.nextHop.focus();
+             return false;
+         }
+
+         if (!isUnicastIpv6Address(document.route.nextHop.value)) {
+             alert("неверный Next Hop!");
+             document.route.nextHop.focus();
+             return false;
+         }
+
+         if (isLinkLocalIpv6Address(document.route.nextHop.value)) {
+             if (document.getElementsByName("interface")[0].value == "") {
+
+                 alert("Пожалуйста, задайте интерфейс!");
+                 document.route.interface.focus();
+                 return false;
+
+             }
+         }
+
+     } else {
+
+         if (document.getElementsByName("interface")[0].value == "") {
+
+             alert("Пожалуйста, задайте интерфейс!");
+             document.route.interface.focus();
+             return false;
+
+         }
+
+     }
+
+     return true;
+ }
+
+ function postRoutingV6(destip, prefixlen, nextip, itf) {
+     document.route.destNet.value = destip;
+     document.route.nextHop.value = nextip;
+     document.route.prefixLen.value = prefixlen;
+     document.route.interface.value = itf;
+ }
+
+ function delRuleCheck() {
+     if (document.route.select.length) {
+         for (i = 0; i < document.route.select.length; i++) {
+             if (document.route.select[i].checked)
+                 return deleteClick();
+         }
+     } else {
+         if (document.route.select.checked)
+             return deleteClick();
+     }
+
+     alert("Выберите запись, чтобы удалить!");
+     return false;
+ }
+ </script>
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Маршрутизация IPv6</p>
+        <p class="intro_content">Страница используется для добавления и удаления статических маршрутов IPv6.</p>
+    </div>
+
+    <div class="data_common data_common_notitle hide_gui">
+
+        <table>
+
+            <tbody><tr>
+
+                <th width="30%">Назначение:</th>
+                <td><input maxlength="64" size="32" name="destNet" type="text"></td>
+
+            </tr>
+
+            <tr>
+
+                <th>Длина префикса:</th>
+                <td><input maxlength="5" size="32" name="prefixLen" type="text"></td>
+
+            </tr> <tr>
+
+                <th>Next Hop:</th>
+                <td><input maxlength="64" size="32" name="nextHop" type="text"></td>
+
+            </tr>
+
+            <tr>
+
+                <th>Интерфейс:</th>
+                <td>
+
+
+<select id="interface" name="interface" width="30">
+<option value="" selected="selected"> </option>
+<option value="pppoe 1"> pppoe1</option>
+<option value="any"> Любой</option>
+</select>
+
+                </td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+    <div class="btn_ctl hide_gui">
+
+        <input class="link_bg" name="addRoute" onclick="return addClick()" value="Добавить маршрут" type="submit">
+        <input class="link_bg" name="delRoute" onclick="return delRuleCheck()" value="Удалить выбранные" type="submit">
+    </div>
+
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Таблица статических маршрутов IPv6:</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common data_vertical">
+
+            <table>
+
+                <tbody><tr>
+
+                    <th>Выбрать</th>
+                    <th>Назначение</th>
+                    <th>NextHop</th>
+                    <th>Интерфейс</th>
+                </tr>
+
+
+            </tbody></table>
+
+        </div>
+
+    </div>
+
+    <input name="submit.htm?routing_v6.htm" value="Send" type="hidden">
+
+
+<script src="files/jquip_sizzle.js" type="text/javascript"></script>
+<script src="files/jquip.js" type="text/javascript"></script>
+<script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+</body></html>

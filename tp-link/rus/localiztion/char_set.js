@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿var pages_js = new Array();
+=======
+﻿var pages_js = new Array();
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 pages_js = {
 // FileName: AccessCtrlAccessRuleModifyRpm.htm
 ntw_acc_ctl_acc_modify_rule :	{
@@ -898,11 +902,19 @@ js_info_end             :	"js_info_end"
 // FileName: LanBrModeRpm.htm
 ntw_lan_mode_rpm :	{
 js_br_setting_changed   :	"Изменение настроек IPTV потребует перезагрузки устройства, OK?",
+<<<<<<< HEAD
 js_nat_vlan_value_wrong  :  "Неверный идентификатор NAT VLAN! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
 js_iptv_vlan_value_wrong :  "Неверный идентификатор VLAN для услуги IPTV! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
 js_mutli_iptv_vlan_value_wrong : "Неверный идентификатор Mutlicast  VLAN для услуги IPTV! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
 js_iphone_vlan_value_wrong :  "Неверный идентификатор VLAN для использования IP-телефона! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
 js_vlan_value_diff   	:  "Идентификаторы VLAN для доступа в Интернет, для услуги IPTV, Mutlicast  VLAN для услуги IPTV и для использования IP-телефона должны отличаться!",
+=======
+js_nat_vlan_value_wrong  :  "Неверный идентификатор NAT VLAN! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
+js_iptv_vlan_value_wrong :  "Неверный идентификатор VLAN для услуги IPTV! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
+js_mutli_iptv_vlan_value_wrong : "Неверный идентификатор Mutlicast  VLAN для услуги IPTV! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
+js_iphone_vlan_value_wrong :  "Неверный идентификатор VLAN для использования IP-телефона! Идентификатор VLAN  должен быть указан в пределах диапазона от 2 до 4094",
+js_vlan_value_diff   	:  "Идентификаторы VLAN для доступа в Интернет, для услуги IPTV, Mutlicast  VLAN для услуги IPTV и для использования IP-телефона должны отличаться!",
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 t_title                 :	"IPTV",
 t_igmp_proxy            :	"IGMP Proxy:",
 t_mode_sel              :	"Режим:",
@@ -1012,17 +1024,28 @@ t_mac_addr              :	"MAC-адрес вашего компьютера:",
 js_info_end             :	"js_info_end"
 },
 
+<<<<<<< HEAD
 // FileName: LoginRpm.htm
 ntw_login_rpm :	{
+=======
+// FileName: LoginRpm.htm
+ntw_login_rpm :	{
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 t_copyright             :	"Copyright &copy; 2014 TP-LINK Technologies Co., Ltd. Все права защищены.",
 t_node                  :	"ПРИМЕЧАНИЕ:",
 t_tip_warn              :	"Имя пользователя и пароль могут содержать от 1 до 15 символов и не должны содержать пробел.",
 t_tip_0                 :	"Только один администратор может входить в веб-утилиту настройки маршрутизатора одновременно. Пожалуйста, повторите попытку входа позднее.",
 t_tip_1                 :	"Вы использовали 10 попыток. Повторите попытку снова через 2 часа.",
 t_tip_2                 :	"Имя пользователя или пароль указаны неверно, попробуйте ещё раз.",
+<<<<<<< HEAD
 js_info_end             :	"js_info_end"
 },
 
+=======
+js_info_end             :	"js_info_end"
+},
+
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 // FileName: MacCloneCfgRpm.htm
 ntw_mac_clone_cfg :	{
 t_title                 :	"Клонирование MAC-адреса",
@@ -2844,8 +2867,13 @@ js_info_end             :	"js_info_end"
 obj_end                 :	""
 }
 
+<<<<<<< HEAD
 var str_main = new Array();
 str_main.charset = "text/html; charset=gb2312"
+=======
+var str_main = new Array();
+str_main.charset = "text/html; charset=gb2312"
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 str_main.btn = {
 Save                    :	"Сохранить",
 Back                    :	"Назад",

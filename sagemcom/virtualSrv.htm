@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Статус - Изменить</title>
+    <script>
+        var retPort = /^([0-9]|[:]){1,15}$/;
+        var retNum = /^[0-9]{1,15}$/;
+
+        function portInfo(startPort, endPort, srvName) {
+            this.startPort = startPort;
+            this.endPort = endPort;
+            this.srvName = srvName;
+        }
+
+        function serverType(name, protocol, port) {
+            this.name = name;
+            this.protocol = protocol;
+            this.port = port;
+        }
+        var servertypes = new Array();
+        servertypes[0] = new serverType("AUTH", 6, 113);
+        servertypes[1] = new serverType("DNS", 17, 53);
+        servertypes[2] = new serverType("FTP", 6, 21);
+        servertypes[3] = new serverType("IPSEC", 17, 500);
+        servertypes[4] = new serverType("POP3", 6, 110);
+        servertypes[5] = new serverType("PPTP", 6, 1723);
+        servertypes[6] = new serverType("SMTP", 6, 25);
+        servertypes[7] = new serverType("SSH", 6, 22);
+        servertypes[8] = new serverType("TELNET", 6, 23);
+        servertypes[9] = new serverType("TFTP", 17, 69);
+        servertypes[10] = new serverType("WEB", 6, 80);
+
+        function cbClick() {
+            with(document.addVrtSrv) {
+                var idx = srvname.selectedIndex;
+                for (var i = 0; i < servertypes.length; i++) {
+                    if (srvname.options[idx].value == servertypes[i].name) {
+                        inprt.value = servertypes[i].port;
+                        srvprt.value = servertypes[i].port;
+                        if (servertypes[i].protocol == 6) protocol.selectedIndex = 0;
+                        if (servertypes[i].protocol == 17) protocol.selectedIndex = 1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function checkOpenPort(startport, endport) {
+            var openedPort = new Array();
+            var rmtaccPort = new Array();
+            rmtaccPort[0] = new portInfo(520, 520, "rip");
+            rmtaccPort[1] = new portInfo(8080, 8080, "web");
+            rmtaccPort[2] = new portInfo(8080, 8080, "web");
+            rmtaccPort[3] = new portInfo(8080, 8080, "web");
+            rmtaccPort[4] = new portInfo(8080, 8080, "web");
+            rmtaccPort[5] = new portInfo(8080, 8080, "web");
+            rmtaccPort[6] = new portInfo(22, 22, "ssh");
+            rmtaccPort[7] = new portInfo(22, 22, "ssh");
+            rmtaccPort[8] = new portInfo(22, 22, "ssh");
+            rmtaccPort[9] = new portInfo(22, 22, "ssh");
+            rmtaccPort[10] = new portInfo(22, 22, "ssh");
+            rmtaccPort[11] = new portInfo(7547, 7547, "cwmp");
+
+
+            for (var i = 0; i < openedPort.length; i++) {
+                if (((startport >= openedPort[i].startPort) && (startport <= openedPort[i].endPort)) ||
+                    ((endport >= openedPort[i].startPort) && (endport <= openedPort[i].endPort)) ||
+                    ((startport <= openedPort[i].startPort) && (endport >= openedPort[i].endPort))) {
+                    alert("Указанный порт занят  " + openedPort[i].srvName + "(" + openedPort[i].startPort + "-" +
+                        openedPort[i].endPort + "),введите другой !");
+                    return false;
+                }
+            }
+            for (var i = 0; i < rmtaccPort.length; i++) {
+                if ((startport <= rmtaccPort[i].startPort) && (endport >= rmtaccPort[i].endPort)) {
+                    alert("Извините, Указанный порт занят удаленным доступом, Пожалуста, укажите другой порт!");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        var curTblNum = 0;
+        curTblNum = 11;
+
+
+        function btnApply() {
+
+
+            if (curTblNum >= 60) {
+                alert("Таблица виртуальных серверов переполнена!");
+                return false;
+            }
+
+            with(document.addVrtSrv) {
+
+                if (radiosrv[1].checked) {
+                    if (!checkSpecialChar(txtsrvname.value, 1)) {
+                        alert("Некорректные символы! Пожалуйста, исправьте!");
+                        return false;
+                    }
+
+                }
+
+
+
+                if (wansetting.selectedIndex == 1) {
+                    if (!checkIP(fromwanip))
+                        return false;
+                }
+
+                if (inprt.value == '' || !retPort.test(inprt.value)) {
+                    msg = 'Порт WAN' + inprt.value + ' неверен.';
+                    alert(msg);
+                    return false;
+                }
+
+                if (srvprt.value == '' || !retPort.test(srvprt.value)) {
+                    msg = 'Открытый порт LAN' + srvprt.value + 'неверен.';
+                    alert(msg);
+                    return false;
+                }
+
+                var inrangevalue = inprt.value;
+                var invalue = inrangevalue.split(':');
+                var startPort;
+                var endPort;
+                var wanOpenPortRange = 0;
+                var wanOpenPortRangeInterval = 0;
+                if (inrangevalue.match("[:]") == null) {
+                    startPort = parseInt(invalue[0]);
+                    endPort = parseInt(invalue[0]);
+                }
+                else {
+                    startPort = parseInt(invalue[0]);
+                    endPort = parseInt(invalue[1]);
+                    wanOpenPortRange = 1;
+                    wanOpenPortRangeInterval = endPort - startPort;
+                }
+                if (startPort > endPort || startPort < 1 || endPort > 65535) {
+                    msg = 'Неверный порт WAN!';
+                    alert(msg);
+                    return false;
+                }
+
+
+
+
+
+                inrangevalue = srvprt.value;
+                invalue = inrangevalue.split(':');
+                if (inrangevalue.match("[:]") == null) {
+                    startPort = parseInt(invalue[0]);
+                    endPort = parseInt(invalue[0]);
+                }
+                else {
+                    if (!wanOpenPortRange) {
+                        msg = 'Неверный интервал открытых портов LAN!';
+                        alert(msg);
+                        return false;
+                    }
+                    startPort = parseInt(invalue[0]);
+                    endPort = parseInt(invalue[1]);
+
+                }
+
+                if (startPort > endPort || startPort < 1 || endPort > 65535) {
+                    msg = 'Неверный открытый порт LAN!';
+                    alert(msg);
+                    return false;
+                }
+                if ((endPort - startPort) && (wanOpenPortRangeInterval != (endPort - startPort))) {
+                    msg = "Интервалы портов LAN и WAN должны совпадать!";
+                    alert(msg);
+                    return false;
+                }
+
+                if (!checkIP(srvaddr))
+                    return false;
+                if (srvaddr.value ==
+                    "192.168.0.1"
+                ) {
+                    alert("Это IP роутера. Укажите правильный адрес LAN.");
+                    srvaddr.focus();
+                    return false;
+                }
+            }
+        }
+
+        function wansettingchange() {
+            if (document.addVrtSrv.wansetting.selectedIndex == 0) {
+                document.getElementById("wanitfselectid").style.display = "";
+                document.getElementById("fromwanipid").style.display = "none";
+                document.addVrtSrv.wanIpOrItf.value = "itf";
+            }
+            else if (document.addVrtSrv.wansetting.selectedIndex == 1) {
+                document.getElementById("wanitfselectid").style.display = "none";
+                document.getElementById("fromwanipid").style.display = "";
+                document.addVrtSrv.wanIpOrItf.value = "ip";
+            }
+        }
+
+        function onLoad() {
+            if (document.addVrtSrv.wansetting.selectedIndex == 1) {
+                document.getElementById("fromwanipid").style.display = "";
+                document.getElementById("wanitfselectid").style.display = "none";
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Виртуальный сервер</p>
+        <p class="intro_content">Страница позволяет настроить виртуальные серверы, к которым можно получить доступ из Интернет. </p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody>
+                <tr>
+
+                    <th colspan="2">Тип сервиса:</th>
+                </tr>
+
+                <tr>
+
+                    <th width="30%"><input checked="checked" value="0" name="radiosrv" type="radio">Стандартное имя сервиса:</th>
+                    <td>
+
+                        <select size="1" name="srvname" onchange="cbClick()">
+
+                    <option selected="selected" value="AUTH">AUTH</option>
+
+                    <option value="DNS">DNS</option>
+
+                    <option value="FTP">FTP</option>
+
+                    <option value="IPSEC">IPSEC</option>
+
+                    <option value="POP3">POP3</option>
+
+                    <option value="PPTP">PPTP</option>
+
+                    <option value="SMTP">SMTP</option>
+
+                    <option value="SSH">SSH</option>
+
+                    <option value="TELNET">TELNET</option>
+
+                    <option value="TFTP">TFTP</option>
+
+                    <option value="WEB">WEB</option>
+
+                    </select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th><input value="1" name="radiosrv" type="radio">Пользовательское имя сервиса:</th>
+                    <td><input maxlength="15" name="txtsrvname" size="15" type="text"></td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Протокол:</th>
+                    <td>
+
+                        <select style="width:200" size="1" name="protocol">
+
+                    <option selected="selected" value="0">TCP</option>
+
+                    <option value="1">UDP</option>
+
+                    </select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>WAN:</th>
+                    <td>
+
+                        <select onchange="wansettingchange();" style="width:200" size="1" name="wansetting">
+
+                    <option selected="selected" value="0">Интерфейс</option>
+                    <option value="1">IP-адрес</option>
+                    </select>
+
+                    </td>
+
+                </tr>
+
+                <tr id="fromwanipid" style="display:none">
+
+                    <th>IP-адрес WAN:</th>
+                    <td><input size="15" name="fromwanip" maxlength="15" type="text">
+                        <font size="2"></font>
+                    </td>
+
+                </tr>
+
+                <tr id="wanitfselectid">
+
+                    <th>Интерфейс WAN:</th>
+                    <td>
+
+                        <select style="width:200" size="1" name="fromwanitf">
+
+<option value="pppoe1" selected="selected"> pppoe1</option>
+
+                        <option value="any">Любой</option>
+                    </select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Порт WAN:</th>
+                    <td><input value="113" name="inprt" size="15" type="text">&nbsp;&nbsp;(например, 5001:5010)</td>
+                </tr>
+
+                <tr>
+
+                    <th>Открытый порт LAN:</th>
+                    <td><input value="113" name="srvprt" size="15" type="text"></td>
+
+                </tr>
+
+                <tr>
+
+                    <th>IP-адрес LAN:</th>
+                    <td><input maxlength="15" name="srvaddr" size="15" type="text"></td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="btn_ctl">
+
+        <input name="wanIpOrItf" value="itf" type="hidden">
+
+        <input name="submit.htm?virtualSrv.htm" value="Send" type="hidden">
+
+        <input class="link_bg" name="save" onclick="return btnApply();" value="Применить" type="submit">
+    </div>
+
+
+
+    <input name="actiontype" value="" type="HIDDEN">
+
+    <input name="natitfcmd" value="" type="HIDDEN">
+
+    <input name="state" value="" type="HIDDEN">
+
+    <input name="itf1" value="" type="HIDDEN">
+
+    <input name="itf2" value="" type="HIDDEN">
+
+    <input name="wanport" value="" type="HIDDEN">
+
+    <input name="instnum" value="" type="HIDDEN">
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Таблица виртуальных серверов:</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common data_vertical">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th>Имя сервера</th>
+                        <th>Протокол</th>
+                        <th>IP-адрес LAN</th>
+                        <th>Порт LAN </th>
+                        <th>IP-адрес WAN</th>
+                        <th>Порт WAN</th>
+                        <th>Состояние</th>
+                        <th>Действие</th>
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <input name="submit.htm?virtualSrv.htm" value="Send" type="HIDDEN">
+
+    </div>
+
+
+    <script language="JavaScript">
+        function natItfActionFunc(form, actiontype, natitfcmd, state, itf1, itf2, wanport, instnum) {
+            form.elements[0].value = actiontype;
+            form.elements[1].value = natitfcmd;
+            form.elements[2].value = state;
+            form.elements[3].value = itf1;
+            form.elements[4].value = itf2;
+            form.elements[5].value = wanport;
+            form.elements[6].value = instnum;
+            form.submit();
+        }
+    </script>
+
+    <script>
+        document.addVrtSrv.inprt.value = servertypes[0].port;
+        document.addVrtSrv.srvprt.value = servertypes[0].port;
+        if (servertypes[0].protocol == 6) document.addVrtSrv.protocol.selectedIndex = 0;
+        if (servertypes[0].protocol == 17) document.addVrtSrv.protocol.selectedIndex = 1;
+    </script>
+
+
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <title>Настройка Контроля Доступа (ACL)</title>
+ <script>
+  var retPort = /^([0-9]|[:]){1,15}$/;
+  var retNum = /^[0-9]{1,15}$/;
+  var aclModeEnabled = 0;
+
+
+
+  function portInfo(startPort, endPort, srvName) {
+   this.startPort = startPort;
+   this.endPort = endPort;
+   this.srvName = srvName;
+  }
+
+  function lanAclip(selectindex, order) {
+   this.selectindex = selectindex;
+   this.order = order;
+  }
+  var lanAclips = new Array();
+
+  function checkOpenPort(startport, endport) {
+
+  }
+
+  function checkPort(port) {
+   portValue = parseInt(port);
+   if ((portValue > 65535) || (portValue <= 0)) {
+    return false;
+   }
+   else {
+    return true;
+   }
+  }
+
+  function checkIpRange(startIp, endIp) {
+   if (getDigit(startIp, 1) != getDigit(endIp, 1))
+    return false;
+   if (getDigit(startIp, 2) != getDigit(endIp, 2))
+    return false;
+   if (getDigit(startIp, 3) != getDigit(endIp, 3))
+    return false;
+   if (getDigit(startIp, 4) > getDigit(endIp, 4))
+    return false;
+   return true;
+  }
+
+  function OnHelp(page) {
+   HelpWin = window.open(page, "Help", "toolbar=no,location=no,directories=no,   status=no,menubar=no,scrollbars=yes,resizable=yes,width=500,height=500");
+  }
+
+  function addClick() {
+   if (document.getElementById("fromwanipid").style.display == "" && (document.formFilterEdit.aclIP.value != "0.0.0.0" && !checkIP(document.formFilterEdit.aclIP))) {
+    document.formFilterEdit.aclIP.focus();
+    return false;
+   }
+   if (document.formFilterEdit.aclIPend.value != "") {
+    if (document.formFilterEdit.aclIP.value == "0.0.0.0") {
+     alert("любой IP-адрес! Пожалуйста, удалите конечный IP-адрес!");
+     return false;
+    }
+    if (!checkIP(document.formFilterEdit.aclIPend))
+     return false;
+    if (!checkIpRange(document.formFilterEdit.aclIP.value, document.formFilterEdit.aclIPend.value)) {
+     alert("Начальный IP-адрес в диапазоне должен быть меньше конечного!");
+     return false;
+    }
+   }
+
+   if (document.formFilterEdit.interface.value == "lan")
+    return true;
+   var tcpPort = new Array(3);
+   var i = 0;
+   if (document.formFilterEdit.localAcl_web.checked) {
+    if (document.formFilterEdit.webport.value == '' || !retNum.test(document.formFilterEdit.webport.value) ||
+     false == checkPort(document.formFilterEdit.webport.value)) {
+     msg = 'web' + document.formFilterEdit.webport.value + ' неверен!';
+     alert(msg);
+     return false;
+    }
+    tcpPort[i++] = document.formFilterEdit.webport.value;
+   }
+   if (document.formFilterEdit.localAcl_telnet.checked) {
+    if (document.formFilterEdit.telnetport.value == '' || !retNum.test(document.formFilterEdit.telnetport.value) ||
+     false == checkPort(document.formFilterEdit.telnetport.value))
+
+    {
+     msg = 'telnet' + formFilterEdit.telnetport.value + ' неверен!';
+     alert(msg);
+     return false;
+    }
+    tcpPort[i++] = document.formFilterEdit.telnetport.value;
+   }
+   if (document.formFilterEdit.localAcl_tftp.checked) {
+    if (document.formFilterEdit.tftpport.value == '' || !retNum.test(document.formFilterEdit.tftpport.value) ||
+     false == checkPort(document.formFilterEdit.tftpport.value)) {
+     msg = 'tftp' + formFilterEdit.tftpport.value + ' неверен!';
+     alert(msg);
+     return false;
+    }
+   }
+   if (document.formFilterEdit.localAcl_ftp.checked) {
+    if (document.formFilterEdit.ftpport.value == '' || !retNum.test(document.formFilterEdit.ftpport.value) ||
+     false == checkPort(document.formFilterEdit.ftpport.value)) {
+     msg = 'ftp' + formFilterEdit.ftpport.value + ' неверен!';
+     alert(msg);
+     return false;
+    }
+    tcpPort[i++] = document.formFilterEdit.ftpport.value;
+   }
+   var m = 0;
+   for (m = 0; m < i; m++) {
+    var t = 0;
+    for (t = m + 1; t < i; t++) {
+     if (tcpPort[t] == tcpPort[m]) {
+      alert("Неверный порт! Несколько сервисов занимают один и тот же порт!");
+      return false;
+     }
+    }
+   }
+   return true;
+  }
+
+  function onClickAnyBtn() {
+   var objDiv = document.getElementById("serviceTable");
+   if (document.formFilterEdit.localAcl_any.checked == true) {
+    objDiv.style.display = "none";
+   }
+   else
+    objDiv.style.display = "";
+   document.formFilterEdit.localAcl_web.checked = false;
+   document.formFilterEdit.localAcl_telnet.checked = false;
+   document.formFilterEdit.localAcl_ssh.checked = false;
+   document.formFilterEdit.localAcl_tftp.checked = false;
+   document.formFilterEdit.localAcl_ftp.checked = false;
+   document.formFilterEdit.localAcl_web.checked = false;
+   document.formFilterEdit.localAcl_ping.checked = false;
+  }
+
+  function OnClickWebChk() {
+   var objDiv = document.formFilterEdit.webport;
+   if (document.formFilterEdit.localAcl_web.checked == true && document.formFilterEdit.interface.value == "wan" && aclModeEnabled == 0) {
+    objDiv.disabled = false;
+   }
+   else
+    objDiv.disabled = true;
+  }
+
+  function OnClickTelnetChk() {
+   var objDiv = document.formFilterEdit.telnetport;
+   if (document.formFilterEdit.localAcl_telnet.checked == true && document.formFilterEdit.interface.value == "wan" && aclModeEnabled == 0) {
+    objDiv.disabled = false;
+   }
+   else
+    objDiv.disabled = true;
+  }
+
+  function OnClickSshChk() {
+   var objDiv = document.formFilterEdit.sshport;
+   if (document.formFilterEdit.localAcl_ssh.checked == true && document.formFilterEdit.interface.value == "wan" && aclModeEnabled == 0) {
+    objDiv.disabled = false;
+   }
+   else
+    objDiv.disabled = true;
+  }
+
+  function OnClickTftpChk() {
+   var objDiv = document.formFilterEdit.tftpport;
+   if (document.formFilterEdit.localAcl_tftp.checked == true && document.formFilterEdit.interface.value == "wan" && aclModeEnabled == 0) {
+    objDiv.disabled = false;
+   }
+   else
+    objDiv.disabled = true;
+  }
+
+  function OnClickFtpChk() {
+   var objDiv = document.formFilterEdit.ftpport;
+   if (document.formFilterEdit.localAcl_ftp.checked == true && document.formFilterEdit.interface.value == "wan" && aclModeEnabled == 0) {
+    objDiv.disabled = false;
+   }
+   else
+    objDiv.disabled = true;
+  }
+
+  function SelectInterface(type) {
+   if (document.formFilterEdit.interface.selectedIndex == 0) {
+    document.getElementById("wanitfselectid").style.display = "none";
+    document.getElementById("fromwanipid").style.display = "";
+    document.getElementById("wansettingid").style.display = "none";
+    document.getElementById("localanyid").style.display = ""
+    document.getElementById("serviceTable").style.display = "none"
+    if (type == 1) document.formFilterEdit.localAcl_any.checked = true;
+   }
+   else {
+    document.getElementById("wanitfselectid").style.display = "";
+    document.getElementById("fromwanipid").style.display = "none";
+    document.getElementById("wansettingid").style.display = "";
+    document.getElementById("localanyid").style.display = "none"
+    document.getElementById("serviceTable").style.display = ""
+    document.formFilterEdit.localAcl_any.checked = false;
+   }
+   if (type == 1) {
+    document.formFilterEdit.aclIP.value = '';
+    document.getElementById("webport").value = "";
+    document.getElementById("localAcl_web").checked = false;
+    document.getElementById("webporttext").style.display = "none";
+    document.getElementById("telnetport").value = "";
+    document.getElementById("localAcl_telnet").checked = false;
+    document.getElementById("telnetporttext").style.display = "none";
+    document.getElementById("tftpport").value = "";
+    document.getElementById("localAcl_tftp").checked = false;
+    document.getElementById("tftpporttext").style.display = "none";
+    document.getElementById("ftpport").value = "";
+    document.getElementById("localAcl_ftp").checked = false;
+    document.getElementById("ftpporttext").style.display = "none";
+    document.getElementById("localAcl_ping").checked = false;
+   }
+  }
+
+  function wansettingchange() {
+   if (document.formFilterEdit.wansetting.selectedIndex == 0) {
+    document.getElementById("wanitfselectid").style.display = "";
+    document.getElementById("fromwanipid").style.display = "none";
+   }
+   else if (document.formFilterEdit.wansetting.selectedIndex == 1) {
+    document.getElementById("wanitfselectid").style.display = "none";
+    document.getElementById("fromwanipid").style.display = "";
+   }
+  }
+
+  function lansettingchange() {
+   if (document.formFilterEdit.lansetting.selectedIndex == 1) {
+    document.getElementById("lanitfselectid").style.display = "";
+    document.getElementById("fromwanipid").style.display = "none";
+   }
+   else if (document.formFilterEdit.lansetting.selectedIndex == 0) {
+    document.getElementById("lanitfselectid").style.display = "none";
+    document.getElementById("fromwanipid").style.display = "";
+   }
+  }
+
+  function localAclEnableCheck() {
+   if (lanAclips.length < 1 && document.formFilterEnable.aclEnable[0].checked == true && oldlanaclmode == 0) {
+    alert("Должен быть разрешен хотя бы один IP-адрес из LAN или один LAN-интерфейс для доступа к роутеру!");
+    document.formFilterEnable.aclEnable[1].checked = true;
+    return false;
+   }
+   return true;
+  }
+
+  function localAclModeCheck() {
+   if ((document.form2aclModeSel.LanAclMode[0].checked == true && oldlanaclmode == 1) ||
+    (document.form2aclModeSel.LanAclMode[1].checked == true && oldlanaclmode == 0)) {
+    if (confirm("Изменение режима Контроля Доступа LAN отменит текущий контроль доступа к LAN и может закрыть доступ к Web-интерфейсу. Продолжить?"))
+     return ture;
+    else
+     return false;
+   }
+  }
+
+  function LanWan(direction) {
+   if (direction == "0") {
+    document.getElementById("lanaclswitchid").style.display = "";
+    document.formFilterEdit.interface.value = "lan";
+    if (document.getElementById("lansettingid"))
+     document.getElementById("lansettingid").style.display = "";
+    if (document.getElementById("lanitfselectid"))
+     document.getElementById("lanitfselectid").style.display = "none";
+    document.getElementById("fromwanipid").style.display = "";
+    document.getElementById("localanyid").style.display = "";
+    document.getElementById("wanitfselectid").style.display = "none";
+    document.getElementById("wansettingid").style.display = "none";
+    document.formFilterEdit.localAcl_any.checked = true;
+    if (document.formFilterEdit.localAcl_any.checked) {
+     document.getElementById("serviceTable").style.display = "none";
+    }
+    else {
+     document.getElementById("serviceTable").style.display = "";
+    }
+    if (aclModeEnabled == 0) {
+     document.getElementById("webporttext").style.display = "none";
+     document.getElementById("telnetporttext").style.display = "none";
+     document.getElementById("sshporttext").style.display = "none";
+     document.getElementById("ftpporttext").style.display = "none";
+     document.getElementById("tftpporttext").style.display = "none";
+    }
+   }
+   if (direction == "1") {
+    document.getElementById("lanaclswitchid").style.display = "none";
+    document.formFilterEdit.interface.value = "wan";
+    if (document.getElementById("lansettingid"))
+     document.getElementById("lansettingid").style.display = "none";
+    if (document.getElementById("lanitfselectid"))
+     document.getElementById("lanitfselectid").style.display = "none";
+    document.getElementById("fromwanipid").style.display = "none";
+    document.getElementById("localanyid").style.display = "none";
+    document.getElementById("wanitfselectid").style.display = "";
+    document.getElementById("wansettingid").style.display = "";
+    document.formFilterEdit.localAcl_any.checked = false;
+    document.getElementById("serviceTable").style.display = "";
+    if (aclModeEnabled == 0) {
+     document.getElementById("webporttext").style.display = "";
+     document.getElementById("telnetporttext").style.display = "";
+     document.getElementById("sshporttext").style.display = "";
+     document.getElementById("ftpporttext").style.display = "";
+     document.getElementById("tftpporttext").style.display = "";
+    }
+    document.formFilterEdit.wansetting.selectedIndex = 0;
+    document.getElementById("wanitfselectid").style.display = "";
+   }
+   OnClickWebChk();
+   OnClickTelnetChk();
+   OnClickSshChk();
+   OnClickTftpChk();
+   OnClickFtpChk();
+   onClickAnyBtn();
+   return true;
+  }
+
+  function onLoad() {
+   if (document.lanwancheck.nop[0].checked == true)
+    LanWan(0);
+   else
+    LanWan(1);
+  }
+ </script>
+
+</head>
+
+<body onload="onLoad();">
+
+ <div class="intro_main ">
+
+  <p class="intro_title">Настройка Контроля Доступа (ACL)</p>
+  <p class="intro_content">
+
+   Вы можете выбрать какие сервисы будут доступны из LAN или WAN.
+   <br> Записи в таблице Контроля Доступа используются для разрешения прохождения определенных видов пакетов из LAN или WAN через роутер.
+   <br> Использование контроля доступа может быть полезным для защиты управления роутером.
+  </p>
+
+ </div>
+
+
+  <div style="display:none" class="data_common data_common_notitle">
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Режим контроля доступа LAN:</th>
+      <td><input name="LanAclMode" value="white" checked="checked" type="radio">&nbsp;&nbsp;Белый список</td>
+      <td><input name="LanAclMode" value="black" type="radio">&nbsp;&nbsp;Черный список</td>
+     </tr>
+
+     <tr>
+
+      <th width="30%">Режим контроля доступа WAN:</th>
+      <td><input name="WanAclMode" value="white" checked="checked" type="radio">&nbsp;&nbsp;Белый список</td>
+      <td><input name="WanAclMode" value="black" type="radio">&nbsp;&nbsp;Черный список</td>
+     </tr>
+
+     <tr>
+
+      <td colspan="3"><input class="inner_btn" onclick="return localAclModeCheck();" value="Применить" type="submit"></td>
+      <input name="submit.htm?acl.htm" value="Send" type="hidden">
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Выбор направления:</th>
+      <td><input onclick="LanWan(0);" checked="checked" value="lan" name="nop" type="radio"> &nbsp;LAN&nbsp;&nbsp;&nbsp;&nbsp;
+       <input onclick="LanWan(1);" value="wan" name="nop" type="radio"> &nbsp;WAN
+      </td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+
+  <div id="lanaclswitchid" style="" class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Контроль доступа с LAN:</th>
+      <td><input name="aclEnable" value="enable" checked="checked" type="radio">&nbsp;&nbsp;Вкл.</td>
+      <td><input name="aclEnable" value="disable" type="radio">&nbsp;&nbsp;Выкл.</td>
+
+     </tr>
+
+     <tr>
+
+      <td colspan="3"><input class="inner_btn" onclick="return localAclEnableCheck();" value="Применить" type="submit"></td>
+      <input name="submit.htm?acl.htm" value="Send" type="hidden">
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+
+  <input name="enable" value="1" type="hidden">
+
+  <input name="interface" value="lan" type="hidden">
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr id="wansettingid" style="display:none">
+
+      <th width="30%">WAN:</th>
+      <td>
+
+       <select onchange="wansettingchange();" style="width:200" size="1" name="wansetting">
+
+                    <option selected="selected" value="0">Интерфейс</option>
+                    <option value="1">IP-адрес</option>
+                    </select>
+
+      </td>
+
+     </tr>
+
+
+
+     <tr id="fromwanipid" style="">
+
+      <th width="30%">IP-адрес:</th>
+      <td>
+
+       <input size="15" name="aclIP" type="text">-<input size="15" name="aclIPend" type="text">(IP 0.0.0.0 означает любой IP )
+      </td>
+
+     </tr>
+
+     <tr id="wanitfselectid" style="display:none">
+
+      <th>WAN-интерфейс:</th>
+      <td>
+
+       <select style="width:200" size="1" name="fromwanitf">
+
+<option value="pppoe1" selected="selected"> pppoe1</option>
+
+                     <option value="any">Любой</option>
+                    </select>
+
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th colspan="2">Разрешенные сервисы:</th>
+     </tr>
+
+     <tr id="localanyid">
+
+      <th><input name="localAcl_any" value="any" checked="checked" onclick="onClickAnyBtn();" type="checkbox">Любой</th>
+      <td></td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div id="serviceTable" style="display:none" class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;<input name="localAcl_web" value="web" onclick="OnClickWebChk();" type="checkbox">web &nbsp;</th>
+      <th id="webporttext" style="display:none">Порт:<input value="80" name="webport" size="5" maxlength="5" disabled="disabled" type="TEXT"></th>
+     </tr>
+
+     <tr>
+
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;<input name="localAcl_telnet" value="telnet" onclick="OnClickTelnetChk();" type="checkbox">telnet &nbsp;</th>
+
+      <th id="telnetporttext" style="display:none">Порт:<input value="23" name="telnetport" size="5" maxlength="5" disabled="disabled" type="TEXT"></th>
+     </tr>
+
+     <tr>
+
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;<input name="localAcl_ssh" value="ssh" onclick="OnClickSshChk();" type="checkbox">ssh &nbsp;</th>
+
+      <th id="sshporttext" style="display:none">Порт:<input value="22" name="sshport" size="5" maxlength="5" disabled="disabled" type="TEXT"></th>
+     </tr>
+
+     <tr>
+
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;<input name="localAcl_ftp" value="ftp" onclick="OnClickFtpChk();" type="checkbox">ftp &nbsp;</th>
+
+      <th id="ftpporttext" style="display:none">Порт:<input value="21" name="ftpport" size="5" maxlength="5" disabled="disabled" type="TEXT"></th>
+     </tr>
+
+     <tr>
+
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;<input name="localAcl_tftp" value="tftp" onclick="OnClickTftpChk();" type="checkbox">tftp &nbsp;</th>
+
+      <th id="tftpporttext" style="display:none">Порт:<input value="69" name="tftpport" size="5" maxlength="5" disabled="disabled" type="TEXT"></th>
+     </tr>
+
+     <tr>
+
+      <th colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<input name="localAcl_ping" value="ping" type="checkbox">ping</th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="btn_ctl clearfix">
+
+   <input class="link_bg" onclick="return addClick()" value="Добавить" type="submit">
+   <input name="submit.htm?acl.htm" value="Send" type="hidden">
+
+  </div>
+
+
+
+  <input name="acldel" value="" type="HIDDEN">
+
+  <input name="state" value="" type="HIDDEN">
+
+  <input name="delip" value="" type="HIDDEN">
+
+  <input name="itftype" value="" type="HIDDEN">
+
+  <input name="openport" value="" type="HIDDEN">
+
+  <input name="itfname" value="" type="HIDDEN">
+
+  <input name="protocol" value="" type="HIDDEN">
+
+  <input name="itforip" value="" type="HIDDEN">
+
+  <input name="srvname" value="" type="HIDDEN">
+
+  <input name="delipend" value="" type="HIDDEN">
+
+  <div class="column">
+
+   <div class="column_title">
+
+    <div class="column_title_left"></div>
+
+    <p>Текущая таблица контроля доступа:</p>
+    <div class="column_title_right"></div>
+
+   </div>
+
+   <div class="data_common data_vertical">
+
+    <table>
+
+     <tbody>
+      <tr>
+
+       <th>Выбрать</th>
+       <th>Направление</th>
+       <th>IP-адрес/Интерфейс</th>
+       <th>Сервис</th>
+       <th>Порт</th>
+       <th>Действие</th>
+      </tr>
+
+      <tr>
+
+
+      </tr>
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">0</td>
+       <td align="center" bgcolor="#C0C0C0">LAN</td>
+       <td align="center" bgcolor="#C0C0C0">0.0.0.0</td>
+       <td align="center" bgcolor="#C0C0C0">web</td>
+       <td align="center" bgcolor="#C0C0C0">80</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src 0.0.0.0 0.0.0.0 0 dst 0.0.0.0 0.0.0.0 80 242 web lan', 'delete',	       0,0,80,'LAN',	       'any','tcp',0,	       'web',1,0,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <script language="JavaScript">
+       lanAclips[0] = new lanAclip(0, 0);
+      </script>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">1</td>
+       <td align="center" bgcolor="#C0C0C0">LAN</td>
+       <td align="center" bgcolor="#C0C0C0">0.0.0.0</td>
+       <td align="center" bgcolor="#C0C0C0">ping</td>
+       <td align="center" bgcolor="#C0C0C0">--</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any icmp src 0.0.0.0 0.0.0.0 dst 0.0.0.0 0.0.0.0 242 ping lan', 'delete',	       0,0,0,'LAN',	       'any','icmp',0,	       'ping',1,1,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">2</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">0.0.0.0</td>
+       <td align="center" bgcolor="#C0C0C0">ping</td>
+       <td align="center" bgcolor="#C0C0C0">--</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any icmp src 0.0.0.0 0.0.0.0 dst 0.0.0.0 0.0.0.0 241 ping wan', 'delete',	       0,0,0,'WAN',	       'any','icmp',0,	       'ping',0,2,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">3</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">10.2.0.1-10.2.0.254</td>
+       <td align="center" bgcolor="#C0C0C0">web</td>
+       <td align="center" bgcolor="#C0C0C0">8080</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 10.2.0.1 10.2.0.254 0 dst 0.0.0.0 0.0.0.0 8080 241 web wan', 'delete',	       167903233,167903486,8080,'WAN',	       'any','tcp',1,	       'web',0,3,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">4</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">10.2.1.1-10.2.1.254</td>
+       <td align="center" bgcolor="#C0C0C0">web</td>
+       <td align="center" bgcolor="#C0C0C0">8080</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 10.2.1.1 10.2.1.254 0 dst 0.0.0.0 0.0.0.0 8080 241 web wan', 'delete',	       167903489,167903742,8080,'WAN',	       'any','tcp',1,	       'web',0,4,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">5</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">212.33.232.102-212.33.232.102</td>
+       <td align="center" bgcolor="#C0C0C0">web</td>
+       <td align="center" bgcolor="#C0C0C0">8080</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 212.33.232.102 212.33.232.102 0 dst 0.0.0.0 0.0.0.0 8080 241 web wan', 'delete',	       -735975322,-735975322,8080,'WAN',	       'any','tcp',1,	       'web',0,5,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">6</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">212.33.233.40-212.33.233.47</td>
+       <td align="center" bgcolor="#C0C0C0">web</td>
+       <td align="center" bgcolor="#C0C0C0">8080</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 212.33.233.40 212.33.233.47 0 dst 0.0.0.0 0.0.0.0 8080 241 web wan', 'delete',	       -735975128,-735975121,8080,'WAN',	       'any','tcp',1,	       'web',0,6,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">7</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">212.33.225.224-212.33.225.254</td>
+       <td align="center" bgcolor="#C0C0C0">web</td>
+       <td align="center" bgcolor="#C0C0C0">8080</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 212.33.225.224 212.33.225.254 0 dst 0.0.0.0 0.0.0.0 8080 241 web wan', 'delete',	       -735976992,-735976962,8080,'WAN',	       'any','tcp',1,	       'web',0,7,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">8</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">10.2.0.1-10.2.0.254</td>
+       <td align="center" bgcolor="#C0C0C0">ssh</td>
+       <td align="center" bgcolor="#C0C0C0">22</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 10.2.0.1 10.2.0.254 0 dst 0.0.0.0 0.0.0.0 22 241 ssh wan', 'delete',	       167903233,167903486,22,'WAN',	       'any','tcp',1,	       'ssh',0,8,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">9</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">10.2.1.1-10.2.1.254</td>
+       <td align="center" bgcolor="#C0C0C0">ssh</td>
+       <td align="center" bgcolor="#C0C0C0">22</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 10.2.1.1 10.2.1.254 0 dst 0.0.0.0 0.0.0.0 22 241 ssh wan', 'delete',	       167903489,167903742,22,'WAN',	       'any','tcp',1,	       'ssh',0,9,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">10</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">212.33.232.102-212.33.232.102</td>
+       <td align="center" bgcolor="#C0C0C0">ssh</td>
+       <td align="center" bgcolor="#C0C0C0">22</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 212.33.232.102 212.33.232.102 0 dst 0.0.0.0 0.0.0.0 22 241 ssh wan', 'delete',	       -735975322,-735975322,22,'WAN',	       'any','tcp',1,	       'ssh',0,10,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">11</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">212.33.233.40-212.33.233.47</td>
+       <td align="center" bgcolor="#C0C0C0">ssh</td>
+       <td align="center" bgcolor="#C0C0C0">22</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 212.33.233.40 212.33.233.47 0 dst 0.0.0.0 0.0.0.0 22 241 ssh wan', 'delete',	       -735975128,-735975121,22,'WAN',	       'any','tcp',1,	       'ssh',0,11,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+      <tr>
+       <td align="center" bgcolor="#C0C0C0">12</td>
+       <td align="center" bgcolor="#C0C0C0">WAN</td>
+       <td align="center" bgcolor="#C0C0C0">212.33.225.224-212.33.225.254</td>
+       <td align="center" bgcolor="#C0C0C0">ssh</td>
+       <td align="center" bgcolor="#C0C0C0">22</td>
+       <td name="pppoeusername" align="center" bgcolor="#C0C0C0"><input value="удалить" onclick="
+return LocalAclDelFunc( this.form,	       'config ip mark interface any tcp src-range 212.33.225.224 212.33.225.254 0 dst 0.0.0.0 0.0.0.0 22 241 ssh wan', 'delete',	       -735976992,-735976962,22,'WAN',	       'any','tcp',1,	       'ssh',0,12,1);
+" type="BUTTON">
+       </td>
+      </tr>
+
+
+
+     </tbody>
+    </table>
+
+   </div>
+
+  </div>
+
+  <script language="JavaScript">
+   function deleteAclip(id) {
+    if (1) {
+     if (lanAclips.length == 1 && lanAclips[0].selectindex == id) {
+      alert("Должен быть разрешен хотя бы один IP-адрес из LAN или один LAN-интерфейс для доступа к роутеру!");
+      return false;
+     }
+    }
+    return true;
+   }
+
+   function LocalAclDelFunc(form, acldel, state, ip, ip2, itftype, openport, itfname, protocol, itforip, srvname, isLocal, id, localAclEnable) {
+    if (isLocal && localAclEnable && !deleteAclip(id)) {
+     return false;
+    }
+    form.elements[0].value = acldel;
+    form.elements[1].value = state;
+    form.elements[2].value = ip;
+    form.elements[3].value = openport;
+    form.elements[4].value = itftype;
+    form.elements[5].value = itfname;
+    form.elements[6].value = protocol;
+    form.elements[7].value = itforip;
+    form.elements[8].value = srvname;
+    form.elements[9].value = ip2;
+    form.submit();
+    return true;
+   }
+  </script>
+
+  <input name="submit.htm?acl.htm" value="Send" type="hidden">
+
+
+
+
+
+
+
+
+</body>
+
+</html>

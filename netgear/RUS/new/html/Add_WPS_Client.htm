@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -147,4 +148,155 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/Add_WPS_Client.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "Add_WPS_Client";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+function JumpToNextPage()
+{
+$H({
+'var:page' : 'WPS',
+'getpage' : '../html/WPS.htm'
+},true);
+$('uiPostForm').submit();
+}
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="http://gui.netgear.ru/admin/WNR612v3/html/WPS.htm"></form>
+<script type="text/javascript" src="js/ajax.js"></script>
+<style type="text/css"><!--
+.div_left { padding-left:0px; width:300px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style>
+<div class="page_title" id="lang_wps_config" >Add WPS Client</div>
+<div id="main" class="main">
+<table style="background:white; width:100%;">
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td>
+<div class="div_orange" class="do bk_black3_black">
+<p ><b id="lang_wps_introduction">New and easy way to connect to the Wireless Router via WiFi Protected setup (WPS)</b><br /><br /><span id="lang_wps_wireless">A wireless client has to support WPS function in order to use this wizard to add the client to your WPS enabled Wireless Router.</span><br /><span id="lang_wps_check">Please check the user manual and gift box of your wireless client to see whether it supports the WPS function.</span><br /><span id="lang_wps_client">If your wireless client does not support the WPS function, you have to configure your wireless client manually so it has the same SSID and wireless security settings as on this router.</span>
+</p>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black"><div class="div_button">
+<input type="RESET" class="short_common_bt" id="BUTTON_NEXT" name="Next" value="Next" onClick="JumpToNextPage()" />
+</div></td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("Add_WPS_Client")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

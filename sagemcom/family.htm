@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+
+ <title>Родительский контроль</title>
+ <script>
+  function SetMode() {
+   if (document.getElementsByName("openoroff")[1].checked) {
+    disableButton(document.form2timelimit.addFilterTime);
+   }
+   else if (document.getElementsByName("openoroff")[0].checked) {
+    enableButton(document.form2timelimit.addFilterTime);
+   }
+
+  }
+
+
+  function SelectAll(obj) {
+   var allInput = document.getElementsByName("select");
+   var loopTime = allInput.length;
+   for (i = 0; i < loopTime; i++) {
+    if (allInput[i].type == "checkbox") {
+     allInput[i].checked = obj.checked;
+    }
+   }
+  }
+
+  function showdifftype() {
+   if (document.getElementsByName("filtertype")[0].checked) {
+    document.getElementById("src").removeAttribute("readOnly");
+    document.getElementById("src").style.background = "#ffffff";
+    document.getElementById("end").removeAttribute("readOnly");
+    document.getElementById("end").style.background = "#ffffff";
+   }
+   else {
+    document.getElementById("src").setAttribute("readOnly", "true");
+    document.getElementById("src").style.background = "#808080";
+    document.getElementById("end").setAttribute("readOnly", "true");
+    document.getElementById("end").style.background = "#808080";
+   }
+
+   if (document.getElementsByName("filtertype")[1].checked) {
+    document.getElementById("mac").removeAttribute("readOnly");
+    document.getElementById("mac").style.background = "#ffffff";
+   }
+   else {
+    document.getElementById("mac").setAttribute("readOnly", "true");
+    document.getElementById("mac").style.background = "#808080";
+   }
+  }
+
+
+  function addClick() {
+   var allInput = document.getElementsByName("select");
+   var i = 0;
+   var temp = "";
+   for (var c = 0; c < allInput.length; c++) {
+    if (allInput[c].checked) {
+     i++;
+     temp += allInput[c].value;
+    }
+   }
+   if (i == 0) {
+    alert("Пустое значение поля даты не допустимо!");
+    return false;
+   }
+   else {
+    document.getElementById("selectday").setAttribute("value", temp);
+   }
+
+
+
+
+
+   if (document.getElementById("timefrom").value == "" || document.getElementById("timeto").value == "") {
+    alert("Пустое значение поля \"Время окончания\" не допустимо!");
+    return false;
+   }
+   else {
+
+    if ((document.getElementById("timefrom").value.length == 5) && (document.getElementById("timeto").value.length == 5))
+
+    {
+     var fromstr = document.getElementById("timefrom").value;
+     var tostr = document.getElementById("timeto").value;
+     var ptr = /^[0-2][0-9]\:[0-5][0-9]$/;
+
+     if (ptr.test(fromstr) && ptr.test(tostr)) {
+      from = new Array;
+      from = document.getElementById("timefrom").value.split(":");
+      to = new Array;
+      to = document.getElementById("timeto").value.split(":");
+
+      if (from[0] >= 24 || from[1] > 59 || to[0] >= 24 || to[1] > 59) {
+       alert("Введенные часы должны быть меньше 24, минуты должны быть меньше 60!");
+       return false;
+      }
+
+
+      if ((from[0] > to[0]) || (from[0] == to[0] && from[1] >= to[1])) {
+       alert("Конечное время не может быть больше начального!");
+       return false;
+      }
+
+
+     }
+     else {
+      alert("Формат времени должен быть xx:xx!");
+      return false;
+     }
+    }
+    else {
+     alert("Пожалуйста, введите время  в следующем формате xx:xx!");
+     return false;
+    }
+
+
+   }
+
+
+   if (!document.getElementsByName("filtertype")[0].checked && !document.getElementsByName("filtertype")[1].checked) {
+    alert("Пожалуйста укажите хотя бы один адрес!");
+    return false;
+   }
+
+   if (document.getElementsByName("filtertype")[0].checked) {
+    if (!checkIP(document.form2timelimit.src)) {
+     alert("Пожалуйста укажите правильный начальный IP адрес!");
+     document.form2timelimit.src.focus();
+     return false;
+    }
+    if (document.form2timelimit.end.value != "") {
+     if (!checkIP(document.form2timelimit.end)) {
+      alert("Пожалуйста укажите правильный конечный IP адрес!");
+      document.form2timelimit.end.focus();
+      return false;
+     }
+     if (!checkIpRange(document.form2timelimit.src.value, document.form2timelimit.end.value)) {
+      alert("Начальный IP адрес должен быть меньше, чем конечный!");
+      return false;
+     }
+    }
+   }
+   else
+    document.form2timelimit.src.value = "";
+
+   if (document.getElementsByName("filtertype")[1].checked) {
+    if (!checkFormatUnicastMac(document.form2timelimit.mac))
+     return false;
+   }
+   else
+    document.form2timelimit.mac.value = "";
+
+
+   var table = document.getElementById("currentinfo");
+   var rowsnum = table.rows.length;
+
+   if ((rowsnum + i - 2) > 32) {
+    alert("Максимальное число записей в таблице 32!");
+    return false;
+   }
+
+
+   return true;
+  }
+
+
+
+  function deleteClick(rml) {
+
+   var tr = rml.parentNode.parentNode;
+
+   if (document.all) {
+    var index = tr.childNodes[0].innerText;
+   }
+   else {
+    var index = tr.childNodes[0].textContent;
+   }
+
+   document.getElementById("delindex").setAttribute("value", index);
+   return true;
+
+  }
+
+  function deleteAllClick() {
+   if (!confirm('Вы действительно хотите удалить все записи?')) {
+    return false;
+   }
+   else
+    return true;
+  }
+
+  function clearData() {
+   document.getElementById("src").removeAttribute("readOnly");
+   document.getElementById("src").style.background = "#ffffff";
+   document.getElementById("end").removeAttribute("readOnly");
+   document.getElementById("end").style.background = "#ffffff";
+
+   document.getElementById("mac").setAttribute("readOnly", "true");
+   document.getElementById("mac").style.background = "#808080";
+  }
+
+  window.onload = function() {
+   showdifftype();
+   SetMode();
+  }
+ </script>
+
+
+</head>
+
+<body>
+
+
+ <div class="intro_main ">
+
+  <p class="intro_title">Родительский контроль</p>
+  <p class="intro_content">Страница предназначена чтобы помочь родителям контролировать время, проводимое детьми в сети. Определенные клиенты будут иметь доступ в Интернет только в определенное время.<br> Замечание: чтобы эта функция работала правильно убедитесь, что системное
+   время на роутере установлено верно. Для настройки времени обратитесь в меню Обслуживание - Время. Клиенты идентифицируются по IP- и MAC-адресам.
+  </p>
+ </div>
+
+ <div class="data_common data_common_notitle hide_gui">
+
+  <table>
+
+   <tbody>
+    <tr>
+
+     <th width="30%">Родительский контроль:</th>
+     <td>
+
+      <input name="openoroff" value="1" onclick="SetMode" type="radio">Включена &nbsp;&nbsp;
+      <input name="openoroff" value="0" onclick="SetMode" checked="checked" type="radio">Отключить &nbsp;&nbsp;
+     </td>
+
+    </tr>
+
+   </tbody>
+  </table>
+
+ </div>
+
+ <div class="btn_ctl hide_gui">
+
+  <input class="link_bg" value="Применить" type="submit">
+  <input name="submit.htm?family.htm" value="Send" type="hidden">
+
+ </div>
+
+
+ <div class="data_common data_common_notitle hide_gui">
+
+  <table>
+
+   <tbody>
+    <tr>
+
+     <th colspan="2">Политика доступа в Интернет:</th>
+    </tr>
+
+    <tr>
+
+     <td>День:</td>
+     <td>
+
+      <div>
+
+       <div>
+
+        <input id="ck0" value="7" onclick="SelectAll(this)" type="checkbox">
+
+        <label for="ck0">Ежедневно</label>
+       </div>
+
+       <div>
+
+        <input id="ck1" value="1" name="select" type="checkbox">
+
+        <label for="ck1">ПН</label>
+        <input id="ck2" value="2" name="select" type="checkbox">
+
+        <label for="ck2">ВТ</label>
+        <input id="ck3" value="3" name="select" type="checkbox">
+
+        <label for="ck3">СР</label>
+        <input id="ck4" value="4" name="select" type="checkbox">
+
+        <label for="ck4">ЧТ</label>
+        <input id="ck5" value="5" name="select" type="checkbox">
+
+        <label for="ck5">ПТ</label>
+        <input id="ck6" value="6" name="select" type="checkbox">
+
+        <label for="ck6">СБ</label>
+        <input id="ck7" value="0" name="select" type="checkbox">
+
+        <label for="ck7">ВС</label>
+       </div>
+
+      </div>
+
+      <input id="selectday" name="selectday" value="" runat="server" type="hidden">
+
+     </td>
+
+    </tr>
+
+    <tr>
+
+     <td>Время:</td>
+     <td>
+
+      Начало
+      <input maxlength="5" id="timefrom" name="timefrom" size="5" type="text"> Окончание
+      <input maxlength="5" id="timeto" name="timeto" size="5" type="text">(например, 09:45)&nbsp;&nbsp;
+     </td>
+
+    </tr>
+
+    <tr>
+
+     <td>Выбранный клиент:</td>
+     <td>
+
+      <input name="filtertype" onclick="showdifftype()" checked="checked" type="radio">IP-адрес&nbsp;&nbsp;
+      <input name="filtertype" onclick="showdifftype()" type="radio">MAC-адрес
+     </td>
+
+    </tr>
+
+    <tr>
+
+     <td>IP-адрес:</td>
+     <td>
+
+      <input style="background: rgb(255, 255, 255) none repeat scroll 0% 0%;" name="src" id="src" maxlength="15" type="text">--<input style="background: rgb(255, 255, 255) none repeat scroll 0% 0%;" name="end" id="end" maxlength="15" type="text">
+
+     </td>
+
+    </tr>
+
+    <tr>
+
+     <td>MAC-адрес:</td>
+     <td>
+
+      <input style="background: rgb(128, 128, 128) none repeat scroll 0% 0%;" readonly="true" name="mac" id="mac" maxlength="17" type="text">(например, 00:E0:86:71:05:02)&nbsp;&nbsp;
+     </td>
+
+    </tr>
+
+   </tbody>
+  </table>
+
+ </div>
+
+ <div class="btn_ctl hide_gui">
+
+  <input disabled="disabled" class="link_bg" value="Добавить" name="addFilterTime" onclick="return addClick()" type="submit">&nbsp;&nbsp;
+  <input class="link_bg" value="Сбросить" name="reset" onclick="clearData()" type="reset">&nbsp;&nbsp;
+  <input class="link_bg" name="submit.htm?family.htm" value="Send" type="hidden">
+
+ </div>
+
+
+ <div class="column">
+
+  <div class="column_title">
+
+   <div class="column_title_left"></div>
+
+   <p>Таблица родительского контроля:</p>
+   <div class="column_title_right"></div>
+
+  </div>
+
+  <div class="data_common data_vertical">
+
+   <table id="currentinfo">
+
+    <tbody>
+     <tr>
+
+      <th>Выбрать</th>
+      <th>День</th>
+      <th>Время начала</th>
+      <th>Время окончания</th>
+      <th>MAC-адрес</th>
+      <th>IP-адрес</th>
+      <th>Действие</th>
+     </tr>
+
+
+    </tbody>
+   </table>
+
+  </div>
+
+ </div>
+
+ <div class="btn_ctl hide_gui">
+
+  <input class="link_bg" value="Удалить все" name="deleteAll" onclick="return deleteAllClick()" type="submit">&nbsp;&nbsp;&nbsp;
+  <input class="link_bg" id="delindex" name="delindex" value="" runat="server" type="hidden">
+
+  <input class="link_bg" name="submit.htm?family.htm" value="Send" type="hidden">
+
+ </div>
+
+
+ <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+ <script src="files/jquip.js" type="text/javascript"></script>
+ <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

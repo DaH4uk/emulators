@@ -1,4 +1,5 @@
 <html><head>
+<<<<<<< HEAD
 <link rel="shortcut icon" href="./icon/icon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="STYLESHEET" type="text/css" 
@@ -971,4 +972,978 @@ src="wireless_tail.gif" height="35" width="114"></td>
 disable_items_by_username(get_current_user);
 //-->
 </script>
+=======
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script language="JavaScript">
+var submit_button_flag = 0;
+var rule_max_num = 32;
+var STATIC_ROUTING_DEFAULT  = "0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1";
+var resert_rule = rule_max_num;
+var DataArray = new Array();
+
+//0/name/192.168.31.0/255.255.255.0/192.168.31.1/192.168.31.1/20
+function Data(enable, name, ip_addr, net_mask, gateway, interface, metric, onList) 
+{
+	this.Enable = enable;
+	this.Name = name;
+	this.Ip_addr = ip_addr;
+	this.Net_mask = net_mask;
+	this.Gateway = gateway;
+	this.Interface = interface;
+	this.Metric = metric;
+	this.OnList = onList ;
+}
+
+function set_routes(){
+	var index = 0;
+	for (var i = 0; i < rule_max_num; i++){
+		var temp_st;
+		var k=i;
+		if(parseInt(i,10)<10){
+			k="0"+i;
+		}
+		temp_st = (get_by_id("static_routing_" + k).value).split("/");
+		if (temp_st.length > 1){
+			if(temp_st[1] != "name" && temp_st[0] != ""){
+				DataArray[DataArray.length++] = new Data(temp_st[0],temp_st[1], temp_st[2], temp_st[3],temp_st[4],temp_st[5],temp_st[6],temp_st[7], index);
+				index++;
+			}
+		}
+	}
+	
+	
+}
+
+function send_request(){
+ 	 
+	if (!is_form_modified("form1") && !confirm(_ask_nochange)) {
+		return false;
+	}
+
+	for (var i = 0; i < rule_max_num; i++){
+		var static_routing_XX;
+		
+		if (i > 9){
+			static_routing_XX = get_by_id("static_routing_" + i);
+		}else{
+			static_routing_XX = get_by_id("static_routing_0" + i);
+		}
+
+		if (get_by_id("Destination" + i).value == "" ){
+			get_by_id("Destination" + i).value="0.0.0.0";
+		}
+		
+		if (get_by_id("Sub_Mask" + i).value == "" ){
+			get_by_id("Sub_Mask" + i).value="0.0.0.0";
+		}
+
+		if (get_by_id("Sub_gateway" + i).value == ""){
+			get_by_id("Sub_gateway" + i).value="0.0.0.0";
+		}		
+		
+		static_routing_XX.value = get_checked_value(get_by_id("enable"+i))+"/"+ get_by_id("name" + i).value +"/"
+						+ get_by_id("Destination" + i).value + "/"+ get_by_id("Sub_Mask" + i).value +"/"
+						+ get_by_id("Sub_gateway" + i).value +"/"+ get_by_id("interface" + i).value + "/"+get_by_id("metric" + i).value;
+		// Default rule, don't care.
+		if(static_routing_XX.value == STATIC_ROUTING_DEFAULT )
+			continue; 		
+		
+		var static_ip = get_by_id("Destination" + i).value;
+		var static_mask = get_by_id("Sub_Mask" + i).value;
+		var static_gateway = get_by_id("Sub_gateway" + i).value;
+		var metric = get_by_id("metric"+ i).value;
+		
+		var ip_addr_msg = replace_msg(all_ip_addr_msg,"IP address");
+		var gateway_msg = replace_msg(all_ip_addr_msg,"Gateway address");
+		
+		var static_ip_obj = new addr_obj(static_ip.split("."), ip_addr_msg, false, true);
+		var static_mask_obj = new addr_obj(static_mask.split("."), subnet_mask_msg, false, false);
+		var static_gateway_obj = new addr_obj(static_gateway.split("."), gateway_msg, false, true);
+		var temp_metric = new varible_obj(metric, metric_msg, 1, 16, false);
+		
+		if(!check_mask(static_mask_obj))
+			return false;
+		if(!check_address(static_gateway_obj))
+			return false;
+		if (!check_varible(temp_metric))
+			return false; 		
+		if(!check_network_address(static_ip_obj, static_mask_obj)){
+			return false;
+		}
+		
+		/* Prevent conflict with other rule*/
+		if(get_checked_value(get_by_id("enable"+i))=="1")
+		  for(jj=i+1;jj<rule_max_num;jj++){ 		   	
+		   	if(get_checked_value(get_by_id("enable"+jj))=="1")
+			  if((get_by_id("Destination" + jj).value==static_ip) && (get_by_id("interface" + jj).value==get_by_id("interface" + i).value)){
+				alert("Destination IP address of \"" + get_by_id("name" +i).value+"\" and \"" + get_by_id("name" +jj).value  +"\" are the same.");
+				return false;
+			  }
+		  }
+		
+		static_routing_XX.value = get_checked_value(get_by_id("enable"+i))+"/"+ get_by_id("name" + i).value +"/"
+						+ get_by_id("Destination" + i).value + "/"+ get_by_id("Sub_Mask" + i).value +"/"
+						+ get_by_id("Sub_gateway" + i).value +"/"+ get_by_id("interface" + i).value + "/"+get_by_id("metric" + i).value;
+	}
+	
+	if(submit_button_flag == 0){
+		submit_button_flag = 1;
+		return true;
+	}else{
+		return false;
+	}
+}
+
+</script>
+
+<style type="text/css">
+<!--
+.style1 {font-size: 11px}
+-->
+</style>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td
+ id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavon" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavoff" 
+height="29"><a href="st_device.htm" onClick="return 
+jump_if();">Status</a></td><td id="topnavoff" height="29"><a 
+href="support_men.htm" onClick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+                  <tbody>
+                    <tr>
+                      <td id="sidenav_container">
+                        <div id="sidenav"><ul><li><div><a 
+href="adv_virtual.htm" onClick="return jump_if();">Virtual
+ Server</a></div></li><li><div><a 
+href="adv_portforward.htm" onClick="return 
+jump_if();">Port Forwarding</a></div></li><li><div><a 
+href="adv_appl.htm" onClick="return jump_if();">Application
+ Rules</a></div></li><li><div><a href="adv_qos.htm" 
+onclick="return jump_if();">QoS Engine</a></div></li><li><div><a 
+href="adv_filters_mac.htm" onClick="return 
+jump_if();">Network Filter</a></div></li><li><div><a 
+href="adv_access_control.htm" onClick="return 
+jump_if();">Access Control</a></div></li><li><div><a 
+href="adv_filters_url.htm" onClick="return 
+jump_if();">Website Filter</a></div></li><li><div><a 
+href="Inbound_Filter.htm" onClick="return jump_if();">Inbound
+ Filter</a></div></li><li><div><a href="adv_dmz.htm" 
+onclick="return jump_if();">Firewall Settings</a></div></li><li><div 
+id="sidenavoff">Routing</div></li><li><div><a 
+href="adv_wlan_perform.htm" onClick="return 
+jump_if();">Advanced Wireless</a></div></li><li><div><a 
+href="adv_network.htm" onClick="return jump_if();">Advanced
+ Network</a></div></li><li><div><a 
+href="adv_ipv6_sel_wan.htm" onClick="return 
+jump_if();">IPv6</a></div></li></ul></div>
+                      	<br><div id="wan_online" style="display: none;"> </div>
+              			<div id="wan_offline"> </div><br>
+						<div id="m17n_div" align="center"></div>		
+            </td>
+                    </tr>
+                  </tbody>
+                </table></td>
+
+                <form saved="true" id="form1" name="form1" method="post"
+ action="http://www.support.dlink.com/emulators/dir615_revE/510/apply.cgi"></form>
+				<input default="back.htm" id="html_response_page" 
+name="html_response_page" value="back.htm" type="hidden">
+				<input default="The setting is saved." id="html_response_message" 
+name="html_response_message" value="The setting is saved." type="hidden">
+				<input default="adv_routing.htm" id="html_response_return_page" 
+name="html_response_return_page" value="adv_routing.htm" type="hidden">
+				<input default="filter" id="reboot_type" name="reboot_type" 
+value="filter" type="hidden">
+                
+                
+                <!-- New Variable -->
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_00" name="static_routing_00" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_01" name="static_routing_01" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_02" name="static_routing_02" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_03" name="static_routing_03" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_04" name="static_routing_04" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_05" name="static_routing_05" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_06" name="static_routing_06" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_07" name="static_routing_07" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_08" name="static_routing_08" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_09" name="static_routing_09" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_10" name="static_routing_10" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_11" name="static_routing_11" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_12" name="static_routing_12" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_13" name="static_routing_13" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_14" name="static_routing_14" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_15" name="static_routing_15" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_16" name="static_routing_16" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_17" name="static_routing_17" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_18" name="static_routing_18" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_19" name="static_routing_19" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_20" name="static_routing_20" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_21" name="static_routing_21" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_22" name="static_routing_22" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_23" name="static_routing_23" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_24" name="static_routing_24" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_25" name="static_routing_25" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_26" name="static_routing_26" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_27" name="static_routing_27" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_28" name="static_routing_28" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_29" name="static_routing_29" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_30" name="static_routing_30" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_31" name="static_routing_31" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_32" name="static_routing_32" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_33" name="static_routing_33" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_34" name="static_routing_34" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_35" name="static_routing_35" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_36" name="static_routing_36" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_37" name="static_routing_37" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_38" name="static_routing_38" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_39" name="static_routing_39" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_40" name="static_routing_40" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_41" name="static_routing_41" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_42" name="static_routing_42" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_43" name="static_routing_43" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_44" name="static_routing_44" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_45" name="static_routing_45" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_46" name="static_routing_46" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_47" name="static_routing_47" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_48" name="static_routing_48" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+				<input default="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" 
+id="static_routing_49" name="static_routing_49" 
+value="0//0.0.0.0/0.0.0.0/0.0.0.0/WAN/1" type="hidden">
+                
+				<input default="admin-941afa219/192.168.0.100/00:04:23:2c:44:9f/Tue 
+Dec 22 12:34:36 2009,iPhone-4/192.168.0.101/5c:59:48:2d:55:c5/Tue Dec 22
+ 16:40:31 2009,UNKNOWN/192.168.0.110/00:1c:f0:78:f5:da/Tue Dec 22 
+13:07:12 2009," id="dhcp_list" name="dhcp_list" 
+value="admin-941afa219/192.168.0.100/00:04:23:2c:44:9f/Tue Dec 22 
+12:34:36 2009,iPhone-4/192.168.0.101/5c:59:48:2d:55:c5/Tue Dec 22 
+16:40:31 2009,UNKNOWN/192.168.0.110/00:1c:f0:78:f5:da/Tue Dec 22 
+13:07:12 2009," type="hidden">
+				
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">				  
+                  <div id="box_header">
+                    <h1>Routing :</h1>
+                    <p>This 
+Routing page allows you to specify custom routes that determine how data
+ is moved around your network.</p>
+                    <br>
+                    <input value="Save Settings" id="button" name="button" class="button_submit" onClick="emulator()" type="button">
+                    <input value="Don't Save Settings" id="button2" name="button2" class="button_submit" onClick="dont_save()" type="button">
+					
+                  </div>
+                  <a name="show_list"></a>
+                  <div class="box">
+                    <h2>32 --ROUTE 
+LIST</h2>
+                    <table bgcolor="#dfdfdf" border="1" 
+bordercolor="#ffffff" cellpadding="2" cellspacing="1" width="525">
+                      <tbody>
+                        <tr>
+                          <td align="center" width="20">&nbsp;</td>
+                          <td align="center">&nbsp;</td>
+                  		  <td align="center">&nbsp;</td>
+                          <td align="center">Metric</td>
+						  <td align="center">Interface</td>
+						</tr>
+						
+                        <tr><td rowspan="2" align="center"><input 
+default="false" id="enable0" name="enable0" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name0" name="name0" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination0" 
+name="Destination0" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric0" name="metric0" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface0" name="interface0"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask0" 
+name="Sub_Mask0" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway0" 
+name="Sub_gateway0" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable1" 
+name="enable1" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name1" name="name1" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination1" 
+name="Destination1" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric1" name="metric1" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface1" name="interface1"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask1" 
+name="Sub_Mask1" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway1" 
+name="Sub_gateway1" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable2" 
+name="enable2" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name2" name="name2" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination2" 
+name="Destination2" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric2" name="metric2" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface2" name="interface2"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask2" 
+name="Sub_Mask2" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway2" 
+name="Sub_gateway2" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable3" 
+name="enable3" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name3" name="name3" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination3" 
+name="Destination3" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric3" name="metric3" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface3" name="interface3"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask3" 
+name="Sub_Mask3" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway3" 
+name="Sub_gateway3" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable4" 
+name="enable4" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name4" name="name4" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination4" 
+name="Destination4" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric4" name="metric4" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface4" name="interface4"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask4" 
+name="Sub_Mask4" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway4" 
+name="Sub_gateway4" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable5" 
+name="enable5" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name5" name="name5" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination5" 
+name="Destination5" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric5" name="metric5" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface5" name="interface5"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask5" 
+name="Sub_Mask5" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway5" 
+name="Sub_gateway5" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable6" 
+name="enable6" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name6" name="name6" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination6" 
+name="Destination6" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric6" name="metric6" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface6" name="interface6"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask6" 
+name="Sub_Mask6" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway6" 
+name="Sub_gateway6" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable7" 
+name="enable7" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name7" name="name7" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination7" 
+name="Destination7" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric7" name="metric7" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface7" name="interface7"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask7" 
+name="Sub_Mask7" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway7" 
+name="Sub_gateway7" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable8" 
+name="enable8" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name8" name="name8" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination8" 
+name="Destination8" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric8" name="metric8" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface8" name="interface8"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask8" 
+name="Sub_Mask8" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway8" 
+name="Sub_gateway8" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable9" 
+name="enable9" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name9" name="name9" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination9" 
+name="Destination9" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td
+ rowspan="2" align="center"><input autocomplete="off" default="1" 
+class="flatL" id="metric9" name="metric9" size="16" maxlength="15" 
+value="1" type="text"></td><td rowspan="2" align="center">&nbsp;<select 
+style="width: 90px;" id="interface9" name="interface9"><option 
+selected="selected" default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask9" 
+name="Sub_Mask9" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway9" 
+name="Sub_gateway9" size="16" maxlength="15" value="0.0.0.0" type="text"></td></tr><tr><td
+ rowspan="2" align="center"><input default="false" id="enable10" 
+name="enable10" value="1" type="checkbox"></td><td>Name<br><input 
+autocomplete="off" default="" class="flatL" id="name10" name="name10" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination10" 
+name="Destination10" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric10" 
+name="metric10" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface10" name="interface10"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask10" 
+name="Sub_Mask10" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway10" 
+name="Sub_gateway10" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable11" name="enable11" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name11" name="name11" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination11" 
+name="Destination11" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric11" 
+name="metric11" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface11" name="interface11"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask11" 
+name="Sub_Mask11" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway11" 
+name="Sub_gateway11" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable12" name="enable12" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name12" name="name12" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination12" 
+name="Destination12" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric12" 
+name="metric12" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface12" name="interface12"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask12" 
+name="Sub_Mask12" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway12" 
+name="Sub_gateway12" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable13" name="enable13" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name13" name="name13" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination13" 
+name="Destination13" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric13" 
+name="metric13" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface13" name="interface13"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask13" 
+name="Sub_Mask13" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway13" 
+name="Sub_gateway13" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable14" name="enable14" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name14" name="name14" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination14" 
+name="Destination14" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric14" 
+name="metric14" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface14" name="interface14"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask14" 
+name="Sub_Mask14" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway14" 
+name="Sub_gateway14" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable15" name="enable15" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name15" name="name15" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination15" 
+name="Destination15" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric15" 
+name="metric15" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface15" name="interface15"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask15" 
+name="Sub_Mask15" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway15" 
+name="Sub_gateway15" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable16" name="enable16" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name16" name="name16" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination16" 
+name="Destination16" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric16" 
+name="metric16" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface16" name="interface16"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask16" 
+name="Sub_Mask16" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway16" 
+name="Sub_gateway16" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable17" name="enable17" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name17" name="name17" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination17" 
+name="Destination17" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric17" 
+name="metric17" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface17" name="interface17"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask17" 
+name="Sub_Mask17" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway17" 
+name="Sub_gateway17" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable18" name="enable18" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name18" name="name18" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination18" 
+name="Destination18" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric18" 
+name="metric18" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface18" name="interface18"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask18" 
+name="Sub_Mask18" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway18" 
+name="Sub_gateway18" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable19" name="enable19" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name19" name="name19" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination19" 
+name="Destination19" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric19" 
+name="metric19" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface19" name="interface19"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask19" 
+name="Sub_Mask19" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway19" 
+name="Sub_gateway19" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable20" name="enable20" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name20" name="name20" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination20" 
+name="Destination20" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric20" 
+name="metric20" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface20" name="interface20"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask20" 
+name="Sub_Mask20" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway20" 
+name="Sub_gateway20" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable21" name="enable21" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name21" name="name21" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination21" 
+name="Destination21" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric21" 
+name="metric21" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface21" name="interface21"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask21" 
+name="Sub_Mask21" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway21" 
+name="Sub_gateway21" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable22" name="enable22" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name22" name="name22" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination22" 
+name="Destination22" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric22" 
+name="metric22" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface22" name="interface22"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask22" 
+name="Sub_Mask22" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway22" 
+name="Sub_gateway22" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable23" name="enable23" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name23" name="name23" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination23" 
+name="Destination23" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric23" 
+name="metric23" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface23" name="interface23"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask23" 
+name="Sub_Mask23" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway23" 
+name="Sub_gateway23" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable24" name="enable24" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name24" name="name24" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination24" 
+name="Destination24" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric24" 
+name="metric24" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface24" name="interface24"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask24" 
+name="Sub_Mask24" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway24" 
+name="Sub_gateway24" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable25" name="enable25" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name25" name="name25" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination25" 
+name="Destination25" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric25" 
+name="metric25" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface25" name="interface25"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask25" 
+name="Sub_Mask25" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway25" 
+name="Sub_gateway25" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable26" name="enable26" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name26" name="name26" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination26" 
+name="Destination26" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric26" 
+name="metric26" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface26" name="interface26"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask26" 
+name="Sub_Mask26" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway26" 
+name="Sub_gateway26" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable27" name="enable27" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name27" name="name27" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination27" 
+name="Destination27" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric27" 
+name="metric27" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface27" name="interface27"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask27" 
+name="Sub_Mask27" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway27" 
+name="Sub_gateway27" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable28" name="enable28" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name28" name="name28" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination28" 
+name="Destination28" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric28" 
+name="metric28" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface28" name="interface28"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask28" 
+name="Sub_Mask28" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway28" 
+name="Sub_gateway28" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable29" name="enable29" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name29" name="name29" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination29" 
+name="Destination29" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric29" 
+name="metric29" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface29" name="interface29"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask29" 
+name="Sub_Mask29" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway29" 
+name="Sub_gateway29" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable30" name="enable30" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name30" name="name30" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination30" 
+name="Destination30" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric30" 
+name="metric30" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface30" name="interface30"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask30" 
+name="Sub_Mask30" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway30" 
+name="Sub_gateway30" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr><tr><td rowspan="2" align="center"><input 
+default="false" id="enable31" name="enable31" value="1" type="checkbox"></td><td>Name<br><input
+ autocomplete="off" default="" class="flatL" id="name31" name="name31" 
+size="16" maxlength="15" type="text"></td><td>Destination IP<br><input 
+autocomplete="off" default="0.0.0.0" class="flatL" id="Destination31" 
+name="Destination31" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td><td rowspan="2" align="center"><input 
+autocomplete="off" default="1" class="flatL" id="metric31" 
+name="metric31" size="16" maxlength="15" value="1" type="text"></td><td 
+rowspan="2" align="center">&nbsp;<select style="width: 90px;" 
+id="interface31" name="interface31"><option selected="selected" 
+default="true" value="WAN">WAN</option></select></td></tr><tr><td>Netmask<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_Mask31" 
+name="Sub_Mask31" size="16" maxlength="15" value="0.0.0.0" type="text"></td><td>gateway<br><input
+ autocomplete="off" default="0.0.0.0" class="flatL" id="Sub_gateway31" 
+name="Sub_gateway31" size="16" maxlength="15" value="0.0.0.0" 
+type="text"></td></tr> 
+                      </tbody>
+                    </table>
+                  </div>             
+			  </div>
+			 
+      </td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bordercolordark="#ffffff" bordercolorlight="#ffffff" 
+bgcolor="#ffffff" border="0" bordercolor="#ffffff" cellpadding="2" 
+cellspacing="0"><tbody><tr><td id="help_text">
+      				<b><strong>Helpful Hints</strong>…</b><br>
+              		<p>
+              		  Each route 
+has a check box next to it, check this box if you want the route to be 
+enabled.
+              		</p>
+              		<p>
+              		  The name 
+field allows you to specify a name for identification of this route, 
+e.g. 'Network 2'
+              		</p>
+              		<p>
+              		  The 
+destination IP address is the address of the host or network you wish to
+ reach.
+              		</p>
+              		<p>
+              		  The 
+netmask field identifies the portion of the destination IP in use.
+              		</p>
+              		<p>
+              		  The 
+gateway IP address is the IP address of the router, if any, used to 
+reach the specified destination.
+              		</p>
+              		<p class="more"><a 
+href="support_adv.htm#Routing" onClick="return 
+jump_if();">More…</a></p>
+                </td></tr></tbody></table>
+           </td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+
+
+<script type="text/javascript">
+<!--
+disable_items_by_username(get_current_user);
+//-->
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body></html>

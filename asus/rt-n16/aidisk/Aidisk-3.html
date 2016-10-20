@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -360,3 +361,367 @@ function hideLoading(flag){
 </form>
 </body>
 </html>
+=======
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>AiDisk Wizard</title>
+<link rel="stylesheet" type="text/css" href="aidisk.css">
+
+<script type="text/javascript" src="../state.js"></script>
+<script>
+var ddns_server_x = '';
+var ddns_hostname_x = '';
+var ddns_old_name = '';
+
+var ddns_timeout = '0';
+var ddns_return_code = '';
+
+var ddns_hostname_title;
+
+function initial(){
+	//parent.show_help_iframe(3);
+	parent.hideLoading();
+	
+	if(this.ddns_server_x == "WWW.ASUS.COM" && this.ddns_hostname_x != ''){
+		this.ddns_hostname_title = this.ddns_hostname_x.substring(0, this.ddns_hostname_x.indexOf('.'));
+		$("DDNSName").value = this.ddns_hostname_title;
+	}
+	else{
+		$("DDNSName").value = "Key in the name";
+	}
+	switch_ddns();
+}
+
+function switch_ddns(){
+	if(document.DDNSForm.check_asus_ddns[0].checked){
+		parent.setASUSDDNS_enable("1");
+		document.DDNSForm.ddns_server_x.value = "WWW.ASUS.COM";
+		
+		//parent.show_help_iframe(5);
+	}
+	else{
+		parent.setASUSDDNS_enable("0");
+		document.DDNSForm.ddns_server_x.value = this.ddns_server_x;
+		
+		if(parent.show_iframe_page("statusframe").indexOf("ASUS_DDNS_TOS.html") > 0)
+			parent.show_help_iframe(3);
+	}
+	
+	show_TOS_checkbox();
+	show_next_button();
+	
+	parent.restore_help_td();
+	parent.openHint(15, 3);
+}
+
+function show_TOS_checkbox(){
+	if(document.DDNSForm.check_asus_ddns[0].checked){
+		//$("TOS_checkbox").style.display = "";
+		document.DDNSForm.asusddns_tos_agreement.value = "1";
+		$("ddnsname_input").style.display = "block";
+		$("DDNSName").focus();
+		$("DDNSName").select();
+	}
+	else{
+		document.DDNSForm.asusddns_tos_agreement.value = "0";		
+		$("ddnsname_input").style.display = "none";	
+		//$("TOS_checkbox").style.display = "none";
+	}
+	
+	//agree_TOS();
+	if(this.ddns_server_x == "WWW.ASUS.COM")
+		check_return_code();
+	
+	//$("alert_block").style.display = "none";
+	//show_ddnsname_input();
+	show_next_button();
+}
+/*
+function agree_TOS(){
+	if(!document.DDNSForm.agree_ASUSDDNS_TOS.checked){
+		document.DDNSForm.asusddns_tos_agreement.value = "0";
+	}
+	else{
+		document.DDNSForm.asusddns_tos_agreement.value = "1";
+		
+		if(this.ddns_server_x == "WWW.ASUS.COM")
+			check_return_code();
+	}
+	$("alert_block").style.display = "none";
+	//show_ddnsname_input();
+	show_next_button();
+}
+
+function show_ddnsname_input(){
+	if(document.DDNSForm.check_asus_ddns[0].checked
+		&& document.DDNSForm.agree_ASUSDDNS_TOS.checked)
+	{
+		$("ddnsname_input").style.display = "";		
+		$("DDNSName").focus();
+	}
+	else
+		$("ddnsname_input").style.display = "none";
+}
+*/
+function show_next_button(){
+
+	if(document.DDNSForm.check_asus_ddns[0].checked || 
+	   document.DDNSForm.check_asus_ddns[1].checked)
+	{
+		$("gotonext_block").style.display = "block";
+		$("gotonext_disabled").style.display = "none";
+	}
+	else{
+		$("gotonext_block").style.display = "none";
+		$("gotonext_disabled").style.display = "block";
+	}
+}
+
+function show_alert_block(alert_str){
+	$("alert_block").style.display = "block";
+	
+	showtext($("alert_str"), alert_str);
+}
+
+function hide_alert_block(){
+	$("alert_block").style.display = "none";
+}
+
+function check_return_code(){
+	if(this.ddns_return_code == ''){
+		if(this.ddns_timeout == '1')
+			show_alert_block("DDNS server does not respond. Please try again.");
+	}
+	else if(this.ddns_return_code == 'register,-1')
+		show_alert_block("Request error! Please try again.");
+	else if(this.ddns_return_code == 'register,200'){
+		show_alert_block("Registration is successful.");
+		parent.setASUSDDNS_enable("1");
+		
+		document.DDNSForm.action = "aidisk/Aidisk-4.html";
+		document.DDNSForm.target = "";
+		document.DDNSForm.submit();
+		
+		return;
+	}
+	else if(this.ddns_return_code == 'register,203')
+		show_alert_block("The domain name '"+this.ddns_hostname_x+"' is registered.");
+	else if(this.ddns_return_code == 'register,220'){
+		show_alert_block("Registered the original hostname successfully.");
+		parent.setASUSDDNS_enable("1");
+		
+		document.DDNSForm.action = "aidisk/Aidisk-4.html";
+		document.DDNSForm.target = "";
+		document.DDNSForm.submit();
+		
+		return;
+	}
+	else if(this.ddns_return_code == 'register,230'){
+		show_alert_block("Registered the new hostname successfully.");
+		parent.setASUSDDNS_enable("1");
+		
+		document.DDNSForm.action = "aidisk/Aidisk-4.html";
+		document.DDNSForm.target = "";
+		document.DDNSForm.submit();
+		
+		return;
+	}
+	else if(this.ddns_return_code == 'register,233')
+		show_alert_block("The domain name '"+this.ddns_hostname_x+"' is already registered. '"+this.ddns_old_name+"'.");
+	else if(this.ddns_return_code == 'register,296')
+		show_alert_block("The IP and hostname are not registered, please register first.");
+	else if(this.ddns_return_code == 'register,297')
+		show_alert_block("Invalid Hostname! The format should be 'xxx.asuscomm.com' and 'xxx' cannot be entirely number.");
+	else if(this.ddns_return_code == 'register,298')
+		show_alert_block("Invalid Domain! The format should be 'xxx.asuscomm.com'.");
+	else if(this.ddns_return_code == 'register,299')
+		show_alert_block("Invalid IP Address!");
+	else if(this.ddns_return_code == 'register,401')
+		show_alert_block("Unauthorized registration request!");
+	else if(this.ddns_return_code == 'register,407')
+		show_alert_block("Client Error: Proxy Authentication Required!");
+	else if(this.ddns_return_code == 'Time-out')
+		show_alert_block("DDNS server does not response.");
+	
+	this.ddns_return_code = "";
+}
+
+function verify_ddns_name(){
+	if(validate_ddns_hostname($("DDNSName"))){
+		parent.showLoading();
+		
+		document.DDNSForm.current_page.value = "aidisk/Aidisk-3.html";
+		document.DDNSForm.action_script.value = "hostname_check";
+		document.DDNSForm.action_mode.value = "Update";
+		document.DDNSForm.ddns_hostname_x.value = $("DDNSName").value+".asuscomm.com";
+		
+		document.DDNSForm.flag.value = "nodetect";
+		
+		document.DDNSForm.target = "hidden_frame";
+		document.DDNSForm.submit();
+	}
+}
+
+function go_next_page(){
+	if(document.DDNSForm.check_asus_ddns[0].checked && this.ddns_return_code == ""){		
+		verify_ddns_name();
+		
+		return;
+	}
+	
+	document.DDNSForm.action = "Aidisk-4.html";
+	document.DDNSForm.target = "";
+	document.DDNSForm.submit();
+}
+
+function go_pre_page(){
+	document.DDNSForm.action = "Aidisk-2.html";
+	document.DDNSForm.target = "";
+	document.DDNSForm.submit();
+}
+
+function validate_ddns_hostname(o){
+	dot = 0;
+	s = o.value;
+	
+	if(s == ""){
+		show_alert_block("Account name cannot be blank.");
+		return false;
+	}
+	
+	if(!validate_string(o)){
+		return false;
+	}
+	
+	for(var i = 0; i < s.length; ++i){
+		c = s.charCodeAt(i);
+		if(c == 46){
+			++dot;
+			
+			if(dot > 2){
+				show_alert_block("Invalid Hostname! The format should be 'xxx.asuscomm.com' and 'xxx' cannot be entirely number.");
+				return false;
+			}
+		}
+		
+		if(!validate_hostnamechar(c)){
+			show_alert_block("Invalid characters of domain name is '"+s.charAt(i)+"' !");
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+function validate_hostnamechar(ch){
+	if(ch >= 48 && ch <= 57)
+		return true;
+	
+	if(ch >= 97 && ch <= 122)
+		return true;
+	
+	if(ch >= 65 && ch <= 90)
+		return true;
+	
+	if(ch == 45)
+		return true;
+	
+	if(ch == 46)
+		return true;
+	
+	return false;
+}
+
+function done_validating(action){
+	document.DDNSForm.action = "Aidisk-3.html";
+	document.DDNSForm.target = "";
+	document.DDNSForm.submit();
+}
+
+function showLoading(seconds, flag){
+	parent.showLoading(seconds, flag);
+}
+
+function hideLoading(flag){
+	parent.hideLoading(flag);
+}
+</script>
+</head>
+
+<body onload="initial();">
+<iframe name="hidden_frame" id="hidden_frame" src="" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="DDNSForm" action="start_apply.htm">
+<input type="hidden" name="current_page" value="">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="sid_list" value="LANHostConfig;">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+
+<input type="hidden" name="asusddns_tos_agreement" value="0">
+<input type="hidden" name="ddns_server_x" value="">
+<input type="hidden" name="ddns_hostname_x" value="">
+
+<input type="hidden" name="flag" value="">
+
+<table width="400" border="0" align="center" cellpadding="0" cellspacing="0" >
+	<tr>
+		<td colspan="2" valign="top">
+			<table width="250" border="0" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td width="64"><img src="../images/aidisk-01.gif" width="64" height="59" /></td>
+					<td width="29"><p><img src="../images/aidisk-arrow-2.gif" width="29" height="29" /></p></td>
+					<td width="64"><img src="../images/aidisk-02_r.gif" width="64" height="59" /></td>
+					<td width="29"><img src="../images/aidisk-arrow-2.gif" width="29" height="29" /></td>
+					<td><img src="../images/aidisk-03.gif" width="64" height="59" /></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2" class="title">Create your domain name via the ASUS DDNS services.</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2" class="textbox">
+			<!--input type="radio" name="check_asus_ddns" onClick="switch_ddns();"-->
+			<input type="radio" name="check_asus_ddns"  onClick="switch_ddns();">
+			<span>I will use the service and accept <a href="#" onclick="parent.show_help_iframe(5);">Terms of service</a>.</span><br/>
+				<!--div id="TOS_checkbox" class="aidiskdesc" style="display:none;">
+					<input type="checkbox" name="agree_ASUSDDNS_TOS"  onClick="agree_TOS();">
+					<span>I will use the service and accept</span>
+				</div-->
+				
+				<div id="ddnsname_input" class="aidiskdesc" style="display:none;">
+					<input type="text" name="DDNSName" id="DDNSName" class="inputtext">.asuscomm.com
+					<div id="alert_block" style="color:#CC0000; margin-left:5px; font-size:11px;display:none;">
+						<span id="alert_str"></span>
+					</div>
+				</div>
+				
+				<br/>
+			<input type="radio" name="check_asus_ddns" onClick="switch_ddns();" >
+			<span>Skip ASUS DDNS setting.</span>
+		</td>
+	</tr>
+	<tr>
+		<td align="right" height="50">
+			<div class="short_btn"><a href="javascript:go_pre_page();">Previous</a></div>
+		</td>		
+		<td>
+			<div id="gotonext_block" class="short_btn"><a id="gotonext" href="javascript:go_next_page();">Next</a></div>
+			<div id="gotonext_disabled" class="short_btn_disabled">Next</div>
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

@@ -1,0 +1,547 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/QIS_wizard.htm by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 15 Jun 2013 17:28:01 GMT -->
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<link rel="shortcut icon" href="images/favicon.png">
+<link rel="icon" href="images/favicon.png">
+<title>ASUS Wireless Router RT-AC66U - Quickly Internet Setup</title>
+<link rel="stylesheet" type="text/css" href="other.css">
+<link rel="stylesheet" type="text/css" href="qis/qis_style.css">
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<style>
+.banner1{
+	width:998px;
+	height:54px;
+	background:url(images/New_ui/title_bg.png) 0 0 no-repeat;
+	margin:0px auto;
+}
+.qismenu{
+	width:120px;
+	font-size: 12px;
+	font-weight: bold;
+	text-shadow: 1px 1px 0px black;
+	filter: progid:DXImageTransform.Microsoft.DropShadow(OffX=1, OffY=1, Color=#000000);
+}
+.button_gen_scan{
+	font-weight: bolder;
+	text-shadow: 1px 1px 0px black;
+  background: #022;
+  border:0;
+  color: #FFFFFF;
+	height:30px;
+	font-family:Verdana;
+	font-size:12px;
+  padding:0 .70em 0 .70em;  
+ 	width:122px;
+  overflow:visible;
+	cursor:pointer;
+	outline: none; /* for Firefox */
+ 	hlbr:expression(this.onFocus=this.blur()); /* for IE */
+ 	white-space:normal;
+}
+.button_gen_scan:hover{
+	font-weight: bolder;
+	background: #356;
+	height:30px;
+ 	width:122px;
+ 	padding:0 .70em 0 .70em;  
+ 	background-position:0px;
+	cursor:pointer;
+	outline: none; /* for Firefox */
+ 	hlbr:expression(this.onFocus=this.blur()); /* for IE */
+}
+</style>
+<script type="text/JavaScript" src="state.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script language="JavaScript" type="text/javascript" src="jquery.js"></script>
+<script language="JavaScript" type="text/javascript" src="ajax.js"></script>
+<script>
+var qisFlag = ''.toLowerCase();
+if(isMobile() && sw_mode != 2 && qisFlag != "sitesurvey" && qisFlag != "sitesurvey_mb")
+	location.href = "QIS_wizard.htm?flag=" + qisFlag;
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '2785126592'; }
+function login_ip_str() { return '192.168.1.166'; }
+function login_ip_str_now() { return '192.168.1.166'; }
+function login_mac_str() { return '50:e5:49:a2:00:f8'; }
+
+
+var parent_macaddr = '74:D0:2B:64:F0:B0';
+var wireless = [["98:4B:E1:CB:DA:D6", "Yes", "No"]];	// [[MAC, associated, authorized], ...]
+
+var reduced_internet_type = "disable";
+var targeturl = "index.htm";
+var firmver = '3.0.0.4';
+var w_Setting_tmp = '1';
+var return_btn = 0;
+var flag_manual = 0;
+var issubmit = 0;
+var isrescan = 0;
+var getBand = '';
+var ISMOBILE = false;
+
+// live update
+var $j = jQuery.noConflict();
+var webs_state_update = '';
+var webs_state_upgrade = '';
+var webs_state_error = '';
+var webs_state_info = '';
+var exist_firmver = "3.0.0.4";
+var Latest_firmver = "";
+var Latest_firm = "";
+var Latest_buildno = "";
+var Latest_extendno = "";
+var current_firm = "";
+var current_buildno = "";
+var current_extendno = "";
+var liveUpdateFinish = false;
+var new_FW = false;
+var retry = 0;
+function detect_firmware(){
+	$j.ajax({
+		url: '/detect_firmware.asp',
+		dataType: 'script',
+
+		error: function(xhr){
+				setTimeout("detect_firmware();", 1000);
+		},
+ 		success: function(){
+			if(retry > 20){
+				liveUpdateFinish = true;					
+			}
+			else if(webs_state_update==0){
+					setTimeout("detect_firmware();", 1000);
+					retry++;
+			}
+			else{
+				if(webs_state_error != 1){
+					Latest_firmver = webs_state_info.split("_");
+					Latest_firm = Latest_firmver[0];
+					Latest_buildno = Latest_firmver[1];
+					Latest_extendno = Latest_firmver[2];
+
+					if(Latest_firm && Latest_buildno && Latest_extendno){	//match model FW
+						current_firm = parseInt(exist_firmver.replace(/[.]/gi,""));
+      			current_buildno = parseInt("372");
+      			current_extendno = "0-g55910de";
+
+						if((current_buildno < Latest_buildno) || 
+      					(current_firm < Latest_firm && current_buildno == Latest_buildno) ||
+      					(current_extendno != Latest_extendno && current_buildno == Latest_buildno && current_firm == Latest_firm))
+      			{
+							new_FW = true;
+						}
+					}
+				}
+				liveUpdateFinish = true;					
+			}
+		}
+	});
+}
+
+function detect_update(){
+	document.start_update.submit();
+}
+
+function set_step(focus_id){
+	$("t1").className = "lefttabmid";
+	$("t2").className = "lefttabmid";
+	$("t3").className = "lefttabmid";
+
+	switch(focus_id){
+		case "t2":
+			$("t2").className = "lefttabmidfocus";
+			break;
+		case "t3":
+			$("t3").className = "lefttabmidfocus";
+			break;
+		default:	
+			$("t1").className = "lefttabmidfocus";
+			break;
+	}
+}
+
+function QIS_load_body(){
+	var showCase;
+	showCase = "internet_type";	
+	winW_H();
+	
+	if(psta_support != -1){
+		if(document.QKform.sw_mode.value == 3 && '0' == 1)
+			document.QKform.sw_mode.value = 4;
+	}
+
+	if(navigator.appName.indexOf("Microsoft") >= 0){
+			$("contentM").width = "105%";
+			$("contentM").style.marginLeft = "-45px";			
+	}
+
+	with(document.redirectForm){
+		switch(showCase){
+			case "remind":
+				action = "qis/QIS_internet_success.htm";
+				submit();
+				break;
+			case "auto_way_static":
+				action = "qis/QIS_internet_ip.htm";
+				flag.value = showCase;
+				prev_page.value = "qis/QIS_detect.htm";
+				submit();
+				break;
+			case "auto_way_vpn":
+				action = "qis/QIS_internet_ip.htm";
+				flag.value = showCase;
+				prev_page.value = "start_apply.htm";
+				submit();
+				break;
+			case "auto_way":
+				action = "qis/QIS_internet_ip.htm";
+				flag.value = showCase;
+				submit();
+				break;				
+			case "verify_detect":
+				action = "qis/QIS_verify_detect.htm";
+				flag.value = showCase;
+				submit();
+				break;				
+			case "adv_ap_mode":
+				document.QKform.sw_mode.value = "3";
+				action = "qis/QIS_lanip.htm";
+				submit();
+				break;				
+			case "pppoe":
+				document.QKform.wan_proto.value = "pppoe";			
+				action = "qis/QIS_internet_account.htm";
+				submit();
+				break;				
+			case "pptp":
+				document.QKform.wan_proto.value = "pptp";			
+				action = "qis/QIS_internet_account.htm";
+				submit();
+				break;				
+			case "l2tp":
+				document.QKform.wan_proto.value = "l2tp";
+				action = "qis/QIS_internet_account.htm";
+				submit();
+				break;				
+			case "account":
+				document.QKform.wan_proto.value = "pptp";
+				action = "qis/QIS_internet_account.htm";
+				submit();
+				break;				
+			default:
+				if(showCase.split("?").length == 1)
+					action = "qis/QIS_" + showCase + ".htm";
+				else
+					action = "qis/QIS_" + showCase.split("?")[0] + ".htm?" + showCase.split("?")[1];
+				submit();
+				break;					
+		}
+	}
+}
+
+function set_internet_type_reducedmode(mode){
+	reduced_internet_type = mode;
+}
+
+function get_internet_type_reducedmode(mode){
+	return reduced_internet_type;
+}
+
+function set_next_step(topage){
+	targeturl = topage;
+}
+
+function get_next_step(){
+	return targeturl;
+}
+
+var failed_connection_reason = "";
+
+function set_failed_connection_reason(flag){
+	failed_connection_reason = flag;
+}
+
+function get_failed_connection_reason(){
+	return failed_connection_reason;
+}
+
+function gotoFinish(forward_page, page_flag){
+	with(document.redirectForm){
+		action = forward_page;
+		target = "";
+		flag.value = page_flag;
+		
+		submit();
+	}
+}
+
+function closeQIS(){
+	if(navigator.appName == "Netscape" && navigator.userAgent.indexOf("Safari") == -1){ //The appName of Safari is Netscape the same as Firefox and mozilla.
+		window.open('', '_self', '');
+		self.close(); 
+	}
+	else if(navigator.appName.indexOf("Microsoft") >= 0){
+		window.opener=null;
+		self.close();
+ 	}
+	else{
+		window.open('', '_self', ''); 
+		self.close();
+	}
+}
+
+var auto_detect_time = 0;
+
+function get_detect_time(){
+	return auto_detect_time;
+}
+
+function do_detect(){
+	++auto_detect_time;
+}
+
+var done_autoMAC = 0;
+
+function ifAutoMAC(){
+	return done_autoMAC;
+}
+
+function doAutoMAC(){
+	done_autoMAC = 1;
+}
+
+var done_resetModem = 0;
+
+function ifResetModem(){
+	return done_resetModem;
+}
+
+function doResetModem(){
+	done_resetModem = 1;
+}
+
+var result_of_detectWAN = 0;
+
+function get_detectWAN(){
+	return result_of_detectWAN;
+}
+
+function set_detectWAN(result){
+	result_of_detectWAN = result;
+}
+
+function gotoIndex(){
+	if(w_Setting_tmp == '0'){
+		alert("Мы настоятельно рекомендуем в первую очередь установить тип шифрования.");
+		location.href = 'QIS_wizard.htm?flag=wireless';
+	}
+	else
+		location.href = 'index.html';
+}
+
+function check_DUT(){
+	$j.ajax({
+		url: '/httpd_check.htm',
+		dataType: 'script',
+		
+		error: function(xhr){
+			setTimeout("check_DUT();", 3000);
+		},
+		success: function(response){
+			setTimeout("location.href ='QIS_wizard.htm?flag=verify_detect'", 3000);
+		}
+	});
+}
+</script>
+</head>
+
+<body class="LevelQIS" onload="QIS_load_body();">
+<noscript>
+	<div class="popup_bg" style="visibility:visible; z-index:999;">
+		<div style="margin:200px auto; width:300px; background-color:#006699; color:#FFFFFF; line-height:150%; border:3px solid #FFF; padding:5px;">Ваш браузер не поддерживает JavaScript. Выберите браузер, поддерживающий JavaScript, или включите поддержку многофункционального маршрутизатора ASUS RT-AC66U.</p></div>
+	</div>
+</noscript>
+
+<div id="LoadingBar" class="popup_bar_bg">
+<table cellpadding="5" cellspacing="0" id="loadingBarBlock" class="loadingBarBlock" align="center">
+	<tr>
+		<td height="80">
+		<div class="Bar_container">
+			<span id="proceeding_img_text" style="display:none;"></span>
+			<div id="proceeding_img"></div>
+		</div>
+		<div id="connHint" style="margin:5px auto; width:85%;">Подождите, RT-AC66U подключается к <span style="font-weight:bolder;" id="stassid"></span></div>
+		</td>
+	</tr>
+</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+<div id="Loading" class="popup_bg">
+	<table cellpadding="5" cellspacing="0" id="loadingBlock" class="loadingBlock" align="center">
+		<tr>
+			<td width="20%" height="80" align="center"><img src="images/loading.gif"></td>
+			<td><span id="proceeding_main_txt">Подождите, </span><span id="proceeding_txt" style="color:#FFFFCC;"></span></td>
+		</tr>
+	</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+<div id="hiddenMask" class="popup_bg">
+	<table cellpadding="5" cellspacing="0" id="dr_sweet_advise" class="dr_sweet_advise" align="center">
+		<tr>
+		<td>
+			<div class="drword" id="drword">Подождите,  Выполнение...
+				<br/>
+				<br/>
+	    </div>
+		  <div class="drImg"><img src="images/alertImg.png"></div>
+			<div style="height:70px; "></div>
+		</td>
+		</tr>
+	</table>
+</div>
+
+<!--For content in ifame-->	
+<!--[if !lte IE 6]>-->
+<div class="banner1" align="center">
+	<img src="images/New_ui/asustitle.png" width="218" height="54" align="left">
+	<span class="modelName_top" style="margin-top:20px;">RT-AC66U</span>
+</div>
+<!--<![endif]-->
+<!--[if lte IE 6]>
+<div class="banner1" align="center">
+	<img src="images/New_ui/asustitle_ie6.png" width="218" height="54" align="left">
+	<span class="modelName_top" style="margin-top:20px;">RT-AC66U</span>
+</div>
+<![endif]-->
+
+<!--div style="margin-top:0px;margin-left:0px;">
+	<span class="modelName_top" style="	margin-top:-34px;margin-left:260px;">RT-AC66U</span>
+</div-->
+
+<table width="998px" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td height="170px" width="998px" valign="top" background="images/New_ui/midup_bg.png"></td>
+	</tr>
+</table>
+
+<table width="998px"  border="0" align="center" cellpadding="0" cellspacing="0" background="images/New_ui/middown_bg.png">
+  <tr>
+		<td style="width:218px;*width:263px;" valign="top">
+			<div class="lefttabhead" style="margin-left:15px;margin-top:-130px;" id="option0"><table width="192px" height="37px"><tbody><tr><td>Быстрая настройка Интернет</td></tr></tbody></table></div>
+			<div class="lefttabmid" id="t1" style="margin-left:15px;"><table height="52px"><tbody><tr><td><img style="margin-left:3px;" border="0" src="images/qis/qisStep1.png"></td><td><div class="qismenu">Проверьте соединение</div></td></tr></tbody></table></div>
+			<div class="lefttabmid" id="t2" style="margin-left:15px;"><table height="52px"><tbody><tr><td><img style="margin-left:3px;" border="0" src="images/qis/qisStep2.png"></td><td><div class="qismenu">Настройки Интернета</div></td></tr></tbody></table></div>
+			<div class="lefttabmid" id="t3" style="margin-left:15px;"><table height="52px"><tbody><tr><td><img style="margin-left:3px;" border="0" src="images/qis/qisStep3.png"></td><td><div class="qismenu">Настройка роутера</div></td></tr></tbody></table></div>
+		</td>
+
+		<td>
+      <div class="_contentM_qis"><iframe name="contentM" id="contentM" class="contentM_qis" scrolling="auto" width="99%" height="540" frameborder="0"></iframe></div>
+    </td>
+    <td width="8" height="365" valign="top"></td>
+  </tr>
+
+	<tr>
+		<td height="27" colspan="3" style="background: url('images/New_ui/bottom_bg.png') no-repeat">&nbsp;</td>
+	</tr>
+</table>
+
+<form method="post" name="QKform">
+	<!-- general -->
+	<input type="hidden" name="flag" id="flag" value=''>
+	<input type="hidden" name="prev_page" value="">
+	<input type="hidden" name="current_page" value="QIS_wizard.htm">
+	<input type="hidden" name="next_page" value="">   
+	<input type="hidden" name="action_mode" value="apply">
+	<input type="hidden" name="action_script" value="restart_wan_if">
+	<input type="hidden" name="wan_unit" value="0">
+	<input type="hidden" name="action_wait" value="5">
+	<input type="hidden" name="modified" value="">  
+	<!-- system -->                  
+	<input type="hidden" name="machine_name" value="">
+	<input type="hidden" name="time_zone" value="CCT-8">
+	<input type="hidden" name="wan_nat_x" value="1">
+	<input type="hidden" name="wan_route_x" value="">
+	<input type="hidden" name="http_username" value="admin">
+	<input type="hidden" name="http_passwd" value="admin"> 
+	<input type="hidden" name="x_Setting" id="x_Setting" value="1" disabled>
+	<input type="hidden" name="sw_mode" value="1">
+	<!-- detect -->
+	<input type="hidden" name="wan_proto" value="dhcp">
+	<!-- internet IP -->
+	<input type="hidden" name="wan_dhcpenable_x" value="1">
+	<input type="hidden" name="wan_ipaddr_x" value="0.0.0.0">
+	<input type="hidden" name="wan_netmask_x" value="0.0.0.0">
+	<input type="hidden" name="wan_gateway_x" value="0.0.0.0">
+	<input type="hidden" name="vpn_enable" value="">
+	<input type="hidden" name="wan_heartbeat_x" value="">
+	<input type="hidden" name="wan_dnsenable_x" value="1">
+	<input type="hidden" name="wan_dns1_x" value=""> 
+	<input type="hidden" name="wan_dns2_x" value=""> 
+	<!-- internet ISP -->
+	<input type="hidden" name="wan_hostname" value="">
+	<input type="hidden" name="wan_hwaddr_x" value="">
+	<!-- internet Account -->
+	<input type="hidden" name="wan_pppoe_username" value="">
+	<input type="hidden" name="wan_pppoe_passwd" value="">
+	<!-- ap lan -->
+	<input type="hidden" name="lan_proto" value="static">
+	<input type="hidden" name="lan_ipaddr" value="192.168.1.1">
+	<input type="hidden" name="lan_netmask" value="255.255.255.0">
+	<input type="hidden" name="lan_gateway" value="0.0.0.0">
+	<input type="hidden" name="lan_dnsenable_x" value="0">
+	<input type="hidden" name="lan_dns1_x" value="">
+	<input type="hidden" name="lan_dns2_x" value="">
+	<input type="hidden" name="lan_ipaddr_rt" value="192.168.1.1">
+	<input type="hidden" name="lan_netmask_rt" value="255.255.255.0">
+	<!-- unifi -->
+	<input type="hidden" name="switch_wantag" value="none">
+	<input type="hidden" name="switch_wan0tagid" value="">
+	<input type="hidden" name="switch_wan0prio" value="0">
+	<input type="hidden" name="switch_wan1tagid" value="">
+	<input type="hidden" name="switch_wan1prio" value="0">
+	<input type="hidden" name="switch_wan2tagid" value="">
+	<input type="hidden" name="switch_wan2prio" value="0">
+	<input type="hidden" name="switch_stb_x" value="0">
+	<!-- wireless client -->
+	<input type="hidden" name="wlc_band" value="">
+	<input type="hidden" name="wlc_ssid" value="8f3610e3c9feabed953a6">
+	<input type="hidden" name="wlc_wep" value="">
+	<input type="hidden" name="wlc_key" value="">
+	<input type="hidden" name="wlc_wep_key" value="">
+	<input type="hidden" name="wlc_auth_mode" value="">
+	<input type="hidden" name="wlc_crypto" value="">
+	<input type="hidden" name="wlc_wpa_psk" value="">
+	<input type="hidden" name="wlc_nbw_cap" value="">
+</form>
+
+<form method="post" name="redirectForm" action="QIS_wizard.htm%3Fflag=detect.html#" target="contentM">
+<input type="hidden" name="flag" value="">
+<input type="hidden" name="prev_page" value="">
+</form>
+
+<form method="post" name="start_update" action="http://admin:admin@192.168.1.1/start_apply2.htm" target="hidden_frame">
+	<input type="hidden" name="productid" value="RT-AC66U">
+	<input type="hidden" name="flag" value="liveUpdate">
+	<input type="hidden" name="current_page" value="">
+	<input type="hidden" name="next_page" value="">
+	<input type="hidden" name="action_mode" value="apply">
+	<input type="hidden" name="action_script" value="start_webs_update">
+	<input type="hidden" name="action_wait" value="12">
+</form>
+<iframe name="hidden_frame" id="hidden_frame" src="QIS_wizard.htm%3Fflag=detect.html#" width="0" height="0" frameborder="0"></iframe>
+</body>
+
+<!-- Mirrored from 192.168.1.1/QIS_wizard.htm by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 15 Jun 2013 17:28:01 GMT -->
+</html>
+﻿

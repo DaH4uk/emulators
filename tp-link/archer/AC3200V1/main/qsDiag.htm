@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script type="text/javascript" language="javascript">
 var step = 0;
 var ethStk = "";
@@ -325,3 +326,332 @@ function testInternet() {
     doInternetDiag();
 }
 </script>
+=======
+<script type="text/javascript" language="javascript">
+var step = 0;
+var ethStk = "";
+var bStart = false; /* indicates that whether we've started a diagnostic once */
+var failNotePre = n_str["quicksetup"].c_internetFailed;
+var reconfigPage = "qsType.htm";
+var removeLoadingFlag = false; /* avoid removing loading icon too quickly to see it */
+var bDiagCompleted = false;
+var handler = "";
+var diagTimeout = $.getAsync();
+
+function doInternetDiag() {
+    var ethIntfCfg = {};
+    var dftConnection = {};
+    var connStatus = "";
+    var connError = "";
+
+    if (!$.checkAsync(diagTimeout))
+        return;
+
+    switch (step)
+	{
+        case 0:
+            if (ethStk == "") 
+			{
+                doFail();
+                return;
+            }
+            ethIntfCfg = $.act(ACT_GET, WAN_ETH_INTF, ethStk, null, ["Status"]);
+            $.exe(function(err) 
+			{
+                if (err) 
+				{
+                    diagRemoveLoading();
+                    $.alert(err);
+                    return;
+                }
+                if (ethIntfCfg.status == "Up") 
+				{
+                    step++;
+                    doInternetDiag();
+                } 
+				else if (ethIntfCfg.status == "NoLink" || ethIntfCfg.status == "Disabled" || ethIntfCfg.status == "Error") 
+				{
+                    handler = function()
+					{
+                        doFail();
+                    }
+                    bDiagCompleted = true;
+                    if (removeLoadingFlag == true)
+                        handler();
+                    return;
+                } 
+				else 
+				{
+                    setTimeout(doInternetDiag, 1000);
+                }
+            });
+            break;
+        case 1:
+            if ($.qd.eth.connectionType == "PPPoE") {
+                dftConnection = $.act(ACT_GET, WAN_PPP_CONN, $.qd.eth.diagStack, null, ["ConnectionStatus", "LastConnectionError"]);
+            } else if ($.qd.eth.connectionType == "DynamicIp" || $.qd.eth.connectionType == "StaticIp") {
+                dftConnection = $.act(ACT_GET, WAN_IP_CONN, $.qd.eth.diagStack, null, ["ConnectionStatus"]);
+            } else if (INCLUDE_PPTP && $.qd.eth.connectionType == "Pptp") {
+                dftConnection = $.act(ACT_GET, WAN_PPTP_CONN, $.qd.eth.diagStack, null, ["ConnectionStatus"]);
+            } else if (INCLUDE_L2TP && $.qd.eth.connectionType == "L2tp") {
+                dftConnection = $.act(ACT_GET, WAN_L2TP_CONN, $.qd.eth.diagStack, null, ["ConnectionStatus"]);
+            }
+
+            $.exe(function(err) {
+                if (err) {
+                    diagRemoveLoading();
+                    $.alert(err);
+                    return;
+                }
+                connStatus = dftConnection.connectionStatus;
+                if (connStatus == "Connected") 
+				{
+                    step++;
+                    doInternetDiag();
+                } 
+				else if (connStatus == "Disconnected" || connStatus == "Unconfigured")
+				{
+                    handler = function()
+					{
+                        doFail();
+                    }
+                    bDiagCompleted = true;
+                    if (removeLoadingFlag == true)
+                        handler();
+                    return;
+                } 
+				else 
+				{
+                    setTimeout(doInternetDiag, 1000);
+                }
+            });
+            break;
+        case 2:
+            diagTool = $.act(ACT_GET, DIAG_TOOL, null, null, ["LastResult"]);
+            $.exe(function(err) {
+                if (err) {
+                    $.alert(err);
+                    return;
+                }
+                if (diagTool.lastResult == 3) 
+				{
+                    setTimeout(doInternetDiag, 1000);
+                } 
+				else 
+				{
+                    if (bStart == true) 
+					{
+                        if (diagTool.lastResult == 1) 
+						{
+                            handler = function() 
+							{
+                               // diagRemoveLoading();
+                                $.qd.internetDiag = 3;
+                                //$.qf.next();
+                                doSuccess();
+                            }
+                        } 
+						else 
+						{
+                            handler = function()
+							{
+                                doFail();
+                            }
+                        }
+                        bDiagCompleted = true;
+                        if (removeLoadingFlag == true)
+                            handler();
+                    } 
+					else 
+					{
+                        bStart = true;
+                        $.act(ACT_OP, ACT_OP_DIAG_STARTDIAG, diagTool.__stack);
+                        $.exe(function(err) {
+                            if (err) {
+                                $.alert(err);
+                                return;
+                            }
+                            setTimeout(doInternetDiag, 1000);
+                        });
+                    }
+                }
+            });
+            break;
+    }
+}
+
+function diagAddLoading() {
+    $("#diag_loading").removeClass("nd");
+    $("#test_failed").addClass("nd");
+    $("#test_success").addClass("nd");
+    $("#diag-container").find("div.msg-btn-container").hide();
+    $("#diag-container").find("a.widget-close.msg-close").hide();
+}
+
+function diagRemoveLoading() {
+    $("#diag_loading").addClass("nd");
+    $("#diag-container").find("div.msg-btn-container").show();
+    $("#diag-container").find("a.widget-close.msg-close").show();
+    $.setCentralPosition($("#diag-container"));
+}
+
+function doFail() {
+    $("#test_failed").removeClass("nd");
+    $("#test_success").addClass("nd");
+    diagRemoveLoading();
+}
+
+function doSuccess() {
+    $("#test_failed").addClass("nd");
+    $("#test_success").removeClass("nd");
+    diagRemoveLoading();
+}
+
+function doFinish() {
+    $("#basic").click();
+}
+
+function goPrev() {
+    $.qf.prev();
+}
+
+function showDiag() {
+    var tmp = $("#diag-container");
+    $.setCentralPosition(tmp);
+    $.lock();
+    $.showCover();
+    tmp.fadeIn(200, function() {
+        tmp.css("z-index", "999");
+        tmp.removeClass("nd");
+    });
+
+    tmp.delegate("a.msg-close", "click", function(e) {
+        e.preventDefault();
+        $.removeLoading();
+        $.hideCover();
+        tmp.fadeOut(200, function() {
+            tmp.addClass("nd");
+        });
+
+    }).delegate("button.btn-msg-ok", "click", function(e) {
+        e.preventDefault();
+        $.removeLoading();
+        $.hideCover();
+        tmp.fadeOut(200, function() {
+            tmp.addClass("nd");
+        });
+    });
+}
+
+function hideDiag() {
+    var tmp = $("#diag-container");
+    $.unlock();
+    $.hideCover();
+    tmp.fadeOut(200, function() {
+        tmp.addClass("nd");
+    });
+}
+</script>
+<div id="quicksetup_diag_container">
+    <form class="pure-form pure-form-aligned">
+        <div id="diagSuccess">
+            <p class="qs_status" style="font-size: 25px;" id="t_success"></p>
+            <p style="margin-top: 35px;" id="t_qs_completed"></p>
+            <p id="t_qs_end"></p>
+            <div class="inline">
+            	<button type="submit" class="blue xxl" id="t_testInternet">Test Internet Connection</button>
+			</div>
+            <!--
+            <p style="margin-top: 35px; color: #FF9933;" >
+                <a href="javascript:void(0);">
+                    <span id="test_icon"></span><span class="test_link" style="color: #FF9933;" id="t_qs_testInternet"></span>
+                </a>
+            </p>
+            -->
+        </div>
+        <div id="diagFailed" class="nd">
+            <p class="qs_status" style="font-size: 25px;" id="t_sorry">
+            </p>
+            <p style="margin-top: 35px;" id="t_qs_restart">
+            </p>
+        </div>
+    </form>
+</div>
+
+<div id="diag-container" class="container widget-container msg-container grid-popup-msg nd">
+    <div class="position-center-left">
+        <div class="position-center-right">
+            <div class="msg-wrap">
+                <a class="widget-close msg-close" href="javascript:void(0);"></a>
+                <div class="msg-content-wrap">
+                    <div class="widget-content msg-content-container">
+                    
+                        <div class="grid-warning-msg"  style="width: 400px;" id="test_success">
+                            <span id="quicksetup-icon-diag-seccessed"></span>
+                           <span style="font-size: 25px; margin-left: 10px;" class="T" id="t_test_success">Success!</span>
+                            <p style="padding-left: 70px;" id="t_qs_success_info">Click Finish to end the Quick Setup process.</p>
+                        </div>
+                        
+                        <div class="grid-warning-msg"  style="width: 400px;" id="test_failed">
+                           <span id="quicksetup-icon-diag-failed"></span>
+                           <span style="font-size: 25px; margin-left: 10px;" class="T" id="t_test_fail">Failed</span>
+                            <p style="padding-left: 70px;" id="t_qs_failed_info1">If all Quick Setup parameters are correct, please reboot your modem, wait 2 minutes, and click Test Internet Connection one more time. If you are not using a modem, you may need to contact your Internet Service Provider (ISP) for assistance.</p>
+                        </div>
+                        
+                        <div class="grid-warning-msg"  style="width: 400px;" id="diag_loading">
+                            <span class="diag-loading-icon"></span>
+                            <span id="t_diagLoadingText"></span>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="msg-btn-container">
+                <div class="msg-btn-wrap">
+                    <div class="button-container in-line">
+                        <button type="button" class="button-button green pure-button btn-msg btn-msg-ok btn-alert">
+                            <span>OK</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="inline-btn-right quicksetup-button-container">
+    <div class="inline">
+        <button type="submit" class="green T_back" onclick="goPrev()">Back</button>
+    </div>
+    <div class="inline">
+        <button type="submit" class="green T_finish" onclick="doFinish()">Finish</button>
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+var diagRet = true;
+
+$("#t_testInternet").click(function() {
+    testInternet();
+    showDiag();
+});
+
+function testInternet() {
+    var commonIntfCfgList = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    $.exe();
+    $.each(commonIntfCfgList, function() {
+        if (this.WANAccessType == "Ethernet") {
+            ethStk = this.__stack;
+            return false;
+        }
+    });
+    $.qd.internetDiag = 0;
+    diagAddLoading();
+    setTimeout(function() {
+        removeLoadingFlag = true;
+        if (bDiagCompleted == true && handler) handler();
+    }, 1000);
+    doInternetDiag();
+}
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

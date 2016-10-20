@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -274,3 +275,281 @@ document.write('<input type="button" name="add" value="'+add_mark+'" /><input ty
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../lan.js"></script>
+<script language=javascript type=text/javascript src="../reservation.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_lan');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#lan.html" target=formframe>
+<input type=hidden name=submit_flag value="lan">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(lan_mark_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var resev_array_num= 0;
+</script>
+<script>
+var old_lanip="192.168.1.1";
+var old_lanmask="255.255.255.0";
+var dmz_ip=" ";
+var bs_trustedip="";
+var wds_endis_fun="0";
+var wan_type="pppoe";
+var wan_ip="10.64.64.64";
+var wan_mask="0.0.0.0";
+var endis_wl_radio="1";
+var wds_endis_fun="0";
+var wds_repeater_basic="0";
+var eth1_wanip="0.0.0.0";
+var eth1_wanmask="0.0.0.0";
+var model="";
+var netgear_region="RU";
+var lan_gateway_dns_flag=(netgear_region.toUpperCase() == "PR") ? 1 : 0;
+if( lan_gateway_dns_flag == 1 )
+{
+var old_lan_gateway="0.0.0.0";
+var old_lan_primary_dns="0.0.0.0";
+var old_lan_secondary_dns="0.0.0.0";
+}
+function loadvalue()
+{
+var form=document.forms[0];
+var dhcp_start='192.168.1.2';
+var dhcp_end='192.168.1.254';
+form.device_name.value="JWNR2000";
+var lanip_array = old_lanip.split(".");
+form.lan_ip1.value=lanip_array[0];
+form.lan_ip2.value=lanip_array[1];
+form.lan_ip3.value=lanip_array[2];
+form.lan_ip4.value=lanip_array[3];
+var mask_array = old_lanmask.split(".");
+form.lan_mask1.value=mask_array[0];
+form.lan_mask2.value=mask_array[1];
+form.lan_mask3.value=mask_array[2];
+form.lan_mask4.value=mask_array[3];
+
+if( lan_gateway_dns_flag == 1 )
+{
+var lan_gateway_array = old_lan_gateway.split(".");
+form.LGateway1.value=lan_gateway_array[0];
+form.LGateway2.value=lan_gateway_array[1];
+form.LGateway3.value=lan_gateway_array[2];
+form.LGateway4.value=lan_gateway_array[3];
+var lan_priDNS_array = old_lan_primary_dns.split(".");
+form.DAddr1.value=lan_priDNS_array[0];
+form.DAddr2.value=lan_priDNS_array[1];
+form.DAddr3.value=lan_priDNS_array[2];
+form.DAddr4.value=lan_priDNS_array[3];
+var lan_secDNS_array = old_lan_secondary_dns.split(".");
+form.PDAddr1.value=lan_secDNS_array[0];
+form.PDAddr2.value=lan_secDNS_array[1];
+form.PDAddr3.value=lan_secDNS_array[2];
+form.PDAddr4.value=lan_secDNS_array[3];
+}
+
+form.sysPoolStartingAddr1.value = form.sysPoolFinishAddr1.value=lanip_array[0];
+ form.sysPoolStartingAddr2.value = form.sysPoolFinishAddr2.value= lanip_array[1];
+form.sysPoolStartingAddr3.value = form.sysPoolFinishAddr3.value=lanip_array[2];
+var start_array =dhcp_start.split('.');
+var end_array = dhcp_end.split('.');
+form.sysPoolStartingAddr4.value=start_array[3];
+form.sysPoolFinishAddr4.value=end_array[3];
+ if( '1' == '1')
+form.lan_dhcpmode.checked = true;
+ else
+ form.lan_dhcpmode.checked = false;
+ dhcponoff();
+form.rip_version_select.value="0";
+form.rip_direction_select.value="1";
+if ('1' == '1' && '0' == '1' && '0' == 0)
+setDisabled(true,form.rip_version_select,form.rip_direction_select,form.lan_dhcpmode, form.sysPoolStartingAddr4,form.sysPoolFinishAddr4,form.add,form.edit,form.delbt);
+}
+</script>
+<input type="hidden" name="select_edit">
+<input type="hidden" name="select_del">
+<input type="hidden" name="dhcp_start">
+<input type="hidden" name="dhcp_end">
+<input type="hidden" name="dmz_ip">
+<input type="hidden" name="bs_trustedip">
+<input type="hidden" name="network">
+<input type="hidden" name="change_network_flag">
+<input type="hidden" name="change_network2_flag">
+<input type="hidden" name="change_ip_flag">
+<input type="hidden" name="lan_ipaddr">
+<input type="hidden" name="lan_subnet">
+<input type="hidden" name="lan_gateway">
+<input type="hidden" name="lan_primary_dns">
+<input type="hidden" name="lan_secondary_dns">
+<tr> 
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_lan','device_name')"><b><script>document.write(lan_mark_name);</script></b></a></td> 
+<script>document.write(hd_r);</script><input type="text" name="device_name" size="20" maxlength="12" value=""></td> 
+</tr> 
+<script>document.write(bluebar);</script>
+<TR><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_lan','tcp')"><B><script>document.write(lan_mark_ip_head);</script><script>document.write(ba);</script></TD></TR>
+<TR>
+ <script>document.write(hd);</script><span id="iptext"><script>document.write(lan_mark_ip);</script></span></TD>
+ <script>document.write(hd_r);</script>
+ <input type="text" size="3" maxlength="3" name="lan_ip1" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">.
+ <input type="text" size="3" maxlength="3" name="lan_ip2" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">.
+ <input type="text" size="3" maxlength="3" name="lan_ip3" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">.
+ <input type="text" size="3" maxlength="3" name="lan_ip4" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">
+ </TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script><span id="subtext"><script>document.write(lan_mark_subnet);</script></span></TD>
+ <script>document.write(hd_r);</script>
+ <input type="text" size="3" maxlength="3" name="lan_mask1" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">.
+ <input type="text" size="3" maxlength="3" name="lan_mask2" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">.
+ <input type="text" size="3" maxlength="3" name="lan_mask3" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">.
+ <input type="text" size="3" maxlength="3" name="lan_mask4" onFocus="this.select();" onKeyPress="return getkey('num', event)" onBlur="lanip_change(document.forms[0])">
+</TD>
+ </TR>
+<script>
+if( lan_gateway_dns_flag == 1 )
+{
+document.write('<TR>');
+document.write('<TD nowrap><span id="iptext">');
+document.write(lan_mark_gateway);
+document.write('</span></TD>');
+document.write('<TD nowrap align=right>');
+document.write('<input type="text" name="LGateway1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="LGateway2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="LGateway3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="LGateway4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">');
+document.write('</TD>');
+document.write('</TR>');
+document.write('<TR>');
+document.write('<TD nowrap><span id="iptext">');
+document.write(basic_int_primary_dns);
+document.write('</span></TD>');
+document.write('<TD nowrap align=right>');
+document.write('<input type="text" name="DAddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="DAddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="DAddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="DAddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">');
+document.write('</TD>');
+document.write('</TR>');
+document.write('<TR>');
+document.write('<TD nowrap><span id="iptext">');
+document.write(basic_int_second_dns);
+document.write('</span></TD>');
+document.write('<TD nowrap align=right>');
+document.write('<input type="text" name="PDAddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="PDAddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="PDAddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">.');
+document.write('<input type="text" name="PDAddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onKeyPress="return getkey(\'num\',event);">');
+document.write('</TD>');
+document.write('</TR>');
+}
+</script> 
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(rip_dir);</script></td>
+ <script>document.write(hd_r);</script>
+ <select name="rip_direction_select">
+<option value="1"><script>document.write(rip_both);</script></option>
+ <option value="2"><script>document.write(rip_in);</script></option>
+ <option value="3"><script>document.write(rip_out);</script></option>
+ </td>
+ </tr>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(rip_ver);</script></td>
+ <script>document.write(hd_r);</script>
+ <select name="rip_version_select">
+ <option value="0" selected><script>document.write(rip_disable);</script></option>
+ <option value="1"><script>document.write(rip1);</script></option>
+ <option value="2"><script>document.write(rip2b);</script></option>
+ <option value="3"><script>document.write(rip2m);</script></option>
+ </td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <script>document.write(hd);</script>
+ <input type="checkbox" name="lan_dhcpmode" value='1' onClick="dhcponoff()"><a tabindex=-1 href="javascript:loadhelp('_lan','dhcp')"><b><script>document.write(lan_mark_dhcp);</script><script>document.write(ba);</script></TD>
+ </TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script><span id="iptext"><script>document.write(lan_dhcp_start);</script></span></TD>
+ <script>document.write(hd_r);</script>
+<input type="text" name="sysPoolStartingAddr1" size="3" maxlength="3" disabled >.
+ <input type="text" name="sysPoolStartingAddr2" size="3" maxlength="3" disabled>.
+<input type="text" name="sysPoolStartingAddr3" size="3" maxlength="3" disabled>.
+<input type="text" name="sysPoolStartingAddr4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+ </td>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script><span id="subtext"><script>document.write(lan_dhcp_end);</script></span></TD>
+ <script>document.write(hd_r);</script>
+ <input type="text" name="sysPoolFinishAddr1" size="3" maxlength="3" disabled>.
+<input type="text" name="sysPoolFinishAddr2" size="3" maxlength="3" disabled>.
+<input type="text" name="sysPoolFinishAddr3" size="3" maxlength="3" disabled>.
+<input type="text" name="sysPoolFinishAddr4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)"></td>
+ </TR>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_lan','reserved')"><b><script>document.write(reservation_head);</script> <script>document.write(ba);</script></td></tr>
+<tr>
+ <script>document.write(hd2);</script><div align=center>
+<script>document.write(table_bolder);</script>
+<TR>
+<script>document.write(hd_center);</script>&nbsp</TD>
+<script>document.write(hd_center);</script> <span class="subhead">#</span></TD>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(info_mark_ip);</script></span></TD>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(adva_wlan_devicename);</script></span></TD>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(stalist_macaddr);</script></span></TD>
+</span></TR>
+<script>
+var array_num= 0;
+if( array_num > 0 )
+{
+for(i=1;i<=array_num;i++)
+{
+var str = eval ( 'resevArray' + i );
+var each_info=str.split(' ');
+document.write('<tr>'+hd_center+'<input type="radio" name="select_resev" value="'+i+'"></td>');
+document.write(hd_center+'<span class="subhead">'+i+'</span></td>');
+if (each_info[0]=="<unknown>")
+document.write(hd_center+' &lt;unknown&gt;</td>');
+else
+document.write(hd_center+each_info[0]+'</td>');
+if (each_info[2]=="<unknown>")
+ document.write(hd_center+' &lt;unknown&gt;</td>');
+ else
+document.write(hd_center+each_info[2]+'</td>');
+if (each_info[1]=="<unknown>")
+ document.write(hd_center+' &lt;unknown&gt;</td>');
+ else
+document.write(hd_center+each_info[1]+'</td></tr>');
+}
+}
+</script>
+
+ </table>
+ </td>
+ </tr>
+ <tr>
+ <script>document.write(hd2_center)
+document.write('<input type="button" name="add" value="'+add_mark+'" /><input type="submit" name="edit" value="'+edit_mark+'" /> <input type="submit" name="delbt" value="'+delete_mark+'" />');</script>
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <TR>
+ <TD align=middle colSpan=2>
+ <script>document.write('<input type="submit" value="'+apply_mark+'" />&nbsp;&nbsp;');</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"lan.html\";'></TD>");</script>
+ </TR>
+</TABLE>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

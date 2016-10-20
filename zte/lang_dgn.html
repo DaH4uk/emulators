@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="No-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="-1" />
+    <title>Wireless AP</title>
+    <link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+    <script type="text/javascript" src="./js/error.js"></script>
+    <script type="text/javascript" src="./js/menu.js"></script>
+    <script type="text/javascript" src="./js/ping.js"></script>
+    <script type="text/javascript" src="./js/SecBoot.js"></script>
+    <script type="text/javascript" src="./js/comBasicFun.js"></script>
+    <script type="text/javascript" src="./js/ajax.js"></script>
+    <script type="text/javascript" src="./js/wiz_ajax.js"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        /*---- Global variable define -----*/
+        var G_Error = "0";
+        var G_Status = "0";
+        var G_Error_Msg = "";
+        var G_ViewState = "-";
+        var userLevel = "1";
+        var G_Menu = "management";
+        var G_Page = "ping";
+        var G_SubPage = "-";
+        var G_ErrorPage = "-";
+
+
+        /* Get Current Page Url */
+        function uiGetPageUrl() {
+            IsLanOrWan_russia();
+            var strUrl = './index.html' +
+                '&var:menu=' + G_Menu +
+                '&var:page=' + G_Page;
+            if (G_SubPage != '0')
+                strUrl += '&var:subpage=' + G_SubPage;
+            if (G_ErrorPage != '0')
+                strUrl += '&var:errorpage=' + G_ErrorPage;
+
+            return strUrl;
+        }
+
+        /* Refresh Current Page */
+        function uiPageRefresh() {
+            document.location.href = uiGetPageUrl();
+        }
+
+
+        var G_IsLanOrWan = "";
+
+        function IsLanOrWan_russia() {
+            if ('0' == '0') {
+                G_IsLanOrWan = "wan";
+                return false;
+            }
+            else {
+                G_IsLanOrWan = "lan";
+                return true;
+            }
+        }
+
+
+        var G_Host = "192.168.0.1";
+        var G_DiagnosticsState = "None";
+        var G_NumberOfRepetitions = "5";
+        var G_Timeout = "1000";
+        var G_DataBlockSize = "56";
+
+        var G_SuccessCount = "0";
+        var G_FailureCount = "0";
+        var G_AverageResponseTime = "0";
+        var G_MinimumResponseTime = "0";
+        var G_MaximumResponseTime = "0";
+
+        function uiOnload() {
+            var Node_Output = '';
+
+            supplyValue('INPUT_Host', G_Host);
+            supplyValue('INPUT_NumberOfRepetitions', G_NumberOfRepetitions);
+            supplyValue('INPUT_TimeOut', G_Timeout);
+            supplyValue('INPUT_DataBlockSize', G_DataBlockSize);
+
+            with(data_language.dynamic) {
+                switch (G_DiagnosticsState) {
+                    case 'Complete':
+                        {
+                            Node_Output += lang_ping_status + ': ' + lang_finish + unescape("%0a");
+                            Node_Output += lang_succ_times + ': ' + G_SuccessCount + unescape("%0a");
+                            Node_Output += lang_fail_times + ': ' + G_FailureCount + unescape("%0a");
+                            Node_Output += lang_response_time + ': ' + lang_max + G_MaximumResponseTime + ' ms ，' + lang_min + G_MinimumResponseTime + ' ms , ' + lang_avg + G_AverageResponseTime + ' ms';
+                            break;
+                        }
+                    case 'Error_CannotResolveHostName':
+                        {
+                            Node_Output = lang_ping_status + ': ' + lang_cannot_resolve_hostname;
+                            break;
+                        }
+                    case 'X_TWSZ-COM_Error_Unreachable':
+                        {
+                            Node_Output = lang_ping_status + ': ' + lang_unreachable_dest_net;
+                            break;
+                        }
+                    case 'Error_Interal':
+                        {
+                            Node_Output = lang_ping_status + ': ' + lang_internal_error;
+                            break;
+                        }
+                    case 'Requested':
+                        {
+                            Node_Output = lang_ping_status + ': ' + lang_pinging;
+                            setTimer();
+                            break;
+                        }
+                    case 'None':
+                        break;
+                }
+            }
+
+            $('TEXTAREA_Output').value = Node_Output;
+
+            dealWithError();
+        }
+
+        function uiSubmit(_tmp) {
+            var value_array = $('INPUT_Host', 'INPUT_NumberOfRepetitions', 'INPUT_TimeOut', 'INPUT_DataBlockSize');
+            $H({
+                ':InternetGatewayDevice.IPPingDiagnostics.Host': value_array[0].value,
+                ':InternetGatewayDevice.IPPingDiagnostics.NumberOfRepetitions': value_array[1].value,
+                ':InternetGatewayDevice.IPPingDiagnostics.Timeout': value_array[2].value,
+                ':InternetGatewayDevice.IPPingDiagnostics.DataBlockSize': value_array[3].value,
+                ':InternetGatewayDevice.IPPingDiagnostics.DiagnosticsState': _tmp,
+                'var:state': _tmp == 'Requested' ? 1 : 0,
+                'var:menu': 'management',
+                'var:page': 'ping',
+                'var:errorpage': 'ping',
+                'var:CacheLastData': ViewState.Save(),
+                'obj-action': 'set'
+            });
+            $('uiPostForm').submit();
+        }
+
+        function setTimer() {
+            var Timer = setTimeout('uiPageRefresh()', 5000);
+            if (G_DiagnosticsState != 'Requested') {
+                clearTimeout(Timer);
+            }
+            else {
+                $('ping').disabled = true;
+            }
+        }
+
+        function uiPageRefresh() {
+            document.location.href = './index.html';
+        }
+
+        function dealWithError() {
+            if (G_Error != 1) {
+                return false;
+            }
+
+            var arrayHint = [];
+            arrayHint['Host'] = 'INPUT_Host';
+            arrayHint['NumberOfRepetitions'] = 'INPUT_NumberOfRepetitions';
+            arrayHint['Timeout'] = 'INPUT_TimeOut';
+            arrayHint['DataBlockSize'] = 'INPUT_DataBlockSize';
+
+            dealErrorMsg(arrayHint, G_Error_Msg);
+        }
+
+        addListeners(uiOnload, Form.Action);
+
+
+        //]]>
+        //���������Ҽ�
+        document.oncontextmenu = function(e) {
+            return false;
+        }
+    </script>
+</head>
+
+<body style="visibility:hidden;">
+    <!--  header -->
+    <div id="Header">
+        <div id="Logo">
+            <p id="Pic"></p>
+            <p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+        </div>
+        <div id="Navigation">
+            <!-- important -->
+            <ul class="M0">
+                <li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+                <!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+                <li class="HidMark"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+                <li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+                <li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+
+                <li class="on"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //zp add 20120419
+        function uiLogout(session) {
+            var form_name = 'uiPostForm';
+            IsLanOrWan_russia();
+            if (G_IsLanOrWan == "wan" || ('0' == '1' && '-' == '1')) {
+                if (document.forms[0]) {
+                    document.forms[0].action = "/cgi-bin/webproc";
+                }
+                else {
+                    form_name = 'uiLogoutForm';
+                    $('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+                }
+
+                $H({
+                    'getpage': 'html/main.html',
+                    //'var:login' :'true',
+                    ':sessionid': session,
+                    'obj-action': 'auth',
+                    ':action': 'logout'
+                }, true);
+                $(form_name).submit();
+            }
+            else {
+                location.href = "logout";
+            }
+        }
+        //end
+    </script>
+    <!--  main content -->
+    <div id="Main">
+        <!-- left menu -->
+        <div id="Menu">
+            <div class="rbottom">
+                <div class="r1"></div>
+                <div class="r2"></div>
+                <div class="r3"></div>
+                <div class="r4"></div>
+            </div>
+            <div id="MenuTitle">
+                <div id="Word_management" class="Word"></div>
+                <a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+            </div>
+            <!-- status -->
+
+
+            <!-- setup -->
+
+
+            <!-- advanced -->
+
+
+
+            <!-- IGMP -->
+
+            <!--  wireless  -->
+
+            <!-- management -->
+            <div class="M1">
+                <p id=""><a href="./lang_management.html" id="lang_system_management">系统管理</a></p>
+
+                <p id=""><a href="./lang_user_management.html" id="lang_user_management">用户管理</a></p>
+
+
+                <p class="SubMenuSwitch dGn">
+                    <a href="./lang_dgn.html"><img src="./img/closed.gif"> <b id="lang_dgn">诊断</b></a>
+                </p>
+                <ul class="ThreeMenu">
+
+                    <li id="up" class="dGn"><a href="./lang_ping.html" id="lang_ping">Ping诊断</a></li>
+
+
+                    <li id="" class="dGn"><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=management&var:page=tracert" id="lang_dgn_tracert">Tracert诊断</a></li>
+
+                </ul>
+
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=management&var:page=tr069" id="lang_tr069">TR069配置</a></p>
+
+
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=management&var:page=config" id="lang_config_update">配置升级</a></p>
+
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=management&var:page=firmware" id="lang_img_update">固件升级</a></p>
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=management&var:page=log" id="lang_log">日志配置</a></p>
+                <p id=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=management&var:page=logview" id="lang_logview">日志显示</a></p>
+
+            </div>
+
+        </div>
+
+        <!--  content -->
+        <div id="Content">
+            <div class="MainTittle">
+                <a href="#" onclick="Help.Go('ping');"><img id="pointTo" src="/html/skin/helpBook.gif" alt="Help" /></a> <span id="lang_title"></span></div>
+            <div class="Embody">
+                <div class="div_left" id="lang_host"></div>
+                <div class="div_middle">&nbsp;<input type="text" maxlength=256 name="INPUT_Host" id="INPUT_Host" value="" onChange="this.value = IPtoNumber(this.value)" /></div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_packetNum" style="margin-top:-3px; "></div>
+                <div class="div_middle">&nbsp;<input type="text" maxlength=4 name="INPUT_NumberOfRepetitions" id="INPUT_NumberOfRepetitions" value="" />&nbsp;(1~100)</div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_timeout"></div>
+                <div class="div_middle">&nbsp;<input type="text" maxlength=4 name="INPUT_TimeOut" id="INPUT_TimeOut" value="" />&nbsp;(1~9999 ms)</div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left" id="lang_packetSize"></div>
+                <div class="div_middle">&nbsp;<input type="text" maxlength=32 name="INPUT_DataBlockSize" id="INPUT_DataBlockSize" value="" />&nbsp;(1~5600)</div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_left">&nbsp;</div>
+                <div class="div_middle">&nbsp;<textarea name="TEXTAREA_Output" id="TEXTAREA_Output" cols="45" rows="10" wrap="virtual" readonly style="font-size:14px; line-height:20px; ">
+			</textarea>
+                </div>
+                <div class="div_right">&nbsp;</div>
+                <div class="div_button do"><input type="button" name="ping" id="ping" value="Ping..." onClick="uiSubmit('Requested');" /></div>
+                <div class="div_button do"><input type="button" name="Stop" id="Stop" value="Stop..." onClick="uiSubmit('Complete');" /></div>
+            </div>
+            <form name="uiPostForm" id="uiPostForm" method="post" action="webproc">
+                <input type="hidden" name="getpage" value="html/index.html" id="uipostGetPage">
+                <input type="hidden" name="errorpage" value="html/index.html" id="uipostErrPage">
+            </form>
+        </div>
+
+        <!-- if loading and content will not display-->
+        <div id="Loading">
+        </div>
+    </div>
+</body>
+
+</html>

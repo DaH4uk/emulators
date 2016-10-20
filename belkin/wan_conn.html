@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -122,4 +123,130 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 	<script language="javascript" type="text/javascript">dw('<input type="button" name="itsbutton0" value="');dw(Next);dw(' &gt;"  style="{width:120px;}" class="submitBtn" onClick="return changeWanPage(99)"></td>');</script>
 	</tr></table></td></tr></table></td>                     
 </form>
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wc1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Connection Type';
+var menuSection	='WAN';
+var menuItem	='Connection Type';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+function logoutF()
+{
+	document.tF0.logout.value=1;
+	document.tF0.submit();
+	return true;
+}
+
+var wanpage='wan_menu.html';
+var timer; 
+
+var havebigpond=true;
+var havepptp=true;
+var havel2tp=true;
+var havemultippoe = '1';
+function logoutF()
+{
+	document.tF0.logout.value=1;
+	document.tF0.submit();
+	return true;
+}
+
+function changeWanPage(type)
+{
+    if(document.tF0.wan_encapmode[0].checked==true)wanpage='wan_dyna.html';
+    if(document.tF0.wan_encapmode[1].checked==true)
+      {
+         if(''=='1')
+         wanpage='wan_stat_checked.html';
+         else
+         wanpage='wan_stat.html';
+      
+      }
+    if(document.tF0.wan_encapmode[2].checked==true)wanpage='wan_ppoe.html';
+    if(havepptp && document.tF0.wan_encapmode[3].checked==true)wanpage='wan_pptp.html';
+    if(havel2tp && document.tF0.wan_encapmode[4].checked==true)wanpage='wan_l2tp.html';
+    if(havebigpond && document.tF0.wan_encapmode[5].checked==true)wanpage='wan_bpa.html';
+    if(havemultippoe == '1' && document.tF0.wan_encapmode[6].checked == true)
+        wanpage = 'multi_pppoe_master.html';    
+    if(type==99)
+        timer = setTimeout('location.replace(wanpage)',0);     
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<form id="tF0" name="tF0" method=post action="http://www.belkin.com/PYRAMID/AdvancedInfo/F5D8236-4ver3000/Interfaces/3.00.02/En/wan_conn.cgi">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(wc1);</script><br><br>
+<table border=0 class="copy_1"><tr><td width=5>&nbsp;</td><td>
+<table width="485" border="0" cellspacing="5" cellpadding="0" align="center" class="copy_1">
+<tr><td width="35">&nbsp;</td><td colspan="2" class="body"><script language="javascript" type="text/javascript">dw(wcc2);</script></td></tr>
+<tr><td width="35"><input type="radio"  checked name="wan_encapmode" value="1" onClick="changeWanPage(1)" checked></td>
+<td colspan="2" class="bold_body"><script language="javascript" type="text/javascript">dw(wcc3);</script></td></tr>
+	<tr><td height="40" width="35">&nbsp;</td><td height="40" colspan="2" class="body"><span><script language="javascript" type="text/javascript">dw(wcc4);</script> 
+	</span></td></tr><tr><td width="35">
+	<input type="radio" name="wan_encapmode" value="2" onClick="changeWanPage(2)"  ></td><td colspan="2" class="bold_body"><script language="javascript" type="text/javascript">dw(wcc5);</script></td></tr><tr><td width="35">&nbsp;</td>
+	<td colspan="2" class="body"><script language="javascript" type="text/javascript">dw(wcc6);</script></td></tr><tr><td width="35">
+	<input type="radio" name="wan_encapmode" value="3" onClick="changeWanPage(3)" >
+	</td><td colspan="2" class="bold_body"><script language="javascript" type="text/javascript">dw(wcc7);</script></td></tr><tr><td width="35">&nbsp;</td>
+	<td colspan="2" class="body"><span><script language="javascript" type="text/javascript">dw(wcc8);</script></span></td></tr>
+	
+	<tr><td width="35">
+		<input type="radio" name="wan_encapmode" value="4" onClick="changeWanPage(4)"  >
+		</td><td colspan="2" class="bold_body"><script language="javascript" type="text/javascript">dw(wcc9);</script></td></tr>
+		<tr><td width="35">&nbsp;</td><td colspan="2" class="body">
+		<span><script language="javascript" type="text/javascript">dw(wcc10);</script></span>
+		</td></tr>
+	
+	<tr><td width="35">
+		<input type="radio" name="wan_encapmode" value="5" onClick="changeWanPage(5)"  >
+		</td><td colspan="2" class="bold_body"><script language="javascript" type="text/javascript">dw(wcc13);</script></td></tr>
+		<tr> <td width="35">&nbsp;</td>
+		<td colspan="2" class="body">
+		<span><script language="javascript" type="text/javascript">dw(wcc14);</script></span>
+		</td> </tr>
+
+	<tr><td width="35">
+		<input type="radio" name="wan_encapmode" value="6" onClick="changeWanPage(6)"  >
+		</td><td colspan="2" class="bold_body"><script language="javascript" type="text/javascript">dw(wcc11);</script></td></tr>
+		<tr> <td width="35">&nbsp;</td>
+		<td colspan="2" class="body">
+		<span><script language="javascript" type="text/javascript">dw(wcc12);</script></span>
+		</td> </tr>
+    <script language="javascript" type="text/javascript">
+    if(havemultippoe == '1')
+    {
+        dw('<tr><td width="35"><input type="radio" name="wan_encapmode" value="7" onClick="changeWanPage(7)" >'+
+    	'</td><td colspan="2" class="body"><b>'+wcc15+'</b></td></tr><tr><td width="35">&nbsp;</td><td colspan="2" class="body">'+
+    	wcc16+'</td></tr>');
+    }   
+</script>
+	<tr>
+	<td width="35">&nbsp;</td>
+	<td width="312">&nbsp;</td>
+	<td width="124"> <br><br>
+	<script language="javascript" type="text/javascript">dw('<input type="button" name="itsbutton0" value="');dw(Next);dw(' &gt;"  style="{width:120px;}" class="submitBtn" onClick="return changeWanPage(99)"></td>');</script>
+	</tr></table></td></tr></table></td>                     
+</form>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 <script language="javascript" type="text/javascript">showTail()</script>

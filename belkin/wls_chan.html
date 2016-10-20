@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -369,3 +370,376 @@ dw('<option value="13" >13</option>');
 <input type="hidden" name="h_bandwidth" value="2">
 </form>
 <script language="javascript" type="text/javascript">showTail()</script>
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wlc1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var helpItem 	='Channel and SSID';
+var menuSection	='WLAN';
+var menuItem	='Channel and SSID';
+var isRouter	='1';
+var	isPS		='';
+var isAPmode
+if('vlan1' =='')
+	isAPmode='1';
+else	
+    isAPmode='0';
+
+
+
+function init()
+{
+    dataToVisible(document.tF);
+    modeQos(0);       
+}
+
+function submitF() 
+{
+    var f = document.tF;
+    
+    if(isBlank(f.wl_ssid.value)) 
+    {
+        f.wl_ssid.focus();
+        f.wl_ssid.select();
+        alert(msg_wls_chan1);
+        return false;
+    }
+    if(!validVisibleStr(f.wl_ssid.value))
+    {
+        f.wl_ssid.focus();
+    	f.wl_ssid.select();
+        alert(msg_invalid_char);
+        return false;
+    }
+    if(f.wl_ssid.value == 'guest')
+    {
+        f.wl_ssid.focus();
+    	f.wl_ssid.select();
+        alert(wlguest1);
+        return false;
+    }
+    
+    dataToHidden(document.forms[0]);
+    return true;
+}
+
+function show_ex_channel(change)
+{   
+    var f = document.tF;
+    var ex_cha = "2";
+    var st_cha = "6";
+    var max_cha = "13";
+    var bandw = "2";
+
+    var tmp = "";
+    
+    if(change)
+    {
+        st_cha = f.wl_channel.value;
+        bandw = f.bandwidth.value;
+    }
+    
+    if(change && (st_cha == "auto" || bandw == "2"))
+    {
+        f.wl_ext_channel.disabled = true;
+        return;
+    }
+        
+    tmp += '<select name="wl_ext_channel">';
+    if(bandw == "2" || st_cha == "auto") //20MHz or stand channel change to auto
+    {
+        tmp += '<option value="'+ex_cha+'">'+ex_cha+'</option>';
+        
+    }
+    else
+    {
+        var low_cha = parseInt(st_cha, 10) - 4;
+        var up_cha = parseInt(st_cha, 10) + 4;
+        
+        if(parseInt(st_cha, 10) < 5)
+        {
+            tmp += '<option value="'+up_cha+'">'+up_cha+'</option>';
+        }
+        else if( parseInt(st_cha, 10) <= max_cha - 4 )
+        {
+            tmp += '<option value="'+low_cha+'">'+low_cha+'</option>';
+            tmp += '<option value="'+up_cha+'">'+up_cha+'</option>';
+        }
+        else
+        {
+            tmp += '<option value="'+low_cha+'">'+low_cha+'</option>';
+        }
+    }
+    tmp += "</select>";
+    
+    document.getElementById('ex_channel').innerHTML = tmp;
+    
+    if(bandw == "2" || st_cha == "auto")
+    {
+        f.wl_ext_channel.disabled = true;
+        return;
+    }
+    
+    if(!change)
+        getSelIndex(f.wl_ext_channel, ex_cha);
+}
+
+function modeQos()
+{
+    var f = document.tF;
+    
+     if(f.wl_gmode.selectedIndex >= 4) 	 
+     { 	 
+        f.qossw.selectedIndex = 1; 	 
+        f.qossw.disabled = true; 	 
+     } 	 
+     else 	 
+     { 	 
+        f.qossw.disabled = false; 	 
+     }
+    if(document.tF.h_bandwidth.value == "1")
+    {
+        f.bandwidth.selectedIndex = 0;
+        f.bandwidth.disabled = true;
+    }
+         
+}
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onLoad="init();">
+<form name="tF" method="post" action="http://www.belkin.com/PYRAMID/AdvancedInfo/F5D8236-4ver3000/Interfaces/3.00.02/En/apply_10_wls_chan.html">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+</script>
+<script language="javascript" type="text/javascript">
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+
+<td valign="top" width="99%" height="100%" class="head_bold">
+<br>&nbsp;&nbsp; <script language="javascript" type="text/javascript">dw(wlc1);</script><br><br>    
+<table border=0 class="copy_1">
+<tr>
+	<td width=5>&nbsp;</td> 
+	<td>
+	      <table width="585" border="0" cellspacing="5" cellpadding="0" align=left class="copy_1">
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td colspan="2" class="body">
+                <script language="javascript" type="text/javascript">dw(wlc2);</script>
+                <a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#channel_ssid','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"> 
+                <b> 
+                <script language="javascript" type="text/javascript">dw(sm1);</script>
+                </b></a> </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174" class="body"><b>
+                <script language="javascript" type="text/javascript">dw(wlc3);</script>
+                &gt;</b></td>
+              <td width="335"> 
+                <select name="wl_channel" onchange="show_ex_channel(1)">
+                <script language="javascript" type="text/javascript"> 
+		          //dw('<option value="auto" selected>'+Auto+'</option>');
+		          dw('<option value="1" >1</option>');
+                  dw('<option value="2" >2</option>');
+                  dw('<option value="3" >3</option>');
+                  dw('<option value="4" >4</option>');
+                  dw('<option value="5" >5</option>');
+                  dw('<option value="6" >6</option>');
+                  dw('<option value="7" >7</option>');
+                  dw('<option value="8" >8</option>');
+                  dw('<option value="9" >9</option>');
+                  dw('<option value="10" >10</option>');
+                  dw('<option value="11" >11</option>');
+                  dw('<option value="12" >12</option>');
+dw('<option value="13" >13</option>');
+                </script></select>&nbsp;&nbsp;&nbsp;&nbsp;<i></i>
+              </td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174" class="body"><b>
+                <script language="javascript" type="text/javascript">dw(wlcwch);</script>
+                &gt;</b></td>
+              <td width="335"> 
+                <span id="ex_channel">
+                <script language="javascript" type="text/javascript">show_ex_channel(0)</script>
+                </span>
+              </td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174" class="body"><b>
+                <script language="javascript" type="text/javascript">dw(wlc4);</script>
+                &gt;</b></td>
+              <td class="plaintext_bold" width="335"> 
+                <input type="text" name="wl_ssid" value="Belkin_N_Wireless_523106" size="32" maxlength="32">
+              </td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174" class="body"><b>
+                <script language="javascript" type="text/javascript">dw(wlc5);</script>
+                &gt;</b></td>
+              <td  width="335"> 
+                <select name="wl_gmode" onChange="modeQos()">
+                <script language="javascript" type="text/javascript">
+                	dw('<option value="0">'+wlcoff+'</option>');
+                   	dw('<option value="2">'+wlcg+'</option>');
+                	dw('<option value="4">'+wlcn+'</option>');
+                   	dw('<option value="7">'+wlcngb+'</option>');
+                </script>
+                </select>
+              </td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174" class="body"><b>
+                <script language="javascript" type="text/javascript">dw(wlc9);</script>
+                &gt;</b></td>
+              <td width="335"> 
+                <input type="checkbox" name="wl_closed" value="">
+                &nbsp;&nbsp;<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#bro_ssid','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"> 
+                <b>
+                <script language="javascript" type="text/javascript">dw(sm1);</script>
+                </b></a> </td>
+            </tr>
+            <TR vAlign=top> 
+              <TD width=36>&nbsp;</TD>
+              <TD width=174 class="body"><B> 
+                <script language="javascript" type="text/javascript">dw(wlc12);</SCRIPT>
+                &gt;</B></TD>
+              <TD width=335> 
+                <TABLE class=copy_1 cellSpacing=1 cellPadding=1 align=left border=0>
+                  <TBODY> 
+                  <TR vAlign=top> 
+                    <TD>
+                      <SELECT name="gprot">
+                        <script language="javascript" type="text/javascript">dw('<option value="0" >'+Off+'</option>');
+						dw('<option value="1" selected>'+On+'</option>');
+						</SCRIPT>
+                      </SELECT>
+                      &nbsp;&nbsp;&nbsp; </TD>
+                    <TD><A class="more" onclick="window.open('glossary.html#protected','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');" 
+                  href="javascript:void(0);"><B>
+                      <script language="javascript" type="text/javascript">dw(sm1);</SCRIPT>
+                      </B></A></TD>
+                  </TR>
+                  </TBODY>
+                </TABLE>
+              </TD>
+            </TR>
+            
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174" class="body"><b>
+                <script language="javascript" type="text/javascript">dw(wlc17);</script>
+                &gt;</b></td>
+              <td  width="335"> 
+                <select name="bandwidth" onchange="show_ex_channel(1)">
+                <script language="javascript" type="text/javascript">
+                	dw('<option value="2"  >'+wlc20+'</option>');
+                	dw('<option value="0" selected >'+wlc22+'</option>');
+                </script>
+                </select>
+              </td>
+            </tr>
+           
+             <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174">
+                <br>
+                &nbsp;</td>
+              <td  width="335">
+                <br>
+                &nbsp;</td>
+            </tr>
+            <TR> 
+              <TD width=36>&nbsp;</TD>
+              <TD width=174 class="head_bold">&nbsp;
+                <b><font size=3><script>dw(wwmm1);</script></b></font></TD>
+              <TD width=335>&nbsp;
+                </TD>
+            </TR>
+            <TR> 
+              <TD width=36>&nbsp;</TD>
+              <TD width=174>&nbsp;
+                </TD>
+              <TD width=335>&nbsp;
+                </TD>
+            </TR>
+            <TR vAlign=top> 
+              <TD width=36>&nbsp;</TD>
+              <TD width=174 class="body"><B> 
+                <script language="javascript" type="text/javascript">dw(wwmm2);</SCRIPT>
+                &gt;</B></TD>
+              <TD width=335> 
+                <TABLE class=copy_1 cellSpacing=1 cellPadding=1 align=left 
+              border=0>
+                  <TBODY> 
+                  <TR vAlign=top> 
+                    <TD>
+                      <SELECT name="qossw">
+                        <script language="javascript" type="text/javascript">dw('<option value="0" >'+Off+'</option>');
+						dw('<option value="1" selected>'+On+'</option>');
+						</SCRIPT>
+                      </SELECT>
+                      &nbsp;&nbsp;&nbsp; </TD>
+                    <TD><A class="more"
+                  onclick="window.open('glossary.html#wmm','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');" 
+                  href="javascript:void(0);"><B> 
+                      <script language="javascript" type="text/javascript">dw(sm1);</SCRIPT>
+                      </B></A></TD>
+                  </TR>
+                  </TBODY>
+                </TABLE>
+              </TD>
+            </TR>
+            
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td width="174"></td>
+              <td  width="335"></td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td class="formText" width="174">&nbsp;</td>
+              <td class="plaintext_bold" width="335">&nbsp; </td>
+            </tr>
+            <tr> 
+              <td width="36">&nbsp;</td>
+              <td colspan="2" align=center> 
+                <script language="javascript" type="text/javascript">dw('<input type="button" name="itsbutton0" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onClick="location.href=\'wls_chan.html\'; return true;" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');
+			dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="');dw(btn2);dw('" onClick="return submitF();" class="submitBtn">');</script>
+              </td>
+            </tr>
+          </table>
+	</td>
+</tr>
+</table>     				
+</td>                     
+<input type="hidden" name="h_wl_channel" value="6"> 	 
+<input type="hidden" name="h_wl_ext_channel" value="2">
+<input type="hidden" name="h_wl_gmode" value="7"> 	 
+<input type="hidden" name="h_wl_closed" value="enable"> 	 
+<input type="hidden" name="h_gprot" value="0">
+<input type="hidden" name="h_qossw" value="1">
+<input type="hidden" name="h_bandwidth" value="2">
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

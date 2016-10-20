@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -81,3 +82,88 @@ return true;
 </form>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_wps');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#wps_status.html" target=formframe>
+<input type=hidden name=submit_flag value="wps_pin">
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=3><H1><script>document.write(add_wps_client_header);</script></H1></TD></TR>
+<TR><TD colSpan=3></TD></TR><TR><td colspan=3><img src="../liteblue.gif" width=100% height=12></td></TR>
+<INPUT TYPE="hidden" NAME="wps_in_progress" VALUE="0">
+<TR><script>document.write(hd);</script><B><script>document.write(wps_or_pin);</script></b></TD></TR>
+<TR><script>document.write(hd);</script><INPUT type=radio name="WPS_type" value=0 onClick="location.href='wps.html'"><script>document.write(wps_push_button);</script></TD></TR>
+<TR><script>document.write(hd);</script><INPUT type=radio name="WPS_type" value=1 checked><script>document.write(wps_pin);</script></TD></TR>
+ <tr>
+ <td colspan="3"><p style='margin-left:15pt'><script>document.write(wps_pin_text1);</script></p></td></tr>
+ <tr>
+<TD><p style='margin-left:15pt'><script>document.write(wps_enter_pin);</script></p></TD>
+<TD nowrap><INPUT TYPE="TEXT" NAME="PIN" SIZE="8" MAXLENGTH="8" VALUE="" align="left" onFocus="this.select();" onKeyPress="return getkey('num', event)"></TD>
+<TD>
+ <p align=center style='margin:0cm;margin-bottom:.0001pt;
+ text-align:center'><span lang=EN-US style='font-size:9.0pt;font-family:Arial'>
+ 
+ <script>document.write('<input type="submit" name=Next value="'+wps_next_mark+'" onclick="if (!check_pin()) return false;">&nbsp;&nbsp;</span></p></TD>');</script>
+</tr>
+<TR><td colspan=3><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script language="javascript">
+<!-- hide script from old browsers
+<!--
+function loadvalue()
+{
+ var cf = document.forms[0];
+}
+function check_pin()
+{
+var cf = document.forms[0];
+var lpin = cf.PIN.value;
+var accum = 0;
+if (lpin.length != 4 && lpin.length != 8) {
+alert(error_4or8);
+return false;
+}
+if ( !_isNumeric(lpin) )
+{
+alert(error_wps_pin);
+return false;
+}
+
+if (lpin.length == 8) {
+lpin = parseFloat(cf.PIN.value);
+accum += 3 * parseInt(lpin / 10000000) % 10;
+accum += 1 * parseInt(lpin / 1000000) % 10;
+accum += 3 * parseInt(lpin / 100000) % 10;
+accum += 1 * parseInt(lpin / 10000) % 10;
+accum += 3 * parseInt(lpin / 1000) % 10;
+accum += 1 * parseInt(lpin / 100) % 10;
+accum += 3 * parseInt(lpin / 10) % 10;
+accum += 1 * parseInt(lpin / 1) % 10;
+if (0 != (accum % 10)) {
+alert(error_wps_pin);
+return false;
+}
+}
+var repeater=0;
+parent.wps_choice=1;
+parent.wps_pin_num=document.forms[0].PIN.value;
+return true;
+}
+//-->
+</script>
+</form>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

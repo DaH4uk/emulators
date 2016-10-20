@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -934,4 +935,942 @@ font-size:12px;
 </table>
 </div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "status";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "-";
+var G_Menu = "status";
+var G_Page = "RU_isp_pppoe";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+// dummy data
+var data_language = {
+innerHTML : {
+'lang_config' : 'Мастер настройки',
+'idStaticIPContext' : 'Пожалуйста, введите нижеследующие настройки подключения (вы можете обнаружить их в договоре на подключение от провайдера):',
+'idPPPOELoginContext' : 'Имя пользователя',
+'idPPPOEPasswordContext' : 'Пароль',
+'idPPPOEServerNameContext' : 'Имя службы'
+},
+value : {
+'back' : 'Назад',
+'next' : 'Далее'
+}
+}
+var G_WanConns = [];
+G_WanConns['IdleDisconnectTime']=300;
+G_WanConns['Path'] = ":InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.";//Path
+G_WanConns['ExternalIPAddress'] = "";
+G_WanConns['SubnetMask'] = "";
+G_WanConns['DefaultGateway'] = "";
+G_WanConns['DNSOverrideAllowed'] = "0";
+G_WanConns['DNSServers'] = "";
+G_WanConns['X_TWSZ-COM_UsrDNSServers'] = "";
+G_WanConns['AddressingType'] = "DHCP";
+G_WanConns['MaxMTUSize'] = "1500";
+G_WanConns['X_TWSZ-COM_VendorId'] = "";
+G_WanConns['X_TWSZ-COM_Hostname'] = "WNR612v3";
+G_WanConns['RouteProtocolRx'] = "Off";
+G_WanConns['X_TWSZ-COM_Domainname'] = "";
+/*use for russia, begin*/
+//var G_DualAccess_Enable = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessEnable?>';
+//var G_DualAccess_IPAddress = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessIPAddress?>';
+//var G_DualAccess_SubnetMask = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessSubnetMask?>';
+//var G_DualAccess_AddressType = '<-?get :InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.X_TWSZ-COM_DualAccessAddressType?>';
+var G_language = 'Russian';
+var G_ApplyLanguage = 'Russian';
+/*use for russia, end*/
+function isValidChar(each_char)
+{
+if( each_char < 33 || each_char > 126)
+return false;
+}
+function RU_pppoe_user_info()
+{
+var jumppage;
+// check user name
+if($('pppoe_username').value=="")
+{
+return false;
+}
+for(var i=0; i<$('pppoe_username').value.length; i++)
+{
+if(isValidChar($('pppoe_username').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check password
+for(var i=0; i<$('pppoe_passwd').value.length; i++)
+{
+if(isValidChar($('pppoe_passwd').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check server ip address
+for (var i=0; i<$('pppoe_servername').value.length; i++)
+{
+if(isValidChar($('pppoe_servername').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+parent.pppoe_username = $('pppoe_username').value;
+parent.pppoe_password = $('pppoe_passwd').value;
+parent.pppoe_server = $('pppoe_servername').value;
+parent.welcome_wan_type=3;
+if(parent.isp_type=="8")
+{
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1=parent.static_dns1;
+parent.pppoe_dns2=parent.static_dns2;
+if(parent.pppoe_dns1 != "" || parent.pppoe_dns1!= "")
+parent.pppoe_dns_assign="1";
+else
+parent.pppoe_dns_assign="0";
+parent.pppoe_eth_ip="";
+parent.pppoe_eth_netmask="";
+parent.pppoe_eth_gateway="";
+parent.pppoe_dual_assign="0";
+parent.dual_access="1";
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="18")
+{
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns_assign="0";
+parent.pppoe_eth_ip="";
+parent.pppoe_eth_netmask="";
+parent.pppoe_eth_gateway="";
+parent.pppoe_dual_assign="0";
+parent.dual_access="0";
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="7" || parent.isp_type=="17")
+{
+jumppage="RU_isp_spoof";
+}
+else if(parent.isp_type=="5" || parent.isp_type=="6")
+{
+jumppage="RU_isp_pppoe_static";
+}
+else if(parent.isp_type=="88")
+{
+jumppage="RU_isp_pppoe_static";
+}
+else
+jumppage="RU_manual_pppoe2";
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function RU_pptp_user_info()
+{
+var jumppage;
+// check user name
+if($('pptp_username').value=="")
+{
+return false;
+}
+for(var i=0; i<$('pptp_username').value.length; i++)
+{
+if(isValidChar($('pptp_username').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check password
+for(var i=0; i<$('pptp_passwd').value.length; i++)
+{
+if(isValidChar($('pptp_passwd').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check server ip address
+if ($('pptp_serv_ip').value=="")
+{
+return false;
+}
+for (var i=0; i<$('pptp_serv_ip').value.length; i++)
+{
+if(isValidChar($('pptp_serv_ip').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+var server_addr_array = $('pptp_serv_ip').value.split('.');
+for (var i=0; i<server_addr_array.length; i++ )
+{
+if (server_addr_array[i].length > 63)
+{
+return false;
+}
+}
+parent.pptp_username = $('pptp_username').value;
+parent.pptp_password = $('pptp_passwd').value;
+parent.pptp_server_ipaddr = $('pptp_serv_ip').value;
+parent.welcome_wan_type = 4;
+if (parent.isp_type == "12" )
+{
+parent.pptp_dns1 = parent.static_dns1;
+parent.pptp_dns2 = parent.static_dns2;
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="11")
+{
+jumppage="RU_isp_spoof";
+}
+else if(parent.isp_type=="9" || parent.isp_type=="10")
+{
+jumppage="RU_isp_pptp_static";
+}
+else
+jumppage="RU_manual_pptp_dual";
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function RU_l2tp_user_info()
+{
+var jumppage;
+// check user name
+if($('l2tp_username').value=="")
+{
+return false;
+}
+for(var i=0; i<$('l2tp_username').value.length; i++)
+{
+if(isValidChar($('l2tp_username').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check password
+for(var i=0; i<$('l2tp_passwd').value.length; i++)
+{
+if(isValidChar($('l2tp_passwd').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+// check server ip address
+if ($('l2tp_serv_ip').value=="")
+{
+return false;
+}
+for (var i=0; i<$('l2tp_serv_ip').value.length; i++)
+{
+if(isValidChar($('l2tp_serv_ip').value.charCodeAt(i))==false)
+{
+return false;
+}
+}
+var server_addr_array = $('l2tp_serv_ip').value.split('.');
+for (var i=0; i<server_addr_array.length; i++ )
+{
+if (server_addr_array[i].length > 63)
+{
+return false;
+}
+}
+parent.l2tp_username = $('l2tp_username').value;
+parent.l2tp_password = $('l2tp_passwd').value;
+parent.l2tp_server_ipaddr = $('l2tp_serv_ip').value;
+parent.welcome_wan_type = 5;
+if (parent.isp_type == "16" )
+{
+parent.l2tp_dns1 = parent.static_dns1;
+parent.l2tp_dns2 = parent.static_dns2;
+uiWanApply();
+return;
+}
+else if(parent.isp_type=="15")
+{
+jumppage="RU_isp_spoof";
+}
+else if(parent.isp_type=="13" || parent.isp_type=="14")
+{
+jumppage="RU_isp_l2tp_static";
+}
+else
+jumppage="RU_manual_l2tp_dual";
+$G('../html/'+jumppage+'.htm',{
+'var:page' : jumppage,
+'getpage' : '../html/'+jumppage+'.htm'
+});
+}
+function RU_welcome_static()
+{
+var tmpIPAddress = $('WPethr1').value+'.'+ $('WPethr2').value +'.'+ $('WPethr3').value +'.'+ $('WPethr4').value;
+var tmpGateway = $('WGateway1').value+'.'+ $('WGateway2').value +'.'+ $('WGateway3').value +'.'+ $('WGateway4').value;
+var tmpSubNet=$('WMask1').value+'.'+ $('WMask2').value +'.'+ $('WMask3').value +'.'+ $('WMask4').value;
+var tmpPriorityDNS=$('DAddr1').value+'.'+$('DAddr2').value+'.'+$('DAddr3').value+'.'+$('DAddr4').value;
+var tmpSecondaryDNS=$('PDAddr1').value+'.'+$('PDAddr2').value+'.'+$('PDAddr3').value+'.'+$('PDAddr4').value;
+// Check DNS
+if(tmpPriorityDNS=='...') tmpPriorityDNS="";
+if(tmpSecondaryDNS=='...')tmpSecondaryDNS="";
+if((tmpPriorityDNS=='')&&(tmpSecondaryDNS=='')){
+alertError('InvDNSServerBlank');
+return false;
+}
+if ((tmpPriorityDNS!='') && !checkDNS(tmpPriorityDNS)) {
+alertError('InvPriDNSServer');
+return false;
+}
+if ((tmpSecondaryDNS!='') && !checkDNS(tmpSecondaryDNS)){
+alertError('InvSecDNSServer');
+return false;
+}
+// check gateway
+if((tmpGateway == '...')||(tmpGateway == '0.0.0.0')){
+alertError('BlankGateway',1);
+return false;
+}
+if(tmpPriorityDNS == tmpIPAddress || tmpPriorityDNS == G_LanIPAddress){
+alertError('InvPriDNSServer');
+return false;
+}
+if( tmpSecondaryDNS == tmpIPAddress || tmpSecondaryDNS == G_LanIPAddress){
+alertError('InvSecDNSServer');
+return false;
+}
+parent.welcome_wan_type = 1;
+parent.static_ip = tmpIPAddress;
+parent.static_subnet = tmpSubNet;
+parent.static_gateway = tmpGateway;
+parent.static_dns1 = tmpPriorityDNS;
+parent.static_dns2 = tmpSecondaryDNS;
+//parent.conflict_wanlan=cf.conflict_wanlan.value;
+if(parent.isp_type=="3" || parent.isp_type=="9" || parent.isp_type=="13")
+{
+$G('../html/RU_isp_spoof.htm',{
+'var:page' : 'RU_isp_spoof',
+'getpage' : '../html/RU_isp_spoof.htm'
+});
+}
+else if(parent.isp_type=="4")
+{
+parent.welcome_wan_type = 1;
+uiWanApply();
+}
+else if(parent.isp_type=="6")
+{
+parent.pppoe_eth_ip = tmpIPAddress;
+parent.pppoe_eth_netmask = tmpSubNet;
+parent.pppoe_eth_gateway = '';
+parent.welcome_wan_type = 3;
+uiWanApply();
+}
+else if(parent.isp_type=="14")
+{
+parent.l2tp_local_ipaddr = tmpIPAddress;
+parent.l2tp_local_netmask = tmpSubNet;
+parent.l2tp_local_gateway = tmpGateway;
+parent.l2tp_dns1 = tmpPriorityDNS;
+parent.l2tp_dns2 = tmpSecondaryDNS;
+parent.l2tp_wan_assign = 1;
+parent.welcome_wan_type = 5;
+uiWanApply();
+}
+else if(parent.isp_type=="10")
+{
+parent.pptp_local_ipaddr = tmpIPAddress;
+parent.pptp_local_netmask = tmpSubNet;
+parent.pptp_local_gateway = tmpGateway;
+parent.pptp_dns1 = tmpPriorityDNS;
+parent.pptp_dns2 = tmpSecondaryDNS;
+parent.pptp_wan_assign = 1;
+parent.welcome_wan_type = 4;
+uiWanApply();
+}
+}
+function RU_check_spoof()
+{
+// check mac format
+var clonmac = $('Spoofmac').value;
+if(clonmac.indexOf(':') == -1)
+{
+if (!clonmac.match(/^[0-9a-fA-F]{12}$/)){
+alertError('CheckMac');
+return false;
+} else {
+clonmac = clonmac.slice(0,2) + ":" + clonmac.slice(2,4) + ":" + clonmac.slice(4,6) + ":" + clonmac.slice(6,8) + ":" + clonmac.slice(8,10) + ":" + clonmac.slice(10,12);
+}
+}
+parent.Spoofmac = $(Spoofmac).value;
+if (Form.Radio('MACAssign')=='0')
+parent.mac_spoof = "0";
+else if (Form.Radio('MACAssign')=='1')
+parent.mac_spoof="1";
+else if (Form.Radio('MACAssign')=='2')
+parent.mac_spoof="2";
+switch (parent.isp_type)
+{
+case 1://dhcp
+parent.wan_assign="0";
+parent.welcome_wan_type=2;
+uiWanApply();
+break;
+case 3://static
+parent.welcome_wan_type=1;
+uiWanApply();
+break;
+case 5://pppoe+static
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1 = parent.static_dns1;
+parent.pppoe_dns2 = parent.static_dns2;
+parent.pppoe_eth_ip = parent.static_ip;
+parent.pppoe_eth_netmask = parent.static_subnet;
+parent.pppoe_eth_gateway = "";
+parent.pppoe_dual_assign = "1";
+parent.dual_access = "1";
+if(parent.pppoe_dns1 != "" || parent.pppoe_dns1 != "")
+parent.pppoe_dns_assign = "1";
+else
+parent.pppoe_dns_assign = "0";
+parent.welcome_wan_type = 3;
+uiWanApply();
+break;
+case 7://pppoe+dynamic
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1 = parent.static_dns1;
+parent.pppoe_dns2 = parent.static_dns2;
+parent.pppoe_dual_assign = "0";
+parent.dual_access = "1";
+if(parent.pppoe_dns1 != "" || parent.pppoe_dns1 != "")
+parent.pppoe_dns_assign = "1";
+else
+parent.pppoe_dns_assign = "0";
+parent.welcome_wan_type = 3;
+uiWanApply();
+break;
+case 9://pptp+static
+parent.pptp_local_ipaddr = parent.static_ip;
+parent.pptp_local_netmask = parent.static_subnet;
+parent.pptp_local_gateway = parent.static_gateway;
+parent.pptp_dns1 = parent.static_dns1;
+parent.pptp_dns2 = parent.static_dns2;
+parent.pptp_wan_assign = 1;
+parent.welcome_wan_type = 4;
+uiWanApply();
+break;
+case 11://pptp+dynamic
+parent.pptp_dns1 = parent.static_dns1;
+parent.pptp_dns2 = parent.static_dns2;
+parent.pptp_wan_assign = 0;
+parent.welcome_wan_type = 4;
+uiWanApply();
+break;
+case 13://l2tp+static
+parent.l2tp_local_ipaddr = parent.static_ip;
+parent.l2tp_local_netmask = parent.static_subnet;
+parent.l2tp_local_gateway = parent.static_gateway;
+parent.l2tp_dns1 = parent.static_dns1;
+parent.l2tp_dns2 = parent.static_dns2;
+parent.l2tp_wan_assign = 1;
+parent.welcome_wan_type = 5;
+uiWanApply();
+break;
+case 15://l2tp+dynamic
+parent.l2tp_dns1 = parent.static_dns1;
+parent.l2tp_dns2 = parent.static_dns2;
+parent.l2tp_wan_assign = 0;
+parent.welcome_wan_type = 5;
+uiWanApply();
+break;
+case 17://pppoe
+parent.pppoe_wan_assign="0";
+parent.pppoe_static_ip="";
+parent.pppoe_dns1 = "";
+parent.pppoe_dns2 = "";
+parent.pppoe_eth_ip = "";
+parent.pppoe_eth_netmask = "";
+parent.pppoe_eth_gateway = "";
+parent.pppoe_dual_assign = "0";
+parent.dual_access = "0";
+parent.pppoe_dns_assign = "0";
+parent.welcome_wan_type = 3;
+uiWanApply();
+break;
+default:
+$G('../html/RU_finish_manual.htm',{
+'var:page' : 'RU_finish_manual',
+'getpage' : '../html/RU_finish_manual.htm'
+});
+break;
+}
+}
+function searchProtocol()
+{
+if(G_WanConns['Path'].indexOf('IP') > 0)
+{
+return G_WanConns['AddressingType'];
+}
+else
+{
+return G_WanConns['ConnectionType'] == 'L2TP_Relay' ? 'L2TP' :
+G_WanConns['ConnectionType'] == 'PPTP_Relay' ? 'PPTP' :
+G_WanConns['ConnectionType'] == 'PPPoU' ? 'PPPoU': 'PPPoE';
+}
+}
+function getConnectionType()
+{
+var value_protocol='';
+switch (parent.welcome_wan_type)
+{
+case 1:
+value_protocol='Static';
+break;
+case 2:
+value_protocol='DHCP';
+break;
+case 3:
+value_protocol='PPPoE';
+break;
+case 4:
+value_protocol='PPTP';
+break;
+case 5:
+value_protocol='L2TP';
+break;
+default:
+value_protocol='';
+break;
+}
+return value_protocol;
+}
+function getProtocol()
+{
+var value_protocol=getConnectionType();
+switch(value_protocol){
+case 'DHCP' : {
+return ['DHCP','IP'];
+}
+case 'Static' : {
+return ['Static','IP'];
+}
+case 'PPPoE' : {
+return ['PPPoE','PPP'];
+}
+case 'PPTP' : {
+return ['PPTP','PPP'];
+}
+case 'L2TP' : {
+return ['L2TP','PPP'];
+}
+case 'PPPoU' : {
+return ['PPPoU','PPP'];
+}
+}
+}
+function uiWanApply()
+{
+var _protocol = getProtocol();
+var _path = G_WanConns['Path']; //唯一的WAN Connection
+if(_path.indexOf(_protocol[1]) < 0)
+{ // -> webproxy
+_path = G_WanConns['Path'].replace(_protocol[1] == 'IP' ? 'PPP' : 'IP', _protocol[1]);
+$F('mid','0438');
+$F(_path + 'X_TWSZ-COM_ProtocolType', _protocol[1]);
+//为配合模块检查，将IP/PPP的前的实例号改为0.
+_path = _path.substr(0, _path.length - 2) + '0.'; // -> InternetGatewayDevice.WANDevice.1.WANConnectionDevice.0.WANIPConnection.0.
+}
+else
+{ // -> cmm
+}
+//公共节点属性
+$F(_path + 'Enable', '1');
+//$F(_path + 'NATEnabled', '1');
+//Name
+$F(_path + 'Name', _protocol[0] + '_1');
+//Mac
+$F(':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_CloneMACAddress', parent.Spoofmac);
+$F(':InternetGatewayDevice.WANDevice.1.WANEthernetInterfaceConfig.X_TWSZ-COM_CloneMACState', parent.mac_spoof);
+/* ? */
+$F(_path + 'RouteProtocolRx', G_WanConns['RouteProtocolRx'] || 'Off');
+if(searchProtocol()!=_protocol[0])
+{//alert("a");
+if(_protocol[0]=='PPPoE'||_protocol[0]=='PPTP'||_protocol[0]=='PPPoE')
+$F(_path + 'X_TWSZ-COM_AlwaysConnectionAction', 'Connect');
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCnterAct', 1);
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcCtlDiscnnAct', "Connect");
+}
+switch(_protocol[0])
+{
+case 'DHCP' : {
+$F(_path + 'X_TWSZ-COM_Hostname',G_WanConns['X_TWSZ-COM_Hostname'] || '');
+$F(_path + 'X_TWSZ-COM_Domainname',G_WanConns['X_TWSZ-COM_Domainname'] || '');
+$F(_path + 'AddressingType', 'DHCP');
+$F(_path + 'ConnectionType', 'IP_Routed');
+if(parent.static_dns1 == "" && parent.static_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.static_dns1 + ',' + parent.static_dns2).delcomma());
+}
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmRndUpVlmPreCnn', '0');
+<!--use for russia, begin-->
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'DHCP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', 'DHCP');
+}
+<!--use for russia, end-->
+break;
+}
+case 'Static' : {
+$F(_path + 'X_TWSZ-COM_Hostname',G_WanConns['X_TWSZ-COM_Hostname'] || '');
+$F(_path + 'X_TWSZ-COM_Domainname',G_WanConns['X_TWSZ-COM_Domainname'] || '');
+$F(_path + 'ExternalIPAddress',parent.static_ip);
+$F(_path + 'SubnetMask',parent.static_subnet);
+$F(_path + 'DefaultGateway',parent.static_gateway);
+//$F(_path + 'MaxMTUSize', $('INPUT_MTU_Static').value);
+$F(_path + 'AddressingType','Static');
+$F(_path + 'ConnectionType','IP_Routed');
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.static_dns1 + ',' + parent.static_dns2).delcomma());
+$F(':InternetGatewayDevice.X_TWSZ-COM_TrafficMeter.TrffcVlmRndUpVlmPreCnn', '0');
+<!--use for russia, begin-->
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'DHCP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', 'DHCP');
+}
+<!--use for russia, end-->
+break;
+}
+case 'PPPoE' :
+// use for russia, begin
+if(G_language==G_ApplyLanguage)
+{
+var dhcp_static = 'dhcp';
+var dual_access_ip = parent.pppoe_eth_ip;
+var dual_access_mask = parent.pppoe_eth_netmask;
+if (parent.dual_access == '1')
+{
+if (dual_access_ip=='...')
+dual_access_ip = '';
+if (dual_access_mask=='...')
+dual_access_mask = '';
+if (dual_access_ip=='' && dual_access_mask=='')
+dhcp_static = 'dhcp';
+else
+dhcp_static = 'static';
+}
+else
+{
+dual_access_ip = '';
+dual_access_mask = '';
+}
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', parent.dual_access == '1' ? '1' : '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'PPPOE');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', (dhcp_static == 'dhcp') ? 'DHCP' : 'Static');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessIPAddress', dual_access_ip);
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessSubnetMask', dual_access_mask);
+}
+// use for russia, end
+$F(_path + 'Username', parent.pppoe_username);
+if (parent.pppoe_password != '**********')
+{
+$F(_path + 'Password', parent.pppoe_password);
+}
+$F(_path + 'PPPoEServiceName', parent.pppoe_server);
+$F(_path + 'PPPAuthenticationProtocol', G_WanConns['PPPAuthenticationProtocol'] || 'Auto');
+//$F(_path + 'MaxMTUSize', $('INPUT_MTU_PPPoE').value);
+//$F(_path + 'IdleDisconnectTime', '300');
+$F(_path + 'ConnectionTrigger', 'AlwaysOn');
+$F(_path + 'ConnectionType', 'IP_Routed');
+if(parent.pppoe_wan_assign == "0")
+{
+$F(_path + 'X_TWSZ-COM_StaticIPAddress', '');
+}
+else
+{
+if(!checkIpAddr(parent.pppoe_static_ip))
+{
+return false;
+}
+$F(_path + 'X_TWSZ-COM_StaticIPAddress', parent.pppoe_static_ip);
+}
+if(parent.pppoe_dns1 == "" && parent.pppoe_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.pppoe_dns1 + ',' + parent.pppoe_dns2).delcomma());
+}
+/*原来非PPPoE，则表示现在切换到PPPoE，要使用默认MTU*/
+if(searchProtocol()!='PPPoE')
+{
+$F(_path + 'MaxMTUSize', '1492');
+$F(_path + 'MaxMRUSize', '1492');
+}
+break;
+case 'PPTP' : {
+if(parent.pptp_local_ipaddr == parent.pptp_server_ipaddr)
+{
+alertError('MyIpSameAsServerIp');
+return false;
+}
+var pptp_vpnClient = (parent.pptp_local_ipaddr == '...') ? '' : parent.pptp_local_ipaddr;
+var pptp_vpnNetmask = (parent.pptp_local_netmask == '...') ? '' : parent.pptp_local_netmask;
+var pptp_vpnGateway = (parent.pptp_local_gateway == '...') ? '' : parent.pptp_local_gateway;
+// use for russia, begin
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'PPTP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', (pptp_vpnClient == '') ? '1' : '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', (pptp_vpnClient == '') ? 'DHCP' : 'Static');
+if (pptp_vpnClient != '')
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', pptp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',pptp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',pptp_vpnGateway);
+}
+}
+else
+// use for russia, end
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', pptp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',pptp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',pptp_vpnGateway);
+}
+$F(_path + 'X_TWSZ-COM_VPN_SERVER', parent.pptp_server_ipaddr);
+$F(_path + 'Username', parent.pptp_username);
+if (parent.pptp_password != '**********')
+{
+$F(_path + 'Password', parent.pptp_password);
+}
+$F(_path + 'ConnectionType', 'PPTP_Relay');
+//$F(_path + 'IdleDisconnectTime','300');
+//$F(_path + 'X_TWSZ-COM_VPN_CONN_ID_NAME',G_WanConns['X_TWSZ-COM_VPN_CONN_ID_NAME']); /*hejianghua*/
+$F(_path + 'ConnectionTrigger','AlwaysOn');
+$F(_path + 'PPPAuthenticationProtocol',G_WanConns['PPPAuthenticationProtocol'] || 'Auto');
+if(parent.pptp_dns1 == "" && parent.pptp_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.pptp_dns1 + ',' + parent.pptp_dns2).delcomma());
+}
+/*原来非PPTP则表示现在切换到PPTP，要使用默认MTU*/
+if(searchProtocol()!='PPTP')
+{
+$F(_path + 'MaxMTUSize', '1436');
+$F(_path + 'MaxMRUSize', '1436');
+}
+break;
+}
+case 'L2TP' : {
+if(parent.l2tp_local_ipaddr == parent.l2tp_server_ipaddr)
+{
+alertError('MyIpSameAsServerIp');
+return false;
+}
+var l2tp_vpnClient = (parent.l2tp_local_ipaddr == '...') ? '' : parent.l2tp_local_ipaddr;
+var l2tp_vpnNetmask = (parent.l2tp_local_netmask == '...') ? '' : parent.l2tp_local_netmask;
+var l2tp_vpnGateway = (parent.l2tp_local_gateway == '...') ? '' : parent.l2tp_local_gateway;
+// use for russia, begin
+if(G_language==G_ApplyLanguage)
+{
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessConnectionType', 'L2TP');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessEnable', (l2tp_vpnClient == '') ? '1' : '0');
+$F(_path.substr(0,57) + 'X_TWSZ-COM_DualAccessAddressType', (l2tp_vpnClient == '') ? 'DHCP' : 'Static');
+if (l2tp_vpnClient != '')
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', l2tp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',l2tp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',l2tp_vpnGateway);
+}
+}
+else
+// use for russia, end
+{
+$F(_path + 'X_TWSZ-COM_VPN_CLIENT', l2tp_vpnClient);
+$F(_path + 'X_TWSZ-COM_VPN_NETMASK',l2tp_vpnNetmask);
+$F(_path + 'X_TWSZ-COM_VPN_GATEWAY',l2tp_vpnGateway);
+}
+$F(_path + 'X_TWSZ-COM_VPN_SERVER', parent.l2tp_server_ipaddr);
+$F(_path + 'Username', parent.l2tp_username);
+if (parent.l2tp_password != '**********')
+{
+$F(_path + 'Password', parent.l2tp_password);
+}
+$F(_path + 'ConnectionType', 'L2TP_Relay');
+//$F(_path + 'IdleDisconnectTime','300');
+$F(_path + 'ConnectionTrigger','AlwaysOn');
+$F(_path + 'PPPAuthenticationProtocol', G_WanConns['PPPAuthenticationProtocol'] || 'Auto');
+if(parent.l2tp_dns1 == "" && parent.l2tp_dns2 == "")
+{
+$F(_path + 'DNSOverrideAllowed', '0');
+}
+else
+{
+$F(_path + 'DNSOverrideAllowed', '1');
+$F(_path + 'X_TWSZ-COM_UsrDNSServers', (parent.l2tp_dns1 + ',' + parent.l2tp_dns2).delcomma());
+}
+/*原来非L2TP则表示现在切换到L2TP，要使用默认MTU*/
+if(searchProtocol()!='L2TP')
+{
+//modify by zhengmingming the L2TP's MTU is 1428 for netgear
+$F(_path + 'MaxMTUSize', '1428');
+$F(_path + 'MaxMRUSize', '1428');
+}
+break;
+}
+}
+$H({
+'obj-action' : 'set',
+'var:page' : 'RU_wait',
+'var:errorpage': G_Page,
+'getpage' : '../html/RU_wait.htm',
+'errorpage' : '../html/RU_wait.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function gotoSearch()
+{
+$G('../html/RU_wait.htm',{
+'var:page': 'RU_wait',
+'var:errorpage': 'RU_wait',
+'getpage': '../html/RU_wait.htm',
+'errorpage': '../html/RU_wait.htm'
+});
+}
+function nullError(responseText){
+return;
+}
+function uiOnload()
+{
+parent.pppoe_server = parent.connection_id;
+$('pppoe_username').value = parent.pppoe_username;
+$('pppoe_passwd').value = parent.pppoe_password;
+$('pppoe_servername').value = parent.pppoe_server;
+}
+function uiRefresh()
+{
+$G('../html/RU_isp_pppoe.htm',{
+'var:page' : 'RU_isp_pppoe',
+'getpage' : '../html/RU_isp_pppoe.htm'
+});
+}
+function uiBackPage()
+{
+$G('../html/RU_welcome.htm',{
+'var:page' : 'RU_welcome',
+'getpage' : '../html/RU_welcome.htm'
+});
+}
+function uiNextPage()
+{
+RU_pppoe_user_info();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+uiRefresh();
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<form id="uiPostForm" method="post" action="RU_isp_pppoe.htm"></form>
+﻿
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+.title_line{border-top:2px solid #9966FF; margin-top:5px; padding:8px 0 0;}
+-->
+</style>
+<div class="page_title" id="lang_config">Setup Wizard</div>
+<div id="main" class="main">
+<table class="content" style="background:white; width:100%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3" id="table1">
+<tbody>
+<tr>
+<td colspan="2"><div class="do bk_black3_black" id="idStaticIPContext">
+</div></td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><b id="idPPPOELoginContext">Login</b></td>
+<td nowrap="" align="right"><input type="text" id="pppoe_username" name="pppoe_username" maxlength="64" size="26" value="guest" onKeyPress="return getkey('ssid',event);"/></td>
+</tr>
+<tr>
+<td nowrap=""><b id="idPPPOEPasswordContext">Password</b></td>
+<td nowrap="" align="right"><input type="password" id="pppoe_passwd" name="pppoe_passwd" maxlength="64" size="26" onKeyPress="return getkey('ssid', event);"/></td>
+</tr>
+<tr style="display:none;">
+<td nowrap=""><b id="idPPPOEServerNameContext">Server Name</b></td>
+<td nowrap="" align="right"><input type="text" id="pppoe_servername" name="pppoe_servername" size="26" onKeyPress="return getkey('ssid', event);"/></td>
+</tr>
+</tbody>
+</table>
+<div class="do bk_black3_black"></div>
+<div class="div_button">
+<input type="button" onClick="uiBackPage()" value="back" name="back" id="back" class="short_common_bt">
+<input type="button" onClick="uiNextPage()" value="next" name="next" id="next" class="short_common_bt">
+</div>
+</div>
+</td>
+<td class="td_help">
+<div class="help" id="lang_help" title="none">
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

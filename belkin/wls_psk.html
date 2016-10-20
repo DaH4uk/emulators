@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -375,3 +376,382 @@ dw('<input type="submit" name="itsbutton1"  value="'+btn2+'" style="{width:160px
 <input type=hidden name="wl_ssid" value="Belkin_N_Wireless_523106">
 </form>
 <script language="javascript" type="text/javascript">showTail()</script>
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wle1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Security';
+var menuSection	='WLAN';
+var menuItem	='Security';
+var isRouter	='1';
+var	isPS		='';
+var isAPmode
+if('vlan1' == '')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+var guest_hide = 1;
+
+function GURL(x){location=x}
+
+function checklength (obj, otherObj)
+{
+    if(obj.value.length>64)
+    {
+    	var substr;
+    	alert(wpskerr2);
+        substr=obj.value.substring(0,64);
+        obj.value= otherObj.value = substr;
+    }
+}
+function initData()
+{
+   var cf = document.forms[0];
+	
+   dataToVisible(document.forms[0]);
+   modify();
+   enable_guest(1);
+   cf.wl_sec_enc.disabled = true;
+}
+
+function setEnc()
+{
+	var cf = document.forms[0];
+	var authtype = cf.wl_sec_auth.options[cf.wl_sec_auth.selectedIndex].value;
+	
+	if(authtype == "wpapsk")
+		cf.wl_sec_enc.value = "TKIP";
+	else if (authtype == "wpa2psk")
+		cf.wl_sec_enc.value = "AES";
+	else 
+		cf.wl_sec_enc.value = "TKIP + AES";
+}
+
+function ChangeSecMode(security_mode)
+{
+	if(security_mode.value == "0")
+		GURL('wls_enno.html');
+	else if(security_mode.value == "psk")
+		GURL('wls_psk.html');
+	else if(security_mode.value == "128")
+		GURL('wls_e128.html');
+	else if(security_mode.value == "64")
+		GURL('wls_e64.html');
+}
+
+function focus_and_select(){
+    var cf = document.tF;
+    
+    if(cf.psk_obscure.checked == true){
+ 	    cf.wl_wpa2_psk2.focus(); 
+    	cf.wl_wpa2_psk2.select();
+    }else{
+ 	    cf.wl_wpa2_psk1.focus(); 
+    	cf.wl_wpa2_psk1.select();
+    }   
+}
+
+function storeData()
+{
+    var cf = document.tF;
+    
+ 	if(isBlank(document.tF.wl_wpa2_psk1.value))
+ 	{
+    	focus_and_select();
+ 	 	alert(wpskerr1);
+ 	 	return false;
+ 	}
+ 	if(!validVisibleStr(document.tF.wl_wpa2_psk1.value))
+    {
+    	focus_and_select();
+        alert(msg_invalid_char);
+        return false;
+    }
+ 	if (document.tF.wl_wpa2_psk1.value.length < 8 || document.tF.wl_wpa2_psk1.value.length > 64)
+ 	{
+    	focus_and_select();
+     	alert(wpskerr2);
+     	return false;
+ 	}
+ 	
+ 	/* for 64 Hex passphase */
+ 	if(64 == document.tF.wl_wpa2_psk1.value.length)
+ 	{
+		if (!isHex(document.tF.wl_wpa2_psk1.value))
+		{
+     		alert(fmcipm);
+     		return false;
+	    }
+	}
+   	
+ 	if((guest_hide != 1) && (cf.wls_gac.value == "1"))
+ 	{
+     	if(cf.wl_ssid.value == cf.wl_guest_ssid.value)
+     	{
+     	    cf.wl_guest_ssid.focus();
+        	cf.wl_guest_ssid.select();
+         	alert(wlguest2);
+         	return false;
+     	}
+     	
+     	if(isBlank(cf.wl_guest_ssid.value))
+     	{
+     	    cf.wl_guest_ssid.focus();
+        	cf.wl_guest_ssid.select();
+     	 	alert(msg_wls_chan2);
+     	 	return false;
+     	}
+     	
+     	if(!validNumLetter(cf.wl_guest_ssid.value))
+     	{
+     	    cf.wl_guest_ssid.focus();
+        	cf.wl_guest_ssid.select();
+         	alert(msg_invalid_char_1);
+         	return false;
+     	}
+     	
+     	if(cf.wl_wpa2_psk1.value == cf.wl_guest_psk.value)
+     	{
+     	    cf.wl_guest_psk.focus();
+        	cf.wl_guest_psk.select();
+         	alert(wpskerr8);
+         	return false;
+     	}
+     	
+     	if(isBlank(cf.wl_guest_psk.value))
+     	{
+     	    cf.wl_guest_psk.focus();
+        	cf.wl_guest_psk.select();
+         	alert(wpskerr4);
+         	return false;
+     	}
+        
+        if(!validNumLetter(cf.wl_guest_psk.value))
+        {
+     	    cf.wl_guest_psk.focus();
+        	cf.wl_guest_psk.select();
+         	alert(msg_invalid_char_1);
+         	return false;
+        }
+        
+     	if(cf.wl_guest_psk.value.length != 8)
+     	{
+     	    cf.wl_guest_psk.focus();
+        	cf.wl_guest_psk.select();
+         	alert(wpskerr7);
+         	return false;
+     	}
+ 	}
+ 	
+    dataToHidden(cf);
+    cf.h_wl_sec_auth.vaule = cf.wl_sec_auth.options[cf.wl_sec_auth.selectedIndex].value;
+    return true;
+}
+
+//  display
+var showit = "block";
+var hideit = "none";
+
+function setDisplay(el,shownow)  // IE & NS6; shownow = true, false
+{
+	if (document.all)
+		document.all(el).style.display = (shownow) ? showit : hideit ;
+	else if (document.getElementById)
+		document.getElementById(el).style.display = (shownow) ? showit : hideit ;
+}
+
+function modify()
+{
+	if (document.tF.psk_obscure.checked == true)
+	{
+		setDisplay('plaintext_psk', false);
+		setDisplay('obscure_psk', true);
+
+	}
+	else
+	{
+		setDisplay('obscure_psk', false);
+		setDisplay('plaintext_psk', true);
+	}
+}
+
+function enable_guest(init)
+{
+    var cf = document.forms[0];
+    var guestable = 0;
+    
+    if(guest_hide == 1)
+        return;
+             
+    if((init && cf.h_wls_gac.value == "1")
+        || (!init && cf.wls_gac.value == "1"))
+        guestable = 1;
+    
+    if(guestable)
+    {
+        cf.wl_guest_ssid.disabled = false;
+        cf.wl_guest_psk.disabled = false;
+        cf.Generate.disabled = false;
+        
+        /* According to PRD, by default, 
+         * an 8 character password is auto generated when you enable a guest SSID. 
+         */
+        if (cf.wl_guest_psk.value.length == 0)
+        {
+            newgssid(); 
+        }
+    }
+    else
+    {
+        cf.wl_guest_ssid.disabled = true;
+        cf.wl_guest_psk.disabled = true;
+        cf.Generate.disabled = true;
+    }
+}
+
+function newgssid()
+{
+    var tmpsid = "";
+    var math = Math.random();
+    
+    smath = math * 100000000000000000000;
+    smath = smath % 100000000;
+    
+    tmpsid += smath;
+    for(var i = tmpsid.length; i < 8; i++)
+        tmpsid += "1";
+    
+    document.tF.wl_guest_psk.value = tmpsid;
+}
+
+//-->
+</script>
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="initData();" >
+<form action="/belkin/3.00.02/En/wls_psk_input.html" name="tF" method="post">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+ <br>
+&nbsp;&nbsp; <script language="javascript" type="text/javascript">dw(wle1);</script><br><br>
+<table border=0 class="copy_1">
+<tr>
+
+<td width=5>&nbsp;</td>
+<td>
+<table width="600" border="0" cellspacing="10" cellpadding="0" align="center" class="body">
+<tr>
+
+<td width="28%"><b><script language="javascript" type="text/javascript">dw(wle2);</script></b></td>
+<td nowrap>
+<select name="security_mode" onChange="ChangeSecMode(this)">
+ <script language="javascript" type="text/javascript">
+	dw('<option value="0"  >'+wle2a+'</option>');
+	dw('<option value="psk" selected>'+wle2b+'</option>');
+	dw('<option value="128">'+wle2c+'</option>');
+	dw('<option value="64">'+wle2d+'</option>');
+ </script>
+</select>
+</td>
+</tr>
+
+<td width="28%"><b><script language="javascript" type="text/javascript">dw(wle3);</script></b></td>
+<td nowrap><select name="wl_sec_auth" onChange="setEnc()">
+<option value="wpapskwpa2psk"><script language="javascript" type="text/javascript">dw(wle3c);</script></option>
+<option value="wpapsk"><script language="javascript" type="text/javascript">dw(wle3a);</script></option>
+<option value="wpa2psk"><script language="javascript" type="text/javascript">dw(wle3b);</script></option>
+
+</select>
+</td>
+</tr>
+
+<tr>
+<td width="28%"><b><script language="javascript" type="text/javascript">dw(ww3);</script></b></td>
+<td class="plaintext_bold" width="235">
+	<input type="text" name="wl_sec_enc" size="12" maxlength="12" value="TKIP + AES">
+</td>
+</tr>
+
+<tr>
+<td width="28%"><b><script language="javascript" type="text/javascript">dw(wwp2 + ' >');</script></b></td>
+<td nowrap>
+
+<div ID="plaintext_psk">
+<input type="text" name="wl_wpa2_psk1" size="60" maxlength="64" value="" style="font:normal 10pt Courier;width:380px;height:22px"
+onkeyup="this.form.wl_wpa2_psk2.value=this.value;checklength(this, this.form.wl_wpa2_psk2)"></div>
+
+<div ID="obscure_psk" name="obscure_psk" style="display:none">
+<input type="password" name="wl_wpa2_psk2" size="60" maxlength="64" value="" style="width:380px;height:22px"
+onkeyup="this.form.wl_wpa2_psk1.value=this.value;checklength(this, this.form.wl_wpa2_psk1)"></div>
+</td>
+</tr>
+
+<tr id='psk_comment' name="psk_comment">
+<td width="28%"><b>&nbsp;</b></td>
+<td><b><script language="javascript" type="text/javascript">dw(wwp3);</script></b><br>
+<script language="javascript" type="text/javascript">dw(wwp4);</script>
+<a class="more" href="javascript:void(0);" class="plaintext_bold" onClick="window.open('glossary.html#wireless_security','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script language="javascript" type="text/javascript">dw(sm1);</script></a>
+</td>
+</tr>
+
+<tr>
+<td colspan="2"><input type="checkbox" name="psk_obscure" value="" onClick="modify();"><script language="javascript" type="text/javascript">dw(wwp5);</script>
+</td>
+</tr><!--<tr>
+<td width="28%"><b><script>dw(wguest2)</script> ></b></td>
+<td nowrap><select name="wls_gac" onChange="enable_guest(0)">
+    <script language="javascript" type="text/javascript">
+	        dw('<option value="1">'+Enabled+'</option>');
+	        dw('<option value="0">'+Disabled+'</option>');
+    </script>
+</select> </td>
+</tr>
+
+<tr><td>&nbsp;</td>
+<td><table width="100" border="0" cellspacing="5" cellpadding="0" align="left" class="copy_1">
+<tr><td width="50"><script>dw(wlc4)</script>:</td>
+<td><input type="text" name="wl_guest_ssid" value="guest" size="17" maxlength="12">
+</td>
+</tr>
+<tr>
+<td width="50"><script>dw(wwp2)</script>:</td>
+<td><input type="text" name="wl_guest_psk" value="" size="17" maxlength="8"></td>
+<td>
+<script language="javascript" type="text/javascript">
+dw('<input type="button" name="Generate" value="' + generate + '" style="{width:80px;}" class="submitBtn" onclick="newgssid()">');
+</script>
+</td>
+</tr>
+</table></td></tr>
+<tr><td>&nbsp;</td><td></td></tr>//--><tr>
+<td colspan="2" align="center">
+<script language="javascript" type="text/javascript">dw('<input type="button" name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onclick="location.href=\'wls_psk.html\'; return true;" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');
+dw('<input type="submit" name="itsbutton1"  value="'+btn2+'" style="{width:160px;}" class="submitBtn" onClick="return storeData();">');</script>
+</td>
+</table>
+ </td>
+ </tr>
+ </table>
+</td>
+<input type=hidden name="h_security_mode" value="psk">
+<input type=hidden name="h_wl_sec_auth" value="open">
+<input type=hidden name="h_psk_obscure" value="enable">
+<input type=hidden name="h_wls_gac" value="0">
+<input type=hidden name="wl_ssid" value="Belkin_N_Wireless_523106">
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

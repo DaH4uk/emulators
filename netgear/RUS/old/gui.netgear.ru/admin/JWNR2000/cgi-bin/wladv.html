@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -137,3 +138,144 @@ var wlan_adv_wpspin="21437083";
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../wlan_adv.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_wladv');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#wladv.html" target=formframe>
+<input type=hidden name=submit_flag value="wlan_adv">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(wlan_adv_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+function loadvalue()
+{
+top.contents.location.reload();
+var form=document.forms[0];
+if('0' == '2')
+form.preamble_11g[2].selected = true;
+else if ('0' == '1')
+form.preamble_11g[1].selected = true;
+else
+form.preamble_11g[0].selected = true;
+form.szRts_11g.value = '2347';
+form.szFrag_11g.value = '2346';
+if('1'=='1')
+form.endis_router.checked = true;
+else
+form.endis_router.checked = false;
+if('1'=='1')
+form.endis_ssid_broadcast.checked = true;
+else
+form.endis_ssid_broadcast.checked = false;
+if('0' == '1')
+form.endis_wps.checked = true;
+else
+form.endis_wps.checked = false;
+if('1' == '5')
+form.keep_exist.checked = true;
+else if ( '1' == '1' )
+form.keep_exist.checked = false;
+if ( '0' == 1 )
+{
+getObj('wladv_pin').color = 'gray';
+}
+if ( '' == '1')
+{
+ getObj('wladv_pin').color = 'gray';
+ form.endis_wps.checked = true;
+
+}
+
+if ( '1' ==2 && '2' != 2 )
+{
+getObj('wladv_pin').color = 'gray';
+getObj('wladv_endis_wps').color = 'gray';
+getObj('wladv_keep_exist').color = 'gray';
+form.endis_wps.disabled=true;
+form.keep_exist.disabled=true;
+}
+if ('1' ==6)
+{
+getObj('wladv_pin').color = 'gray';
+getObj('wladv_endis_wps').color = 'gray';
+getObj('wladv_keep_exist').color = 'gray';
+form.endis_wps.disabled=true;
+form.keep_exist.disabled=true;
+}
+}
+var old_wds_endis_fun="0";
+var old_wds_repeater_basic="0";
+var old_endis_wl_radio="1";
+var security_mode="1";
+var wlan_adv_wpspin="21437083";
+</script>
+<input type="hidden" name="wds_change_ip">
+<input type="hidden" name="enable_router" value="ignore">
+<input type="hidden" name="enable_ssid_broadcast" value="ignore">
+<input type="hidden" name="endis_pin" value=1>
+<input type="hidden" name="endis_wsc_config" value=5>
+ <tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_wladv','settings')"><b><script>document.write(adva_wlan_setting);</script><script>document.write(ba);</script></td></tr>
+ <TR><script>document.write(hd);</script> <input type="checkbox" name="endis_router" value="1"><script>document.write(adva_wlan_router);</script></td></tr>
+ <tr><script>document.write(hd);</script> <input type="checkbox" name="endis_ssid_broadcast" value="1"><script>document.write(adva_wlan_ssid_broadcast);</script></td></tr> 
+ 
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(wlan_adv_szFrag_11g);</script></TD>
+ <script>document.write(hd);</script> <INPUT maxLength=4 size=5 name="szFrag_11g" value="2346" onFocus="this.select();" onKeyPress="return getkey('num', event)"></TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <script>document.write(wlan_adv_szRts_11g);</script></TD>
+ <script>document.write(hd);</script> <INPUT maxLength=4 size=5 name="szRts_11g" value="2347" onFocus="this.select();" onKeyPress="return getkey('num', event)"></TD>
+ </TR>
+ <tr>
+ <script>document.write(hd);</script> <script>document.write(adva_wlan_pream);</script></td>
+ <script>document.write(hd);</script> 
+ <select name="preamble_11g">
+ <option value="0"><script>document.write(adva_wlan_pream_long);</script></option>
+ <option value="1"><script>document.write(adva_wlan_pream_short);</script></option>
+ <!--option value="2"><script>document.write(adva_wlan_pream_long);</script></option-->
+ </select>
+ </td>
+ </tr> 
+<script>document.write(bluebar);</script>
+ <tr>
+ <script>document.write(hd);</script> <b><a tabindex=-1 href="javascript:loadhelp('_wladv','wps')"><script>document.write(wlan_adv_wps);</script></a></b></td> 
+ </tr>
+ <TR id='wladv_pin'>
+ <script>document.write(hd);</script> <script>document.write(wlan_adv_routerpin);</script></TD>
+ <script>document.write(hd);</script> <b><script>document.write(wlan_adv_wpspin);</script></b></TD>
+ </TR> 
+ <tr id='wladv_endis_wps'>
+ <script>document.write(hd);</script> <input type=checkbox name=endis_wps value=1><script>document.write(wlan_adv_endis_pin+"");</script></td>
+ </tr>
+ <tr id='wladv_keep_exist'>
+ <script>document.write(hd);</script> <input type=checkbox name=keep_exist value=1><script>document.write(wlan_adv_keep);</script></td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+ <script>document.write(hd);</script> <a tabindex=-1 href="javascript:loadhelp('_wladv','access')"><b><script>document.write(wlan_wlacl);</script><script>document.write(ba);</script></td>
+ <script>document.write(hd+'<input type="button" name="access" value="'+setup_acl+'" /></td>');</script>
+ </tr>
+<script>document.write(bluebar);</script>
+ <TR>
+ <script>document.write(hd2_center+'<input type="submit" value="'+apply_mark+'" onClick="return checkadv(document.forms[0])">&nbsp;&nbsp;');</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"wladv.html\";'></TD>");</script>
+ </TR>
+</TABLE>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

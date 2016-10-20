@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -386,3 +387,393 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 </form>
 <script language="javascript" type="text/javascript">showTail()</script>
 
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script language="JavaScript" src="validate.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+fmc1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='MAC Address Filtering';
+var menuSection	='Fire';
+var menuItem	='MAC Address Filtering';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+var count;
+var maxMacNum = 32;
+var pcmac='00:08:74:b2:e4:92';
+pcmac = pcmac.toLowerCase();
+
+function storeData(type)
+{
+    var temp_mac='';
+    var tmp=0;
+    
+    count=1;
+    while(count <= maxMacNum)
+    {
+        if(token[count]!='')
+        {
+            var temp_token=token[count];
+            
+            t1=temp_token.indexOf('-');
+            t2=temp_token.indexOf('-',t1+1);
+            
+            if(count!=type)
+                temp_mac+=token_checked[count]+'-'+temp_token.substring(t1+1,t2)+'-'+'';
+            else
+                temp_mac+=token_checked[count]+'-'+temp_token.substring(t1+1,t2)+'-';
+                    
+            temp_mac+=' ';      
+        }
+        count++;
+    }
+    
+    document.mac_form.fm.value=temp_mac;
+    if(document.mac_form.check.checked==true)
+        document.mac_form.mac_filter.value = '1';
+    else 
+        document.mac_form.mac_filter.value = '0'; 
+     
+    document.mac_form.submit();
+    return true;
+}
+
+function checkedMac(type)
+{
+	i=eval(type);
+	if(token_checked[i]=='1')
+		token_checked[i]='0';
+	else	
+	    token_checked[i]='1';
+}
+
+function showhostname(value,count)
+{
+	var dhcplist='<tr><td width=20 bgcolor=#94CAE4 align=left ><font size=2 face=arial>192.168.2.2</td><td width=20 bgcolor=#94CAE4 align=left ><font size=2 face=arial>Nathans</td><td width=20 bgcolor=#94CAE4 align=left ><font size=2 face=arial>00:08:74:b2:e4:92</td></tr>';
+	var pos_next=dhcplist.indexOf("</td></tr>"); 
+	
+	while(pos_next!=-1)
+	{
+		var token=dhcplist.substring(0,pos_next);
+		
+		if(dhcplist.substring(pos_next-17,pos_next).toLowerCase() == value)
+		{
+			t3=token.indexOf('face=arial>');
+			token=token.substring(t3+1);
+			t3=token.indexOf('face=arial>'); 
+			token=token.substring(t3+11);
+			t4=token.indexOf('</td>'); 
+			document.writeln(token.substring(0,t4));
+			eval("document.mac_form.hostname"+String(count)+".value='"+token.substring(0,t4)+"'");
+			
+			return false;
+		}
+		dhcplist=dhcplist.substring(pos_next+1);
+		pos_next=dhcplist.indexOf("</td></tr>");
+	}
+	
+	return true;
+}
+
+function checkmac() 
+{
+	var j;	
+	
+	if(!isBlank(document.mac_form.macfilterAdd.value))
+  	{
+  	    if(maxMacNum < count)
+        {
+            alert(fmc9);
+            return false;
+        }
+        
+		for(var i = 0; i < 12; i++) 
+		{
+			var c = document.mac_form.macfilterAdd.value.charAt(i);
+			
+			j = parseInt(c,16);
+			if ((j < 0) || (j >15) || (isNaN(j) == true)) 
+			{
+			    alert(fmcipm); 
+			    return false; 
+		    }	
+		}
+		
+		var qq = document.mac_form.macfilterAdd.value.toLowerCase();
+		var mac_str = qq.substring(0,2)+':'+qq.substring(2,4)+':'+qq.substring(4,6)+':'+qq.substring(6,8)+':'+qq.substring(8,10)+':'+qq.substring(10,12);
+		
+		if(!validateMac(mac_str))
+		    return false;
+        
+        mac_str = mac_str+'-';
+		for(i = 1; i < count; i++)
+		{
+			if(token[i].indexOf(mac_str) != -1)
+			{
+    			alert(fmc8);
+    			return false;
+    		}
+		}  
+		  
+		if(document.mac_form.addcon.checked == true)
+		{
+		    mac_str = '1-'+mac_str;
+			token_checked[count] = '1'; 
+		}
+		else
+		{
+			mac_str='0-'+mac_str;
+			token_checked[count]='0';
+		}
+		mac_str+=' ';
+		token[count]=mac_str;
+	           
+		if(storeData(count) == false)
+		    return false;
+		    
+		return true;
+	}	 
+	
+	alert(fmcipm);
+	return false;
+}
+
+function submitF() 
+{
+	if(storeData(99) == false)
+	    return false;
+}
+
+function mayApply(e)
+{
+    if(filter_enter(e))
+        return checkmac();
+}
+
+function macrelease(x) 
+{ 
+	token[x]='';
+	storeData(99);
+}
+
+function macconnetstate(x) 
+{ 
+	document.mac_form.stateindex.value = x;
+} 
+
+function logoutF()
+{
+	document.mac_form.logout.value=1;
+	document.mac_form.submit();
+	
+	return true;
+}
+function ChefilterAddr()
+{
+  var msgVar=document.mac_form.message.value;
+  if (msgVar.length > 1) 
+  {
+	 alert(msgVar);
+     //history.back();
+  }
+}
+//-->
+</script>
+</head>
+
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="ChefilterAddr()">
+<form name="mac_form" method="post" action="/belkin/3.00.02/En/apply_10_fw_mac_add.html">
+<input type=hidden name=webpage value=fw_mac.html>
+<input type=hidden name="action" value=""> 
+<input type=hidden name="mac_filter" value="">
+<input type=hidden name="fm" value="">
+<input type="hidden" name="page" value="">
+<input type="hidden" name="releaseindex" value="">
+<input type="hidden" name="stateindex" value="">
+<input type="hidden" name="logout" value="">
+
+
+<script>
+dw('<input type="hidden" name="message" value="'+""+'">');
+</script>
+
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+
+<td valign="top" width="99%" height="100%" class="head_bold">
+ <br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(fmc1);</script> <br><br>
+    <table border=0 class="copy_1">
+		<tr><td width=5>&nbsp;</td>
+		<td>
+		<table width=600 border="0" cellspacing="0" cellpadding="0" align="center" class="copy_1">
+		<tr><td class="body"><script language="javascript" type="text/javascript">dw(fmc2);</script>
+		<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#mac_filtering','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+		<script language="javascript" type="text/javascript">dw(sm1);</script></a></td>
+		</tr>
+		</table><br>
+		<table width=500 border="0" cellspacing="5" cellpadding="0" align="left" class="copy_1">
+		<tr> <td width="19">&nbsp;</td>
+		<td width="340" class="bold_body"><script language="javascript" type="text/javascript">dw(fmc3);</script> &gt;</td>
+		<td width="189"><input type="checkbox" name="check" value="1"  ></TD>
+		</td></tr>
+		<tr><td width="19">&nbsp;</td>
+		<td width="340" class="bold_body"><script language="javascript" type="text/javascript">dw(fmc4);</script> &gt;</td>
+		<td width="189">&nbsp;</td>
+		</tr><tr><td width="19">&nbsp;</td>
+		<td colspan="2">
+		<table width=500 border="0" cellspacing="1" cellpadding="1" align="left" class="copy_1">
+		<tr bgcolor="#666666" height="20"><th>&nbsp;</th>
+		<th><font color="#ffffff"><script language="javascript" type="text/javascript">dw(fmc5);</script></font></th>
+		<th width="30%"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(fmc6);</script></font></th>
+		<th width="30%"><font color="#ffffff"><script language="javascript" type="text/javascript">dw(fmc7);</script></font></th>
+		<th width="26%">&nbsp;</th>
+		</tr><tr bgcolor="#cccccc" align=center>
+		<td>&nbsp;</td><td align=center>
+		<input type="checkbox" name="addcon" value="0">
+		</td><td width="30%">&nbsp;</td>
+		<td width="30%">
+		<input type="text" name="macfilterAdd" size="12" maxlength="12" onkeydown="return mayApply(event)" value="">
+		</td><td width="26%"><div align="center">
+		<script language="javascript" type="text/javascript">strHtml='<input type="button" name="hostAdd1" value="&lt;&lt; '+Add+'" style="{width:100px;}" class="submitBtn" onClick="return checkmac();">';
+		dw(strHtml);</script>
+		</div></td></tr>
+		<script language="javascript" type="text/javascript">
+		var strHtml;
+		var strTemp;
+		var token = new Array(maxMacNum + 2);
+		var token_checked=new Array(maxMacNum + 2);
+		
+		count=1;
+		token[1]='';
+		token[2]='';
+		token[3]='';
+		token[4]='';
+		token[5]='';
+		token[6]='';
+		token[7]='';
+		token[8]='';
+		token[9]='';
+		token[10]='';
+		token[11]='';
+		token[12]='';
+		token[13]='';
+		token[14]='';
+		token[15]='';
+		token[16]='';
+		token[17]='';
+		token[18]='';
+		token[19]='';
+		token[20]='';
+		token[21]='';
+		token[22]='';
+		token[23]='';
+		token[24]='';
+		token[25]='';
+		token[26]='';
+		token[27]='';
+		token[28]='';
+		token[29]='';
+		token[30]='';
+		token[31]='';
+		token[32]='';
+		token[33]='';
+		
+		while(token[count] != '')
+		{
+		    if((pcmac.length) && (token[count].indexOf(pcmac) != -1))
+		        break;
+            
+            count++;		        
+		}
+		
+		if((token[count] == '') && (count <= maxMacNum) && (pcmac.length))
+		    token[count] = '0'+'-'+pcmac+'-';
+        
+        count = 1;
+        		    
+		while(token[count]!='')
+		{          
+			strTemp=token[count];
+			t1=strTemp.indexOf('-');
+			t2=strTemp.indexOf('-',t1+1);
+			
+			if(strTemp.substring(0,t1)=='1')
+			    token_checked[count]='1';
+			else
+			    token_checked[count]='0';
+	                       
+			strHtml='<tr bgcolor="#cccccc" align="center"><td align="center">'+String(count)
+				+'.</td><td align="center">' 
+				+'<input type="checkbox" value="1" name="macstate_'
+				+String(count);
+				
+			if((pcmac.length)&&(strTemp.indexOf(pcmac)!=-1))
+				document.writeln(strHtml+'" disabled onClick="checkedMac('+String(count)+');"');
+            else
+				document.writeln(strHtml+'" onClick="checkedMac('+String(count)+');"');
+                                         
+			if(strTemp.substring(0,t1)=='1')
+				document.writeln(' checked '); 
+			
+			document.writeln('></td><td width="30%" align="center">');
+			document.writeln('<input type=hidden name=hostname'+String(count)+' value='+strTemp.substring(t2+1)+'>');
+			
+			if(showhostname(strTemp.substring(t1+1,t2),count))
+				document.writeln(strTemp.substring(t2+1));
+                                     
+			strHtml='</td><td width="39%" align="center">'
+				+strTemp.substring(t1+1,t1+3)
+				+strTemp.substring(t1+4,t1+6)
+				+strTemp.substring(t1+7,t1+9)
+				+strTemp.substring(t1+10,t1+12)
+				+strTemp.substring(t1+13,t1+15)
+				+strTemp.substring(t1+16,t1+18)
+				+'</td><td width="26%" align="center">';
+				
+		    if(!(pcmac.length) || (strTemp.indexOf(pcmac) == -1))
+			{
+				strHtml =strHtml +'<input type="button" name="relname" style="{width:100px;}" class="submitBtn" value="'+Del+'" onClick="macrelease('
+				+String(count)
+				+');">';
+			}
+			else
+		    {
+			    strHtml =strHtml + '&nbsp;';
+			}
+				    
+			strHtml =strHtml +'</td></tr>';
+				
+			document.writeln(strHtml); 
+			count++;
+		} //while
+		</script>
+		</table></td></tr>
+		<tr><td width="19">&nbsp;</td>
+		<td colspan="2">&nbsp;</td>
+		</tr><tr><td width="19">&nbsp;</td>
+		<td colspan="2"><div align="right">
+<input type="button" style="{width:160px;}" value="Clear Changes" class="submitBtn" noctl="true" onclick="window.location.href='fw_mac.html'">
+		<input type="button" style="{width:160px;}" value="Apply Changes" class="submitBtn" noctl="true" onclick="window.location.href='apply_10_fw_mac.html'">
+		</td></tr>
+		</table></td></tr>
+	</table></td>
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>
+
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

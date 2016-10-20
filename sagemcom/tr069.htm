@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Настройка TR-069 </title>
+    <script>
+        function checkHttpChar(str) {
+            http_pattern = /^https?:\/\/[a-zA-Z0-9~`!@#$%^&*()_+|\\{}[\]:;<?,-./=']*$/;
+
+            if (str == "")
+                return true;
+            if (!http_pattern.exec(str)) return false;
+            return true;
+        }
+
+        function saveChanges() {
+
+            if (!checkHttpChar(document.tr069.cwmpserverurl.value)) {
+                alert("URL формат: http://xxxxx или https://xxxxx ");
+                document.tr069.cwmpserverurl.value = document.tr069.cwmpserverurl.defaultValue;
+                document.tr069.cwmpserverurl.focus();
+                return false;
+            }
+            if (document.tr069.cwmpserveruser.value != "" && !checkSpecialChar(document.tr069.cwmpserveruser.value, 1)) {
+                alert("Неверные символы");
+                document.tr069.cwmpserveruser.focus();
+                return false;
+            }
+            if (document.tr069.cwmpserverpwd.value != "" && !checkSpecialChar(document.tr069.cwmpserverpwd.value, 1)) {
+                alert("Неверные символы");
+                document.tr069.cwmpserverpwd.focus();
+                return false;
+            }
+            if (!checkSpecialChar(document.tr069.cwmpconreqpath.value, 1)) {
+                alert("Неверные символы");
+                document.tr069.cwmpconreqpath.focus();
+                return false;
+            }
+            if (document.tr069.cwmpinforminterval.value == "") {
+                alert("Пожалуйста укажите значение Periodic Inform");
+                document.tr069.cwmpinforminterval.focus();
+                return false;
+            }
+            if (validateKey(document.tr069.cwmpinforminterval.value) == 0) {
+                alert('Periodic inform интервал должен состоять из цифр (0-9).');
+                document.tr069.cwmpinforminterval.focus();
+                return false;
+            }
+            if (document.tr069.cwmpinforminterval.value == 0) {
+                alert('Periodic inform интервал не может быть равен 0.');
+                document.tr069.cwmpinforminterval.focus();
+                return false;
+            }
+            if (!checkDigitRange(document.tr069.cwmpinforminterval.value, 1, 0, 2147483647)) {
+                alert('Неверное значение Periodic Inform. Он может лежать в пределах 1-2147483647');
+                document.tr069.cwmpinforminterval.focus();
+                return false;
+            }
+            if (document.tr069.cwmpconreqport.value == "") {
+                alert("Укажите номер порта для запросов Connection Request.");
+                document.tr069.cwmpconreqport.value = document.tr069.cwmpconreqport.defaultValue;
+                document.tr069.cwmpconreqport.focus();
+                return false;
+            }
+            if (validateKey(document.tr069.cwmpconreqport.value) == 0) {
+                alert("Неверное значение портов Connection Request. Он может лежать в пределах 1-65535.");
+                document.tr069.cwmpconreqport.value = document.tr069.cwmpconreqport.defaultValue;
+                document.tr069.cwmpconreqport.focus();
+                return false;
+            }
+            if (!checkDigitRange(document.tr069.cwmpconreqport.value, 1, 1, 65535)) {
+                alert('Неверное значение портов Connection Request. Он может лежать в пределах 1-65535.');
+                document.tr069.cwmpconreqport.value = document.tr069.cwmpconreqport.defaultValue;
+                document.tr069.cwmpconreqport.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function updateState() {
+            if (document.tr069.tr069ReadOnly.value == "YES") {
+                disableCheckBox(document.tr069.cwmpserverenable);
+                disableTextField(document.tr069.cwmpserverurl);
+                disableTextField(document.tr069.cwmpserveruser);
+                disableTextField(document.tr069.cwmpserverpwd);
+                disableRadioGroup(document.tr069.cwmpinformenable);
+                disableTextField(document.tr069.cwmpinforminterval);
+                disableTextField(document.tr069.cwmpconrequser);
+                disableTextField(document.tr069.cwmpconreqpwd);
+                disableTextField(document.tr069.cwmpconreqpath);
+                disableTextField(document.tr069.cwmpconreqport);
+                disableRadioGroup(document.tr069.cwmpacscertcpe);
+                disableRadioGroup(document.tr069.cwmpshowmsg);
+                disableRadioGroup(document.tr069.cwmpgetrpc);
+                disableRadioGroup(document.tr069.cwmpskip);
+                disableRadioGroup(document.tr069.cwmpdelay);
+                disableRadioGroup(document.tr069.cwmpautoexec);
+                disableButton(document.tr069.apply);
+                disableButton(document.tr069.reset);
+                disableTextField(document.cpe_passwd.cwmpcertpwd);
+                disableButton(document.cpe_passwd.apply);
+                disableButton(document.cpe_passwd.reset);
+                disableTextField(document.cpe_cert.binary);
+                disableButton(document.cpe_cert.load);
+                disableTextField(document.ca_cert.binary);
+                disableButton(document.ca_cert.load);
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Настройка TR-069</p>
+        <p class="intro_content">Страница используется для настройки параметров TR-069. Здесь Вы можете изменить настройки для работы с ACS сервером. </p>
+    </div>
+
+    <div id="autoset_acs" class="data_common data_common_notitle">
+
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Auto fill ACS credential: </th>
+
+                        <th><input onclick="this.form.submit();" name="autosetACS" type="checkbox"> (Set CWMP username and password by default route ppp automatically)</th>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <input name="submit.htm?tr069.htm" value="Send" type="hidden">
+
+
+    </div>
+
+
+        <input name="tr069ReadOnly" value="NO" type="hidden">
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">ACS:</th>
+
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Включена:</th>
+                        <td>
+
+                            <input name="cwmpserverenable" value="ON" checked="checked" type="CHECKBOX">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>URL:</th>
+
+                        <td>
+
+                            <input id="cwmpserverurl" name="cwmpserverurl" size="32" maxlength="256" value="https://acs.ertelecom.ru/ACS/35" type="TEXT">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Имя пользователя:</th>
+                        <td>
+
+                            <input id="cwmpserveruser" name="cwmpserveruser" size="32" maxlength="256" value="cwmp-igd39" type="TEXT">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Пароль:</th>
+                        <td>
+
+                            <input name="cwmpserverpwd" style="width:32 pt" maxlength="256" value="*********************" type="PASSWORD">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Включить Periodic Inform:</th>
+                        <td>
+
+                            <input name="cwmpinformenable" value="Disable" type="RADIO">Выкл.
+                            <input name="cwmpinformenable" value="Enable" checked="checked" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Интервал Periodic Inform:</th>
+                        <td>
+
+                            <input id="cwmpinforminterval" name="cwmpinforminterval" size="32" maxlength="10" value="94229" type="TEXT"> секунд
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Изменение значения Inform:</th>
+                        <td>
+
+                            <input name="cwmpvalueinformenable" value="Disable" type="RADIO">Выкл.
+                            <input name="cwmpvalueinformenable" value="Enable" checked="checked" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Connection Request:</th>
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Имя пользователя:</th>
+                        <td>
+
+                            <input id="cwmpconrequser" name="cwmpconrequser" size="32" maxlength="256" value="cr-igd39" type="TEXT">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Пароль:</th>
+                        <td>
+
+                            <input name="cwmpconreqpwd" style="width:32 pt" maxlength="256" value="********************" type="PASSWORD">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Путь:</th>
+                        <td>
+
+                            <input id="cwmpconreqpath" name="cwmpconreqpath" size="32" maxlength="32" value="/tr069" type="TEXT">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Порт:</th>
+                        <td>
+
+                            <input id="cwmpconreqport" name="cwmpconreqport" size="32" maxlength="5" value="7547" type="TEXT">
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Отладка:</th>
+                    </tr>
+
+                    <tr>
+                        <th width="30%">ACS сертификат CPE:</th>
+                        <td>
+                            <input name="cwmpacscertcpe" value="0" checked="checked" type="radio">Нет
+                            <input name="cwmpacscertcpe" value="1" type="radio">Да
+                        </td>
+                    </tr>
+
+                    <tr>
+
+                        <th>Показать сообщения в CLI:</th>
+                        <td>
+
+                            <input name="cwmpshowmsg" value="0" checked="checked" type="RADIO">Выкл.
+                            <input name="cwmpshowmsg" value="1" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>CPE отправит GetRPC:</th>
+                        <td>
+
+                            <input name="cwmpgetrpc" value="0" checked="checked" type="RADIO">Выкл.
+                            <input name="cwmpgetrpc" value="1" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Пропустить MReboot:</th>
+                        <td>
+
+                            <input name="cwmpskip" value="0" checked="checked" type="RADIO">Выкл.
+                            <input name="cwmpskip" value="1" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Задержка:</th>
+                        <td>
+
+                            <input name="cwmpdelay" value="0" type="RADIO">Выкл.
+                            <input name="cwmpdelay" value="1" checked="checked" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Авто-выполнение:</th>
+                        <td>
+
+                            <input name="cwmpautoexec" value="0" type="RADIO">Выкл.
+                            <input name="cwmpautoexec" value="1" checked="checked" type="RADIO">Вкл.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="btn_ctl clearfix">
+
+            <input class="link_bg" name="apply" onclick="return saveChanges()" value="Применить" type="submit">
+            <input class="link_bg" name="reset" value="Сбросить" type="RESET">
+            <input name="submit.htm?tr069.htm" value="Send" type="hidden">
+
+        </div>
+
+
+    <div class="data_common data_common_notitle">
+
+
+        <table>
+            <tbody>
+                <tr>
+                    <th width="30%">Управление сертификатами:</th>
+                    <td colspan="2" width="70%"></td>
+                </tr>
+
+                <tr>
+                    <th width="30%">Пароль сертификата CPE:</th>
+                    <td colspan="2" width="70%">
+                            <input name="cwmpcertpwd" size="24" maxlength="64" value="client" type="text">
+                            <input class="inner_btn" value="Применить" name="apply" onclick="if(!checkSpecialChar(document.cpe_passwd.cwmpcertpwd.value,1)){alert('Недопустимые символы!');return false;}" type="submit">
+                            <input class="inner_btn" value="Отменить" name="reset" type="reset">
+                            <input name="submit.htm?tr069.htm" value="Send" type="hidden">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th width="30%">Сертификат CPE:</th>
+                    <td width="60%">
+                            <input class="inner_btn" name="binary" size="24" type="file">
+                            <input class="inner_btn" value="Upload" name="load" type="submit">
+                            <input name="submit" value="Send" type="hidden">
+                    </td>
+                    <td width="10%">
+                            <input disabled="disabled" class="inner_btn" value="удалить" name="cpedelbutton" type="submit">
+                            <input name="submit.htm?tr069.htm" value="Send" type="hidden">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="30%">
+                        <font size="2"><b>CA Сертификат:</b></font>
+                    </td>
+                    <td width="60%">
+                            <input class="inner_btn" name="binary" size="24" type="file">
+                            <input class="inner_btn" value="Upload" name="load" type="submit">
+                            <input name="submit" value="Send" type="hidden">
+                    </td>
+                    <td width="10%">
+                            <input disabled="disabled" class="inner_btn" value="удалить" name="cadelbutton" type="submit">
+                            <input name="submit.htm?tr069.htm" value="Send" type="hidden">
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <script>
+            document.cpe_cert_del.cpedelbutton.disabled = true;
+            document.ca_cert_del.cadelbutton.disabled = true;
+        </script>
+    </div>
+
+    <script>
+        updateState();
+    </script>
+
+
+
+
+
+
+
+</body>
+
+</html>

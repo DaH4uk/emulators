@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
@@ -107,3 +108,114 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 </table>
 </td>
 <script language="JavaScript">showTail()</script>
+=======
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu.js"></script>
+<script>
+strHtml='<title>'+wla1+'</title>';
+dw(strHtml);
+
+<!--
+var wanStatus	='Down';
+var helpItem 	='Use as Access Point';
+var menuSection	='WLAN';
+var menuItem	='Use as Access Point';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else	isAPmode='0';
+
+function EnableDisable()
+{
+    if(document.tF.wan_access[0].checked)
+		location='ap_enabl.html';
+}
+
+function submitF()
+{
+  if('vlan1'=='')
+  {
+  	document.tF.lan_ipaddr.value='192.168.2.1';
+  	document.tF.lan_netmask.value='255.255.255.0';
+  	var alertmess=usys86+'(192.168.2.1).';
+  	alert(alertmess);
+  }
+  if(document.tF.wan_access[1].checked==true && '1'=='1')
+  {
+  	document.tF.wl0_macmode.value='disabled';
+  }
+  return true;
+}
+
+function logoutF()
+{
+	document.tF.logout.value=1;
+	document.tF.submit();
+	return true;
+}
+
+//-->
+</script>
+
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<form action="/belkin/3.00.02/En/apply_40_fw_dmz.html" name="tF" method="post">
+<input type=hidden name=webpage value=wireless_apt_disabled.html >
+<input type=hidden name="action" value="">
+<input type=hidden name="wl0_macmode" value='disabled'>
+<input type=hidden name="lan_ipaddr" value='192.168.2.1'>
+<input type=hidden name="lan_netmask" value='255.255.255.0'>
+<input type=hidden name="nat_enable" value="">
+<input type=hidden name="reboot_ap" value="">
+
+<script language="JavaScript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+</script>
+<script language="JavaScript">
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+
+<td valign="top" width="99%" height="100%" class="head_bold">
+<br>&nbsp;&nbsp; <script>dw(wla1);</script><br><br>
+<table border=0 class="copy_1">
+<tr>
+	<td width=5>&nbsp;</td>
+    	<td>
+	<table width="580" border="0" cellspacing="10" cellpadding="0" align=left class="copy_1">
+		<tr>
+			<td colspan="3" height="18" class="body"><b><script>dw(AF);</script></b>&nbsp;<script>dw(wlad1);</script><br>
+                                      <a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#access_point','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+                                      <script>dw(sm1);</script></a>
+			</td>
+		</tr>
+		<tr> <td width="36">&nbsp;</td></tr>
+		<tr>
+			<td width="36">&nbsp;</td>
+			<td width="174" class="body"><b><script>dw(wlad2);</script></b></td>
+			<td width="335">
+				<input type="radio" name="wan_access" value="" onClick="EnableDisable()"><span class="body"><script>dw(Enable);</script></span>
+				<input type="radio" name="wan_access" checked value="eth1"><span class="body"><script>dw(Disable);</script></span>
+			</td>
+		</tr>
+		<tr> 	<td width="36">&nbsp;</td>
+			<td width="174">&nbsp;</td>
+			<td width="335">&nbsp;</td>
+		</tr>
+		<tr> 	<td width="36">&nbsp;</td>
+			<td colspan="2" align=center>
+				<script>dw('<input type="reset" name="itsbutton0" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');
+				dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="');dw(btn2);dw('" onClick="return submitF();" class="submitBtn">');</script>
+			</td>
+		</tr>
+	</table>
+	</form>
+</td>
+</tr>
+</table>
+</td>
+<script language="JavaScript">showTail()</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

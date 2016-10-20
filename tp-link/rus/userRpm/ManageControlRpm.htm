@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <SCRIPT language="javascript" type="text/javascript">
 var managementPara = new Array(
 80,
@@ -209,4 +210,217 @@ document.forms[0].ip.value =managementPara[1];
 
 var webcontrolport = document.forms[0].port.value;
 
+=======
+<SCRIPT language="javascript" type="text/javascript">
+var managementPara = new Array(
+80,
+"0.0.0.0",
+0,
+0,0 );
+</SCRIPT>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<HTML>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico"><TITLE>TL-WR740N/TL-WR741ND</TITLE>
+<META http-equiv=Pragma content=no-cache>
+<META http-equiv=Expires content="wed, 26 Feb 1997 08:21:57 GMT">
+<LINK href="../dynaform/css_main.css" rel=stylesheet type="text/css">
+<SCRIPT language="javascript" src="../dynaform/common.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="javascript" type="text/javascript"><!--
+if(window.parent == window){window.location.href="http://192.168.0.1";}
+function Click(){ return false;}
+document.oncontextmenu=Click;
+//--></SCRIPT>
+
+
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+
+<SCRIPT type="text/javascript">
+
+<!--//
+
+
+
+function is_Specific_port(port)
+
+{
+
+    if( port == 21 || port == 25 || port == 110 || port == 119 || port == 139 || port == 145 || port == 445)
+
+    {
+
+        alert(str_pages.ntw_manage_control.js_specific_port);
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+
+
+function doSubmit()
+
+{
+
+    var port;
+
+    if(document.forms[0].port.value != "")
+
+    {
+
+        if(!is_port(document.forms[0].port.value) || is_Specific_port(document.forms[0].port.value))
+
+        {
+
+            var element =document.forms[0].port;
+
+            if(element)
+
+            {
+
+                element.focus();
+
+                element.select();
+
+            }
+
+            return false;
+
+        }
+
+        
+
+        port = Number(document.forms[0].port.value);
+
+        
+
+        
+
+    }
+
+    if((document.forms[0].ip.value != "") && (document.forms[0].ip.value != "0.0.0.0"))
+
+    {/* 0.0.0.0 is a legal ip for remote management, it means diable remote management*/
+
+        if(!is_ipaddr(document.forms[0].ip.value))
+
+        {/*is_ipaddr will say 0.0.0. is inlegal*/   
+
+            var element =document.forms[0].ip;
+
+            if(element)
+
+            {
+
+                element.focus();
+
+                element.select();
+
+            }
+
+            return false;
+
+        }
+
+    }   
+
+    return true;
+
+}
+
+//-->
+
+</SCRIPT>
+
+</HEAD>
+
+<BODY onLoad="LoadHelp('ManageControlHelpRpm.htm');setTagStr(document,'ntw_manage_control');resize(this);" onResize="resize(this);">
+
+<CENTER>
+
+  <FORM action="ManageControlRpm.htm" enctype="multipart/form-data" method="get">
+
+    <TABLE id="autoWidth">
+
+      <TBODY>
+
+        <TR>
+
+          <TD class=h1 colspan=2 id = "t_title">Remote Management</TD>
+
+        </TR>
+
+        <TR>
+
+          <TD class=blue colspan=2></TD>
+
+        </TR>
+
+        <TR>
+
+          <TD class=Item id = "t_manage_port">Web Management Port:</TD>
+
+          <TD><INPUT name="port" type="text" class="text" value="80" size="6" maxlength="5"></TD>
+
+        </TR>
+
+        <TR>
+
+          <TD class=Item id = "t_manage_ip_addr">Remote Management IP Address:</TD>
+
+          <TD>
+
+             <INPUT name="ip" type="text" class="text" value="222.88.88.234" size="16" maxlength="15">
+
+            <SPAN id = "t_for_all">(Enter 255.255.255.255 for all)</SPAN>
+
+          </TD>
+
+        </TR>
+
+        <TR>
+
+          <TD class=blue colspan=2></TD>
+
+        </TR>
+
+        <TR>
+
+          <TD></TD>
+
+          <TD colspan=2><INPUT name="Save" type="submit" class="buttonBig" value="Save" onClick="return doSubmit();"></TD>
+
+        </TR>
+
+      </TBODY>
+
+    </TABLE>
+
+  </FORM>
+
+</CENTER>
+
+</BODY>
+
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+
+<META http-equiv="pragma" content="no-cache">
+
+</HEAD>
+
+</HTML>
+
+<SCRIPT type="text/javascript">
+
+document.forms[0].port.value =managementPara[0];
+
+document.forms[0].ip.value =managementPara[1];
+
+var webcontrolport = document.forms[0].port.value;
+
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </SCRIPT>

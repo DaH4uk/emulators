@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -235,3 +236,242 @@ Jan  1 00:10:36 (none) user.emerg WAN Connection: WAN was exceptionally disconne
 
 <!-- Mirrored from 192.168.1.1/Main_LogStatus_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
 </html>
+=======
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!-- Mirrored from 192.168.1.1/Main_LogStatus_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - General Log</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+
+<script language="JavaScript" type="text/javascript" src="state.js"></script>
+<script language="JavaScript" type="text/javascript" src="general.js"></script>
+<script language="JavaScript" type="text/javascript" src="popup.js"></script>
+<script language="JavaScript" type="text/javascript" src="help.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+function showclock(){
+	JS_timeObj2 = JS_timeObj.toString();
+	JS_timeObj2 = JS_timeObj2.substring(0,3) + ", " +
+	              JS_timeObj2.substring(4,10) + "  " +
+				  checkTime(JS_timeObj.getHours()) + ":" +
+				  checkTime(JS_timeObj.getMinutes()) + ":" +
+				  checkTime(JS_timeObj.getSeconds()) + "  " +
+				  JS_timeObj.getFullYear() + " GMT" +
+				  timezone;
+	$("system_time").value = JS_timeObj2;
+	
+	setTimeout("showclock()", 1000);
+}
+
+function showbootTime(){
+	Days = Math.floor(boottime / (60*60*24));	
+	Hours = Math.floor((boottime / 3600) % 24);
+	Minutes = Math.floor(boottime % 3600 / 60);
+	Seconds = Math.floor(boottime % 60);
+	
+	$("boot_days").innerHTML = Days;
+	$("boot_hours").innerHTML = Hours;
+	$("boot_minutes").innerHTML = Minutes;
+	$("boot_seconds").innerHTML = Seconds;
+	boottime += 1;
+	setTimeout("showbootTime()", 1000);
+}
+</script>
+</head>
+
+<body onload="show_banner(1); show_menu(5,7,1); show_footer();load_body();showclock(); showbootTime();" onunLoad="return unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="Main_LogStatus_Content.html#" width="0" height="0" frameborder="0"></iframe>
+
+<form method="post" name="form" action="https://admin:admin@192.168.1.1/apply.cgi" >
+<input type="hidden" name="current_page" value="Main_LogStatus_Content.html">
+<input type="hidden" name="next_page" value="Main_LogStatus_Content.html">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="sid_list" value="FirewallConfig;">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+</form>
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="23">&nbsp;</td>
+    	<td valign="top" width="202">
+			<div id="mainMenu"></div>
+			<div id="subMenu"></div>
+		</td>
+		
+		<td valign="top">
+			<div id="tabMenu" class="submenuBlock"></div><br/>
+			
+			<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td align="left" valign="top" >
+
+					<table width="95%" border="0" align="center" cellpadding="5" cellspacing="0" bordercolor="#6b8fa3"  class="FormTitle">
+						<thead>
+						<tr>
+							<td>System Log - General Log</td>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td bgcolor="#FFFFFF">
+								<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+									<tr>
+										<th width="20%">System Time</th>
+										<td>
+											<input type="text" id="system_time" name="system_time" size="40" class="devicepin" value="" readonly="1" style="font-size:12px;">											
+										</td>										
+									</tr>
+									<tr>
+										<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(12, 1);">Boot time</a></th>
+										<td><span id="boot_days"></span> days <span id="boot_hours"></span> hours <span id="boot_minutes"></span> minutes <span id="boot_seconds"></span> seconds</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td align="center"  bgcolor="#FFFFFF">
+								<textarea cols="63" rows="14" wrap=off readonly=readonly style="width:98%; font-family:'Courier New', Courier, mono; font-size:11px;" >Jan  1 00:00:06 (none) syslog.info syslogd started: BusyBox v1.7.2
+Jan  1 00:00:06 (none) user.notice igmp[1829]: igmp started! 
+Jan  1 00:00:07 (none) user.emerg USB storage: "d7d/100/100" was plugged in.
+Jan  1 00:00:11 (none) user.emerg dhcp client: deconfig: lease is lost
+Jan  1 00:00:11 (none) user.notice igmp[1829]:  interface 192.168.1.1, DOWNSTREAM ver=0x16 name=br0 index=7 
+Jan  1 00:00:11 (none) user.notice igmp[1829]:  interface 192.168.39.32, UPSTREAM ver=0x16 name=eth0 index=4 
+Jan  1 00:00:12 (none) user.err syslog: ERRO: MC-Router API already in use; Errno(125): Address already in use
+Jan  1 00:00:12 (none) user.emerg dhcp client: bound IP : 192.168.39.32 from 192.168.39.1
+Jan  1 00:00:21 (none) user.emerg USB storage: vfat fs mounted to /tmp/harddisk/part0 
+Jan  1 00:00:22 (none) user.emerg USB storage: The swap file is not added for partition size is less than 1024MB
+Jan  1 00:00:22 (none) user.emerg FTP Server: daemon is stoped
+Jan  1 00:00:22 (none) user.emerg FTP Server: daemon is started
+Jan  1 00:00:22 (none) user.emerg Samba Server: daemon is stoped
+Jan  1 00:00:24 (none) user.emerg Samba Server: daemon is started
+Jan  1 00:00:25 (none) daemon.notice uShare[1990]: Listening on telnet port 1337 
+Jan  1 00:00:25 (none) user.emerg Media Server: daemon is started
+Jan  1 00:00:25 (none) daemon.notice uShare[1990]: Initializing UPnP subsystem ... 
+Jan  1 00:00:25 (none) daemon.notice uShare[1990]: Starting in XboX 360 compliant profile ... 
+Jan  1 00:00:25 (none) daemon.notice uShare[1990]: UPnP MediaServer listening on 192.168.1.1:49152 
+Jan  1 00:00:25 (none) daemon.notice uShare[1990]: Sending UPnP advertisement for device ... 
+Jan  1 00:00:26 (none) daemon.notice uShare[1990]: Listening for control point connections ... 
+Jan  1 00:00:26 (none) daemon.notice uShare[1990]: Building Metadata List ... 
+Jan  1 00:00:26 (none) daemon.notice uShare[1990]: Looking for files in content directory : /shares/DMSRoot 
+Jan  1 00:00:26 (none) daemon.notice uShare[1990]: Found 5 files and subdirectories. 
+Jan  1 00:04:18 (none) user.emerg WAN Connection: Connected manually
+Jan  1 00:04:18 (none) user.err syslog: ERRO: MC-Router API already in use; Errno(125): Address already in use
+Jan  1 00:04:18 (none) user.emerg dhcp client: bound IP : 192.168.39.32 from 192.168.39.1
+Jan  1 00:04:19 (none) user.emerg WAN Connection: Disconnected manually
+Jan  1 00:04:19 (none) user.emerg dhcp client: deconfig: lease is lost
+Jan  1 00:04:19 (none) user.emerg WAN Connection: WAN was exceptionally disconnected.
+Jan  1 00:08:16 (none) user.emerg WAN Connection: Connected manually
+Jan  1 00:08:16 (none) user.err syslog: ERRO: MC-Router API already in use; Errno(125): Address already in use
+Jan  1 00:08:16 (none) user.emerg dhcp client: bound IP : 192.168.39.174 from 192.168.39.1
+Jan  1 00:08:17 (none) user.emerg WAN Connection: WAN was restored.
+Jan  1 00:09:20 (none) user.emerg WAN Connection: Connected manually
+Jan  1 00:09:20 (none) user.err syslog: ERRO: MC-Router API already in use; Errno(125): Address already in use
+Jan  1 00:09:20 (none) user.emerg dhcp client: bound IP : 192.168.39.174 from 192.168.39.1
+Jan  1 00:09:21 (none) user.emerg WAN Connection: Disconnected manually
+Jan  1 00:09:21 (none) user.emerg dhcp client: deconfig: lease is lost
+Jan  1 00:09:22 (none) user.emerg WAN Connection: WAN was exceptionally disconnected.
+Jan  1 00:09:54 (none) user.emerg WAN Connection: Connected manually
+Jan  1 00:09:54 (none) user.err syslog: ERRO: MC-Router API already in use; Errno(125): Address already in use
+Jan  1 00:09:54 (none) user.emerg dhcp client: bound IP : 192.168.39.174 from 192.168.39.1
+Jan  1 00:09:55 (none) user.emerg WAN Connection: WAN was restored.
+Jan  1 00:10:35 (none) user.emerg WAN Connection: Connected manually
+Jan  1 00:10:35 (none) user.err syslog: ERRO: MC-Router API already in use; Errno(125): Address already in use
+Jan  1 00:10:35 (none) user.emerg dhcp client: bound IP : 192.168.39.174 from 192.168.39.1
+Jan  1 00:10:36 (none) user.emerg WAN Connection: Disconnected manually
+Jan  1 00:10:36 (none) user.emerg dhcp client: deconfig: lease is lost
+Jan  1 00:10:36 (none) user.emerg WAN Connection: WAN was exceptionally disconnected.
+</textarea>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+			<table width="300" border="0" align="right" cellpadding="2" cellspacing="0">
+				<tr align="center">
+					<td>
+<form method="post" name="form1" action="https://admin:admin@192.168.1.1/apply.cgi">
+<input type="hidden" name="current_page" value="Main_LogStatus_Content.html">
+<input type="hidden" name="action_mode" value=" Clear ">
+<input type="hidden" name="next_host" value="">
+<input type="submit" onClick="document.form1.next_host.value = location.host; onSubmitCtrl(this, ' Clear ')" value="Clear" class="button">
+</form>
+					</td>
+					
+					<td>
+<form method="post" name="form2" action="https://admin:admin@192.168.1.1/syslog.cgi">
+<input type="hidden" name="next_host" value="">
+<input type="submit" onClick="document.form2.next_host.value = location.host; onSubmitCtrl(this, ' Save ')" value="Save" class="button">
+</form>
+					</td>
+					
+					<td>
+<form method="post" name="form3" action="https://admin:admin@192.168.1.1/apply.cgi">
+<input type="hidden" name="current_page" value="Main_LogStatus_Content.html">
+<input type="hidden" name="action_mode" value=" Refresh ">
+<input type="hidden" name="next_host" value="">
+<input type="submit" onClick="document.form3.next_host.value = location.host; onSubmitCtrl(this, ' Refresh ')" value="Refresh" class="button">
+</form>
+					</td>
+				</tr>
+			</table>
+		</form>
+		</td>
+		<td id="help_td" style="width:15px;" valign="top">
+			<form name="hint_form"></form>
+			<div id="helpicon" onClick="openHint(0, 0);" title="Click to open AiHelp">
+			<img src="images/help.gif">
+		</div>
+	  
+		<div id="hintofPM" style="display:none;">
+		<table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:closeHint();"><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tbody>
+		  <tr>
+			<td valign="top">
+			  <div id="hint_body" class="hint_body2"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="Main_LogStatus_Content.html#" frameborder="0"></iframe>
+			</td>
+		  </tr>
+		  </tbody>
+		</table>
+		</div>
+		</td>
+	</tr>
+</table>
+	<td width="10" align="center" valign="top"></td>
+  </tr>
+</table>
+<div id="footer"></div>
+</body>
+
+<!-- Mirrored from 192.168.1.1/Main_LogStatus_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

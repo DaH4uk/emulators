@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -95,3 +96,102 @@ document.write('<input type="submit" value="'+delete_mark+'" />&nbsp;&nbsp;');</
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../block_services.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_BKS_service');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#block_services.html" target=formframe>
+<input type=hidden name=submit_flag value="block_services">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(block_serv_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+</script>
+<script>
+function loadvalue()
+{
+form=document.forms[0];
+if('0' == '0')
+form.skeyword[0].checked = true;
+else if('0' == '1')
+form.skeyword[1].checked = true;
+else
+form.skeyword[2].checked = true;
+}
+function isfull(array_num)
+{
+ if( array_num == 20 )
+ {
+ alert(blockser_length_20);
+ return false;
+ }
+ else
+ {
+ location.href="block_services_add.html" 
+ }
+}
+</script>
+<input type="hidden" name="select_edit">
+<input type="hidden" name="select_del">
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_BKS_service','block')"><b><script>document.write(block_ser_services_block);</script><script>document.write(ba);</script></td></tr>
+<script>document.write("<tr>"+hd2+"<input type='radio' name='skeyword' value='0'>"+never_mark+"</td></tr><tr>"+hd2+"<input type=\"radio\" name=\"skeyword\" value=1>"+per_schedule_mark+"</td></tr><tr>"+hd2+"<input type=radio name=skeyword value=2>"+always_mark+"</td></tr>");</script>
+<script>document.write(bluebar);</script>
+ <tr><td nowrap colspan=2><a tabindex=-1 href="javascript:loadhelp('_BKS_service','table')"><b><script>document.write(block_ser_service_table);</script></b></td></tr>
+<tr>
+<script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+<tr>
+<script>document.write(hd_center);</script> &nbsp;</td>
+<script>document.write(hd_center);</script> <span class="subhead">#</span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(block_ser_service_type);</script></span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(block_ser_service_port);</script></span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(block_ser_service_ip);</script></span></td>
+</tr>
+<script>
+var array_num= 0;
+if( array_num > 0 )
+{
+for(i=1;i<=array_num;i++)
+{
+var str = eval ( 'block_servicesArray' + i );
+var each_info=str.split(' ');
+each_service_type=each_info[4].replace(/&harr;/g," ");
+each_service_type=each_service_type.replace(/ /g,"&nbsp;");
+document.write('<tr>'+hd_center+'<input type="radio" name="select_block_services" value="'+i+'"></td>'+hd_center+'<span class="subhead">'+i+'</span></td>'+hd_center+each_service_type+'</td>'+hd_center+each_info[2]+'-'+each_info[3]+'</td>'+hd_center+each_info[6]+'</td></tr>');
+}
+}
+</script>
+</table>
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<TR>
+<script>document.write(hd2_center)
+document.write('<input type="button" value="'+add_mark+'" onClick="isfull(array_num)">&nbsp;&nbsp;')
+document.write('<input type="submit" value="'+edit_mark+'" />&nbsp;&nbsp;')
+document.write('<input type="submit" value="'+delete_mark+'" />&nbsp;&nbsp;');</script> </TD>
+</TR>
+<script>document.write(bluebar);</script>
+<TR>
+<script>document.write(hd2_center);</script>
+<script>document.write('<input type="submit" value="'+apply_mark+'" onClick="return check_block_services_apply(document.forms[0])">&nbsp;&nbsp;');</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"block_services.html\";'></TD>");</script>
+</TR> 
+</TABLE>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

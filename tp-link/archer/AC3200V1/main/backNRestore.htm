@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script type="text/javascript">
 $("#t_backup").click(function() {
     document.getElementById('backupConf').submit();
@@ -75,3 +76,82 @@ $("#resetBtn").click(function() {
 <script type="text/javascript">
 $.tpInit();
 </script>
+=======
+<script type="text/javascript">
+$("#t_backup").click(function() {
+    document.getElementById('backupConf').submit();
+});
+
+$("#t_restore").click(function() {
+    if ($("#filename").val() == "") {
+        $.alert(ERR_CONF_FILE_NONE);
+        return false;
+    }
+
+    var formObj = document.getElementById('reConf');
+
+    try {
+        formObj.target = "up_frame";
+        formObj.action = "/cgi/confup";
+        formObj.submit();
+    } catch (e) {}
+
+    $.guage(["<span class='T T_uploading'>" + s_str.uploading + "</span>", "<span class='T T_wait_upload'>" + s_str.wait_upload + "</span>..."], 10, 100, function() {
+        $.guage(["<span class='T T_rebooting'>" + s_str.rebooting + "</span>", "<span class='T T_wait_restore'>" + s_str.wait_restore + "</span>"], 100, $.guageInterval, function() {
+            $.deleteCookie("Authorization");
+            $.refresh();
+        });
+        $.cgi("/cgi/bnr", null, function(ret) {
+            if (ret && ret != ERR_NETWORK && ret != ERR_EXIT && ret != ERR_NONE_FILE) $.errBack(ret, "backNRestore.htm");
+        }, false, true);
+    });
+});
+
+$("#resetBtn").click(function() {
+    $.confirm(c_str.cdefaults, function() {
+        $.act(ACT_OP, ACT_OP_FACTORY_RESET);
+        $.exe(function(err) {
+            if (!err) {
+                $.guage(["<span class='T T_rebooting'>" + s_str.rebooting + "</span>", "<span class='T T_wait_reboot'>" + s_str.wait_reboot + "</span>"], 100, $.guageInterval, function() {
+                    window.location.reload();
+                });
+            }
+            $.act(ACT_OP, ACT_OP_REBOOT);
+            $.exe(function(err) {
+                if (!err) $.deleteCookie("Authorization");
+            }, true);
+        });
+    })
+});
+</script>
+<h3 class="T_backup">Backup</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned" action="http://www.tp-linkru.com/cgi/conf.bin" id="backupConf">
+        <p class="cfg-line" id="t_savecopy">Save a copy of current settings.</p>
+        <button type="submit" class="green T_backup xl" id="t_backup" value="Backup">Backup</button>
+    </form>
+</div>
+<h3 class="T_restore">Restore</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned" action="http://www.tp-linkru.com/cgi/confup" enctype="multipart/form-data" method="post" id="reConf">
+    	<p class="cfg-line" id="t_restoreinfo">Restore saved settings from a file.</p>
+        <div class="file-container">
+            <b class="T" id="t_file">File:</b>
+            <input type="file" name="filename" id="filename" />
+        </div>
+    </form>
+    <form class="pure-form pure-form-aligned">
+        <button type="submit" class="green T_restore xl" id="t_restore" value="Restore">Restore</button>
+    </form>
+</div>
+<h3 id="t_facrestore">Factory Default Restore</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <p class="cfg-line" id="t_facrestoreinfo">Revert all the configuration settings to their default values.</p>
+        <button type="submit" class="green T_facrestore xl" id="resetBtn" value="Factory Restore">Factory Restore</button>
+    </form>
+</div>
+<script type="text/javascript">
+$.tpInit();
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

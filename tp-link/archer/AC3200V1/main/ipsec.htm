@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script language="javascript" type="text/javascript">
 var currentIndexArr = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 var index = 0;
@@ -1135,3 +1136,1142 @@ $("#checkbox_st").on('click', function(e) {
 });
 $.tpInit();
 </script>
+=======
+<script language="javascript" type="text/javascript">
+var currentIndexArr = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+var index = 0;
+var selAll;
+var currentIndex = 0;
+var allStk;
+var editFlag = 0;
+var curStk = new Array();
+var ipsecCfgObj = {};
+var ipsecSaveObj = {};
+var tunnel_enable = 1;
+
+function initTable() {
+    selAll = 0;
+    index = 0;
+    allStk = [];
+    var array = new Array();
+    var ipsec = $.act(ACT_GET, IPSEC, [0, 0, 0, 0, 0, 0]);
+    if (!$.exe()) {
+        if (ipsec.enableDPD == 1) {
+            $("#dpd_on").addClass('selected');
+            $("#dpd_off").removeClass('selected');
+        } else {
+            $("#dpd_on").removeClass('selected');
+            $("#dpd_off").addClass('selected');
+        }
+    }
+
+    var getList = $.act(ACT_GL, IPSEC_CFG, null, null, ["entryID", "connName", "remoteGWAddress", "localIPAddress", "remoteIPAddress", "enable", "status"]);
+    if (!$.exe()) {
+        $.each(getList, function() {
+            var thisStk = "[" + this.__stack + "]";
+            currentIndexArr[this.entryID] = -1;
+
+            index++;
+
+            if (this.enable == 0) {
+                array.push([{
+                    "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                    "width": "5%"
+                }, {
+                    "text": this.connName,
+                    "width": "20%"
+                }, {
+                    "text": this.remoteGWAddress,
+                    "width": "15%"
+                }, {
+                    "text": this.localIPAddress,
+                    "width": "15%"
+                }, {
+                    "text": this.remoteIPAddress,
+                    "width": "15%"
+                }, {
+                    "text": "Disabled",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon disable-icon' id='en_" + index + "' onclick='doEnable(\"ip\", " + thisStk + ");'></span>",
+                    "width": "10%"
+                }, {
+                    "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"ip\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"ip\", " + thisStk + ");'></span>",
+                    "width": "10%"
+                }]);
+            } else {
+                if (this.status == 0) {
+                    array.push([{
+                        "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                        "width": "5%"
+                    }, {
+                        "text": this.connName,
+                        "width": "20%"
+                    }, {
+                        "text": this.remoteGWAddress,
+                        "width": "15%"
+                    }, {
+                        "text": this.localIPAddress,
+                        "width": "15%"
+                    }, {
+                        "text": this.remoteIPAddress,
+                        "width": "15%"
+                    }, {
+                        "text": "Down",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon enable-icon' id='en_" + index + "' onclick='doEnable(\"ip\", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(\"ip\", " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(\"ip\", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }]);
+                } else {
+                    array.push([{
+                        "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+                        "width": "5%"
+                    }, {
+                        "text": this.connName,
+                        "width": "20%"
+                    }, {
+                        "text": this.remoteGWAddress,
+                        "width": "15%"
+                    }, {
+                        "text": this.localIPAddress,
+                        "width": "15%"
+                    }, {
+                        "text": this.remoteIPAddress,
+                        "width": "15%"
+                    }, {
+                        "text": "Up",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon enable-icon' id='en_" + index + "' onclick='doEnable(" + index + " , " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }, {
+                        "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(" + index + " , " + thisStk + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(" + index + ", " + thisStk + ");'></span>",
+                        "width": "10%"
+                    }]);
+                }
+            }
+            allStk[index - 1] = this.__stack;
+        });
+
+    }
+    $.initTableBody($("#table-ipsec"), array);
+    return array;
+}
+
+function initConfig() {
+    $("#connName").prop("value", "Name");
+    $("#remoteGWAddr").prop("value", "0.0.0.0");
+    $("#localIP").prop("value", "0.0.0.0");
+    $("#localMask").prop("value", "255.255.255.0");
+    $("#remoteIP").prop("value", "0.0.0.0");
+    $("#remoteMask").prop("value", "255.255.255.0");
+    $("#psk").prop("value", "psk_key");
+    $("#ph1KeyTime").prop("value", "3600");
+    $("#ph2KeyTime").prop("value", "3600");
+    $("#spi").prop("value", "101");
+    $("#adv").addClass("nd");
+    $("#ManualKey").addClass("nd");
+
+    $("#advSWButton").removeClass("nd");
+    $("#advSWButton").removeClass("cln");
+    $("#ph1MyId").prop("disabled", "true");
+    $("#ph1PeerId").prop("disabled", "true");
+}
+
+function checkLifeTime(value) {
+    var re = /^[0-9]*[1-9][0-9]*$/;
+    if (value.search(re) == -1) {
+        return false;
+    }
+    return true;
+}
+
+function checkSPI() {
+    var txtName = $.id("spi").value;
+    var re = /^[0-9a-fA-F]{3,8}$/;
+    var dec = parseInt(txtName, 16);
+    var hexStr = dec.toString(16);
+    if (txtName.search(re) == -1) {
+        return false;
+    }
+    if ((dec < 256) || (dec > 4294967295)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isValidHexKey(val, size) {
+    var ret = false;
+    if (val.length == size) {
+        for (i = 0; i < val.length; i++) {
+            if (isHexaDigit(val.charAt(i)) == false) {
+                break;
+            }
+        }
+        if (i == val.length) {
+            ret = true;
+        }
+    }
+
+    return ret;
+}
+
+function isHexaDigit(digit) {
+    var hexVals = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f");
+    var len = hexVals.length;
+    var i = 0;
+    var ret = false;
+
+    for (i = 0; i < len; i++)
+        if (digit == hexVals[i]) break;
+
+    if (i < len)
+        ret = true;
+
+    return ret;
+}
+
+
+function doEdit(entryID, stack) {
+    editFlag = 1;
+    curStk = stack;
+
+    ipsecCfgObj = $.act(ACT_GET, IPSEC_CFG, curStk, null);
+    $.exe(function(err) {
+        if (!err) {
+            tunnel_enable = ipsecCfgObj.enable;
+            $("#connName").prop('value', ipsecCfgObj.connName);
+            $("#remoteGWAddr").prop('value', ipsecCfgObj.remoteGWAddress);
+
+            if (ipsecCfgObj.localIPMode == 0) {
+                $("#localIPMode option[value='0']").prop("selected", "selected");
+            } else {
+                $("#localIPMode option[value='1']").prop("selected", "selected");
+            }
+            var options = {
+                refresh: 1
+            };
+            $("#localIPMode").tpSelect(options);
+
+
+            $("#localIP").prop('value', ipsecCfgObj.localIPAddress);
+            if (ipsecCfgObj.localIPMode == 0) {
+                $("#localMask").prop('value', ipsecCfgObj.localMask);
+            } else {
+                $("#localMask").prop('value', "255.255.255.255");
+                $("#localMask").prop('disabled', true);
+            }
+
+            if (ipsecCfgObj.remoteIPMode == 0) {
+                $("#remoteIPMode option[value='0']").prop("selected", "selected");
+            } else {
+                $("#remoteIPMode option[value='1']").prop("selected", "selected");
+            }
+            var options = {
+                refresh: 1
+            };
+            $("#remoteIPMode").tpSelect(options);
+
+
+            $("#remoteIP").prop('value', ipsecCfgObj.remoteIPAddress);
+            if (ipsecCfgObj.remoteIPMode == 0) {
+                $("#remoteMask").prop('value', ipsecCfgObj.remoteMask);
+            } else {
+                $("#remoteMask").prop('value', "255.255.255.255");
+                $("#remoteMask").prop('disabled', true);
+            }
+
+            if (ipsecCfgObj.keyExMethod == 0) {
+                $("#keyExM option[value='0']").prop("selected", "selected");
+            } else {
+                $("#keyExM option[value='1']").prop("selected", "selected");
+            }
+            var options = {
+                refresh: 1
+            };
+            $("#keyExM").tpSelect(options);
+
+
+            if (ipsecCfgObj.keyExMethod == 0) {
+                if (ipsecCfgObj.authMethod == 0) {
+                    $("#authM option[value='0']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#authM").tpSelect(options);
+
+                $("#psk").prop('value', ipsecCfgObj.PSK);
+
+                if (ipsecCfgObj.perfectFSEn == 0) {
+                    $("#perfectFSEn option[value='0']").prop("selected", "selected");
+                } else {
+                    $("#perfectFSEn option[value='1']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#perfectFSEn").tpSelect(options);
+
+                if (ipsecCfgObj.ph1Mode == 'main') {
+                    $("#ph1Mode option[value='main']").prop("selected", "selected");
+                } else {
+                    $("#ph1Mode option[value='aggressive']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph1Mode").tpSelect(options);
+
+
+                if (ipsecCfgObj.ph1MyIdType != 'fqdn') {
+                    $("#ph1MyId").prop('disabled', true);
+                } else {
+                    $("#ph1MyId").prop('value', ipsecCfgObj.ph1MyId);
+                }
+
+                if (ipsecCfgObj.ph1MyIdType == 'fqdn') {
+                    $("#ph1MyIdType option[value='fqdn']").prop("selected", "selected");
+                } else {
+                    $("#ph1MyIdType option[value='address']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph1MyIdType").tpSelect(options);
+
+                if (ipsecCfgObj.ph1PeerIdType != 'fqdn') {
+                    $("#ph1PeerId").prop('disabled', true);
+                } else {
+                    $("#ph1PeerId").prop('value', ipsecCfgObj.ph1PeerId);
+                }
+
+                if (ipsecCfgObj.ph1PeerIdType == 'fqdn') {
+                    $("#ph1PeerIdType option[value='fqdn']").prop("selected", "selected");
+                } else {
+                    $("#ph1PeerIdType option[value='address']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph1PeerIdType").tpSelect(options);
+				
+                if (ipsecCfgObj.ph1EncryptionAlo == 'des') {
+                    $("#ph1EncryptionAlgo option[value='des']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1EncryptionAlo == '3des') {
+                    $("#ph1EncryptionAlgo option[value='3des']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1EncryptionAlo == 'aes128') {
+                    $("#ph1EncryptionAlgo option[value='aes128']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1EncryptionAlo == 'aes192') {
+                    $("#ph1EncryptionAlgo option[value='aes192']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1EncryptionAlo == 'aes256') {
+                    $("#ph1EncryptionAlgo option[value='aes256']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph1EncryptionAlgo").tpSelect(options);
+
+                if (ipsecCfgObj.ph1IntegrityAlgo == 'md5') {
+                    $("#ph1IntegrityAlgo option[value='md5']").prop("selected", "selected");
+                } else {
+                    $("#ph1IntegrityAlgo option[value='sha1']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph1IntegrityAlgo").tpSelect(options);
+
+                if (ipsecCfgObj.ph1DHGroup == 'modp768') {
+                    $("#ph1DHGroup option[value='modp768']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1DHGroup == 'modp1024') {
+                    $("#ph1DHGroup option[value='modp1024']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1DHGroup == 'modp1536') {
+                    $("#ph1DHGroup option[value='modp1536']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1DHGroup == 'modp2048') {
+                    $("#ph1DHGroup option[value='modp2048']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1DHGroup == 'modp3072') {
+                    $("#ph1DHGroup option[value='modp3072']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1DHGroup == 'modp4096') {
+                    $("#ph1DHGroup option[value='modp4096']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph1DHGroup == 'modp6144') {
+                    $("#ph1DHGroup option[value='modp6144']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph1DHGroup").tpSelect(options);
+
+                $("#ph1KeyTime").prop('value', ipsecCfgObj.ph1KeyTime);
+				
+                if (ipsecCfgObj.ph2EncryptionAlo == 'des') {
+                    $("#ph2EncryptionAlgo option[value='des']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2EncryptionAlo == '3des') {
+                    $("#ph2EncryptionAlgo option[value='3des']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2EncryptionAlo == 'aes128') {
+                    $("#ph2EncryptionAlgo option[value='aes128']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2EncryptionAlo == 'aes192') {
+                    $("#ph2EncryptionAlgo option[value='aes192']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2EncryptionAlo == 'aes256') {
+                    $("#ph2EncryptionAlgo option[value='aes256']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph2EncryptionAlgo").tpSelect(options);
+                if (ipsecCfgObj.ph2IntegrityAlgo == 'hmac_md5') {
+                    $("#ph2IntegrityAlgo option[value='hmac_md5']").prop("selected", "selected");
+                } else {
+                    $("#ph2IntegrityAlgo option[value='hmac_sha1']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph2IntegrityAlgo").tpSelect(options);
+
+
+
+                if ($('select#perfectFSEn').data('value') == 1) {
+                    $("#ph2DHGroup").prop('disabled', false);
+                } else {
+                    $("#ph2DHGroup").prop('disabled', true);
+                }
+
+                if (ipsecCfgObj.ph2DHGroup == 'modp768') {
+                    $("#ph2DHGroup option[value='modp768']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2DHGroup == 'modp1024') {
+                    $("#ph2DHGroup option[value='modp1024']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2DHGroup == 'modp1536') {
+                    $("#ph2DHGroup option[value='modp1536']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2DHGroup == 'modp2048') {
+                    $("#ph2DHGroup option[value='modp2048']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2DHGroup == 'modp3072') {
+                    $("#ph2DHGroup option[value='modp3072']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2DHGroup == 'modp4096') {
+                    $("#ph2DHGroup option[value='modp4096']").prop("selected", "selected");
+                } else if (ipsecCfgObj.ph2DHGroup == 'modp6144') {
+                    $("#ph2DHGroup option[value='modp6144']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#ph2DHGroup").tpSelect(options);
+
+
+                $("#ph2KeyTime").prop('value', ipsecCfgObj.ph2KeyTime);
+                $("#ManualKey").addClass("nd");
+                $("#adv").addClass("nd");
+            } else {
+                if (ipsecCfgObj.manualEncryptionAlgo == 'des-cbc') {
+                    $("#manualEncryptionAlgo option[value='des-cbc']").prop("selected", "selected");
+                } else if (ipsecCfgObj.manualEncryptionAlgo == '3des-cbc') {
+                    $("#manualEncryptionAlgo option[value='3des-cbc']").prop("selected", "selected");
+                } else if (ipsecCfgObj.manualEncryptionAlgo == 'aes-cbc') {
+                    $("#manualEncryptionAlgo option[value='aes-cbc']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#manualEncryptionAlgo").tpSelect(options);
+
+                $("#manualEncryptionKey").prop('value', ipsecCfgObj.manualEncryptionKey);
+
+                if (ipsecCfgObj.manualAuthAlgo == 'hmac-md5') {
+                    $("#manualAuthAlgo option[value='hmac-md5']").prop("selected", "selected");
+                } else if (ipsecCfgObj.manualAuthAlgo == 'hmac-sha1') {
+                    $("#manualAuthAlgo option[value='hmac-sha1']").prop("selected", "selected");
+                }
+                var options = {
+                    refresh: 1
+                };
+                $("#manualAuthAlgo").tpSelect(options);
+                $("#manualAuthKey").prop('value', ipsecCfgObj.manualAthKey);
+                $("#spi").prop('value', ipsecCfgObj.SPI);
+                $("#AutoKeyEx").addClass("nd");
+                $("#PSK_DIV").addClass("nd");
+                $("#Perfect_IKE").addClass("nd");
+                $("#adv").addClass("nd");
+                $("#advdiv").addClass("nd");
+            }
+        }
+    });
+}
+
+function doEnable(entryID, stack) {
+    var ipsecEntry = $.act(ACT_GET, IPSEC_CFG, stack, null, null);
+    $.exe();
+    if (ipsecEntry.enable == 0) {
+        $.act(ACT_SET, IPSEC_CFG, stack, null, ["enable=1"]);
+        $.exe(function(err) {
+            if (!err) {
+                $.reload();
+            }
+        });
+    } else {
+        $.act(ACT_SET, IPSEC_CFG, stack, null, ["enable=0"]);
+        $.exe(function(err) {
+            if (!err) {
+                $.reload();
+            }
+        });
+    }
+}
+
+function doDel(entryID, stack) {
+    currentIndexArr[entryID] = entryID;
+    $.act(ACT_DEL, IPSEC_CFG, stack, null, null);
+    $.exe(function(err) {
+        if (!err) {
+            $.reload();
+        }
+    });
+}
+
+$("#dpd_on").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, IPSEC, [0, 0, 0, 0, 0, 0], null, ["enableDPD=1"]);
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            $.reload();
+        }
+    });
+});
+
+$("#dpd_off").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, IPSEC, [0, 0, 0, 0, 0, 0], null, ["enableDPD=0"]);
+    $.exe(function(err) {
+        $.removeLoading();
+        if (!err) {
+            $.reload();
+        }
+    });
+});
+
+$("#cancel").click(function() {
+    editFlag = 0;
+    for (var i = 0; i < curStk.length; i++) {
+        curStk[i] = -1;
+    }
+    $.reload();
+});
+
+
+$("#ok").click(function() {
+
+    if ($("#remoteGWAddr").prop('value').length < 1) {
+        $.alert(ERR_IPSEC_GW_INVALID);
+        return;
+    }
+
+    if ($('select#localIPMode').data('value') == 0) {
+        if ($.ifip($("#localIP").prop('value'), true) != 0) {
+            $.alert(ERR_IPSEC_LOCALIP_INVALID, $("#localIP").prop('value'));
+            return;
+        }
+        if ($.mask($("#localMask").prop('value'), true) != 0) {
+            $.alert(ERR_IPSEC_LOCALMASK_INVALID, $("#localMask").prop('value'));
+            return;
+        }
+    } else {
+        if ($.ifip($("#localIP").prop('value'), true) != 0) {
+            $.alert(ERR_IPSEC_LOCALIP_INVALID, $("#localIP").prop('value'));
+            return;
+        }
+    }
+
+    if ($('select#remoteIPMode').data('value') == 0) {
+        if ($.ifip($("#remoteIP").prop('value'), true) != 0) {
+            $.alert(ERR_IPSEC_REMOTEIP_INVALID, $("#remoteIP").prop('value'));
+            return;
+        }
+        if ($.mask($("#remoteMask").prop('value'), true) != 0) {
+            $.alert(ERR_IPSEC_REMOTEMASK_INVALID, $("#remoteMask").prop('value'));
+            return;
+        }
+    } else {
+        if ($.ifip($("#remoteIP").prop('value'), true) != 0) {
+            $.alert(ERR_IPSEC_REMOTEIP_INVALID, $("#remoteIP").prop('value'));
+            return;
+        }
+    }
+
+    if ($('select#keyExM').data('value') == 0) {
+        var val;
+        if ($("#psk").prop('value').length == 0) {
+            $.alert(ERR_IPSEC_PRESHAREDKEY_INVALID);
+            return;
+        }
+        val = parseInt($("#ph1KeyTime").prop('value'));
+        if (isNaN(val) == true || val < 0 || checkLifeTime($("#ph1KeyTime").prop('value')) == false) {
+            $.alert(ERR_IPSEC_PHASE1_KEYLIFETIME_INVALID);
+            $("#adv").removeClass("nd");
+            return;
+        }
+        val = parseInt($("#ph2KeyTime").prop('value'));
+        if (isNaN(val) == true || val < 0 || (checkLifeTime($("#ph2KeyTime").prop('value')) == false)) {
+            $.alert(ERR_IPSEC_PHASE2_KEYLIFETIME_INVALID);
+            $("#adv").removeClass("nd");
+            return;
+        }
+    }
+    if ($('select#keyExM').data('value') == 1) {
+        var ekeys;
+        if ($('select#manualEncryptionAlgo').data('value') == "des-cbc") {
+            ekeys = 16;
+        } else if ($('select#manualEncryptionAlgo').data('value') == "3des-cbc") {
+            ekeys = 48;
+        } else {
+            ekeys = -1;
+        }
+        if (ekeys != -1 && isValidHexKey($("#manualEncryptionKey").prop('value'), ekeys) == false) {
+            $.alert(ERR_IPSEC_MANUAL_ENKEY_INVALID);
+            return;
+        }
+        if ($('select#manualEncryptionAlgo').data('value') == "aes-cbc") {
+            if (($("#manualEncryptionKey").prop('value').length == 32) || ($("#manualEncryptionKey").prop('value').length == 48) || ($("#manualEncryptionKey").prop('value').length == 64)) {;
+            } else {
+                $.alert(ERR_IPSEC_AES_ENKEY_INVALID);
+                return;
+            }
+            if (isValidHexKey($("#manualEncryptionKey").prop('value'), $("#manualEncryptionKey").prop('value').length) == false) {
+                $.alert(ERR_IPSEC_MANUAL_ENKEY_DIGITONLY);
+                return;
+            }
+        }
+        var akeys;
+        if ($('select#manualAuthAlgo').data('value') == "hmac-md5") {
+            akeys = 32;
+        } else if ($('select#manualAuthAlgo').data('value') == "hmac-sha1") {
+            akeys = 40;
+        } else {
+            akeys = -1;
+        }
+        if (akeys != -1 && isValidHexKey($("#manualAuthKey").prop('value'), akeys) == false) {
+            $.alert(ERR_IPSEC_MANUAL_AUKEY_INVALID);
+            return;
+        }
+        if (checkSPI() == false) {
+            $.alert(ERR_IPSEC_SPI_VALUE_INVALID);
+            return;
+        }
+    }
+
+    ipsecSaveObj.entryID = currentIndex;
+    ipsecSaveObj.enable = tunnel_enable;
+    ipsecSaveObj.connName = $("#connName").prop('value');
+    ipsecSaveObj.remoteGWAddress = $("#remoteGWAddr").prop('value');
+    ipsecSaveObj.localIPMode = $('select#localIPMode').data('value');
+    ipsecSaveObj.localIPAddress = $("#localIP").prop('value');
+    if ($('select#localIPMode').data('value') == 0) {
+        ipsecSaveObj.localMask = $("#localMask").prop('value');
+    }
+    ipsecSaveObj.remoteIPMode = $('select#remoteIPMode').data('value');
+    ipsecSaveObj.remoteIPAddress = $("#remoteIP").prop('value');
+    if ($('select#remoteIPMode').data('value') == 0) {
+        ipsecSaveObj.remoteMask = $("#remoteMask").prop('value');
+    }
+    ipsecSaveObj.keyExMethod = $('select#keyExM').data('value');
+
+    if ($('select#keyExM').data('value') == 1) {
+        ipsecSaveObj.manualEncryptionAlgo = $('select#manualEncryptionAlgo').data('value');
+        ipsecSaveObj.manualEncryptionKey = $("#manualEncryptionKey").prop('value');
+        ipsecSaveObj.manualAuthAlgo = $('select#manualAuthAlgo').data('value');
+        ipsecSaveObj.manualAthKey = $("#manualAuthKey").prop('value');
+        ipsecSaveObj.SPI = $("#spi").prop('value');
+        ipsecSaveObj.secondSPI = $("#spi").prop('value');
+    } else {
+        ipsecSaveObj.authMethod = $('select#authM').data('value');
+        ipsecSaveObj.PSK = $("#psk").prop('value');
+        ipsecSaveObj.perfectFSEn = $('select#perfectFSEn').data('value');
+        ipsecSaveObj.ph1Mode = $('select#ph1Mode').data('value');
+        ipsecSaveObj.ph1MyIdType = $('select#ph1MyIdType').data('value');
+        if ($('select#ph1MyIdType').data('value') == "fqdn") {
+            ipsecSaveObj.ph1MyId = $("#ph1MyId").prop('value');
+            if ($("#ph1MyId").prop('value').length < 1) {
+                $.alert(ERR_IPSEC_MYIDENTIFIER_EMPTY);
+                return;
+            }
+        }
+        if ($('select#ph1PeerIdType').data('value') == "fqdn") {
+            ipsecSaveObj.ph1PeerId = $("#ph1PeerId").prop('value');
+            if ($("#ph1PeerId").prop('value').length < 1) {
+                $.alert(ERR_IPSEC_PEERIDENTIFIER_EMPTY);
+                return;
+            }
+        }
+        if ((($('select#ph1MyIdType').data('value') == "fqdn") || ($('select#ph1PeerIdType').data('value') == "fqdn")) && ($('select#ph1Mode').data('value') == "main")) {
+            $.alert(ERR_IPSEC_MODE_INVALID);
+            return;
+        }
+        ipsecSaveObj.ph1PeerIdType = $('select#ph1PeerIdType').data('value');
+        ipsecSaveObj.ph1EncryptionAlo = $('select#ph1EncryptionAlgo').data('value');
+        ipsecSaveObj.ph1IntegrityAlgo = $('select#ph1IntegrityAlgo').data('value');
+        ipsecSaveObj.ph1DHGroup = $('select#ph1DHGroup').data('value');
+        ipsecSaveObj.ph1KeyTime = $("#ph1KeyTime").prop('value');
+        ipsecSaveObj.ph2EncryptionAlo = $('select#ph2EncryptionAlgo').data('value');
+        ipsecSaveObj.ph2IntegrityAlgo = $('select#ph2IntegrityAlgo').data('value');
+        ipsecSaveObj.ph2DHGroup = $('select#ph2DHGroup').data('value');
+        ipsecSaveObj.ph2KeyTime = $("#ph2KeyTime").prop('value');
+    }
+
+    if (editFlag == 2) {
+        $.act(ACT_ADD, IPSEC_CFG, null, null, ipsecSaveObj);
+    } else {
+        $.act(ACT_SET, IPSEC_CFG, curStk, null, ipsecSaveObj);
+    }
+    $.exe(function(err) {
+        if (!err) {
+            $.reload();
+        }
+    });
+});
+
+$("#add").click(function() {
+    var i;
+    for (i = 0; i < 10; i++) {
+        if (currentIndexArr[i] != -1) {
+            currentIndex = currentIndexArr[i];
+            break;
+        }
+    }
+    if (i == 10) {
+        $.alert(ERR_IPSEC_TUNNELS_FULL);
+        $.reload();
+    }
+
+    initConfig();
+    editFlag = 2;
+});
+
+$("#delAll").click(function() {
+    ipsec_stack = [];
+    ipsec_stackIndex = index;
+    $.confirm(c_str.del_tunnels, function() {
+        for (var j = 0; j < ipsec_stackIndex; j++) {
+            ipsec_stack[j] = allStk[j];
+        }
+        for (var i = 0; i < ipsec_stackIndex; i++) {
+            if ($("#" + (i + 1)).prop('data-checked')) {
+                $.act(ACT_DEL, IPSEC_CFG, ipsec_stack[i], null);
+            }
+        }
+        if (ipsec_stackIndex > 0) {
+            $.exe(function(ret) {
+                if (!ret) $.reload();
+            });
+        }
+    });
+});
+
+$("#advSWButton").click(function() {
+    if ($("#advSWButton").hasClass("cln")) {
+        $("#adv").addClass("nd");
+        $("#advSWButton").removeClass("cln");
+    } else {
+        $("#adv").removeClass("nd");
+        $("#advSWButton").addClass("cln");
+    }
+});
+
+$("select#localIPMode").on("click", function() {
+    var mode = $('select#localIPMode').data('value');
+    if (mode == 0) {
+        $("#localMask").prop('disabled', false);
+    }
+    if (mode == 1) {
+        $("#localMask").prop('value', '255.255.255.255');
+        $("#localMask").prop('disabled', true);
+    }
+});
+
+$("select#remoteIPMode").on("click", function() {
+    var mode = $('select#remoteIPMode').data('value');
+    if (mode == 0) {
+        $("#remoteMask").prop('disabled', false);
+    }
+    if (mode == 1) {
+        $("#remoteMask").prop('value', '255.255.255.255');
+        $("#remoteMask").prop('disabled', true);
+    }
+});
+
+$("select#keyExM").on("click", function() {
+    var keymode = $('select#keyExM').data('value');
+    if (keymode == 1) {
+        $("#AutoKeyEx").addClass("nd");
+        $("#PSK_DIV").addClass("nd");
+        $("#Perfect_IKE").addClass("nd");
+        $("#adv").addClass("nd");
+        $("#advdiv").addClass("nd");
+        $("#ManualKey").removeClass("nd");
+    }
+    if (keymode == 0) {
+        $("#ManualKey").addClass("nd");
+        $("#AutoKeyEx").removeClass("nd");
+        $("#PSK_DIV").removeClass("nd");
+        $("#Perfect_IKE").removeClass("nd");
+        $("#advdiv").removeClass("nd");
+        if ($("#advSWButton").hasClass("cln")) {
+            $("#adv").removeClass("nd");
+        }
+    }
+
+});
+
+$("select#perfectFSEn").on("click", function() {
+    if ($('select#perfectFSEn').data('value') == 1) {
+        $("#ph2DHGroup").prop('disabled', false);
+    } else {
+        $("#ph2DHGroup").prop('disabled', true);
+    }
+});
+
+$("select#ph1Mode").on("click", function() {
+    if ((($('select#ph1MyIdType').data('value') == "fqdn") || ($('select#ph1PeerIdType').data('value') == "fqdn")) && ($('select#ph1Mode').data('value') == "main")) {
+        $.alert(ERR_IPSEC_MODE_AGGRESSIVE);
+        $("#ph1Mode option[value='aggressive']").prop("selected", "selected");
+        var options = {
+            refresh: 1
+        };
+        $("#ph1Mode").tpSelect(options);
+    }
+});
+
+$("select#ph1MyIdType").on("click", function() {
+    if ($('select#ph1MyIdType').data('value') == "address") {
+        $("#ph1MyId").prop('disabled', true);
+        $("#ph1MyId").prop('value', "");
+    }
+    if ($('select#ph1MyIdType').data('value') == "fqdn") {
+        $("#ph1MyId").prop('disabled', false);
+        if ($('select#ph1Mode').data('value') == "main") {
+            $.alert(ERR_IPSEC_MODE_AGGRESSIVE);
+            $("#ph1Mode option[value='aggressive']").prop("selected", "selected");
+            var options = {
+                refresh: 1
+            };
+            $("#ph1Mode").tpSelect(options);
+
+        }
+    }
+});
+
+$("select#ph1PeerIdType").on("click", function() {
+    if ($('select#ph1PeerIdType').data('value') == "address") {
+        $("#ph1PeerId").prop('disabled', true);
+        $("#ph1PeerId").prop('value', "");
+    }
+    if ($('select#ph1PeerIdType').data('value') == "fqdn") {
+        $("#ph1PeerId").prop('value', $("#remoteGWAddr").prop('value'));
+        $("#ph1PeerId").prop('disabled', false);
+        if ($('select#ph1Mode').data('value') == "main") {
+            $.alert(ERR_IPSEC_MODE_AGGRESSIVE);
+            $("#ph1Mode option[value='aggressive']").prop("selected", "selected");
+            var options = {
+                refresh: 1
+            };
+            $("#ph1Mode").tpSelect(options);
+        }
+    }
+
+});
+
+function selectAll() {
+    var i;
+    for (i = 0; i < allStk.length; i++) {
+        if ($('#checkbox_st').prop('data-checked'))
+            $("#" + (i + 1)).prop('checked', true);
+        else
+            $("#" + (i + 1)).prop('checked', false);
+    }
+    $('#checkbox_st').prop('checked', $('#checkbox_st').prop('data-checked'));
+
+    $.each($('input.checkbox-checkbox'), function() {
+        $(this).data('tpCheckbox').refresh();
+    });
+}
+</script>
+
+
+<h3 id="et">IPSec Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b id="t_dpd">Dead Peer Detection:</b>
+            <ul>
+                <li>
+                    <button id="dpd_on" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="dpd_off" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+        <div class="table-op" id="addItem">
+            <div class="table-btn">
+                <span id="add" class="add-icon"></span>
+                <label class="T_add">Add</label>
+                <span id="delAll" class="delete-all-icon"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+        <table id="table-ipsec">
+            <thead></thead>
+            <tbody id="body-ipsec">
+                <tr id="edit-container-ipsec" class="nd">
+                    <td colspan="9">
+                        <div>
+                            <b id="t_conname" class="xxl">IPSec Connection Name:</b>
+                            <input class="xl" type="text" id="connName" maxlength="45"/>
+                        </div>
+                        <div>
+                            <b id="t_remgwaddr" class="xxl">Remote IPSec Gateway Address(URL):</b>
+                            <input class="xl" type="text" id="remoteGWAddr" maxlength="45" title="'0.0.0.0' or 'www.example.com'" />
+                        </div>
+                        <div class="part-separate">
+                            <b id="t_tunlocaddr" class="xxl">Tunnel access from local IP addresses:</b>
+                            <select class="xl" id="localIPMode">
+                                <option value="0" class="T_c_sub">Subnet</option>
+                                <option value="1" class="T_c_singleaddr">Single Address</option>
+                            </select>
+                        </div>
+                        <div>
+                            <b class="xxl T_c_addrVPN">IP Address for VPN:</b>
+                            <input class="xl" type="text" id="localIP"  maxlength="15" />
+                        </div>
+                        <div>
+                            <b class="xxl T_c_submask">IP Subnetmask:</b>
+                            <input class="xl" type="text" id="localMask"  maxlength="15" />
+                        </div>
+                        <div class="part-separate">
+                            <b id="t_tunremaddr" class="xxl">Tunnel access from remote IP addresses:</b>
+                            <select class="xl" id="remoteIPMode">
+                                <option value="0" class="T_c_sub">Subnet</option>
+                                <option value="1" class="T_c_singleaddr">Single Address</option>
+                            </select>
+                        </div>
+                        <div>
+                            <b class="xxl T_c_addrVPN">IP Address for VPN:</b>
+                            <input class="xl" type="text" id="remoteIP"  maxlength="15" />
+                        </div>
+                        <div>
+                            <b class="xxl T_c_submask">IP Subnetmask:</b>
+                            <input class="xl" type="text" id="remoteMask"  maxlength="15" />
+                        </div>
+                        <div class="part-separate">
+                            <b id="t_kexmeth" class="xxl">Key Exchange Method:</b>
+                            <select class="xl" id="keyExM">
+                                <option value="0" id="t_auto">Auto(IKE)</option>
+                                <option value="1" id="t_manual">Manual</option>
+                            </select>
+                        </div>
+                        <div id="AutoKeyEx">
+                            <b id="t_authmeth" class="xxl">Authentication Method:</b>
+                            <select class="xl" id="authM">
+                                <option value="0" class="T_c_presharekey">Pre-Shared Key</option>
+                            </select>
+                        </div>
+                        <div id="PSK_DIV">
+                            <b class="xxl T_c_presharekey2">Pre-Shared Key:</b>
+                            <input class="xl" type="text" id="psk"  maxlength="255" />
+                        </div>
+                        <div id="Perfect_IKE">
+                            <b id="t_fosec" class="xxl">Perfect Forward Secrecy:</b>
+                            <select class="xl" id="perfectFSEn">
+                                <option value="1" class="T_en">Enable</option>
+                                <option value="0" class="T_dis">Disable</option>
+                            </select>
+                        </div>
+
+                        <div class="advanced-block" id="advdiv">
+                            <span class="advanced-icon advanced-hide-icon" id="advSWButton"></span>
+                            <span class="T_adv">Advanced</span>
+                        </div>
+                        <div id="ManualKey">
+                            <div>
+                                <b class="xxl T_enalgo">Encryption Algorithm:</b>
+                                <select class="xl" id="manualEncryptionAlgo">
+                                    <option value="des-cbc">DES</option>
+                                    <option value="3des-cbc" selected>3DES</option>
+                                    <option value="aes-cbc">AES(aes-cbc)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_enkey" class="xxl">Encryption Key:</b>
+                                <input class="xl" type="text" id="manualEncryptionKey" maxlength="64" title="DES: 16 digit Hex, 3DES: 48 digit Hex" />
+                            </div>
+                            <div>
+                                <b id="t_authalgo" class="xxl">Authentication Algorithm:</b>
+                                <select class="xl" id="manualAuthAlgo">
+                                    <option value="hmac-md5">MD5</option>
+                                    <option value="hmac-sha1">SHA1</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_authkey" class="xxl">Authentication Key:</b>
+                                <input class="xl" type="text" id="manualAuthKey" maxlength="40" title="MD5: 32 digit Hex, SHA1: 40 digit Hex" />
+                            </div>
+                            <div>
+                                <b class="xxl">SPI:</b>
+                                <input class="xl" type="text" id="spi" maxlength="8" title="Hex 100-FFFFFFFF" />
+                            </div>
+                        </div>
+                        <div id="adv">
+                            <div class="part-separate">
+                                <label class="label-title" id="t_phase">==Phase 1==</label>
+                            </div>
+                            <div class="part-separate">
+                                <b class="xxl T_mode">Mode:</b>
+                                <select class="xl" id="ph1Mode">
+                                    <option value="main" id="t_main" class="xxl">Main</option>
+                                    <option value="aggressive" id="t_aggr" class="xxl">Aggressive</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_myidtype" class="xxl">My Identifier Type:</b>
+                                <select class="xl" id="ph1MyIdType">
+                                    <option value="address" id="t_locwanip">Local Wan IP</option>
+                                    <option value="fqdn">FQDN</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_myid" class="xxl">My Identifier:</b>
+                                <input class="xl" type="text" id="ph1MyId" maxlength="45"/>
+                            </div>
+                            <div>
+                                <b id="t_remidtype" class="xxl">Remote Identifier Type:</b>
+                                <select class="xl" id="ph1PeerIdType">
+                                    <option value="address" id="t_remwanip">Remote Wan IP</option>
+                                    <option value="fqdn">FQDN</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_remid" class="xxl">Remote Identifier:</b>
+                                <input class="xl" type="text" id="ph1PeerId" maxlength="45"/>
+                            </div>
+                            <div>
+                                <b class="T_enalgo xxl">Encryption Algorithm:</b>
+                                <select class="xl" id="ph1EncryptionAlgo">
+                                    <option value="des">DES</option>
+                                    <option value="3des" selected>3DES</option>
+                                    <option value="aes128">AES - 128</option>
+                                    <option value="aes192">AES - 192</option>
+                                    <option value="aes256">AES - 256</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b class="T_intealgo xxl">Integrity Algorithm:</b>
+                                <select class="xl" id="ph1IntegrityAlgo">
+                                    <option value="md5">MD5</option>
+                                    <option value="sha1">SHA1</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b class="xxl T_c_selectkeyex">Diffie-Hellman Group for Key Exchange:</b>
+                                <select class="xl" id="ph1DHGroup">
+                                    <option value="modp768">768bit</option>
+                                    <option value="modp1024" selected="selected">1024bit</option>
+                                    <option value="modp1536">1536bit</option>
+                                    <option value="modp2048">2048bit</option>
+                                    <option value="modp3072">3072bit</option>
+                                    <option value="modp4096">4096bit</option>
+                                    <option value="modp6144">6144bit</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b class="xxl T_c_keylife">Key Life Time:(Seconds)</b>
+                                <input class="xl" type="text" id="ph1KeyTime" value="3600" maxlength="8"/>
+                            </div>
+                            <div class="part-separate">
+                                <label class="label-title" id="t_phase2">==Phase 2==</label>
+                            </div>
+                            <div class="part-separate">
+                                <b class="T_enalgo xxl">Encryption Algorithm:</b>
+                                <select class="xl" id="ph2EncryptionAlgo">
+                                    <option value="des">DES</option>
+                                    <option value="3des" selected>3DES</option>
+                                    <option value="aes128">AES - 128</option>
+                                    <option value="aes192">AES - 192</option>
+                                    <option value="aes256">AES - 256</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b class="T_intealgo xxl">Integrity Algorithm:</b>
+                                <select class="xl" id="ph2IntegrityAlgo">
+                                    <option value="hmac_md5">MD5</option>
+                                    <option value="hmac_sha1">SHA1</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b class="xxl T_c_selectkeyex">Diffie-Hellman Group for Key Exchange:</b>
+                                <select class="xl" id="ph2DHGroup">
+                                    <option value="modp768">768bit</option>
+                                    <option value="modp1024" selected="selected">1024bit</option>
+                                    <option value="modp1536">1536bit</option>
+                                    <option value="modp2048">2048bit</option>
+                                    <option value="modp3072">3072bit</option>
+                                    <option value="modp4096">4096bit</option>
+                                    <option value="modp6144">6144bit</option>
+                                </select>
+                            </div>
+                            <div>
+                                <b class="xxl T_c_keylife">Key Life Time:(Seconds)</b>
+                                <input class="xl" type="text" id="ph2KeyTime" value="3600" maxlength="8"/>
+                            </div>
+                        </div>
+                        <div class="inline-btn-right">
+                            <button type="submit" class="green T_cancel" id="cancel">Cancel</button>
+                            <button type="submit" class="green T_ok" id="ok">OK</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+var headArray = [{
+    "text": '<div><input type="checkbox" id="checkbox_st" /><label></label></div>',
+    "width": "5%"
+}, {
+    "text": table_str.connname,
+    "width": "20%"
+}, {
+    "text": table_str.remgateway,
+    "width": "15%"
+}, {
+    "text": table_str.locaddr,
+    "width": "15%"
+}, {
+    "text": table_str.remaddr,
+    "width": "15%"
+}, {
+    "text": table_str.status,
+    "width": "10%"
+}, {
+    "text": table_str.enable,
+    "width": "10%"
+}, {
+    "text": table_str.modify,
+    "width": "10%"
+}];
+
+$.initTableHead($("#table-ipsec"), headArray);
+$("#table-ipsec").tpTable(initTable);
+
+$("#checkbox_st").on('click', function(e) {
+    selectAll();
+});
+$.tpInit();
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

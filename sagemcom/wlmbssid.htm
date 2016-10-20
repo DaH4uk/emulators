@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>MBSSID </title>
+    <script>
+        function checkVapState(vap) {
+            if (vap == 0) {
+                if (document.WlanMBSSID.En_vap0.checked == true) {
+                    enableTextField(document.WlanMBSSID.ssid_v0);
+                    enableRadioGroup(document.WlanMBSSID.authType0);
+                    enableRadioGroup(document.WlanMBSSID.brssid_v0);
+                    enableRadioGroup(document.WlanMBSSID.vap0_relay_block);
+
+                    enableTextField(document.WlanMBSSID.clientnum_vap0);
+
+
+                    enableTextField(document.WlanMBSSID.uprate_vap0);
+                    enableTextField(document.WlanMBSSID.downrate_vap0);
+
+                }
+                else {
+                    disableTextField(document.WlanMBSSID.ssid_v0);
+                    disableRadioGroup(document.WlanMBSSID.authType0);
+                    disableRadioGroup(document.WlanMBSSID.brssid_v0);
+                    disableRadioGroup(document.WlanMBSSID.vap0_relay_block);
+
+                    disableTextField(document.WlanMBSSID.clientnum_vap0);
+
+
+                    disableTextField(document.WlanMBSSID.uprate_vap0);
+                    disableTextField(document.WlanMBSSID.downrate_vap0);
+
+                }
+            }
+
+            if (vap == 1) {
+                if (document.WlanMBSSID.En_vap1.checked == true) {
+                    enableTextField(document.WlanMBSSID.ssid_v1);
+                    enableRadioGroup(document.WlanMBSSID.authType1);
+                    enableRadioGroup(document.WlanMBSSID.brssid_v1);
+                    enableRadioGroup(document.WlanMBSSID.vap1_relay_block);
+
+                    enableTextField(document.WlanMBSSID.clientnum_vap1);
+
+
+                    enableTextField(document.WlanMBSSID.uprate_vap1);
+                    enableTextField(document.WlanMBSSID.downrate_vap1);
+
+                }
+                else {
+                    disableTextField(document.WlanMBSSID.ssid_v1);
+                    disableRadioGroup(document.WlanMBSSID.authType1);
+                    disableRadioGroup(document.WlanMBSSID.brssid_v1);
+                    disableRadioGroup(document.WlanMBSSID.vap1_relay_block);
+
+                    disableTextField(document.WlanMBSSID.clientnum_vap1);
+
+
+                    disableTextField(document.WlanMBSSID.uprate_vap1);
+                    disableTextField(document.WlanMBSSID.downrate_vap1);
+
+                }
+            }
+
+
+            if (vap == 2) {
+                if (document.WlanMBSSID.En_vap2.checked == true) {
+                    enableTextField(document.WlanMBSSID.ssid_v2);
+                    enableRadioGroup(document.WlanMBSSID.authType2);
+                    enableRadioGroup(document.WlanMBSSID.brssid_v2);
+                    enableRadioGroup(document.WlanMBSSID.vap2_relay_block);
+
+                    enableTextField(document.WlanMBSSID.clientnum_vap2);
+
+
+                    enableTextField(document.WlanMBSSID.uprate_vap2);
+                    enableTextField(document.WlanMBSSID.downrate_vap2);
+
+                }
+                else {
+                    disableTextField(document.WlanMBSSID.ssid_v2);
+                    disableRadioGroup(document.WlanMBSSID.authType2);
+                    disableRadioGroup(document.WlanMBSSID.brssid_v2);
+                    disableRadioGroup(document.WlanMBSSID.vap2_relay_block);
+
+                    disableTextField(document.WlanMBSSID.clientnum_vap2);
+
+
+                    disableTextField(document.WlanMBSSID.uprate_vap2);
+                    disableTextField(document.WlanMBSSID.downrate_vap2);
+
+                }
+            }
+        }
+
+        function updateState() {
+            if (wlanDisabled) {
+                disableCheckBox(document.WlanMBSSID.En_vap0);
+                disableTextField(document.WlanMBSSID.ssid_v0);
+                disableRadioGroup(document.WlanMBSSID.brssid_v0);
+                disableRadioGroup(document.WlanMBSSID.authType0);
+                disableTextField(document.WlanMBSSID.clientnum_vap0);
+                disableTextField(document.WlanMBSSID.uprate_vap0);
+                disableTextField(document.WlanMBSSID.downrate_vap0);
+                disableRadioGroup(document.WlanMBSSID.vap0_relay_block);
+                disableCheckBox(document.WlanMBSSID.En_vap1);
+                disableTextField(document.WlanMBSSID.ssid_v1);
+                disableRadioGroup(document.WlanMBSSID.brssid_v1);
+                disableRadioGroup(document.WlanMBSSID.authType1);
+                disableTextField(document.WlanMBSSID.clientnum_vap1);
+                disableTextField(document.WlanMBSSID.uprate_vap1);
+                disableTextField(document.WlanMBSSID.downrate_vap1);
+                disableRadioGroup(document.WlanMBSSID.vap1_relay_block);
+                disableCheckBox(document.WlanMBSSID.En_vap2);
+                disableTextField(document.WlanMBSSID.ssid_v2);
+                disableRadioGroup(document.WlanMBSSID.brssid_v2);
+                disableRadioGroup(document.WlanMBSSID.authType2);
+                disableTextField(document.WlanMBSSID.clientnum_vap2);
+                disableTextField(document.WlanMBSSID.uprate_vap2);
+                disableTextField(document.WlanMBSSID.downrate_vap2);
+                disableRadioGroup(document.WlanMBSSID.vap2_relay_block);
+                disableButton(document.WlanMBSSID.save);
+            }
+            else {
+                checkVapState(0);
+                checkVapState(1);
+                checkVapState(2);
+                enableButton(document.WlanMBSSID.save);
+            }
+        }
+
+        function checkSSIDChar(str, type) {
+            var patrn;
+            if (type)
+                patrn = /^[a-zA-Z0-9~`!@#$%^&*()_+|\\{}[\]:;<>?,-./='" ]+$/;
+
+            else
+                patrn = /^[a-zA-Z0-9~`!@#$%^&*()_+|\\{}[\]:;<>?,-./='" ]*$/;
+
+            if (!patrn.exec(str)) return false;
+            return true;
+        }
+
+        function saveChanges() {
+            if (document.WlanMBSSID.ssid_v0.value == "") {
+                alert('SSID не может быть пустым!');
+                document.WlanMBSSID.ssid_v0.value = document.WlanMBSSID.ssid_v0.defaultValue;
+                document.WlanMBSSID.ssid_v0.focus();
+                return false;
+            }
+            if (checkSSIDChar(document.WlanMBSSID.ssid_v0.value, 1) == 0) {
+                alert('Неверный SSID.');
+                document.WlanMBSSID.ssid_v0.focus();
+                return false;
+            }
+            if (!validateDecimalDigit(document.WlanMBSSID.clientnum_vap0.value) || !checkDigitRange(document.WlanMBSSID.clientnum_vap0.value, 1, 1, 16)) {
+                alert("Invalid max clients number. It should be 1-16.");
+                document.WlanMBSSID.clientnum_vap0.focus();
+                return false;
+            }
+            if (!validateDecimalDigit(document.WlanMBSSID.uprate_vap0.value) || getDigit(document.WlanMBSSID.uprate_vap0.value, 1) < 0) {
+                alert('Invalid Bandwidth value.');
+                document.WlanMBSSID.uprate_vap0.focus();
+                return false;
+            }
+            if (!validateDecimalDigit(document.WlanMBSSID.downrate_vap0.value) || getDigit(document.WlanMBSSID.downrate_vap0.value, 1) < 0) {
+                alert('Invalid Bandwidth value.');
+                document.WlanMBSSID.downrate_vap0.focus();
+                return false;
+            }
+            if (document.WlanMBSSID.ssid_v1.value == "") {
+                alert('SSID не может быть пустым!');
+                document.WlanMBSSID.ssid_v1.value = document.WlanMBSSID.ssid_v1.defaultValue;
+                document.WlanMBSSID.ssid_v1.focus();
+                return false;
+            }
+            if (checkSSIDChar(document.WlanMBSSID.ssid_v1.value, 1) == 0) {
+                alert('Неверный SSID.');
+                document.WlanMBSSID.ssid_v1.focus();
+                return false;
+            }
+            if (!validateDecimalDigit(document.WlanMBSSID.clientnum_vap1.value) || !checkDigitRange(document.WlanMBSSID.clientnum_vap1.value, 1, 1, 16)) {
+                alert("Invalid max clients number. It should be 1-16.");
+                document.WlanMBSSID.clientnum_vap1.focus();
+                return false;
+            }
+            if (!validateDecimalDigit(document.WlanMBSSID.uprate_vap1.value) || getDigit(document.WlanMBSSID.uprate_vap1.value, 1) < 0) {
+                alert('Invalid Bandwidth value.');
+                document.WlanMBSSID.uprate_vap1.focus();
+                return false;
+            }
+            if (!validateDecimalDigit(document.WlanMBSSID.downrate_vap1.value) || getDigit(document.WlanMBSSID.downrate_vap1.value, 1) < 0) {
+                alert('Invalid Bandwidth value.');
+                document.WlanMBSSID.downrate_vap1.focus();
+                return false;
+            }
+            if (document.WlanMBSSID.En_vap2.checked == true) {
+                if (document.WlanMBSSID.ssid_v2.value == "") {
+                    alert('SSID не может быть пустым!');
+                    document.WlanMBSSID.ssid_v2.value = document.WlanMBSSID.ssid_v2.defaultValue;
+                    document.WlanMBSSID.ssid_v2.focus();
+                    return false;
+                }
+                if (checkSSIDChar(document.WlanMBSSID.ssid_v2.value, 1) == 0) {
+                    alert('Неверный SSID.');
+                    document.WlanMBSSID.ssid_v2.focus();
+                    return false;
+                }
+                if (!validateDecimalDigit(document.WlanMBSSID.clientnum_vap2.value) || !checkDigitRange(document.WlanMBSSID.clientnum_vap2.value, 1, 1, 16)) {
+                    alert("Invalid max clients number. It should be 1-16.");
+                    document.WlanMBSSID.clientnum_vap2.focus();
+                    return false;
+                }
+                if (!validateDecimalDigit(document.WlanMBSSID.uprate_vap2.value) || getDigit(document.WlanMBSSID.uprate_vap2.value, 1) < 0) {
+                    alert('Invalid Bandwidth value.');
+                    document.WlanMBSSID.uprate_vap2.focus();
+                    return false;
+                }
+                if (!validateDecimalDigit(document.WlanMBSSID.downrate_vap2.value) || getDigit(document.WlanMBSSID.downrate_vap2.value, 1) < 0) {
+                    alert('Invalid Bandwidth value.');
+                    document.WlanMBSSID.downrate_vap2.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">Настройка виртуальных BSSID</p>
+            <p class="intro_content">Эта страница предназначена для управления виртуальными точками доступа Wi-Fi (VAP). </p>
+        </div>
+
+        <div class="data_common data_common_notitle" id="VAP0">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%"><label><input value="1" name="En_vap0" onclick="checkVapState(0)" type="checkbox"> Вкл. SSID0</label></th>
+                        <td></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>SSID:</th>
+
+                        <td>
+
+                            <input disabled="disabled" maxlength="32" size="16" name="ssid_v0" value="WiFi-DOM.ru-6533-0" type="text">
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Вещание SSID: </th>
+                        <td>
+
+                            <input checked="checked" disabled="disabled" value="0" name="brssid_v0" type="radio"> Вкл.&nbsp;&nbsp;
+                            <input disabled="disabled" value="1" name="brssid_v0" type="radio"> Выкл.
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <th width="40%">Изоляция клиентов:</th>
+                        <td width="60%"><input checked="checked" disabled="disabled" name="vap0_relay_block" value="1" type="radio">Вкл.&nbsp;&nbsp; <input disabled="disabled" name="vap0_relay_block" value="0" type="radio">Выкл.</td>
+                    </tr>
+                    <tr>
+
+                        <th>Тип аутентификации:</th>
+                        <td>
+
+                            <input disabled="disabled" value="0" name="authType0" type="radio"> Открытая&nbsp;&nbsp;
+                            <input disabled="disabled" value="1" name="authType0" type="radio"> Общий ключ&nbsp;&nbsp;
+                            <input checked="checked" disabled="disabled" value="2" name="authType0" type="radio"> Авто
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Макс. кол-во клиентов:</th>
+                        <td>
+
+                            <input disabled="disabled" name="clientnum_vap0" size="5" maxlength="2" value="16" type="text">
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Скорость отдачи:</th>
+                        <td>
+
+                            <input disabled="disabled" maxlength="6" size="6" name="uprate_vap0" value="0" type="text"> Кбит/с
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Скорость приема:</th>
+                        <td>
+
+                            <input disabled="disabled" maxlength="6" size="6" name="downrate_vap0" value="0" type="text"> Кбит/с
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle" id="VAP1">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%"><label><input value="1" name="En_vap1" onclick="checkVapState(1)" type="checkbox">&nbsp;&nbsp;Вкл. SSID1 </label></th>
+                        <td></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>SSID:</th>
+
+                        <td>
+
+                            <input disabled="disabled" maxlength="32" size="16" name="ssid_v1" value="WiFi-DOM.ru-6533-1" type="text">
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Вещание SSID: </th>
+                        <td>
+
+                            <input checked="checked" disabled="disabled" value="0" name="brssid_v1" type="radio"> Вкл.&nbsp;&nbsp;
+                            <input disabled="disabled" value="1" name="brssid_v1" type="radio"> Выкл.
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <th width="40%">Изоляция клиентов:</th>
+                        <td width="60%"><input checked="checked" disabled="disabled" name="vap1_relay_block" value="1" type="radio">Вкл.&nbsp;&nbsp; <input disabled="disabled" name="vap1_relay_block" value="0" type="radio">Выкл.</td>
+                    </tr>
+                    <tr>
+
+                        <th>Тип аутентификации:</th>
+                        <td>
+
+                            <input disabled="disabled" value="0" name="authType1" type="radio"> Открытая&nbsp;&nbsp;
+                            <input disabled="disabled" value="1" name="authType1" type="radio"> Общий ключ&nbsp;&nbsp;
+                            <input checked="checked" disabled="disabled" value="2" name="authType1" type="radio"> Авто
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Макс. кол-во клиентов:</th>
+                        <td>
+
+                            <input disabled="disabled" name="clientnum_vap1" size="5" maxlength="2" value="16" type="text">
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Скорость отдачи:</th>
+                        <td>
+
+                            <input disabled="disabled" maxlength="6" size="6" name="uprate_vap1" value="0" type="text"> Кбит/с
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Скорость приема:</th>
+                        <td>
+
+                            <input disabled="disabled" maxlength="6" size="6" name="downrate_vap1" value="0" type="text"> Кбит/с
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle" id="VAP2">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%"><label><input value="1" name="En_vap2" onclick="checkVapState(2)" type="checkbox">&nbsp;&nbsp;Вкл. SSID2 </label></th>
+                        <td></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>SSID:</th>
+
+                        <td>
+
+                            <input disabled="disabled" maxlength="32" size="16" name="ssid_v2" value="WiFi-DOM.ru-6533-2" type="text">
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Вещание SSID: </th>
+                        <td>
+
+                            <input checked="checked" disabled="disabled" value="0" name="brssid_v2" type="radio"> Вкл.&nbsp;&nbsp;
+                            <input disabled="disabled" value="1" name="brssid_v2" type="radio"> Выкл.
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <th width="40%">Изоляция клиентов:</th>
+                        <td width="60%"><input checked="checked" disabled="disabled" name="vap2_relay_block" value="1" type="radio">Вкл.&nbsp;&nbsp; <input disabled="disabled" name="vap2_relay_block" value="0" type="radio">Выкл.</td>
+                    </tr>
+                    <tr>
+
+                        <th>Тип аутентификации:</th>
+                        <td>
+
+                            <input disabled="disabled" value="0" name="authType2" type="radio"> Открытая&nbsp;&nbsp;
+                            <input disabled="disabled" value="1" name="authType2" type="radio"> Общий ключ&nbsp;&nbsp;
+                            <input checked="checked" disabled="disabled" value="2" name="authType2" type="radio"> Авто
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Макс. кол-во клиентов:</th>
+                        <td>
+
+                            <input disabled="disabled" name="clientnum_vap2" size="5" maxlength="2" value="16" type="text">
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Скорость отдачи:</th>
+                        <td>
+
+                            <input disabled="disabled" maxlength="6" size="6" name="uprate_vap2" value="0" type="text"> Кбит/с
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Скорость приема:</th>
+                        <td>
+
+                            <input disabled="disabled" maxlength="6" size="6" name="downrate_vap2" value="0" type="text"> Кбит/с
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="btn_ctl">
+
+            <input class="link_bg" name="save" onclick="return saveChanges()" value="Применить" type="submit">
+            <input name="submit.htm?wlmbssid.htm" value="Send" type="hidden">
+
+        </div>
+
+        <script>
+            wlanDisabled = 0;
+            document.WlanMBSSID.authType0[2].checked = true;
+            document.WlanMBSSID.authType1[2].checked = true;
+            document.WlanMBSSID.authType2[2].checked = true;
+            document.WlanMBSSID.brssid_v0[0].checked = true;
+            document.WlanMBSSID.brssid_v1[0].checked = true;
+            document.WlanMBSSID.brssid_v2[0].checked = true;
+            document.WlanMBSSID.vap0_relay_block[0].checked = true;
+            document.WlanMBSSID.vap1_relay_block[0].checked = true;
+            document.WlanMBSSID.vap2_relay_block[0].checked = true;
+
+            updateState();
+        </script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

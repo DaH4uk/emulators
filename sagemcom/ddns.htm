@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Маршрутизация </title>
+    <script>
+        function checkTextStr(str) {
+            for (var i = 0; i < str.length; i++) {
+                if (str.charAt(i) == '%' || str.charAt(i) == '&' || str.charAt(i) == '\\' || str.charAt(i) == '?' || str.charAt(i) == '"')
+                    return false;
+            }
+            return true;
+        }
+
+        function addClick() {
+            if (document.ddns.hostname.value == "") {
+                alert("Введите имя хоста для данной учетной записи DDNS!");
+                document.ddns.hostname.focus();
+                return false;
+            }
+            if (!checkTextStr(document.ddns.hostname.value)) {
+                alert("Неверное имя хоста!");
+                document.ddns.hostname.focus();
+                return false;
+            }
+
+            if (document.ddns.ddnsProv.value == "0" || document.ddns.ddnsProv.value == "2") {
+                if (document.ddns.username.value == "") {
+                    alert("Введите имя пользователя DDNS!");
+                    document.ddns.username.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.username.value)) {
+                    alert("Неверное имя пользователя!");
+                    document.ddns.username.focus();
+                    return false;
+                }
+                if (document.ddns.password.value == "") {
+                    alert("Введите пароль!");
+                    document.ddns.password.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.password.value)) {
+                    alert("Неверный пароль!");
+                    document.ddns.password.focus();
+                    return false;
+                }
+            }
+
+            if (document.ddns.ddnsProv.value == "1") {
+                if (document.ddns.email.value == "") {
+                    alert("Введите адрес электронной почты!");
+                    document.ddns.email.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.email.value)) {
+                    alert("Неверный адрес e-mail!");
+                    document.ddns.email.focus();
+                    return false;
+                }
+
+                if (document.ddns.key.value == "") {
+                    alert("Введите ключ!");
+                    document.ddns.key.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.key.value)) {
+                    alert("Неверное значение ключа!");
+                    document.ddns.key.focus();
+                    return false;
+                }
+            }
+
+            if (document.ddns.ddnsProv.value == "3") {
+                if (document.ddns.noipemail.value == "") {
+                    alert("Введите адрес электронной почты!");
+                    document.ddns.noipemail.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.noipemail.value)) {
+                    alert("Неверный адрес e-mail!");
+                    document.ddns.noipemail.focus();
+                    return false;
+                }
+
+                if (document.ddns.noippassword.value == "") {
+                    alert("Введите пароль!");
+                    document.ddns.noippassword.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.noippassword.value)) {
+                    alert("Неверный пароль!");
+                    document.ddns.noippassword.focus();
+                    return false;
+                }
+            }
+
+
+
+            if (document.ddns.ddnsProv.value == "4") {
+                if (document.ddns.dnsdynamicemail.value == "") {
+                    alert("Введите адрес электронной почты!");
+                    document.ddns.dnsdynamicemail.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.dnsdynamicemail.value)) {
+                    alert("Неверный адрес e-mail!");
+                    document.ddns.dnsdynamicemail.focus();
+                    return false;
+                }
+
+                if (document.ddns.dnsdynamicpassword.value == "") {
+                    alert("Введите пароль!");
+                    document.ddns.dnsdynamicpassword.focus();
+                    return false;
+                }
+                if (!checkTextStr(document.ddns.dnsdynamicpassword.value)) {
+                    alert("Неверный пароль!");
+                    document.ddns.dnsdynamicpassword.focus();
+                    return false;
+                }
+            }
+
+
+            return true;
+        }
+
+
+        function updateState() {
+            if (document.ddns.ddnsProv.value == "0") {
+                enableTextField(document.ddns.username);
+                enableTextField(document.ddns.password);
+                disableTextField(document.ddns.email);
+                disableTextField(document.ddns.key);
+                disableTextField(document.ddns.noipemail);
+                disableTextField(document.ddns.noippassword);
+
+                disableTextField(document.ddns.dnsdynamicemail);
+                disableTextField(document.ddns.dnsdynamicpassword);
+
+            }
+            else if (document.ddns.ddnsProv.value == "2") {
+                enableTextField(document.ddns.username);
+                enableTextField(document.ddns.password);
+                disableTextField(document.ddns.email);
+                disableTextField(document.ddns.key);
+                disableTextField(document.ddns.noipemail);
+                disableTextField(document.ddns.noippassword);
+
+                disableTextField(document.ddns.dnsdynamicemail);
+                disableTextField(document.ddns.dnsdynamicpassword);
+
+            }
+            else if (document.ddns.ddnsProv.value == "3") {
+                disableTextField(document.ddns.username);
+                disableTextField(document.ddns.password);
+                disableTextField(document.ddns.email);
+                disableTextField(document.ddns.key);
+                enableTextField(document.ddns.noipemail);
+                enableTextField(document.ddns.noippassword);
+
+                disableTextField(document.ddns.dnsdynamicemail);
+                disableTextField(document.ddns.dnsdynamicpassword);
+
+            }
+
+            else if (document.ddns.ddnsProv.value == "4") {
+                disableTextField(document.ddns.username);
+                disableTextField(document.ddns.password);
+                disableTextField(document.ddns.email);
+                disableTextField(document.ddns.key);
+                disableTextField(document.ddns.noipemail);
+                disableTextField(document.ddns.noippassword);
+
+                enableTextField(document.ddns.dnsdynamicemail);
+                enableTextField(document.ddns.dnsdynamicpassword);
+
+            }
+
+            else {
+                enableTextField(document.ddns.email);
+                enableTextField(document.ddns.key);
+                disableTextField(document.ddns.username);
+                disableTextField(document.ddns.password);
+                disableTextField(document.ddns.noipemail);
+                disableTextField(document.ddns.noippassword);
+
+                disableTextField(document.ddns.dnsdynamicemail);
+                disableTextField(document.ddns.dnsdynamicpassword);
+
+            }
+        }
+
+        function postDdns(provider, hostname, username, password, ifname) {
+
+        }
+    </script>
+
+</head>
+
+<body id="adsl">
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">Настройка Dynamic DNS</p>
+            <p class="intro_content">Данная страница используется для настройки динамического адреса DNS от провайдеров DynDNS.org, TZO и т.д. </p>
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Провайдер DDNS:</th>
+                        <td>
+
+                            <select onchange="updateState()" name="ddnsProv" size="1">
+
+                     <option value="0" selected="selected">DynDNS.org</option>
+
+                     <option value="1">TZO</option>
+
+
+<option value="3">NO-IP</option>
+
+    <option value="4">DNSDynamic.org</option>
+
+
+                    </select>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Имя хоста:</th>
+                        <td>
+
+                            <input maxlength="34" size="35" name="hostname" type="text">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Интерфейс:</th>
+                        <td>
+
+                            <select name="interface">
+
+<option value="14" selected="selected"> pppoe1</option>
+
+                    <option value="100">----</option>
+
+                    </select>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Вкл.:</th>
+                        <td>
+
+                            <input checked="checked" name="enable" type="checkbox">
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Настройки DynDns:</th>
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Имя пользователя:</th>
+                        <td><input value="q" maxlength="34" size="35" name="username" type="text"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Пароль:</th>
+                        <td><input maxlength="34" size="35" name="password" type="password"></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Настройки TZO:</th>
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Email:</th>
+                        <td><input disabled="disabled" maxlength="34" size="35" name="email" type="text"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Ключ:</th>
+                        <td><input disabled="disabled" maxlength="34" size="35" name="key" type="text"></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="data_common data_common_notitle">
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Настройки NO-IP:</th>
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Email:</th>
+                        <td><input disabled="disabled" maxlength="50" size="35" name="noipemail" type="text"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Пароль:</th>
+                        <td><input disabled="disabled" maxlength="34" size="35" name="noippassword" type="text"></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Настройки DNSDynamic.org:</th>
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Email:</th>
+                        <td><input disabled="disabled" maxlength="50" size="35" name="dnsdynamicemail" type="text"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Пароль:</th>
+                        <td><input disabled="disabled" maxlength="34" size="35" name="dnsdynamicpassword" type="text"></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+        <div class="btn_ctl clearfix">
+
+            <input class="link_bg" onclick="return addClick()" name="addacc" value="Добавить" type="submit">
+            <input class="link_bg" name="delacc" value="Удалить" type="submit">
+        </div>
+
+        <div class="column">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Таблица Dynamic DDNS:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th>Выбрать</th>
+                            <th>Состояние</th>
+                            <th>Сервис</th>
+                            <th>Имя хоста</th>
+                            <th>Имя пользователя</th>
+                            <th>Интерфейс</th>
+                        </tr>
+
+                        <tr>
+
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <input name="submit.htm?ddns.htm" value="Send" type="hidden">
+
+        <script>
+            updateState();
+        </script>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>

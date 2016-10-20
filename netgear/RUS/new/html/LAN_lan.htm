@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -1013,4 +1014,1021 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/LAN_lan.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "LAN_lan";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+var LanHosts = [];
+var LanSelect = [];
+var LanActive = [];
+var m = 0;
+LanHosts[m] = [];
+LanHosts[m][0] = '<input type="radio" value="0" onclick="data_select('+m+');" name="MacSelect">';
+LanHosts[m][1] = m+1;
+LanHosts[m][2] = "192.168.1.2";
+LanHosts[m][3] = "NoName";
+LanHosts[m][4] = "00:00:00:00:00:00";
+LanSelect[m] = "InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1.";
+LanActive[m] = "1";
+++m;
+//rip
+var G_RipVersion = "0";
+var G_RipDirection = "0";
+var G_EbAddress = "1";
+var G_IPAddress = "192.168.1.1";
+var G_SubAddress = "255.255.255.0";
+var G_IPRouters = "192.168.1.1";
+var G_SubnetMask = "255.255.255.0";
+var G_AllowOtherGateway = "0";
+var G_DomainName = "";
+var G_DHCPServerEnable = "1";
+var G_MinAddress = "192.168.1.2";
+var G_MaxAddress = "192.168.1.254";
+var G_DHCPLeaseTime = "86400";
+//RELAY
+var G_DHCPRelayEnable = "0";
+var G_DHCPRelayIP = "192.168.1.200";
+//DNS
+var G_DNSRelayEnable = "1";
+var G_DNSServers = "";
+var G_lan_BakupIP = "192.168.1.1";
+//Lan Mode
+var G_LanMode = "Routed";
+var G_device_name = "WNR612v3";
+//DHCP Filter
+var pathIndex = '-' == '-' ? 0 : '-';
+var G_DHCP_WhiteList = [];
+var m = 0;
+var G_DHCPFilterEnabled="1";
+var WDS_Enable="0";
+var WDS_WDSMode="";
+var G_CurrentManageIp = "192.168.1.2";
+var G_CurrentEditSelect;
+var G_ajax;
+var tt;
+//880 ---------->wire wait time
+//1680 ---------->wireless wait time
+var pchar = "|"; // progress char
+var maxchars = 63;
+var delay_time = 200; // msecs
+var charcount = 0;
+var progressOver =0 ;
+function makeStr(strsize, fillchar)
+{
+var temp = "";
+for (i=0; i < strsize ; i ++)
+temp = temp + fillchar;
+return temp;
+}
+function updateProgress()
+{
+if (charcount < maxchars)
+{
+charcount ++;
+var prg = makeStr(charcount,pchar);
+setTimeout("updateProgress()",delay_time);
+}
+else
+{
+progressOver=1;
+doRedirect();
+}
+}
+function makeSureLanOrWlanIp()
+{
+var LanTemp=[];
+var _k=0,_l=0;
+for(var i=0;i < LanSelect.length; i++)
+{
+if(LanActive[i]==1)
+{
+LanTemp =LanSelect[i].split('.');
+if(LanTemp[3]=='LANEthernetInterfaceConfig')
+{
+if(LanHosts[i][2]==G_CurrentManageIp)
+return 'Lan';
+}
+else if(LanTemp[3]=='WLANConfiguration')
+{
+//alert(LanHosts[i][2]);
+if(LanHosts[i][2]==G_CurrentManageIp)
+return 'Wlan';
+}
+}
+}
+}
+function onclkLanIntfMode(){
+var bool = Form.Radio('lanInfMode') == 'Routed' ? true : false;
+//.$('isbridge1').style.display = bool ? 'block' : 'none';
+//.$('isbridge2').style.display = bool ? 'block' : 'none';
+//.$('bridgebtn').style.display = !bool ? 'block' : 'none';
+}
+function ReservedChange()
+{
+var _IpLan = $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value;
+for (var i = 0; i < G_DHCP_WhiteList.length; i++)
+{
+var Path;
+var reservedip =[];
+reservedip=G_DHCP_WhiteList[i][0].split(".");
+Path = ':' + G_DHCP_WhiteList[i][3];
+if(G_DHCP_WhiteList[i][0]==_IpLan)
+{
+alertError('Lan_lanIPConflitReverIP',1);
+return false;
+}
+if(($('sysLANSubnetMask1').value=="255")&&($('sysLANSubnetMask2').value=="255")&&($('sysLANSubnetMask3').value=="255"))
+{
+$F(Path + 'FilterIP', $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ reservedip[3]);
+}
+else if(($('sysLANSubnetMask1').value=="255")&&($('sysLANSubnetMask2').value=="255"))
+{
+$F(Path + 'FilterIP', $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ reservedip[2] +'.'+ reservedip[3]);
+}
+else if($('sysLANSubnetMask1').value=="255")
+{
+$F(Path + 'FilterIP', $('sysLANIPAddr1').value+'.'+ reservedip[1] +'.'+ reservedip[2] +'.'+ reservedip[3]);
+}
+}
+}
+function disCtrlDhcpEnable(_Bool)
+{
+$('sysPoolStartingAddr1').disabled=true;
+$('sysPoolStartingAddr2').disabled=true;
+$('sysPoolStartingAddr3').disabled=true;
+$('sysPoolFinishAddr1').disabled=true;
+$('sysPoolFinishAddr2').disabled=true;
+$('sysPoolFinishAddr3').disabled=true;
+if(_Bool=='1')
+{
+$('sysPoolStartingAddr4').disabled=false;
+$('sysPoolFinishAddr4').disabled=false;
+$('INPUT_DHCPLeaseTime').disabled=false;
+}
+else
+{
+$('sysPoolStartingAddr4').disabled=true;
+$('sysPoolFinishAddr4').disabled=true;
+$('INPUT_DHCPLeaseTime').disabled=true;
+}
+}
+function branchSupplyValue(){
+OnloadIP4hops(G_IPAddress || '','sysLANIPAddr1','sysLANIPAddr2','sysLANIPAddr3','sysLANIPAddr4');
+OnloadIP4hops(G_SubAddress || '','sysLANSubnetMask1','sysLANSubnetMask2','sysLANSubnetMask3','sysLANSubnetMask4');
+OnloadIP4hops(G_MinAddress || '','sysPoolStartingAddr1','sysPoolStartingAddr2','sysPoolStartingAddr3','sysPoolStartingAddr4');
+OnloadIP4hops(G_MaxAddress || '','sysPoolFinishAddr1','sysPoolFinishAddr2','sysPoolFinishAddr3','sysPoolFinishAddr4');
+}
+function createWhiteListTable(){
+var array_whitelist = [];
+for(var i = 0, _len = G_DHCP_WhiteList.length; i < _len; i++){
+array_whitelist[i]= [
+'<input type="radio" id="choose'+i+'" onclick="data_select_edit('+G_DHCP_WhiteList[i][5]+');" name="ruleSelect" value=' + i + '>',
+i+1,
+G_DHCP_WhiteList[i][0], //IP
+EscapeHtmlSting(G_DHCP_WhiteList[i][4]), //pcname
+G_DHCP_WhiteList[i][1] //MAC
+];
+}
+$T('td_reseverlist',array_whitelist);
+}
+function IsIPinscope(_ip,_ipMin,_ipMax)
+{
+var M_num=_ip.split('.');
+var M_MinAddress=_ipMin.split('.');
+var M_MaxAddress=_ipMax.split('.');
+var C_MinAddress=M_MinAddress[0]*1000000000+M_MinAddress[1]*1000000+M_MinAddress[2]*1000+M_MinAddress[3]*1;
+var C_MaxAddress=M_MaxAddress[0]*1000000000+M_MaxAddress[1]*1000000+M_MaxAddress[2]*1000+M_MaxAddress[3]*1;
+var C_num=M_num[0]*1000000000+M_num[1]*1000000+M_num[2]*1000+M_num[3]*1;
+if((C_num < C_MinAddress)||(C_num > C_MaxAddress))
+{
+alertError('ipNotBetween');
+return 0;
+}
+return 1;
+}
+function IsIPoutscope(_ip,_ipMin,_ipMax)
+{
+var M_num=_ip.split('.');
+var M_MinAddress=_ipMin.split('.');
+var M_MaxAddress=_ipMax.split('.');
+var C_MinAddress=M_MinAddress[0]*1000000000+M_MinAddress[1]*1000000+M_MinAddress[2]*1000+M_MinAddress[3]*1;
+var C_MaxAddress=M_MaxAddress[0]*1000000000+M_MaxAddress[1]*1000000+M_MaxAddress[2]*1000+M_MaxAddress[3]*1;
+var C_num=M_num[0]*1000000000+M_num[1]*1000000+M_num[2]*1000+M_num[3]*1;
+if(C_MinAddress == C_MaxAddress)
+{
+alertError('lanIpPoolStartEndWrong');
+return false;
+}
+return true;
+}
+function OnloadRip(){
+setJSONValue({'sysRIPVersion' : (G_RipVersion=='0') ? 'Disabled' : (G_RipVersion=='1' ? 'RIP_1' : (G_RipVersion=='2' ? 'RIP_2B' : 'RIP_2M'))});
+setJSONValue({'rip_direction' : G_RipDirection});
+}
+function isValidIpAddress(address, type) {
+var i = 0;
+var c = '';
+if ( address == '0.0.0.0' ||
+address == '127.0.0.1'||
+address == '255.255.255.255' )
+return false;
+for (i = 0; i < address.length; i++) {
+c = address.charAt(i);
+if((c>='0'&&c<='9')||(c=='.'))
+continue;
+else
+{
+return false;
+}
+}
+addrParts = address.split('.');
+//Make sure that everything is in decimal place
+for (i=0; i < addrParts.length; i++){
+addrParts[i] = parseInt(addrParts[i],10);
+addrParts[i] += "";
+}
+if ( addrParts.length != 4 ) return false;
+for (i = 0; i < 4; i++) {
+if (isNaN(addrParts[i]) || addrParts[i] =="")
+return false;
+num = parseInt(addrParts[i],10);
+if ( isNaN(num)|| num < 0 || num > 255 )
+return false;
+if (addrParts[i].length > 3)
+{
+return false;
+}
+}
+if (parseInt(addrParts[0],10) == 127 )
+return false;
+if (parseInt(addrParts[0],10) < 1 || parseInt(addrParts[0],10) > 223 )
+return false;
+if((type == undefined)||(type=="IP")){
+if (parseInt(addrParts[3],10) < 1 || parseInt(addrParts[3],10) >= 255 ){
+return false;
+}
+}
+return true;
+}
+function isValidIpAddressRange(startAddr,endAddr,_IpLan)
+{
+if(!isValidIpAddress(_IpLan,'IP'))
+{
+alertError('lanIpValueWromg');
+return false;
+}
+if ( !isValidIpAddress(startAddr))
+{
+alertError('lanIpPoolStartWrong');
+return false;
+}
+if (!isValidIpAddress(endAddr))
+{
+alertError('lanIpPoolEndWrong');
+return false;
+}
+var i;
+var startAddrParts = startAddr.split('.');
+var endAddrParts = endAddr.split('.');
+var IpLanAddrParts = _IpLan.split('.');
+for ( i = 0; i < 4; i++ )
+{
+if ( parseInt(startAddrParts[i]) < parseInt(endAddrParts[i]) )
+{
+continue;
+}
+else if (parseInt(startAddrParts[i]) > parseInt(endAddrParts[i]))
+{
+alertError('lanIpPoolStartEndWrong');
+return false;
+}
+}
+return true;
+}
+function uiSubmit(){
+var ValueArray = $('INPUT_DHCPLeaseTime','Apply');
+var _IpLan = $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value;
+var _IpMinAddr = $('sysPoolStartingAddr1').value+'.'+ $('sysPoolStartingAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolStartingAddr4').value;
+var _IpMaxAddr = $('sysPoolFinishAddr1').value+'.'+ $('sysPoolFinishAddr2').value +'.'+ $('sysPoolFinishAddr3').value +'.'+ $('sysPoolFinishAddr4').value;
+var _Iptemp=G_IPAddress.split('.');
+if(!isValidIpAddressRange(_IpMinAddr,_IpMaxAddr,_IpLan))
+{
+return;
+}
+//for check lease time input
+if(ValueArray[0].value.match(/^\+?[1-9][0-9]*$/) == null||(parseInt(ValueArray[0].value) > 160)||(parseInt(ValueArray[0].value) < 1))
+{
+alertError('DhcpLeaseTimeWrongWarn',1);
+return;
+}
+//rip
+var ripnode=$('sysRIPVersion','rip_direction');
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_DynamicRouting.Enable' : ripnode[0].value=='Disabled'?'0':'1',
+':InternetGatewayDevice.X_TWSZ-COM_DynamicRouting.Forwarding.1.Enable' : ripnode[0].value=='Disabled'?'0':'1',
+':InternetGatewayDevice.X_TWSZ-COM_DynamicRouting.Forwarding.1.Version' : (ripnode[0].value=='Disabled') ? '0' : (ripnode[0].value=='RIP_1' ? '1' : (ripnode[0].value=='RIP_2B' ? '2' : '3')),
+':InternetGatewayDevice.LANDevice.1.X_TWSZ-COM_LAN_DeviceName' : $('device_name').value,
+':InternetGatewayDevice.X_TWSZ-COM_DynamicRouting.Forwarding.1.Operation' : ripnode[1].value
+});
+if((G_EbAddress!=1)
+||(G_IPAddress!=$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value)
+||(G_SubAddress!=$('sysLANSubnetMask1').value+'.'+ $('sysLANSubnetMask2').value +'.'+ $('sysLANSubnetMask3').value +'.'+ $('sysLANSubnetMask4').value)
+)
+{
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.Enable' :1,
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceIPAddress' :$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value,
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1.IPInterfaceSubnetMask':$('sysLANSubnetMask1').value+'.'+ $('sysLANSubnetMask2').value +'.'+ $('sysLANSubnetMask3').value +'.'+ $('sysLANSubnetMask4').value
+});
+}
+$H({
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_TWSZ-COM_DHCPFilter.Enabled' : Form.Checkbox('INPUT_AddressReservation'),
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_TWSZ-COM_BakupIP': $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value,
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPServerEnable':Form.Checkbox('dhcp_server'),
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.MinAddress' :$('sysPoolStartingAddr1').value+'.'+ $('sysPoolStartingAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolStartingAddr4').value,
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.MaxAddress' :$('sysPoolFinishAddr1').value+'.'+ $('sysPoolFinishAddr2').value +'.'+ $('sysPoolFinishAddr3').value +'.'+ $('sysPoolFinishAddr4').value,
+':InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.DHCPLeaseTime' :Number(ValueArray[0].value) * 3600,
+'obj-action' : 'set',
+'errorpage' : '',
+'var:CacheLastData': ViewState.Save()
+});
+if(ReservedChange()==false)
+{
+return;
+}
+var _url = "";
+G_ajax = Ajax.getInstance(_url, "", 0, dealwithip ,null_errorfunc);
+if((G_IPAddress!=$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value)||(G_SubAddress!=$('sysLANSubnetMask1').value+'.'+ $('sysLANSubnetMask2').value +'.'+ $('sysLANSubnetMask3').value +'.'+ $('sysLANSubnetMask4').value))
+{
+if(makeSureLanOrWlanIp()=='Lan')
+{
+tt=setTimeout(doRedirect,12000);
+delay_time = 880;
+}
+else if(makeSureLanOrWlanIp()=='Wlan')
+{
+tt=setTimeout(doRedirect,20000);
+delay_time = 1680;
+}
+setTimeout(showChange,500);
+}
+else
+setTimeout(doRedirect,1000);
+G_ajax.post($('uiPostForm'));
+}
+function showChange()
+{
+if(G_Error != '1')
+{
+$('lang_lan_set').style.display='none';
+$('table3').style.display='none';
+$('table1').style.display='none';
+$('table2').style.display='';
+updateProgress();
+}
+else
+{
+G_Error='0';
+clearTimeout(tt);
+G_ajax.abort();
+}
+}
+function null_errorfunc()
+{
+return true;
+}
+function setTimeToLink()
+{
+top.document.location.href = 'http://'+$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value+'/html/index.htm';
+}
+var flag=1;
+function doRedirect()
+{
+if(flag==1&& progressOver==1)
+{
+if((G_IPAddress!=$('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value)||(G_SubAddress!=$('sysLANSubnetMask1').value+'.'+ $('sysLANSubnetMask2').value +'.'+ $('sysLANSubnetMask3').value +'.'+ $('sysLANSubnetMask4').value))
+{
+if(makeSureLanOrWlanIp()=='Lan')
+setTimeout(setTimeToLink,11000);
+else if(makeSureLanOrWlanIp()=='Wlan')
+setTimeout(setTimeToLink,18000);
+}
+else
+{
+$G('../html/LAN_lan.htm',{
+'var:page': 'LAN_lan',
+'var:subpage' : 'LAN_lan',
+'getpage': '../html/LAN_lan.htm',
+'errorpage': '../html/LAN_lan.htm'
+});
+}
+}
+else if(progressOver==1)
+{
+$G('../html/LAN_lan.htm',{
+'var:page': 'LAN_lan',
+'var:errorpage' : 'LAN_lan',
+'getpage': '../html/LAN_lan.htm',
+'errorpage': '../html/LAN_lan.htm'
+});
+}
+}
+function dealwithip(_text){
+try{
+eval(_text);
+}
+catch (ex){
+return false;
+}
+if(G_Error == '1')
+{
+flag=0;
+dealWithError();
+}
+else
+{
+flag=1;
+progressOver=1;
+}
+}
+function ShowAdd(){
+$G('../html/LAN_reserv_add.htm',{
+'var:page': 'LAN_reserv_add',
+'var:errorpage' : 'LAN_reserv_add',
+'getpage': '../html/LAN_reserv_add.htm',
+'errorpage': '../html/LAN_reserv_add.htm'
+});
+}
+function editreseverdisp(){
+if(G_DHCP_WhiteList.length=='0')
+{
+alertError('pleasechooseanitemedit',1);
+return false;
+}
+for (var i = 0; i < G_DHCP_WhiteList.length; i++)
+{
+var tmpid = "choose" + i;
+if (Form.Checkbox(tmpid) == 1)
+{
+$G('../html/LAN_reserv_edit.htm',{
+'var:page': 'LAN_lan',
+'var:subpage' : 'LAN_reserv_edit',
+'var:errorpage' : 'LAN_reserv_edit',
+'getpage': '../html/LAN_reserv_edit.htm',
+'errorpage': '../html/LAN_reserv_edit.htm',
+'var:nodeIndex' : G_CurrentEditSelect
+});
+return;
+}
+}
+alertError('pleasechooseanitemedit',1);
+return false;
+}
+function deleresever(){
+var flat = 0;
+if(G_DHCP_WhiteList.length=='0')
+{
+alertError('pleasechooseanitemedelete',1);
+return false;
+}
+for (var i = 0; i < G_DHCP_WhiteList.length; i++)
+{
+var tmpid = "choose" + i;
+if (Form.Checkbox(tmpid) == 1)
+{
+var flat = 1;
+$H({
+'del-obj' : G_DHCP_WhiteList[i][3],
+'obj-action' : 'del',
+'var:menu' : 'setup',
+'var:page' : 'LAN_lan',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:errorpage' : 'LAN_lan',
+'var:CacheLastData' : ViewState.Save()
+},true);
+$('uiPostForm').submit();
+return;
+}
+}
+if(flat != 1)
+{
+alertError('pleasechooseanitemedelete',1);
+return false;
+}
+}
+function data_select(data){
+$('Dv_mac_addr').value = LanHosts[data][4];
+$('Dv_name').value = LanHosts[data][3];
+OnloadIP4hops(LanHosts[data][2] || '','INPUTDVIpAddr_1','INPUTDVIpAddr_2','INPUTDVIpAddr_3','INPUTDVIpAddr_4');
+}
+function data_select_edit(data){
+G_CurrentEditSelect = data;
+}
+var Array_For_repeater = ['rip_direction','sysRIPVersion','dhcp_server','sysPoolStartingAddr1','sysPoolStartingAddr2','sysPoolStartingAddr3','sysPoolStartingAddr4','sysPoolFinishAddr1','sysPoolFinishAddr2','sysPoolFinishAddr3','sysPoolFinishAddr4','INPUT_DHCPLeaseTime','Add','Edit','Delete'];
+function DisWpaForRepeater(_A,_Bool)
+{
+for(var _num=0; _num < _A.length; _num++)
+{
+$(_A[_num]).disabled=_Bool;
+}
+if(_Bool==false)
+{
+disCtrlDhcpEnable(G_DHCPServerEnable);
+}
+}
+function uiOnload(){
+Form.Checkbox('INPUT_AddressReservation',G_DHCPFilterEnabled);
+setJSONValue({
+'lanInfMode' : G_LanMode || 'Routed',
+'device_name' : G_device_name,
+'INPUT_GatewayIP': G_IPRouters,
+'INPUT_GatewayMask': G_SubnetMask,
+'dhcp_server' : G_DHCPServerEnable,
+'INPUT_DHCPLeaseTime' : Number(G_DHCPLeaseTime)/3600
+});
+branchSupplyValue();
+OnloadRip();
+onclkLanIntfMode();
+createWhiteListTable();
+settablecolor("td_reseverlist");
+DisWpaForRepeater(Array_For_repeater,'1'==WDS_Enable&&'Repeater'==WDS_WDSMode);
+}
+function clickChange(_t){
+var _IpLan = $('sysLANIPAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysLANIPAddr4').value;
+var _IpMinAddr = $('sysPoolStartingAddr1').value+'.'+ $('sysPoolStartingAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolStartingAddr4').value;
+var _IpMaxAddr = $('sysPoolFinishAddr1').value+'.'+ $('sysPoolFinishAddr2').value +'.'+ $('sysPoolFinishAddr3').value +'.'+ $('sysPoolFinishAddr4').value;
+var _Iptemp=G_IPAddress.split('.');
+var ipadd1= $('sysLANIPAddr1').value;
+var ipadd2= $('sysLANIPAddr2').value;
+var ipadd3= $('sysLANIPAddr3').value;
+var ipadd4= $('sysLANIPAddr4').value;
+var maskadd1=$('sysLANSubnetMask1').value;
+var maskadd2=$('sysLANSubnetMask2').value;
+var maskadd3=$('sysLANSubnetMask3').value;
+var maskadd4=$('sysLANSubnetMask4').value;
+var tmp;
+if(1==_t){
+tmp = $('sysLANIPAddr1').value+'.'+ $('sysPoolStartingAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolStartingAddr4').value ;
+OnloadIP4hops(tmp || '','sysPoolStartingAddr1','sysPoolStartingAddr2','sysPoolStartingAddr3','sysPoolStartingAddr4');
+tmp = $('sysLANIPAddr1').value+'.'+ $('sysPoolStartingAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolFinishAddr4').value ;
+OnloadIP4hops(tmp || '','sysPoolFinishAddr1','sysPoolFinishAddr2','sysPoolFinishAddr3','sysPoolFinishAddr4');
+}
+else if(2==_t){
+tmp = $('sysPoolStartingAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolStartingAddr4').value ;
+OnloadIP4hops(tmp || '','sysPoolStartingAddr1','sysPoolStartingAddr2','sysPoolStartingAddr3','sysPoolStartingAddr4');
+tmp = $('sysPoolFinishAddr1').value+'.'+ $('sysLANIPAddr2').value +'.'+ $('sysPoolStartingAddr3').value +'.'+ $('sysPoolFinishAddr4').value ;
+OnloadIP4hops(tmp || '','sysPoolFinishAddr1','sysPoolFinishAddr2','sysPoolFinishAddr3','sysPoolFinishAddr4');
+}
+else if(3==_t){
+tmp = $('sysPoolStartingAddr1').value+'.'+ $('sysPoolStartingAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysPoolStartingAddr4').value ;
+OnloadIP4hops(tmp || '','sysPoolStartingAddr1','sysPoolStartingAddr2','sysPoolStartingAddr3','sysPoolStartingAddr4');
+tmp = $('sysPoolFinishAddr1').value+'.'+ $('sysPoolFinishAddr2').value +'.'+ $('sysLANIPAddr3').value +'.'+ $('sysPoolFinishAddr4').value ;
+OnloadIP4hops(tmp || '','sysPoolFinishAddr1','sysPoolFinishAddr2','sysPoolFinishAddr3','sysPoolFinishAddr4');
+}
+maskclickChange();
+}
+function maskclickChange()
+{
+var ipadd1= $('sysLANIPAddr1').value;
+var ipadd2= $('sysLANIPAddr2').value;
+var ipadd3= $('sysLANIPAddr3').value;
+var ipadd4= $('sysLANIPAddr4').value;
+var maskadd1=$('sysLANSubnetMask1').value;
+var maskadd2=$('sysLANSubnetMask2').value;
+var maskadd3=$('sysLANSubnetMask3').value;
+var maskadd4=$('sysLANSubnetMask4').value;
+if(ipadd1==''||ipadd2==''||ipadd3==''||ipadd4=='')
+{
+return;
+}
+if(maskadd1!='')
+{
+if(maskadd2=='')
+maskadd2='0';
+if(maskadd3=='')
+maskadd3='0';
+if(maskadd4=='')
+maskadd4='0';
+}
+else
+{
+return;
+}
+var _mask = maskadd1+'.'+ maskadd2 +'.'+ maskadd3 +'.'+ maskadd4;
+if(false== checkIP2(_mask))
+{
+alertError('lanMaskValueWromg');
+return;
+}
+if(!IsMaskConstientOne(Number(zip(maskadd1,maskadd2,maskadd3,maskadd4))))
+{
+alertError('lanMaskValueWromg');
+return ;
+}
+if(IpMaskConfilict(zip(ipadd1, ipadd2, ipadd3, ipadd4),zip(maskadd1,maskadd2,maskadd3,maskadd4)))
+{
+return 0;
+}
+firstIP(zip(ipadd1, ipadd2, ipadd3, ipadd4),zip(maskadd1,maskadd2,maskadd3,maskadd4));
+lastIP(zip(ipadd1, ipadd2, ipadd3, ipadd4),zip(maskadd1,maskadd2,maskadd3,maskadd4));
+}
+function zip( a, b, c, d)
+{
+var re = 0;
+re=(Number(a)*16777216)+(Number(b)<<16)+(Number(c)<<8)+(Number(d));
+return re;
+}
+function unzip( zipc, flag)
+{
+var var1=Math.floor(Number(zipc/16777216));
+var remainder1=Number(zipc%16777216);
+var var2=Math.floor(remainder1/65536);
+var remainder2=Math.floor(remainder1%65536);
+var var3=Math.floor(remainder2/256);
+var var4=Math.floor(remainder2%256);
+if(flag==1)
+{
+$('sysPoolStartingAddr1').value=var1;
+$('sysPoolStartingAddr2').value=var2;
+$('sysPoolStartingAddr3').value=var3;
+$('sysPoolStartingAddr4').value=var4;
+}
+else if(flag==2)
+{
+$('sysPoolFinishAddr1').value=var1;
+$('sysPoolFinishAddr2').value=var2;
+$('sysPoolFinishAddr3').value=var3;
+$('sysPoolFinishAddr4').value=var4;
+}
+}
+function firstIP( IP,mask)
+{
+var ip1=Math.floor(IP/4);
+var ip2=Number(IP%4);
+var mask1=Math.floor(mask/4);
+var mask2=Number(mask%4);
+var network=Number(ip1&mask1)*4+Number(ip2&mask2);//3221225472
+var firstIPAdd = network+1+1;
+unzip(firstIPAdd,1);
+}
+function lastIP(IP,mask)
+{
+var ip1=Math.floor(IP/4);
+var ip2=Number(IP%4);
+var mask1=Math.floor(mask/4);
+var mask2=Number(mask%4);
+var network=Number(ip1&mask1)*4+Number(ip2&mask2);
+var network1=Math.floor(network/2);
+var network2=Number(network%2);
+var lastIPAdd=Number(network2|((~mask)%2))+Number(network1|((~mask)/2))*2-1;
+unzip(lastIPAdd,2);
+}
+function IpMaskConfilict(ulIp, ulHostMask)
+{
+var ip1=Math.floor(ulIp/4);
+var ip2=Number(ulIp%4);
+var mask1=Math.floor(~ulHostMask/4);
+var mask2=Number(~ulHostMask%4);
+var network=Number(ip1&mask1)*4+Number(ip2&mask2);//3221225472
+if ( network == 0 || network== ~ulHostMask )
+{
+alertError('lanMaskValueWromg');
+return 1;
+}
+return 0;
+}
+function IsMaskConstientOne(ulMask)
+{
+var ulMask1=Math.floor(ulMask/0x40000000);
+var remainder1=Number(ulMask%0x40000000)
+if (ulMask1<=1)//�����0xxxxxx
+{
+return false;
+}
+if ((ulMask1==2)&&(remainder1!=0))//�����10xxxxx
+{
+return false;
+}
+ulMask = Number(remainder1*2);
+while(ulMask & 0x40000000)
+{
+remainder1=Number(ulMask%0x40000000)
+ulMask = Number(remainder1*2);
+}
+if ( ulMask == 0 )
+{
+return true;
+}
+else
+{
+return false;
+}
+}
+function checkIP2(sIPAddress)
+{
+var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+var reg = sIPAddress.match(exp);
+if(reg==null)
+{
+return false;
+}
+else
+{
+return true;
+}
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload,dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="LAN_lan.htm"></form>
+<script type="text/javascript" src="js/ajax.js"></script>
+<style type="text/css">
+<!--
+.div_left{ width: 233px;}
+.doo { padding-top:0px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+BODY {
+FONT-SIZE: 12px; MARGIN: 8px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+H1 {
+FONT-WEIGHT: bold; FONT-SIZE: 16px; BACKGROUND: white; COLOR: #9966ff; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+.prgbar { font-family:Arial; padding:0px; height: 20px; width: 200px; font-weight: bolder; font-size: 10pt; color: #0000FF}
+-->
+</style>
+<div class="page_title" id="lang_lan_set">LAN Setup</div>
+<div class="fix_button" id="table3">
+<table width=100% border=0 cellpadding=0 cellspacing=2 >
+<tr>
+<td align=center colSpan=2>
+<input class="cancel_bt"type="button" id="Cancel" value="Cancel" name="Cancel"/>
+<input class="apply_bt" type="button" id="Apply" onClick="uiSubmit();" value="Apply" name="Apply"/>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;" id="table1">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td>
+<tr>
+<td nowrap="" id="lang_device_name" style="font-weight:bold ">Device Name</td>
+<td nowrap="" align="right"><input type="text" MAXLENGTH="12" SIZE="24" id="device_name" NAME="device_name" style="width:140px "/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a tabindex=-1 href="javascript:loadhelp('tcp')"><p class="do bk_black3_black" id="lang_lan_tcpip">LAN TCP/IP Setup</p></a></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_routerIPaddr">IP Address</td>
+<td nowrap="" align="right"><input type='text' id="sysLANIPAddr1" name="sysLANIPAddr1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)"onBlur="clickChange(1);" onKeyPress="return getkey('num',event);">.
+<input type='text' id="sysLANIPAddr2" name="sysLANIPAddr2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onBlur="clickChange(2);" onKeyPress="return getkey('num',event);">.
+<input type='text' id="sysLANIPAddr3" name="sysLANIPAddr3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onBlur="clickChange(3);" onKeyPress="return getkey('num',event);">.
+<input type='text' id="sysLANIPAddr4" name="sysLANIPAddr4" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onBlur="clickChange(4);" onKeyPress="return getkey('num',event);"></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_submask">IP Subnet Mask</td>
+<td nowrap="" align="right"><input type='text' id="sysLANSubnetMask1" name="sysLANSubnetMask1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)"onBlur="maskclickChange();" onKeyPress="return getkey('num',event);">.
+<input type='text' id="sysLANSubnetMask2" name="sysLANSubnetMask2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)"onBlur="maskclickChange();" onKeyPress="return getkey('num',event);">.
+<input type='text' id="sysLANSubnetMask3" name="sysLANSubnetMask3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)"onBlur="maskclickChange();" onKeyPress="return getkey('num',event);">.
+<input type='text' id="sysLANSubnetMask4" name="sysLANSubnetMask4" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)"onBlur="maskclickChange();" onKeyPress="return getkey('num',event);"></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_rip_dir">RIP Direction</td>
+<td nowrap="" align="right"><select id="rip_direction" name="rip_direction" size="1">
+<option value="0" id="lang_Both">Both</option>
+<option value="1" id="lang_InOnly">In Only</option>
+<option value="2" id="lang_OutOnly">Out Only</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_rip_ver">RIP Version</td>
+<td nowrap="" align="right"><select id="sysRIPVersion" name="sysRIPVersion" size="1">
+<option value="Disabled" id="lang_Disabled">Disabled</option>
+<option value="RIP_1">RIP_1</option>
+<option value="RIP_2B">RIP_2B</option>
+<option value="RIP_2M">RIP_2M</option>
+</select> </td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">
+<input type="checkbox" id="dhcp_server" name="dhcp_server" value="dhcp_server" onClick="disCtrlDhcpEnable(this.checked);" /><a tabindex=-1 href="javascript:loadhelp('dhcp')"><span id="lang_Enabledhcp" style="font-weight:bold ">&nbsp;&nbsp;Use Router as DHCP Server</span></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" id="DhcpipaddrStart">Starting IP Address</td>
+<td nowrap="" align="right"><input type='text' id="sysPoolStartingAddr1" name="sysPoolStartingAddr1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysPoolStartingAddr2" name="sysPoolStartingAddr2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysPoolStartingAddr3" name="sysPoolStartingAddr3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysPoolStartingAddr4" name="sysPoolStartingAddr4" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);"/></td></tr>
+<tr>
+<td nowrap="" id="DhcpipaddrEnd">Ending IP Address</td>
+<td nowrap="" align="right"><input type='text' id="sysPoolFinishAddr1" name="sysPoolFinishAddr1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysPoolFinishAddr2" name="sysPoolFinishAddr2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysPoolFinishAddr3" name="sysPoolFinishAddr3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);" />.
+<input type='text' id="sysPoolFinishAddr4" name="sysPoolFinishAddr4" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);"></td>
+</tr>
+<tr style="display:none">
+<td nowrap="" colspan="2"><div class="div_left doo" style="display:none">
+<input type="checkbox" name="Enable" id="INPUT_AllowOtherGateway" onClick="onAllowOtherGateway()" /> &nbsp;&nbsp;IP Pool Uses Other Default Gw
+</div>
+<div class="div_right" style="display:none"></div>
+<div id="div_gateway" style="display:none">
+<div class="div_left" id="Dhcp_Gateway">IP Pool Default Gateway</div>
+<div class="div_right" id="todispaly">
+<input type="text" class="control" id="INPUT_GatewayIP" name="INPUT_GatewayIP" />
+</div>
+<div class="div_left" id="Dhcp_Mask">IP Pool Subnet mask</div>
+<div class="div_right" id="todispaly">
+<input type="text" class="control" id="INPUT_GatewayMask" name="INPUT_GatewayMask" />
+</div>
+</div>
+</td>
+</tr>
+<tr style="display:none">
+<td nowrap="" id="DhcpleaseT">DHCP Lease Time( 1 - 160 hours)</td>
+<td nowrap="" id="secdisplay" align="right"><input type="text" class="control" id="INPUT_DHCPLeaseTime" name="INPUT_DHCPLeaseTime" style="width:140px "/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><a tabindex=-1 href="javascript:loadhelp('reserved')"><p class="do bk_black3_black" id="lang_AddressReservation1">Address Reservation</p></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="div_left doo" style="display:none">
+<input type="checkbox" name="INPUT_AddressReservation" id="INPUT_AddressReservation" onClick="disCtrl('addressreservation',this.checked);" /> <span id="lang_AddressReservationEn">&nbsp;Enable Address Reservation</span>
+</div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div id="addressreservation">
+<div class="div_black3">
+<p id="idMaxrules" style="display:none;">Max of rules: 64</p>
+<table id="td_reseverlist" width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="td_table_s3">
+<tr align="center" class="table_header">
+<td nowrap="">&nbsp;&nbsp;</td>
+<td nowrap="">&nbsp;#&nbsp;</td>
+<td id="lang_IpAddr" nowrap="">IP Address</td>
+<td id="lang_DeviceName" nowrap="">Device Name</td>
+<td id="lang_MacAddr" nowrap="">MAC Address</td>
+</tr>
+</table>
+<div id="addeditdelete" style="padding-top:2px; padding-bottom:5px;" align="center">
+<input class="add_bt" type="button" value="Add" onClick="ShowAdd();" id="Add" name="Add"/>
+<input class="edit_bt" type="button" value="Edit" onClick="editreseverdisp();" id="Edit" name="Edit"/>
+<input class="delete_bt" type="button" value="Delete" onClick="deleresever();" id="Delete" name="Delete"/>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div class="div_orange3">
+<div class="div_left" style="display:none">LAN interface mode :</div>
+<div class="div_right" style="display:none">
+<input type="radio" id="lanInfMode" name="lanInfMode" value="Routed" onClick="onclkLanIntfMode()" /> &nbsp;Router &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" id="lanInfMode" name="lanInfMode" value="Bridged" onClick="onclkLanIntfMode()" /> &nbsp;Bridge
+</div>
+</div>
+</td>
+</tr>
+</td>
+<!-- Help -->
+<td class="td_help">
+<div class="help" id="lang_help">
+</div>
+</td>
+</tr>
+</table>
+</div>
+<table style="background:white;width:98% !important; width:101%; display:none;" id="table2">
+<tr>
+<td >
+<div class="wizard_content_div">
+<div class="wizard_words_div">
+<div class="waiting_connect_div" align="center">
+<h1 class="h1_black" id="lang_wait"><!--please waite a moment--></h1>
+</div>
+<div class="waiting_img_div" align="center">
+<img src="skin/image/wait30.gif" alt="waiting" />
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("LAN_lan")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

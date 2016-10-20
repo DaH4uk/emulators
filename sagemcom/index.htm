@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="Pragma" content="no-cache">
+
+    <meta charset="utf-8">
+
+    <title>Router</title>
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+
+    <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+
+    <script src="files/jquip.js" type="text/javascript"></script>
+
+    <script src="files/juicer.js" type="text/javascript"></script>
+
+    <script src="files/ui.js" type="text/javascript"></script>
+
+
+
+
+    <script>
+        document.write("<s" + "cript type='text/javascript' src='adminMenu.js?v=" + Math.random() + "'></scr" + "ipt>");
+    </script>
+    <script type="text/javascript" src="files/adminMenu.js"></script>
+
+    <script type="text/javascript" src="files/init.js"></script>
+
+    <script id="nav-tmpl" type="text/template">
+
+        {@each items as item}
+        <li><a href="javascript:void(0)" rel="${item.sub}" class="">${item.name}</a><span></span></li>
+
+        {@/each}
+    </script>
+
+    <script id="side-tmpl" type="text/x-template">
+
+        {@each items as item}
+        <li class="{@if item.collapsed}collapsed{@/if}">
+
+            <h3><a href="#">${item.name}</a></h3>
+
+            <ul>
+
+                {@each item.items as it}
+                <li><a target="contentIframe" href="${it.href}" class="">${it.name}</a></li>
+
+                {@/each}
+            </ul>
+
+        </li>
+
+        {@/each}
+    </script>
+
+    <script>
+        function languageInit(lgSelIndex) {
+            document.lgSel.selectLanguage.selectedIndex = lgSelIndex;
+        }
+
+        function languagePost() {
+            document.lgSel.submit();
+        };
+        $(function() {
+            $('#localize').on('change', function() {
+                document.lgSel.submit();
+            });
+        });
+    </script>
+
+    <style type="text/css">
+        #nav li a {
+            display: block;
+            color: #fff;
+            font-size: 14px;
+            padding: 0 20px;
+            background: url("nav_line.jpg") no-repeat right center;
+            text-transform: capitalize;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <div id="header">
+
+            <div class="top_bg" align="right">
+
+                <form action="form2languageSelect.cgi" method="POST" name="lgSel">
+
+                    <div class="middle_language">
+
+                        Выберите язык:
+                        <select width="20" onchange="languagePost()" name="selectLanguage" id="localize">
+
+<option value="0"> English</option><option selected="selected" value="1"> Pусский</option>
+     </select>
+
+                        <input name="submit.htm?index.htm" value="Send" type="hidden">
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="nav_side clearfix">
+
+                <ul id="nav">
+                    <li><a href="javascript:void(0)" rel="0" class="active">Статус</a><span></span></li>
+                    <li><a href="javascript:void(0)" rel="2" class="">Сеть</a><span></span></li>
+                    <li><a href="javascript:void(0)" rel="3" class="">Дополнительно</a><span></span></li>
+                    <li><a href="javascript:void(0)" rel="4" class="">Сервисы</a><span></span></li>
+                    <li><a href="javascript:void(0)" rel="5" class="">Межсетевой экран</a><span></span></li>
+                    <li><a href="javascript:void(0)" rel="6" class="">Обслуживание</a><span></span></li>
+                    <li><a href="javascript:void(0)" rel="7" class="">Выход</a><span></span></li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div id="main" class="clearfix">
+
+            <div id="side_wrapper">
+
+                <div class="box_wrapper">
+
+                    <h3 class="box_top"></h3>
+
+                    <div class="box_content">
+
+                        <ul id="side">
+                            <li class="">
+                                <h3><a href="#">Система</a></h3>
+                                <ul>
+                                    <li><a target="contentIframe" href="http://provisioning.ertelecom.ru:8083/status.htm" class="active">Система</a></li>
+                                </ul>
+                            </li>
+                            <li class="collapsed">
+                                <h3><a href="#">Статистика</a></h3>
+                                <ul>
+                                    <li><a target="contentIframe" href="http://provisioning.ertelecom.ru:8083/stats.htm" class="">Статистика</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+                <div class="box_wrapper none" id="attention">
+
+                    <h3 class="box_top"></h3>
+
+                    <div class="box_content">
+
+                        <div class="page_confirm">
+
+                            <form name="formAttensave" method="POST" action="form2AttenSave.cgi">
+
+                                <div class="page_confirm">
+
+                                    <p>Внимание: Конфигурация изменена!</p>
+                                    <input value="Сохранить" class="link_bg" type="submit">
+                                    <input name="submit.htm?index.htm" value="Send" type="hidden">
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="content">
+
+                <iframe style="height: 1588px;" src="files/status.htm" name="contentIframe" id="contentIframe" scrolling="no" frameborder="0"></iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        lgSelIndex = 1;
+        languageInit(lgSelIndex);
+    </script>
+
+
+
+
+
+
+
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <h3 id="et">ALG Settings</h3>
 <div class="content-container">
     <form class="pure-form pure-form-aligned">
@@ -95,3 +96,102 @@
     $.tpInit(init);
 })();
 </script>
+=======
+<h3 id="et">ALG Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="pure-control-group">
+            <b id="t_pptp">PPTP Pass-through:</b>
+            <input type="checkbox" id="pptpEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group">
+            <b id="t_l2tp">L2TP Pass-through:</b>
+            <input type="checkbox" id="l2tpEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group">
+            <b id="t_ipsec">IPSec Pass-through:</b>
+            <input type="checkbox" id="ipsecEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group">
+            <b id="t_ftp">FTP ALG:</b>
+            <input type="checkbox" id="ftpAlgEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group">
+            <b id="t_tftp">TFTP ALG:</b>
+            <input type="checkbox" id="tftpAlgEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group">
+            <b id="t_rtsp">RTSP ALG:</b>
+            <input type="checkbox" id="rtspAlgEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group nd" id="h323">
+            <b id="t_h323">H323 ALG:</b>
+            <input type="checkbox" id="h323AlgEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <div class="pure-control-group nd" id="sip">
+            <b id="t_sip">SIP ALG:</b>
+            <input type="checkbox" id="sipAlgEn" />
+            <label class="T_enable">Enable</label>
+        </div>
+        <button type="submit" class="green T_save" id="algSave">Save</button>
+    </form>
+</div>
+
+<script language="javascript" type="text/javascript">
+(function() {
+    $('#algSave').on('click.alg', function() {
+        $.addLoading($(this));
+        var algParam = {};
+        algParam.PptpAlg = $('#pptpEn').prop('data-checked') ? 1 : 0;
+        algParam.L2tpAlg = $('#l2tpEn').prop('data-checked') ? 1 : 0;
+        algParam.IpSecAlg = $('#ipsecEn').prop('data-checked') ? 1 : 0;
+        algParam.FtpAlg = $('#ftpAlgEn').prop('data-checked') ? 1 : 0;
+        algParam.TftpAlg = $('#tftpAlgEn').prop('data-checked') ? 1 : 0;
+		algParam.RtspAlg = $('#rtspAlgEn').prop('data-checked') ? 1 : 0;
+		if (INCLUDE_ALG_H323) {
+            algParam.H323Alg = $('#h323AlgEn').prop('data-checked') ? 1 : 0;
+        }
+        if (INCLUDE_ALG_SIP) {
+            algParam.SipAlg = $('#sipAlgEn').prop('data-checked') ? 1 : 0;
+        }
+        $.act(ACT_SET, ALG_CFG, null, null, algParam);
+        $.exe(function(err) {
+            $.removeLoading();
+            if (!err) {
+                $.reload();
+            }
+        });
+    });
+
+    function init() {
+        var algEntry = $.act(ACT_GET, ALG_CFG, null, null);
+        if (!$.exe()) {
+            $('#pptpEn').prop('checked', algEntry.pptpAlg === '1' ? true : false);
+            $('#l2tpEn').prop('checked', algEntry.l2tpAlg === '1' ? true : false);
+            $('#ipsecEn').prop('checked', algEntry.ipSecAlg === '1' ? true : false);
+            $('#ftpAlgEn').prop('checked', algEntry.ftpAlg === '1' ? true : false);
+            $('#tftpAlgEn').prop('checked', algEntry.tftpAlg === '1' ? true : false);
+			$('#rtspAlgEn').prop('checked', algEntry.rtspAlg === '1' ? true : false);
+
+            if (INCLUDE_ALG_H323) {
+                $("#h323").removeClass('nd');
+                $('#h323AlgEn').prop('checked', algEntry.h323Alg === '1' ? true : false);
+            }
+
+            if (INCLUDE_ALG_SIP) {
+                $("#sip").removeClass('nd');
+                $('#sipAlgEn').prop('checked', algEntry.sipAlg === '1' ? true : false);
+            }
+        }
+    }
+    $.tpInit(init);
+})();
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

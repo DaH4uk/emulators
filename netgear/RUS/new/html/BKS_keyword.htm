@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -457,4 +458,465 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/BKS_keyword.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "BKS_keyword";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//URL Filter
+var G_TrustedIP = "";
+//Black
+var G_BlackList = [];
+var m = 0;
+G_BlackList= ["InternetGatewayDevice.X_TWSZ-COM_URL_Filter.BlackList.1.",
+"",
+"",
+"Always"
+];
+G_UrlEnable = "0";
+var G_lan_ip_addr = "192.168.1.1";
+var G_lan_mask = "255.255.255.0";
+//将DevPath的路径转换为Schedule的Name
+function searchPath(path)
+{
+var tmpPath;
+if(path=='always')
+tmpPath='Always';
+else if(path == 'never')
+tmpPath='Never';
+else
+tmpPath='InternetGatewayDevice.X_TWSZ-COM_SCHEDULES.SchedEntry.1.';
+return tmpPath;
+}
+var G_URLList=new Array();
+var _path;
+var formerURLList=new Array();
+var G_trustipEnble;
+//index
+var _index = -1;
+function uiOnload()
+{
+if(G_BlackList[1]=='')
+G_URLList ='';
+else
+G_URLList = G_BlackList[1].split(' ');
+_path = 'InternetGatewayDevice.X_TWSZ-COM_URL_Filter.BlackList.';
+setTrustedIPValue();
+EnableTrustIPControl();
+createList();
+if(G_UrlEnable==false)
+{
+Form.Radio('skeyword', 'never');
+}
+else if(G_BlackList[3]=='Always')
+Form.Radio('skeyword', 'always');
+else if(G_BlackList[3]=='Never')
+Form.Radio('skeyword', 'never');
+else
+Form.Radio('skeyword', 'perschedule');
+}
+function setTrustedIPValue()
+{
+//根据wan连接来寻找对应的值
+var tmpTrustedIP;
+var tmpLanIP;
+var tmpLanMask;
+var tmpIP=new Array(4);
+if(G_TrustedIP=='')
+{
+tmpLanIP=G_lan_ip_addr.split(".");
+tmpLanMask=G_lan_mask.split(".");
+for(var j=0; j<4; j++)
+{
+tmpIP[j]=tmpLanIP[j]&tmpLanMask[j];
+if(tmpIP[j]==0&&tmpLanIP[j]!=0)
+tmpIP[j]='';
+}
+tmpTrustedIP=tmpIP[0]+'.'+tmpIP[1]+'.'+tmpIP[2]+'.'+tmpIP[3];
+G_trustipEnble = 0;
+$('trustipenble').checked=false;
+}
+else
+{
+tmpTrustedIP=G_TrustedIP;
+$('trustipenble').checked=true;
+G_trustipEnble = 1;
+}
+OnloadIP4hops(tmpTrustedIP,'cfTrusted_IPAddress1','cfTrusted_IPAddress2','cfTrusted_IPAddress3','cfTrusted_IPAddress4');
+}
+function EnableTrustIPControl()
+{
+//$('cfTrusted_IPAddress4').disabled = (_flag == '1') ? false : true;
+var tmpLanIP=G_lan_ip_addr.split(".");
+var tmpLanMask=G_lan_mask.split(".");
+var i = 0;
+disCtrl('trustIp',$('trustipenble').checked);
+if($('trustipenble').checked)
+{
+for(i = 0; i <4; i++){
+if(tmpLanMask[i]!= 255)
+{
+$('cfTrusted_IPAddress' + (i+1)).disabled=false;
+}
+else
+{
+$('cfTrusted_IPAddress' + (i+1)).disabled=true;
+}
+}
+}
+}
+function createList()
+{
+var oSelCode=document.getElementById("cfKeyWord_DomainList");
+var count = oSelCode.options.length;
+var oText;
+var tmpLength=G_URLList.length;
+for(var i=count; i>=0; i--)
+{
+oSelCode.options[i]=null;
+}
+for(var i=0; i<tmpLength; i++)
+{
+G_URLList[i] = G_URLList[i].escape();
+formerURLList[i]=G_URLList[i];
+var oOption=document.createElement("option");
+oOption.setAttribute("value",G_URLList[i]);
+oText=document.createTextNode(G_URLList[i]);
+oOption.appendChild(oText);
+oSelCode.appendChild(oOption);
+}
+}
+function ListAdd()
+{
+var tmpURL=$('cfKeyWord_Domain').value.toLowerCase();
+var tmpURLNew=new Array();
+if(tmpURL=='')
+return;
+if(!checkKeyWord())
+return;
+/*
+if(tmpURL.indexOf(' ')!=-1)
+{
+alertError('URLBlankDetected');
+return;
+}
+*/
+var oSelCode=document.getElementById("cfKeyWord_DomainList");
+for(var i=0;i<oSelCode.options.length;i++)
+{
+if(oSelCode.options[i].value==tmpURL)
+{
+$('cfKeyWord_Domain').value='';
+return;
+}
+}
+var oOption=document.createElement("option");
+var oText;
+oOption.setAttribute("value",tmpURL);
+oText=document.createTextNode(tmpURL);
+oOption.appendChild(oText);
+oSelCode.appendChild(oOption);
+$('cfKeyWord_Domain').value='';
+}
+function ListDelete()
+{
+var i;
+var oSelCode=document.getElementById("cfKeyWord_DomainList");
+for(i=oSelCode.options.length-1;i>=0;i--)
+{
+if(oSelCode.options[i].selected)
+{
+var oOption=oSelCode.options[oSelCode.selectedIndex];
+oSelCode.removeChild(oOption);
+}
+}
+}
+function ListDeleteAll()
+{
+var oSelCode=document.getElementById("cfKeyWord_DomainList");
+var oOption;
+for(var i=oSelCode.options.length-1;i>=0;i--)
+{
+oOption=oSelCode.options[i];
+oSelCode.removeChild(oOption);
+}
+}
+function checkData()
+{
+var lan_ip = G_lan_ip_addr.split(".");
+var lan_netmask = G_lan_mask.split(".");
+var lan_ipaddr = (lan_ip[0] << 24) | (lan_ip[1] << 16) | (lan_ip[2] << 8)| (lan_ip[3]);
+var lan_netmaskaddr = (lan_netmask[0] << 24) | (lan_netmask[1] << 16) | (lan_netmask[2] << 8)| (lan_netmask[3]);
+if($('trustipenble').checked)
+{
+var trusted_ipaddr = ($('cfTrusted_IPAddress1').value << 24) | ($('cfTrusted_IPAddress2').value << 16)
+| ($('cfTrusted_IPAddress3').value << 8)| $('cfTrusted_IPAddress4').value;
+if(checkIP($('cfTrusted_IPAddress1'),$('cfTrusted_IPAddress2'),$('cfTrusted_IPAddress3'),$('cfTrusted_IPAddress4'),254)
+|| (parseInt($('cfTrusted_IPAddress4').value,10)==0)
+|| ( (trusted_ipaddr & lan_netmaskaddr) != (lan_ipaddr & lan_netmaskaddr) ) )
+{
+//alert("Invalid IP address. Please enter it again.");
+alertError('BKS_keywordInvalidIP');
+return false;
+}
+}
+return true;
+}
+function checkKeyWord()
+{
+if ($('cfKeyWord_Domain').value.match( /[^\x20-\x7E]/ ))
+{
+alertError('BKS_Invalidkeyword');
+return false;
+}
+return true;
+}
+function uiSubmit()
+{
+if(!checkData())
+{
+return false;
+}
+var oSelCode=document.getElementById("cfKeyWord_DomainList");
+var i, j, k;
+var newerURLList=new Array();
+var tmpURL='';
+var tmpLengthFormer;
+var tmpLengthNewer;
+var tmpTrustedIP;
+tmpTrustedIP=$('cfTrusted_IPAddress1').value+'.'+$('cfTrusted_IPAddress2').value+'.'+$('cfTrusted_IPAddress3').value+'.'+$('cfTrusted_IPAddress4').value;
+for(i=0;i<oSelCode.options.length;i++)
+{
+newerURLList[i]=oSelCode.options[i].getAttribute("value");
+tmpURL+=newerURLList[i];
+if(i==oSelCode.options.length-1)
+continue;
+tmpURL+=' ';
+}
+if($('idBlockTimesNever').checked)
+tmpURLFilterEnable=0;
+else
+tmpURLFilterEnable=1;
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_URL_Filter.Enable' : tmpURLFilterEnable,
+//':InternetGatewayDevice.X_TWSZ-COM_URL_Filter.FilterMode' : $('INPUT_URLFilterMode').value,
+':InternetGatewayDevice.X_TWSZ-COM_URL_Filter.TrustedIP' : Form.Checkbox('trustipenble') ? tmpTrustedIP : "",
+'var:menu' : G_Menu,
+'var:page' : G_Page,
+'var:subpage' : G_SubPage,
+'var:errorpage' : G_SubPage,
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'obj-action' : 'set'
+},true);
+$F(':' + G_BlackList[0] + 'SchedulePath' , searchPath(Form.Radio('skeyword')));
+$F(':' + G_BlackList[0] + 'URL' , tmpURL);
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="BKS_keyword.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style>
+<!-- config -->
+<div class="page_title" id="lang_BlockWebsite">Block Sites</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type='submit' name='Cancel' value='Cancel' id="Cancel">&nbsp;&nbsp;
+<input class="apply_bt" type='submit' name='Apply' value='Apply' id="Apply" >
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white;width:100%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td colspan=2>
+<span id="lang_learnmore">To learn more about advanced content filtering and keyword blocking features from NETGEAR,please go to </span>&nbsp;<a class='linktype' href='http://lpc.netgear.ru' target='_blank'>lpc.netgear.ru</a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black"><a tabindex=-1 href="javascript:loadhelp('blocking')"><span id="idKeywordBlocking">Keyword Blocking</span></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><input type="radio" name="skeyword" value="never" id="idBlockTimesNever" checked="checked" />&nbsp;<span id="idBlockTimesContextNever">Never</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><input type="radio" name="skeyword" value="perschedule" id="idBlockTimesPerSchedule" />&nbsp;<span id="idBlockTimesContextPerSchedule">Per Schedule</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><input type="radio" name="skeyword" value="always" id="idBlockTimesAlways" />&nbsp;<span id="idBlockTimesContextAlways">Always</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2" class="do bk_black3_black"><A tabindex=-1 href="javascript:loadhelp('toaddword')"><span id="idKeywordDomain">Type Keyword or Domain Name Here.</span></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><input type="text" id="cfKeyWord_Domain" name="cfKeyWord_Domain" maxlength="60" size="32" value="" onKeyPress="return getkey('ssid',event)"/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><span class="common_bt2"><input class="common_bt1" type="submit" id="idAddKeywordButton" name="cfKeyWord_AddKeyword" value="Add Keyword" onClick="ListAdd();" /></span></td>
+</tr>
+<tr>
+<td colspan="2"></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2" class="do bk_black3_black"><a tabindex=-1 href="javascript:loadhelp('blocklist')"><span id="idKeywordListContext">Block Sites Containing these Keywords or Domain Names</span></a><span id="lang_maxofterms" style="display:none;">(Max of terms: 32):</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><select id="cfKeyWord_DomainList" name="cfKeyWord_DomainList" multiple="multiple" size="6"></select></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div>
+<span class="common_bt2"><input class="common_bt1" type="submit" name="cfKeyWord_DeleteKeyword" id="cfKeyWord_DeleteKeyword" value="Delete Keyword" onClick="ListDelete();" /></span>&nbsp;&nbsp;<input class="common_bt" type="submit" name="cfKeyWord_ClearList" id="cfKeyWord_ClearList" value="Clear List" onClick="ListDeleteAll();" />
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2" class="do bk_black3_black"><input type="checkbox" id="trustipenble" name="trustipenble" value="" onClick="EnableTrustIPControl()" />&nbsp;<b id="idAllowTrustIPEnableContext">Allow Trusted IP Address To Visit Blocked Sites</b>
+</td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><b id="idAllowTrustIP">Trusted IP Address</b></td>
+<td nowrap="" align="right" id="trustIp">
+<input type='text' id="cfTrusted_IPAddress1" name="cfTrusted_IPAddress1" maxlength=3 size="4" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />.
+<input type='text' id="cfTrusted_IPAddress2" name="cfTrusted_IPAddress2" maxlength=3 size="4" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />.
+<input type='text' id="cfTrusted_IPAddress3" name="cfTrusted_IPAddress3" maxlength=3 size="4" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />.
+<input type='text' id="cfTrusted_IPAddress4" name="cfTrusted_IPAddress4" maxlength=3 size="4" onFocus="this.select();" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<INPUT name=bs_enable type=hidden value= "0">
+<INPUT name=bs_trustedip_enable type=hidden value= "0">
+<INPUT name=bs_trustedip type=hidden value= "192.168.1.0">
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("BKS_keyword")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

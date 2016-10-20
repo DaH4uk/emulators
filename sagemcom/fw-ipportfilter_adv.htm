@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="files/reset.css" rel="stylesheet" type="text/css">
+<link href="files/base.css" rel="stylesheet" type="text/css">
+<link href="files/style.css" rel="stylesheet" type="text/css">
+<script src="files/share.js" type="text/javascript">
+</script>
+
+ <title>Фильтрация IP</title>
+    <script>
+
+
+        var retNum = /^[0-9]{1,15}$/;
+
+        function OnHelp(page) {
+            HelpWin = window.open(page, "Помощь", "toolbar=no,location=no,directories=no,   status=no,menubar=no,scrollbars=yes,resizable=yes,width=500,height=500");
+        }
+        function protocalSelection() {
+            if (document.formFilterAdd.protocol.selectedIndex <= 1)
+            {
+                document.formFilterAdd.srcportfrom.disabled = true;
+                document.formFilterAdd.srcportto.disabled = true;
+                document.formFilterAdd.dstportfrom.disabled = true;
+                document.formFilterAdd.dstportto.disabled = true;
+            } else {
+                document.formFilterAdd.srcportfrom.disabled = false;
+                document.formFilterAdd.srcportto.disabled = false;
+                document.formFilterAdd.dstportfrom.disabled = false;
+                document.formFilterAdd.dstportto.disabled = false;
+            }
+        }
+
+        function addClick() {
+            if (document.formFilterAdd.sourceip.value != "") {
+                if (validateKey(document.formFilterAdd.sourceip.value) == 0) {
+                    alert("Неверное значение источника.");
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                var str = document.formFilterAdd.sourceip.value;
+                var count = 0;
+                for (var i = 0; i < str.length; i++) {
+                    if (str.charAt(i) == '.') {
+                        count++;
+                    }
+                }
+                if (count != 3) {
+                    alert("Неверное значение источника.");
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.sourceip.value, 1, 0, 239)) {
+                    alert('Неверный диапазон IP адреса источника в первом октете. Должен быть 0-239.');
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                if (IsLoopBackIP(document.formFilterAdd.sourceip.value)) {
+                    alert('127.xx.xx.xx это IP loopback адрес!');
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.sourceip.value, 2, 0, 255)) {
+                    alert('Неверный диапазон IP адреса источника во втором октете. Должен быть  0-255.');
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.sourceip.value, 3, 0, 255)) {
+                    alert('Неверный диапазон IP адреса источника в третьем октете. Должен быть  0-255.');
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.sourceip.value, 4, 0, 254)) {
+                    alert('Неверный диапазон IP адреса источника в четвертом октете. Должен быть 0-254.');
+                    document.formFilterAdd.sourceip.focus();
+                    return false;
+                }
+                if (!checkMask(document.formFilterAdd.sourcemask)) {
+                    return false;
+                }
+                if (document.formFilterAdd.sourcemask.value == "") {
+                    alert("Укажите маску IP адреса источника!");
+                    document.formFilterAdd.sourcemask.focus();
+                    return false;
+                }
+                ip = document.formFilterAdd.sourceip.value;
+                ip1 = getDigit(ip, 1);
+                ip2 = getDigit(ip, 2);
+                ip3 = getDigit(ip, 3);
+                ip4 = getDigit(ip, 4);
+                mask = document.formFilterAdd.sourcemask.value;
+                mask1 = getDigit(mask, 1);
+                mask2 = getDigit(mask, 2);
+                mask3 = getDigit(mask, 3);
+                mask4 = getDigit(mask, 4);
+                if (((ip1 & mask1) != ip1) ||
+  ((ip2 & mask2) != ip2) ||
+  ((ip3 & mask3) != ip3) ||
+  ((ip4 & mask4) != ip4)) {
+                    alert("Маска источника не соответствует IP адресу!");
+                    return false;
+                }
+            }
+            else
+                document.formFilterAdd.sourcemask.value = "";
+            if (document.formFilterAdd.destip.value != "") {
+                if (validateKey(document.formFilterAdd.destip.value) == 0) {
+                    alert("Неверное значение получателя");
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                var str = document.formFilterAdd.destip.value;
+                var count = 0;
+                for (var i = 0; i < str.length; i++) {
+                    if (str.charAt(i) == '.') {
+                        count++;
+                    }
+                }
+                if (count != 3) {
+                    alert("Неверное значение получателя");
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.destip.value, 1, 0, 239)) {
+                    alert('Неверный диапазон IP адреса получателя в первом октете. Должен быть 0-239.');
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                if (IsLoopBackIP(document.formFilterAdd.destip.value)) {
+                    alert('127.xx.xx.xx это IP loopback адрес!');
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.destip.value, 2, 0, 255)) {
+                    alert('Неверный диапазон IP адреса получателя во втором октете. Должен быть  0-255.');
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.destip.value, 3, 0, 255)) {
+                    alert('Неверный диапазон IP адреса получателя в третьем октете. Должен быть  0-255.');
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                if (!checkDigitRange(document.formFilterAdd.destip.value, 4, 0, 254)) {
+                    alert('Неверный диапазон IP адреса получателя в четвертом октете. Должен быть 0-254.');
+                    document.formFilterAdd.destip.focus();
+                    return false;
+                }
+                if (!checkMask(document.formFilterAdd.destmask)) {
+                    return false;
+                }
+                if (document.formFilterAdd.destmask.value == "") {
+                    alert("Укажите маску IP адреса получателя!");
+                    document.formFilterAdd.destmask.focus();
+                    return false;
+                }
+                ip = document.formFilterAdd.destip.value;
+                ip1 = getDigit(ip, 1);
+                ip2 = getDigit(ip, 2);
+                ip3 = getDigit(ip, 3);
+                ip4 = getDigit(ip, 4);
+                mask = document.formFilterAdd.destmask.value;
+                mask1 = getDigit(mask, 1);
+                mask2 = getDigit(mask, 2);
+                mask3 = getDigit(mask, 3);
+                mask4 = getDigit(mask, 4);
+                if (((ip1 & mask1) != ip1) ||
+  ((ip2 & mask2) != ip2) ||
+  ((ip3 & mask3) != ip3) ||
+  ((ip4 & mask4) != ip4)) {
+                    alert("Маска получателя не соответствует IP адресу!");
+                    return false;
+                }
+            }
+            else
+                document.formFilterAdd.destmask.value = "";
+            if (document.formFilterAdd.protocol.selectedIndex != 0 &&
+        document.formFilterAdd.protocol.selectedIndex != 1) {
+                digit1 = getDigit(document.formFilterAdd.srcportfrom.value, 1);
+                if ((document.formFilterAdd.srcportfrom.value != "") && (digit1 > 65535 || digit1 <= 0)) {
+                    alert("Неверное значение \"Порт источника\"! Значение может лежать в пределае 1-65535.");
+                    document.formFilterAdd.srcportfrom.focus();
+                    return false;
+                }
+                digit2 = getDigit(document.formFilterAdd.srcportto.value, 1);
+                if ((document.formFilterAdd.srcportto.value != "") && ((digit2 > 65535 || digit2 <= 0)
+       || (!(retNum.test(document.formFilterAdd.srcportto.value))))) {
+                    alert("Неверное значение \"Порт источника\"! Значение может лежать в пределае 1-65535.");
+                    document.formFilterAdd.srcportto.focus();
+                    return false;
+                }
+                if ((document.formFilterAdd.srcportfrom.value != "") &&
+       (document.formFilterAdd.srcportto.value != "") && (digit1 > digit2)) {
+                    alert("Неверный диапазон портов источника. Начальный порт не может быть больше конечного.");
+                    document.formFilterAdd.srcportfrom.focus();
+                    return false;
+                }
+                digit1 = getDigit(document.formFilterAdd.dstportfrom.value, 1);
+                if ((document.formFilterAdd.dstportfrom.value != "") && ((digit1 > 65535 || digit1 <= 0)
+      || (!(retNum.test(document.formFilterAdd.dstportfrom.value))))) {
+                    alert("Неверное значение \"Порт получателя\"! Значение может лежать в пределае 1-65535");
+                    document.formFilterAdd.dstportfrom.focus();
+                    return false;
+                }
+                digit2 = getDigit(document.formFilterAdd.dstportto.value, 1);
+                if ((document.formFilterAdd.dstportto.value != "") && ((digit2 > 65535 || digit2 <= 0)
+       || (!(retNum.test(document.formFilterAdd.dstportto.value))))) {
+                    alert("Неверное значение \"Порт получателя\"! Значение может лежать в пределае 1-65535");
+                    document.formFilterAdd.dstportto.focus();
+                    return false;
+                }
+                if ((document.formFilterAdd.dstportfrom.value != "") &&
+       (document.formFilterAdd.dstportto.value != "") && (digit1 > digit2)) {
+                    alert("Неверный диапазон портов получателя. Начальный порт не может быть больше конечного.");
+                    document.formFilterAdd.dstportfrom.focus();
+                    return false;
+                }
+            }
+        }
+        function Dchange(action) {
+            if (action == "0") {
+                document.getElementById("directiondisplay").style.display = "";
+                document.getElementById("interfacedisplay").style.display = "none";
+            } else {
+                document.getElementById("directiondisplay").style.display = "none";
+                document.getElementById("interfacedisplay").style.display = "";
+            }
+            return true;
+        }
+    </script>
+
+    <style type="text/css">
+
+   td
+   {
+    word-wrap:break-word;
+    word-break:keep-all;
+    word-break:break-all;
+   }
+ </style>
+
+</head>
+
+<body>
+
+
+<div class="data_common data_common_notitle">
+
+ <table>
+
+  <tbody><tr>
+
+     <th width="30%">Межсетевой экран SPI:</th>
+     <td>
+
+<input name="inAct" value="Deny" checked="checked" type="RADIO">Вкл.
+<input name="inAct" value="Permit" type="RADIO">Выкл.
+
+     </td>
+
+  </tr>
+
+ </tbody></table>
+
+</div>
+
+ <div class="btn_ctl clearfix">
+
+ <input class="link_bg" value="Применить" type="submit">
+ <input name="submit.htm?fw-ipportfilter_adv.htm" value="Send" type="hidden">
+
+ </div>
+
+
+
+    <input name="acltype" value="fwd" type="HIDDEN">
+
+    <div class="data_common data_common_notitle hide_gui">
+
+        <table>
+
+            <tbody><tr class="data_common_sth">
+
+                <th>Действие:</th>
+                <td colspan="3">
+
+                    <input checked="checked" value="Permit" name="operate" type="radio">
+
+                    Permit
+                    <input value="Deny" name="operate" type="radio">
+
+                    Deny
+                </td>
+
+            </tr>
+
+             <tr style="display:">
+                <th>Интерфейс WAN:</th>
+                <td colspan="3">
+
+                    <select style="width:200" size="1" name="fromwanitf">
+
+<option value="pppoe1" selected="selected"> pppoe1</option>
+
+                        <option value="any">Любой</option>
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <th>Протокол:</th>
+                <td colspan="3">
+
+                    <select onchange="protocalSelection();" name="protocol">
+
+                    <option selected="selected" value="0"> IP
+
+                    </option><option value="1"> ICMP
+
+                    </option><option value="6"> TCP
+
+                    </option><option value="17"> UDP
+
+                    </option></select>
+
+                </td>
+
+            </tr>
+
+<tr id="directiondisplay">
+<th>Направление:</th>
+<td colspan="3"><select name="name">
+	<option value="out2wan" selected="selected"> Upstream
+	</option><option value="out2lan"> Downstream
+	</option></select>
+</td></tr>
+
+            <tr>
+
+                <th width="20%">IP-адрес источника:</th>
+                <td width="30%"><input maxlength="15" size="15" name="sourceip" type="text"></td>
+
+                <th width="20%">Маска сети:</th>
+                <td width="30%"><input value="255.255.255.255" maxlength="15" size="15" name="sourcemask" type="text"></td>
+
+            </tr>
+
+            <tr>
+
+                <th>IP-адрес получателя:</th>
+                <td><input maxlength="15" size="15" name="destip" type="text"></td>
+
+                <th>Маска сети:</th>
+                <td><input value="255.255.255.255" maxlength="15" size="15" name="destmask" type="text"></td>
+
+            </tr>
+
+            <tr>
+
+                <th>Порт источника:</th>
+                <td>
+
+                    <input disabled="disabled" maxlength="5" size="5" name="srcportfrom" type="text">
+
+                    &nbsp;&nbsp;-&nbsp;&nbsp;
+                    <input disabled="disabled" maxlength="5" size="5" name="srcportto" type="text">
+
+                </td>
+
+                <th>Порт назначения:</th>
+                <td>
+
+                    <input disabled="disabled" maxlength="5" size="5" name="dstportfrom" type="text">
+
+                    &nbsp;&nbsp;-&nbsp;&nbsp;
+                    <input disabled="disabled" maxlength="5" size="5" name="dstportto" type="text">
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <th>Вкл.:</th>
+                <td colspan="3"><input checked="checked" value="enable" name="state" type="CHECKBOX"></td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+         <div class="btn_ctl clearfix hide_gui">
+
+  <input class="link_bg" onclick="return addClick()" value="Применить" type="submit">
+  <input name="submit.htm?fw-ipportfilter_adv.htm" value="Send" type="hidden">
+
+        </div>
+
+
+
+    <input name="acldel" value="" type="HIDDEN">
+
+    <input name="acllocaldel" value="" type="HIDDEN">
+
+    <input name="state" value="" type="HIDDEN">
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Талица фильтров:</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common data_vertical">
+
+            <table style="word-break:break-all">
+
+                <tbody><tr class="data_common_sth">
+
+                    <th width="8%">Правило</th>
+                    <th style="display:" width="8%">Wan Интерфейс</th>
+                    <th width="8%">Протокол</th>
+                    <th width="15%">IP-адрес источника/Маска сети</th>
+                    <th width="8%">Порт источника</th>
+                    <th width="15%">IP-адрес получателя/Маска сети</th>
+                    <th width="8%">Порт назначения</th>
+                    <th width="6%">Состояние</th>
+                    <th width="11%">Направление</th>
+                    <th width="8%">Действие</th>
+                </tr>
+
+                <tr>
+
+
+                </tr>
+
+            </tbody></table>
+
+        </div>
+
+    </div>
+
+  <script language="JavaScript">
+
+  function aclDelFunc( form , acldel, acllocaldel, state){
+  form.elements[0].value=acldel;
+  form.elements[1].value=acllocaldel;
+  form.elements[2].value=state;
+  form.submit();
+  }
+  </script>
+
+  <input name="submit.htm?fw-ipportfilter_adv.htm" value="Send" type="hidden">
+
+
+<script src="files/jquip_sizzle.js" type="text/javascript"></script>
+<script src="files/jquip.js" type="text/javascript"></script>
+<script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+</body></html>

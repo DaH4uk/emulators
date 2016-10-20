@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -116,3 +117,123 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 <input type="hidden" name="h_language" value="en">
 </form>
 <script language="javascript" type="text/javascript">showTail()</script>
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="showmenu_login.js"></script>
+<script language="Javascript" src="base64.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+lo1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Login';
+var menuSection	='';
+var menuItem	='';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+{
+	isAPmode='1';
+}
+else
+{
+	isAPmode='0';
+}
+
+function logoutF()
+{
+	document.tF.logout.value=1;
+	document.tF.submit();
+	return true;
+}
+
+function doSubmit()
+{
+    document.tF.action.value = "submit";
+    
+    /* encode username and password with Base64 algorithm */
+    if(document.tF.pws.value != "")
+    {
+        document.tF.pws.value = base64encode(document.tF.pws.value);
+    }
+    
+    checkfw();
+}
+
+function checkfw()
+{
+		if(''=='1'){
+		newwin=window.open('chk_wait.html',"Firmware","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,width=395,height=200,resizable=0");
+		newwin.focus();
+}
+}
+
+//-->
+</script>
+
+</head>
+
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<form name="tF" action="/belkin/3.00.02/En/wls_chan.html" method="post"  onsubmit="doSubmit()">
+<input type="hidden" name="page" value="">
+<input type="hidden" name="logout" value="">
+<input type="hidden" name="action" value="">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold">
+ <br>
+    &nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(lo1);</script> <br><br>
+    <table border=0>
+         	<tr>
+    			<td width=5>&nbsp;</td> 
+    			<td>  
+                                  <table width=480 border="0" cellspacing="5" cellpadding="0" align=left>
+                                    <tr> 
+                                      <td width="69" height="41">&nbsp;</td>
+                                      <td height="41"  colspan="2" class="body"><script language="javascript" type="text/javascript">dw(lo2);</script></td>
+                                    </tr>
+                                    <tr> 
+                                      <td width="69"></td>
+                                      <td width="146">&nbsp;</td>
+                                      <td width="250">&nbsp;</td>
+                                    </tr>
+                                    <tr> 
+                                      <td width="69">&nbsp;</td>
+                                      <td width="146" class="bold_body"><script language="javascript" type="text/javascript">dw(lo3);</script></td>
+                                      <td width="250"> 
+                                        <INPUT type="password" maxLength="12" size="9" name="pws" value="">
+                                      </td>
+                                    </tr>
+                                    <tr> 
+                                      <td width="69">&nbsp;</td>
+                                      <td colspan="2" class="more"><script language="javascript" type="text/javascript">dw(lo4);</script> 
+                                      </td>
+                                    </tr>
+                                    <tr> 
+                                      <td width="69">&nbsp;</td>
+                                      <td colspan="2"></td>
+                                    </tr>
+                                    <tr> 
+                                      <td width="69">&nbsp;</td>
+                                      <td colspan=2 align=center>
+                                      <script language="javascript" type="text/javascript">strHtml='<input type="reset" name="itsbutton0" value="'+Clear+'" style="{width:120px;}" class="submitBtn" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;';
+                            		dw(strHtml);
+                            		strHtml='<input type="submit" name="itsbutton1" value="'+Submit+'" style="{width:120px;}" class="submitBtn">';
+                            		dw(strHtml);</script></td>
+                                    </tr>
+                                  </table>
+                                    </td>
+			</tr>
+		</table>
+	</td>
+<input type="hidden" name="h_language" value="en">
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

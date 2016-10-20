@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <html xmlns:v>
@@ -411,3 +412,418 @@ function validate_wlphrase(s, v, obj){
 
 <!-- Mirrored from 192.168.1.1/Advanced_Wireless_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
 </html>
+=======
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+
+<!-- Mirrored from 192.168.1.1/Advanced_Wireless_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - General</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+<link rel="stylesheet" type="text/css" href="usp_style.css">
+<link href="other.css"  rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="md5.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '1';
+wan_proto = 'dhcp';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '33663168'; }
+function login_ip_str() { return '192.168.1.2'; }
+function login_ip_str_now() { return '192.168.1.2'; }
+function login_mac_str() { return '00:1A:92:47:00:02'; }
+
+var wireless = [];	// [[MAC, associated, authorized], ...]
+
+var wl_wpa_psk_org = '';
+var wl_key1_org = '';
+var wl_key2_org = '';
+var wl_key3_org = '';
+var wl_key4_org = '';
+var wl_phrase_x_org = '';
+
+function initial(){
+	show_banner(1);
+	show_menu(5,1,1);
+	show_footer();
+	
+	enable_auto_hint(0, 11);
+	
+	load_body();
+	
+	document.form.wl_ssid.value = decodeURIComponent(document.form.ssid_acsii.value);
+	document.form.wl_wpa_psk.value = decodeURIComponent(wl_wpa_psk_org);
+	document.form.wl_key1.value = decodeURIComponent(wl_key1_org);
+	document.form.wl_key2.value = decodeURIComponent(wl_key2_org);
+	document.form.wl_key3.value = decodeURIComponent(wl_key3_org);
+	document.form.wl_key4.value = decodeURIComponent(wl_key4_org);
+	document.form.wl_phrase_x.value = decodeURIComponent(wl_phrase_x_org);
+	
+	if(document.form.wl_wpa_psk.value.length <= 0)
+		document.form.wl_wpa_psk.value = "Please type Password";
+}
+
+function applyRule(){
+location.reload(true)
+
+	
+}
+
+function validForm(){
+	var auth_mode = document.form.wl_auth_mode.value;
+	
+	if(!validate_string_ssid(document.form.wl_ssid))
+		return false;
+	//document.form.ssid_acsii.value = encodeURIComponent(document.form.wl_ssid.value);
+	
+	if(document.form.wl_wep_x.value != "0")
+		if(!validate_wlphrase('WLANConfig11b', 'wl_phrase_x', document.form.wl_phrase_x))
+			return false;	
+	if(auth_mode == "psk"){ //2008.08.04 lock modified
+		if(!validate_psk(document.form.wl_wpa_psk))
+			return false;
+		
+		if(!validate_range(document.form.wl_wpa_gtk_rekey, 0, 86400))
+			return false;
+	}
+	else if(auth_mode == "wpa" || auth_mode == "wpa2"){
+		if(!validate_range(document.form.wl_wpa_gtk_rekey, 0, 86400))
+			return false;
+	}
+	else{
+		var cur_wep_key = eval('document.form.wl_key'+document.form.wl_key.value);		
+		if(auth_mode != "radius" && !validate_wlkey(cur_wep_key))
+			return false;
+	}	
+	return true;
+}
+
+function done_validating(action){
+	refreshpage();
+}
+
+function change_key_des(){
+	var objs = getElementsByName_iefix("span", "key_des");
+	var wep_type = document.form.wl_wep_x.value;
+	var str = "";
+	
+	if(wep_type == "1")
+		str = "(5 ASCII digits or 10 hex digits)";
+	else if(wep_type == "2")
+		str = "(13 ASCII digits or 26 hex digits)";
+	
+	for(var i = 0; i < objs.length; ++i)
+		showtext(objs[i], str);
+}
+
+function validate_wlphrase(s, v, obj){
+	if(!validate_string(obj)){
+		is_wlphrase(s, v, obj);
+		return(false);
+	}
+	
+	return true;
+}
+</script>
+</head>
+
+<body onload="initial();" onunLoad="disable_auto_hint(0, 11);return unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+<div id="hiddenMask" class="popup_bg">
+	<table cellpadding="5" cellspacing="0" id="dr_sweet_advise" class="dr_sweet_advise" align="center">
+		<tr>
+		<td>
+			<div class="drword" id="drword">Please wait,  Proceeding...
+				<br/>
+				<br/>
+		    </div>
+		  <div class="drImg"><img src="images/DrsurfImg.gif"></div>
+			<div style="height:70px; "></div>
+		</td>
+		</tr>
+	</table>
+<!--[if lte IE 6.5]><iframe class="hackiframe"></iframe><![endif]-->
+</div>
+
+<iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" action="#" target="hidden_frame">
+<input type="hidden" name="productid" value="RT-N16">
+<input type="hidden" name="wan_route_x" value="IP_Routed">
+<input type="hidden" name="wan_nat_x" value="1">
+
+<input type="hidden" name="current_page" value="Advanced_Wireless_Content.html">
+<input type="hidden" name="next_page" value="Advanced_Wireless_Content.html">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="sid_list" value="WLANConfig11b;">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="wl_country_code" value="TW">
+<input type="hidden" name="firmver" value="9.9.3.7">
+<!--input type="hidden" name="wl_nbw" value="40"-->
+
+<input type="hidden" name="wps_mode" value="enabled">
+<input type="hidden" name="wps_config_state" value="1">
+
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="wl_wpa_mode" value="0">
+
+<input type="hidden" maxlength="15" size="15" name="x_RegulatoryDomain" value="" readonly="1">
+<input type="hidden" name="wl_gmode_protection_x" value="1">
+
+<input type="hidden" name="wl_wme" value="on">
+<input type="hidden" name="wl_mode_x" value="0">
+<input type="hidden" name="HT_EXTCHA_old" value=""> <!-- Templated UI -->
+<input type="hidden" name="wl_key_type" value=""> <!--Lock Add 1125 for ralink platform-->
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td width="23">&nbsp;</td>
+	
+	<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+	
+	<td height="430" valign="top">
+	  <div id="tabMenu" class="submenuBlock"></div><br>
+
+<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td align="left" valign="top" >
+	  <table width="98%" border="0" cellpadding="5" cellspacing="0" class="FormTitle">
+		<thead>
+		<tr>
+		  <td>Wireless - General</td>
+		</tr>
+		</thead>	
+		
+		<tbody>
+		<tr>
+		  <td bgcolor="#FFFFFF">
+			<table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
+			  <tr>
+					<th width="50%"><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 1);">SSID</a></th>
+					<td><input type="text" maxlength="32" class="input"  size="32" name="wl_ssid" value="" onkeypress="return is_string(this)"></td>
+			  </tr>
+			  
+				<tr>
+					<th><a class="hintstyle"  href="javascript:void(0);" onClick="openHint(0, 2);">Hide SSID</a></th>
+					<td>
+						<input type="radio" value="1" name="wl_closed" class="input" onClick="return change_common_radio(this, 'WLANConfig11b', 'wl_closed', '1')" >Yes
+						<input type="radio" value="0" name="wl_closed" class="input" onClick="return change_common_radio(this, 'WLANConfig11b', 'wl_closed', '0')" checked>No
+					</td>
+				</tr>
+			  	  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 4);">Wireless Mode</a></th>
+				<td>
+					<select name="wl_gmode" class="input" onChange="return change_common(this, 'WLANConfig11b', 'wl_gmode')">
+						<option value="0" selected>Auto</option>
+						<option value="1" >b/g Mixed</option>
+						<option value="2" >n Only</option>
+						<option value="3" >g Only</option>
+						<option value="4" >b Only</option>
+					</select>
+				  <input type="checkbox" style="margin-left:30" name="wl_gmode_check" value="" onClick="return change_common(this, 'WLANConfig11b', 'wl_gmode_check', '1')">
+				  b/g Protection</input>
+				</td>
+			  </tr>
+			  
+			  <tr>
+			    <th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 14);">Channel bandwidth</a></th>
+			    <td>
+				<select name="wl_nbw_cap" class="input" onChange="return change_common(this, 'WLANConfig11b', 'wl_nbw_cap')">
+					<option class="content_input_fd" value="0" >20 MHz</option>
+					<option class="content_input_fd" value="1" selected>40 MHz</option>
+				</select>				
+				</td>
+			    </tr>
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 3);">Channel</a></th>
+				<td>
+				  <select name="wl_channel" class="input" onChange="return change_common(this, 'WLANConfig11b', 'wl_channel')">
+					<option value="0" selected>Auto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option>
+				  </select>
+				</td>
+			  </tr>
+			  
+			  <tr>
+			    <th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 15);">Extension Channel</a></th>
+			    <td>
+				<select name="HT_EXTCHA" class="input">
+					<option value="1" selected>Auto</option>
+				</select>		
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 5);">Authentication Method</a></th>
+				<td>
+				  <select name="wl_auth_mode" class="input" onChange="return change_common(this, 'WLANConfig11b', 'wl_auth_mode');">
+					<option value="open" selected>Open System</option>
+					<option value="shared" >Shared Key</option>
+					<option value="psk" >WPA-Personal</option>
+					<option value="psk" >WPA2-Personal</option>
+					<option value="psk" >WPA-Auto-Personal</option>
+					<option value="wpa" >WPA-Enterprise</option>
+					<option value="wpa2" >WPA2-Enterprise</option>
+					<option value="wpa" >WPA-Auto-Enterprise</option>
+					<option value="radius" >Radius with 802.1x</option>
+				  </select>
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 6);">WPA Encryption</a></th>
+				<td>
+				  <select name="wl_crypto" class="input" onChange="return change_common(this, 'WLANConfig11b', 'wl_crypto')">
+					<option value="tkip" selected>TKIP</option>
+					<option value="aes" >AES</option>
+					<option value="tkip+aes" >TKIP+AES</option>
+				  </select>
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 7);">WPA Pre-Shared Key</a></th>
+				<td>
+				  <input type="text" name="wl_wpa_psk" maxlength="64" class="input" size="32" value="">
+				</td>
+			  </tr>
+			  		  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 9);">WEP Encryption</a></th>
+				<td>
+				  <select name="wl_wep_x" class="input" onChange="return change_common(this, 'WLANConfig11b', 'wl_wep_x');">
+					<option value="0" selected>None</option>
+					<option value="1" >WEP-64bits</option>
+					<option value="2" >WEP-128bits</option>
+				  </select>
+				  <br>
+				  <span name="key_des"></span>
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 10);">Key Index</a></th>
+				<td>
+				  <select name="wl_key" class="input"  onChange="return change_common(this, 'WLANConfig11b', 'wl_key');">
+					<option value="1" selected>1</option>
+					<option value="2" >2</option>
+					<option value="3" >3</option>
+					<option value="4" >4</option>
+				  </select>
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th>WEP Key 1</th>
+				<td><input type="text" name="wl_key1" id="wl_key1" maxlength="32" class="input" size="34" value="" onKeyUp="return change_wlkey(this, 'WLANConfig11b');"></td>
+			  </tr>
+			  
+			  <tr>
+				<th>WEP Key 2</th>
+				<td><input type="text" name="wl_key2" id="wl_key2" maxlength="32" class="input" size="34" value="" onKeyUp="return change_wlkey(this, 'WLANConfig11b');"></td>
+			  </tr>
+			  
+			  <tr>
+				<th>WEP Key 3</th>
+				<td><input type="text" name="wl_key3" id="wl_key3" maxlength="32" class="input" size="34" value="" onKeyUp="return change_wlkey(this, 'WLANConfig11b');"></td>
+			  </tr>
+			  
+			  <tr>
+				<th>WEP Key 4</th>
+				<td><input type="text" name="wl_key4" id="wl_key4" maxlength="32" class="input" size="34" value="" onKeyUp="return change_wlkey(this, 'WLANConfig11b');"></td>
+			  </tr>
+
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 8);">ASUS Passphrase</a></th>
+				<td>
+				  <input type="text" name="wl_phrase_x" maxlength="64" class="input" size="32" value="" onKeyUp="return is_wlphrase('WLANConfig11b', 'wl_phrase_x', this);">
+				</td>
+			  </tr>
+			  
+			  <tr>
+				<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 11);">Network Key Rotation Interval</a></th>
+				<td><input type="text" maxlength="5" size="5" name="wl_wpa_gtk_rekey" class="input"  value="0"></td>
+			  </tr>
+			  
+			  <tr align="right">
+				<td colspan="2">
+				   <input type="button" id="applyButton" class="button" value="Apply" onclick="applyRule();"></td>
+			  </tr>
+			</table>
+		  </td>
+		</tr>
+		</tbody>
+	  </table>
+	</td>
+</form>
+
+	<!--==============Beginning of hint content=============-->
+	<td id="help_td" style="width:15px;" valign="top">
+<form name="hint_form"></form>
+	  <div id="helpicon" onClick="openHint(0, 0);" title="Click to open AiHelp">
+		<img src="images/help.gif">
+	  </div>
+	  
+	  <div id="hintofPM" style="display:none;">
+		<table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+		  <thead>
+		  <tr>
+			<td>
+			  <div id="helpname" class="AiHintTitle"></div>
+			  <a href="javascript:closeHint();"><img src="images/button-close.gif" class="closebutton" /></a>
+			</td>
+		  </tr>
+		  </thead>
+		  
+		  <tbody>
+		  <tr>
+			<td valign="top">
+			  <div id="hint_body" class="hint_body2"></div>
+			  <iframe id="statusframe" name="statusframe" class="statusframe" src="#" frameborder="0"></iframe>
+			</td>
+		  </tr>
+		  </tbody>
+		</table>
+	  </div>
+	</td>
+	<!--==============Ending of hint content=============-->
+  </tr>
+</table>
+<!--===================================Ending of Main Content===========================================-->
+
+	</td>
+	
+	<td width="10" align="center" valign="top"></td>
+  </tr>
+</table>
+
+<div id="footer"></div>
+</body>
+
+<!-- Mirrored from 192.168.1.1/Advanced_Wireless_Content.html by HTTrack Website Copier/3.x [XR&CO'2003], Mon, 14 Dec 2009 06:29:16 GMT -->
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

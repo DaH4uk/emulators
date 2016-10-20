@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Интерфейс LAN </title>
+    <script>
+        selected = 0;
+
+        function resetClick() {
+            document.tcpip.reset;
+        }
+
+        function saveChanges() {
+            if (!checkIP(document.tcpip.ip))
+                return false;
+            if (!checkMaskSpecial(document.tcpip.mask))
+                return false;
+            if (document.tcpip.enable_ip2.checked) {
+                if (!checkIP(document.tcpip.ip2))
+                    return false;
+                if (!checkMaskSpecial(document.tcpip.mask2))
+                    return false;
+                if (!Lan1NeqLan2(document.tcpip.ip, document.tcpip.mask, document.tcpip.ip2, document.tcpip.mask2)) {
+                    alert("Начальный и конечный IP адреса находяться в разных подсетях!");
+                    document.tcpip.ip2.focus();
+                    return false;
+                }
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">Интерфейс LAN</p>
+            <p class="intro_content">Страница используется для настройки интерфейса LAN. Здесь можно сменить IP-адрес, маску и т.д. </p>
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Имя интерфейса:</th>
+                        <td>Ethernet1</td>
+                    </tr>
+
+                    <tr>
+
+                        <th>IP-адрес:</th>
+                        <td><input name="ip" size="40" value="192.168.0.1" type="text"></td>
+                    </tr>
+
+                    <tr>
+
+                        <th> Сетевая маска:</th>
+                        <td><input name="mask" size="40" value="255.255.255.0" type="text"></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <table class="secondary_ip">
+                <tbody>
+                    <tr>
+                        <th width="30%">
+                            <input name="enable_ip2" value="1" onclick="updateInput()" type="checkbox">&nbsp;&nbsp;Вторичный IP
+                        </th>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="secondIP" style="display:none">
+                <table border="0" cellpadding="0" cellspacing="4" width="500">
+                    <tbody>
+                        <tr>
+                            <th width="30%">IP-адрес:</th>
+                            <td><input name="ip2" size="15" maxlength="15" value="0.0.0.0" type="text"></td>
+                        </tr>
+                        <tr>
+                            <th width="30%">Маска подсети:</th>
+                            <td><input name="mask2" size="15" maxlength="15" value="0.0.0.0" type="text"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+            </p>
+            <table>
+                <tbody>
+                    <tr>
+                        <th width="30%">IGMP Snooping:</th>
+                        <td><input name="snoop" value="0" type="radio">Выкл.</td>
+                        <td><input checked="checked" name="snoop" value="1" type="radio">Вкл.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <script>
+                document.tcpip.snoop[1].checked = true;
+
+                function updateInput() {
+                    if (document.tcpip.enable_ip2.checked == true) {
+                        if (document.getElementById) // DOM3 = IE5, NS6
+                            document.getElementById('secondIP').style.display = 'block';
+                        else {
+                            if (document.layers == false) // IE4
+                                document.all.secondIP.style.display = 'block';
+                        }
+                    }
+                    else {
+                        if (document.getElementById) // DOM3 = IE5, NS6
+                            document.getElementById('secondIP').style.display = 'none';
+                        else {
+                            if (document.layers == false) // IE4
+                                document.all.secondIP.style.display = 'none';
+                        }
+                    }
+                }
+            </script>
+
+        </div>
+
+        <div class="btn_ctl">
+
+            <input class="link_bg" onclick="return saveChanges()" value="Применить" type="submit">
+        </div>
+
+        <input value="Send" name="submit.htm?tcpiplan.htm" type="hidden">
+
+
+
+
+
+
+
+
+</body>
+
+</html>

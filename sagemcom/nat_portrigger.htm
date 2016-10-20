@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="files/reset.css" rel="stylesheet" type="text/css">
+<link href="files/base.css" rel="stylesheet" type="text/css">
+<link href="files/style.css" rel="stylesheet" type="text/css">
+<script src="files/share.js" type="text/javascript">
+</script>
+
+ <title>Триггер портов NAT</title>
+    <script language="javascript">
+
+        TOTAL_ROW = 8;
+        remain = 31;
+        var appName = '';
+        NO_SEL_MSG = 'Выберите приложение';
+        RE_ALL_MSG = 'Введите входящий порт для локального приложения и соответствующий связанный порт';
+        function isValidPort(port) {
+            var fromport = 0;
+            var toport = 100;
+
+            portrange = port.split(':');
+            if (portrange.length < 1 || portrange.length > 2) {
+                return false;
+            }
+            if (isNaN(portrange[0]))
+                return false;
+            fromport = parseInt(portrange[0]);
+
+            if (portrange.length > 1) {
+                if (isNaN(portrange[1]))
+                    return false;
+                toport = parseInt(portrange[1]);
+                if (toport <= fromport)
+                    return false;
+            }
+
+            if (fromport < 1 || fromport > 65535 || toport < 1 || toport > 65535)
+                return false;
+
+            return true;
+        }
+        function clearAll() {
+            with (document.form2PortriggerRule) {
+                for (i = 0; i < TOTAL_ROW; i++) {
+                    matchPort_s[i].value = matchPort_e[i].value = relatePort_s[i].value = relatePort_e[i].value = "";
+                    protocol[i].value = oProto[i].value = 1;
+                    dir[i].value = 0;
+                }
+            }
+        }
+        function appSelect(v) {
+            clearAll();
+            with (document.form2PortriggerRule) {
+                switch (v) {
+                    case '0':
+                        AppName.selectedIndex = 0;
+                        AppName.options[0].value = "0";
+                        appName = "";
+                        break;
+                    case '1':
+                        appName = "Aim Talk";
+                        matchPort_s[0].value = matchPort_e[0].value = 4099;
+                        relatePort_s[0].value = relatePort_e[0].value = 5191;
+                        protocol[0].value = oProto[0].value = 0;
+                        break;
+                    case '2':
+                        appName = "Asheron's Call";
+                        matchPort_s[0].value = relatePort_s[0].value = 9000;
+                        matchPort_e[0].value = relatePort_e[0].value = 9013;
+                        protocol[0].value = oProto[0].value = 1;
+                        break;
+                    case '3':
+                        appName = "Calista IP Phone";
+                        matchPort_s[0].value = matchPort_e[0].value = 5190;
+                        relatePort_s[0].value = relatePort_e[0].value = 3000;
+                        protocol[0].value = 0;
+                        oProto[0].value = 1;
+                        break;
+                    case '4':
+                        appName = "Delta Force (Client/Server)";
+                        matchPort_s[0].value = matchPort_e[0].value = 3568;
+                        protocol[0].value = 1;
+                        relatePort_s[0].value = 3100;
+                        relatePort_e[0].value = 3999;
+                        oProto[0].value = 255;
+                        break;
+                    case '5':
+                        appName = "ICQ";
+                        matchPort_s[0].value = matchPort_e[0].value = 4000;
+                        protocol[0].value = 1;
+                        relatePort_s[0].value = 20000;
+                        relatePort_e[0].value = 20059;
+                        oProto[0].value = 0;
+                        break;
+                    case '6':
+                        appName = "Napster";
+                        matchPort_s[0].value = matchPort_e[0].value = matchPort_s[1].value = matchPort_e[1].value = matchPort_s[2].value = matchPort_e[2].value =
+         matchPort_s[3].value = matchPort_e[3].value = matchPort_s[4].value = matchPort_e[4].value = matchPort_s[5].value = matchPort_e[5].value =
+         matchPort_s[6].value = matchPort_e[6].value = 6699;
+                        relatePort_s[0].value = relatePort_e[0].value = 6699;
+                        relatePort_s[1].value = relatePort_e[1].value = 6697;
+                        relatePort_s[2].value = relatePort_e[2].value = 4444;
+                        relatePort_s[3].value = relatePort_e[3].value = 5555;
+                        relatePort_s[4].value = relatePort_e[4].value = 6666;
+                        relatePort_s[5].value = relatePort_e[5].value = 7777;
+                        relatePort_s[6].value = relatePort_e[6].value = 8888;
+                        protocol[0].value = oProto[0].value = 0;
+                        protocol[1].value = oProto[1].value = 0;
+                        protocol[2].value = oProto[2].value = 0;
+                        protocol[3].value = oProto[3].value = 0;
+                        protocol[4].value = oProto[4].value = 0;
+                        protocol[5].value = oProto[5].value = 0;
+                        protocol[6].value = oProto[6].value = 0;
+                        break;
+                    case '7':
+                        appName = "Net2Phone";
+                        matchPort_s[0].value = matchPort_e[0].value = 6801;
+                        protocol[0].value = 1;
+                        relatePort_s[0].value = relatePort_e[0].value = 6801;
+                        oProto[0].value = 1;
+                        break;
+                    case '8':
+                        appName = "QuickTime 4 Client";
+                        matchPort_s[0].value = matchPort_e[0].value = matchPort_s[1].value = matchPort_e[1].value = 554;
+                        relatePort_s[0].value = relatePort_s[1].value = 6970;
+                        relatePort_e[0].value = 32000;
+                        relatePort_e[1].value = 7000;
+                        protocol[0].value = protocol[1].value = 0;
+                        oProto[0].value = oProto[1].value = 1;
+                        break;
+                    case '9':
+                        appName = "Rainbow Six/Rogue Spea";
+                        matchPort_s[0].value = matchPort_e[0].value = 2346;
+                        relatePort_s[0].value = 2436;
+                        relatePort_e[0].value = 2438;
+                        protocol[0].value = 0;
+                        oProto[0].value = 255;
+                        break;
+                    default:
+                        alert('Неподдерживаемый выбор');
+                }
+            }
+        }
+        function radioClick() {
+            with (document.form2PortriggerRule) {
+                if (radiosrv[0].checked == true)
+                    txtAppName.value = '';
+            }
+            appSelect("0");
+        }
+        function btnApply() {
+            var loc = "form2PortriggerRule.cgi?";
+            with (document.form2PortriggerRule) {
+                if (radiosrv[0].checked == true) {
+                    if (encodeURI(appName) == '') {
+                        alert(NO_SEL_MSG);
+                        return;
+                    }
+                    appName = appName.replace(/(^\s*)/g, "");
+                    appName = appName.replace(/(\s*$)/g, "");
+                    appName = appName.replace(/(\s)/g, "&nbsp;");
+                    loc += '&AppName=' + encodeURI(appName);
+                }
+                else {
+                    if (encodeURI(txtAppName.value) == '') {
+                        alert('Укажите имя приложения');
+            return;
+         }
+  if(!checkSpecialCharForURL(txtAppName.value, 1))
+  {
+   alert("Неверное имя сервера!");
+   txtAppName.focus();
+                        return;
+                    }
+                    txtAppName.value = txtAppName.value.replace(/(^\s*)/g, "");
+                    txtAppName.value = txtAppName.value.replace(/(\s*$)/g, "");
+                    txtAppName.value = (txtAppName.value).replace(/(\s)/g, "&nbsp;");
+                    loc += '&AppName=' + encodeURI(txtAppName.value);
+                }
+                for (i = 0; i < TOTAL_ROW; i++) {
+                    if (matchPort_s[i].value == "" && matchPort_e[i].value == "" && relatePort_s[i].value == "" && relatePort_e[i].value == "")
+            continue;
+                    if (matchPort_s[i].value == "" || matchPort_e[i].value == "" || relatePort_s[i].value == "" || relatePort_e[i].value == "") {
+                        alert(RE_ALL_MSG);
+                        return;
+                    }
+                }
+                if (i == 0) {
+                    alert(RE_ALL_MSG);
+                    return;
+                }
+                if (i > remain) {
+                    remain = i - remain;
+                    alert('xxxx' + remain);
+                    remain = 31;
+                    return;
+                }
+                tProtoLoc = '&triggerProto=';
+                tStartLoc = '&matchPort_s=';
+                tEndLoc = '&matchPort_e=';
+                oProtoLoc = '&openProto=';
+                oStartLoc = '&relatePort_s=';
+                oEndLoc = '&relatePort_e=';
+
+
+
+                dirLoc = '&dir=';
+                eCount = i;
+                for (i = 0; i < eCount; i++) {
+                    if (isValidPort(matchPort_s[i].value) == false) {
+                        alert('Начальный триггер порт "' + matchPort_s[i].value + '" is unvalid.');
+                        return;
+                    }
+                    if (isValidPort(matchPort_e[i].value) == false) {
+                        alert('Конечный триггер port"' + matchPort_e[i].value + '" is unvalid.');
+                        return;
+                    }
+                    if (isValidPort(relatePort_s[i].value) == false) {
+                        alert('Начальный связанный порт "' + relatePort_s[i].value + '" is unvalid.');
+                        return;
+                    }
+                    if (isValidPort(relatePort_e[i].value) == false) {
+                        alert('he end relate port"' + relatePort_e[i].value + '" is unvalid.');
+                        return;
+                    }
+                    tS = parseInt(matchPort_s[i].value);
+                    tE = parseInt(matchPort_e[i].value);
+                    if (tS > tE) {
+                        alert('Диапазон открытого порта [' + tS + '-' + tE + '] is unvalid.');
+                        return;
+                    }
+                    oS = parseInt(relatePort_s[i].value);
+                    oE = parseInt(relatePort_e[i].value);
+                    if (oS > oE) {
+                        alert('Диапазон связанного порта [' + oS + '-' + oE + '] is unvalid.');
+                        return;
+                    }
+                    tStartLoc = tStartLoc + matchPort_s[i].value + ',';
+                    tEndLoc = tEndLoc + matchPort_e[i].value + ',';
+                    tProtoLoc = tProtoLoc + protocol[i].value + ',';
+                    oStartLoc = oStartLoc + relatePort_s[i].value + ',';
+                    oEndLoc = oEndLoc + relatePort_e[i].value + ',';
+                    oProtoLoc = oProtoLoc + oProto[i].value + ',';
+
+
+                    dirLoc = dirLoc + dir[i].value + ',';
+                }
+            }
+            loc = loc + tStartLoc + tEndLoc + tProtoLoc + oStartLoc + oEndLoc + oProtoLoc + dirLoc + '&submit.htm?nat_portrigger.htm=Send';
+            var code = 'location="' + loc + '"';
+            eval(code);
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Триггер портов NAT</p>
+        <p class="intro_content">Страница используется для настройки 
+триггера портов, динамически открывающего заданные порты в межсетевом 
+экране, когда приложение в локальной сети инициирует TCP/IP соединение к
+ удаленной стороне. Это позволяет удаленной стороне в Интернет 
+устанавливать соединение к приложению в локальной сети. </p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody><tr>
+
+               <th width="30%">Триггер портов NAT:</th>
+               <td>
+
+<input name="pt_status" value="enable" type="radio">&nbsp;&nbsp;Вкл.<input name="pt_status" value="disable" checked="checked" type="radio">&nbsp;&nbsp;Выкл.
+               </td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+    <div class="btn_ctl">
+
+        <input class="link_bg" value="Применить" type="submit">
+    </div>
+
+    <input name="submit.htm?nat_portrigger.htm" value="Send" type="hidden">
+
+
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody><tr>
+
+                <th colspan="2">Тип приложения:</th>
+            </tr>
+
+            <tr>
+
+                <th><input value="0" name="radiosrv" onclick="radioClick()" checked="checked" type="radio"> Имя приложения: </th>
+                <td>
+
+                    <select name="AppName" size="1" onchange="appSelect(this.value)">
+
+                    <option selected="selected" value="0">Выберите
+                    </option><option value="1">Aim Talk
+                    </option><option value="2">Asheron's Call
+                    </option><option value="3">Calista IP Phone
+                    </option><option value="4">Delta Force (Client/Server)
+                    </option><option value="5">ICQ
+                    </option><option value="6">Napster
+                    </option><option value="7">Net2Phone
+                    </option><option value="8">QuickTime 4 Client</option>
+                    <option value="9">Rainbow Six/RogueSpea</option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <th>
+
+                    <input value="1" name="radiosrv" type="radio"> Пользовательское приложение:
+                </th>
+
+                <td><input maxlength="15" name="txtAppName" size="28" type="text"></td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+
+
+    <div class="data_common data_vertical data_common_notitle">
+
+        <table>
+
+            <tbody><tr style="font-size: 11px;">
+
+                <th width="100">Начало диапазона триггер-портов</th>
+                <th width="100">Конец диапазона триггер-портов</th>
+                <th width="100">Триггер-протокол</th>
+                <th width="110">Начало диапазона связанного порта</th>
+                <th width="100">Конец диапазона связанного порта</th>
+                <th width="90">Протокол</th>
+                <th width="80">Тип NAT</th>
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><input name="matchPort_s" size="7"></td>
+
+                <td><input name="matchPort_e" size="7"></td>
+
+                <td>
+
+                    <select name="protocol">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td><input name="relatePort_s" size="7"></td>
+
+                <td><input name="relatePort_e" size="7"></td>
+
+                <td>
+
+                    <select name="oProto">
+
+                    <option value="1" selected="selected">UDP
+
+                    </option><option value="0">TCP
+
+                    </option><option value="255">TCP/UDP
+
+                    </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <select name="dir">
+
+                    <option value="0" selected="selected">Исходящий
+                    </option><option value="1">Входящий
+                    </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+    <div class="btn_ctl">
+
+        <input class="link_bg" name="save" onclick="return btnApply();" value="Применить" type="button">
+    </div>
+
+
+
+    <input name="natType" value="" type="HIDDEN">
+
+    <input name="dir" value="" type="HIDDEN">
+
+    <input name="triggerproto" value="" type="HIDDEN">
+
+    <input name="matchPort_s" value="" type="HIDDEN">
+
+    <input name="matchPort_e" value="" type="HIDDEN">
+
+    <input name="openproto" value="" type="HIDDEN">
+
+    <input name="relatePort_s" value="" type="HIDDEN">
+
+    <input name="relatePort_e" value="" type="HIDDEN">
+
+    <input name="name" value="" type="HIDDEN">
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Таблица триггеров NAT:</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common data_vertical">
+
+            <table>
+
+                <tbody><tr>
+
+                    <th>Имя сервера</th>
+                    <th>Триггер-протокол</th>
+                    <th>Направление</th>
+                    <th>Триггер-порт</th>
+                    <th>Протокол</th>
+                    <th>Целевой порт</th>
+                    <th>Действие</th>
+                </tr>
+
+                <tr>
+
+
+                </tr>
+
+            </tbody></table>
+
+        </div>
+
+    </div>
+
+    <input name="submit.htm?nat_portrigger.htm" value="Send" type="HIDDEN">
+
+
+    <script language="JavaScript">
+
+        function natPortriggerActionFunc(form, natType, dir, triggerproto, matchport_s, matchport_e, openproto, relateport_s, relateport_e, name) {
+            form.elements[0].value = natType;
+            form.elements[1].value = dir;
+            form.elements[2].value = triggerproto;
+            form.elements[3].value = matchport_s;
+            form.elements[4].value = matchport_e;
+            form.elements[5].value = openproto;
+            form.elements[6].value = relateport_s;
+            form.elements[7].value = relateport_e;
+            form.elements[8].value = name;
+            form.submit();
+        }
+    </script>
+
+
+
+
+
+
+
+</body></html>

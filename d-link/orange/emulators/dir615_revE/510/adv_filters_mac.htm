@@ -1,4 +1,5 @@
 <html><head>
+<<<<<<< HEAD
 <link rel="shortcut icon" href="./icon/icon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="STYLESHEET" type="text/css" 
@@ -748,4 +749,755 @@ src="wireless_tail.gif" height="35" width="114"></td>
 disable_items_by_username(get_current_user);
 //-->
 </script>
+=======
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script language="JavaScript">
+var submit_button_flag = 0;
+var rule_max_num = 24;
+var resert_rule = rule_max_num;
+var DHCPL_DataArray = new Array();
+function onPageLoad(){
+	set_selectIndex("disable", get_by_id("mac_filter_type"));
+	disable_mac_filter();
+}
+function DHCP_Data(name, ip, mac, Exp_time, onList) 
+{
+	this.Name = name;
+	this.IP = ip;
+	this.MAC = mac;
+	this.EXP_T = Exp_time;
+	this.OnList = onList;
+}
+
+function set_mac_filter(){
+		for (var i = 0; i < rule_max_num; i++){
+			var temp_mf;
+			
+			if (i > 9){
+				temp_mf = (get_by_id("mac_filter_" + i).value).split("/");
+			}else{
+				temp_mf = (get_by_id("mac_filter_0" + i).value).split("/");		
+			}
+			
+			if (temp_mf.length > 1){
+				//set_checked(temp_mf[0],get_by_id("entry_enable_"+i));
+				get_by_id("mac" + i).value = temp_mf[2];
+				//set_selectIndex(temp_mf[3], get_by_id("schedule" + i));
+				if(temp_mf[2].length > 0 && temp_mf[2] !="00:00:00:00:00:00"){
+					resert_rule--;
+				}
+			}
+		}
+		//get_by_id("show_resert").innerHTML = "<font color=\"red\">"+ resert_rule +"</font>";
+}
+
+	function disable_mac_filter(){
+		var mac_filter_type = get_by_id("mac_filter_type").selectedIndex;
+		for (var i = 0; i < rule_max_num; i++){
+			get_by_id("mac" + i).disabled = !(mac_filter_type != 0);
+			get_by_id("copy" + i).disabled = !(mac_filter_type != 0);
+			get_by_id("dhcp_list" + i).disabled = !(mac_filter_type != 0);
+			get_by_id("clear" + i).disabled = !(mac_filter_type != 0);
+		}
+	}
+
+	function copy_mac(index){
+		if (get_by_id("dhcp_list" + index).selectedIndex > 0){
+			get_by_id("mac" + index).value = get_by_id("dhcp_list" + index).options[get_by_id("dhcp_list" + index).selectedIndex].value;
+		}else{
+			alert(aa_alert_10);
+		}
+	}
+
+	function clear_mac(index){
+		get_by_id("mac" + index).value = "00:00:00:00:00:00";
+	}
+	
+	function check_dhcp_ip(index){
+		var index = 0;
+		var mac = get_by_id("dhcp_list" + index).options[get_by_id("dhcp_list" + index).selectedIndex].value;
+		var temp_dhcp_list = get_by_id("dhcp_list").value.split(",");
+		for (var i = 0; i < temp_dhcp_list.length; i++){	
+			var temp_data = temp_dhcp_list[i].split("/");
+			if(temp_data.length > 1){
+				DHCPL_DataArray[DHCPL_DataArray.length++] = new DHCP_Data(temp_data[0], temp_data[1], temp_data[2], temp_data[3], index);
+				//check selected mac equal to mac or not?
+				index++;
+					if(mac == temp_data[2]){
+						var lan_ip = "192.168.0.1";
+						var lan_ip_addr_msg = replace_msg(all_ip_addr_msg,_ipaddr);
+						var temp_lan_ip_obj = new addr_obj(lan_ip.split("."), lan_ip_addr_msg, false, false);
+						var ip = temp_data[1];
+						var ip_addr_msg = replace_msg(all_ip_addr_msg,_ipaddr);
+						var temp_ip_obj = new addr_obj(ip.split("."), ip_addr_msg, false, false);
+							if(!check_LAN_ip(temp_lan_ip_obj.addr, temp_ip_obj.addr, "IP address")){
+			return false;
+		}
+						return true;
+					}
+			}					  
+			
+			}
+			return true;
+	}
+			
+	/* mac rule at least should equal to none empty(00:00:00:00:00:00) value */
+	function check_if_empty_mac_rule(){
+		for (var i = 0; i < rule_max_num+1; i++){
+			if(i==rule_max_num)
+				return true;
+			if(get_by_id("mac" + i).value != "00:00:00:00:00:00")
+				return false;				
+		}		
+	}
+			
+	function send_request(){
+		/* check empty mac rule */
+		if(get_by_id("mac_filter_type").value == "list_allow" && check_if_empty_mac_rule()){
+			alert(GW_MAC_FILTER_ALL_LOCKED_OUT_INVALID);
+			return false;
+		}
+		if (!is_form_modified("form1") && !confirm(_ask_nochange)) {
+			return false;
+		}
+		var lan_mac = "00:26:5a:f3:7e:dd";
+		
+		for (var i = 0; i < rule_max_num; i++){
+			var mac = get_by_id("mac" + i).value;
+			if (get_by_id("mac" + i).value != ""){			
+				if (mac != "00:00:00:00:00:00" && mac !=""){
+					if (!check_mac(get_by_id("mac" + i).value)){
+						alert(LS47);
+						return false;
+					}
+					if (get_by_id("mac" + i).value == lan_mac ){
+						alert(lingual_replace(GW_MAC_FILTER_MAC_UNIQUENESS_INVALID,lan_mac));
+						return false;
+					}
+					if(	!check_dhcp_ip()){
+					return false;
+					}
+				}
+				for (var j = i+1; j < rule_max_num; j++){
+					if (mac != "00:00:00:00:00:00" && mac !="" && mac == get_by_id("mac" + j).value){
+						alert(lingual_replace(GW_MAC_FILTER_MAC_UNIQUENESS_INVALID,mac));
+						return false;
+					}
+				}
+			}
+		}
+		
+		var count = 0;
+		for (var i = 0; i < rule_max_num; i++){
+			if (i > 9){
+				get_by_id("mac_filter_" + i).value = "0/Name/00:00:00:00:00:00/Always";
+			}else{
+				get_by_id("mac_filter_0" + i).value = "0/Name/00:00:00:00:00:00/Always";
+			}
+			
+			if (get_by_id("mac" + i).value != "" && get_by_id("mac" + i).value != "00:00:00:00:00:00"){
+				var dat = "1/Name/"+ get_by_id("mac" + i).value + "/Always";
+				if (count > 9){
+					get_by_id("mac_filter_" + count).value = dat;
+				}else{
+					get_by_id("mac_filter_0" + count).value = dat;
+				}
+				count++;			
+			}		
+		}
+		
+		if(submit_button_flag == 0){
+			submit_button_flag = 1;
+			get_by_id("form1").submit();
+		}
+	}
+/*	
+	function check_date(){
+		var is_change = false;
+		var check_mac_filter_type = "disable";
+		if (get_by_id("mac_filter_type").value != check_mac_filter_type){
+			is_change = true;
+		}else if(!is_change){
+			for(i=0;i<rule_max_num;i++){
+				var temp_mac = "Name/00:00:00:00:00:00/Always";
+				var kk = i;
+				if(i<10){
+					kk = "0"+i;
+				}
+				if (get_by_id("mac" + i).value != "" && get_by_id("mac" + i).value != "00:00:00:00:00:00"){
+					temp_mac = get_checked_value(get_by_id("entry_enable_"+i)) +"/Name/"+ get_by_id("mac" + i).value + "/" + get_by_id("schedule" + i).value;
+				}
+				if(get_by_id("mac_filter_"+ kk).value != temp_mac){
+					is_change = true;
+					break;
+				}
+			}
+		}
+		if(is_change){
+			if (!confirm(msg[IS_CHANGE_DATA])){
+				return false;
+			}
+		}
+		location.href="tools_schedules.htm";
+	}
+*/
+</script>
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<style type="text/css">
+<!--
+.style1 {font-size: 11px}
+-->
+</style>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td
+ id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavon" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavoff" 
+height="29"><a href="st_device.htm" onClick="return 
+jump_if();">Status</a></td><td id="topnavoff" height="29"><a 
+href="support_men.htm" onClick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+                    <tbody><tr>
+                      <td id="sidenav_container">
+                        <div id="sidenav"><ul><li><div><a 
+href="adv_virtual.htm" onClick="return jump_if();">Virtual
+ Server</a></div></li><li><div><a 
+href="adv_portforward.htm" onClick="return 
+jump_if();">Port Forwarding</a></div></li><li><div><a 
+href="adv_appl.htm" onClick="return jump_if();">Application
+ Rules</a></div></li><li><div><a href="adv_qos.htm" 
+onclick="return jump_if();">QoS Engine</a></div></li><li><div 
+id="sidenavoff">Network Filter</div></li><li><div><a 
+href="adv_access_control.htm" onClick="return 
+jump_if();">Access Control</a></div></li><li><div><a 
+href="adv_filters_url.htm" onClick="return 
+jump_if();">Website Filter</a></div></li><li><div><a 
+href="Inbound_Filter.htm" onClick="return jump_if();">Inbound
+ Filter</a></div></li><li><div><a href="adv_dmz.htm" 
+onclick="return jump_if();">Firewall Settings</a></div></li><li><div><a 
+href="adv_routing.htm" onClick="return jump_if();">Routing</a></div></li><li><div><a
+ href="adv_wlan_perform.htm" onClick="return 
+jump_if();">Advanced Wireless</a></div></li><li><div><a 
+href="adv_network.htm" onClick="return jump_if();">Advanced
+ Network</a></div></li><li><div><a 
+href="adv_ipv6_sel_wan.htm" onClick="return 
+jump_if();">IPv6</a></div></li></ul></div>
+                      	<div id="m17n_div" align="center"></div>
+                      </td>
+                    </tr>
+                </tbody></table></td>
+                <form saved="true" id="form1" name="form1" method="post"
+ action="http://www.support.dlink.com/emulators/dir615_revE/510/apply.cgi"></form>
+				<input default="back.htm" id="html_response_page" 
+name="html_response_page" value="back.htm" type="hidden">
+				<input default="The setting is saved." id="html_response_message" 
+name="html_response_message" value="The setting is saved." type="hidden">
+				<input default="adv_filters_mac.htm" id="html_response_return_page" 
+name="html_response_return_page" value="adv_filters_mac.htm" 
+type="hidden">
+				<input default="all" id="reboot_type" name="reboot_type" value="all"
+ type="hidden"> <!--active wlan mac filter and lease dhcp launched ip immediately-->
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_00" name="mac_filter_00" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_01" name="mac_filter_01" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_02" name="mac_filter_02" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_03" name="mac_filter_03" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_04" name="mac_filter_04" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_05" name="mac_filter_05" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_06" name="mac_filter_06" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_07" name="mac_filter_07" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_08" name="mac_filter_08" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_09" name="mac_filter_09" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_10" name="mac_filter_10" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_11" name="mac_filter_11" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_12" name="mac_filter_12" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_13" name="mac_filter_13" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_14" name="mac_filter_14" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_15" name="mac_filter_15" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_16" name="mac_filter_16" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_17" name="mac_filter_17" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_18" name="mac_filter_18" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_19" name="mac_filter_19" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_20" name="mac_filter_20" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_21" name="mac_filter_21" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_22" name="mac_filter_22" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+                <input default="0/name/00:00:00:00:00:00/Always" 
+id="mac_filter_23" name="mac_filter_23" 
+value="0/name/00:00:00:00:00:00/Always" type="hidden">
+				<input default="End User/192.168.0.100/00:04:23:2c:44:9f/Tue 
+Dec 22 14:06:56 2009" id="dhcp_list" name="dhcp_list" 
+value="End User/192.168.0.100/00:04:23:2c:44:9f/Tue Dec 22 
+14:06:56 2009" type="hidden">
+				
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">				  
+                  <div id="box_header">
+                    <h1>MAC 
+Address Filter</h1>
+                    The MAC 
+(Media Access Controller) Address filter option is used to control 
+network access based on the MAC Address of the network adapter. A MAC 
+address is a unique ID assigned by the manufacturer of the network 
+adapter. This feature can be configured to ALLOW or DENY 
+network/Internet access.
+                    <br><br>
+                    <input id="button" name="button" 
+class="button_submit" value="Save Settings" onClick="emulator()" type="button">
+                    <input id="button2" name="button2" 
+class="button_submit" value="Don't Save Settings" onclick="dont_save()" type="button">
+					
+                  </div>
+                  <div class="box">
+                    <h2>24 
+–– MAC Filtering Rules</h2>
+                    <table border="0" cellpadding="2" cellspacing="1" 
+width="525">
+                      <tbody>
+                        <tr>
+                          <td>Configure
+ MAC Filtering below:</td>
+                        </tr>
+                        <tr>
+                          <td>
+						  <select id="mac_filter_type" name="mac_filter_type" 
+onchange="disable_mac_filter();">
+                              <option selected="selected" default="true"
+ value="disable">Turn MAC Filtering
+ OFF</option>
+                              <option default="false" value="list_allow">Turn
+ MAC Filtering ON and ALLOW computers listed to access the network</option>
+                              <option default="false" value="list_deny">Turn
+ MAC Filtering ON and DENY computers listed to access the network</option>
+                            </select>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table bgcolor="#dfdfdf" border="1" 
+bordercolor="#ffffff" cellpadding="2" cellspacing="1" width="525">
+                      <tbody>
+                        <tr>
+                          <td align="left" width="100"><strong>MAC
+ Address</strong></td>
+                          <td>&nbsp;</td>
+                          <td align="left" width="250"><strong>DHCP
+ Client List</strong></td>
+                          <td>&nbsp;</td>
+                        </tr>
+                        <tr><td><input value="00:00:00:00:00:00" 
+autocomplete="off" default="00:00:00:00:00:00" disabled="disabled" 
+class="flatL" id="mac0" name="mac0" size="20" maxlength="17" type="text"><input
+ default="" id="name0" name="name0" maxlength="31" type="hidden"></td><td><input
+ disabled="disabled" id="copy0" name="copy0" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(0)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list0" name="dhcp_list0" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear0" name="clear0" 
+value="Clear" onClick="clear_mac(0)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac1" 
+name="mac1" size="20" maxlength="17" type="text"><input default="" 
+id="name1" name="name1" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy1" name="copy1" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(1)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list1" name="dhcp_list1" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear1" name="clear1" 
+value="Clear" onClick="clear_mac(1)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac2" 
+name="mac2" size="20" maxlength="17" type="text"><input default="" 
+id="name2" name="name2" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy2" name="copy2" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(2)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list2" name="dhcp_list2" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear2" name="clear2" 
+value="Clear" onClick="clear_mac(2)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac3" 
+name="mac3" size="20" maxlength="17" type="text"><input default="" 
+id="name3" name="name3" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy3" name="copy3" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(3)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list3" name="dhcp_list3" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear3" name="clear3" 
+value="Clear" onClick="clear_mac(3)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac4" 
+name="mac4" size="20" maxlength="17" type="text"><input default="" 
+id="name4" name="name4" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy4" name="copy4" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(4)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list4" name="dhcp_list4" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear4" name="clear4" 
+value="Clear" onClick="clear_mac(4)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac5" 
+name="mac5" size="20" maxlength="17" type="text"><input default="" 
+id="name5" name="name5" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy5" name="copy5" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(5)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list5" name="dhcp_list5" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear5" name="clear5" 
+value="Clear" onClick="clear_mac(5)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac6" 
+name="mac6" size="20" maxlength="17" type="text"><input default="" 
+id="name6" name="name6" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy6" name="copy6" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(6)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list6" name="dhcp_list6" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear6" name="clear6" 
+value="Clear" onClick="clear_mac(6)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac7" 
+name="mac7" size="20" maxlength="17" type="text"><input default="" 
+id="name7" name="name7" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy7" name="copy7" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(7)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list7" name="dhcp_list7" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear7" name="clear7" 
+value="Clear" onClick="clear_mac(7)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac8" 
+name="mac8" size="20" maxlength="17" type="text"><input default="" 
+id="name8" name="name8" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy8" name="copy8" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(8)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list8" name="dhcp_list8" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear8" name="clear8" 
+value="Clear" onClick="clear_mac(8)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac9" 
+name="mac9" size="20" maxlength="17" type="text"><input default="" 
+id="name9" name="name9" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy9" name="copy9" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(9)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list9" name="dhcp_list9" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear9" name="clear9" 
+value="Clear" onClick="clear_mac(9)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac10"
+ name="mac10" size="20" maxlength="17" type="text"><input default="" 
+id="name10" name="name10" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy10" name="copy10" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(10)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list10" name="dhcp_list10" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear10" name="clear10" 
+value="Clear" onClick="clear_mac(10)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac11"
+ name="mac11" size="20" maxlength="17" type="text"><input default="" 
+id="name11" name="name11" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy11" name="copy11" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(11)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list11" name="dhcp_list11" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear11" name="clear11" 
+value="Clear" onClick="clear_mac(11)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac12"
+ name="mac12" size="20" maxlength="17" type="text"><input default="" 
+id="name12" name="name12" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy12" name="copy12" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(12)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list12" name="dhcp_list12" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear12" name="clear12" 
+value="Clear" onClick="clear_mac(12)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac13"
+ name="mac13" size="20" maxlength="17" type="text"><input default="" 
+id="name13" name="name13" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy13" name="copy13" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(13)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list13" name="dhcp_list13" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear13" name="clear13" 
+value="Clear" onClick="clear_mac(13)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac14"
+ name="mac14" size="20" maxlength="17" type="text"><input default="" 
+id="name14" name="name14" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy14" name="copy14" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(14)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list14" name="dhcp_list14" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear14" name="clear14" 
+value="Clear" onClick="clear_mac(14)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac15"
+ name="mac15" size="20" maxlength="17" type="text"><input default="" 
+id="name15" name="name15" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy15" name="copy15" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(15)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list15" name="dhcp_list15" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear15" name="clear15" 
+value="Clear" onClick="clear_mac(15)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac16"
+ name="mac16" size="20" maxlength="17" type="text"><input default="" 
+id="name16" name="name16" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy16" name="copy16" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(16)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list16" name="dhcp_list16" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear16" name="clear16" 
+value="Clear" onClick="clear_mac(16)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac17"
+ name="mac17" size="20" maxlength="17" type="text"><input default="" 
+id="name17" name="name17" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy17" name="copy17" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(17)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list17" name="dhcp_list17" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear17" name="clear17" 
+value="Clear" onClick="clear_mac(17)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac18"
+ name="mac18" size="20" maxlength="17" type="text"><input default="" 
+id="name18" name="name18" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy18" name="copy18" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(18)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list18" name="dhcp_list18" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear18" name="clear18" 
+value="Clear" onClick="clear_mac(18)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac19"
+ name="mac19" size="20" maxlength="17" type="text"><input default="" 
+id="name19" name="name19" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy19" name="copy19" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(19)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list19" name="dhcp_list19" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear19" name="clear19" 
+value="Clear" onClick="clear_mac(19)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac20"
+ name="mac20" size="20" maxlength="17" type="text"><input default="" 
+id="name20" name="name20" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy20" name="copy20" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(20)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list20" name="dhcp_list20" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear20" name="clear20" 
+value="Clear" onClick="clear_mac(20)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac21"
+ name="mac21" size="20" maxlength="17" type="text"><input default="" 
+id="name21" name="name21" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy21" name="copy21" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(21)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list21" name="dhcp_list21" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear21" name="clear21" 
+value="Clear" onClick="clear_mac(21)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac22"
+ name="mac22" size="20" maxlength="17" type="text"><input default="" 
+id="name22" name="name22" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy22" name="copy22" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(22)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list22" name="dhcp_list22" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear22" name="clear22" 
+value="Clear" onClick="clear_mac(22)" type="button"></td></tr><tr><td><input
+ value="00:00:00:00:00:00" autocomplete="off" 
+default="00:00:00:00:00:00" disabled="disabled" class="flatL" id="mac23"
+ name="mac23" size="20" maxlength="17" type="text"><input default="" 
+id="name23" name="name23" maxlength="31" type="hidden"></td><td><input 
+disabled="disabled" id="copy23" name="copy23" value="&lt;&lt;" 
+class="btnForCopy" onClick="copy_mac(23)" type="button"></td><td 
+width="155"> <select disabled="disabled" class="wordstyle" width="140" 
+id="dhcp_list23" name="dhcp_list23" modified="ignore"><option 
+selected="selected" value="-1">Computer Name</option><option 
+value="00:04:23:2c:44:9f">End User (00:04:23:2c:44:9f )</option></select></td><td
+ align="center"><input disabled="disabled" id="clear23" name="clear23" 
+value="Clear" onClick="clear_mac(23)" type="button"></td></tr> 
+                      </tbody>
+                    </table>
+                  </div>             
+			  </div></td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bordercolordark="#ffffff" bordercolorlight="#ffffff" 
+bgcolor="#ffffff" border="0" bordercolor="#ffffff" cellpadding="2" 
+cellspacing="0">
+                  <tbody><tr><td id="help_text"><b><strong>Helpful
+ Hints</strong>…</b>
+                   	<p>Create a 
+list of MAC addresses that you would either like to allow or deny access
+ to your network.</p>
+					<p>Computers that have 
+obtained an IP address from the router's DHCP server will be in the DHCP
+ Client List. Select a device from the drop down menu, then click the 
+arrow to add that device's MAC address to the list.</p>
+					<p>Click the <strong>Clear</strong>
+ button to remove the MAC address from the MAC Filtering list.</p>
+					<p class="more"><a 
+href="support_adv.htm#MAC_Address_Filter" 
+onclick="return jump_if();">More…</a></p>
+        		  </td></tr></tbody>
+        		</table>
+        	</td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+ 
+
+
+<script type="text/javascript">
+<!--
+disable_items_by_username(get_current_user);
+//-->
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body></html>

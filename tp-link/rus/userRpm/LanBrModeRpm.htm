@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <SCRIPT language="javascript" type="text/javascript">
 var modeSel = new Array(
 0,
@@ -540,3 +541,547 @@ refreshMulti();
 	}
 }*/
 </SCRIPT>
+=======
+<SCRIPT language="javascript" type="text/javascript">
+var modeSel = new Array(
+0,
+0,0 );
+</SCRIPT>
+<SCRIPT language="javascript" type="text/javascript">
+var lanBrMode = new Array(
+1,
+1,
+0,0 );
+</SCRIPT>
+<SCRIPT language="javascript" type="text/javascript">
+var vidInfo = new Array(
+1257,
+0,
+4000,
+4,
+1110,
+4,
+263,
+0,
+6,
+8,
+1,
+0,
+0,0 );
+</SCRIPT>
+<LINK href="../dynaform/css_main.css" rel=stylesheet type="text/css">
+<SCRIPT language="javascript" src="../dynaform/common.js" type="text/javascript"></SCRIPT>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<SCRIPT><!--//
+function isDigit(digit_string)
+{
+	var c;
+	var ch = "0123456789";
+	for (var i = 0; i < digit_string.length; i++)
+	{
+        c = digit_string.charAt(i);
+        
+        if(c == " " && i ==1)
+        {
+            continue;
+        }
+        
+        if(i > 0)
+        {
+             if(digit_string.charAt(i-1) == " " && c == " ")
+             {
+                continue;
+             }
+            
+            if(digit_string.charAt(i-1) != " " && c == " ")
+            {
+                return false;
+            }
+        }
+        
+		if(ch.indexOf(c) == -1 )
+		{
+           if(c !=" ")
+           {
+    			return false;
+           }
+		}
+	}
+	return true;
+}
+function doSubmit()
+{
+	document.forms[0].igmpChanged.value = 0;
+	
+	if (document.forms[0].igmpEn.value == lanBrMode[1])
+	{
+	}
+	else
+	{
+		document.forms[0].igmpChanged.value = 1;
+	}
+	
+	var index = document.forms[0].mode_sel.selectedIndex;	
+	if (index != 2)
+	{
+		if (document.forms[0].ru_br.value != lanBrMode[0] || document.forms[0].mode_sel.value != modeSel[0])
+		{
+			if(!confirm(str_pages.ntw_lan_mode_rpm.js_br_setting_changed))
+			{
+				return false;
+			}
+		}
+	
+		return true;
+	}
+	
+	nat_vid = document.forms[0].nat_vid.value;
+	iptv_vid = document.forms[0].iptv_vid.value;
+	multi_iptv_vid = document.forms[0].multi_iptv_vid.value;
+	ip_phone_vid = document.forms[0].ip_phone_vid.value;
+	
+	nat_pri = document.forms[0].nat_pri.value;
+	iptv_pri = document.forms[0].iptv_pri.value;
+	multi_iptv_pri = document.forms[0].multi_iptv_pri.value;
+	ip_phone_pri = document.forms[0].ip_phone_pri.value;
+	
+	if (nat_vid < 2 || nat_vid > 4094 || !isDigit(nat_vid))
+	{
+		alert(str_pages.ntw_lan_mode_rpm.js_nat_vlan_value_wrong);
+		document.forms[0].nat_vid.value = vidInfo[0];			
+		return false;
+	}
+	if (iptv_vid< 2|| iptv_vid >4094 || !isDigit(iptv_vid))
+	{
+		alert(str_pages.ntw_lan_mode_rpm.js_iptv_vlan_value_wrong);
+		document.forms[0].iptv_vid.value = vidInfo[2];
+		return false;
+	}
+	if (multi_iptv_vid < 2 || multi_iptv_vid >4094 || !isDigit(multi_iptv_vid))
+	{
+		alert(str_pages.ntw_lan_mode_rpm.js_mutli_iptv_vlan_value_wrong);
+		document.forms[0].multi_iptv_vid.value = vidInfo[4];
+		return false;
+	}
+	if (ip_phone_vid < 2 || ip_phone_vid >4094 || !isDigit(ip_phone_vid))
+	{
+		alert(str_pages.ntw_lan_mode_rpm.js_iphone_vlan_value_wrong);
+		document.forms[0].ip_phone_vid.value = vidInfo[6];
+		return false;
+	}
+	if (nat_vid == iptv_vid || nat_vid == ip_phone_vid ||  nat_vid == multi_iptv_vid 
+		|| iptv_vid == ip_phone_vid || iptv_vid == multi_iptv_vid
+		|| multi_iptv_vid == ip_phone_vid )
+	{
+		alert(str_pages.ntw_lan_mode_rpm.js_vlan_value_diff);
+		return false;
+	}
+	var ii = 0;
+	var lanBrMask = 0;	
+	var lanIptvMask = 0;	
+	for (ii = 0; ii < 4; ii++)
+	{	
+		idx = document.forms[0].Lan[ii].selectedIndex;		
+		if (idx == 0)
+		{
+			lanBrMask = lanBrMask + Math.pow(2, ii);
+		}
+		else if (idx == 1)
+		{
+			lanIptvMask = lanIptvMask + Math.pow(2, ii);
+		}		 
+	}
+	document.forms[0].lan_brmask.value = lanBrMask;
+	document.forms[0].lan_iptv_mask.value = lanIptvMask;
+	
+	if (nat_vid != vidInfo[0] || iptv_vid != vidInfo[2] || multi_iptv_vid != vidInfo[4] || 
+		ip_phone_vid != vidInfo[6] || nat_pri != vidInfo[1] || iptv_pri != vidInfo[3] || 
+		multi_iptv_pri != vidInfo[5] || ip_phone_pri != vidInfo[7] || lanBrMask != vidInfo[8] || 
+		lanIptvMask != vidInfo[9]|| document.forms[0].enMulti.checked != vidInfo[11])
+	{
+		if (!confirm(str_pages.ntw_lan_mode_rpm.js_br_setting_changed))
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+function setVlanConfState(vlanEnable)
+{
+	var i;
+	
+	if (vlanEnable == 0)
+	{
+		document.forms[0].nat_vid.disabled = true;
+		document.forms[0].iptv_vid.disabled = true;
+		document.forms[0].multi_iptv_vid.disabled = true;
+		document.forms[0].ip_phone_vid.disabled = true;
+		
+		document.forms[0].nat_pri.disabled = true;
+		document.forms[0].iptv_pri.disabled = true;
+		document.forms[0].multi_iptv_pri.disabled = true;
+		document.forms[0].ip_phone_pri.disabled = true;
+		
+		for (i = 0; i < 4; i++)
+		{
+			document.forms[0].Lan[i].disabled = true;
+		}
+	}
+	else
+	{
+		document.forms[0].nat_vid.disabled = false;
+		document.forms[0].iptv_vid.disabled = false;
+		document.forms[0].multi_iptv_vid.disabled = false;
+		document.forms[0].ip_phone_vid.disabled = false;
+		
+		document.forms[0].nat_pri.disabled = false;
+		document.forms[0].iptv_pri.disabled = false;
+		document.forms[0].multi_iptv_pri.disabled = false;
+		document.forms[0].ip_phone_pri.disabled = false;
+		
+		for (i = 0; i < 4; i++)
+		{
+			document.forms[0].Lan[i].disabled = false;
+		}
+	}
+}
+
+function setModeState(index)
+{ 
+	if (index == 0)
+	{
+		document.getElementById("bridgeMode").style.display = "none";
+		document.getElementById("vlanTagMode").style.display = "none";
+		document.getElementById("igmpMode").style.display = "";
+		LoadHelp('ModeBridgeandVlanTagHelpRpm.htm');
+	}
+	else if (index == 1)
+	{
+		document.getElementById("bridgeMode").style.display = "";
+		document.getElementById("vlanTagMode").style.display = "none";
+		document.getElementById("igmpMode").style.display = "";
+		LoadHelp('BridgeHelpRpm.htm');
+	}
+	else if (index == 2)
+	{
+		document.getElementById("bridgeMode").style.display = "none";
+		document.getElementById("vlanTagMode").style.display = "";
+		document.getElementById("igmpMode").style.display = "";
+		refreshMulti();
+		LoadHelp('VlanTagCfgHelpRpm.htm');
+	}
+}
+
+function refreshMulti()
+{
+	var cf = document.forms[0];
+	if (cf.enMulti.checked)
+	{
+		document.getElementById("display_multiVid").style.display = "";
+		document.getElementById("display_multiPrio").style.display = "";
+
+	}
+	else
+	{
+		document.getElementById("display_multiVid").style.display = "none";
+		document.getElementById("display_multiPrio").style.display = "none";
+	}
+	return true;
+}
+//--></SCRIPT>
+</HEAD>
+<BODY onLoad="setTagStr(document,'ntw_lan_mode_rpm');resize(this);" onResize="resize(this);">
+<CENTER>
+  <FORM action="LanBrModeRpm.htm" enctype="multipart/form-data" method="get" onSubmit="return doSubmit();">
+    <TABLE id="autoWidth" border="0" name="autoWidth">
+      <TBODY>
+        <TR>
+          <TD class="h1" colspan="2" id="t_title" name="t_title">IPTV</TD>
+        </TR>
+        <TR>
+          <TD class="blue" colspan="2"></TD>
+        </TR>
+		<TR id="igmpMode" name="igmpMode">
+			<TD class="Item" id="t_igmp_proxy" name="t_igmp_proxy">IGMP Proxy:</TD>
+			<TD><SELECT name="igmpEn" id="igmpEn" >
+					<OPTION id="t_disable" value="0" name="t_disable">Disable</OPTION>
+					<OPTION id="t_enable" value="1" name="t_enable">Enable</OPTION>
+				</SELECT>
+			</TD>
+		</TR>
+		
+		<TR>
+          <TD class="blue" colspan="2"></TD>
+        </TR>
+		
+		<TR>
+			<TD class=Item id="t_mode_sel" name="t_mode_sel">Mode:</TD> 
+			<TD>
+				<select name="mode_sel" style="width:200px" onClick="setModeState(document.forms[0].mode_sel.selectedIndex)" id="mode_sel">
+					<option id="t_mode_sel0" value="0" name="t_mode_sel0">Automatic</option>
+					<option id="t_mode_sel1" value="1" name="t_mode_sel1">Bridge</option>
+					<option id="t_mode_sel2" value="2" name="t_mode_sel2">802.1Q Tag VLAN</option>
+				</select>
+			</TD>	
+        </TR>
+		
+        <TR id="bridgeMode" style="display:none" name="bridgeMode">
+			<TD class="Item" id="t_lan_port" name="t_lan_port">Port for IPTV:</TD>
+			<TD><SELECT name="ru_br" id="ru_br">
+				<OPTION id="t_disable" value="0" name="t_disable">Disable</OPTION>
+				<OPTION value="1">LAN 4</OPTION>
+				<OPTION value="2">LAN 3&LAN 4</OPTION>
+			</SELECT></TD>
+        </TR>
+		
+		<TR id="vlanTagMode"  style="display:none" name="vlanTagMode">
+             <TD colspan="2">
+	        <TABLE border="0" width="100%">
+	        <TBODY>
+			<TR>
+			  	<TD class=Item id="t_vlanInetEnb" name="t_vlanInetEnb">VLAN TAG for Internet Service:</TD> 
+				<TD> 
+					<INPUT name="vlanInetEnb" type="radio" value="0" id="vlanInetEnb">
+				    <SPAN id = "t_disable" name="t_disable">Disable</SPAN>
+				    <INPUT name="vlanInetEnb" type="radio" value="1" id="vlanInetEnb">
+				    <SPAN id = "t_enable" name="t_enable">Enable</SPAN>
+				</TD>
+			</TR>
+			<TR>
+				<TD class=Item id="t_nat_tag" name="t_nat_tag">Internet VLAN ID:</TD> 
+				<TD><INPUT type="edit" name="nat_vid" value="" style="width:135px"></TD>
+			</TR>
+			<TR>
+				<TD class=Item id="t_nat_pri" name="t_nat_pri">Internet VLAN Pri:</TD> 
+				<TD>
+				<select name="nat_pri" style="width:135px" id="nat_pri" id="nat_pri">
+					<option id="t_nat_pri0" value="0" name="t_nat_pri0">0</option>
+					<option id="t_nat_pri1" value="1" name="t_nat_pri1">1</option>
+					<option id="t_nat_pri2" value="2" name="t_nat_pri2">2</option>
+					<option id="t_nat_pri3" value="3" name="t_nat_pri3">3</option>
+					<option id="t_nat_pri4" value="4" name="t_nat_pri4">4</option>
+					<option id="t_nat_pri5" value="5" name="t_nat_pri5">5</option>
+					<option id="t_nat_pri6" value="6" name="t_nat_pri6">6</option>
+					<option id="t_nat_pri7" value="7" name="t_nat_pri7">7</option>
+				</select>
+				</TD>	
+			</TR>
+			<TR>
+				<TD class=Item id="t_ip_phone_tag" name="t_ip_phone_tag">IP-phone VLAN ID:</TD>
+				<TD><INPUT type="edit" style="width:135px" name="ip_phone_vid" value=""></TD>
+		    </TR>
+			<TR>
+				<TD class=Item id="t_ip_phone_pri" name="t_ip_phone_pri">IP-phone VLAN Pri:</TD> 
+				<TD>
+				<select name="ip_phone_pri" style="width:135px" id="ip_phone_pri" id="ip_phone_pri">
+					<option id="t_ip_phone_pri0" value="0" name="t_ip_phone_pri0">0</option>
+					<option id="t_ip_phone_pri1" value="1" name="t_ip_phone_pri1">1</option>
+					<option id="t_ip_phone_pri2" value="2" name="t_ip_phone_pri2">2</option>
+					<option id="t_ip_phone_pri3" value="3" name="t_ip_phone_pri3">3</option>
+					<option id="t_ip_phone_pri4" value="4" name="t_ip_phone_pri4">4</option>
+					<option id="t_ip_phone_pri5" value="5" name="t_ip_phone_pri5">5</option>
+					<option id="t_ip_phone_pri6" value="6" name="t_ip_phone_pri6">6</option>
+					<option id="t_ip_phone_pri7" value="7" name="t_ip_phone_pri7">7</option>
+				</select>
+				</TD>	
+			</TR>
+			<TR>
+				<TD class=Item id="t_iptv_tag" name="t_iptv_tag">IPTV VLAN ID:</TD>
+				<TD><INPUT type="edit" style="width:135px" name="iptv_vid" value=""></TD>
+		    </TR>
+			<TR>
+				<TD class=Item id="t_iptv_pri" name="t_iptv_pri">IPTV VLAN Pri:</TD> 
+				<TD>
+				<select name="iptv_pri" style="width:135px" id="iptv_pri" id="iptv_pri">
+					<option id="t_iptv_pri0" value="0" name="t_iptv_pri0">0</option>
+					<option id="t_iptv_pri1" value="1" name="t_iptv_pri1">1</option>
+					<option id="t_iptv_pri2" value="2" name="t_iptv_pri2">2</option>
+					<option id="t_iptv_pri3" value="3" name="t_iptv_pri3">3</option>
+					<option id="t_iptv_pri4" value="4" name="t_iptv_pri4">4</option>
+					<option id="t_iptv_pri5" value="5" name="t_iptv_pri5">5</option>
+					<option id="t_iptv_pri6" value="6" name="t_iptv_pri6">6</option>
+					<option id="t_iptv_pri7" value="7" name="t_iptv_pri7">7</option>
+				</select>
+				</TD>	
+			</TR>
+			<TR>
+				<TD></TD>
+				<TD>
+					<INPUT type="checkbox" name="enMulti" id="enMulti" value="2" onClick="refreshMulti()">
+					<A id="t_enMultiVLAN" name="t_enMultiVLAN">Enable Multicast VLAN</A>
+				</TD>
+			</TR>
+			<TR id="display_multiVid" name="display_multiVid">
+				<TD class=Item id="t_multi_iptv_tag" name="t_multi_iptv_tag">Multicast VLAN ID for IPTV:</TD>
+				<TD><INPUT type="edit" style="width:135px" name="multi_iptv_vid" value=""></TD>
+		    </TR>
+			<TR id="display_multiPrio" name="display_multiPrio">
+				<TD class=Item id="t_multi_iptv_pri" name="t_multi_iptv_pri">Multicast VLAN Pri for IPTV:</TD> 
+				<TD>
+				<select name="multi_iptv_pri" style="width:135px" id="multi_iptv_pri" id="multi_iptv_pri">
+					<option id="t_multi_iptv_pri0" value="0" name="t_multi_iptv_pri0">0</option>
+					<option id="t_multi_iptv_pri1" value="1" name="t_multi_iptv_pri1">1</option>
+					<option id="t_multi_iptv_pri2" value="2" name="t_multi_iptv_pri2">2</option>
+					<option id="t_multi_iptv_pri3" value="3" name="t_multi_iptv_pri3">3</option>
+					<option id="t_multi_iptv_pri4" value="4" name="t_multi_iptv_pri4">4</option>
+					<option id="t_multi_iptv_pri5" value="5" name="t_multi_iptv_pri5">5</option>
+					<option id="t_multi_iptv_pri6" value="6" name="t_multi_iptv_pri6">6</option>
+					<option id="t_multi_iptv_pri7" value="7" name="t_multi_iptv_pri7">7</option>
+				</select>
+				</TD>	
+			</TR>
+			<TR>
+				<TD></TD>
+				<TD></TD>
+		    </TR>
+			<TR>
+				<TD class=Item id="t_LAN1" name="t_LAN1">LAN1 Mode:</TD>
+				<TD>
+				<select name="Lan" style="width:135px" id="Lan" id="Lan">
+					<option id="t_internet1" value="0" name="t_internet1">Internet</option>
+					<option id="t_iptv1" value="1" name="t_iptv1">IPTV</option>
+					<option id="t_ip_phone1" value="2" name="t_ip_phone1">IP-phone</option>
+				</select>
+				</TD>
+		    </TR>
+			<TR>
+				<TD class=Item id="t_LAN2" name="t_LAN2">LAN2 Mode:</TD>
+				<TD>
+				<select name="Lan" style="width:135px" id="Lan" id="Lan">
+					<option id="t_internet2" value="0" name="t_internet2">Internet</option>
+					<option id="t_iptv2" value="1" name="t_iptv2">IPTV</option>
+					<option id="t_ip_phone2" value="2" name="t_ip_phone2">IP-phone</option>
+				</select>
+				</TD>
+		    </TR>
+			<TR>
+				<TD class=Item id="t_LAN3" name="t_LAN3">LAN3 Mode:</TD>
+				<TD>
+				<select name="Lan" style="width:135px" id="Lan" id="Lan">
+					<option id="t_internet3" value="0" name="t_internet3">Internet</option>
+					<option id="t_iptv3" value="1" name="t_iptv3">IPTV</option>
+					<option id="t_ip_phone3" value="2" name="t_ip_phone3">IP-phone</option>
+				</select>
+				</TD>
+		    </TR>
+			<TR>
+				<TD class=Item id="t_LAN4" name="t_LAN4">LAN4 Mode:</TD>
+				<TD>
+				<select name="Lan" style="width:135px" id="Lan" id="Lan">
+					<option id="t_internet4" value="0" name="t_internet4">Internet</option>
+					<option id="t_iptv4" value="1" name="t_iptv4">IPTV</option>
+					<option id="t_ip_phone4" value="2" name="t_ip_phone4">IP-phone</option>
+				</select>
+				</TD>
+		    </TR>
+			</TBODY>
+			</TABLE>
+			</TD>
+		</TR>	
+
+        <TR>
+          <TD class="blue" colspan="2"></TD>
+        </TR>
+        <TR>
+		  <TD class = "mbtn" colspan="2">
+			  <INPUT type="hidden" name="lan_brmask" value="" id="lan_brmask">
+			  <INPUT type="hidden" name="lan_ipphonemask" value="" / id="lan_ipphonemask">
+			  <INPUT type="hidden" name="lan_iptv_mask" value="" / id="lan_iptv_mask">
+			  <INPUT type="hidden" name="igmpChanged" value="0" id="igmpChanged">
+			  <INPUT name="Save" type="submit" class="buttonBig" value="Save">
+		 </TD>
+        </TR>
+      </TBODY>
+    </TABLE>
+  </FORM>
+</CENTER>
+</BODY>
+<head>
+<link rel="shortcut icon" href="./icon/icon.ico">
+<META http-equiv="pragma" content="no-cache">
+</HEAD>
+</HTML>
+<SCRIPT type="text/javascript">
+//Mode
+document.forms[0].mode_sel.value = modeSel[0];
+setModeState(document.forms[0].mode_sel.value);
+
+//Bridge
+document.forms[0].ru_br.value = lanBrMode[0];
+
+//VLAN TAG
+document.forms[0].nat_vid.value = vidInfo[0];
+document.forms[0].nat_pri.selectedIndex = vidInfo[1];
+	
+document.forms[0].iptv_vid.value = vidInfo[2];
+document.forms[0].iptv_pri.selectedIndex = vidInfo[3];
+	
+document.forms[0].enMulti.checked = vidInfo[11];
+document.forms[0].multi_iptv_vid.value = vidInfo[4];
+document.forms[0].multi_iptv_pri.value = vidInfo[5];
+	
+document.forms[0].ip_phone_vid.value = vidInfo[6];
+document.forms[0].ip_phone_pri.selectedIndex = vidInfo[7];
+
+var i = 1;
+var j = 1;
+	
+for (i = 0; i < 4; i++)
+{	
+	if (vidInfo[8] & j)
+	{
+		document.forms[0].Lan[i].selectedIndex = 0;	
+	}
+	else if (vidInfo[9] & j)
+	{
+		document.forms[0].Lan[i].selectedIndex = 1;
+	}
+	else
+	{
+		document.forms[0].Lan[i].selectedIndex = 2;
+	}
+	j = j*2; 
+}
+if (vidInfo[10] == 1)
+{
+	document.forms[0].vlanInetEnb[0].checked = false;
+	document.forms[0].vlanInetEnb[1].checked = true;
+}
+else
+{
+	document.forms[0].vlanInetEnb[0].checked = true;
+	document.forms[0].vlanInetEnb[1].checked = false;
+}
+
+//IGMP	
+document.forms[0].igmpEn.value = lanBrMode[1];
+document.forms[0].igmpChanged.value = 0;
+
+refreshMulti();
+
+//currentWorkMode
+/*if (currentWorkMode[0] != 0)
+{
+	var i;
+	document.forms[0].igmpEn.disabled = true;
+	document.forms[0].mode_sel.disabled = true;
+	document.forms[0].ru_br.disabled = true;
+	document.forms[0].vlanInetEnb[0].disabled = true;
+	document.forms[0].vlanInetEnb[1].disabled = true;
+	document.forms[0].nat_vid.disabled = true;
+	document.forms[0].iptv_vid.disabled = true;
+	document.forms[0].multi_iptv_vid.disabled = true;
+	document.forms[0].ip_phone_vid.disabled = true;
+	document.forms[0].nat_pri.disabled = true;
+	document.forms[0].iptv_pri.disabled = true;
+	document.forms[0].multi_iptv_pri.disabled = true;
+	document.forms[0].ip_phone_pri.disabled = true;
+	for (i = 0; i < 4; i++)
+	{
+		document.forms[0].Lan[i].disabled = true;
+	}
+}*/
+</SCRIPT>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

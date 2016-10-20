@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -154,3 +155,161 @@ filter: alpha(opacity=0); /* for IE */
 <form name="uiPostForm_adv" id="uiPostForm" method="post" action="adv_index.htm"></form>
 </body>
 </html>
+=======
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="skin/advanced.css">
+<script language="javascript" type="text/javascript" src="js/boot.js"></script>
+<script language="javascript" type="text/javascript" src="js/advanced.js"></script>
+<script language="javascript" type="text/javascript" src="js/ruwiz.js"></script>
+<title></title><meta http-equiv=content-type content='text/html; charset=UTF-8'>
+<script type="text/javascript"><!--
+var G_RouterName = 'WNR612v3';
+document.title = 'NETGEAR Router '+G_RouterName;
+--></script>
+<meta http-equiv=content-type content='text/html; charset=UTF-8'>
+</head>
+<body onload="loadvalue();" onResize="change_size();" style="visibility:hidden">
+<script>
+var WDS_Enable="0";
+var WDS_WDSMode="";
+if('1'==WDS_Enable&&'Repeater'==WDS_WDSMode)
+{
+var enabled_wds=1;
+}else{
+var enabled_wds=0;
+}
+var enabled_wps = "1";
+if(top!=self)top.location.href = self.location.href;
+var status=1000; // for demo AUTO_download_img.htm
+var gui_region="Russian";
+var region_class;
+var parental_ctrl_flag = "0";
+var menu_Type="advanced";
+function loadvalue()
+{
+setFooterClass();
+change_size();
+region_class = initClass(gui_region);
+menu_color_change('home');
+}
+</script>
+<div id="top">
+<iframe name="topframe" id="topframe" src="top.htm" allowtransparency="true" height="100%" width="100%" frameborder="0"></iframe>
+</div>
+<div id="container" class="container_center">
+<div id="middle">
+<div id="menu">
+<script>
+var setup_open=0;
+var security_open=0;
+var admin_open=0;
+var advanced_open=0;
+</script>
+<style>
+.black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 1024px;
+background-color: black;
+-moz-opacity: 0.0;
+opacity:.0; /* for mozilla */
+filter: alpha(opacity=0); /* for IE */
+}
+.white_content {
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 0%;
+height: 0px;
+background-color: white;
+-moz-opacity: 0.0;
+opacity:.0; /* for mozilla */
+filter: alpha(opacity=0); /* for IE */
+}
+</style>
+<div id="home" class="advanced_purple_button" onclick="click_adv_action('home');"><b><span id="lang_advanced_home">ADVANCED Home</span></b></div>
+<div id="setup_wizard" class="advanced_black_button" onclick="click_adv_action('setup_wizard');"><b><span id="lang_setupwizard">Setup Wizard</span></b></div>
+<div id="wps" title="wps" class="advanced_black_button" onclick="click_adv_action('wps');"><b><span id="lang_wpssetup">WPS Wizard</span></b></div>
+<div id="setup_bt" class="advanced_white_close_button" onclick="open_or_close_sub('setup'); setup_open++;"><b><span id="lang_setup">Setup</span></b></div>
+<div id="setup_sub" class="sub_men" style="display: none">
+<dl>
+<dt id="internet" class="sub_back" onclick="click_adv_action('internet');"><a><b><span id="lang_advanced_wansetup">Internet Setup</span></b></a></dt>
+<dt id="wireless" class="sub_back" target="formframe" onclick="click_adv_action('wireless');"><a><b><span id="lang_advanced_wirelesssetup">Wireless Setup</span></b></a></dt> <!--href="javascript:void(1)"-->
+<dt id="guest" class="sub_back" target="formframe" onclick="click_adv_action('guest');"><a><b><span id="lang_advanced_wirelessguest">Guest Network</span></b></a></dt>
+<dt id="wan" class="sub_back" target="formframe" onclick="click_adv_action('wan');"><a><b><span id="lang_wansetup_menu">WAN Setup</span></b></a></dt>
+<dt id="lan" class="sub_back" target="formframe" onclick="click_adv_action('lan');"><a><b><span id="lang_lansetup">LAN Setup</span></b></a></dt>
+<dt id="qos" class="sub_back" target="formframe" onclick="click_adv_action('qos');"><a><b><span id="lang_qos">QoS Setup</span></b></a></dt>
+</dl>
+</div>
+<div id="security_bt" class="advanced_white_close_button" onclick="open_or_close_sub('security'); security_open++;"><b><span id="lang_firewall">Security</span></b></div>
+<div id="security_sub" class="sub_men" style="display: none">
+<dl>
+<dt id="parental" class="sub_back" target="formframe" onclick="click_adv_action('parental');"><a><b><span id="lang_parental">Parental Controls</span></b></a></dt>
+<dt id="block_site" class="sub_back" target="formframe" onclick="click_adv_action('block_site');"><a><b><span id="lang_urlfiltering">Block Sites</span></b></a></dt>
+<dt id="block_services" class="sub_back" target="formframe" onclick="click_adv_action('block_services');"><a><b><span id="lang_blockservices_main">Block Services</span></b></a></dt>
+<dt id="schedule" class="sub_back" target="formframe" onclick="click_adv_action('schedule');"><a><b><span id="lang_schedules">Schedule</span></b></a></dt>
+<dt id="email" class="sub_back" target="formframe" onclick="click_adv_action('email');"><a><b><span id="lang_email">E-mail</span></b></a></dt>
+</dl>
+</div>
+<div id="admin_bt" class="advanced_white_close_button" onclick="open_or_close_sub('admin'); admin_open++;"><b><span id="lang_maintenance">Administration</span></b></div>
+<div id="admin_sub" class="sub_men" style="display: none">
+<dl>
+<dt id="status" class="sub_back" target="formframe" onclick="click_adv_action('status');"><a><b><span id="lang_routerstatus">Router Status</span></b></a></dt>
+<dt id="log" class="sub_back" target="formframe" onclick="click_adv_action('log');"><a><b><span id="lang_logs">Logs</span></b></a></dt>
+<dt id="attached" class="sub_back" target="formframe" onclick="click_adv_action('attached');"><a><b><span id="lang_advanced_attacheddevices">Attached Devices</span></b></a></dt>
+<dt id="bak_set" class="sub_back" target="formframe" onclick="click_adv_action('bak_set');"><a><b><span id="lang_backupsettings">Backup Settings</span></b></a></dt>
+<dt id="passwd" class="sub_back" target="formframe" onclick="click_adv_action('passwd');"><a><b><span id="lang_setpassword">Set Password</span></b></a></dt>
+<dt id="upgrade" class="sub_back" target="formframe" onclick="click_adv_action('upgrade');"><a><b><span id="lang_routerupgrade">Firmware Update</span></b></a></dt>
+</dl>
+</div>
+<div id="advanced_bt" class="advanced_white_close_button" onclick="open_or_close_sub('advanced'); advanced_open++;"><b><span id="lang_advancedsetup">Advanced Setup</span></b></div>
+<div id="advanced_sub" class="sub_men" style="display: none">
+<dl>
+<dt id="plc" class="sub_back" style="display: none" target="formframe" onclick="click_adv_action('plc');"><a><b><span id="lang_plc">Powerline Devices</span></b></a></dt>
+<dt id="wladv" class="sub_back" target="formframe" onclick="click_adv_action('wladv');"><a><b><span id="lang_wirelessadvanced">Wireless Settings</span></b></a></dt>
+<dt id="wds" class="long_name" target="formframe" onclick="click_adv_action('wds');"><a><b><span id="lang_wirelessrepeater">Wireless Repeating Function</span></b></a></dt>
+<dt id="forwarding_triggering" class="long_name" target="formframe" onclick="click_adv_action('forwarding_triggering');"><a><b><span id="lang_portforwarding">Port Forwarding / Port Triggering</span></b></a></dt>
+<dt id="dns" class="sub_back" target="formframe" onclick="click_adv_action('dns');"><a><b><span id="lang_ddns">Dynamic DNS</span></b></a></dt>
+<dt id="static" class="sub_back" target="formframe" onclick="click_adv_action('static');"><a><b><span id="lang_staticroutes">Static Routes</span></b></a></dt>
+<dt id="remote" class="sub_back"target="formframe" onclick="click_adv_action('remote');"><a><b><span id="lang_remotemanagement">Remote Management</span></b></a></dt>
+<dt id="upnp" class="sub_back" target="formframe" onclick="click_adv_action('upnp');"><a><b><span id="lang_upnp">UPnP</span></b></a></dt>
+<dt id="tr069" class="sub_back" style="display: none" target="formframe" onclick="click_adv_action('tr069');"><a><b><span id="lang_tr069">TR069</span></b></a></dt>
+<dt id="traffic" class="sub_back" target="formframe" onclick="click_adv_action('traffic');"><a><b><span id="lang_traffic_meter">Traffic Meter</span></b></a></dt>
+</dl>
+</div>
+</div>
+<div id="formframe_div">
+<iframe name="formframe" id="formframe" src="RST_status.htm" allowtransparency="true" height="100%" width="100%" scrolling="no" frameborder="0">
+</iframe>
+</div>
+<div id="footer" class="footer">
+<img class="footer_img" src="skin/image/footer/footer.gif">
+<div id="support">
+<b><span id="lang_help_support"> HELP & SUPPORT</span></b> &nbsp;
+<a target="_blank" href="http://downloadcenter.netgear.com"><span id="lang_basic_doc">Documentation</span></a> |
+<a target="_blank" href="http://support.netgear.com"><span id="lang_basic_support">Online Support</span></a> |
+<a target="_blank" href="http://kb.netgear.com/app/answers/detail/a_id/12923"><span id="lang_basic_faq">Router FAQ</span></a>
+</div>
+<div id="search" align=right>
+<b><span id="lang_basic_search">SEARCH HELP </span></b>
+<input type="text" id="searchText" name="search" value="Enter Search Item" onkeypress="detectEnter('num',event);" onFocus="this.select();" >
+<input id="searchButton" class="search_button" type="button" name="dosearch" value="GO" onClick="do_search();">
+</div>
+</div>
+</div>
+</div>
+<div id="light" class="white_content"></div>
+<div id="fade" class="black_overlay"></div>
+<form name="uiPostForm_adv" id="uiPostForm" method="post" action="adv_index.htm"></form>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

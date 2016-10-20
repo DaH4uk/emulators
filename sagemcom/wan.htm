@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+
+ <script src="files/jquip.js" type="text/javascript"></script>
+
+ <title>Режим ADSL</title>
+ <script>
+  if (!('trim' in String)) {
+   String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/, '');
+   }
+  }
+  var initConnectMode;
+  var pppConnectStatus = 0;
+  var selectflag = 0;
+  var option60string;
+  option60string = "ERT SAGEM F2304";
+
+  function pppTypeSelection() {
+   if (document.adsl.pppConnectType.selectedIndex == 2) {
+    document.adsl.pppIdleTime.value = "";
+    disableTextField(document.adsl.pppIdleTime);
+   }
+   else {
+    if (document.adsl.pppConnectType.selectedIndex == 1) {
+     if (document.adsl.pppIdleTime.value == "")
+      document.adsl.pppIdleTime.value = 10;
+     if (superprivilege == 1)
+      enableTextField(document.adsl.pppIdleTime);
+    }
+    else {
+     document.adsl.pppIdleTime.value = "";
+     disableTextField(document.adsl.pppIdleTime);
+    }
+   }
+  }
+
+  function pppConnectClick(connect) {
+   if ((document.adsl.adslConnectionMode.value == 2) ||
+    (document.adsl.adslConnectionMode.value == 3)) {
+    if (document.adsl.pppConnectType.selectedIndex == 2 && pppConnectStatus == connect) {
+     if (document.adsl.pppUserName.value == "") {
+      alert('Имя пользователя PPP не может быть пустым!');
+      document.adsl.pppUserName.focus();
+      return false;
+     }
+    }
+    return true;
+   }
+   return false;
+  }
+
+  function wanvlanChange() {
+   if (document.adsl.vlanenable[0].checked) {
+    document.adsl.vlanid.disabled = true;
+    document.adsl.vlanpriority.disabled = true;
+   }
+   else {
+    document.adsl.vlanid.disabled = false;
+    document.adsl.vlanpriority.disabled = false;
+   }
+  }
+
+  function addClick() {
+   if (!vcCheck()) return false;
+  }
+
+  function modifyCheck() {
+   if (selectflag == 0) {
+    alert('Ни одно соединение не выбрано, чтобы изменить!');
+    return false;
+   }
+   if ((document.adsl.vpi.value == 1) && (document.adsl.vci.value == 39)) {
+    alert('Этот интерфейс (vpi=' + document.adsl.vpi.value + ', vci=' + document.adsl.vci.value + ') зарезервирован и не может быть изменен!');
+    return false;
+   }
+   return vcCheck();
+  }
+
+  function vcCheck() {
+   digit = getDigit(document.adsl.vpi.value, 1);
+   if (document.adsl.vlanenable[1].checked) {
+    if (!validateDecimalDigit(document.adsl.vlanid.value) || !checkDigitRange(document.adsl.vlanid.value, 1, 1, 4095)) {
+     alert("Некорректное значение VlanID. Значения могут быть в диапазоне 1-4095.");
+     document.adsl.vlanid.focus();
+     return false;
+    }
+   }
+   if ((document.adsl.adslConnectionMode.value == 2) ||
+    (document.adsl.adslConnectionMode.value == 3)) {
+    if (document.adsl.pppUserName.value == "") {
+     alert('Имя пользователя PPP не может быть пустым!');
+     document.adsl.pppUserName.focus();
+     return false;
+    }
+    if (!checkSpecialChar(document.adsl.pppUserName.value, 1)) {
+     alert("Недопустимые символы!");
+     document.adsl.pppUserName.focus();
+     return false;
+    }
+    if (!checkSpecialChar(document.adsl.pppPassword.value, 0)) {
+     alert("Недопустимые символы!");
+     document.adsl.pppPassword.focus();
+     return false;
+    }
+    if (document.adsl.pppConnectType.value == 1) {
+     digit = getDigit(document.adsl.pppIdleTime.value, 1);
+     if (validateKey(document.adsl.pppIdleTime.value) == 0 ||
+      (digit < 1 || digit > 1440)) {
+      alert('неверное Время простоя PPP!');
+      document.adsl.pppIdleTime.focus();
+      return false;
+     }
+    }
+    digit = getDigit(document.adsl.pppmtu.value, 1);
+    if (validateKey(document.adsl.pppmtu.value) == 0 || (digit > 1500 || digit < 40)) {
+     alert("Неправильное значение MTU! Возможный диапазон 40-1500.");
+     document.adsl.pppmtu.focus();
+     return false;
+    }
+   }
+   if (document.adsl.IpProtocolType.value == 0 || document.adsl.IpProtocolType.value == 1) {
+    if ((document.adsl.adslConnectionMode.value == 1) ||
+     (document.adsl.adslConnectionMode.value == 4) ||
+     (document.adsl.adslConnectionMode.value == 5)) {
+     if (document.adsl.ipMode[0].checked) {
+      if (!checkIP(document.adsl.ip)) {
+       return false;
+      }
+      if (document.adsl.remoteIp.value != "") {
+       if (!checkIP(document.adsl.remoteIp)) {
+        return false;
+       }
+      }
+      if (!checkMask(document.adsl.netmask))
+       return false;
+     }
+     if (document.adsl.dnsip1.value != "") {
+      if (!checkIP(document.adsl.dnsip1)) {
+       return false;
+      }
+      if (document.adsl.dnsip2.value != "") {
+       if (!checkIP(document.adsl.dnsip1)) {
+        return false;
+       }
+      }
+     }
+     else if (document.adsl.dnsip2.value != "") {
+      alert("Поле DNS Сервер1 не может быть пустым!");
+      document.adsl.dnsip1.focus();
+      return false;
+     }
+     if (document.adsl.dnsip1.value != "" && document.adsl.dnsip2.value != "") {
+      if (document.adsl.dnsip1.value == document.adsl.dnsip2.value) {
+       document.adsl.dnsip1.focus();
+       alert("DNS Сервер1 и DNS Сервер2 не могут совпадать");
+       return false;
+      }
+     }
+    }
+   }
+   if (document.adsl.IpProtocolType.value == 0 || document.adsl.IpProtocolType.value == 2) {
+    if (document.adsl.Ipv6AddrType.value == 1) {
+     if (document.adsl.Ipv6Addr.value != "") {
+      if (!isGlobalIpv6Address(document.adsl.Ipv6Addr.value)) {
+       alert("Неверный IPv6 адрес!");
+       document.adsl.Ipv6Addr.focus();
+       return false;
+      }
+      var prefixlen = getDigit(document.adsl.Ipv6PrefixLen.value, 1);
+      if (prefixlen > 128 || prefixlen <= 0) {
+       alert("Неверная длина Префикса IPv6!");
+       document.adsl.Ipv6PrefixLen.focus();
+       return false;
+      }
+     }
+     if (document.adsl.Ipv6Gateway.value != "") {
+      if (!isUnicastIpv6Address(document.adsl.Ipv6Gateway.value)) {
+       alert("Неверный адрес шлюза IPv6!");
+       document.adsl.Ipv6Gateway.focus();
+       return false;
+      }
+     }
+    }
+   }
+   return true;
+  }
+
+  function setPPPConnected() {
+   pppConnectStatus = 1;
+  }
+
+  function resetClicked() {
+   if ((initConnectMode == 2) ||
+    (initConnectMode == 3)) {
+    pppSettingsEnable();
+    ipSettingsDisable();
+   }
+   else if (initConnectMode == 0) {
+    document.adsl.naptEnabled.disabled = true;
+    document.adsl.igmpEnabled.disabled = true;
+    document.adsl.firewallEnabled.disabled = true;
+    document.adsl.dnsEnabled.disabled = true;
+    pppSettingsDisable();
+    ipSettingsDisable();
+   }
+   else {
+    pppSettingsDisable();
+    ipSettingsEnable();
+   }
+   if (initConnectMode == 4)
+    document.adsl.ipUnnum.disabled = false;
+   selectflag = 0;
+  }
+
+  function disableFixedIpInput() {
+   disableTextField(document.adsl.ip);
+   disableTextField(document.adsl.remoteIp);
+   disableTextField(document.adsl.netmask);
+   disableTextField(document.adsl.dnsip1);
+   disableTextField(document.adsl.dnsip2);
+  }
+
+  function enableFixedIpInput() {
+   enableTextField(document.adsl.ip);
+   enableTextField(document.adsl.netmask);
+   if (document.DrouteMethod.autoDroute[0].checked == false) {
+    if (document.adsl.droute[0].checked)
+     disableTextField(document.adsl.remoteIp);
+    else
+     enableTextField(document.adsl.remoteIp);
+   }
+   else {
+    enableTextField(document.adsl.remoteIp);
+   }
+   enableTextField(document.adsl.dnsip1);
+   enableTextField(document.adsl.dnsip2);
+  }
+
+  function disableDHCPIpInput() {
+   disableTextField(document.adsl.dhcpoption60);
+  }
+
+  function enableDHCPIpInput() {
+   enableTextField(document.adsl.dhcpoption60);
+  }
+
+  function ipTypeSelection() {
+   if (document.adsl.ipMode[0].checked) {
+    enableFixedIpInput();
+    disableDHCPIpInput();
+   }
+   else {
+    disableFixedIpInput();
+    enableDHCPIpInput();
+   }
+  }
+
+  function pppSettingsEnable() {
+   enableTextField(document.adsl.pppUserName);
+   enableTextField(document.adsl.pppPassword);
+   if (superprivilege == 1) {
+    enableTextField(document.adsl.pppConnectType);
+    enableTextField(document.adsl.pppacname);
+   }
+   if (document.adsl.pppacname.value == "")
+    document.adsl.pppacname.value = "DOM.RU";
+   if (superprivilege == 1) {
+    enableTextField(document.adsl.pppservicename);
+    enableTextField(document.adsl.pppmtu);
+   }
+   if (document.adsl.pppmtu.value == "")
+    document.adsl.pppmtu.value = "1492";
+   pppTypeSelection();
+   if (document.DrouteMethod.autoDroute[1].checked == true) {
+    document.adsl.droute[0].disabled = false;
+    document.adsl.droute[1].disabled = false;
+   }
+   else {
+    document.adsl.droute[0].disabled = true;
+    document.adsl.droute[1].disabled = true;
+   }
+  }
+
+  function naptClicked() {
+   if (document.adsl.adslConnectionMode.value == 4) {
+    if (document.adsl.naptEnabled.checked == true) {
+     document.adsl.ipUnnum.checked = false;
+     document.adsl.ipUnnum.disabled = true;
+    }
+    else
+     document.adsl.ipUnnum.disabled = false;
+   }
+  }
+
+  function pppUnnumberedSettingsEnable() {
+   enableTextField(document.adsl.pppUserName);
+   enableTextField(document.adsl.pppPassword);
+   enableTextField(document.adsl.pppConnectType);
+   enableTextField(document.adsl.unnumberedip);
+   enableTextField(document.adsl.unnumberedmask);
+   pppTypeSelection();
+  }
+
+  function pppSettingsDisable() {
+   disableTextField(document.adsl.pppUserName);
+   disableTextField(document.adsl.pppPassword);
+   disableTextField(document.adsl.pppIdleTime);
+   disableTextField(document.adsl.pppConnectType);
+   disableTextField(document.adsl.pppacname);
+   disableTextField(document.adsl.pppservicename);
+   disableTextField(document.adsl.pppmtu);
+   disableButtonIB(document.adsl.pppConnect);
+   disableButtonIB(document.adsl.pppDisconnect);
+   document.adsl.droute[0].disabled = true;
+   document.adsl.droute[1].disabled = true;
+  }
+
+  function ipSettingsEnable() {
+   if (document.adsl.adslConnectionMode.value == 4) {
+    document.adsl.ipMode[0].checked = true;
+    if (document.adsl.naptEnabled.checked)
+     document.adsl.ipUnnum.disabled = true;
+    else
+     document.adsl.ipUnnum.disabled = false;
+    document.adsl.ipMode[0].disabled = true;
+    document.adsl.ipMode[1].disabled = true;
+   }
+   else {
+    document.adsl.ipMode[0].disabled = false;
+    document.adsl.ipMode[1].disabled = false;
+   }
+   if (document.DrouteMethod.autoDroute[0].checked == false) {
+    if (document.adsl.adslServiceMode.value == 2) {
+     document.adsl.droute[0].disabled = true;
+     document.adsl.droute[1].disabled = true;
+    }
+    else {
+     if (superprivilege == 0) {
+      document.adsl.ipMode[0].disabled = true;
+      document.adsl.ipMode[1].disabled = true;
+     }
+     else {
+      document.adsl.droute[0].disabled = false;
+      document.adsl.droute[1].disabled = false;
+     }
+    }
+    document.adsl.remoteIp.disabled = false;
+   }
+   else {
+    document.adsl.droute[0].disabled = true;
+    document.adsl.droute[1].disabled = true;
+    document.adsl.remoteIp.disabled = false;
+   }
+   ipTypeSelection();
+  }
+
+  function ipunnumSettingsEnable() {
+   if (document.adsl.adslConnectionMode.value == 4) {
+    document.adsl.ipMode[0].checked = true;
+    if (document.adsl.naptEnabled.checked)
+     document.adsl.ipUnnum.disabled = true;
+    else
+     document.adsl.ipUnnum.disabled = false;
+    document.adsl.ipMode[0].disabled = true;
+    document.adsl.ipMode[1].disabled = true;
+    document.adsl.remoteIp.disabled = true;
+    if (document.DrouteMethod.autoDroute[0].checked == false) {
+     document.adsl.droute[0].disabled = false;
+     document.adsl.droute[1].disabled = false;
+    }
+    ipTypeSelection();
+   }
+   else {
+    document.adsl.ipMode[0].disabled = true;
+    document.adsl.ipMode[1].disabled = true;
+    disableFixedIpInput();
+    disableDHCPIpInput();
+   }
+  }
+
+  function ipSettingsDisable() {
+   document.adsl.ipMode[0].disabled = true;
+   document.adsl.ipMode[1].disabled = true;
+   disableFixedIpInput();
+   disableDHCPIpInput();
+   document.adsl.droute[0].disabled = true;
+   document.adsl.droute[1].disabled = true;
+  }
+
+  function ipModeSelection() {
+   if (document.adsl.ipUnnum.checked) {
+    pppSettingsDisable();
+    ipSettingsDisable();
+    if (document.DrouteMethod.autoDroute[0].checked == false) {
+     document.adsl.droute[0].disabled = false;
+     document.adsl.droute[1].disabled = false;
+    }
+   }
+   else
+    ipSettingsEnable();
+  }
+
+  function ipUnnumModeSelection() {
+   if (document.adsl.ipUnnum.checked) {
+    ipSettingsDisable();
+    if (document.DrouteMethod.autoDroute[0].checked == false) {
+     document.adsl.droute[0].disabled = false;
+     document.adsl.droute[1].disabled = false;
+    }
+    document.adsl.ipMode[0].checked = false;
+    document.adsl.ipMode[1].checked = false;
+    document.adsl.remoteIp.disabled = true;
+   }
+   else
+    ipunnumSettingsEnable();
+  }
+
+  function adslConnectionModeSelection() {
+   document.adsl.naptEnabled.disabled = false;
+   document.adsl.igmpEnabled.disabled = false;
+   document.adsl.igmpEnabled.checked = true;
+   document.adsl.firewallEnabled.disabled = false;
+   document.adsl.firewallEnabled.checked = true;
+   document.adsl.dnsEnabled.disabled = false;
+   document.adsl.dnsEnabled.checked = true;
+   document.adsl.adslEncap[1].disabled = false;
+   document.adsl.vlanenable[0].checked = true;
+   document.adsl.vlanid.value = "";
+   document.adsl.vlanpriority.value = 0;
+   wanvlanChange();
+   if ((document.adsl.adslConnectionMode.value == 1) ||
+    (document.adsl.adslConnectionMode.value == 2)
+   )
+    document.adsl.naptEnabled.checked = true;
+   else
+    document.adsl.naptEnabled.checked = false;
+   ipv6SettingsEnable();
+   document.getElementById('tbprotocol').style.display = "";
+   if (superprivilege == 1)
+    document.getElementById('tbsrvmode').style.display = "";
+   if (document.adsl.adslConnectionMode.value == 2) {
+    ipSettingsDisable();
+    pppSettingsEnable();
+    document.adsl.ipUnnum.disabled = true;
+   }
+   else if (document.adsl.adslConnectionMode.value == 3) {
+    ipSettingsDisable();
+    pppSettingsEnable();
+    document.adsl.ipUnnum.disabled = true;
+   }
+   else if ((document.adsl.adslConnectionMode.value == 4)) {
+    document.adsl.ipMode[0].checked = true;
+    pppSettingsDisable();
+    ipSettingsEnable();
+    document.adsl.ipUnnum.disabled = true;
+    document.adsl.ipMode[0].disabled = true;
+    document.adsl.ipMode[1].disabled = true;
+    document.adsl.ipUnnum.disabled = false;
+   }
+   else if (document.adsl.adslConnectionMode.value == 5) {
+    document.adsl.ipMode[0].checked = true;
+    document.adsl.adslEncap[0].checked = true;
+    pppSettingsDisable();
+    ipSettingsEnable();
+    document.adsl.ipUnnum.disabled = true;
+    document.adsl.ipMode[0].disabled = true;
+    document.adsl.ipMode[1].disabled = true;
+   }
+   else if (document.adsl.adslConnectionMode.value == 0) {
+    document.adsl.ipUnnum.disabled = true;
+    document.adsl.naptEnabled.disabled = true;
+    document.adsl.igmpEnabled.disabled = true;
+    document.adsl.firewallEnabled.disabled = true;
+    document.adsl.dnsEnabled.disabled = true;
+    pppSettingsDisable();
+    ipSettingsDisable();
+    ipv6SettingsDisable();
+    document.getElementById('tbprotocol').style.display = "none";
+    if (superprivilege == 1)
+     document.getElementById('tbsrvmode').style.display = "none";
+   }
+   else {
+    pppSettingsDisable();
+    ipSettingsEnable();
+    document.adsl.ipUnnum.disabled = true;
+    document.adsl.dhcpoption60.value = option60string;
+   }
+   if (document.adsl.adslConnectionMode.value != 0)
+    protocolChange();
+   if (document.adsl.adslConnectionMode.value == 0) {
+    if (document.adsl.adslServiceMode)
+     document.adsl.adslServiceMode.disabled = true;
+   }
+   else {
+    if (document.adsl.adslServiceMode) {
+     document.adsl.adslServiceMode.disabled = false;
+     adslServiceModeEnable();
+    }
+   }
+  }
+
+  function adslServiceModeEnable() {
+   if (document.adsl.adslServiceMode.selectedIndex == 2) {
+    document.adsl.naptEnabled.disabled = true;
+    document.adsl.droute[0].disabled = true;
+    document.adsl.droute[1].disabled = true;
+    document.adsl.dnsEnabled.disabled = true;
+   }
+   else {
+    document.adsl.naptEnabled.disabled = false;
+    if (document.DrouteMethod.autoDroute[0].checked == true) {
+     document.adsl.droute[0].disabled = true;
+     document.adsl.droute[1].disabled = true;
+    }
+    else {
+     document.adsl.droute[0].disabled = false;
+     document.adsl.droute[1].disabled = false;
+    }
+    document.adsl.igmpEnabled.disabled = false;
+    document.adsl.firewallEnabled.disabled = false;
+    document.adsl.dnsEnabled.disabled = false;
+   }
+   if (document.adsl.dhcp6mode.value != 2)
+    if (superprivilege == 1)
+     document.adsl.pdenable.disabled = false;
+  }
+
+  function adslServiceModeSelection() {
+   adslServiceModeEnable();
+   if (document.adsl.adslServiceMode.selectedIndex != 2) {
+    document.adsl.naptEnabled.checked = true;
+   }
+  }
+
+  function DeleteClick() {
+   if (selectflag == 0) {
+    alert('Не выбрано соединение для удаления');
+    return false;
+   }
+   if ((document.adsl.vpi.value == 1) && (document.adsl.vci.value == 39)) {
+    alert('Этот интерфейс (vpi=' + document.adsl.vpi.value + ', vci=' + document.adsl.vci.value + ') зарезервирован и не может быть удален!');
+    return false;
+   }
+   if (!confirm('Вы действительно хотите удалить указанную запись?')) {
+    return false;
+   }
+   else
+    return true;
+  }
+
+  function clearAll() {
+   document.adsl.vpi.value = 0;
+   document.adsl.vci.value = "";
+   document.adsl.vlanenable[0].checked = true;
+   document.adsl.vlanid.value = "";
+   document.adsl.vlanpriority.value = 0;
+   document.adsl.adslEncap.value = 0;
+   document.adsl.naptEnabled.checked = false;
+   document.adsl.igmpEnabled.checked = true;
+   document.adsl.firewallEnabled.checked = true;
+   document.adsl.dnsEnabled.checked = true;
+   if (superprivilege == 0)
+    document.adsl.adslConnectionMode.value = 1;
+   else
+    document.adsl.adslConnectionMode.value = 0;
+   document.adsl.adslServiceMode.value = 1;
+   document.adsl.pppUserName.value = "";
+   document.adsl.pppPassword.value = "";
+   document.adsl.pppConnectType.value = 0;
+   document.adsl.pppIdleTime.value = "";
+   document.adsl.pppacname.value = "";
+   document.adsl.pppmtu.value = "";
+   document.adsl.pppservicename.value = "";
+   document.adsl.netmask.value = "";
+   document.adsl.dhcpoption60.value = "";
+   document.adsl.ipMode.value = 0;
+   document.adsl.ip.value = "";
+   document.adsl.remoteIp.value = "";
+   document.adsl.dnsip1.value = "";
+   document.adsl.dnsip2.value = "";
+   document.adsl.IpProtocolType.value = 0;
+   document.adsl.Ipv6AddrType.value = 0;
+   document.adsl.Ipv6Addr.value = "";
+   document.adsl.Ipv6PrefixLen.value = "";
+   document.adsl.Ipv6Gateway.value = "";
+   document.adsl.dhcp6mode.value = 0;
+   document.adsl.iaenable.checked = true;
+   document.adsl.pdenable.checked = true;
+  }
+
+  function postVC(
+   phytype,
+   vpi, vci, encap, napt, mode, igmp, username, passwd, auth, acname, servicename, pppType, idletime,
+   mtu,
+   ipmode, ipaddr, netmask, remoteip, ipunnum, apptype,
+   dhcpoption60,
+   firewall,
+   dnsenable,
+   dnsip1, dnsip2,
+   protocoltype, ipv6type, ipv6add, ipv6prefix, ipv6gw, dhcp6mode, dhcp6pdenable, dhcp6iaenable,
+   ipv6dhcpcenable, ipv6requestaddr, ipv6requestprefix,
+   vlanenable, vlanid, vlanpriority,
+   status, droute, enable
+  ) {
+   clearAll();
+   document.adsl.vpi.value = vpi;
+   document.adsl.vci.value = vci;
+   if (encap == "LLC")
+    document.adsl.adslEncap[0].checked = true;
+   else
+    document.adsl.adslEncap[1].checked = true;
+   if (mode == "br1483")
+    document.adsl.adslConnectionMode.value = 0;
+   else if (mode == "mer1483")
+    document.adsl.adslConnectionMode.value = 1;
+   else if (mode == "PPPoE")
+    document.adsl.adslConnectionMode.value = 2;
+   else if (mode == "PPPoA")
+    document.adsl.adslConnectionMode.value = 3;
+   else if (mode == "rt1483")
+    document.adsl.adslConnectionMode.value = 4;
+   else if (mode == "IPoA")
+    document.adsl.adslConnectionMode.value = 5;
+   adslConnectionModeSelection();
+   if (napt == "On")
+    document.adsl.naptEnabled.checked = true;
+   else
+    document.adsl.naptEnabled.checked = false;
+   if (igmp == "On") {
+    document.adsl.igmpEnabled.checked = true;
+   }
+   else {
+    document.adsl.igmpEnabled.checked = false;
+   }
+   if (firewall == "On") {
+    document.adsl.firewallEnabled.checked = true;
+   }
+   else {
+    document.adsl.firewallEnabled.checked = false;
+   }
+   if (dnsenable == "On") {
+    document.adsl.dnsEnabled.checked = true;
+   }
+   else {
+    document.adsl.dnsEnabled.checked = false;
+   }
+   if (enable == 0)
+    document.adsl.chEnable[1].checked = true;
+   else
+    document.adsl.chEnable[0].checked = true;
+   if (vlanenable == 0)
+    document.adsl.vlanenable[0].checked = true;
+   else {
+    document.adsl.vlanenable[1].checked = true;
+    document.adsl.vlanid.value = vlanid;
+    document.adsl.vlanpriority.value = vlanpriority;
+    wanvlanChange();
+   }
+   if ((mode == "PPPoE") || (mode == "PPPoA")) {
+    document.adsl.pppUserName.value = username;
+    document.adsl.pppPassword.value = passwd;
+    document.adsl.pppauth.value = auth;
+    document.adsl.pppacname.value = acname;
+    document.adsl.pppservicename.value = servicename;
+    document.adsl.pppmtu.value = mtu;
+    document.adsl.ipUnnum.disabled = true;
+    if (pppType == "persistent")
+     document.adsl.pppConnectType.value = 0;
+    else if (pppType == "dial-on-demand")
+     document.adsl.pppConnectType.value = 1;
+    else {
+     document.adsl.pppConnectType.value = 2;
+     if (status == 0) {
+      disableButtonIB(document.adsl.pppConnect);
+      disableButtonIB(document.adsl.pppDisconnect);
+     }
+     if (status == 2) {
+      enableButtonIB(document.adsl.pppConnect);
+      disableButtonIB(document.adsl.pppDisconnect);
+     }
+     else {
+      enableButtonIB(document.adsl.pppDisconnect);
+      disableButtonIB(document.adsl.pppConnect);
+     }
+    }
+    pppTypeSelection();
+    if (pppType == "dial-on-demand")
+     document.adsl.pppIdleTime.value = idletime;
+   }
+   else if (mode == "mer1483" || mode == "rt1483" || mode == "IPoA") {
+    if (superprivilege == 0)
+     ipmode = 0;
+    document.adsl.ipMode[ipmode].checked = true;
+    if (ipmode == 0) {
+     document.adsl.ip.value = ipaddr;
+     document.adsl.remoteIp.value = remoteip;
+     document.adsl.netmask.value = netmask;
+     document.adsl.dnsip1.value = dnsip1;
+     document.adsl.dnsip2.value = dnsip2;
+    }
+    else {
+     document.adsl.dhcpoption60.value = dhcpoption60;
+    }
+    if (mode == "rt1483") {
+     if (document.adsl.naptEnabled.checked == true)
+      document.adsl.ipUnnum.disabled = true;
+     else
+      document.adsl.ipUnnum.disabled = false;
+    }
+   }
+   if (document.DrouteMethod.autoDroute[0].checked == false) {
+    if (droute == 1) {
+     document.adsl.droute[1].checked = true;
+     if (ipunnum == 0)
+      document.adsl.remoteIp.disabled = false;
+    }
+    else {
+     document.adsl.droute[0].checked = true;
+     document.adsl.remoteIp.disabled = true;
+    }
+   }
+   if (ipunnum == 1)
+    document.adsl.ipUnnum.checked = true;
+   else
+    document.adsl.ipUnnum.checked = false;
+   if (mode != "br1483") {
+    document.adsl.IpProtocolType.value = protocoltype;
+    if (protocoltype != 1) {
+     document.adsl.Ipv6AddrType.value = ipv6type;
+     ipv6Wanchange();
+     if (ipv6type == 1) {
+      document.adsl.Ipv6Addr.value = ipv6add;
+      document.adsl.Ipv6PrefixLen.value = ipv6prefix;
+      document.adsl.Ipv6Gateway.value = ipv6gw;
+     }
+     document.adsl.dhcp6mode.value = dhcp6mode;
+     if (dhcp6pdenable == 1)
+      document.adsl.pdenable.checked = true;
+     else
+      document.adsl.pdenable.checked = false;
+     if (dhcp6iaenable == 1)
+      document.adsl.iaenable.checked = true;
+     else
+      document.adsl.iaenable.checked = false;
+    }
+    protocolChange();
+   }
+   selectflag = 1;
+   if (phytype == "1")
+    document.getElementById('control').style.dispaly = "none";
+   if (mode != "br1483") {
+    document.adsl.adslServiceMode.value = apptype;
+    adslServiceModeEnable();
+   }
+   if (superprivilege == 0) {
+    $(":input").attr("disabled", "true");
+    $(":selected").attr("disabled", "true");
+    $("input[name='select']").removeAttr("disabled");
+    $("input[type='hidden']").removeAttr("disabled");
+    $("input[name='modify']").removeAttr("disabled");
+    $("#adslConnectionMode").removeAttr("disabled");
+    $("#adslConnectionMode option[value='1']").removeAttr("disabled");
+    $("#adslConnectionMode option[value='2']").removeAttr("disabled");
+    if ((mode == "PPPoE") || (mode == "PPPoA")) {
+     $("input[name='pppUserName']").removeAttr("disabled");
+     $("input[name='pppPassword']").removeAttr("disabled");
+    }
+    else if (mode == "mer1483" || mode == "rt1483" || mode == "IPoA") {
+     if (ipmode == 0) {
+      $("input[name='ip']").removeAttr("disabled");
+      $("input[name='remoteIp']").removeAttr("disabled");
+      $("input[name='netmask']").removeAttr("disabled");
+      $("input[name='dnsip1']").removeAttr("disabled");
+      $("input[name='dnsip2']").removeAttr("disabled");
+     }
+    }
+   }
+  }
+
+  function remoteipenable() {
+   if (document.adsl.adslConnectionMode.value == 1)
+    document.adsl.remoteIp.disabled = false;
+   else if ((document.adsl.adslConnectionMode.value == 4)) {
+    if (document.adsl.ipUnnum.checked)
+     document.adsl.remoteIp.disabled = true;
+    else
+     document.adsl.remoteIp.disabled = false;
+   }
+   else if ((document.adsl.adslConnectionMode.value == 5)) {
+    document.adsl.remoteIp.disabled = false;
+   }
+  }
+
+  function remoteipdisable() {
+   if (document.adsl.adslConnectionMode.value == 1 || document.adsl.adslConnectionMode.value == 4 ||
+    document.adsl.adslConnectionMode.value == 5)
+    document.adsl.remoteIp.disabled = true;
+  }
+
+  function autopvcapplycheckclick() {
+   if (document.adsl.autopvc.checked == true) {
+    if (!confirm("Режим Автопоиск PVC будет иметь только одно соединение. Продолжить?")) {
+     document.adsl.autopvc.checked = false;
+     return false;
+    }
+   }
+   updatepvcState();
+  }
+
+  function updatepvcState() {
+   if (document.adsl.autopvc.checked == true) {
+    document.adsl.autopvc.value = "ON";
+    document.adsl.enablepvc.value = 1;
+    disableTextField(document.adsl.vpi);
+    disableTextField(document.adsl.vci);
+    enableTextField(document.adsl.autopvcvci);
+    enableTextField(document.adsl.autopvcvpi);
+    enableButtonIB(document.adsl.autopvcadd);
+   }
+   else {
+    document.adsl.autopvc.value = "OFF";
+    document.adsl.enablepvc.value = 0;
+    disableTextField(document.adsl.autopvcvci);
+    disableTextField(document.adsl.autopvcvpi);
+    disableButtonIB(document.adsl.autopvcadd);
+   }
+  }
+
+  function updateauto() {
+   if (document.adsl.enablepvc.value == 1) {
+    disableTextField(document.adsl.vpi);
+    disableTextField(document.adsl.vci);
+   }
+   else {
+    enableTextField(document.adsl.vpi);
+    enableTextField(document.adsl.vci);
+   }
+  }
+
+  function updatepvcState2() {
+   if (document.adsl.autopvc.checked == true) {
+    document.adsl.autopvc.value = "ON";
+    document.adsl.enablepvc.value = 1;
+   }
+   else {
+    document.adsl.autopvc.value = "OFF";
+    document.adsl.enablepvc.value = 0;
+   }
+  }
+
+  function autopvcCheckClick() {
+   var dVPI, dVCI;
+   if (document.adsl.autopvc.checked == true) {
+    document.adsl.enablepvc.value = 1;
+    dVPI = getDigit(document.adsl.autopvcvpi.value, 1);
+    if (validateKey(document.adsl.autopvcvpi.value) == 0 ||
+     (dVPI > 255 || dVPI < 0)) {
+     alert("Неверное значение VPI! Значение должно быть в пределах 0-255.");
+     document.adsl.autopvcvpi.focus();
+     return false;
+    }
+    dVCI = getDigit(document.adsl.autopvcvci.value, 1);
+    if (validateKey(document.adsl.autopvcvci.value) == 0 ||
+     (dVCI > 65535 || dVCI < 32)) {
+     alert("Неверное значение VСI! Значение должно быть в пределах 32-65535.");
+     document.adsl.autopvcvci.focus();
+     return false;
+    }
+    if ((dVPI == 0 && dVCI == 0)) {
+     alert("Неверное значение VPI/VCI!");
+     document.adsl.autopvcvpi.focus();
+     return false;
+    }
+    document.adsl.addVPI.value = dVPI;
+    document.adsl.addVCI.value = dVCI;
+   }
+   else {
+    alert(" Вы далжны включить режим Auto-PVC.");
+    return false;
+   }
+  }
+
+  function dhcp6cEnable() {
+   if (document.adsl.dhcp6mode.value == 2) {
+    document.adsl.iaenable.disabled = true;
+    document.adsl.pdenable.disabled = true;
+    document.getElementById('tbdhcpia').style.display = "none";
+    document.getElementById('tbdhcppd').style.display = "none";
+   }
+   else {
+    if (document.adsl.adslServiceMode.selectedIndex == 2) {
+     document.adsl.pdenable.disabled = true;
+     document.getElementById('tbdhcppd').style.display = "none";
+    }
+    else {
+     if (superprivilege == 1)
+      document.adsl.pdenable.disabled = false;
+     document.getElementById('tbdhcppd').style.display = "";
+    }
+    if (document.adsl.dhcp6mode.value == 0) {
+     document.adsl.iaenable.disabled = true;
+     document.getElementById('tbdhcpia').style.display = "none";
+    }
+    else {
+     if (superprivilege == 1)
+      document.adsl.iaenable.disabled = false;
+     document.getElementById('tbdhcpia').style.display = "";
+    }
+   }
+  }
+
+  function ianaclick() {}
+
+  function iapdclick() {}
+
+  function ipv6Wanchange() {
+   if (document.adsl.Ipv6AddrType.value == 1)
+    document.getElementById('secIPv6Div').style.display = "";
+   else
+    document.getElementById('secIPv6Div').style.display = "none";
+  }
+
+  function ipv6SettingsDisable() {
+   document.getElementById('tbipv6wan').style.display = "none";
+   document.getElementById('secIPv6Div').style.display = "none";
+   document.getElementById('dhcp6c_ctrlblock').style.display = "none";
+  }
+
+  function ipv6SettingsEnable() {
+   if (document.adsl.IpProtocolType.value != 1) {
+    document.getElementById('tbipv6wan').style.display = "";
+    ipv6Wanchange();
+    document.getElementById('dhcp6c_ctrlblock').style.display = "";
+    dhcp6cEnable();
+   }
+  }
+
+  function protocolChange() {
+   if (document.adsl.IpProtocolType.value == 1) {
+    if (document.adsl.adslConnectionMode.value == 1 ||
+     document.adsl.adslConnectionMode.value == 4 ||
+     document.adsl.adslConnectionMode.value == 5)
+     ipSettingsEnable();
+    ipv6SettingsDisable();
+   }
+   else {
+    if (document.adsl.IpProtocolType.value == 2) {
+     ipSettingsDisable();
+    }
+    else {
+     if (document.adsl.adslConnectionMode.value == 1 ||
+      document.adsl.adslConnectionMode.value == 4 ||
+      document.adsl.adslConnectionMode.value == 5)
+      ipSettingsEnable();
+    }
+    ipv6SettingsEnable();
+   }
+  }
+
+  function toBreakWord(name, intLen) {
+   var objs = document.getElementsByName(name);
+   for (i = 0; i < objs.length; i++) {
+    var strContent = objs[i].innerHTML;
+    var strTemp = "";
+    while (strContent.length > intLen) {
+     strTemp += strContent.substr(0, intLen) + " ";
+     strContent = strContent.substr(intLen, strContent.length);
+    }
+    strTemp += " " + strContent;
+    objs[i].innerHTML = strTemp;
+   }
+  }
+
+  function myLoad() {
+   if (document.getElementsByName && !document.all) {
+    toBreakWord("pppoeusername", 12);
+   }
+  }
+  window.onload = function() {
+   var control = document.getElementById('control');
+   control.style.display = 'none';
+   myLoad();
+  }
+ </script>
+
+ <style type="text/css">
+  .tablewidth {
+   table-layout: fixed;
+   width: 600px;
+  }
+  
+  .tablewidth tr td {
+   word-wrap: break-word;
+  }
+ </style>
+
+</head>
+
+<body>
+
+ <div class="intro_main ">
+
+  <p class="intro_title">WAN</p>
+  <p class="intro_content">
+
+   Страница предназначена для настройки параметров интерфейса WAN. Внимание: кнопки "Подключить" и "Отключить" появляются только если для интерфейса PPPoE установлен режим "Ручной".</p>
+ </div>
+
+ <div class="data_common data_common_notitle hide_gui" style="display: ; ">
+  <table>
+
+   <form action="wan.htm" method="POST" name="DrouteMethod"></form>
+
+   <tbody>
+    <tr>
+
+     <th width="25%">Выбор маршрута по умолчанию:</th>
+     <th>
+
+      <input onclick="this.form.submit();" name="autoDroute" value="1" type="radio"><span>Авто</span>
+      <input checked="checked" onclick="this.form.submit();" name="autoDroute" value="0" type="radio"><span>Указанный</span>
+     </th>
+
+    </tr>
+
+    <input name="submit.htm?wan.htm" value="Send" type="hidden">
+
+
+
+   </tbody>
+  </table>
+
+ </div>
+
+ <form action="wan.htm" method="POST" name="adsl">
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+   </table>
+   <table style="display: none;" id="control">
+
+    <tbody>
+     <tr>
+
+      <th width="25%">VPI: </th>
+
+      <th width="25%"><input value="0" maxlength="3" size="4" name="vpi" type="text"></th>
+
+      <th width="25%">VCI: </th>
+
+      <th width="25%"><input maxlength="5" size="6" name="vci" type="text"></th>
+
+     </tr>
+
+     <tr>
+
+      <th>Инкапсуляция:</th>
+      <th>
+
+       <input value="0" name="adslEncap" checked="checked" type="radio"><span>LLC</span>
+
+      </th>
+
+      <th>
+
+       <input value="1" name="adslEncap" type="radio"><span>VC-Mux</span>
+
+      </th>
+
+      <th></th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+   <table id="wanModeBlockDiv">
+
+    <tbody>
+     <tr>
+
+      <th width="25%"><span>Тип интерфейса:</span></th>
+      <th width="25%">
+
+
+       <select name="adslConnectionMode" id="adslConnectionMode" width="20" onchange="adslConnectionModeSelection()">
+<option value="0" selected="selected"> Bridge</option>
+<option value="1"> IPoE</option>
+<option value="2"> PPPoE</option>
+</select>
+
+      </th>
+
+      <th class="hide_gui" width="25%">Включить NAPT: </th>
+      <th class="hide_gui" width="25%"><input disabled="disabled" name="naptEnabled" value="ON" onclick="naptClicked()" type="checkbox"></th>
+
+     </tr>
+
+     <tr class="hide_gui">
+
+      <th>Включить Firewall:</th>
+      <th><input checked="checked" disabled="disabled" name="firewallEnabled" value="ON" type="checkbox"></th>
+
+      <th>Включить DNS:</th>
+      <th><input checked="checked" disabled="disabled" name="dnsEnabled" value="ON" type="checkbox"></th>
+
+     </tr>
+
+     <tr class="hide_gui">
+
+      <th>Включить IGMP: </th>
+      <th><input checked="checked" disabled="disabled" name="igmpEnabled" value="ON" type="checkbox"></th>
+
+      <th>
+
+       <input value="1" name="chEnable" checked="checked" style="display:none" type="radio">&nbsp;&nbsp;
+
+      </th>
+
+      <th>
+
+       <input value="0" name="chEnable" style="display:none" type="radio">
+
+      </th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+
+
+  </div>
+
+  <div class="data_common data_common_notitle hide_gui">
+
+   <table>
+
+    <tbody>
+     <tr nowrap="" id="TrVlanSet">
+
+      <th width="25%">VLAN:</th>
+
+      <th width="25%"><input name="vlanenable" value="0" checked="checked" onclick="wanvlanChange()" type="radio"> Отключен</th>
+      <th width="25%"><input name="vlanenable" value="1" onclick="wanvlanChange()" type="radio"> Включено</th>
+      <th></th>
+
+     </tr>
+
+     <tr>
+
+      <th width="25%">VLAN ID(1-4095):</th>
+
+      <th width="25%"><input disabled="disabled" name="vlanid" size="20" maxlength="4" type="text"></th>
+
+      <th colspan="2"></th>
+
+     </tr>
+
+     <tr>
+
+      <th width="25%">802.1P:</th>
+
+      <th>
+
+       <select disabled="disabled" name="vlanpriority">
+
+     <option value="0" selected="selected">&nbsp;&nbsp;&nbsp;&nbsp; </option>
+
+     <option value="1"> 0</option>
+
+     <option value="2"> 1</option>
+
+     <option value="3"> 2</option>
+
+     <option value="4"> 3</option>
+
+     <option value="5"> 4</option>
+
+     <option value="6"> 5</option>
+
+     <option value="7"> 6</option>
+
+     <option value="8"> 7</option>
+
+     </select>
+
+      </th>
+
+      <th colspan="2"></th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div style="display: none;" id="tbprotocol" class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr nowrap="" id="TrIpProtocolType">
+
+      <th width="25%">Протокол IP:</th>
+      <th>
+
+       <select id="IpProtocolType" onchange="protocolChange()" name="IpProtocolType">
+
+     <option selected="selected" value="0"> IPv4/IPv6</option>
+
+     <option value="1"> IPv4</option>
+
+     <option value="2"> IPv6</option>
+
+     </select>
+
+      </th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div style="display: none;" id="tbsrvmode" class="data_common data_common_notitle hide_gui">
+
+   <table>
+
+    <tbody>
+     <tr nowrap="" id="TrSrvMode">
+
+      <th width="25%">Режим приложений:</th>
+      <th>
+
+       <select disabled="disabled" id="adslServiceMode" onchange="adslServiceModeSelection()" name="adslServiceMode">
+
+     <option value="0"> TR069_INTERNET</option>
+
+     <option value="1" selected="selected"> INTERNET</option>
+
+     <option value="2"> TR069</option>
+
+     </select>
+
+      </th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="25%">PPP:</th>
+      <th colspan="3"></th>
+
+     </tr>
+
+     <tr>
+
+      <th width="25%">Имя пользователя: </th>
+      <th width="25%"><input disabled="disabled" name="pppUserName" value="v12345678" size="20" type="text"></th>
+
+      <th width="25%">Пароль: </th>
+      <th width="25%"><input disabled="disabled" name="pppPassword" value="12345678" size="20" type="password"></th>
+
+      <input name="pppauth" maxlength="30" type="hidden">
+
+     </tr>
+
+     <tr>
+
+      <th>Подключение:</th>
+      <th>
+
+       <select disabled="disabled" name="pppConnectType" onchange="pppTypeSelection()">
+
+     <option selected="selected" value="0">Постоянно</option>
+     <option value="1">Подключать по запросу</option>
+     <option value="2">Вручную</option>
+     </select>
+
+      </th>
+
+      <th>Время простоя (мин): </th>
+      <th><input disabled="disabled" name="pppIdleTime" size="20" type="text"></th>
+
+     </tr>
+
+     <tr>
+
+      <th width="25%">AC-имя: </th>
+      <th width="25%"><input disabled="disabled" name="pppacname" size="20" maxlength="30" type="text"></th>
+
+      <th class="hide_gui" width="25%">Имя Сервиса: </th>
+      <th class="hide_gui" width="25%"><input disabled="disabled" name="pppservicename" size="20" maxlength="30"></th>
+
+     </tr>
+
+     <tr>
+
+      <th width="25%">MTU(40-1500):</th>
+
+      <th width="25%"><input disabled="disabled" name="pppmtu" size="20" maxlength="4" type="text"></th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th>WAN IP:</th>
+      <th colspan="3"></th>
+
+     </tr>
+
+     <tr>
+
+      <th width="25%">Подключение:</th>
+      <th width="25%"><input disabled="disabled" value="0" name="ipMode" checked="checked" onclick="ipTypeSelection()" type="radio">Фиксированный IP </th>
+      <th width="25%"> <input disabled="disabled" value="1" name="ipMode" onclick="ipTypeSelection()" type="radio">DHCP</th>
+
+      <th width="25%"></th>
+
+     </tr>
+
+     <tr>
+
+      <th>Локальный IP-адрес:</th>
+      <th><input disabled="disabled" name="ip" size="15" maxlength="15" type="text"></th>
+
+      <th>Шлюз:</th>
+      <th><input disabled="disabled" name="remoteIp" size="15" maxlength="15" type="text"></th>
+
+     </tr>
+
+     <tr>
+
+      <th>Сетевая маска:</th>
+      <th><input disabled="disabled" name="netmask" size="15" maxlength="15" type="text"></th>
+
+      <th colspan="2"></th>
+
+     </tr>
+
+     <tr>
+
+      <th>DNS-сервер 1: </th>
+      <th><input disabled="disabled" name="dnsip1" size="15" type="text"></th>
+
+      <th>DNS-сервер 2: </th>
+      <th><input disabled="disabled" name="dnsip2" size="15" type="text"></th>
+
+     </tr>
+
+     <tr class="hide_gui">
+
+      <th>DHCP Опция 60:</th>
+      <th><input disabled="disabled" name="dhcpoption60" size="15" maxlength="63" type="text"></th>
+
+      <th colspan="2"></th>
+
+     </tr>
+
+     <tr class="hide_gui" style="
+
+display: ;
+   ">
+      <th>Маршрут по умолчанию:</th>
+      <th><input disabled="disabled" name="droute" value="0" onclick="remoteipdisable()" type="radio"> Отключен</th>
+      <th><input disabled="disabled" name="droute" value="1" checked="checked" onclick="remoteipenable()" type="radio"> Включено</th>
+      <th><input disabled="disabled" name="droute" value="2/" type="radio"> Авто</th>
+     </tr>
+
+     <tr class="hide_gui" style="
+
+display: ;
+   ">
+      <th>Ненумерованный: </th>
+      <th><input disabled="disabled" name="ipUnnum" value="ON" onclick="ipUnnumModeSelection()" type="checkbox"></th>
+
+      <th colspan="2"></th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div style="display: none;" id="tbipv6wan" class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="25%">IPv6 WAN:</th>
+      <th></th>
+
+     </tr>
+
+     <tr>
+
+      <th>Режим адресации:</th>
+      <th>
+
+       <select id="Ipv6AddrType" onchange="ipv6Wanchange()" name="Ipv6AddrType">
+
+     <option selected="selected" value="0"> SLAAC</option>
+     <option value="1"> Статический</option>
+     </select>
+
+      </th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div id="secIPv6Div" style="display:none" class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr id="TrIpv6Addr">
+
+      <th width="25%">Адрес IPv6:</th>
+      <th><input id="Ipv6Addr" maxlength="39" size="36" name="Ipv6Addr"> /
+       <input id="Ipv6PrefixLen" maxlength="3" size="3" name="Ipv6PrefixLen">
+
+      </th>
+
+     </tr>
+
+     <tr id="TrIpv6Gateway">
+
+      <th>Шлюз IPv6:</th>
+      <th><input id="Ipv6Gateway" maxlength="39" size="36" name="Ipv6Gateway"></th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div id="dhcp6c_ctrlblock" style="display: none;" class="data_common data_common_notitle">
+
+   <table id="tbdhcpv6">
+
+    <tbody>
+     <tr>
+
+      <th width="25%">Режим DHCPv6:</th>
+      <th>
+
+       <select name="dhcp6mode" onchange="dhcp6cEnable()">
+
+     <option selected="selected" value="0"> Авто</option>
+     <option value="1"> Включено</option>
+     <option value="2"> Отключен</option>
+     </select>
+
+      </th>
+
+     </tr>
+
+     <tr style="display: none;" id="tbdhcpia">
+
+      <th>Запросить адрес DHCPv6: </th>
+      <th><input checked="checked" disabled="disabled" name="iaenable" value="ON" type="checkbox"></th>
+
+     </tr>
+
+     <tr id="tbdhcppd">
+
+      <th>Запросить DHCPv6 PD: </th>
+      <th><input checked="checked" name="pdenable" value="ON" type="checkbox"></th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="adsl clearfix">
+
+   <div class="btn_ctls">
+
+    <input disabled="disabled" class="link_bg hide_gui" name="pppConnect" onclick="return pppConnectClick(0)" value="Подключить" type="submit">
+    <input disabled="disabled" class="link_bg hide_gui" name="pppDisconnect" onclick="return pppConnectClick(1)" value="Отключить" type="submit">
+    <input class="link_bg hide_gui" name="add" onclick="return addClick()" value="Добавить" type="submit">
+    <input class="link_bg" name="modify" onclick="return modifyCheck()" value="Изменить" type="submit">
+    <input class="link_bg hide_gui" name="delvc" value="Удалить" type="submit">
+    <input class="link_bg" name="reset" onclick="resetClicked()" value="Отменить" type="reset">
+    <input class="link_bg" onclick="window.location.href='wan.htm'" value="Обновить" type="button">
+   </div>
+
+  </div>
+
+  <div class="column">
+
+   <div class="column_title">
+
+    <div class="column_title_left"></div>
+
+    <p>Список интерфейсов WAN:</p>
+    <div class="column_title_right"></div>
+
+   </div>
+
+   <div class="data_common_sth data_common data_vertical" id="eachtable">
+
+    <table style="word-break:break-all">
+
+     <tbody>
+      <tr class="data_common_sth">
+
+       <th width="30">Выбрать</th>
+       <th width="30">Интерфейс</th>
+       <th width="40">Режим</th>
+       <th width="40">NAPT</th>
+
+       <th width="40">IGMP</th>
+
+       <th width="40">Firewall</th>
+
+       <th width="40">DNS</th>
+
+       <th width="40">Шлюз по-умолчанию</th>
+       <th width="60">IP-адрес</th>
+       <th width="60">Удаленный IP</th>
+       <th width="50">Сетевая маска</th>
+       <th width="40">Имя пользователя</th>
+
+       <th width="30">Статус</th>
+       <th width="40">Изменить</th>
+      </tr>
+
+
+      <tr>
+       <td><input name="select" value="14" onclick="postVC('1', 255,65535,'LLC','On','PPPoE','Off','v43472352','********',0,'DOM.RU','','persistent',0,1492,'0','188.234.105.2','255.255.255.255','10.84.255.126',0,0,'','On','On','','',0,0,'',0,'',0,1,0,0,0,0,0,0,0,3,1,1)"
+         type="radio"></td>
+       <td>pppoe1</td>
+       <td>PPPoE</td>
+       <td>Вкл.</td>
+       <td>Выкл.</td>
+       <td>Вкл.</td>
+       <td>Вкл.</td>
+       <td>Вкл.</td>
+       <td>188.234.105.2</td>
+       <td>10.84.255.126</td>
+       <td>255.255.255.255</td>
+       <td name="pppoeusername"> v41234567</td>
+       <td>Up</td>
+       <td>
+        <a href="./PPPoE.htm"><img src="files/edit.gif" alt="Edit" border="0"></a>
+        <a href="#?delete" onclick="delClick2(0,14)"><img src="files/del.gif" alt="Delete" border="0"></a>
+       </td>
+      </tr>
+     </tbody>
+    </table>
+
+
+
+
+   </div>
+
+  </div>
+
+  <script>
+   var superprivilege = 1;
+
+   $(document).ready(function() {
+    if (superprivilege == 0) {
+     $(":input").attr("disabled", "true");
+     $(":selected").attr("disabled", "true");
+     $(".hide_gui").hide();
+     $("input[name='select']").removeAttr("disabled");
+     $("input[type='hidden']").removeAttr("disabled");
+     $("a").each(function() {
+      $(this).css("cursor", "default");
+      $(this).attr("href", "#");
+      $(this).removeAttr("onClick");
+     });
+    }
+    clearAll();
+    document.DrouteMethod.autoDroute[1].checked = true;
+    initConnectMode = document.adsl.adslConnectionMode.value;
+    adslConnectionModeSelection();
+    naptClicked();
+    document.adsl.droute[2].disabled = true;
+    if (document.DrouteMethod.autoDroute[0].checked == true) {
+     document.adsl.droute[2].checked = true;
+    }
+    if (superprivilege == 0) {
+     $('input:radio[name=select]:checked').click();
+    }
+   });
+  </script>
+
+  <input name="submit.htm?wan.htm" value="Send" type="hidden">
+
+ </form>
+
+ <form action="wan.htm" method="POST" name="actionForm">
+
+  <input name="action" type="hidden">
+
+  <input name="idx" type="hidden">
+
+  <input name="connid" type="hidden">
+
+  <input name="submit.htm?wan.htm" value="Send" type="hidden">
+
+ </form>
+
+
+
+
+
+
+
+</body>
+
+</html>

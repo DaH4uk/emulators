@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>LAN Interface Setup </title>
+
+    <script>
+        function resetClick() {
+            document.dhcpipv6.reset;
+        }
+
+        function checkDUID(duid) {
+
+            var patrn;
+            patrn = /^([0-9a-fA-F]{2})(([/\s:][0-9a-fA-F]{2}){11,127})$/;
+            if (!patrn.exec(duid))
+                return false;
+            return true;
+        }
+
+        function saveChanges() {
+            if (!checkDUID(document.dhcpipv6.duid.value)) {
+                alert("Некорректный DUID");
+                document.dhcpipv6.duid.focus();
+                return false;
+            }
+
+            if (!isIpv6Address(document.dhcpipv6.ipv6addr.value)) {
+                alert("Invalid IPv6 адрес.");
+                document.dhcpipv6.ipv6addr.focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        function postDhcpv6(duid, addr, type) {
+            document.dhcpipv6.duid.value = duid;
+            document.dhcpipv6.ipv6addr.value = addr;
+            document.getElementById('addressmode').value = type;
+        }
+    </script>
+
+</head>
+
+
+<body>
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Резервирование DHCPv6</p>
+        <p class="intro_content">
+
+            На этой странице Вы можете задать и посмотреть список резервирования IPv6 адресов и DUID в LAN. Устройство раздает адреса согласно настройкам для хост устройств.
+        </p>
+
+    </div>
+
+
+        <div class="data_common data_common_notitle hide_gui">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th>DUID:</th>
+
+                        <td>
+
+                            <input maxlength="64" size="22" name="duid" type="text"><span>(например 00:01:00:01:1D:E7:33:73:3C:97:8E:C3:87:9E)</span>
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Режим адреса:</th>
+                        <td>
+
+                            <select name="addressmode" id="addressmode">
+
+      <option selected="selected" value="0">IPv6 адрес</option>
+      <option value="1">IPv6 префикс</option>
+     </select>
+
+                        </td>
+
+                    </tr>
+
+                    <tr id="ipv6address">
+
+                        <th width="30%">IPv6 адрес:</th>
+                        <td>
+
+                            <input maxlength="64" size="22" name="ipv6addr" type="text">
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="adsl clearfix hide_gui">
+
+            <div class="btn_ctls">
+
+                <input class="link_bg" onclick="return saveChanges()" value="Добавить" type="submit">
+                <input class="link_bg" name="delete" value="Удалить выбранные" type="submit">
+                <input class="link_bg" name="reset" onclick="resetClick()" value="Отменить" type="reset">
+            </div>
+
+        </div>
+
+        <div class="column clearfix">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Таблица резервирования адресов DHCPv6:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="45">Выбрать</th>
+                            <th>IPv6 адрес</th>
+                            <th>DUID</th>
+
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+                <input name="submit.htm?dhcpv6_reserv.htm" value="Send" type="hidden">
+
+            </div>
+
+        </div>
+
+
+    <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+    <script src="files/jquip.js" type="text/javascript"></script>
+    <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+</body>
+
+</html>

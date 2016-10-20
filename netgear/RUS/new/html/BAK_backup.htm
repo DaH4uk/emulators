@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -221,4 +222,229 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/BAK_backup.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "BAK_backup";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+var G_IPInterfaceIPAddress = "192.168.1.1";
+var progress = 0;
+function isInProgress() {
+var node_value = $('mtenRestoreCfg').value;
+if($('mtenRestoreCfg').value.length == 0)
+{
+alertError('BlankImgFile');
+return false;
+}
+if($('mtenRestoreCfg').value.match(/.*[.](xml)$/) == null)
+{
+alertError('InvImgFile');
+return false;
+}
+if(node_value == ""){
+alert(data_language.dynamic.lang_select_update_file);
+return false;
+}
+if (progress == 0 ) {
+progress = 1;
+return true;
+}
+alert(data_language.dynamic.lang_config_file_uploading);
+return false;
+}
+function dealWithError(){
+if (G_Error != 1){ return false; }
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+function uirestore(){
+if( alertError('ConfirmRevert',2) == false ){
+return;
+}
+$("Restore").submit();
+}
+function JumptoBAK_cfm()
+{
+$G('../html/BAK_cfm.htm',{
+'var:page' : 'BAK_cfm',
+'getpage' : '../html/BAK_cfm.htm'
+});
+}
+function uireboot(){
+if(alertError('ConfirmReboot',2) == false ){
+return;
+}
+Cookie.Set('LinkIpForReboot_Flag', '1');
+Cookie.Set("LinkIpForReboot",G_IPInterfaceIPAddress);
+$("reboot").submit();
+}
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="BAK_backup.htm"></form>
+<style type="text/css"><!--
+.div_left { padding-left:0px; width:155px;}
+.defaults, .restore, .backup, .download, .reboot{text-align:center; height: 22px; width:99px; background: url(skin/image/button/test.gif) no-repeat; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
+.page_title{width: 100%; height: 20px; font: bold 17px arial; color: #9d98ff; position: absolute; top: 0px; left: 0px;}
+.title_line{border-top:2px solid #9966FF; margin-top:45px;}
+--></style>
+<form id="uiPostForm" method="post" action="BAK_backup.htm"></form>
+<div class="page_title" id="lang_backup_setting">Backup Settings</div>
+<div class="title_line"></div>
+<div id="main" class="main">
+<table style="background:white; width:98%;">
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tbody>
+<tr>
+<td nowrap="" colspan="2">
+<p id="lang_save_setting" style=" font-weight:bolder;">Save a Copy of Current Settings</p></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div class="div_black3">
+<div class="div_button3_no">
+<form id="confForm2" name="confForm2" method="post" action="BAK_backup.htm" class="div_form3">
+<span class="common_bt2"><input name="Backup" type="button" class="common_bt1" value="Backup" id="Backup" onClick="$('confForm2').submit()" ></span><!--$('confForm2').submit()-->
+<input type="hidden" class="download" name="name" value="downloadConfig" />
+</form>
+</div>
+</div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<p class="do bk_black3_black" id="lang_restore_setting">Restore Saved Setting from a File</p></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div class="div_black3">
+<form name="confForm1" method="post" action="BAK_backup.htm" enctype="multipart/form-data" onSubmit="return isInProgress();" class="div_form3">
+<div class="div_right"><input type="file" name="mtenRestoreCfg" size="40" maxlength="1024" id="mtenRestoreCfg" value=""/></div>
+<input type="hidden" name="updateConfig" value="Restore">
+<input type="hidden" name="btn1" value="Restore">
+<div class="div_button3_no"><input type="submit" class="restore" name="mtenRestore" id="mtenRestore" value="Restore"></div>
+</form>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<p class="do bk_black3_black" id="lang_revert_default">Revert to Factory Default Settings</p></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div class="div_black3">
+<div class="div_button3_no">
+<input type="button" class="defaults" id="defaults" name="defaults" value="Erase" onClick="JumptoBAK_cfm();">
+</div>
+</div>
+<p class="do bk_black3_black"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("BAK_backup")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

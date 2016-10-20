@@ -1,4 +1,5 @@
 <html><head>
+<<<<<<< HEAD
 <link rel="shortcut icon" href="./icon/icon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="STYLESHEET" type="text/css" 
@@ -1113,4 +1114,1120 @@ src="wireless_tail.gif" height="35" width="114"></td>
 <div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
 <br>
 
+=======
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<script language="JavaScript" src="lingual_EN.js"></script>
+<script language="Javascript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script language="JavaScript">
+var submit_button_flag = 0;
+	var data_list = new Array();
+	var rule_max_num = 32;
+	var from_edit = 0;
+
+	function edit_row(index){
+		var check_wlan_flag = 0;
+		var temp_wlan_sch = "Always";
+        if(temp_wlan_sch != "Always" && temp_wlan_sch != "Never")
+		{
+            var wlan_sch = get_by_id(temp_wlan_sch).value.split("/");
+        	check_wlan_flag = 1;
+		}
+		else
+            var wlan_sch = temp_wlan_sch;
+
+		if (index < 10){
+			var temp_rule = get_by_id("schedule_rule_0" + index).value;
+		}else{
+			var temp_rule = get_by_id("schedule_rule_" + index).value;
+		}
+		
+		var rule = temp_rule.split("/");					
+		
+		for (var l=0 ;l <=rule_max_num ;l++)
+		{
+			if(l<10)
+			{
+					var temp_vs_rule = get_by_id("vs_rule_0" + l).value;
+					var temp_port_rule = get_by_id("port_forward_both_0" + l).value;
+					var temp_application_rule = get_by_id("application_0"+l).value;
+			}
+			else
+			{
+				if(l<24)
+				{
+						var temp_rule = get_by_id("schedule_rule_" + l).value;
+						var temp_vs_rule = get_by_id("vs_rule_" + l).value;
+						var temp_port_rule = get_by_id("port_forward_both_" + l).value;
+						var temp_application_rule = get_by_id("application_"+l).value;	
+				}
+			}
+			
+				var vs_rule = temp_vs_rule.split("/");	
+				var port_rule = temp_port_rule.split("/");
+				var application_rule = temp_application_rule.split("/");
+				var email_rule = get_by_id("log_email_schedule").value.split("/");
+				var access_rule = get_by_id("asp_temp_01").value;
+					
+				var vs_rule_schedule = vs_rule[6];			
+				var port_rule_schedule = port_rule[5];
+				var application_rule_schedule = application_rule[6];
+				var email_rule_schedule = email_rule[3];
+				if(check_wlan_flag)
+				{
+					if((rule[0] == email_rule_schedule)||(rule[0] == access_rule)||(rule[0] == vs_rule_schedule)||(rule[0] == port_rule_schedule)||(rule[0] == application_rule_schedule) || (rule[0] == wlan_sch[0]))
+					{
+						get_by_id("name").disabled = true;
+						if(rule[0] == wlan_sch[0])
+							get_by_id("reboot_type").value = "wlanfilter";
+						break;
+					}
+					else
+					{
+						get_by_id("name").disabled = false;
+					}
+				}
+				else
+				{
+					if((rule[0] == email_rule_schedule)||(rule[0] == access_rule)||(rule[0] == vs_rule_schedule)||(rule[0] == port_rule_schedule)||(rule[0] == application_rule_schedule) || (rule[0] == wlan_sch))
+                    {
+                        get_by_id("name").disabled = true;
+                        break;
+                    }
+                    else
+                    {
+                        get_by_id("name").disabled = false;
+                    }
+				}
+		}
+				
+		var week_str = new Array(7);
+		var num=0;
+		
+		get_by_id("name").value=rule[0] ;
+		
+		for (var i = 0; i < 7; i++){
+			if (rule[1].charAt(i) == "1"){
+				week_str[i] = 1;
+			}else{
+				week_str[i] = 0;
+			}
+		}
+		
+
+		var p_all_week = get_by_name("all_week");
+		if(rule[1] == "1111111"){
+			p_all_week[0].checked = true;
+		}else{
+			p_all_week[1].checked = true;
+			
+			for(var j=0;j<7;j++){
+				if(week_str[j]== 1){
+					var temp_check = get_by_id("day" + j);
+					temp_check.checked= true;	
+				}else{
+					var temp_check = get_by_id("day" + j);
+					temp_check.checked= false;
+				}
+			}
+			
+		}
+
+
+		var all_day = 0;
+		var st_hour,st_min,en_hour,en_min;
+		if(rule[2]=="00:00" && rule[3]=="24:00"){
+			all_day = 1;						
+		}else{						
+			var temp_s= rule[2].split(":");
+			var temp_e= rule[3].split(":");
+			
+			st_min= temp_s[1];
+			en_min= temp_e[1];
+			get_by_id("start_min").value = st_min;
+			get_by_id("end_min").value = en_min;
+			
+			if(parseInt(temp_s[0],10)>11){
+				get_by_id("start_time").selectedIndex = 1; //pm
+				st_hour=parseInt(temp_s[0],10)-12;
+				if(st_hour < 1){
+					st_hour = parseInt(12);
+				}
+				if(st_hour < 10){
+					get_by_id("start_hour").value = "0" + st_hour;
+				}else{
+					get_by_id("start_hour").value = st_hour;
+				}
+			}else{
+				get_by_id("start_time").selectedIndex = 0;  //am
+				st_hour=parseInt(temp_s[0],10);
+				if(st_hour < 1){
+					st_hour = parseInt(12);
+				}
+				if(st_hour < 10){
+					get_by_id("start_hour").value = "0" + st_hour;
+				}else{
+					get_by_id("start_hour").value = st_hour;
+				}
+			}
+			
+			if(parseInt(temp_e[0],10)>11){
+				get_by_id("end_time").selectedIndex = 1; //pm
+				en_hour=parseInt(temp_e[0],10)-12;
+				if(en_hour < 1){
+					en_hour = parseInt(12);
+				}
+				if(en_hour < 10){
+					get_by_id("end_hour").value = "0" + en_hour;
+				}else{
+					get_by_id("end_hour").value = en_hour;
+				}
+			}else{
+				get_by_id("end_time").selectedIndex = 0;  //am
+				en_hour=parseInt(temp_e[0],10);
+				if(en_hour < 1){
+					en_hour = parseInt(12);
+				}
+				if(en_hour < 10){
+					get_by_id("end_hour").value = "0" + en_hour;
+				}else{
+					get_by_id("end_hour").value = en_hour;
+				}
+			}
+		}
+		
+		var p_time_type = get_by_id("time_type");
+		if(all_day == 1){
+				p_time_type.checked =true;
+				get_by_id("start_hour").value = "12";
+				get_by_id("start_min").value = "00";
+				set_selectIndex(0,get_by_id("start_time"));
+				get_by_id("end_hour").value = "12";
+				get_by_id("end_min").value = "00";
+				set_selectIndex(0,get_by_id("end_time"));
+		}else{
+				p_time_type.checked =false;
+		}
+
+
+		get_by_id("edit").value = index;
+		change_color("table1", index+1);
+		from_edit = index;
+		show_day();
+		show_time();
+	}
+	
+	function del_row(row){	
+		var check_wlan_flag = 0;
+        var temp_wlan_sch = "Always";
+        if(temp_wlan_sch != "Always" && temp_wlan_sch != "Never")
+        {
+            var wlan_sch = get_by_id(temp_wlan_sch).value.split("/");
+            check_wlan_flag = 1;
+        }
+        else
+            var wlan_sch = temp_wlan_sch;
+
+		if (row < 10){
+			var temp_rule = get_by_id("schedule_rule_0" + row).value;
+		}else{
+			var temp_rule = get_by_id("schedule_rule_" + row).value;
+		}		
+		var rule = temp_rule.split("/");
+		
+		for (var l=0 ;l <=rule_max_num ;l++){
+			if(l<10){
+					var temp_vs_rule = get_by_id("vs_rule_0" + l).value;
+					var temp_port_rule = get_by_id("port_forward_both_0" + l).value;
+					var temp_application_rule = get_by_id("application_0"+l).value;
+			}else{
+				if(l<24){
+						var temp_rule = get_by_id("schedule_rule_" + l).value;
+						var temp_vs_rule = get_by_id("vs_rule_" + l).value;
+						var temp_port_rule = get_by_id("port_forward_both_" + l).value;
+						var temp_application_rule = get_by_id("application_"+l).value;	
+					}
+				}
+			
+				var vs_rule = temp_vs_rule.split("/");	
+				var port_rule = temp_port_rule.split("/");
+				var application_rule = temp_application_rule.split("/");
+				var email_rule = get_by_id("log_email_schedule").value.split("/");
+				var access_rule = get_by_id("asp_temp_01").value;
+					
+				var vs_rule_schedule = vs_rule[6];			
+				var port_rule_schedule = port_rule[5];
+				var application_rule_schedule = application_rule[6];
+				var email_rule_schedule = email_rule[3];
+			if(check_wlan_flag)
+			{
+				if((rule[0] == email_rule_schedule)||(rule[0] == access_rule)||(rule[0] == vs_rule_schedule)||(rule[0] == port_rule_schedule)||(rule[0] == application_rule_schedule) || (rule[0] == wlan_sch[0]))
+				{
+					alert(TEXT063);
+					return;
+				}
+			}
+			else
+			{
+				if((rule[0] == email_rule_schedule)||(rule[0] == access_rule)||(rule[0] == vs_rule_schedule)||(rule[0] == port_rule_schedule)||(rule[0] == application_rule_schedule) || (rule[0] == wlan_sch))
+                {
+					alert(TEXT063);
+                    return;
+                }
+			}
+		}
+		if (confirm(YM35+"?")){
+			get_by_id("del_row").value = row;
+			delete_data();
+			get_by_id("button").click();
+				}else{
+					return ;
+		}
+		
+	}
+	
+function delete_data(){
+	var num =get_by_id("del_row").value;
+	var num_next = parseInt(num)+1;
+
+	for(i=num_next ; i < rule_max_num ;i++)
+	{
+		var pre_name, next_name;
+		
+		if (i - 1 < 10){
+			pre_name = "schedule_rule_0" + (i-1);
+		}else{
+			pre_name = "schedule_rule_" +  (i-1);
+		}
+		
+		if (i < 10){
+			next_name = "schedule_rule_0" + i;
+		}else{
+			next_name = "schedule_rule_" +  i;
+		}
+		get_by_id(pre_name).value = get_by_id(next_name).value;
+	
+	}
+	get_by_id("schedule_rule_09").value = "";
+}
+	
+	
+	function show_day(){
+		var all_week = get_by_name("all_week");
+	
+		for (var i = 0; i < 7; i++){
+			get_by_id("day" + i).disabled = all_week[0].checked;
+		}
+	}
+	
+	function show_time(){
+		var time_type = get_by_id("time_type");
+		
+		get_by_id("start_hour").disabled = time_type.checked;
+		get_by_id("start_min").disabled = time_type.checked;
+		get_by_id("start_time").disabled = time_type.checked;
+		get_by_id("end_hour").disabled = time_type.checked;
+		get_by_id("end_min").disabled = time_type.checked;
+		get_by_id("end_time").disabled = time_type.checked;
+	}
+
+function update_data(){
+	if(get_by_id("edit").value != -1){
+		var days_in_week="";
+		var start_time_total,end_time_total;
+		var p_all_week = get_by_name("all_week");
+		if(p_all_week[0].checked == true){
+			days_in_week = "1111111"
+		}else{
+			for(var i=0;i<7;i++){
+				if(get_by_id("day"+ i).checked== true){
+					days_in_week += "1";
+				}else{
+					days_in_week += "0"
+				}
+			}	
+		}
+		var p_all_day=get_by_id("time_type");
+
+		if (p_all_day.checked==true){			
+			start_time_total= "00:00";
+			end_time_total="24:00";
+		}else{
+			var s_hour,s_min;
+			var e_hour,e_min;
+			
+			//start time
+			if(parseInt(get_by_id("start_min").value,10)<10){
+				s_min= "0" + parseInt(get_by_id("start_min").value,10);
+			}else{
+				s_min= get_by_id("start_min").value;
+			}
+			
+			if(get_by_id("start_time").selectedIndex ==1){	//pm
+				s_hour = time_hour(parseInt(get_by_id("start_hour").value,10)) +12;
+			}else{											//am
+				if(time_hour(parseInt(get_by_id("start_hour").value,10))<10){
+					s_hour ="0" + time_hour(parseInt(get_by_id("start_hour").value,10));
+				}else{
+					s_hour = get_by_id("start_hour").value;
+				}
+			}
+			start_time_total =s_hour + ":" + s_min;
+			
+			//end time		
+			if(parseInt(get_by_id("end_min").value,10)<10){
+				e_min= "0" + parseInt(get_by_id("end_min").value,10);
+			}else{
+				e_min= get_by_id("end_min").value;
+			}
+			
+			if(get_by_id("end_time").selectedIndex ==1){	//pm
+				e_hour = time_hour(parseInt(get_by_id("end_hour").value,10)) +12;
+			}else{											//am
+				if(time_hour(parseInt(get_by_id("end_hour").value,10))<10){
+					e_hour ="0" + time_hour(parseInt(get_by_id("end_hour").value,10));
+				}else{
+					e_hour = get_by_id("end_hour").value;
+				}
+			}
+			end_time_total =e_hour + ":" + e_min;
+		}
+		
+		
+		
+		var dat =get_by_id("name").value +"/"+ days_in_week +"/"+ start_time_total +"/"+ end_time_total;
+		var num= parseInt(get_by_id("edit").value,10);
+		if (num < 10){
+			get_by_id("schedule_rule_0" + num).value = dat;
+		}else{
+			get_by_id("schedule_rule_" + num).value = dat;
+		}
+	
+	}else{
+		if(get_by_id("max_row").value >= parseInt(rule_max_num-1)){
+			alert(TEXT015);
+		}
+			
+		var days_in_week="";
+		var start_time_total,end_time_total;
+		var p_all_week = get_by_name("all_week");
+		if(p_all_week[0].checked == true){
+			days_in_week = "1111111"
+		}else{
+			for(var i=0;i<7;i++){
+				if(get_by_id("day"+ i).checked== true){
+					days_in_week += "1";
+				}else{
+					days_in_week += "0"
+				}
+			}	
+		}
+		
+		var p_all_day=get_by_id("time_type");
+		if (p_all_day.checked==true){			
+			start_time_total= "00:00";
+			end_time_total="24:00";
+		}else{
+			var s_hour,s_min;
+			var e_hour,e_min;
+			
+			//start time
+			if(parseInt(get_by_id("start_min").value,10)<10){
+				s_min= "0" + parseInt(get_by_id("start_min").value,10);
+			}else{
+				s_min= get_by_id("start_min").value;
+			}
+			
+			if(get_by_id("start_time").selectedIndex ==1){	//pm
+				s_hour = time_hour(parseInt(get_by_id("start_hour").value,10)) +12;	
+			}else{											//am
+				if(time_hour(parseInt(get_by_id("start_hour").value,10))<10){
+					s_hour ="0" + time_hour(parseInt(get_by_id("start_hour").value,10));
+				}else{
+					s_hour = get_by_id("start_hour").value;
+				}
+			}
+			start_time_total =s_hour + ":" + s_min;
+			
+			//end time		
+			if(parseInt(get_by_id("end_min").value,10)<10){
+				e_min= "0" + parseInt(get_by_id("end_min").value,10);
+			}else{
+				e_min= get_by_id("end_min").value;
+			}
+			
+			if(get_by_id("end_time").selectedIndex ==1){	//pm
+				e_hour = time_hour(parseInt(get_by_id("end_hour").value,10)) +12;
+			}else{											//am
+				if(time_hour(parseInt(get_by_id("end_hour").value,10))<10){
+					e_hour ="0" + time_hour(parseInt(get_by_id("end_hour").value,10));
+				}else{
+					e_hour = get_by_id("end_hour").value;
+				}
+			}
+			end_time_total =e_hour + ":" + e_min;
+		}
+		
+		
+		
+		var dat =get_by_id("name").value +"/"+ days_in_week +"/"+ start_time_total +"/"+ end_time_total;
+		var num = parseInt(get_by_id("max_row").value) +1;
+		if (num < 10){
+			get_by_id("schedule_rule_0" + num).value = dat;
+		}else{
+			get_by_id("schedule_rule_" + num).value = dat;
+		}	
+	}
+}
+
+	function time_hour(hour){
+		var hour_c = hour;
+		if (parseInt(hour,10) >= 12){
+			hour_c = 00;
+		}
+		return hour_c;
+	}
+	
+
+	function send_request(){
+		if (!is_form_modified("form1") && !confirm(_ask_nochange)) {
+			return false;
+		}
+		var time_type = get_by_id("time_type");
+		
+		if(get_by_id("del_row").value == "-1"){	
+			if (get_by_id("name").value.length <= 0){
+				alert(GW_SCHEDULES_NAME_INVALID);
+				return false;
+			}else{
+				var temp_obj = get_by_id("name").value;
+				var space_num = 0;
+				for (i=0;i<temp_obj.length;i++){
+					if (temp_obj.charAt(i)==" "){	
+						space_num++
+					}
+					if (!check_ascii_key_fun(temp_obj.substring(i, i+1))){
+						alert(TEXT064);
+						return false;
+					}
+				}
+				if(parseInt(space_num) >= parseInt(temp_obj.length)){
+					alert(GW_INET_ACL_SCHEDULE_NAME_INVALIDa);
+					return false;
+				}
+				if((temp_obj == "Always")||(temp_obj == "Never") ){
+					alert(GW_SCHEDULES_NAME_RESERVED_INVALIDa);
+					return false;
+				}
+				for (i = 0; i < rule_max_num; i++){
+					if (i < 10){
+						var temp_rule = get_by_id("schedule_rule_0" + i).value;
+					}else{
+						var temp_rule = get_by_id("schedule_rule_" + i).value;
+					}
+					var rule = temp_rule.split("/");
+				
+							
+					if (rule[0] != "" && from_edit != i){
+						if (temp_obj == rule[0]){
+							alert(TEXT066);
+							return false;
+						}
+					}
+				}
+			}
+			if (!time_type.checked){
+				if (!check_integer(get_by_id("start_hour").value, 1, 12) || !check_integer(get_by_id("start_min").value, 0, 59)){
+					alert(YM184);
+					return false;
+				}
+					
+				if (!check_integer(get_by_id("end_hour").value, 1, 12) || !check_integer(get_by_id("end_min").value, 0, 59)){
+					alert(YM184);
+					return false;
+				}
+
+				var start_hourc = time_hour(parseInt(get_by_id("start_hour").value,10));
+				var end_hourc = time_hour(parseInt(get_by_id("end_hour").value,10));
+				var temp_start_time = (start_hourc * 60) + (12 * 60 * get_by_id("start_time").selectedIndex) + (parseInt(get_by_id("start_min").value,10));
+				var temp_end_time = (end_hourc * 60) + (12 * 60 * get_by_id("end_time").selectedIndex) + (parseInt(get_by_id("end_min").value,10));
+
+				if(temp_start_time - temp_end_time == 0){
+					get_by_id("time_type").checked = true;
+				}
+				
+				if((temp_start_time > 1439) && (temp_end_time - temp_start_time > 0)){
+					alert(YM184);
+					return false;
+				}
+
+				if((temp_end_time > 1440) && (temp_end_time - temp_start_time > 0)){
+					alert(YM184);
+					return false;
+				}
+			}
+			update_data();
+		}
+		
+		
+		if(submit_button_flag == 0){
+			submit_button_flag = 1;
+			return true;
+		}else{
+			return false;
+		}
+	}
+</script>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td
+ id="topnavoff" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavoff" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavon" height="29"><a href="tools_admin.htm" 
+onclick="return jump_if();">Tools</a></td><td id="topnavoff" height="29"><a
+ href="st_device.htm" onClick="return jump_if();">Status</a></td><td
+ id="topnavoff" height="29"><a href="support_men.htm"
+ onclick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td id="sidenav_container">
+							<div id="sidenav"><ul><li><div><a 
+href="tools_admin.htm" onClick="return jump_if();">Admin</a></div></li><li><div><a
+ href="tools_time.htm" onClick="return jump_if();">Time</a></div></li><li><div><a
+ href="tools_syslog.htm" onClick="return jump_if();">SysLog</a></div></li><li><div><a
+ href="tools_email.htm" onClick="return jump_if();">Email
+ Settings</a></div></li><li><div><a 
+href="tools_system.htm" onClick="return jump_if();">System</a></div></li><li><div><a
+ href="tools_firmw.htm" onClick="return jump_if();">Firmware</a></div></li><li><div><a
+ href="tools_ddns.htm" onClick="return jump_if();">Dynamic
+ DNS</a></div></li><li><div><a href="tools_vct.htm" 
+onclick="return jump_if();">System Check</a></div></li><li><div 
+id="sidenavoff">Schedules</div></li></ul></div>
+							<div id="m17n_div" align="center"></div>
+						</td>			
+					</tr>
+				</tbody></table>			
+			</td>
+			<form saved="true" id="form1" name="form1" method="post" 
+action="http://www.support.dlink.com/emulators/dir615_revE/510/apply.cgi"></form>
+				<input default="back.htm" id="html_response_page" 
+name="html_response_page" value="back.htm" type="hidden">
+	   			<input default="The setting is saved." id="html_response_message"
+ name="html_response_message" value="The setting is saved." 
+type="hidden">
+	   			<input default="tools_schedules.htm" 
+id="html_response_return_page" name="html_response_return_page" 
+value="tools_schedules.htm" type="hidden">
+	   			<input default="filter" id="reboot_type" name="reboot_type" 
+value="filter" type="hidden">
+				<input default="-1" id="edit" name="edit" value="-1" type="hidden">
+				<input default="-1" id="del_row" name="del_row" value="-1" 
+type="hidden">
+				<input default="0" id="max_row" name="max_row" value="0" 
+type="hidden">
+				<input default="0" id="restart_wlan" name="restart_wlan" value="0" 
+type="hidden">	
+				<input default="0/0/0/Never" id="log_email_schedule" 
+name="log_email_schedule" value="0/0/0/Never" type="hidden"> <!-- email -->
+				<input default="testSchedule" id="asp_temp_01" name="asp_temp_01" 
+value="testSchedule" type="hidden">	<!-- schedule -->
+				<input default="testSchedule/1111111/00:00/01:00" 
+id="schedule_rule_00" name="schedule_rule_00" 
+value="testSchedule/1111111/00:00/01:00" type="hidden">
+				<input default="" id="schedule_rule_01" name="schedule_rule_01" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_02" name="schedule_rule_02" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_03" name="schedule_rule_03" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_04" name="schedule_rule_04" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_05" name="schedule_rule_05" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_06" name="schedule_rule_06" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_07" name="schedule_rule_07" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_08" name="schedule_rule_08" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_09" name="schedule_rule_09" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_10" name="schedule_rule_10" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_11" name="schedule_rule_11" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_12" name="schedule_rule_12" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_13" name="schedule_rule_13" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_14" name="schedule_rule_14" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_15" name="schedule_rule_15" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_16" name="schedule_rule_16" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_17" name="schedule_rule_17" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_18" name="schedule_rule_18" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_19" name="schedule_rule_19" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_20" name="schedule_rule_20" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_21" name="schedule_rule_21" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_22" name="schedule_rule_22" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_23" name="schedule_rule_23" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_24" name="schedule_rule_24" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_25" name="schedule_rule_25" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_26" name="schedule_rule_26" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_27" name="schedule_rule_27" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_28" name="schedule_rule_28" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_29" name="schedule_rule_29" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_30" name="schedule_rule_30" 
+value="" type="hidden">
+				<input default="" id="schedule_rule_31" name="schedule_rule_31" 
+value="" type="hidden">
+				
+				<input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_00" name="port_forward_both_00" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_01" name="port_forward_both_01" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_02" name="port_forward_both_02" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_03" name="port_forward_both_03" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_04" name="port_forward_both_04" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_05" name="port_forward_both_05" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_06" name="port_forward_both_06" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_07" name="port_forward_both_07" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_08" name="port_forward_both_08" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_09" name="port_forward_both_09" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_10" name="port_forward_both_10" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_11" name="port_forward_both_11" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_12" name="port_forward_both_12" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_13" name="port_forward_both_13" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_14" name="port_forward_both_14" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_15" name="port_forward_both_15" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_16" name="port_forward_both_16" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_17" name="port_forward_both_17" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_18" name="port_forward_both_18" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_19" name="port_forward_both_19" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+				        <input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_20" name="port_forward_both_20" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+								<input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_21" name="port_forward_both_21" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+								<input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_22" name="port_forward_both_22" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+								<input default="0//0.0.0.0/0/0/Always/Allow_All" 
+id="port_forward_both_23" name="port_forward_both_23" 
+value="0//0.0.0.0/0/0/Always/Allow_All" type="hidden">
+								
+								<input default="0//TCP/0/TCP/0/Always" id="application_00" 
+name="application_00" value="0//TCP/0/TCP/0/Always" type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_01" name="application_01" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_02" name="application_02" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_03" name="application_03" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_04" name="application_04" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_05" name="application_05" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_06" name="application_06" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_07" name="application_07" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_08" name="application_08" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_09" name="application_09" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_10" name="application_10" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_11" name="application_11" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_12" name="application_12" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_13" name="application_13" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_14" name="application_14" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_15" name="application_15" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_16" name="application_16" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_17" name="application_17" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_18" name="application_18" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_19" name="application_19" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_20" name="application_20" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_21" name="application_21" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_22" name="application_22" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                <input default="0//TCP/0/TCP/0/Always" 
+id="application_23" name="application_23" value="0//TCP/0/TCP/0/Always" 
+type="hidden">
+                
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_00" name="vs_rule_00" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_01" name="vs_rule_01" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_02" name="vs_rule_02" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_03" name="vs_rule_03" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_04" name="vs_rule_04" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_05" name="vs_rule_05" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_06" name="vs_rule_06" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_07" name="vs_rule_07" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_08" name="vs_rule_08" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_09" name="vs_rule_09" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_10" name="vs_rule_10" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_11" name="vs_rule_11" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_12" name="vs_rule_12" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_13" name="vs_rule_13" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_14" name="vs_rule_14" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_15" name="vs_rule_15" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_16" name="vs_rule_16" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_17" name="vs_rule_17" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_18" name="vs_rule_18" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_19" name="vs_rule_19" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+                <input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_20" name="vs_rule_20" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+								<input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_21" name="vs_rule_21" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+								<input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_22" name="vs_rule_22" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+								<input default="0//6/0/0/0.0.0.0/Always/Allow_All" 
+id="vs_rule_23" name="vs_rule_23" 
+value="0//6/0/0/0.0.0.0/Always/Allow_All" type="hidden">
+				
+                                
+			<td id="maincontent_container" valign="top">
+				<div id="maincontent">
+ 					
+				  <div id="box_header"> 
+						<h1>Schedules</h1>
+						<p>The Schedule 
+configuration option is used to manage schedule rules for various 
+firewall and parental control features.</p>
+						<br>
+						<input name="button" id="button" class="button_submit" value="Save Settings" onClick="emulator()" type="button">
+						<input id="button2" name="button2" class="button_submit" value="Don't Save Settings" onClick="dont_save()" type="button">
+						
+				  </div>
+				  <div class="box">
+                    <h2>10 – <span id="sched_title0">Add</span>
+ 
+            					Schedule Rule</h2>
+                    <table border="0" cellpadding="1" cellspacing="1" 
+width="525">
+                      <tbody><tr>
+                        <td width="150"><div align="right"><strong>Name&nbsp;:</strong>&nbsp;</div></td>
+                        <td height="20" valign="top" width="384">&nbsp;&nbsp;<input
+ autocomplete="off" default="" id="name" name="name" size="20" 
+maxlength="16" type="text"></td>
+                      </tr>
+                      <tr>
+                        <td width="150">
+                          <div align="right"><strong>Day(s)&nbsp;:</strong>&nbsp;</div></td>
+                        <td height="20" valign="top">&nbsp;<input 
+default="true" name="all_week" value="1" onClick="show_day()" 
+checked="checked" type="radio">
+                        All Week
+                        &nbsp;<input default="false" name="all_week" 
+value="0" onClick="show_day()" type="radio">
+                        Select 
+Day(s)
+					    </td>
+                      </tr>
+                      <tr>
+                        <td width="150">
+                          <div align="right"></div></td>
+                        <td height="20" valign="top">&nbsp;<input 
+default="false" disabled="disabled" id="day0" name="day0" value="1" 
+type="checkbox">&nbsp;Sun
+                        	<input default="false" disabled="disabled" 
+id="day1" name="day1" value="1" type="checkbox">&nbsp;Mon
+
+                        	<input default="false" disabled="disabled" 
+id="day2" name="day2" value="1" type="checkbox">&nbsp;Tue
+
+                        	<input default="false" disabled="disabled" 
+id="day3" name="day3" value="1" type="checkbox">&nbsp;Wed
+
+                        	<input default="false" disabled="disabled" 
+id="day4" name="day4" value="1" type="checkbox">&nbsp;Thu
+
+                        	<input default="false" disabled="disabled" 
+id="day5" name="day5" value="1" type="checkbox">&nbsp;Fri
+
+                        	<input default="false" disabled="disabled" 
+id="day6" name="day6" value="1" type="checkbox">&nbsp;Sat
+
+                        </td>
+                      </tr>
+                          <tr>
+                            <td width="150">
+                              <div align="right"><strong>All
+ Day - 24 hrs&nbsp;:</strong>&nbsp;</div></td>
+                            <td height="20" valign="middle">&nbsp;<input
+ default="false" id="time_type" name="time_type" value="1" 
+onclick="show_time()" type="checkbox">
+                            	<input default="" id="h0" name="h0" 
+type="hidden">
+								<input default="" id="h1" name="h1" type="hidden">
+								<input default="" id="h2" name="h2" type="hidden">
+								<input default="" id="h3" name="h3" type="hidden">
+								<input default="" id="h4" name="h4" type="hidden">
+								<input default="" id="h5" name="h5" type="hidden">
+								<input default="" id="h6" name="h6" type="hidden">
+							</td>
+                           
+                          </tr>
+                          <tr>
+                            <td width="150"><div align="right"><strong>Start
+ Time&nbsp;:</strong>&nbsp;</div></td>
+                            <td height="20" valign="top">&nbsp;&nbsp;<input
+ autocomplete="off" default="12" id="start_hour" name="start_hour" 
+style="width: 40px;" maxlength="2" value="12" type="text">:
+                            <input autocomplete="off" default="00" 
+id="start_min" name="start_min" style="width: 40px;" maxlength="2" 
+value="00" type="text">
+                            <select style="width: 50px;" id="start_time"
+ name="start_time" value="00">
+                            	<option selected="selected" default="true" 
+value="0">AM</option>
+						    	<option default="false" value="1">PM</option>
+						    </select>
+						    &nbsp;(hour:minute, 12 
+hour time)</td>
+                          </tr>
+                          <tr>
+                            <td width="150">
+                            <div align="right"><span class="form_label"><strong>End
+ Time&nbsp;:&nbsp;</strong></span></div></td>
+                            <td height="20" valign="top">&nbsp;&nbsp;<input
+ autocomplete="off" default="12" id="end_hour" name="end_hour" 
+style="width: 40px;" maxlength="2" value="12" type="text">:
+                            <input autocomplete="off" default="00" 
+id="end_min" name="end_min" style="width: 40px;" maxlength="2" 
+value="00" type="text">
+                            <select style="width: 50px;" id="end_time" 
+name="end_time">
+                            	<option selected="selected" default="true" 
+value="0">AM</option>
+                            	<option default="false" value="1">PM</option>
+                            </select>
+                            &nbsp;(hour:minute,
+ 12 hour time) </td>
+                          </tr>
+                    </tbody></table>
+                  </div>
+				  <div class="box">
+                    <h2>Schedule
+ Rules List : </h2>
+                    <table id="table1" border="0" cellpadding="1" 
+cellspacing="1" width="524">
+                      <tbody><tr>
+                        <td width="165">
+                          <div align="center"><strong>Name&nbsp;:</strong>&nbsp;</div></td>
+                        <td width="190"><div align="center"><strong>Day(s)&nbsp;:</strong>&nbsp;</div></td>
+                        <td width="135"><div align="center"><strong>Time
+ Frame&nbsp;:</strong></div></td>
+                        <td valign="top" width="15">&nbsp;</td>
+                        <td valign="top" width="15">&nbsp;</td>
+                      </tr>
+					  <tr><td align="center">testSchedule</td><td align="center">All
+ Week</td><td align="center">00:00~01:00</td><td><a 
+href="javascript:emulator()"><img src="edit.jpg" 
+alt="edit" border="0" height="17" width="15"></a></td><td><a 
+href="javascript:emulator()"><img src="delete.jpg"
+ alt="delete" border="0" height="18" width="15"></a></td></tr>
+					                                      
+                    </tbody></table>
+                    
+			</div></div></td><td id="sidehelp_container" align="left" 
+valign="top" width="150">
+				<table bgcolor="#ffffff" border="0" cellpadding="2" cellspacing="0">
+					<tbody><tr>
+					  <td id="help_text"><strong>Helpful
+ Hints…</strong>
+						<p>Schedules are used with
+ a number of other features to define when those features are in effect.</p>
+						<p>Give each schedule a 
+name that is meaningful to you. For example, a schedule for Monday 
+through Friday from 3:00pm to 9:00pm, might be called "After School".</p>
+						<p>Click <strong>Save</strong>
+ to add a completed schedule to the list below.</p>
+						<p>Click the <strong>Edit</strong>
+ icon to change an existing schedule.</p>
+						<p>Click the <strong>Delete</strong>
+ icon to permanently delete a schedule.</p>
+						<p class="more"><a 
+href="support_tools.htm#Schedules" onClick="return 
+jump_if();">More…</a></p>
+					  </td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body></html>

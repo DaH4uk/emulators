@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<script language="javascript" type="text/javascript">
 var DLNA_DEFAULT_NAME = "Adsl Router"
 var blank = "&nbsp;&nbsp;";
@@ -1438,3 +1439,1445 @@ $("#edit-cancel").click(function() {
 <script language="javascript" type="text/javascript">
 $.tpInit(init);
 </script>
+=======
+﻿<script language="javascript" type="text/javascript">
+var DLNA_DEFAULT_NAME = "Adsl Router"
+var blank = "&nbsp;&nbsp;";
+var usbDeviceList;
+var volumeList;
+var smbService;
+var dlnaService;
+
+var accessFolderList_samba;
+var accessFolderList_ftp;
+var accessFolderList_dlna;
+
+var numAliveDev = 0;
+var numAliveLog = 0;
+var idx;
+
+var currVolume = "";
+var currPath = "";
+
+var currentFolder = "";
+var fPath = "";
+
+var firstClick = 1;
+var firstNode = 1;
+var o;
+var prevObj;
+
+var folderPath = "";
+var currentVol = "";
+
+var folderIdx;
+var shareTabStatus = "";
+var editCurIndex;
+
+function handleUsb(idx) {
+    var command = {};
+
+    if ("Online" == usbDeviceList[idx].status) {
+        command.enable = 0;
+        usbDeviceList[idx].enable = 0;
+    } else if (("Standby" == usbDeviceList[idx].status) && (1 == usbDeviceList[idx].enable)) {
+        usbDeviceList[idx].enable = 0;
+        command.enable = 0;
+    } else {
+        usbDeviceList[idx].enable = 1;
+        command.enable = 1;
+    }
+
+    $.act(ACT_SET, USB_DEVICE, usbDeviceList[idx].__stack, null, command);
+    var usbDevice = $.act(ACT_GET, USB_DEVICE, usbDeviceList[idx].__stack, null, null);
+
+    if (!$.exe()) {
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("usbManage.htm", param);
+    }
+}
+
+function mountUsb(idx) {
+    var command = {};
+    if (("Standby" == usbDeviceList[idx].status) && (1 == usbDeviceList[idx].enable)) {
+        command.enable = 1;
+        $.act(ACT_SET, USB_DEVICE, usbDeviceList[idx].__stack, null, command);
+        var usbDevice = $.act(ACT_GET, USB_DEVICE, usbDeviceList[idx].__stack, null, null);
+
+        if (!$.exe()) {
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("usbManage.htm", param);
+        }
+        return;
+    }
+}
+
+function ableFunc(num, event) {
+    var command = {};
+    var e = window.event || event;
+    var target = e.srcElement || e.target;
+    $(target).off('click');
+    $.addLoading($(target));
+    var table = $(target).parents('table');
+    if ("Online" == volumeList[num].status) {
+        command.enable = 0;
+    } else if ("Error" == volumeList[num].status) {
+        return;
+    } else if (("Offline" == volumeList[num].status)) {
+        command.enable = 1;
+    } else {
+        $.reload();
+    }
+
+    $.act(ACT_SET, LOGICAL_VOLUME, volumeList[num].__stack, null, command);
+	$.exe(function() {
+    var volume = $.act(ACT_GET, LOGICAL_VOLUME, volumeList[num].__stack, null, null);
+		volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+		$.exe(function() {
+		   handleVolumeChange()
+           $.bodyStyleUpdate(table);
+           $.removeLoading();
+		});
+
+    });
+
+}
+
+function handleVolumeChange(){
+     numAliveLog = 0;
+        for (idx = 0; idx < volumeList.length; idx++) {
+            if ("Online" == volumeList[idx].status) {
+                numAliveLog++;
+            }
+        }
+        for (i = 0; i < volumeList.length; i++) {
+            if ($('#vol' + i).hasClass('disable-icon')) {
+                $('#vol' + i).removeClass('disable-icon');
+            }
+            if ($('#vol' + i).hasClass('enable-icon')) {
+                $('#vol' + i).removeClass('enable-icon');
+            }
+            if ($('#vol' + i).hasClass('inactive-icon')) {
+                $('#vol' + i).removeClass('inactive-icon');
+            }
+            if (volumeList[i].status == "Online") {
+                $('#vol' + i).addClass('enable-icon').attr('onclick', 'ableFunc(' + i + ',event)');
+            } else if ("Error" == volumeList[i].status) {
+                $('#vol' + i).addClass('inactive-icon').attr('onclick', null);
+            } else if (("Offline" == volumeList[i].status) && (1 == volumeList[i].enable)) {
+                if (8 > numAliveLog) {
+                    $('#vol' + i).addClass(' disable-icon').attr('onclick', 'handleVolumeForce(' + i + ',event)');
+                } else {
+                    $('#vol' + i).addClass('inactive-icon').attr('onclick', null);
+                }
+            } else {
+                $('#vol' + i).addClass('disable-icon').attr('onclick', 'ableFunc(' + i + ',event)');
+            }
+    }
+}
+
+function handleVolumeForce(num, event) {
+    var command = {};
+    var e = window.event || event;
+    var target = e.srcElement || e.target;
+    $(target).off('click');
+     $.addLoading($(target));
+    var table = $(target).parents('table');
+    if (("Offline" == volumeList[num].status) && (1 == volumeList[num].enable)) {
+        command.enable = 1;
+        command.force = 1;
+        $.act(ACT_SET, LOGICAL_VOLUME, volumeList[num].__stack, null, command);
+        var volume = $.act(ACT_GET, LOGICAL_VOLUME, volumeList[num].__stack, null, null);
+         volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+        if (!$.exe()) {
+             handleVolumeChange();
+            $.bodyStyleUpdate(table);
+            $.removeLoading();
+        }
+        return;
+    }
+}
+
+function initTable() {
+    var array = new Array();
+    var i;
+    for (i = 0; i < volumeList.length; i++) {
+        if (((usbDeviceList[idx - 1].__stack).split(','))[0] == ((volumeList[i].__stack).split(','))[0]) {
+            var ableControl;
+
+            if (volumeList[i].status == "Online") {
+                ableControl = "<span class='table-grid-icon enable-icon' id='vol" + i + "' onclick='ableFunc(" + i + ",event)'></span>";
+            } else if ("Error" == volumeList[i].status) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='vol" + i + "'></span>";
+
+            } else if (("Offline" == volumeList[i].status) && (1 == volumeList[i].enable)) {
+                if (0) {
+                    ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='ableFunc(" + i + ",event)'></span>";
+                    if (8 > numAliveLog) {
+                        ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='handleVolumeForce(" + i + ",event);ableFunc(" + i + ",event);'></span>";
+                    }
+                } else {
+                    if (8 > numAliveLog) {
+                        ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='handleVolumeForce(" + i + ",event)'></span>";
+                    } else {
+                        ableControl = "<span class='table-grid-icon inactive-icon' id='vol" + i + "'></span>";
+                    }
+                }
+            } else {
+                ableControl = "<span class='table-grid-icon disable-icon' id='vol" + i + "' onclick='ableFunc(" + i + ",event)'></span>";
+            }
+
+            if ((0 == usbDeviceList[idx - 1].enable) || ("Online" != usbDeviceList[idx - 1].status)) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='vol" + i + "'></span>";
+            }
+
+            array.push([{
+                "text": i + 1,
+                "width": "16%"
+            }, {
+                "text": volumeList[i].name,
+                "width": "21%"
+            }, {
+                "text": volumeList[i].capacity,
+                "width": "21%"
+            }, {
+                "text": volumeList[i].freeSpace,
+                "width": "21%"
+            }, {
+                "text": ableControl,
+                "width": "21%"
+            }]);
+        }
+    }
+
+    $.initTableBody($('#volumeTbl' + idx), array);
+    $.tablePages($('#volumeTbl' + idx), 5);
+    return array;
+}
+
+function selectJudge(index) {
+    var i;
+    var selectAll = 1;
+
+    if ($("#cb" + index).prop("data-checked") == true) {
+        for (i = 0; i < accessFolderList_samba.length; i++) {
+            if ($("#cb" + i).prop("data-checked") == false) {
+                selectAll = 0;
+            }
+        }
+
+        if (selectAll == 1) {
+            $("#shareTitle").prop("checked", true);
+            $("#shareTitle").tpCheckbox();
+        }
+    } else {
+        $("#shareTitle").prop("checked", false);
+        $("#shareTitle").tpCheckbox();
+    }
+}
+
+function initShareTab() {
+    var array = new Array();
+    var fp;
+    var matchVolume;
+    var status;
+    var dlnaEnable;
+    var ableControl;
+    var j;
+    var index;
+    var edit = "";
+    var del = "";
+    var i;
+
+    for (index = 0; index < accessFolderList_samba.length; index++) {
+        var match = false;
+        var volumeName = "disconnected";
+        fp = accessFolderList_samba[index].volumeLabel + ":" + accessFolderList_samba[index].name;
+
+        $.each(volumeList, function() {
+            if (this.uuid == accessFolderList_samba[index].volumeUuid) {
+                matchVolume = this;
+                match = true;
+                return false;
+            }
+        });
+
+        dlnaEnable = table_str.off;
+		if (accessFolderList_dlna[index].enable == 1) {
+                    dlnaEnable = table_str.on;
+        }
+
+        if ((accessFolderList_samba[index].volumeUuid != "") && (match == false)) {
+            ableControl = "<span class='table-grid-icon inactive-disable-icon' id='sp" + index + "'></span>";//"' onclick='ableShare(" + index + ", " + match + ", " + matchVolume + ");'></span>";
+        } else if ((accessFolderList_samba[index].volumeUuid != "") && (matchVolume.status != "Online")) {
+            if ("Error" == matchVolume.status) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='sp" + index + "'></span>";
+            } else if (("Offline" == matchVolume.status) && (matchVolume.enable == 1)) {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='sp" + index + "'></span>";
+            } else {
+                ableControl = "<span class='table-grid-icon inactive-icon' id='sp" + index + "'></span>";
+            }
+        } else {
+            if (1 == accessFolderList_samba[index].enable) {
+                ableControl = "<span class='table-grid-icon enable-icon' id='sp" + index + "' onclick='ableShare(" + index + ");'></span>";
+            } else {
+                ableControl = "<span class='table-grid-icon disable-icon' id='sp" + index + "' onclick='ableShare(" + index + ");'></span>";
+            }
+        }
+
+        edit = "<span class='table-grid-icon edit-modify-icon' id='edit" + index + "' onclick='modifyShare(" + index + ");'></span>"
+        del = "<span class='table-grid-icon edit-trash-icon' id='del" + index + "' onclick='delShare(" + index + ");'></span>"
+
+        for (i = 0; i < volumeList.length; i++) {
+            if (volumeList[i].label == accessFolderList_samba[index].volumeLabel) {
+                volumeName = volumeList[i].name;
+            }
+        }
+
+        if (volumeName == undefined) {
+            volumeName = "disconnected";
+        }
+
+        array.push([{
+            "text": '<div><input type="checkbox" id="cb' + index + '" onclick="selectJudge(' + index + ');" /><label></label></div>',
+            "width": "8%"
+        }, {
+            "text": (index + 1),
+            "width": "5%"
+        }, {
+            "text": accessFolderList_samba[index].alias,
+            "width": "15%"
+        }, {
+            "text": escapeStr(fp),
+            "width": "25%"
+        }, {
+            "text": dlnaEnable,
+            "width": "10%"
+        }, {
+            "text": volumeName,
+            "width": "10%"
+        }, {
+            "text": ableControl,
+            "width": "10%"
+        }, {
+            "text": edit + del,
+            "width": "17%"
+        }]);
+    }
+
+    $.initTableBody($('#shareTab'), array);
+    $.tablePages($('#shareTab'), 8);
+    return array;
+}
+
+function ableShare(index) {
+    var command = {};
+
+    var matchVolume;
+    var match = false;
+    var _index;
+
+    $.each(volumeList, function() {
+        if (this.uuid == accessFolderList_samba[index].volumeUuid) {
+            matchVolume = this;
+            match = true;
+        }
+    });
+
+    if ((accessFolderList_samba[index].volumeUuid != "") && (match == false)) {
+
+    } else if ((accessFolderList_samba[index].volumeUuid != "") && (matchVolume.status != "Online")) {
+
+    } else {
+        if (1 == accessFolderList_samba[index].enable) {
+            command.enable = 0;
+        } else {
+            command.enable = 1;
+        }
+    }
+
+    var i;
+
+    for (_index = 0; _index < accessFolderList_dlna.length; _index++) {
+        if (accessFolderList_samba[index].name == accessFolderList_dlna[_index].name) {
+            $.act(ACT_SET, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[_index].__stack, null, command);
+        }
+    }
+	
+    $.act(ACT_SET, SMB_SERVICE_FOLDER, accessFolderList_samba[index].__stack, null, command);
+    $.act(ACT_SET, FTP_SERVER_FOLDER, accessFolderList_ftp[index].__stack, null, command);
+
+    if (!$.exe()) {
+        $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+        $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+        if (!$.exe()) {
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("usbManage.htm", param);
+        }
+    }
+}
+
+$("#shareItemAdd").click(function() {
+    shareTabStatus = "add";
+});
+
+function modifyShare(index) {
+    var i;
+    editCurIndex = index;
+    var str = accessFolderList_samba[index].volumeLabel + ":";
+
+    $("#shareVolume option[value='" + str + "']").prop("selected", "selected");
+    var options = {
+        refresh: 1
+    };
+    $("#shareVolume").tpSelect(options);
+
+    $("#filename").val(accessFolderList_samba[index].volumeLabel + ":" + accessFolderList_samba[index].name);
+    $("#shareName").val(accessFolderList_samba[index].alias);
+
+    if (accessFolderList_samba[index].needAuth == 1) {
+        $("#ea").prop("checked", true);
+        $("#ea").data("tpCheckbox").refresh();
+    }
+
+    for (i = 0; i < userAccessList_samba.length; i++) {
+        if (parseInt(accessFolderList_samba[index].__stack, 10) != parseInt(userAccessList_samba[i].__stack, 10)) {
+            continue;
+        }
+
+        if (parseInt(userList[0].__stack, 10) == userAccessList_samba[i].userId) {
+            if (userAccessList_samba[i].permissions == 7) {
+                $("#wa").prop("checked", true);
+                $("#wa").data("tpCheckbox").refresh();
+            } else {
+                $("#wa").prop("checked", false);
+                $("#wa").data("tpCheckbox").refresh();
+            }
+        }
+    }
+
+    if (accessFolderList_dlna[index].enable == 1) {
+            $("#ems").prop("checked", true);
+            $("#ems").data("tpCheckbox").refresh();
+        }
+
+    shareTabStatus = "modify";
+}
+
+function delShare(index) {
+    var i;
+
+    $.act(ACT_DEL, SMB_SERVICE_FOLDER, accessFolderList_samba[index].__stack, null, null);
+    $.act(ACT_DEL, FTP_SERVER_FOLDER, accessFolderList_ftp[index].__stack, null, null);
+
+    for (i = 0; i < accessFolderList_dlna.length; i++) {
+        if (accessFolderList_samba[index].name == accessFolderList_dlna[i].name) {
+            $.act(ACT_DEL, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[i].__stack, null, null);
+            accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+        }
+    }
+
+    if (!$.exe()) {
+        $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+        $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+        if (!$.exe()) {
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("usbManage.htm", param);
+        }
+    }
+}
+
+function delShareMul(index) {
+    var i;
+
+    $.act(ACT_DEL, SMB_SERVICE_FOLDER, accessFolderList_samba[index].__stack, null, null);
+    $.act(ACT_DEL, FTP_SERVER_FOLDER, accessFolderList_ftp[index].__stack, null, null);
+
+    for (i = 0; i < accessFolderList_dlna.length; i++) {
+        if (accessFolderList_samba[index].name == accessFolderList_dlna[i].name) {
+            $.act(ACT_DEL, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[i].__stack, null, null);
+            accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+        }
+    }
+
+    $.exe();
+}
+
+function initAuthTab() {
+    var array = new Array();
+    var index;
+
+    if (volumeList.length == 0) {
+        array.push([{
+            "text": "--",
+            "width": "10%"
+        }, {
+            "text": "--",
+            "width": "40%"
+        }, {
+            "text": "--",
+            "width": "25%"
+        }, {
+            "text": "--",
+            "width": "25%"
+        }]);
+    }
+
+	usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+    volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+	if (!$.exe()) {
+    for (idx = 1; idx <= usbDeviceList.length; idx++) {
+        if ("Online" == usbDeviceList[idx - 1].status) {
+            for (index = 0; index < volumeList.length; index++) {
+                if (((usbDeviceList[idx - 1].__stack).split(','))[0] == ((volumeList[index].__stack).split(','))[0]) {
+                    if (volumeList[index].status == "Online") {
+                        array.push([{
+                            "text": (index + 1),
+                            "width": "10%"
+                        }, {
+                            "text": "volume(" + volumeList[index].name + ")",
+                            "width": "40%"
+                        }, {
+                            "text": volumeList[index].label + ":",
+                            "width": "25%"
+                        }, {
+                            "text": volumeList[index].name,
+                            "width": "25%"
+                        }]);
+                    }
+                }
+            }
+        }
+    }
+
+    $.initTableBody($('#authTab'), array);
+    $.tablePages($('#authTab'), 5);
+	}
+    return array;
+}
+
+$("#refShareSet").click(function() {
+	 $.addLoading($("#refShareSet"));
+    initAuthTab();
+	$.removeLoading();
+});
+
+function selectAll() {
+    var index;
+    if ($("#shareTitle").prop("data-checked") == true) {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            $("#cb" + index).prop("checked", true);
+            $("#cb" + index).data("tpCheckbox").refresh();
+        }
+    } else {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            $("#cb" + index).prop("checked", false);
+            $("#cb" + index).data("tpCheckbox").refresh();
+        }
+    }
+}
+
+function init() {
+    usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+    volumeList = $.act(ACT_GL, LOGICAL_VOLUME, null, null);
+    smbService = $.act(ACT_GET, SMB_SERVICE, null, null, null);
+    ftpServer = $.act(ACT_GET, FTP_SERVER, null, null, null);
+    dlnaService = $.act(ACT_GET, DLNA_MEDIA_SERVER, null, null, null);
+    accessFolderList_samba = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+    accessFolderList_ftp = $.act(ACT_GL, FTP_SERVER_FOLDER, null, null, null);
+    accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+
+    userAccessList_samba = $.act(ACT_GL, SMB_USER_ACCESS, null, null, null);
+
+    userList = $.act(ACT_GL, USER_ACCOUNT, null, null, null);
+
+    var index;
+
+    if (!$.exe()) {
+        for (idx = 0; idx < usbDeviceList.length; idx++) {
+            if ("Online" == usbDeviceList[idx].status) {
+                numAliveDev++;
+            }
+        }
+
+        for (idx = 0; idx < volumeList.length; idx++) {
+            if ("Online" == volumeList[idx].status) {
+                numAliveLog++;
+            }
+        }
+
+        var authHeadArray = [{
+            "text": table_str.id,
+            width: "10%"
+        }, {
+            "text": table_str.shareName,
+            width: "40%"
+        }, {
+            "text": table_str.folderPath,
+            width: "25%"
+        }, {
+            "text": table_str.volume,
+            width: "25%"
+        }];
+
+        $.initTableHead($('#authTab'), authHeadArray);
+        $('#authTab').tpTable(initAuthTab);
+
+        for (idx = 1; idx <= usbDeviceList.length; idx++) {
+            if ("Online" == usbDeviceList[idx - 1].status) {
+                $("#usb_drawing").append("<div class='table-op'><div class='table-note' id='usbInfo" + idx + "'></div><div class='table-btn' id='usbStatus" + idx + "' onClick='handleUsb(" + (idx - 1) + ");'></div></div>");
+                var diskInfo;
+                diskInfo = usbDeviceList[idx - 1].vendor + blank + usbDeviceList[idx - 1].model;
+                $("#usbInfo" + idx).html(diskInfo);
+
+                if ("Online" == usbDeviceList[idx - 1].status) {
+                    $("#usbStatus" + idx).append("<span class='safely-remove-icon'></span><label class='table-icon-text'>" + table_str.safelyRemove + "</label>");
+                }
+
+                var usbDrawing;
+                usbDrawing = "<table id='volumeTbl" + idx + "'><thead></thead><tbody></tbody></table>";
+                $("#usb_drawing").append(usbDrawing);
+
+                $("#usb_drawing").append("<br><br>");
+
+                var headArray = [{
+                    "text": table_str.id,
+                    "width": "16%"
+                }, {
+                    "text": table_str.volume,
+                    "width": "21%"
+                }, {
+                    "text": table_str.capacity,
+                    "width": "21%"
+                }, {
+                    "text": table_str.freeSpace,
+                    "width": "21%"
+                }, {
+                    "text": table_str.active,
+                    "width": "21%"
+                }];
+
+                $.initTableHead($('#volumeTbl' + idx), headArray);
+                $('#volumeTbl' + idx).tpTable(initTable);
+            }
+        }
+
+        var headArray = [{
+            "text": '<div><input type="checkbox" id="shareTitle" onclick="selectAll();" /><label></label></div>',
+            "width": "8%"
+        }, {
+            "text": table_str.id,
+            "width": "5%"
+        }, {
+            "text": table_str.shareName,
+            "width": "15%"
+        }, {
+            "text": table_str.folderPath,
+            "width": "25%"
+        }, {
+            "text": table_str.mediaSharing,
+            "width": "10%"
+        }, {
+            "text": table_str.volume,
+            "width": "10%"
+        }, {
+            "text": table_str.status,
+            "width": "10%"
+        }, {
+            "text": table_str.modify,
+            "width": "17%"
+        }];
+        $.initTableHead($('#shareTab'), headArray);
+        $('#shareTab').tpTable(initShareTab);
+
+        if (smbService.anonymous == 0) {
+            $("#authOn").addClass("selected");
+        } else {
+            $("#authOff").addClass("selected");
+        }
+
+        if (smbService.shareAll == false) {
+            $("#shareOff").addClass("selected");
+            $("#authentication").addClass("nd");
+            $("#authDrawing").addClass("nd");
+            $("#shareDrawing").removeClass("nd");
+        } else {
+            $("#shareOn").addClass("selected");
+            $("#shareDrawing").addClass("nd");
+            $("#authentication").removeClass("nd");
+
+            $("#authDrawing").removeClass("nd");
+        }
+
+        $("#server_name").val(smbService.serverName);
+
+        var $volNameSelect = $("#shareVolume");
+
+        while ((i = $("#shareVolume option").length) > 0) {
+            $("#shareVolume option[index='0']").remove();
+        }
+
+        var $ispOption = $("<option>" + table_str.selectopt + "</option>");
+        $ispOption.val(table_str.selectopt);
+
+        $volNameSelect.append($ispOption);
+
+        for (index = 0; index < volumeList.length; index++) {
+            if ("Online" == volumeList[index].status) {
+                $ispOption = $("<option></option>");
+                $ispOption.val(volumeList[index].label + ":");
+                $ispOption.text(volumeList[index].label + ":");
+
+                $volNameSelect.append($ispOption);
+            }
+        }
+
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if (parseInt(accessFolderList_samba[index].__stack, 10) != parseInt(userAccessList_samba[0].__stack, 10)) {
+                continue;
+            }
+        }
+
+        folderIdx = accessFolderList_samba.length;
+
+        if ($.mainParam !== undefined) {
+            var param = new Object();
+            param = $.mainParam;
+            $('#scroll').scrollTop(param.scrollTop);
+        }
+    }
+}
+
+$("#refresh").click(function() {
+    $.addLoading($(this));
+    usbDeviceList = $.act(ACT_GL, USB_DEVICE, null, null);
+
+    if (!$.exe()) {
+        if (0 == usbDeviceList.length) {
+            $.removeLoading();
+            $.reload();
+			$.alert(CMM_USB_SCAN_NO_DEVICE);
+            return;
+        }
+
+        var idx;
+
+        for (idx = 0; idx < usbDeviceList.length; idx++) {
+            usbDeviceList[idx].enable = 1;
+            mountUsb(idx);
+        }
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("usbManage.htm", param);
+    }
+
+});
+
+$("#shareOn").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["shareAll=1"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["shareAll=1"]);
+    $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, ["shareAll=1"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        $("#authentication").removeClass("nd");
+        $("#shareDrawing").addClass("nd");
+        $("#authDrawing").removeClass("nd");
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("usbManage.htm", param);
+    }
+});
+
+$("#shareOff").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["shareAll=0"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["shareAll=0"]);
+    $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, ["shareAll=0"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        $("#authentication").addClass("nd");
+        $("#authDrawing").addClass("nd");
+        $("#shareDrawing").removeClass("nd");
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("usbManage.htm", param);
+    }
+});
+
+$("#authOn").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["anonymous=0"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["anonymous=0"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("usbManage.htm", param);
+    };
+});
+
+$("#authOff").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["anonymous=1"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["anonymous=1"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        var param = {};
+        param.scrollTop = $("#scroll").scrollTop();
+        $.loadMain("usbManage.htm", param);
+    };
+});
+
+function getParentObj(obj) {
+    if (!obj.hasClass('cc')) {
+        currentFolder = obj.siblings().text();
+        if (fPath != "") {
+            currentFolder += ("/" + fPath);
+        }
+        fPath = currentFolder;
+        getParentObj(obj.parent());
+    } else {
+        fPath = "/" + fPath;
+    }
+}
+
+function clickFunc(obj) {
+    fPath = "";
+    currPath = "";
+
+    var id = obj.id;
+    var $ob = $("#" + id).parent();
+
+    getParentObj($ob);
+}
+
+$("#shareVolume").click(function() {
+    currentVol = $("#shareVolume").data("value");
+});
+
+function escapeStr(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/ /g, '&nbsp;');
+}
+
+function transStr(str) {
+    return str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\s/g, ' ');
+}
+
+function getFolderPath(obj) {
+    var label;
+    var index;
+
+    if (firstNode == 1) {
+        if (!$(obj).parent().hasClass('root')) {
+            folderPath = ("/" + $(obj).text());
+            o = obj;
+            firstNode = 0;
+            getFolderPath($(obj).parent());
+        } else {
+            folderPath = $(obj).text();
+
+            for (index = 0; index < volumeList.length; index++) {
+                if ($(obj).text() == (volumeList[index].label + ":")) {
+                    currVolume = volumeList[index].name;
+                }
+            }
+
+            var color = $(obj).css("color");
+            $(obj).css("color", "#0CF");
+            if (prevObj) {
+                $(prevObj).css("color", color);
+
+                var $prefol = $(prevObj).siblings(".folderSel");
+                if (prevObj != obj) {
+                    $prefol.removeClass("folderSel");
+                    $prefol.addClass("folderImg");
+                }
+            }
+            prevObj = obj;
+        }
+    } else {
+        if (!$(obj).parent().hasClass('root')) {
+            folderPath = ("/" + $(obj).siblings('span').text()) + folderPath;
+            getFolderPath($(obj).parent());
+        } else {
+            label = $(obj).siblings('.span').text();
+
+            for (index = 0; index < volumeList.length; index++) {
+                if ($(obj).siblings('.span').text() == (volumeList[index].label + ":")) {
+                    currVolume = volumeList[index].name;
+                }
+            }
+
+            folderPath = label + folderPath;
+            firstNode = 1;
+
+            var color = $(o).css("color");
+            $(o).css("color", "#0CF");
+
+            var $ofol = $(o).siblings(".folderImg");
+            $ofol.removeClass("folderImg");
+            $ofol.addClass("folderSel");
+
+            if (prevObj) {
+                $(prevObj).css("color", color);
+
+                var $prefol = $(prevObj).siblings(".folderSel");
+                if (prevObj != o) {
+                    $prefol.removeClass("folderSel");
+                    $prefol.addClass("folderImg");
+                }
+
+            }
+            prevObj = o;
+        }
+    }
+}
+
+function createChildFolder(obj) {
+    var index;
+
+    if (firstClick == 1) {
+        firstClick = 0;
+        o = obj;
+    }
+
+    if (!$(obj).parent().hasClass('root')) {
+        currentFolder = $(obj).siblings('.fName').text();
+
+        if (currPath != "") {
+            currentFolder += ("/" + currPath);
+        }
+        currPath = currentFolder;
+
+        createChildFolder($(obj).parent());
+    } else {
+        for (index = 0; index < volumeList.length; index++) {
+            if ($(obj).siblings('.span').text() == (volumeList[index].label + ":")) {
+                currVolume = volumeList[index].name;
+            }
+        }
+
+        var fullPath = currVolume + "/" + transStr(currPath);
+
+        var command = {};
+        command.targetPath = fullPath;
+        var ide;
+
+        $.act(ACT_SET, FOLDER_BROWSE, null, null, command);
+        folderList = $.act(ACT_GL, FOLDER_NODE, null, null, null);
+
+        if (!$.exe()) {
+            for (ide = 0; ide < folderList.length; ide++) {
+                var folderNameStr = escapeStr(folderList[ide].folderName);
+				/*add by wuzeyu do not show dir .media_server*/
+				if ($(obj).parent().hasClass('root'))
+				{
+					if (folderNameStr == ".media_server")
+					{
+						//alert("do not show dir:"+folderNameStr);
+						continue;
+					}
+				}
+				/*end add*/
+                text = ("<div style='padding-left:" + 23 + "px;' class='div'><div class='addFolder inline' onclick=loadClick(this);></div><div class='folderImg inline' onclick=foldSelect(this); style='cursor:pointer;'></div>&nbsp;<span class='fName inline' style='line-height:24px;vertical-align:top;cursor:pointer;' onClick='getFolderPath(this);'>" + folderNameStr + "</span></div>");
+                $(o).parent().append(text);
+            }
+        }
+        firstClick = 1;
+        currPath = "";
+        if (!($(o).parent().hasClass("root"))) {
+            $(o).parent().addClass("loaded");
+        }
+    }
+}
+
+function foldSelect(obj) {
+    $(obj).siblings(".fName").click();
+}
+
+function loadClick(obj) {
+    if ($(obj).hasClass("addFolder")) {
+        if ($(obj).parent().hasClass("vol")) {
+            $(obj).siblings('div').removeClass("nd");
+            $(o).parent().removeClass("vol");
+        } else if ($(obj).parent().hasClass("loaded")) {
+            $(obj).siblings('div').removeClass("nd");
+        } else {
+            createChildFolder(obj);
+        }
+
+        $(obj).removeClass("addFolder");
+        $(obj).addClass("hideFolder");
+    } else if ($(obj).hasClass("hideFolder")) {
+        $(obj).removeClass("hideFolder");
+        $(obj).addClass("addFolder");
+
+        if ($(obj).parent().hasClass("root")) {
+            $(obj).parent().addClass("vol");
+        }
+
+        $(obj).siblings('div').addClass("nd");
+    }
+}
+
+function showBrowse() {
+    $.setFixedCentral($("#folderSel"));
+    $.showCover();
+    $("#folderSel").removeClass("nd");
+    var index;
+    var i;
+
+    for (index = 0; index < volumeList.length; index++) {
+        if ("Online" == volumeList[index].status && currentVol == (volumeList[index].label + ":")) {
+            var text;
+            text = ("<div style='padding-left:10px;' class='root'><div class='addFolder inline' onclick=loadClick(this);></div>&nbsp;<span class='span inline' style='line-height:24px;vertical-align:top;cursor:pointer;' onClick='getFolderPath(this);'>" + volumeList[index].label + ":" + "</span></div>");
+
+            $("#folderSelContent").append(text);
+        }
+    }
+}
+
+$("#cancelPathSel").click(function() {
+    $.hideCover();
+    $("#folderSelContent").empty();
+    $("#folderSel").addClass("nd");
+});
+
+$("#confirmPathSel").click(function() {
+    $.hideCover();
+    $("#folderSelContent").empty();
+    $("#folderSel").addClass("nd");
+    $("#filename").val(transStr(folderPath));
+});
+
+function showFilename(o) {
+    var filename = $.id("filename");
+    if (filename) {
+        filename.value = o.value;
+    }
+}
+
+$("#shareSettings").click(function() {
+    $.addLoading($(this));
+
+    if ($("#server_name").val().length >= 16) {
+        $.alert(CMM_USB_SERVER_NAME_LENGTH);
+        return;
+    }
+
+    var newDlnaObj = {};
+    newDlnaObj.serverName = $("#server_name").val();
+
+    if (newDlnaObj.serverName == "") {
+        $.alert(ERR_USB_DLNA_SERVER_NAME_EMPTY);
+        return;
+    }
+    if ($.asc(newDlnaObj.serverName, true)) {
+        $.alert(ERR_USB_DLNA_SERVER_NAME_NOT_ASCII);
+        return;
+    }
+    if ((/[\\\/\*\?=:;,.()$#@^%!+""<>|\[\]\&\ ]+/).test(newDlnaObj.serverName)) {
+        $.alert(ERR_USB_DLNA_INVALID_SERVER_NAME);
+        return;
+    }
+
+    var command = {};
+    command.serverName = $("#server_name").val();
+
+    $.act(ACT_SET, DLNA_MEDIA_SERVER, null, null, newDlnaObj);
+    $.act(ACT_SET, SMB_SERVICE, null, null, command);
+
+    $.exe(function(ret) {
+        if (!ret) {
+            $.removeLoading();
+            var param = {};
+            param.scrollTop = $("#scroll").scrollTop();
+            $.loadMain("usbManage.htm", param);
+        };
+    });
+});
+
+function deleteItem() {
+    var index;
+
+    if ($("#shareTitle").prop("data-checked") == true) {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            delShareMul(index);
+        }
+    } else {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if ($("#cb" + index).prop("data-checked") == true) {
+                delShareMul(index);
+            }
+        }
+    }
+
+    $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+    $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+    $.exe();
+    var param = {};
+    param.scrollTop = $("#scroll").scrollTop();
+    $.loadMain("usbManage.htm", param);
+}
+
+$("#edit-ok").click(function() {
+    var newStr;
+    var selectVolumeUuid;
+    var selectVolumeLabel;
+    var index;
+    var command = {};
+    var command_ftp = {};
+	var command_dlna = {};
+    var stack_samba;
+    var enableDlna = 0;
+    var str;
+    var stack_ftp;
+    var curFolderPath;
+
+    $.addLoading($(this));
+
+    newStr = $("#shareName").val();
+
+    if (newStr === "") {
+        $.alert(ERR_USB_SHARE_NAME_EMPTY);
+        return;
+    }
+
+	if ((/[\\\/:\*\?""<>|[\]\+\ ]+/).test(newStr)) {
+        $.alert(ERR_USB_INVALID_CHAR_IN_FOLDER_NAME);
+        return;
+    }
+
+    if ($.asc(newStr)) {
+        $.alert(ERR_USB_SHARE_NAME_NOT_ASCII);
+        return;
+    }
+
+    selectVolumeUuid = "";
+    selectVolumeLabel = "";
+
+    $.each(volumeList, function() {
+        if (this.name == currVolume) {
+            selectVolumeUuid = this.uuid;
+            selectVolumeLabel = this.label;
+        }
+    });
+
+    str = $("#filename").val();
+    if (str == "") {
+        $.alert(CMM_USB_BROWSE_FOLDER_PATH);
+        return;
+    }
+
+    if (str.length == 2){
+        curFolderPath = "/";
+    } else {
+        curFolderPath = str.substring(2, str.length);
+    }
+
+    if ("add" == shareTabStatus) {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if ((curFolderPath == accessFolderList_samba[index].name) && (selectVolumeUuid == accessFolderList_samba[index].volumeUuid)) {    
+                $.alert(ERR_USB_DIR_EXIST);
+                return;
+            }
+
+            if ($("#shareName").val() == accessFolderList_samba[index].alias) {
+                $.alert(ERR_USB_SHARE_NAME_EXIST);
+                return;
+            }
+        }
+
+        command.name = curFolderPath;
+        command.alias = $("#shareName").val();
+        command.enable = 1;
+        command.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+
+        command_ftp.name = curFolderPath;
+        command_ftp.alias = $("#shareName").val();
+        command_ftp.enable = 1;
+        command_ftp.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+        command_ftp.writePermission = ($("#wa").prop("data-checked") == true) ? 7 : 3;
+
+		command_dlna.name = curFolderPath;
+        command_dlna.alias = $("#shareName").val();
+        command_dlna.enable = ($("#ems").prop("data-checked") == true) ? 1 : 0;
+        command_dlna.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+        if (selectVolumeUuid != "") {
+            command.volumeUuid = selectVolumeUuid;
+            command_ftp.volumeUuid = selectVolumeUuid;
+			command_dlna.volumeUuid = selectVolumeUuid;
+        }
+        if (selectVolumeLabel != "") {
+            command.volumeLabel = selectVolumeLabel;
+            command_ftp.volumeLabel = selectVolumeLabel;
+			command_dlna.volumeLabel = selectVolumeLabel;
+        }
+
+        $.act(ACT_ADD, SMB_SERVICE_FOLDER, null, null, command);
+        accessFolderList_samba = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+
+        $.act(ACT_ADD, FTP_SERVER_FOLDER, null, null, command_ftp);
+        accessFolderList_ftp = $.act(ACT_GL, FTP_SERVER_FOLDER, null, null, null);
+
+        $.act(ACT_ADD, DLNA_MEDIA_SERVER_FOLDER, null, null, command_dlna);
+            accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+    } else {
+        for (index = 0; index < accessFolderList_samba.length; index++) {
+            if (($("#shareName").val() == accessFolderList_samba[index].alias) && (index != editCurIndex)) {
+                $.alert(ERR_USB_SHARE_NAME_EXIST);
+                return;
+            }
+            if ((curFolderPath == accessFolderList_samba[index].name) && (selectVolumeUuid == accessFolderList_samba[index].volumeUuid) && (index != editCurIndex)) {
+                $.alert(ERR_USB_DIR_EXIST);
+                return;
+            }
+        }
+
+        command.name = curFolderPath;
+        command.alias = $("#shareName").val();
+        command.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+
+        command_ftp.name = curFolderPath;
+        command_ftp.alias = $("#shareName").val();
+        command_ftp.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+        command_ftp.writePermission = ($("#wa").prop("data-checked") == true) ? 7 : 3;
+
+		command_dlna.name = curFolderPath;
+        command_dlna.alias = $("#shareName").val();
+        command_dlna.enable = ($("#ems").prop("data-checked") == true) ? 1 : 0;
+        command_dlna.needAuth = ($("#ea").prop("data-checked") == true) ? 1 : 0;
+		
+        if (selectVolumeUuid != "") {
+            command.volumeUuid = selectVolumeUuid;
+            command_ftp.volumeUuid = selectVolumeUuid;
+			command_dlna.volumeUuid = selectVolumeUuid;
+        }
+        if (selectVolumeLabel != "") {
+            command.volumeLabel = selectVolumeLabel;
+            command_ftp.volumeLabel = selectVolumeLabel;
+			command_dlna.volumeLabel = selectVolumeLabel;
+        }
+
+        $.act(ACT_SET, SMB_SERVICE_FOLDER, accessFolderList_samba[editCurIndex].__stack, null, command);
+        accessFolderList_samba = $.act(ACT_GL, SMB_SERVICE_FOLDER, null, null, null);
+
+        $.act(ACT_SET, FTP_SERVER_FOLDER, accessFolderList_ftp[editCurIndex].__stack, null, command_ftp);
+        accessFolderList_ftp = $.act(ACT_GL, FTP_SERVER_FOLDER, null, null, null);
+
+		$.act(ACT_SET, DLNA_MEDIA_SERVER_FOLDER, accessFolderList_dlna[editCurIndex].__stack, null, command_dlna);
+        accessFolderList_dlna = $.act(ACT_GL, DLNA_MEDIA_SERVER_FOLDER, null, null, null);
+    }
+
+    $.exe(function(ret) {
+        if (!ret) {
+            if ("add" == shareTabStatus) {
+                stack_samba = accessFolderList_samba[folderIdx].__stack;
+                stack_ftp = accessFolderList_ftp[folderIdx].__stack;
+            } else {
+                stack_samba = accessFolderList_samba[editCurIndex].__stack;
+                stack_ftp = accessFolderList_ftp[editCurIndex].__stack;
+            }
+
+            var newFlag = 1;
+            var userCommand = {};
+
+            for (index = 0; index < userAccessList_samba.length; index++) {
+                if (parseInt(stack_samba, 10) != parseInt(userAccessList_samba[index].__stack, 10)) {
+                    continue;
+                }
+
+                if (parseInt(userList[0].__stack, 10) == userAccessList_samba[index].userId) {
+                    userCommand.userId = 1;
+                    if ($("#wa").prop("data-checked") == true) {
+                        userCommand.permissions = 7;
+                    } else {
+                        userCommand.permissions = 3;
+                    }
+                }
+
+                $.act(ACT_SET, SMB_USER_ACCESS, userAccessList_samba[index].__stack, null, userCommand);
+                newFlag = 0;
+            }
+            if (1 == newFlag) {
+                userCommand.userId = 1;
+                if ($("#wa").prop("data-checked") == true) {
+                    userCommand.permissions = 7;
+                } else {
+                    userCommand.permissions = 3;
+                }
+
+                $.act(ACT_ADD, SMB_USER_ACCESS, null, stack_samba, userCommand);
+            }
+
+            $.exe(function(ret) {
+                if (!ret) {
+                    $.act(ACT_SET, SMB_SERVICE, null, null, ["modified=0"]);
+                    $.act(ACT_SET, FTP_SERVER, null, null, ["modified=0"]);
+                    if (!$.exe()) {
+                        $.removeLoading();
+                        var param = {};
+                        param.scrollTop = $("#scroll").scrollTop();
+                        $.loadMain("usbManage.htm", param);
+                    }
+                } else {
+                    $.removeLoading();
+                }
+            });
+        } else {
+            $.removeLoading();
+        }
+    });
+});
+
+$("#edit-cancel").click(function() {
+    var param = {};
+    param.scrollTop = $("#scroll").scrollTop();
+    $.loadMain("usbManage.htm", param);
+});
+</script>
+
+<h3 id="t_dSett">Device Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <button type="submit" id="refresh" class="blue left T_scan">Scan</button>
+        <div id="usb_drawing" class="part-separate">
+        </div>
+    </form>
+</div>
+
+<h3 id="t_sSett">Sharing Settings</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <label id="t_nsn">Network/Media Server Name:</label>
+        <input type="text" id="server_name" maxlength="15" />
+        <button type="submit" class="green T_save" id='shareSettings'>Save</button>
+    </form>
+</div>
+
+<h3 id="t_info">Folder Sharing</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b id="t_esa">Share All:</b>
+            <ul>
+                <li>
+                    <button id="shareOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="shareOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="browse-content-container nd" id="folderSel">
+            <div class="browse-content-container-wrap">
+                <span><b id="t_brw">Browse for folder path</b>
+                </span>
+                <br>
+                <br>
+                <div id="folderSelContent">
+                </div>
+            </div>
+
+            <div class="inline-btn-right">
+                <button type="submit" class="green inline T_cancel" id="cancelPathSel">Cancel</button>
+                <button type="submit" class="green inline T_ok" id="confirmPathSel">OK</button>
+            </div>
+        </div>
+
+
+        <div id="shareDrawing" class="nd">
+            <div class='table-op'>
+                <div class='table-btn'>
+                    <span class='add-icon' id="shareItemAdd"></span>
+                    <label class="T_add">Add</label>
+                    <span class='delete-icon' onclick="deleteItem()"></span>
+                    <label class="T_del">Delete</label>
+                </div>
+            </div>
+            <table id='shareTab'>
+                <thead></thead>
+                <tbody>
+                    <tr id="editShareFolder" class="nd">
+                        <td colspan="8">
+                            <div>
+                                <b id="t_vol">Volume Name:</b>
+                                <select id="shareVolume">
+                                </select>
+                            </div>
+                            <div>
+                                <b id="t_folP">Folder Path:</b>
+                                <input type="text" id="filename" class="xl" disabled required>
+                                <button type="submit" class="blue" id="t_browse" onclick="showBrowse()">Browse</button>
+                            </div>
+                            <div>
+                                <b id="t_shareN">Folder Name:</b>
+                                <input type="text" id="shareName" class="xl" maxlength="31" required>
+                            </div>
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="ea" />
+                                <label id="t_ea">Enable Authentication</label>
+                            </div>
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="wa" />
+                                <label id="t_wa">Enable Write Access</label>
+                            </div>
+                            <div>
+                                <b></b>
+                                <input type="checkbox" id="ems" />
+                                <label id="t_ems">Enable Media Sharing</label>
+                            </div>
+                            <div class="inline-btn-right">
+                                <button type="submit" class="green T_cancel" id="edit-cancel">Cancel</button>
+                                <button type="submit" class="green T_ok" id="edit-ok">OK</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-group-container" id="authentication">
+            <b id="t_ea_a">Enable Authentication:</b>
+            <ul>
+                <li>
+                    <button id="authOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="authOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+
+        <div id="authDrawing" class="nd">
+            <div class='table-op'>
+                <div class='table-btn'>
+                    <span class='refresh-icon' id="refShareSet"></span>
+                    <label class="T_refresh">Refresh</label>
+                </div>
+            </div>
+            <table id='authTab'>
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<script language="javascript" type="text/javascript">
+$.tpInit(init);
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

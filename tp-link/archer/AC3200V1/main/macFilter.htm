@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script type="text/javascript">
 var wlanObj_2g,
     wlanObj_5g,
@@ -642,3 +643,649 @@ $("#checkbox_devicesOnline").click(function() {
 });
 $.tpInit(init);
 </script>
+=======
+<script type="text/javascript">
+var wlanObj_2g,
+    wlanObj_5g,
+    wlanObj_5g_2,
+    wlanFilterList_2g,
+    wlanFilterList_5g,
+    wlanFilterList_5g_2;
+
+var macFilterArray = [];
+var wlanFilterList, wlanObj;
+var editFlag = 0;
+var editIndex = -1;
+
+function init() {
+
+    var wlanList = $.act(ACT_GL, LAN_WLAN, null, null, ["name",
+        "X_TP_MACAddressControlRule",
+        "MACAddressControlEnabled",
+        "X_TP_Band",
+        "subBand"
+    ]);
+
+    if (!$.exe()) {
+        $.each(wlanList, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                wlanObj_2g = this;
+            } else {
+                if (1 == this.subBand)
+                wlanObj_5g = this;
+                else
+                    wlanObj_5g_2 = this;
+            }
+        });
+        initFilterArray();
+    }
+
+
+    // if (!$.exe()) {
+
+    /*        $.each(wlanList, function() {
+            var wlanFilterObj = this;
+            var found = false;
+            $.each(macFilterArray, function() {
+                if (this.mac == wlanFilterObj.MACAddress) {
+                    found = true;
+                    macFilterGroup = this;
+                }
+            });
+            if (found == false) {
+                macFilterGroup = {};
+                macFilterGroup.mac = wlanFilterObj.MACAddress;
+                macFilterGroup.arr = [];
+                macFilterGroup.arr.push(wlanFilterObj);
+                macFilterArray.push(macFilterGroup);
+            } else {
+                macFilterGroup.arr.push(wlanFilterObj);
+            }
+        });
+        wlanObj = wlanList[0];*/
+
+    if (wlanObj_2g.MACAddressControlEnabled == 1) {
+        $('#macEn').addClass('selected');
+    } else {
+        $('#macDis').addClass('selected');
+    }
+
+    if (wlanObj_2g.X_TP_MACAddressControlRule === 'allow') {
+        $('#white').prop('checked', 'checked');
+        $(".block-icon-wrap").hide();
+    } else {
+        $('#black').prop('checked', 'checked');
+        $(".block-icon-wrap").show();
+    }
+    // }
+
+}
+
+function deleteOne(index) {
+    var i;
+    var filterEntry = macFilterArray[index].arr;
+    for (i in filterEntry) {
+        $.act(ACT_DEL, LAN_WLAN_MACTABLEENTRY, filterEntry[i].__stack, null, null);
+    }
+}
+
+function doDel(index) {
+    deleteOne(index);
+    $.exe();
+    $.reload();
+}
+
+function doEdit(index) {
+    editIndex = index;
+    editFlag = 1;
+    var filterEntry = macFilterArray[index].arr;
+    $('#mac').prop('value', filterEntry[0].MACAddress);
+    $('#desc').prop('value', filterEntry[0].description);
+    $('#enable').prop('checked', filterEntry[0].enabled == "1");
+    $('#enable').data('tpCheckbox').refresh();
+}
+
+function doEnable(index) {
+    var filterEntry = macFilterArray[index].arr;
+    for (i in filterEntry) {
+        filterEntry[i].enabled = filterEntry[i].enabled == "1" ? "0" : "1";
+        $.act(ACT_SET, LAN_WLAN_MACTABLEENTRY, filterEntry[i].__stack, null, ["enabled=" + filterEntry[i].enabled]);
+    }
+    $.exe(function(ret) {
+        if (filterEntry[0].enabled == 0)
+            $('#en_' + index).addClass('disable-icon').removeClass('enable-icon');
+        else
+            $('#en_' + index).removeClass('disable-icon').addClass('enable-icon');
+    });
+}
+
+function initFilterArray() {
+
+    wlanFilterList_2g = $.act(ACT_GS, LAN_WLAN_MACTABLEENTRY, null, wlanObj_2g.__stack, ["enabled",
+        "MACAddress",
+        "Description",
+        "HostName"
+    ]);
+    wlanFilterList_5g = $.act(ACT_GS, LAN_WLAN_MACTABLEENTRY, null, wlanObj_5g.__stack, ["enabled",
+        "MACAddress",
+        "Description",
+        "HostName"
+    ]);
+    wlanFilterList_5g_2 = $.act(ACT_GS, LAN_WLAN_MACTABLEENTRY, null, wlanObj_5g_2.__stack, ["enabled",
+        "MACAddress",
+        "Description",
+        "HostName"
+    ]);
+	macFilterArray = [];
+    if (!$.exe()) {
+        $.each(wlanFilterList_2g, function() {
+            var macFilterGroup = {};
+            macFilterGroup.mac = this.MACAddress;
+            macFilterGroup.arr = [];
+            macFilterGroup.arr.push(this);
+            $.each(wlanFilterList_5g, function() {
+                if (macFilterGroup.mac == this.MACAddress)
+                    macFilterGroup.arr.push(this);
+            });
+            $.each(wlanFilterList_5g_2, function() {
+                if (macFilterGroup.mac == this.MACAddress)
+                    macFilterGroup.arr.push(this);
+            });
+            macFilterArray.push(macFilterGroup);
+        });
+        /*the following code is useless*/
+        $.each(wlanFilterList_5g, function() {
+            var exist = 0;
+            var i;
+            for (i in macFilterArray) {
+                if (macFilterArray[i].mac == this.MACAddress) {
+                    exist = 1;
+                    break;
+                }
+            }
+            if (exist == 0) {
+                macFilterGroup = {};
+                macFilterGroup.mac = this.MACAddress;
+                macFilterGroup.arr = [];
+                macFilterGroup.arr.push(this);
+                macFilterArray.push(macFilterGroup);
+            }
+        })
+
+    }
+}
+
+function initTable(argument) {
+    var array = [];
+    init();
+	//$.tpInit(init);
+    var index = 0;
+
+    $.each(macFilterArray, function() {
+        array.push([{
+            "text": '<span><div><input type="checkbox" id="' + index + '"/><label></label></div></span>',
+            "width": "5%"
+        }, {
+            "text": index + 1,
+            "width": "5%"
+        }, {
+            "text": this.arr[0].MACAddress,
+            "width": "20%"
+        }, {
+            "text": this.arr[0].description,
+            "width": ""
+        }, {
+            "text": "<span class='table-grid-icon " + (this.arr[0].enabled == "0" ? "disable-icon" : "enable-icon") + "' id='en_" + index + "' onclick='doEnable(" + index + ");'></span>",
+            "width": "10%"
+        }, {
+            "text": "<span class='table-grid-icon edit-modify-icon' id='edit_" + index + "' onclick='doEdit(" + index + ");'></span><span class='table-grid-icon edit-trash-icon' id='del_" + index + "' onclick='doDel(" + index + ");'></span>",
+            "width": "15%"
+        }]);
+        index++;
+    });
+
+    $.initTableBody($("#tableMacFilter"), array);
+    $.tablePages($("#tableMacFilter"), 8);
+}
+
+
+function initDeviceOnlineTable() {
+    var array = new Array();
+    var deviceOnline = $.act(ACT_GL, LAN_HOST_ENTRY, null, null, ["X_TP_ConnType", "MACAddress", "hostName", "IPAddress"]);
+
+    $.exe(function(err) {
+        if (err) return;
+        var index = 1;
+        $.each(deviceOnline, function() {
+            if (this.X_TP_ConnType == 1 || this.X_TP_ConnType == 3) {
+                array.push([{
+                    "text": '<span><div><input type="checkbox" id="devOnline' + index + '"/><label></label></div></span>',
+                    "width": "5%"
+                }, {
+                    "text": index,
+                    "width": "5%"
+                }, {
+                    "text": this.hostName,
+                    "width": "20%"
+                }, {
+                    "text": this.IPAddress,
+                    "width": "20%"
+                }, {
+                    "text": this.MACAddress,
+                    "width": "30%"
+                }, {
+                    "text": table_str.wireless,
+                    "width": "20%"
+                }]);
+
+                index++;
+            }
+        });
+
+        $.initTableBody($("#tableDevicesOnline"), array);
+        $.tablePages($("#tableDevicesOnline"), 5);
+    });
+
+}
+
+$("#blockDev").click(function() {
+    doAddImmediately();
+});
+
+function doAddImmediately() {
+    var td = $("#tableDevicesOnline").find("tbody tr td");
+    td.find("span.checkbox-click").each(function() {
+        var macAddr = $(this).parents("tr").find("td:eq(4)").text();
+        var desc = $(this).parents("tr").find("td:eq(2)").text();
+
+        $.act(ACT_ADD, LAN_WLAN_MACTABLEENTRY, null, wlanObj_2g.__stack, ["MACAddress=" + macAddr,
+            "Description=" + desc,
+            "enabled=1",
+            "hostName=" + wlanObj_2g.name
+        ]);
+        $.act(ACT_ADD, LAN_WLAN_MACTABLEENTRY, null, wlanObj_5g.__stack, ["MACAddress=" + macAddr,
+            "Description=" + desc,
+            "enabled=1",
+            "hostName=" + wlanObj_5g.name
+        ]);
+        $.act(ACT_ADD, LAN_WLAN_MACTABLEENTRY, null, wlanObj_5g_2.__stack, ["MACAddress=" + macAddr,
+            "Description=" + desc,
+            "enabled=1",
+            "hostName=" + wlanObj_5g_2.name
+        ]);
+        $.exe(function(ret) {
+            if (!ret) {
+                $.reload();
+            }
+        });
+    });
+}
+
+function clickRule(onOff) {
+    if (onOff === 'on') {
+        $.act(ACT_SET, LAN_WLAN, wlanObj_2g.__stack, null, ["MACAddressControlEnabled=1"]);
+        $.act(ACT_SET, LAN_WLAN, wlanObj_5g.__stack, null, ["MACAddressControlEnabled=1"]);
+        $.act(ACT_SET, LAN_WLAN, wlanObj_5g_2.__stack, null, ["MACAddressControlEnabled=1"]);
+        $.exe(function(ret) {
+            $.removeLoading();
+        });
+    } else {
+        $.act(ACT_SET, LAN_WLAN, wlanObj_2g.__stack, null, ["MACAddressControlEnabled=0"]);
+        $.act(ACT_SET, LAN_WLAN, wlanObj_5g.__stack, null, ["MACAddressControlEnabled=0"]);
+        $.act(ACT_SET, LAN_WLAN, wlanObj_5g_2.__stack, null, ["MACAddressControlEnabled=0"]);
+        $.exe(function(ret) {
+            $.removeLoading();
+        });
+    }
+}
+
+function clickSaveRule() {
+    var mode;
+
+    if ($('#black').prop('checked')) {
+        mode = "deny";
+        $(".block-icon-wrap").show();
+    } else {
+        mode = "allow";
+        $(".block-icon-wrap").hide();
+    }
+    $.act(ACT_SET, LAN_WLAN, wlanObj_2g.__stack, null, ["X_TP_MACAddressControlRule=" + mode]);
+    $.act(ACT_SET, LAN_WLAN, wlanObj_5g.__stack, null, ["X_TP_MACAddressControlRule=" + mode]);
+    $.act(ACT_SET, LAN_WLAN, wlanObj_5g_2.__stack, null, ["X_TP_MACAddressControlRule=" + mode]);
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+
+function clickEditOk() {
+    if (checkParam() == false) {
+        return false;
+    }
+
+    if (editFlag == 1) {
+        var filterEntry = macFilterArray[editIndex].arr;
+        var macFilter = {};
+        macFilter.MACAddress = $('#mac').prop('value');
+        macFilter.description = $('#desc').prop('value');
+        macFilter.enabled = $('#enable').prop('data-checked') == true ? "1" : "0";
+        for (i in filterEntry) {
+            $.act(ACT_SET, LAN_WLAN_MACTABLEENTRY, filterEntry[i].__stack, null, macFilter)
+        }
+        $.exe(function(ret) {
+            if (!ret) {
+            $.removeLoading();
+            $.reload();
+            }
+        });
+    } else if (editFlag == 2) {
+        var macAddr = $('#mac').prop('value');
+        var desc = $('#desc').prop('value');
+        var enable = $('#enable').prop('data-checked') == true ? "1" : "0";
+        $.act(ACT_ADD, LAN_WLAN_MACTABLEENTRY, null, wlanObj_2g.__stack, ["MACAddress=" + macAddr,
+            "Description=" + desc,
+            "enabled=" + enable,
+            "hostName=" + wlanObj_2g.name
+        ]);
+        $.act(ACT_ADD, LAN_WLAN_MACTABLEENTRY, null, wlanObj_5g.__stack, ["MACAddress=" + macAddr,
+            "Description=" + desc,
+            "enabled=" + enable,
+            "hostName=" + wlanObj_5g.name
+        ]);
+        $.act(ACT_ADD, LAN_WLAN_MACTABLEENTRY, null, wlanObj_5g_2.__stack, ["MACAddress=" + macAddr,
+            "Description=" + desc,
+            "enabled=" + enable,
+            "hostName=" + wlanObj_5g_2.name
+        ]);
+        $.exe(function(ret) {
+            if (!ret) {
+            $.removeLoading();
+            $.reload();
+            }
+        });
+    }
+}
+
+function delSelect() {
+    var numOfDel = 0;
+    for (i in macFilterArray) {
+        if ($("#" + i).prop('data-checked')) {
+            numOfDel++;
+        }
+    }
+    if (numOfDel > 0) {
+    $.confirm(n_str.macFilter.t_confirm, function() {
+        for (i in macFilterArray) {
+            if ($("#" + i).prop('data-checked')) {
+                deleteOne(i);
+            }
+        }
+        $.exe();
+        $.reload();
+    });
+}
+}
+
+
+function checkParam() {
+    var macAddr = $('#mac').prop("value");
+    var enable = $('#enable').prop('checked');
+    var desc = $('#desc').prop('value');
+    var isConflict = false;
+    if ($.mac(macAddr))
+        return false;
+
+    if (desc == "") {
+        desc = " ";
+    }
+
+    if (!$.isname(desc)) {
+        $.alert(ERR_WLAN_MAC_FILTER_DESCRIP_INVALID);
+        return false;
+    }
+
+    if (editFlag == 2) {
+        $.each(macFilterArray, function() {
+            if (this.mac.toUpperCase() == macAddr.toUpperCase()) {
+                isConflict = true;
+            }
+        });
+    } else if (editFlag == 1) {
+        for (i in macFilterArray) {
+            if (i == editIndex)
+                continue;
+
+            if (macFilterArray[i].mac.toUpperCase() == macAddr.toUpperCase()) {
+                isConflict = true;
+            }
+
+        }
+    }
+    if (isConflict) {
+        $.alert(ERR_WLAN_MAC_CONFLICT);
+        return false;
+    }
+
+    return true;
+}
+
+function selectAll() {
+    var i;
+    var td = $("#tableMacFilter").find("tbody tr td");
+    for (i in macFilterArray) {
+        if ($('#checkbox_st').prop('data-checked'))
+            $("#" + i).prop('checked', true);
+        else
+            $("#" + i).prop('checked', false);
+    }
+    $('#checkbox_st').prop('checked', $('#checkbox_st').prop('data-checked'));
+
+    $.each(td.find('input.checkbox-checkbox'), function() {
+        $(this).data('tpCheckbox').refresh();
+    });
+}
+
+$('#white').on('click.macfilter', function() {
+    $(".block-icon-wrap").hide();
+});
+$('#black').on('click.macfilter', function() {
+    $(".block-icon-wrap").show();
+});
+$('#macEn').on('click.macfilter', function(e) {
+    $.addLoading($(this));
+    clickRule('on');
+});
+$('#macDis').on('click.macfilter', function(e) {
+    $.addLoading($(this));
+    clickRule('off');
+});
+$('#saveRule').on('click.macfilter', function(e) {
+    $.addLoading($(this));
+    clickSaveRule();
+});
+$('#edit-ok').on('click.macfilter', function(e) {
+    $.addLoading($('#edit-cancel'));
+    clickEditOk();
+});
+$('#addMacFilter').on('click.macfilter', function(e) {
+    editFlag = 2;
+    editIndex = -1;
+});
+$('#delMacFilter').on('click.macfilter', function(e) {
+    delSelect();
+});
+$("#edit-cancel").on('click.macfilter', function(e) {
+    $.reload();
+});
+</script>
+
+<h3 id="et">Settings</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b class="xl" id="t_acl">Wireless MAC Filtering:</b>
+            <ul>
+                <li>
+                    <button id="macEn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="macDis" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<div class="part-separate"></div>
+
+<h3 id="t_rule">Filtering Rules</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <p class="cfg-line" id="t_selrule">Select the filtering rule:</p>
+        <div>
+            <input type="radio" name="filterRule" id="black" checked="checked" />
+            <label id="t_black">Black List(Device in below list can not access this router).</label>
+        </div>
+        <div>
+            <input type="radio" name="filterRule" id="white" />
+            <label id="t_white">White List(Only the device in below list can access this router).</label>
+        </div>
+        <button type="submit" class="green T_save" id="saveRule">Save</button>
+    </form>
+</div>
+
+<h3 id="t_list">Devices in List</h3>
+<form class="pure-form pure-form-aligned">
+    <div>
+        <div class="table-op" id="addItem">
+            <div class="table-btn">
+                <span id="addMacFilter" class="add-icon"></span>
+                <label class="T_add">Add</label>
+                <span id="delMacFilter" class="delete-icon"></span>
+                <label class="T_del">Delete</label>
+            </div>
+        </div>
+        <table id="tableMacFilter">
+            <thead></thead>
+            <tbody id="bodyMacFilter">
+                <tr id="edit-container-arp" class="nd">
+                    <td colspan="7">
+                        <div>
+                            <b id="t_macaddr">MAC Address:</b>
+                            <input id="mac" type="text" required>
+                        </div>
+                        <div>
+                            <b id="t_description">Description:</b>
+                            <input id="desc" type="text" maxlength="60" required>
+                        </div>
+                        <div>
+                            <b></b>
+                            <input type="checkbox" id="enable" checked="true" />
+                            <label id="t_en">Enable this Entry</label>
+                        </div>
+                        <div class="inline-btn-right">
+                            <button type="submit" class="green T_cancel" id="edit-cancel">Cancel</button>
+                            <button type="submit" class="green T_ok" id="edit-ok">OK</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+
+<div class="part-separate"></div>
+
+<h3 id="t_online">Devices Online</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="table-op" id="refreshDeviceOnline">
+            <div class="table-btn">
+                <span class="refresh-icon"></span>
+                <label class="T_refresh">Refresh</label>
+                <span id="blockDev" class="block-icon"></span>
+                <label class="T_block">Block</label>
+            </div>
+        </div>
+
+        <table id="tableDevicesOnline">
+            <thead></thead>
+            <tbody id="bodyDevicesOnline">
+
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+var headArray = [{
+    "text": '<div><input type="checkbox" id="checkbox_st" /><label></label></div>',
+    "width": "5%"
+}, {
+    "text": table_str.id,
+    "width": "5%"
+}, {
+    "text": table_str.mac,
+    "width": "20%"
+}, {
+    "text": table_str.description,
+    "width": ""
+}, {
+    "text": table_str.enable,
+    "width": "15%"
+}, {
+    "text": table_str.modify,
+    "width": "15%"
+}];
+
+$.initTableHead($("#tableMacFilter"), headArray);
+$("#tableMacFilter").tpTable(initTable);
+
+var devicesOnlineHeadArray = [{
+    "text": '<div><input type="checkbox" id="checkbox_devicesOnline"/><label></label></div>',
+    "width": "5%"
+}, {
+    "text": table_str.id,
+    "width": "5%"
+}, {
+    "text": table_str.devname,
+    "width": "20%"
+}, {
+    "text": table_str.ip,
+    "width": "20%"
+}, {
+    "text": table_str.mac,
+    "width": "30%"
+}, {
+    "text": table_str.conntype,
+    "width": "20%"
+}];
+
+$.initTableHead($("#tableDevicesOnline"), devicesOnlineHeadArray);
+$("#tableDevicesOnline").tpTable(initDeviceOnlineTable);
+
+$("#checkbox_st").on('click.macfilter', function(e) {
+    selectAll();
+});
+
+$("#checkbox_devicesOnline").click(function() {
+    var td = $("#tableDevicesOnline").find("tbody tr td");
+    if ($("#checkbox_devicesOnline").next("label").siblings('.checkbox-checkbox').prop('data-checked') === true) {
+        td.find("input[type='checkbox']").each(function(index) {
+            $(this).next("label").siblings('.checkbox-checkbox').prop('checked', true);
+        });
+    } else if ($("#checkbox_devicesOnline").next("label").siblings('.checkbox-checkbox').prop('data-checked') === false) {
+        td.find("input[type='checkbox']").each(function(index) {
+            $(this).next("label").siblings('.checkbox-checkbox').prop('checked', false);
+        });
+    }
+    $("#checkbox_devicesOnline").prop("checked", $("#checkbox_devicesOnline").prop("data-checked"));
+
+    $.each(td.find('input.checkbox-checkbox'), function() {
+        $(this).data('tpCheckbox').refresh();
+    });
+});
+$.tpInit(init);
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

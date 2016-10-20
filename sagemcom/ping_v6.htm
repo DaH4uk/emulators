@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="files/reset.css" rel="stylesheet" type="text/css">
+<link href="files/base.css" rel="stylesheet" type="text/css">
+<link href="files/style.css" rel="stylesheet" type="text/css">
+<script src="files/share.js" type="text/javascript">
+</script>
+
+ <title>Ping6</title>
+    <script>
+
+
+        function ping6Click() {
+            if (document.ping6.ip6addr.value == "") {
+                alert("Укажите тестируемый адрес!");
+                document.ping6.ip6addr.focus();
+                return false;
+            }
+
+            if (isLinkLocalIpv6Address(document.ping6.ip6addr.value)) {
+                if (document.getElementsByName("Интерфейс")[0].value == "") {
+
+                    alert("Выберите интерфейс!");
+                    document.ping6.Интерфейс.focus();
+                    return false;
+
+                }
+            }
+
+            return true;
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Диагностика Ping6</p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody><tr>
+
+                <th width="30%">Хост: </th>
+                <td><input maxlength="64" size="32" name="ip6addr" type="text"></td>
+
+            </tr>
+
+            <tr>
+
+                <th>Интерфейс: </th>
+                <td>
+
+                    <select name="Интерфейс" width="25">
+<option value="" selected="selected"> </option>
+<option value="14"> pppoe1</option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+    <div class="btn_ctl">
+
+        <input class="link_bg" onclick="return ping6Click()" value=" PING " type="submit">
+  <input value="Send" name="submit.htm?pingrlt_v6.htm" type="hidden">
+
+    </div>
+
+
+
+
+
+
+
+
+</body></html>

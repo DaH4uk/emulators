@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Управление доступом к беспроводным сетям</title>
+    <script>
+        function skip() {
+            this.blur();
+        }
+
+        function addClick() {
+            if (!checkMacWithoutColon(document.formWlAcAdd.mac, 1)) {
+                alert("Неверный MAC адрес! Задайте верное значение MAC адреса!");
+                return false;
+            }
+            return true;
+        }
+
+        function disableDelButton() {
+            disableButton(document.formWlAcDel.deleteSelFilterMac);
+            disableButton(document.formWlAcDel.deleteAllFilterMac);
+        }
+
+        function enableAc() {
+            enableTextField(document.formWlAcAdd.mac);
+        }
+
+        function disableAc() {
+            disableTextField(document.formWlAcAdd.mac);
+        }
+
+        function updateState() {
+            if (wlanDisabled || wlanMode == 1 || wlanMode == 2) {
+                disableDelButton();
+                disableButton(document.formWlAcAdd.setFilterMode);
+                disableButton(document.formWlAcAdd.reset);
+                disableButton(document.formWlAcAdd.addFilterMac);
+                disableTextField(document.formWlAcAdd.wlanAcEnabled);
+                disableAc();
+            }
+            else {
+                if (document.formWlAcAdd.wlanAcEnabled.selectedIndex) {
+                    enableButton(document.formWlAcAdd.reset);
+                    enableButton(document.formWlAcAdd.addFilterMac);
+                    enableAc();
+                }
+                else {
+                    disableButton(document.formWlAcAdd.reset);
+                    disableButton(document.formWlAcAdd.addFilterMac);
+                    disableAc();
+                }
+            }
+        }
+
+        function delACLEntryCheck() {
+            if (deleteClick() == true) {
+                if (document.formWlAcAdd.checkWPS2.value == 1) {
+                    if (document.formWlAcAdd.wlanAcEnabled.selectedIndex == 1 && document.formWlAcDel.totalNum.value == 1) {
+                        if (confirm("Если режим ACL установлен в режим 'Разрешить указанным', а ACL лист не будет содержать записи - WPS будет отключен.\nПродолжить?") == 0) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+
+            return true;
+        }
+
+        function delEntryCheck() {
+            if (document.formWlAcDel.select.length) {
+                for (i = 0; i < document.formWlAcDel.select.length; i++) {
+                    if (document.formWlAcDel.select[i].checked) {
+                        return delACLEntryCheck();
+                    }
+                }
+            }
+            else {
+                if (document.formWlAcDel.select.checked) {
+                    return delACLEntryCheck();
+                }
+            }
+
+            alert("Выберите запись, чтобы удалить!");
+            return false;
+        }
+
+        function deleteACLAllClick() {
+            if (document.formWlAcAdd.checkWPS2.value == 1) {
+                if (document.formWlAcAdd.wlanAcEnabled.selectedIndex == 1 && document.formWlAcDel.totalNum.value > 0) {
+                    if (confirm("Если режим ACL установлен в режим 'Разрешить указанным', а ACL лист не будет содержать записи - WPS будет отключен.\nПродолжить?") == 0) {
+                        return false;
+                    }
+                }
+            }
+
+            return deleteAllClick();
+        }
+
+        function saveChanges() {
+            if (document.formWlAcAdd.checkWPS2.value == 1) {
+                if (document.formWlAcAdd.wlanAcEnabled.selectedIndex == 1 && document.formWlAcDel.totalNum.value == 0) {
+                    if (confirm("Если режим ACL установлен в режим 'Разрешить указанным', а ACL лист не будет содержать записи - WPS будет отключен.\nПродолжить?") == 0) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    </script>
+
+</head>
+
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Управление доступом к беспроводным сетям</p>
+        <p class="intro_content">Если выбран тип "Разрешить указанным", то доступ к беспроводной точке доступа сети будут иметь только клиенты из списка. В режиме "Запретить указанным" доступ у сети для указанных в таблице клиентов будет закрыт. </p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody>
+                <tr>
+
+                    <th width="50%">Режим доступа к беспроводной сети:
+                        <select onclick="updateState()" name="wlanAcEnabled" size="1">
+
+    <option selected="selected" value="0">Откл.</option>
+    <option value="1">Разрешить указанным</option>
+    <option value="2">Запретить указанным</option>
+    </select>
+
+                    </th>
+
+                    <td>
+
+                        <input name="checkWPS2" value="1" type="HIDDEN">
+                        <input class="inner_btn" onclick="return saveChanges();" name="setFilterMode" value="Применить" type="submit">
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th> MAC-адрес:
+                        <input disabled="disabled" maxlength="12" size="15" name="mac" type="text"> &nbsp;&nbsp;(например, 00E086710502)
+                    </th>
+
+                    <td>
+
+                        <input disabled="disabled" class="inner_btn" onclick="return addClick()" name="addFilterMac" value="Добавить" type="submit">
+                        <input disabled="disabled" class="inner_btn" name="reset" value="Сбросить" type="reset">
+                        <input name="submit.htm?wlactrl.htm" value="Send" type="hidden">
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Список контроля доступа:</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common data_vertical">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                    </tr>
+                    <tr class="form_label_row">
+                        <td class="form_label_col"><b>MAC адрес</b></td>
+                        <td class="form_label_col"><b>Выбрать</b></td>
+                    </tr>
+                    <input name="totalNum" value="0" type="HIDDEN">
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="adsl clearfix">
+
+            <div class="btn_ctls">
+
+                <input disabled="disabled" class="link_bg" name="deleteSelFilterMac" onclick="return delEntryCheck()" value="Удалить выбранные" type="submit">
+                <input disabled="disabled" class="link_bg" name="deleteAllFilterMac" onclick="return deleteACLAllClick()" value="Удалить все" type="submit">
+            </div>
+
+            <input name="submit.htm?wlactrl.htm" value="Send" type="hidden">
+
+        </div>
+
+        <script>
+            disableDelButton();
+            wlanDisabled = 0;
+            wlanMode = 0;
+            document.formWlAcAdd.wlanAcEnabled.selectedIndex = 0;
+
+            updateState();
+        </script>
+
+
+
+
+
+
+
+
+
+    </div>
+</body>
+
+</html>

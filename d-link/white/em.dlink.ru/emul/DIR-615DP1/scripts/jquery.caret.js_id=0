@@ -1,0 +1,24 @@
+! function(k, e, i, j) {
+    k.fn.caret = function(b, l) {
+        var a, c, f = this[0],
+            d = k.browser.msie;
+        if ("object" == typeof b && "number" == typeof b.start && "number" == typeof b.end ? (a = b.start, c = b.end) : "number" == typeof b && "number" == typeof l ? (a = b, c = l) : "string" == typeof b ? (a = f.value.indexOf(b)) > -1 ? c = a + b[e] : a = null : "[object RegExp]" === Object.prototype.toString.call(b) && (b = b.exec(f.value), null != b && (a = b.index, c = a + b[0][e])), "undefined" != typeof a) return d ? (d = this[0].createTextRange(), d.collapse(!0), d.moveStart("character", a), d.moveEnd("character", c - a), d.select()) : (this[0].selectionStart = a, this[0].selectionEnd = c), this[0].focus(), this;
+        if (d)
+            if (c = document.selection, "textarea" != this[0].tagName.toLowerCase()) {
+                d = this.val(), a = c[i]()[j](), a.moveEnd("character", d[e]);
+                var g = "" == a.text ? d[e] : d.lastIndexOf(a.text);
+                a = c[i]()[j](), a.moveStart("character", -d[e]);
+                var h = a.text[e]
+            }
+            else a = c[i](), c = a[j](), c.moveToElementText(this[0]), c.setEndPoint("EndToEnd", a), g = c.text[e] - a.text[e], h = g + a.text[e];
+        else g = f.selectionStart, h = f.selectionEnd;
+        return a = f.value.substring(g, h), {
+            start: g,
+            end: h,
+            text: a,
+            replace: function(m) {
+                return f.value.substring(0, g) + m + f.value.substring(h, f.value[e])
+            }
+        }
+    }
+}(jQuery, "length", "createRange", "duplicate");

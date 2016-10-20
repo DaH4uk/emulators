@@ -1,0 +1,25 @@
+var TITLE = document.title;
+$(document).bind("ready", function() {
+    var $version = $("#logo>.info>.version"),
+        $lang = ($("#logo>.info>.model"), $("#fastmenu>.lang")),
+        langlist = ($("#creator"), $("#notifybox"), LANG.list()),
+        $langlist = $lang.find(".tip>ul");
+    "fas" == window.curlang || "ara" == window.curlang ? "mobile2" == getCookie("viewmode") ? (addjscssfile("mobile/css/rtl.css?id=@PARAMS:sesid@", "css"), addjscssfile("mobile/css/rtl-login.css?id=@PARAMS:sesid@", "css")) : (addjscssfile("css/rtl.css?id=@PARAMS:sesid@", "css"), addjscssfile("css/rtl-login.css?id=@PARAMS:sesid@", "css")) : "mobile2" == getCookie("viewmode") ? (removejscssfile("mobile/css/rtl.css?id=@PARAMS:sesid@", "css"), removejscssfile("mobile/css/rtl-login.css?id=@PARAMS:sesid@", "css")) : (removejscssfile("css/rtl.css?id=@PARAMS:sesid@", "css"), removejscssfile("css/rtl-login.css?id=@PARAMS:sesid@", "css"));
+    for (var lang in langlist) lang && $("				<li class='" + lang + "'>					<div class='bull'>&nbsp;</div>					<div class='title'>						<a href='#'>" + langlist[lang] + "</a>					</div>					<div class='clear'></div>				</li>			").appendTo($langlist).find(".title>a").bind("click", callback(this, function(lang) {
+        return HELPER.hide(), LANG.change(lang, !0), !1
+    }, lang));
+    $(window).bind("langchange", function(e, lang) {
+        $lang.removeClass(Object.keys(langlist).join(" ")).addClass(lang), $lang.find(".text").text(langlist[lang]), $lang.find(".tip>ul>li>.bull").html("&nbsp;"), $lang.find(".tip>ul>li." + lang + ">.bull").html("&bull;"), $("#active_lang").html(langlist[lang]), lang != detectLanguage() ? ($(".messYourLang span.guess").text(" " + window.langs[detectLanguage()]), $(".messYourLang").show()) : $(".messYourLang").hide(), "fas" == lang || "ara" == lang ? "mobile2" == getCookie("viewmode") ? (addjscssfile("mobile/css/rtl.css?id=@PARAMS:sesid@", "css"), addjscssfile("mobile/css/rtl-login.css?id=@PARAMS:sesid@", "css")) : (addjscssfile("css/rtl.css?id=@PARAMS:sesid@", "css"), addjscssfile("css/rtl-login.css?id=@PARAMS:sesid@", "css")) : "mobile2" == getCookie("viewmode") ? (removejscssfile("mobile/css/rtl.css?id=@PARAMS:sesid@", "css"), removejscssfile("mobile/css/rtl-login.css?id=@PARAMS:sesid@", "css")) : (removejscssfile("css/rtl.css?id=@PARAMS:sesid@", "css"), removejscssfile("css/rtl-login.css?id=@PARAMS:sesid@", "css"))
+    }), $(window).bind("langload", function(e, lang) {
+        if (window.WELCOME_LANG) {
+            var __lang = window.WELCOME_LANG[lang] ? lang : "eng";
+            window.lang && (window.lang = $.extend(window.lang, window.WELCOME_LANG[__lang])), window.baselang && (window.baselang = $.extend(baselang.lang, window.WELCOME_LANG[__lang]))
+        }
+    }), LANG.load(), $version.find("a").bind("click", function() {
+        return window.__FIRMWARE && __FIRMWARE.show(), !1
+    }), $(".messYourLang").bind("click", callback(this, function() {
+        return LANG.change(detectLanguage()), !1
+    })), $("#fastmenu>.lang>.text").bind("mouseover mouseout", function(e) {
+        $("#fastmenu>.lang>.icon").trigger(e.type)
+    })
+});

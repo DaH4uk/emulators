@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -678,4 +679,686 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/WLG_schedule.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "status";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "status";
+var G_Page = "WLG_adv";
+var G_SubPage = "WLG_schedule";
+var G_ErrorPage = "-";
+var tmpNodeIndex='-';
+var G_EditEnableAllDays=G_EditSelectDays=G_EditEnableAllTimes=G_EditStartTime=G_EditEndTime=G_EditIndex='';
+var W_ScheduleList = [];
+var m = 0;
+function uiOnload()
+{
+Init_Show();
+InitAllTime();
+if(tmpNodeIndex=='-')
+{
+ChangeAddMode();
+}else{
+ChangeEditMode();
+return;
+}
+}
+function ChangeAddMode()
+{
+$('Accept').style.display='none';
+}
+function ChangeEditMode()
+{
+hideChForWep('ADDBUTTONZONE',2,'none');
+$('Accept').style.display='';
+}
+function Init_Show()
+{
+var starttime= G_EditStartTime;
+var num=starttime.indexOf(':');
+var starttimeh=starttime.substring(0,num);
+var starttimem=starttime.substring(num+1,starttime.length+1);
+var endtime= G_EditEndTime;
+var num=endtime.indexOf(':');
+var endtimeh=endtime.substring(0,num);
+var endtimem=endtime.substring(num+1,endtime.length+1);
+var day=G_EditSelectDays;
+if(day.indexOf('Sun')!=-1){
+var SunEnable=1; //Sun
+}else{
+var SunEnable=0; //Sun
+}
+if(day.indexOf('Mon')!=-1)
+var MonEnable=1; //Mon
+else
+var MonEnable=0; //Mon
+if(day.indexOf('Tue')!=-1)
+var TueEnable=1; //Tue
+else
+var TueEnable=0; //Tue
+if(day.indexOf('Wed')!=-1)
+var WedEnable=1; //Wed
+else
+var WedEnable=0; //Wed
+if(day.indexOf('Thu')!=-1)
+var ThuEnable=1; //Thu
+else
+var ThuEnable=0; //Thu
+if(day.indexOf('Fri')!=-1)
+var FriEnable=1; //Fri
+else
+var FriEnable=0; //Fri
+if(day.indexOf('Sat')!=-1)
+var SatEnable=1; //Sat
+else
+var SatEnable=0; //Sat
+if(tmpNodeIndex == '-')
+{
+setJSONValue({
+checkboxNamehours : 1,
+starthour : "00",
+endhour : "23",
+startminute : "00",
+endminute : "59",
+checkboxNameSun : 1,
+checkboxNameMon : 1,
+checkboxNameTue : 1,
+checkboxNameWed : 1,
+checkboxNameThu : 1,
+checkboxNameFri : 1,
+checkboxNameSat : 1
+});
+Form.Radio('Radio_Daily',1);
+}else{
+setJSONValue({
+checkboxNamehours : G_EditEnableAllTimes,
+starthour : starttimeh,
+endhour : endtimeh,
+startminute : starttimem,
+endminute : endtimem,
+checkboxNameSun : SunEnable,
+checkboxNameMon : MonEnable,
+checkboxNameTue : TueEnable,
+checkboxNameWed : WedEnable,
+checkboxNameThu : ThuEnable,
+checkboxNameFri : FriEnable,
+checkboxNameSat : SatEnable
+});
+Form.Radio('Radio_Daily',G_EditEnableAllDays);
+if($('checkboxNamehours').checked == true)
+{
+$('starthour').disabled = true;
+$('endhour').disabled = true;
+$('startminute').disabled = true;
+$('endminute').disabled = true;
+}else{
+$('starthour').disabled = false;
+$('endhour').disabled = false;
+$('startminute').disabled = false;
+$('endminute').disabled = false;
+}
+if($('idSelectDays').checked == true)
+{
+$('checkboxNameSun').style.disabled = false;
+$('checkboxNameMon').style.disabled = false;
+$('checkboxNameTue').style.disabled = false;
+$('checkboxNameWed').style.disabled = false;
+$('checkboxNameThu').style.disabled = false;
+$('checkboxNameFri').style.disabled = false;
+$('checkboxNameSat').style.disabled = false;
+}else{
+$('checkboxNameSun').style.disabled = true;
+$('checkboxNameMon').style.disabled = true;
+$('checkboxNameTue').style.disabled = true;
+$('checkboxNameWed').style.disabled = true;
+$('checkboxNameThu').style.disabled = true;
+$('checkboxNameFri').style.disabled = true;
+$('checkboxNameSat').style.disabled = true;
+}
+}
+}
+function SetWholeDay(){
+if($('checkboxNamehours').checked){
+$('starthour').value="00";
+$('endhour').value="23";
+$('startminute').value="00";
+$('endminute').value="59";
+$('starthour').disabled=true;
+$('endhour').disabled=true;
+$('startminute').disabled=true;
+$('endminute').disabled=true;
+}else{
+$('starthour').value="";
+$('endhour').value="";
+$('startminute').value="";
+$('endminute').value="";
+$('starthour').disabled=false;
+$('endhour').disabled=false;
+$('startminute').disabled=false;
+$('endminute').disabled=false;
+}
+return true;
+}
+function InitAllTime()
+{
+var tmpWeek = [$('checkboxNameSun'),$('checkboxNameMon'),$('checkboxNameTue'),$('checkboxNameWed'),$('checkboxNameThu'),$('checkboxNameFri'),$('checkboxNameSat')];
+if($('idDaily').checked == true)
+{
+for(var k = 0, _len = tmpWeek.length; k < _len; k++)
+{
+if(tmpNodeIndex == '-')
+{
+tmpWeek[k].checked = true;
+}
+tmpWeek[k].disabled = true;
+}
+}else{
+for(var k = 0, _len = tmpWeek.length; k < _len; k++)
+{
+if(tmpNodeIndex == '-')
+{
+tmpWeek[k].checked = true;
+}
+tmpWeek[k].disabled = false;
+}
+}
+}
+function SetAllTime()
+{
+var tmpWeek = [$('checkboxNameSun'),$('checkboxNameMon'),$('checkboxNameTue'),$('checkboxNameWed'),$('checkboxNameThu'),$('checkboxNameFri'),$('checkboxNameSat')];
+if($('idDaily').checked == true)
+{
+for(var k = 0, _len = tmpWeek.length; k < _len; k++)
+{
+tmpWeek[k].checked = true;
+tmpWeek[k].disabled = true;
+}
+}else{
+for(var k = 0, _len = tmpWeek.length; k < _len; k++)
+{
+tmpWeek[k].checked = true;
+tmpWeek[k].disabled = false;
+}
+}
+}
+function IsNum(num){
+var reNum=/^\d*$/;
+return(reNum.test(num));
+}
+function numCheck(_flag)
+{
+var _a = _flag.substr(0,1);
+var _b = _flag.substr(1,1);
+if(_b=='')
+return _a;
+else if(_a=='0')
+return _b;
+else
+return _flag;
+}
+/***********************************************alert************************/
+function isNumeric(str, max) {
+if(str.value.length == 0 || str.value == null || str.value == "") {
+if (str.focus)
+str.focus();
+return true;
+}
+var i = parseInt(str.value,10);
+if(i>max) {
+if (str.focus)
+str.focus();
+return true;
+}
+for(i=0; i<str.value.length; i++) {
+var c = str.value.substring(i, i+1);
+if("0" <= c && c <= "9") {
+continue;
+}
+if (str.focus)
+str.focus();
+return true;
+}
+return false;
+}
+function _isNumeric(str)
+{
+var i;
+if(str.length == 0 || str == null || str == "")
+{
+return false;
+}
+for(i = 0; i<str.length; i++)
+{
+var c = str.substring(i, i+1);
+if(0 <= c && c <= 9)
+{
+continue;
+}
+return false;
+}
+return true;
+}
+function checkSchedule()
+{
+if (!($('checkboxNamehours').checked))
+{
+if(isNumeric($('starthour'),23) || isNumeric($('endhour'),23)||isNumeric($('startminute'),59) || isNumeric($('endminute'),59))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+else
+{
+$('starthour').value = parseInt($('starthour').value,10);
+$('endhour').value = parseInt($('endhour').value,10);
+$('startminute').value = parseInt($('startminute').value,10);
+$('endminute').value = parseInt($('endminute').value,10);
+}
+if (($('starthour').value == $('endhour').value)&&($('startminute').value == $('endminute').value))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+if ($('starthour').value == 24 && $('startminute').value == 0)
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+if ($('endhour').value == 24 && $('endminute').value == 0)
+{
+// allow end time to be 24:00
+if (($('starthour').value < 0) || ($('starthour').value > 23) ||($('startminute').value < 0) || ($('startminute').value > 59))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+}
+else
+{
+if (($('starthour').value < 0) || ($('starthour').value > 23) ||($('endhour').value < 0) || ($('endhour').value > 23) ||($('startminute').value < 0) || ($('startminute').value > 59) ||($('endminute').value < 0) || ($('endminute').value > 59))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+}
+if ((!_isNumeric($('starthour').value)) ||(!_isNumeric($('endhour').value)) ||(!_isNumeric($('startminute').value)) ||(!_isNumeric($('endminute').value)))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+if (($('starthour').value=='') || ($('endhour').value==''))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+if (($('starthour').value != '') && ($('endhour').value != ''))
+{
+if ($('startminute').value == '')
+$('startminute').value = 0;
+if ($('endminute').value == '')
+$('endminute').value = 0;
+}
+if ((Number($('starthour').value) > Number($('endhour').value )) || ((Number($('starthour').value)==Number($('endhour').value ))&&(Number($('startminute').value) >= Number($('endminute').value))))
+{
+alertError('FW_scheduleInvalueTime',1);
+return false;
+}
+}
+return true;
+}
+function CheckSameRules(tempStartTime,tempEndTime,tempSelectDay,tempAllDayRadio,tempallTimeBox)
+{
+for(var k = 0,i = 0; k < W_ScheduleList.length; k++)
+{
+if((W_ScheduleList[k][0] == tempAllDayRadio)&&(W_ScheduleList[k][1] == tempSelectDay)&&(W_ScheduleList[k][2] == tempallTimeBox)&&(W_ScheduleList[k][3] == tempStartTime)&&(W_ScheduleList[k][4] == tempEndTime))
+{
+alertError('WLG_ScheduleSameRules',1);
+return false;
+}
+}
+return true;
+}
+function uiSubmitadd()
+{
+if(!checkSchedule())
+{
+return false;
+}
+var _nodes = $('starthour','startminute','endhour','endminute');
+//test the time input
+if(IsNum(_nodes[0].value)==0 ? 0 : (IsNum(_nodes[1].value)==0 ? 0 : (IsNum(_nodes[2].value)==0 ? 0 : (IsNum(_nodes[3].value)==0 ? 0 : 1)))==1)
+{
+if(parseInt(numCheck(_nodes[0].value))<10)
+{_nodes[0].value='0'+parseInt(numCheck(_nodes[0].value))}
+if(parseInt(numCheck(_nodes[1].value))<10)
+{_nodes[1].value='0'+parseInt(numCheck(_nodes[1].value))}
+if(parseInt(numCheck(_nodes[2].value))<10)
+{_nodes[2].value='0'+parseInt(numCheck(_nodes[2].value))}
+if(parseInt(numCheck(_nodes[3].value))<10)
+{_nodes[3].value='0'+parseInt(numCheck(_nodes[3].value))}
+}
+var starttime=_nodes[0].value+':'+_nodes[1].value;
+var endtime=_nodes[2].value+':'+_nodes[3].value;
+var selectdays='';
+if(Form.Checkbox('checkboxNameSun')=='1')
+selectdays='Sun,';
+if(Form.Checkbox('checkboxNameMon')=='1')
+selectdays+='Mon,';
+if(Form.Checkbox('checkboxNameTue')=='1')
+selectdays+='Tue,';
+if(Form.Checkbox('checkboxNameWed')=='1')
+selectdays+='Wed,';
+if(Form.Checkbox('checkboxNameThu')=='1')
+selectdays+='Thu,';
+if(Form.Checkbox('checkboxNameFri')=='1')
+selectdays+='Fri,';
+if(Form.Checkbox('checkboxNameSat')=='1')
+selectdays+='Sat,';
+if(selectdays=='')
+{
+selectdays='None,';
+}
+if(W_ScheduleList.length > 20)
+{
+alertError('WLG_W_ScheduleListMaxNum',1);
+return false;
+}
+var allTimeBox = ($('checkboxNamehours').checked) == true ? 1 : 0;
+if(!CheckSameRules(starttime,endtime,selectdays,Form.Radio('Radio_Daily'),allTimeBox))
+{
+return false;
+}
+$H({
+'add-obj' :'InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_ScheduleList.',
+':EnableAllDays': Form.Radio('Radio_Daily'),
+':EnableAllTimes': ($('checkboxNamehours').checked == true) ? 1 : 0,
+':SelectDays': selectdays,
+':StartTime': starttime,
+':EndTime': endtime,
+'obj-action' : 'add-set',
+'var:page' : 'WLG_adv',
+'var:errorpage': 'WLG_adv',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function JumpToFormerPage()
+{
+$G('../html/WLG_adv.htm',{
+'var:page' : 'WLG_adv',
+'var:subpage' : 'WLG_adv',
+'getpage' : '../html/WLG_adv.htm',
+'errorpage' : '../html/WLG_adv.htm'
+});
+}
+function uiEdit()
+{
+if(tmpNodeIndex=='-')
+return;
+if(!checkSchedule())
+{
+return false;
+}
+var _nodes = $('starthour','startminute','endhour','endminute');
+//test the time input
+if(IsNum(_nodes[0].value)==0 ? 0 : (IsNum(_nodes[1].value)==0 ? 0 : (IsNum(_nodes[2].value)==0 ? 0 : (IsNum(_nodes[3].value)==0 ? 0 : 1)))==1)
+{
+if(parseInt(numCheck(_nodes[0].value))<10)
+{_nodes[0].value='0'+parseInt(numCheck(_nodes[0].value))}
+if(parseInt(numCheck(_nodes[1].value))<10)
+{_nodes[1].value='0'+parseInt(numCheck(_nodes[1].value))}
+if(parseInt(numCheck(_nodes[2].value))<10)
+{_nodes[2].value='0'+parseInt(numCheck(_nodes[2].value))}
+if(parseInt(numCheck(_nodes[3].value))<10)
+{_nodes[3].value='0'+parseInt(numCheck(_nodes[3].value))}
+}
+var starttime=_nodes[0].value+':'+_nodes[1].value;
+var endtime=_nodes[2].value+':'+_nodes[3].value;
+var selectdays='';
+if(Form.Checkbox('checkboxNameSun')=='1')
+selectdays='Sun,';
+if(Form.Checkbox('checkboxNameMon')=='1')
+selectdays+='Mon,';
+if(Form.Checkbox('checkboxNameTue')=='1')
+selectdays+='Tue,';
+if(Form.Checkbox('checkboxNameWed')=='1')
+selectdays+='Wed,';
+if(Form.Checkbox('checkboxNameThu')=='1')
+selectdays+='Thu,';
+if(Form.Checkbox('checkboxNameFri')=='1')
+selectdays+='Fri,';
+if(Form.Checkbox('checkboxNameSat')=='1')
+selectdays+='Sat,';
+if(selectdays=='')
+{
+selectdays='None,';
+}
+var allTimeBox = ($('checkboxNamehours').checked) == true ? 1 : 0;
+if(!CheckSameRules(starttime,endtime,selectdays,Form.Radio('Radio_Daily'),allTimeBox))
+{
+return false;
+}
+var path;
+$H({
+'obj-action' : 'set',
+'var:page' : 'WLG_adv',
+'var:nodeIndex': tmpNodeIndex,
+'var:subpage' : 'WLG_adv',
+'var:errorpage' : G_SubPage,
+'var:CacheLastData' : ViewState.Save(),
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm'
+},true);
+var prePath='InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TWSZ-COM_ScheduleList.';
+path = ':' + prePath + G_EditIndex + '.';
+$F(path + 'EnableAllDays' , Form.Radio('Radio_Daily'));
+$F(path + 'SelectDays' ,selectdays);
+$F(path + 'EnableAllTimes' ,(($('checkboxNamehours').checked == true) ? 1 : 0));
+$F(path + 'StartTime' ,starttime);
+$F(path + 'EndTime' ,endtime);
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="WLG_schedule.htm"></form>
+<div >
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap height="45" colspan=2>
+<div class="fix_button">
+<table cellspacing="2" cellpadding="0" border="0" width="100%">
+<tbody>
+<tr>
+<td nowrap="" align="center" colspan="2">
+<input type="button" onClick="JumpToFormerPage()" name="Cancel" id="Cancel" value="Cancel" class="cancel_bt">
+<input type="submit" style="display: none;" id="Accept" onClick="uiEdit()" name="Accept" value="Apply" class="apply_bt">
+<input type="submit" onClick="uiSubmitadd()" name="Add" id="ADDBUTTONZONE1" value="Add" class="add_bt">
+<input type="button" name="Refresh" id="ADDBUTTONZONE2" value="Refresh" class="common_bt">
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" >
+<table><tr><td nowrap="" ><b id ="lang_WiFiTime">When to trun off wireless signal</b></td>
+<tr><td nowrap="" colspan="2"><input type="checkbox" value="checkboxValue" onClick="SetWholeDay();" name="checkboxNamehours" id="checkboxNamehours"><b id="lang_ALlDay" for="EnableAllTimes">All Day</b></td></tr></tr>
+<tr>
+<td nowrap="" >
+<label id="lang_WiFiStart">Start:</label>
+</td>
+<td nowrap="">
+<input onKeyPress="return getkey('num',event);" maxlength="2" size="3" name="starthour" class="num" id="starthour" title="00" disabled="">
+<label id="lang_Hour1">Hour</label>
+<input onKeyPress="return getkey('num',event);" maxlength="2" size="3" name="startminute" class="num" id="startminute" title="00" disabled="">
+<label id="lang_Minute1">Minute</label>
+</td>
+</tr>
+<tr>
+<td nowrap="">
+<label id="lang_WiFiEnd">End:</label>
+</td>
+<td nowrap="">
+<input onKeyPress="return getkey('num',event);" maxlength="2" size="3" name="endhour" class="num" id="endhour" title="23" disabled="">
+<label id="lang_Hour2">Hour</label>
+<input onKeyPress="return getkey('num',event);" maxlength="2" size="3" name="endminute" class="num" id="endminute" title="59" disabled="">
+<label id="lang_Minute2">Minute</label>
+</td>
+</tr>
+<tr>
+<td nowrap=""><b id="lang_WiFiRegu">Recurrence Pattern</b></td>
+</tr>
+<tr>
+<td nowrap="" >
+<input type="radio" id="idDaily" name="Radio_Daily" value="1" onClick="SetAllTime();" />
+<b id="lang_daily">Daily</b>
+</td>
+</tr>
+<tr>
+<td nowrap="">
+<input type="radio" id="idSelectDays" name="Radio_Daily" value="0" onClick="SetAllTime();" />
+<b id="lang_WiFiSelect">Select Days</b>
+</td>
+</tr>
+<tr align="center">
+<td width="25%"><input id='checkboxNameSun' name='checkboxNameSun' type=checkbox value=checkboxValue>
+<label for=sunday id="lang_Sun">Sunday</label>
+</td>
+<td width="25%" ><input id='checkboxNameMon' name='checkboxNameMon' type=checkbox value=checkboxValue>
+<label for=monday id="lang_Mon">Monday</label>
+</td>
+<td width="25%"><input id='checkboxNameTue' name='checkboxNameTue' type=checkbox value=checkboxValue>
+<label for=tuesday id="lang_Tue">Tuesday</label>
+</td>
+<td width="25%"><input id='checkboxNameWed' name='checkboxNameWed' type=checkbox value=checkboxValue>
+<label for=wednesday id="lang_Wed">Wednesday</label>
+</td>
+</tr>
+<tr align="center">
+<td width="25%">&nbsp;&nbsp;&nbsp;<input id='checkboxNameThu' name='checkboxNameThu' type=checkbox value=checkboxValue>
+<label for=thursday id="lang_Thu">Thursday</label>
+</td>
+<td width="25%"><input id='checkboxNameFri' name='checkboxNameFri' type=checkbox value=checkboxValue>
+<label for=friday id="lang_Fri">Friday</label>&nbsp;&nbsp;&nbsp;
+</td>
+<td width="25%"><input id='checkboxNameSat' name='checkboxNameSat' type=checkbox value=checkboxValue>
+<label for=saturday id="lang_Sat">Saturday</label>
+</td>
+<td width="25%"></td>
+</tr>
+</table>
+</div>
+<div>
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr><td nowrap height="40" colspan=2 align=center><div nowrap="" colspan="3" class="do bk_black3_black"></div>
+</td></tr></table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("WLG_schedule")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

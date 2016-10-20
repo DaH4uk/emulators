@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2305">
@@ -201,4 +202,209 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 </td>
 <input type="hidden" name="h_wl0_sec_mode" value="128">
 </form>                     
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2305">
+
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showMenu.js"></script>
+<script language="javascript" type="text/javascript" src="linuxs.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wle1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='Security';
+var menuSection	='WLAN';
+var menuItem	='Security';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+function submitF() {
+	if (isBlank(document.tF.wep_str.value)){ alert(errm); return false; }
+ 	document.tF.submit();
+ 	return true;
+}
+
+function submitF1() {
+	if (isBlank(document.tF.wep_str.value)){ alert(errm); return false; }
+ 	document.tF.submit();
+ 	return true;
+}
+
+function GURL(x){location=x}
+
+function logoutF()
+{
+	document.tF.logout.value=1;
+	document.tF.submit();
+	return true;
+}
+
+function ChangeSecMode(wl0_sec_mode)
+{
+	if(wl0_sec_mode.value == "0")
+		GURL('wls_enno.html');
+	else if(wl0_sec_mode.value == "psk")
+		GURL('wls_psk.html');	
+	else if(wl0_sec_mode.value == "128")
+		GURL('wls_e128.html');	
+	else if(wl0_sec_mode.value == "64")
+		GURL('wls_e64.html');
+}
+
+function checkForm()
+{
+	 if (isNValid(document.tF.key1.value)||isNValid(document.tF.key2.value)||isNValid(document.tF.key3.value)
+	 	||isNValid(document.tF.key4.value) ||isNValid(document.tF.key5.value)){alert(fmcipm); return false; }
+
+	 if (isNValid(document.tF.key6.value)||isNValid(document.tF.key7.value)||isNValid(document.tF.key8.value)
+	 	||isNValid(document.tF.key9.value) ||isNValid(document.tF.key10.value)){alert(fmcipm); return false; }
+
+	 if (isNValid(document.tF.key11.value)||isNValid(document.tF.key12.value)||isNValid(document.tF.key13.value))
+	 	{alert(fmcipm); return false; }
+	 	
+  document.tF.wl0_key1.value=document.tF.key1.value+document.tF.key2.value+document.tF.key3.value+document.tF.key4.value+document.tF.key5.value;
+  document.tF.wl0_key1.value+=document.tF.key6.value+document.tF.key7.value+document.tF.key8.value+document.tF.key9.value+document.tF.key10.value;
+  document.tF.wl0_key1.value+=document.tF.key11.value+document.tF.key12.value+document.tF.key13.value;
+  if(document.tF.wl0_key1.value.length!=0 && document.tF.wl0_key1.value.length!=26)
+  {
+  	alert(keym);
+  	return false;
+  }
+  document.tF.page.value = '2';
+  return true;
+}
+
+function genwep()
+{
+    if(document.tF.passphrase_128.value.length < 1)   
+    {   
+        alert(errm);   
+        return false;   
+    }
+	document.tF.page.value = '1';
+	return true;
+}
+//-->
+</script>
+</head>
+
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="dataToVisible(document.tF);">
+<form action="/belkin/3.00.02/En/wls_e128.cgi" name="wpa_wep_cgi" method="post">
+<input type=hidden name=webpage value=wls_e128.html >
+<input type=hidden name=gen_wep value=128 >
+<input type=hidden name=wep_str value="">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+</script>
+<script language="javascript" type="text/javascript">
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+</form>
+<form action="/belkin/3.00.02/En/apply_10_wls_e128.html" name="tF" method="post" >
+<input type="hidden" name="page" value="">
+<input type=hidden name=wl0_key value=1 >
+<input type=hidden name="wl0_key1" value="">
+<input type=hidden name=wl0_wep value="" >
+<input type=hidden name=wl0_auth_mode value="">
+<input type=hidden name="action" value="">
+
+<td valign="top" width="99%" height="100%" class="head_bold">
+<br>&nbsp;&nbsp; <script language="javascript" type="text/javascript">dw(wle1);</script><br><br>     
+<table border=0 class="copy_1">
+<tr>
+<td width=5>&nbsp;</td> 
+<td>
+<table width="600" border="0" cellspacing="10" cellpadding="0" align="center" class="body">
+<tr>
+<td width="26%" align=left>
+<b><script language="javascript" type="text/javascript">dw(wle2);</script></b>
+</td>
+<td>
+<select name="wl0_sec_mode" onChange="ChangeSecMode(this)"> 
+<option value="0"><script language="javascript" type="text/javascript">dw(wle2a);</script></option>
+<option value="psk"><script language="javascript" type="text/javascript">dw(wle2b);</script></option>
+<option value="128" selected><script language="javascript" type="text/javascript">dw(wle2c);</script></option>
+<option value="64"><script language="javascript" type="text/javascript">dw(wle2d);</script></option>
+</select>
+</td>                                    
+</tr> 
+
+<tr>
+    <td align="right" valign="top"><b>Key </b></td>
+
+<td align="left" valign="top">           	
+<input type="text" name="key1" size="4" maxlength="2" value=""> 
+<input type="text" name="key2" size="4" maxlength="2" value=""> 
+<input type="text" name="key3" size="4" maxlength="2" value=""> 
+<input type="text" name="key4" size="4" maxlength="2" value=""> 
+<input type="text" name="key5" size="4" maxlength="2" value=""> 
+<br>
+<input type="text" name="key6" size="4" maxlength="2" value=""> 
+<input type="text" name="key7" size="4" maxlength="2" value=""> 
+<input type="text" name="key8" size="4" maxlength="2" value=""> 
+<input type="text" name="key9" size="4" maxlength="2" value=""> 
+<input type="text" name="key10" size="4" maxlength="2" value=""> 
+<br>
+<input type="text" name="key11" size="4" maxlength="2" value=""> 
+<input type="text" name="key12" size="4" maxlength="2" value=""> 
+<input type="text" name="key13" size="4" maxlength="2" value="">
+<b> <script language="javascript" type="text/javascript">dw(wle8);</script></b>
+</td>				    
+</tr>
+
+<tr> 
+    <td align="right"><script language="javascript" type="text/javascript">dw(wle9);</script>  </td>
+    <td align=left><script language="javascript" type="text/javascript">dw(wle10);</script><br>
+    <a class="more" href="javascript:void(0);" class="plaintext_bold" onClick="window.open('glossary.html#wireless_security','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');">
+<script language="javascript" type="text/javascript">dw(sm1);</script></a>
+    </td>
+    
+  </tr> 		    
+<tr>
+<td align="right">
+<b> <script language="javascript" type="text/javascript">dw(PP);</script>  </b>
+</td>
+<td align="left">
+
+<input type="text" name="passphrase_128" size="30" maxlength="30" value="">
+
+	  			
+<script language="javascript" type="text/javascript"></script>
+<input type="button" style="{width:80px;}" value="generate" class="submitBtn" noctl="true" onclick="window.location.href='wls_e128_gen.html'">
+</td>				    
+</tr>
+
+<tr> 
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  </td>
+</tr>
+
+<tr> 
+      <td colspan="2" align="center"> 
+      <script language="javascript" type="text/javascript">dw('<input type="button" name="itsbutton0" value="'+btn1+'" style="{width:160px;}" class="submitBtn" onclick="location.href=\'wls_e128.html\'; return true;" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');</script>
+	  <script language="javascript" type="text/javascript">dw('<input type="submit" name="save" style="{width:150px;}" class="submitBtn" value="'+btn2+'" onclick="return checkForm();">');</script>                                  
+    </td>
+  </tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+</td>
+</tr>
+</table>
+</td>
+<input type="hidden" name="h_wl0_sec_mode" value="128">
+</form>                     
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 <script language="javascript" type="text/javascript">showTail()</script>

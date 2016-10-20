@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -473,4 +474,481 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/FW_forward_service.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "status";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "status";
+var G_Page = "FW_forward";
+var G_SubPage = "FW_forward_service";
+var G_ErrorPage = "-";
+var G_Description=G_ExternalPort=G_ExternalPortEnd=G_InternalClient=G_Protocol=G_InternalPort=G_InternalPortEnd=G_SamePortFlag='';
+var LanSelect = [];
+var LanHosts = [];
+var m = 0;
+LanHosts[m] = [
+"192.168.1.2", //IPAddress
+"00:00:00:00:00:00".toUpperCase(),//MACAddress
+"NoName"
+];
+LanSelect[m] = "InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1.";
+++m;
+var IPaddress="192.168.1.1";
+function create_divClient()
+{
+var array_value = [];
+for(var i=0;i < LanSelect.length; i++)
+{
+array_value[i] = [
+'<input name="MacSelect" type="radio" id="radio'+i+'" onclick="ipaddr_value()" value='+i+'>',
+LanHosts[i][0],
+LanHosts[i][2]
+];
+}
+create_td('td_DeviceClients',array_value);
+}
+function create_td(Node,Value)
+{ // 传入的Value必须是符合要求的数组
+var Table = $(Node);
+var Tbody = Table.getElementsByTagName('tbody')[0];
+//如果没有Tbody,就创建一个; 如果有,就共用一个;
+if(Tbody == null){
+Tbody = document.createElement('tbody');
+}
+//组成TD
+for(var i = 0; i < Value.length; i++){
+var Tr = [];
+Tr[i] = document.createElement('tr');
+//防止空数组
+if(Value[i] == undefined) continue;
+for(var j = 0; j < Value[i].length; j++){
+var Td = [];
+Td[j] = document.createElement('td');
+Td[j].innerHTML = Value[i][j];
+Td[j].id = Node + "_" + i.toString() + j.toString();
+Td[j].align = "center";
+Tr[i].appendChild(Td[j]);
+}
+Tbody.appendChild(Tr[i]);
+}
+Table.appendChild(Tbody);
+}
+function ipaddr_value()
+{
+var cf;
+var select_num;
+for(i=0;i<LanSelect.length;i++)
+{
+cf = document.getElementById('radio'+i+'');
+if(cf.checked == true )
+{
+select_num=parseInt(cf.value);
+var ipaddr_array=LanHosts[select_num][0].split('.');
+server_ip1.value=ipaddr_array[0];
+server_ip2.value=ipaddr_array[1];
+server_ip3.value=ipaddr_array[2];
+server_ip4.value=ipaddr_array[3];
+}
+}
+}
+function SamePortFlagInt()
+{
+if(G_SamePortFlag == '0')
+{
+$('same_range').checked = false;
+setJSONValue({
+'internal_start' : G_InternalPort,
+'internal_end' : G_InternalPortEnd
+});
+}else{
+$('same_range').checked = true;
+setJSONValue({
+'internal_start' : G_ExternalPort,
+'internal_end' : G_InternalPortEnd
+});
+}
+}
+function uiOnload()
+{
+var tmpProtocol=G_Protocol;
+create_divClient();
+if(tmpProtocol=='')
+tmpProtocol='TCP';
+SamePortFlagInt();
+setJSONValue({
+'portname':G_Description,
+'port_start':G_ExternalPort,
+'port_end':G_ExternalPortEnd,
+'srvtype' : tmpProtocol
+});
+if(G_InternalClient == '')
+{
+OnloadIP4hops(IPaddress,'server_ip1','server_ip2','server_ip3','');
+}else{
+OnloadIP4hops(G_InternalClient,'server_ip1','server_ip2','server_ip3','server_ip4');
+}
+if($("same_range").checked == true){
+$("internal_start").disabled = true;
+$("internal_end").disabled = true;
+$("internal_start").style.color="grey";
+$("internal_end").style.color="grey";
+}
+else{
+$("internal_start").disabled = false;
+$("internal_end").disabled = false;
+$("internal_start").style.color="black";
+$("internal_end").style.color="black";
+}
+}
+function portrange_value()
+{
+var cf=$("same_range");
+if(cf.checked == true){
+document.getElementById("internal_start").disabled = true;
+document.getElementById("internal_end").disabled = true;
+document.getElementById("internal_start").style.color="grey";
+document.getElementById("internal_end").style.color="grey";
+}
+else{
+document.getElementById("internal_start").disabled = false;
+document.getElementById("internal_end").disabled = false;
+document.getElementById("internal_start").style.color="black";
+document.getElementById("internal_end").style.color="black";
+}
+int_port_value();
+}
+function int_port_value()
+{
+var i_s=document.getElementById("internal_start");
+var i_d=document.getElementById("internal_end");
+var e_s=document.getElementById("port_start");
+var e_d=document.getElementById("port_end");
+if(document.getElementById('same_range').checked==false){
+i_d.value= Number(i_s.value) + Number(e_d.value)-Number(e_s.value);
+if(i_s.value == '')
+i_d.value = '';
+}
+else{
+i_s.value=e_s.value;
+i_d.value=e_d.value;
+}
+}
+function uiCancel()
+{
+$G('../html/FW_forward.htm',{
+'var:page' : 'FW_forward',
+'getpage' : '../html/FW_forward.htm',
+'errorpage' : '../html/FW_forward.htm'
+});
+}
+function pfCheckIpValue(forCheckIp,gatewayIp)
+{
+if(forCheckIp==gatewayIp)
+{
+return false;
+}
+else
+return true;
+}
+function uiSubmit()
+{
+if($('port_start').value == '' || $('port_end').value == '')
+{
+alertError('CheckPortValue');
+return false;
+}
+if((Number($('port_end').value)>65535) || (Number($('port_end').value)<1))
+{
+alertError('CheckPortEnd');
+return false;
+}
+if((Number($('port_start').value)>65535) || (Number($('port_start').value)<1))
+{
+alertError('CheckPortStart');
+return false;
+}
+if(Number($('port_start').value) > Number($('port_end').value))
+{
+alertError('CheckPortStartEnd');
+return false;
+}
+if($('internal_start').value == '' || $('internal_end').value == '')
+{
+alertError('CheckPortValue');
+return false;
+}
+if((Number($('internal_end').value)>65535) || (Number($('internal_end').value)<1))
+{
+alertError('CheckPortEnd');
+return false;
+}
+if((Number($('internal_start').value)>65535) || (Number($('internal_start').value)<1))
+{
+alertError('CheckPortStart');
+return false;
+}
+if(Number($('internal_start').value) > Number($('internal_end').value))
+{
+alertError('CheckPortStartEnd');
+return false;
+}
+var result = checkNameBlank($('portname').value);
+if(result == false)
+{
+alertError("CheckServicNameBlank1");
+return false;
+}
+/*客户需求：希望可以输入空格特殊字符，因此不能在此加以判断是否有空格
+**
+*/
+/*else if(result == true)
+{
+}
+else
+{
+alertError("CheckServicNameBlank2");
+$('portname').value = result;
+return false;
+}
+*/
+var _IpValue = $('server_ip1').value+'.'+ $('server_ip2').value +'.'+ $('server_ip3').value +'.'+ $('server_ip4').value;
+if(!checkIpAddr(_IpValue))
+{
+return false;
+}
+if(!pfCheckIpValue(_IpValue,IPaddress))
+{
+alertError('pfCheckIp',1);
+return false;
+}
+$H({
+':Description' : $('portname').value,
+':Protocol' : $('srvtype').value,
+':SamePortFlag' : ($('same_range').checked == true ? 1 : 0 ),
+':ExternalPort' : $('port_start').value,
+':ExternalPortEnd' : $('port_end').value,
+':InternalPort' : $('internal_start').value,
+':InternalPortEnd': $('internal_end').value,
+':InternalClient' : $('server_ip1').value+'.'+ $('server_ip2').value +'.'+ $('server_ip3').value +'.'+ $('server_ip4').value,
+':Enable' : '1',
+'var:page': 'FW_forward',
+'var:errorpage': 'FW_forward_service',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+},true);
+if('-' == '-'){
+$F('::InternetGatewayDevice.X_TWSZ-COM_Nat.PortMappingEnabled','1');
+$F('add-obj','InternetGatewayDevice.X_TWSZ-COM_Nat.PortMapping.');
+$F('obj-action','add-set');
+} else {
+$F('var:nodeIndex','-');
+$F('obj-action','set');
+}
+var _url = "";
+$('uiPostForm').submit();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorPage(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="FW_forward_service.htm"></form>
+<style type="text/css">
+<!--
+.div_left { padding-left:0px; width:175px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+-->
+</style>
+<div class="page_title" id="lang_custum_service">Ports - Custom Services</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="cancel_bt" type="button" name="Cancel" id ="Cancel" value="Cancel" onClick="uiCancel()" />
+<input class="apply_bt" type="button" name="Apply" id="Apply" value="Apply" onClick="uiSubmit();"/>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr>
+<!-- config -->
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tbody>
+<tr>
+<td nowrap="" width="50%"><span id="lang_servicename">Service Name: </span></td>
+<td nowrap=""><input name="portname" type="text" id="portname" maxlength="30" onKeyPress="return getkey('ssid',event);"/></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_Region">Protocol :</span></td>
+<td nowrap="">
+<select id="srvtype" name="srvtype" onChange="">
+<option value="TCP/UDP" >TCP/UDP</option>
+<option value="TCP" >TCP</option>
+<option value="UDP" >UDP</option>
+</select></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_startport">External Starting Port</span></td>
+<td nowrap=""><input name="port_start" type="text" id="port_start" style="width:50px" maxlength="5" onMouseOut="int_port_value()" onKeyUp="int_port_value()" onKeyPress="return getkey('num', event)"/>(1~65535)</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_endport">External Ending Port</span></td>
+<td nowrap=""><input name="port_end" type="text" id="port_end" style="width:50px" maxlength="5" onMouseOut="int_port_value()" onKeyUp="int_port_value()" onKeyPress="return getkey('num', event)"/>(1~65535)</td>
+</tr>
+<tr>
+<td nowrap=""><input name="same_range" id="same_range" value="same_range" checked="" onClick="portrange_value()" type="checkbox" />
+<span id="lang_same_portRange">Use the same port range for Internal port</span></td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_Internal_startport">Internal Starting Port</span></td>
+<td nowrap=""><input name="internal_start" type="text" id="internal_start" style="width:50px" maxlength="5" onKeyPress="return getkey('num', event)" onMouseOut="int_port_value()" onKeyUp="int_port_value()" disabled="disabled" />
+(1~65535)</td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_Internal_endport">Internal Ending Port</span></td>
+<td nowrap=""><input name="internal_end" id="internal_end" type="text" style="border: medium none ; color: grey; width:50px" maxlength="5" onKeyPress="return getkey('num', event)" readonly disabled="disabled" /></td>
+</tr>
+<tr>
+<td nowrap=""><span id="lang_ipaddress">Internal IP Address</span></td>
+<td nowrap="">
+<input type='text' id="server_ip1" name="server_ip1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)">.
+<input type='text' id="server_ip2" name="server_ip2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)">.
+<input type='text' id="server_ip3" name="server_ip3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)">.
+<input type='text' id="server_ip4" name="server_ip4" maxlength=3 style="width:30px" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event,this)"></td>
+</tr>
+<tr>
+<td></td>
+<td nowrap=""><span id="lang_device"><b>Or</b> select from currently attached devices</span></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td nowrap="">
+<table id="td_DeviceClients" cellspacing="0" cellpadding="2" border="1" width="100%">
+<tr>
+<td nowrap="" align="center"><span id="td_Clients_head0" class="subhead_1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+<td nowrap="" align="center"><span id="td_Clients_head1" class="subhead_1">IP Address</span></td>
+<td nowrap="" align="center"><span id="td_Clients_head2" class="subhead_1">Device Name</span></td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("FW_forward_service")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

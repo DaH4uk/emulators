@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<script language="javascript" type="text/javascript">
 function getPPPoEConnStatus() {
     var pppoelist = $.act(ACT_GET, WAN_PPP_CONN, PPPoEStk, null, null);
@@ -2713,3 +2714,2720 @@ $("input[type='checkbox'][id$='_elem_enable']").click(function() {
     ShowDiv($(this));
 });
 </script>
+=======
+﻿<script language="javascript" type="text/javascript">
+function getPPPoEConnStatus() {
+    var pppoelist = $.act(ACT_GET, WAN_PPP_CONN, PPPoEStk, null, null);
+    var bConnecting = false;
+    if (!$.exe() && (pppoelist.enable == 1)) {
+        if (!INCLUDE_IPV6) {
+            if (pppoelist.connectionStatus == "Connecting") {
+                bConnecting = true;
+            }
+        } else {
+            if (pppoelist.X_TP_IPv4Enabled == true && pppoelist.connectionStatus == "Connecting") {
+                bConnecting = true;
+            } else if (pppoelist.X_TP_IPv4Enabled == false && pppoelist.X_TP_IPv6Enabled == true && pppoelist.X_TP_IPv6ConnStatus == "Connecting") {
+                bConnecting = true;
+            }
+        }
+
+        if (bConnecting) {
+            $("#PPPoEConnecting").removeClass("nd");
+        } else {
+            $("#PPPoEConnecting").addClass("nd");
+        }
+
+        if (INCLUDE_IPV6 && pppoelist.X_TP_IPv4Enabled == 0) {
+            $("#conn").prop("disabled", true);
+            $("#disConn").prop("disabled", true);
+        } else if (pppoelist.connectionStatus == "Connected") {
+            $("#conn").prop("disabled", true);
+            $("#disConn").prop("disabled", false);
+        } else if ((pppoelist.connectionStatus == "Disconnected") || (pppoelist.connectionStatus == "Unconfigured")) {
+            $("#conn").prop("disabled", false);
+            $("#disConn").prop("disabled", true);
+		} else if (pppoelist.connectionStatus == "Connecting"){
+	        $("#conn").prop("disabled", true);
+            $("#disConn").prop("disabled", true);	
+        } else {
+            $("#conn").prop("disabled", true);
+            $("#disConn").prop("disabled", false);
+        }
+
+        if (INCLUDE_DUAL_ACCESS) {
+            if (pppoelist.X_TP_SecondConnectionStatus == "Connecting") {
+                $("#secondDynIpConnecting").removeClass("nd");
+                $("#secondDynIpRenew").prop("disabled", true);
+                $("#secondDynIpRelease").prop("disabled", true);
+            } else if (pppoelist.X_TP_SecondConnectionStatus == "Connected") {
+                $("#secondDynIpConnecting").addClass("nd");
+                $("#secondDynIpRenew").prop("disabled", true);
+                $("#secondDynIpRelease").prop("disabled", false);
+                if ($("#secConnType_dyn").prop("checked")) {
+                    $("#secondDynIpAddress").html(pppoelist.X_TP_SecondConnectionIPAddress);
+                    $("#secondDynIpMask").html(pppoelist.X_TP_SecondConnectionSubnetMask);
+                }
+            } else if (pppoelist.X_TP_SecondConnectionStatus == "Disconnected" || pppoelist.X_TP_SecondConnectionStatus == "Unconfigured") {
+                $("#secondDynIpConnecting").addClass("nd");
+                $("#secondDynIpRenew").prop("disabled", false);
+                $("#secondDynIpRelease").prop("disabled", true);
+            }
+        }
+    }
+}
+
+function isValidGLUIP6AddrStrict(ip6Addr) {
+    var flag;
+    /* judge the amount of total character*/
+    var regExp = /^(:|[a-f]|[A-F]|[0-9]){1,39}$/;
+    if (regExp.test(ip6Addr)) {
+        flag = true;
+    } else {
+        flag = false;
+    }
+
+    /* whether contain ::*/
+    regExp = /::/;
+    if (flag) {
+        if (regExp.test(ip6Addr)) { /* found :: */
+            regExp = /^([a-f]|[A-F]|[0-9])*(::)([a-f]|[A-F]|[0-9])*(::)([a-f]|[A-F]|[0-9])*$/;
+            if (regExp.test(ip6Addr)) {
+                /* found more than one ::*/
+                flag = false;
+            } else {
+                /* process the substr if found only one :: */
+                var index = ip6Addr.indexOf("::");
+                var len = ip6Addr.length;
+                var substr1 = ip6Addr.substr(0, index);
+                var substr2 = ip6Addr.substr(index + 2, len - index - 2);
+                regExp = /^(([a-f]|[A-F]|[0-9]){1,4}(:)){0,6}([a-f]|[A-F]|[0-9]){1,4}$/;
+                var num = 0;
+
+                if ("" == substr1 && "" == substr2) {
+                    flag = false;
+                } else if ("" == substr2) {
+                    flag = false;
+                } else if ("" == substr1) {
+
+                    if (!regExp.test(substr2)) {
+                        flag = false;
+                    }
+                } else if (!regExp.test(substr1) || !regExp.test(substr2)) {
+                    flag = false;
+                } else if (regExp.test(substr1) && regExp.test(substr2)) {
+                    /* the amount of ":" contained in reamin should not more than 5 when found :: */
+                    for (var i = 0; i < substr1.length; i++) {
+                        if (substr1.charAt(i) == ":") {
+                            num += 1;
+                        }
+                    }
+
+                    for (var i = 0; i < substr2.length; i++) {
+                        if (substr1.charAt(i) == ":") {
+                            num += 1;
+                        }
+                    }
+
+                    if (num > 5) {
+                        flag = false;
+                    }
+                }
+            }
+        } else {
+            /* no :: */
+            regExp = /^(([a-f]|[A-F]|[0-9]){1,4}(:)){7}([a-f]|[A-F]|[0-9]){1,4}$/;
+            if (!regExp.test(ip6Addr)) {
+                flag = false;
+            }
+        }
+    }
+
+    /* type judgement */
+    if (flag) {
+        /* former 16 bit*/
+        var index;
+        index = ip6Addr.indexOf(":");
+        var substr = ip6Addr.substr(0, index);
+        if (0 == index || parseInt(substr, 16) == 0) {
+            /* undefined address */
+            regExp = /^((0{0,4})|::|:)*$/;
+            if (regExp.test(ip6Addr)) {
+                flag = false;
+            }
+
+            /* loopback address */
+            regExp = /^(((0){0,4})|::|:)*((0){0,3}(1))$/;
+            if (regExp.test(ip6Addr)) {
+                flag = false;
+            }
+        } else if (parseInt(substr, 16) >= 65280) {
+            /* FF00 = 65280, exclude broadcast address */
+            flag = false;
+        } else if (parseInt(substr, 16) >= 65152 && parseInt(substr, 16) <= 65215) {
+            /* FE80 = 65152, FEBF = 65215, local address */
+            flag = true;
+        } else {
+            /* 0x200 = 8192, 0x3ff = 16383, global unnicast address */
+            if (parseInt(substr, 16) >= 8192 && parseInt(substr, 16) <= 16383) {
+                flag = true;
+            }
+        }
+    }
+
+    return flag;
+}
+
+function showLnkType(type) {
+    if (type == "") {
+        switch (ethWan.X_TP_lastUsedIntf) {
+            case "ipoe_eth3_d":
+                $("#link_type option[value='dynamicIp']").prop("selected", "selected");
+                initDynamicIP();
+                doManualDns();
+                break;
+            case "ipoe_eth3_s":
+                $("#link_type option[value='staticIp']").prop("selected", "selected");
+                initStaticIP();
+                break;
+            case "pppoe_eth3_d":
+                $("#link_type option[value='pppoe']").prop("selected", "selected");
+                initPPPoE();
+                break;
+            case "l2tp_eth3_d":
+                $("#link_type option[value='l2tp']").prop("selected", "selected");
+                initL2TP();
+                break;
+            case "pptp_eth3_d":
+                $("#link_type option[value='pptp']").prop("selected", "selected");
+                initPPTP();
+                break;
+            default:
+                $("#link_type option[value='dynamicIp']").prop("selected", "selected");
+                initDynamicIP();
+                doManualDns();
+                break;
+        }
+    } else {
+        switch (type) {
+            case "staticIp":
+                $("#link_type option[value='staticIp']").prop("selected", "selected");
+                initStaticIP();
+                break;
+            case "dynamicIp":
+                $("#link_type option[value='dynamicIp']").prop("selected", "selected");
+                initDynamicIP();
+                doManualDns();
+                break;
+            case "pppoe":
+                $("#link_type option[value='pppoe']").prop("selected", "selected");
+                initPPPoE();
+                break;
+            case "l2tp":
+                $("#link_type option[value='l2tp']").prop("selected", "selected");
+                initL2TP();
+                break;
+            case "pptp":
+                $("#link_type option[value='pptp']").prop("selected", "selected");
+                initPPTP();
+                break;
+            default:
+                $("#link_type option[value='dynamicIp']").prop("selected", "selected");
+                initDynamicIP();
+                doManualDns();
+                break;
+        }
+    }
+}
+
+function natClick(val) {
+    if (val == "static") {
+        if ($("#enable_nat").prop("data-checked")) {
+            $("#enable_fullnat").prop("disabled", false);
+        } else {
+            $("#enable_fullnat").prop("checked", false);
+            $("#enable_fullnat").prop("disabled", true);
+            //$("#enable_spi").prop("checked", false);
+        }
+        //$("#enable_fullnat").data("tpCheckbox").refresh();
+        //$("#enable_spi").data("tpCheckbox").refresh();
+    } else if (val == "dynamic") {
+        if ($("#dyn_enable_nat").prop("data-checked")) {
+            $("#dyn_enable_fullnat").prop("disabled", false);
+        } else {
+            $("#dyn_enable_fullnat").prop("checked", false);
+            $("#dyn_enable_fullnat").prop("disabled", true);
+            //$("#dyn_ip_spi_en").prop("checked", false);
+        }
+        //$("#dyn_enable_fullnat").data("tpCheckbox").refresh();
+        //$("#dyn_ip_spi_en").data("tpCheckbox").refresh();
+    }
+}
+
+function IPClick(obj) {
+    if ($(obj).hasClass("cln")) {
+        $("#ip_elem_adv").addClass("nd");
+        $(obj).removeClass("cln");
+    } else {
+        $("#ip_elem_adv").removeClass("nd");
+        $(obj).addClass("cln");
+    }
+}
+
+function DynIPClick(obj) {
+    if ($(obj).hasClass("cln")) {
+        $("#dyn_ip_elem_adv").addClass("nd");
+        $(obj).removeClass("cln");
+    } else {
+        $("#dyn_ip_elem_adv").removeClass("nd");
+        $(obj).addClass("cln");
+    }
+}
+
+function PPPoEClick(obj) {
+    if ($(obj).hasClass("cln")) {
+        $("#pppoe_elem_adv").addClass("nd");
+        $(obj).removeClass("cln");
+    } else {
+        $("#pppoe_elem_adv").removeClass("nd");
+        $(obj).addClass("cln");
+    }
+}
+
+function doManualDns() {
+    if ($("#dynamic_manual_dns").prop("data-checked")) {
+        $("#dyn_ip_dns_tbl").removeClass("nd");
+    } else {
+        $("#dyn_ip_dns_tbl").addClass("nd");
+    }
+}
+
+function doManualDns6() {
+    if ($("#dynamic_manual_dns6").prop("data-checked")) {
+        $("#dyn_ip_dns6_tbl").removeClass("nd");
+    } else {
+        $("#dyn_ip_dns6_tbl").addClass("nd");
+    }
+}
+
+function PPPoEShowDiv(val) {
+    switch (val) {
+        case 2:
+            if ($("#externIp_en").prop("data-checked"))
+                $("#exIp_tbl").removeClass("nd");
+            else
+                $("#exIp_tbl").addClass("nd");
+            break;
+        case 3:
+            if ($("#dns_en").prop("data-checked"))
+                $("#dns_tbl").removeClass("nd");
+            else
+                $("#dns_tbl").addClass("nd");
+            break;
+        default:
+            ;
+    }
+}
+
+function ShowDiv(val) {
+    if (val == null || val.attr("id") == null)
+        return;
+
+    var objId = val.attr("id");
+    var pattern1 = /_enable/i;
+    var pattern2 = /ppp_/i;
+
+    if (objId.search(pattern1) != -1) {
+        var obj = $("#" + objId.replace(pattern1, "_basic"));
+        if (obj != null) {
+            if (val.prop("data-checked") == true)
+                obj.removeClass("nd");
+            else
+                obj.addClass("nd");
+        }
+        obj = $("#" + objId.replace(pattern1, "_adv"));
+        if (obj != null) {
+            if (val.prop("data-checked") == true)
+                obj.removeClass("nd");
+            else
+                obj.addClass("nd");
+        }
+        if (objId.search(pattern2) != -1) {
+            if ($("#ppp_ip4_elem_enable").prop("data-checked") == false && $("#ppp_ip6_elem_enable").prop("data-checked") == true) {
+                $("#connAlwaysOn").prop("checked", true).data("tpRadio").refresh();
+                $("#connOnDemand").prop("disabled", true).data("tpRadio").refresh();
+                $("#connManual").prop("disabled", true).data("tpRadio").refresh();
+            } else {
+                $("#connOnDemand").prop("disabled", false).data("tpRadio").refresh();
+                $("#connManual").prop("disabled", false).data("tpRadio").refresh();
+            }
+
+            if ($("#ppp_ip6_elem_enable").prop("data-checked") == false) {
+                $("#ipv6_cfg_ppp_slaac").addClass("nd");
+            } else if ($("#ppp_ip6_elem_enable").prop("data-checked") == true) {
+                $("#ipv6_cfg_ppp_slaac").removeClass("nd");
+            }
+        }
+    } else if (objId == "externIp6_en") {
+        if (val.prop("data-checked") == true) {
+            $("#exIp6_tbl").removeClass("nd");
+            if (INCLUDE_IPV6_SLAAC) {
+                $("#ppp_ip6addr_type").prop("disabled", true);
+            }
+        } else {
+            $("#exIp6_tbl").addClass("nd");
+            if (INCLUDE_IPV6_SLAAC) {
+                $("#ppp_ip6addr_type").prop("disabled", false);
+            }
+        }
+    } else if (objId == "dns6_en") {
+        if (val.prop("data-checked") == true)
+            $("#dns6_tbl").removeClass("nd");
+        else
+            $("#dns6_tbl").addClass("nd");
+    }
+}
+
+function initStaticIP() {
+    $("#ip_elem_basic").removeClass("nd");
+    $("#ipoeClick").removeClass("nd");
+    $("#ipoeClick").removeClass("cln");
+    $("#ip_elem_adv").addClass("nd");
+
+    $("#dyn_ip_elem_basic").addClass("nd");
+    $("#dyn_ip_elem_adv").addClass("nd");
+    $("#dynipClick").addClass("nd");
+
+    $("#pppoe_elem_basic").addClass("nd");
+    $("#pppoe_elem_adv").addClass("nd");
+    $("#pppoeClick").addClass("nd");
+
+    if (INCLUDE_PPTP || INCLUDE_L2TP) {
+        $("#l2tp_pptp_elem_basic").addClass("nd");
+    }
+    $("#ip_address").val(wan_iplist_sta.externalIPAddress);
+    $("#netmask").val(wan_iplist_sta.subnetMask);
+    $("#ip_gateway").val(wan_iplist_sta.defaultGateway ? wan_iplist_sta.defaultGateway : "0.0.0.0");
+    $("#mtu").val(wan_iplist_sta.maxMTUSize);
+    if (wan_iplist_sta.NATEnabled == 1) {
+        $("#enable_nat").prop("checked", "checked");
+        $("#enable_fullnat").prop("checked", (wan_iplist_sta.X_TP_FullconeNATEnabled == 1) ? true : false);
+    } else if (wan_iplist_sta.NATEnabled == 0) {
+        $("#enable_nat").prop("checked", false);
+        $("#enable_fullnat").prop("disabled", true);
+        $("#enable_fullnat").prop("checked", false);
+    }
+    //$("#enable_nat").data("tpCheckbox").refresh();
+    //$("#enable_fullnat").data("tpCheckbox").refresh();
+
+    //$("#enable_spi").prop("checked", (wan_iplist_sta.X_TP_FirewallEnabled == 1) ? 1 : 0);
+    $("#ip_igmp_en").prop("checked", (wan_iplist_sta.X_TP_IGMPProxyEnabled == 1) ? 1 : 0);
+
+    //$("#enable_spi").data("tpCheckbox").refresh();
+    $("#ip_igmp_en").data("tpCheckbox").refresh();
+
+    if (wan_iplist_sta.DNSOverrideAllowed == 1) {
+        $("#dns_address").val((wan_iplist_sta.DNSServers).split(",")[0] ? (wan_iplist_sta.DNSServers).split(",")[0] : "0.0.0.0");
+        $("#second_dns").val((wan_iplist_sta.DNSServers).split(",")[1] ? (wan_iplist_sta.DNSServers).split(",")[1] : "0.0.0.0");
+    }
+
+    if (INCLUDE_IPV6) {
+        $("#stc_ip4_elem_enable").prop("checked", (wan_iplist_sta.X_TP_IPv4Enabled == 1) ? 1 : 0);
+        $("#stc_ip4_elem_enable").tpCheckbox();
+        ShowDiv($("#stc_ip4_elem_enable"));
+
+        $("#stc_ip6_elem_enable").prop("checked", (wan_iplist_sta.X_TP_IPv6Enabled == 1) ? 1 : 0);
+        $("#stc_ip6_elem_enable").tpCheckbox();
+        ShowDiv($("#stc_ip6_elem_enable"));
+
+        if (INCLUDE_IPV6_MLD) {
+            $("#ip_mld").removeClass("nd");
+            $("#ip_mld_en").prop("checked", (wan_iplist_sta.X_TP_MLDProxyEnabled == 1) ? 1 : 0);
+            $("#ip_mld_en").data("tpCheckbox").refresh();
+        } else {
+            $("#ip_mld").addClass("nd");
+        }
+
+        $("#stc_ip6_addr").val(wan_iplist_sta.X_TP_ExternalIPv6Address);
+        $("#stc_prefix_len").val("64");
+        $("#stc_ip6_gateway").val(wan_iplist_sta.X_TP_DefaultIPv6Gateway);
+
+        $("#dns6_address").val((wan_iplist_sta.X_TP_IPv6DNSServers).split(",")[0] ? (wan_iplist_sta.X_TP_IPv6DNSServers).split(",")[0] : "::");
+        $("#second_dns6").val((wan_iplist_sta.X_TP_IPv6DNSServers).split(",")[1] ? (wan_iplist_sta.X_TP_IPv6DNSServers).split(",")[1] : "::");
+    }
+
+    initMacClone(wan_iplist_sta);
+}
+
+function initDynamicIP() {
+    $("#dyn_ip_elem_basic").removeClass("nd");
+    $("#dynipClick").removeClass("nd");
+    $("#dynipClick").removeClass("cln");
+    $("#dyn_ip_elem_adv").addClass("nd");
+
+    $("#ip_elem_basic").addClass("nd");
+    $("#ip_elem_adv").addClass("nd");
+    $("#ipoeClick").addClass("nd");
+
+    $("#pppoe_elem_basic").addClass("nd");
+    $("#pppoe_elem_adv").addClass("nd");
+    $("#pppoeClick").addClass("nd");
+
+    if (INCLUDE_PPTP || INCLUDE_L2TP) {
+        $("#l2tp_pptp_elem_basic").addClass("nd");
+    }
+
+    $("#dyn_ip").html(wan_iplist_dyn.externalIPAddress);
+    $("#dyn_mask").html(wan_iplist_dyn.subnetMask);
+    $("#dyn_gw").html(wan_iplist_dyn.defaultGateway);
+    $("#dyn_mtu").val(wan_iplist_dyn.maxMTUSize);
+    if (wan_iplist_dyn.NATEnabled == 1) {
+        $("#dyn_enable_nat").prop("checked", true);
+        $("#dyn_enable_fullnat").prop("checked", (wan_iplist_dyn.X_TP_FullconeNATEnabled == 1) ? 1 : 0);
+    } else if (wan_iplist_dyn.NATEnabled == 0) {
+        $("#dyn_enable_nat").prop("checked", false);
+        $("#dyn_enable_fullnat").prop("disabled", true);
+        $("#dyn_enable_fullnat").prop("checked", false);
+    }
+    //$("#dyn_enable_nat").data("tpCheckbox").refresh();
+    //$("#dyn_enable_fullnat").data("tpCheckbox").refresh();
+
+    if (wan_iplist_dyn.DNSOverrideAllowed == 1) {
+        $("#dyn_dns1").val((wan_iplist_dyn.DNSServers).split(",")[0] ? (wan_iplist_dyn.DNSServers).split(",")[0] : "0.0.0.0");
+        $("#dyn_dns2").val((wan_iplist_dyn.DNSServers).split(",")[1] ? (wan_iplist_dyn.DNSServers).split(",")[1] : "0.0.0.0");
+    }
+
+    $("#dynamic_manual_dns").prop("checked", wan_iplist_dyn.DNSOverrideAllowed == 1 ? 1 : 0);
+    $("#dynamic_manual_dns").data("tpCheckbox").refresh();
+    $("#hostname").val(wan_iplist_dyn.X_TP_Hostname);
+    $("#unicast").prop("checked", wan_iplist_dyn.X_TP_Unicast == 1 ? 1 : 0);
+    $("#dyn_ip_igmp_en").prop("checked", (wan_iplist_dyn.X_TP_IGMPProxyEnabled == 1) ? 1 : 0);
+    //$("#dyn_ip_spi_en").prop("checked", (wan_iplist_dyn.X_TP_FirewallEnabled == 1) ? 1 : 0);
+
+    $("#unicast").data("tpCheckbox").refresh();
+    //$("#dyn_ip_igmp_en").data("tpCheckbox").refresh();
+    //$("#dyn_ip_spi_en").data("tpCheckbox").refresh();
+
+    doManualDns();
+
+    if (wan_iplist_dyn.enable == 1) {
+        if (wan_iplist_dyn.connectionStatus == "Connected") {
+            $("#renew").prop("disabled", true);
+            $("#release").prop("disabled", false);
+        } else if (wan_iplist_dyn.connectionStatus == "Disconnected") {
+            $("#renew").prop("disabled", false);
+            $("#release").prop("disabled", true);
+        } else {
+            $("#DynIpConnecting").removeClass("nd");
+            $("#renew").prop("disabled", true);
+            $("#release").prop("disabled", true);
+            connStatusTimeout = $.timeout($.reload, 10000);
+        }
+    }
+
+    if (INCLUDE_IPV6) {
+        $("#dyn_ip4_elem_enable").prop("checked", (wan_iplist_dyn.X_TP_IPv4Enabled == 1) ? 1 : 0);
+        $("#dyn_ip4_elem_enable").tpCheckbox();
+        ShowDiv($("#dyn_ip4_elem_enable"));
+
+        $("#dyn_ip6_elem_enable").prop("checked", (wan_iplist_dyn.X_TP_IPv6Enabled == 1) ? 1 : 0);
+        $("#dyn_ip6_elem_enable").tpCheckbox();
+        ShowDiv($("#dyn_ip6_elem_enable"));
+
+        if (INCLUDE_IPV6_MLD) {
+            $("#dyn_ip_mld").removeClass("nd");
+            $("#dyn_ip_mld_en").prop("checked", (wan_iplist_dyn.X_TP_MLDProxyEnabled == 1) ? 1 : 0);
+            $("#dyn_ip_mld_en").data("tpCheckbox").refresh();
+        } else {
+            $("#dyn_ip_mld").addClass("nd");
+        }
+
+        $("#dyn_ip6_addr").html(wan_iplist_dyn.X_TP_ExternalIPv6Address);
+        $("#dyn_prefix_len").html(wan_iplist_dyn.X_TP_PrefixLength);
+        $("#dyn_ip6_gw").html(wan_iplist_dyn.X_TP_DefaultIPv6Gateway);
+
+        $("#dynamic_manual_dns6").prop("checked", (wan_iplist_dyn.X_TP_IPv6DNSOverrideAllowed == 1) ? 1 : 0);
+        $("#dynamic_manual_dns6").data("tpCheckbox").refresh();
+        doManualDns6();
+        if (wan_iplist_dyn.X_TP_IPv6DNSOverrideAllowed == 1) {
+            $("#dyn_dns6_1").val((wan_iplist_dyn.X_TP_IPv6DNSServers).split(",")[0] ? (wan_iplist_dyn.X_TP_IPv6DNSServers).split(",")[0] : "::");
+            $("#dyn_dns6_2").val((wan_iplist_dyn.X_TP_IPv6DNSServers).split(",")[1] ? (wan_iplist_dyn.X_TP_IPv6DNSServers).split(",")[1] : "::");
+        }
+
+        if (INCLUDE_IPV6_SLAAC) {
+            var optVal = (wan_iplist_dyn.X_TP_IPv6AddressingType == "DHCPv6") ? "dhcp" : "autoip";
+            $("#dyn_ip6addr_type option[value='" + optVal + "']").prop("selected", "selected");
+        }
+    }
+
+    initMacClone(wan_iplist_dyn);
+}
+
+function initSecConnStaIp() {
+    $("#secConnType_sta").prop("checked", true).data("tpRadio").refresh();
+    $("#secondStaIp").removeClass("nd");
+    $("#secondStaIpAddress").val(wan_pppoelist.X_TP_SecondConnectionIPAddress);
+    $("#secondStaIpMask").val(wan_pppoelist.X_TP_SecondConnectionSubnetMask);
+}
+
+function initSecConnDynIp() {
+    $("#secConnType_dyn").prop("checked", true).data("tpRadio").refresh();
+    $("#secondDynIp").removeClass("nd");
+    $("#secondDynIpAddress").html(wan_pppoelist.X_TP_SecondConnectionIPAddress);
+    $("#secondDynIpMask").html(wan_pppoelist.X_TP_SecondConnectionSubnetMask);
+
+    if (wan_pppoelist.X_TP_SecondConnectionStatus == "Connected") {
+        /*$.removeLoading();*/
+        $("#secondDynIpRenew").prop("disabled", true);
+        $("#secondDynIpRelease").prop("disabled", false);
+    } else if (wan_pppoelist.X_TP_SecondConnectionStatus == "Disconnected" || wan_pppoelist.X_TP_SecondConnectionStatus == "Unconfigured") {
+        /*$.removeLoading();*/
+        $("#secondDynIpRenew").prop("disabled", false);
+        $("#secondDynIpRelease").prop("disabled", true);
+    } else {
+        $("#secondDynIpConnecting").removeClass("nd");
+        $("#secondDynIpRenew").prop("disabled", true);
+        $("#secondDynIpRelease").prop("disabled", true);
+    }
+}
+
+function initSecondaryConn() {
+    if (wan_pppoelist.X_TP_SecondConnection == "DHCP") {
+        initSecConnDynIp();
+    } else if (wan_pppoelist.X_TP_SecondConnection == "StaticIP") {
+        initSecConnStaIp();
+    } else {
+        $("#secConnType_disable").prop("checked", true).data("tpRadio").refresh();
+    }
+}
+
+function initPPPoE() {
+    $("#pppoe_elem_basic").removeClass("nd");
+    $("#pppoeClick").removeClass("nd");
+    $("#pppoeClick").removeClass("cln");
+    $("#pppoe_elem_adv").addClass("nd");
+
+    $("#dyn_ip_elem_basic").addClass("nd");
+    $("#dyn_ip_elem_adv").addClass("nd");
+    $("#dynipClick").addClass("nd");
+
+    $("#ip_elem_basic").addClass("nd");
+    $("#ip_elem_adv").addClass("nd");
+    $("#ipoeClick").addClass("nd");
+
+    if (INCLUDE_PPTP || INCLUDE_L2TP) {
+        $("#l2tp_pptp_elem_basic").addClass("nd");
+    }
+
+    $("#username").val(wan_pppoelist.username);
+    $("#pwd").val(wan_pppoelist.password);
+    $("#pwd2").val(wan_pppoelist.password);
+    if (INCLUDE_SPECIAL_DIAL_MODE) $("#speDail").val(wan_pppoelist.X_TP_SpecialDail);
+    $("#idleTime").val(wan_pppoelist.idleDisconnectTime);
+    if (wan_pppoelist.connectionTrigger == "OnDemand") {
+        $("#connOnDemand").prop("checked", true).data("tpRadio").refresh();
+    } else if (wan_pppoelist.connectionTrigger == "AlwaysOn") {
+        $("#connAlwaysOn").prop("checked", true).data("tpRadio").refresh();
+    } else if (wan_pppoelist.connectionTrigger == "Manual") {
+        $("#connManual").prop("checked", true).data("tpRadio").refresh();
+    }
+    $("#ppp_authpro option[value='" + wan_pppoelist.PPPAuthenticationProtocol + "']").prop("selected", true);
+    $("#acName").val(wan_pppoelist.PPPoEACName);
+    $("#serviceName").val(wan_pppoelist.PPPoEServiceName);
+    $("#pppmtu").val(wan_pppoelist.maxMRUSize);
+    $("#ppp_fullnat_en").prop("checked", (wan_pppoelist.X_TP_FullconeNATEnabled == 1) ? true : false);
+    //$("#ppp_spi_en").prop("checked", (wan_pppoelist.X_TP_FirewallEnabled == 1) ? true : false);
+    $("#ppp_igmp_en").prop("checked", (wan_pppoelist.X_TP_IGMPProxyEnabled == 1) ? true : false);
+
+    //$("#ppp_fullnat_en").data("tpCheckbox").refresh();
+    //$("#ppp_spi_en").data("tpCheckbox").refresh();
+    $("#ppp_igmp_en").data("tpCheckbox").refresh();
+
+    if (wan_pppoelist.X_TP_UseStaticIP == 1) {
+        $("#externIp_en").prop("checked", true);
+        $("#exIp_tbl").removeClass("nd");
+        $("#externIpAddr").val(wan_pppoelist.externalIPAddress);
+    } else {
+        $("#externIp_en").prop("checked", false);
+        $("#exIp_tbl").addClass("nd");
+    }
+
+    $("#externIp_en").data("tpCheckbox").refresh();
+
+    $("#ppp_echotime").val(wan_pppoelist.PPPLCPEcho ? wan_pppoelist.PPPLCPEcho : 0);
+    if (wan_pppoelist.DNSOverrideAllowed == 1) {
+        $("#dns_en").prop("checked", true);
+        $("#dns_en").tpCheckbox();
+        $("#dns_tbl").removeClass("nd");
+        $("#dns1").val((wan_pppoelist.DNSServers.split(",")[0]) ? wan_pppoelist.DNSServers.split(",")[0] : "0.0.0.0");
+        $("#dns2").val((wan_pppoelist.DNSServers.split(",")[1]) ? wan_pppoelist.DNSServers.split(",")[1] : "0.0.0.0");
+    } else {
+        $("#dns_en").prop("checked", false);
+        $("#dns_en").tpCheckbox();
+        $("#dns_tbl").addClass("nd");
+    }
+
+    if (INCLUDE_DUAL_ACCESS) {
+        initSecondaryConn();
+    }
+
+    if (wan_pppoelist.enable == 1) {
+        $.auto(function() {
+            if (!$.locked()) getPPPoEConnStatus();
+        }, 5000, true);
+    }
+
+    if (INCLUDE_IPV6) {
+        $("#ppp_ip4_elem_enable").prop("checked", (wan_pppoelist.X_TP_IPv4Enabled == 1) ? true : false);
+        $("#ppp_ip4_elem_enable").tpCheckbox();
+        ShowDiv($("#ppp_ip4_elem_enable"));
+        $("#ppp_ip6_elem_enable").prop("checked", (wan_pppoelist.X_TP_IPv6Enabled == 1) ? true : false);
+        $("#ppp_ip6_elem_enable").tpCheckbox();
+        ShowDiv($("#ppp_ip6_elem_enable"));
+
+        $("#externIp6_en").prop("checked", (wan_pppoelist.X_TP_IPv6AddressingType == "Static") ? true : false);
+        $("#externIp6_en").data("tpCheckbox").refresh();
+
+        if ($("#ppp_ip4_elem_enable").prop("data-checked") == false && $("#ppp_ip6_elem_enable").prop("data-checked") == true) {
+            $("#connAlwaysOn").prop("checked", true).data("tpRadio").refresh();
+            $("#connOnDemand").prop("disabled", true).data("tpRadio").refresh();
+            $("#connManual").prop("disabled", true).data("tpRadio").refresh();
+        }
+
+        if (INCLUDE_IPV6_MLD) {
+            $("#ppp_mld").removeClass("nd");
+            $("#ppp_mld_en").prop("checked", (wan_pppoelist.X_TP_MLDProxyEnabled == 1) ? 1 : 0);
+            $("#ppp_mld_en").data("tpCheckbox").refresh();
+        } else {
+            $("#ppp_mld").addClass("nd");
+        }
+
+        if (INCLUDE_IPV6_SLAAC) {
+            if (wan_pppoelist.X_TP_IPv6AddressingType == "Static") {
+                $("#ppp_ip6addr_type").prop("disabled", true);
+            } else {
+                $("#ppp_ip6addr_type").prop("disabled", false);
+                if (wan_pppoelist.X_TP_IPv6AddressingType == "SLAAC") {
+                    $("#ppp_ip6addr_type option[value='autoip']").prop("selected", "selected");
+                }
+            }
+        }
+
+        $("#externIp6Addr").val(wan_pppoelist.X_TP_ExternalIPv6Address ? wan_pppoelist.X_TP_ExternalIPv6Address : "::");
+        $("#externIp6Gateway").val(wan_pppoelist.X_TP_DefaultIPv6Gateway ? wan_pppoelist.X_TP_DefaultIPv6Gateway : "::");
+
+        $("#dns6_en").prop("checked", (wan_pppoelist.X_TP_IPv6DNSOverrideAllowed == 1) ? true : false);
+        $("#dns6_en").data("tpCheckbox").refresh();
+
+        ShowDiv($("#dns6_en"));
+        if (wan_pppoelist.X_TP_IPv6DNSOverrideAllowed == 1) {
+            $("#dns6_1").val((wan_pppoelist.X_TP_IPv6DNSServers.split(",")[0]) ? wan_pppoelist.X_TP_IPv6DNSServers.split(",")[0] : "::");
+            $("#dns6_2").val((wan_pppoelist.X_TP_IPv6DNSServers.split(",")[1]) ? wan_pppoelist.X_TP_IPv6DNSServers.split(",")[1] : "::");
+        }
+    }
+    $("input[type='radio']").tpRadio();
+
+    initMacClone(wan_pppoelist);
+}
+
+function initL2TP() {
+    $("#l2tp_pptp_elem_basic").removeClass("nd");
+
+    $("#dyn_ip_elem_basic").addClass("nd");
+    $("#dyn_ip_elem_adv").addClass("nd");
+    $("#dynipClick").addClass("nd");
+
+    $("#ip_elem_basic").addClass("nd");
+    $("#ip_elem_adv").addClass("nd");
+    $("#ipoeClick").addClass("nd");
+
+    $("#pppoe_elem_basic").addClass("nd");
+    $("#pppoe_elem_adv").addClass("nd");
+    $("#pppoeClick").addClass("nd");
+
+    $("#defgw_elem").removeClass("nd");
+
+    $("#l2tp_mtu_msg").removeClass("nd");
+    $("#pptp_mtu_msg").addClass("nd");
+
+    $("#ppp_username").val(wan_l2tp_list.username);
+    $("#ppp_pwd").val(wan_l2tp_list.password);
+    $("#srvAddrName").val(wan_l2tp_list.serverIpOrName);
+
+    if (wan_l2tp_list.enable == 0) {
+        $("#conn2").prop("disabled", true);
+        $("#disConn2").prop("disabled", true);
+    } else if (wan_l2tp_list.connectionStatus == "Connected") {
+        $("#conn2").prop("disabled", true);
+        $("#disConn2").prop("disabled", false);
+    } else if ((wan_l2tp_list.connectionStatusIP == "Disconnected") ||
+        (wan_l2tp_list.connectionStatusIP == "Unconfigured") ||
+        ((wan_l2tp_list.addressingType == "Static") &&
+            (wan_l2tp_list.connectionStatusIP == "Connected") &&
+            ((wan_l2tp_list.connectionStatus == "Unconfigured") || (wan_l2tp_list.connectionStatus == "Disconnected")))) {
+        $("#conn2").prop("disabled", false);
+        $("#disConn2").prop("disabled", true);
+    } else {
+        $("#conn2").prop("disabled", true);
+        $("#disConn2").prop("disabled", false);
+    }
+
+    if (wan_l2tp_list.addressingType == "DHCP") {
+        $("#ipType_stc").prop("checked", false);
+        $("#ipType_stc").data("tpRadio").refresh();
+        $("#ipType_dyn").prop("checked", true);
+        $("#ipType_dyn").data("tpRadio").refresh();
+        $("#l2tp_pptp_dyn_ip_elem").removeClass("nd");
+        $("#l2tp_pptp_stc_ip_elem").addClass("nd");
+        $("#isp_ip_dyn").html(wan_l2tp_list.externalIPAddressIP ? wan_l2tp_list.externalIPAddressIP : "0.0.0.0");
+        $("#isp_net_mask_dyn").html(wan_l2tp_list.subnetMaskIP ? wan_l2tp_list.subnetMaskIP : "0.0.0.0");
+        $("#isp_gw_dyn").html(wan_l2tp_list.defaultGatewayIP ? wan_l2tp_list.defaultGatewayIP : "0.0.0.0");
+        $("#isp_dns_1_dyn").html(wan_l2tp_list.DNSServersIP.split(",")[0] ? wan_l2tp_list.DNSServersIP.split(",")[0] : "0.0.0.0");
+        $("#isp_dns_2_dyn").html(wan_l2tp_list.DNSServersIP.split(",")[1] ? wan_l2tp_list.DNSServersIP.split(",")[1] : "0.0.0.0");
+    } else if (wan_l2tp_list.addressingType == "Static") {
+        $("#ipType_dyn").prop("checked", false);
+        $("#ipType_dyn").data("tpRadio").refresh();
+        $("#ipType_stc").prop("checked", true);
+        $("#ipType_stc").data("tpRadio").refresh();
+        $("#l2tp_pptp_stc_ip_elem").removeClass("nd");
+        $("#l2tp_pptp_dyn_ip_elem").addClass("nd");
+
+        $("#isp_ip_stc").val(wan_l2tp_list.externalIPAddressIP);
+        $("#isp_net_mask_stc").val(wan_l2tp_list.subnetMaskIP);
+        $("#isp_gw_stc").val(wan_l2tp_list.defaultGatewayIP ? wan_l2tp_list.defaultGatewayIP : "0.0.0.0");
+        $("#isp_dns_1_stc").val(wan_l2tp_list.DNSServersIP.split(",")[0] ? wan_l2tp_list.DNSServersIP.split(",")[0] : "0.0.0.0");
+        $("#isp_dns_2_stc").val(wan_l2tp_list.DNSServersIP.split(",")[1] ? wan_l2tp_list.DNSServersIP.split(",")[1] : "0.0.0.0");
+    }
+
+    $("#internet_ip").html(wan_l2tp_list.externalIPAddress);
+    $("#internet_dns_1").html(wan_l2tp_list.DNSServers.split(",")[0] ? wan_l2tp_list.DNSServers.split(",")[0] : "0.0.0.0");
+    $("#internet_dns_2").html(wan_l2tp_list.DNSServers.split(",")[1] ? wan_l2tp_list.DNSServers.split(",")[1] : "0.0.0.0");
+
+    $("#l2tp_mtu").val(wan_l2tp_list.maxMRUSize);
+
+    $("#da_connOnDemand").prop("checked", false);
+    $("#da_connAlwaysOn").prop("checked", false);
+    $("#da_connManual").prop("checked", false);
+    $("#da_connOnDemand").data("tpRadio").refresh();
+    $("#da_connAlwaysOn").data("tpRadio").refresh();
+    $("#da_connManual").data("tpRadio").refresh();
+    if (wan_l2tp_list.connectionTrigger == "OnDemand") {
+        $("#da_connOnDemand").prop("checked", true);
+        $("#da_connOnDemand").data("tpRadio").refresh();
+    } else if (wan_l2tp_list.connectionTrigger == "AlwaysOn") {
+        $("#da_connAlwaysOn").prop("checked", true);
+        $("#da_connAlwaysOn").data("tpRadio").refresh();
+    } else if (wan_l2tp_list.connectionTrigger == "Manual") {
+        $("#da_connManual").prop("checked", true);
+        $("#da_connManual").data("tpRadio").refresh();
+    }
+    $("#da_idleTime").val(wan_l2tp_list.idleDisconnectTime);
+
+    initMacClone(wan_l2tp_list);
+}
+
+function initPPTP() {
+    $("#l2tp_pptp_elem_basic").removeClass("nd");
+
+    $("#dyn_ip_elem_basic").addClass("nd");
+    $("#dyn_ip_elem_adv").addClass("nd");
+    $("#dynipClick").addClass("nd");
+    $("#ip_elem_basic").addClass("nd");
+    $("#ip_elem_adv").addClass("nd");
+    $("#ipoeClick").addClass("nd");
+    $("#pppoe_elem_basic").addClass("nd");
+    $("#pppoe_elem_adv").addClass("nd");
+    $("#pppoeClick").addClass("nd");
+    //DNS & GateWay
+    $("#defgw_elem").removeClass("nd");
+    //MTU
+    $("#pptp_mtu_msg").removeClass("nd");
+    $("#l2tp_mtu_msg").addClass("nd");
+
+    $("#ppp_username").val(wan_pptp_list.username);
+    $("#ppp_pwd").val(wan_pptp_list.password);
+    $("#srvAddrName").val(wan_pptp_list.serverIpOrName);
+
+    if (wan_pptp_list.enable == 0) {
+        $("#conn2").prop("disabled", true);
+        $("#disConn2").prop("disabled", true);        
+    } else if (wan_pptp_list.connectionStatus == "Connected") {
+        $("#conn2").prop("disabled", true);
+        $("#disConn2").prop("disabled", false);
+    } else if ((wan_pptp_list.connectionStatusIP == "Disconnected") ||
+        (wan_pptp_list.connectionStatusIP == "Unconfigured") ||
+        ((wan_pptp_list.addressingType == "Static") &&
+            (wan_pptp_list.connectionStatusIP == "Connected") &&
+            ((wan_pptp_list.connectionStatus == "Unconfigured") || (wan_pptp_list.connectionStatus == "Disconnected")))) {
+        $("#conn2").prop("disabled", false);
+        $("#disConn2").prop("disabled", true);
+    } else {
+        $("#conn2").prop("disabled", true);
+        $("#disConn2").prop("disabled", false);
+    }
+
+    if (wan_pptp_list.addressingType == "DHCP") {
+        $("#ipType_stc").prop("checked", false);
+        $("#ipType_stc").data("tpRadio").refresh();
+        $("#ipType_dyn").prop("checked", true);
+        $("#ipType_dyn").data("tpRadio").refresh();
+        $("#l2tp_pptp_dyn_ip_elem").removeClass("nd");
+        $("#l2tp_pptp_stc_ip_elem").addClass("nd");
+        $("#isp_ip_dyn").html(wan_pptp_list.externalIPAddressIP ? wan_pptp_list.externalIPAddressIP : "0.0.0.0");
+        $("#isp_net_mask_dyn").html(wan_pptp_list.subnetMaskIP ? wan_pptp_list.subnetMaskIP : "0.0.0.0");
+        $("#isp_gw_dyn").html(wan_pptp_list.defaultGatewayIP ? wan_pptp_list.defaultGatewayIP : "0.0.0.0");
+        $("#isp_dns_1_dyn").html(wan_pptp_list.DNSServersIP.split(",")[0] ? wan_pptp_list.DNSServersIP.split(",")[0] : "0.0.0.0");
+        $("#isp_dns_2_dyn").html(wan_pptp_list.DNSServersIP.split(",")[1] ? wan_pptp_list.DNSServersIP.split(",")[1] : "0.0.0.0");
+
+    } else if (wan_pptp_list.addressingType == "Static") {
+        $("#ipType_dyn").prop("checked", false);
+        $("#ipType_dyn").data("tpRadio").refresh();
+        $("#ipType_stc").prop("checked", true);
+        $("#ipType_stc").data("tpRadio").refresh();
+        $("#l2tp_pptp_stc_ip_elem").removeClass("nd");
+        $("#l2tp_pptp_dyn_ip_elem").addClass("nd");
+
+        $("#isp_ip_stc").val(wan_pptp_list.externalIPAddressIP);
+        $("#isp_net_mask_stc").val(wan_pptp_list.subnetMaskIP);
+        $("#isp_gw_stc").val(wan_pptp_list.defaultGatewayIP ? wan_pptp_list.defaultGatewayIP : "0.0.0.0");
+        $("#isp_dns_1_stc").val(wan_pptp_list.DNSServersIP.split(",")[0] ? wan_pptp_list.DNSServersIP.split(",")[0] : "0.0.0.0");
+        $("#isp_dns_2_stc").val(wan_pptp_list.DNSServersIP.split(",")[1] ? wan_pptp_list.DNSServersIP.split(",")[1] : "0.0.0.0");
+    }
+
+
+    $("#internet_ip").html(wan_pptp_list.externalIPAddress);
+    $("#internet_dns_1").html(wan_pptp_list.DNSServers.split(",")[0] ? wan_pptp_list.DNSServers.split(",")[0] : "0.0.0.0");
+    $("#internet_dns_2").html(wan_pptp_list.DNSServers.split(",")[1] ? wan_pptp_list.DNSServers.split(",")[1] : "0.0.0.0");
+
+    $("#pptp_mtu").val(wan_pptp_list.maxMRUSize);
+
+    $("#da_connOnDemand").prop("checked", false);
+    $("#da_connAlwaysOn").prop("checked", false);
+    $("#da_connManual").prop("checked", false);
+    $("#da_connOnDemand").data("tpRadio").refresh();
+    $("#da_connAlwaysOn").data("tpRadio").refresh();
+    $("#da_connManual").data("tpRadio").refresh();
+    if (wan_pptp_list.connectionTrigger == "OnDemand") {
+        $("#da_connOnDemand").prop("checked", true);
+        $("#da_connOnDemand").data("tpRadio").refresh();
+    } else if (wan_pptp_list.connectionTrigger == "AlwaysOn") {
+        $("#da_connAlwaysOn").prop("checked", true);
+        $("#da_connAlwaysOn").data("tpRadio").refresh();
+    } else if (wan_pptp_list.connectionTrigger == "Manual") {
+        $("#da_connManual").prop("checked", true);
+        $("#da_connManual").data("tpRadio").refresh();
+    }
+    $("#da_idleTime").val(wan_pptp_list.idleDisconnectTime);
+    initMacClone(wan_pptp_list);
+}
+
+function init() {
+    //if (INCLUDE_WAN_MODE) {
+        $("#ethEnable").addClass("nd");
+    //}
+    /*if (INCLUDE_IPV6) {
+        $("div").each(function() {
+            if ($(this).hasClass("IPv6")) $(this).removeClass("nd");
+        });
+
+        if (INCLUDE_IPV6_SLAAC) {
+            $("#ipv6_cfg_dynamic_slaac").removeClass("nd");
+            $("#ipv6_cfg_ppp_slaac").removeClass("nd");
+        } else {
+            $("#ipv6_cfg_dynamic_slaac").addClass("nd");
+            $("#ipv6_cfg_ppp_slaac").addClass("nd");
+        }
+    } else 
+    */
+    {
+        $("input[type='checkbox'][id$='_elem_enable']").each(function() {
+            $(this).prop("checked", true);
+            $(this).tpCheckbox();
+            ShowDiv($(this));
+        });
+    }
+
+    if (INCLUDE_DUAL_ACCESS) {
+        $("#div_secConn").removeClass("nd");
+    }
+
+    var type = "";
+    var wanTypes = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "addressingType", "X_TP_IPv4Enabled"]);
+    var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "transportType", "X_TP_IPv4Enabled"]);
+    if (INCLUDE_L2TP) {
+        $("#link_type").append("<option value='l2tp' text='L2TP'>L2TP</option>");
+        var wanL2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "addressingType", "transportType"]);
+    }
+    if (INCLUDE_PPTP) {
+        $("#link_type").append("<option value='pptp' text='PPTP'>PPTP</option>");
+        var wanPptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "addressingType", "transportType"]);
+    }
+
+    if (!$.exe()) {
+        $.each(wanTypes, function() {
+            if (this.WANAccessType == "Ethernet")
+                pStk = this.__stack;
+        });
+        ethWan = $.act(ACT_GET, WAN_ETH_INTF, pStk, null, ["enable", "X_TP_lastUsedIntf"]);
+        $.each(wanIPList, function() {
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (pStk == tmpStk && this.X_TP_IPv4Enabled == 1) {
+                if (this.addressingType == "Static") {
+                    staticStk = this.__stack;
+                    staticEnable = this.enable;
+                    if (this.enable == 1) type = "staticIp";
+                    wan_iplist_sta = $.act(ACT_GET, WAN_IP_CONN, this.__stack, null, null);
+                }
+                if (this.addressingType == "DHCP") {
+                    dynStk = this.__stack;
+                    dynEnable = this.enable;
+                    if (this.enable == 1) type = "dynamicIp";
+                    wan_iplist_dyn = $.act(ACT_GET, WAN_IP_CONN, this.__stack, null, null);
+                }
+            }
+        });
+        $.each(wanPPPList, function() {
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (pStk == tmpStk && this.X_TP_IPv4Enabled == 1) {
+                if (this.transportType == "PPPoE") {
+                    PPPoEStk = this.__stack;
+                    PPPoEEnable = this.enable;
+                    if (this.enable == 1) type = "pppoe";
+                    wan_pppoelist = $.act(ACT_GET, WAN_PPP_CONN, this.__stack, null, null);
+                }
+            }
+        });
+        if (INCLUDE_L2TP) {
+            $.each(wanL2tpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (pStk == tmpStk) {
+                    l2tpStk = this.__stack;
+                    l2tpEnable = this.enable;
+                    wan_l2tp_list = $.act(ACT_GET, WAN_L2TP_CONN, this.__stack, null, null);
+                    if (this.enable == 1) type = "l2tp";
+                }
+            });
+        }
+        if (INCLUDE_PPTP) {
+            $.each(wanPptpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (pStk == tmpStk) {
+                    pptpStk = this.__stack;
+                    pptpEnable = this.enable;
+                    wan_pptp_list = $.act(ACT_GET, WAN_PPTP_CONN, this.__stack, null, null);
+                    if (this.enable == 1) type = "pptp";
+                }
+            });
+        }
+        if (!$.exe()) {
+            $("#ethWan_en").prop("checked", (ethWan.enable == 1) ? 1 : 0).data("tpCheckbox").refresh();
+            showLnkType(type);
+        }
+    }
+}
+
+function addStaticIpAttrs() {
+    var temp_ip = $("#ip_address").val();
+    var temp_mask = $("#netmask").val();
+    var temp_gateway = $("#ip_gateway").val();
+    if (!INCLUDE_IPV6 || $("#stc_ip4_elem_enable").prop("data-checked")) {
+		if ($.ifip(temp_ip, true)){
+			$("#ip_address").focus().select();
+			$.alert(ERR_IP_FORMAT);
+			return false;
+		}
+		if ((!$.mask(temp_mask)) && (!$.ipmask(temp_ip, temp_mask))) {
+            wan_iplistarg_sta.externalIPAddress = $.ip2ip(temp_ip);
+            wan_iplistarg_sta.subnetMask = $.ip2ip(temp_mask);
+        } else {
+            return false;
+        }
+        if ((temp_gateway != "") && (temp_gateway != "0.0.0.0") && ($.ifip(temp_gateway, true))) {
+            $.alert(ERR_IP_FORMAT);
+            $("#ip_gateway").focus().select();
+            return false;
+        }
+        if ((temp_gateway != "") && (temp_gateway != "0.0.0.0") && (!$.isSameLan(temp_gateway, temp_mask, temp_ip, temp_mask))) {
+            $.alert(ERR_GATEWAY_INVAD);
+            $("#ip_gateway").focus().select();
+            return false;
+        }
+    }
+    wan_iplistarg_sta.defaultGateway = (temp_gateway) ? $.ip2ip(temp_gateway) : "0.0.0.0";
+    /*wan_iplistarg_sta.NATEnabled = $("#enable_nat").prop("data-checked") ? 1 : 0;
+    wan_iplistarg_sta.X_TP_FullconeNATEnabled = $("#enable_fullnat").prop("data-checked") ? 1 : 0;
+    wan_iplistarg_sta.X_TP_FirewallEnabled = $("#enable_spi").prop("data-checked") ? 1 : 0;
+*/
+    wan_iplistarg_sta.X_TP_IGMPProxyEnabled = $("#ip_igmp_en").prop("data-checked") ? 1 : 0;
+    if (($("#mtu").val() >= 576) && ($("#mtu").val() <= 1500)) {
+        wan_iplistarg_sta.maxMTUSize = parseInt($("#mtu").val(), 10);
+    } else {
+        $.alert(ERR_WAN_MTU_INVAD);
+        $("#mtu").focus().select();
+        return false;
+    }
+
+    var temp_dnsaddr = $("#dns_address").val();
+    var temp_secdnsaddr = $("#second_dns").val();
+    var temp_dnsServers = "";
+    if (!INCLUDE_IPV6 || $("#stc_ip4_elem_enable").prop("data-checked")) {
+        if ((temp_dnsaddr != "") && (temp_dnsaddr != "0.0.0.0") && ($.ifip(temp_dnsaddr, true))) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#dns_address").focus().select();
+            return false;
+        }
+        if ((temp_secdnsaddr != "") && (temp_secdnsaddr != "0.0.0.0") && ($.ifip(temp_secdnsaddr, true))) {
+            $.alert(ERR_WAN_SECDNS_INVAD);
+            $("#second_dns").focus().select();
+            return false;
+        }
+    }
+    temp_dnsaddr = (temp_dnsaddr) ? $.ip2ip(temp_dnsaddr) : "0.0.0.0";
+    temp_secdnsaddr = (temp_secdnsaddr) ? $.ip2ip(temp_secdnsaddr) : "0.0.0.0";
+    temp_dnsServers = temp_dnsaddr + "," + temp_secdnsaddr;
+    wan_iplistarg_sta.DNSOverrideAllowed = ((temp_dnsServers == "0.0.0.0,0.0.0.0") ? 0 : 1);
+    wan_iplistarg_sta.DNSServers = temp_dnsServers;
+
+    if (INCLUDE_IPV6) {
+        wan_iplistarg_sta.X_TP_IPv4Enabled = ($("#stc_ip4_elem_enable").prop("data-checked")) ? 1 : 0;
+        wan_iplistarg_sta.X_TP_IPv6Enabled = ($("#stc_ip6_elem_enable").prop("data-checked")) ? 1 : 0;
+
+        if (wan_iplistarg_sta.X_TP_IPv4Enabled == 0 && wan_iplistarg_sta.X_TP_IPv6Enabled == 0) {
+            $.alert(ERR_WAN6_IP_STACK_NONE);
+            return false;
+        }
+
+        wan_iplistarg_sta.X_TP_IPv6AddressingType = "Static";
+
+        var temp_ip6 = $("#stc_ip6_addr").val();
+        var temp_plen = $("#stc_prefix_len").val();
+        var temp_gateway = $("#stc_ip6_gateway").val();
+
+        if ($("#stc_ip6_elem_enable").prop("data-checked")) {
+            if (!isValidGLUIP6AddrStrict(temp_ip6)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#stc_ip6_addr").focus().select();
+                return false;
+            }
+
+            if (temp_plen != 64) {
+                $.alert(ERR_WAN6_PFXLEN_INVAD);
+                $("#stc_prefix_len").focus().select();
+                return false;
+            }
+
+            if (temp_gateway != "" && temp_gateway != "::" && !isValidGLUIP6AddrStrict(temp_gateway)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#stc_ip6_gateway").focus().select();
+                return false;
+            }
+        }
+
+        wan_iplistarg_sta.X_TP_ExternalIPv6Address = temp_ip6;
+        wan_iplistarg_sta.X_TP_PrefixLength = temp_plen;
+        wan_iplistarg_sta.X_TP_DefaultIPv6Gateway = (temp_gateway) ? temp_gateway : "::";
+        if (wan_iplistarg_sta.X_TP_DefaultIPv6Gateway != "::") {
+            wan_iplistarg_sta.X_TP_DefaultIPv6GatewayOverride = 1;
+        }
+
+        var temp_dnsaddr = $("#dns6_address").val();
+        var temp_secdnsaddr = $("#second_dns6").val();
+        var temp_dnsServers = "";
+
+        if ($("#stc_ip6_elem_enable").prop("data-checked")) {
+            if (temp_dnsaddr != "" && temp_dnsaddr != "::" && !isValidGLUIP6AddrStrict(temp_dnsaddr)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#dns6_address").focus().select();
+                return false;
+            }
+
+            if (temp_secdnsaddr != "" && temp_secdnsaddr != "::" && !isValidGLUIP6AddrStrict(temp_secdnsaddr)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#second_dns6").focus().select();
+                return false;
+            }
+        }
+
+        temp_dnsaddr = (temp_dnsaddr) ? temp_dnsaddr : "::";
+        temp_secdnsaddr = (temp_secdnsaddr) ? temp_secdnsaddr : "::";
+        temp_dnsServers = temp_dnsaddr + "," + temp_secdnsaddr;
+        wan_iplistarg_sta.X_TP_IPv6DNSOverrideAllowed = ((temp_dnsServers == "::,::") ? 0 : 1);
+        wan_iplistarg_sta.X_TP_IPv6DNSServers = temp_dnsServers;
+
+        if (INCLUDE_IPV6_MLD) {
+            wan_iplistarg_sta.X_TP_MLDProxyEnabled = $("#ip_mld_en").prop("data-checked") ? 1 : 0;
+        }
+    }
+
+    if (false == addMacCloneAttrs(wan_iplistarg_sta)) {
+        return false;
+    }
+    return true;
+}
+
+function addDynIpAttrs() {
+	/*
+    wan_iplistarg_dyn.NATEnabled = $("#dyn_enable_nat").prop("data-checked") ? 1 : 0;
+    wan_iplistarg_dyn.X_TP_FullconeNATEnabled = $("#dyn_enable_fullnat").prop("data-checked") ? 1 : 0;
+    wan_iplistarg_dyn.X_TP_FirewallEnabled = $("#dyn_ip_spi_en").prop("data-checked") ? 1 : 0;
+*/
+    wan_iplistarg_dyn.X_TP_IGMPProxyEnabled = $("#dyn_ip_igmp_en").prop("data-checked") ? 1 : 0;
+
+    if (($("#dyn_mtu").val() >= 576) && ($("#dyn_mtu").val() <= 1500)) {
+        wan_iplistarg_dyn.MaxMTUSize = parseInt($("#dyn_mtu").val(), 10);
+    } else {
+        $.alert(ERR_WAN_MTU_INVAD);
+        $("#dyn_mtu").focus().select();
+        return false;
+    }
+    if ($("#dynamic_manual_dns").prop("data-checked")) {
+        wan_iplistarg_dyn.DNSOverrideAllowed = 1;
+
+        var temp_dnsaddr = $("#dyn_dns1").val();
+        var temp_secdnsaddr = $("#dyn_dns2").val();
+        var temp_dnsServers = "";
+        if (!INCLUDE_IPV6 || $("#dyn_ip4_elem_enable").prop("data-checked")) {
+            if ((temp_dnsaddr != "") && (temp_dnsaddr != "0.0.0.0") && ($.ifip(temp_dnsaddr, true))) {
+                $.alert(ERR_WAN_DNSADDR_INVAD);
+                $("#dns_address").focus().select();
+                return false;
+            }
+            if ((temp_secdnsaddr != "") && (temp_secdnsaddr != "0.0.0.0") && ($.ifip(temp_secdnsaddr, true))) {
+                $.alert(ERR_WAN_SECDNS_INVAD);
+                $("#second_dns").focus().select();
+                return false;
+            }
+        }
+        temp_dnsaddr = (temp_dnsaddr) ? $.ip2ip(temp_dnsaddr) : "0.0.0.0";
+        temp_secdnsaddr = (temp_secdnsaddr) ? $.ip2ip(temp_secdnsaddr) : "0.0.0.0";
+
+        if (!INCLUDE_IPV6 || $("#dyn_ip4_elem_enable").prop("data-checked")) {
+            if ((temp_dnsaddr + "," + temp_secdnsaddr) == "0.0.0.0,0.0.0.0") {
+                $.alert(ERR_WAN_DNS_INVAD);
+                $("#dns_address").focus().select();
+                return false;
+            }
+        }
+        wan_iplistarg_dyn.DNSServers = temp_dnsaddr + "," + temp_secdnsaddr;
+    } else {
+        wan_iplistarg_dyn.DNSOverrideAllowed = 0;
+    }
+    if (!$.charCompareA($("#hostname").val(), 63, 0)) {
+        $.alert(ERR_WAN_HOST_NAME_INVALID);
+        $("#hostname").focus().select();
+        return false;
+    }
+    wan_iplistarg_dyn.X_TP_Hostname = $("#hostname").val();
+    wan_iplistarg_dyn.X_TP_Unicast = $("#unicast").prop("data-checked") ? 1 : 0;
+
+    if (INCLUDE_IPV6) {
+        wan_iplistarg_dyn.X_TP_IPv4Enabled = ($("#dyn_ip4_elem_enable").prop("data-checked")) ? 1 : 0;
+        wan_iplistarg_dyn.X_TP_IPv6Enabled = ($("#dyn_ip6_elem_enable").prop("data-checked")) ? 1 : 0;
+
+        if (wan_iplistarg_dyn.X_TP_IPv4Enabled == 0 && wan_iplistarg_dyn.X_TP_IPv6Enabled == 0) {
+            $.alert(ERR_WAN6_IP_STACK_NONE);
+            return false;
+        }
+
+        wan_iplistarg_dyn.X_TP_IPv6AddressingType = "DHCPv6";
+
+        if (INCLUDE_IPV6_SLAAC) {
+            if ($("#dyn_ip6addr_type").data("value") == "autoip") {
+                wan_iplistarg_dyn.X_TP_IPv6AddressingType = "SLAAC";
+            }
+        }
+
+        if ($("#dynamic_manual_dns6").prop("data-checked") == 1) {
+            wan_iplistarg_dyn.X_TP_IPv6DNSOverrideAllowed = 1;
+
+            var temp_dnsaddr = $("#dyn_dns6_1").val();
+            var temp_secdnsaddr = $("#dyn_dns6_2").val();
+
+            if ($("#dyn_ip6_elem_enable").prop("data-checked") == 1) {
+                if (temp_dnsaddr != "" && temp_dnsaddr != "::" && !isValidGLUIP6AddrStrict(temp_dnsaddr)) {
+                    $.alert(ERR_WAN6_ADDR_INVAD);
+                    $("#dyn_dns6_1").focus().select();
+                    return false;
+                }
+
+                if (temp_secdnsaddr != "" && temp_secdnsaddr != "::" && !isValidGLUIP6AddrStrict(temp_secdnsaddr)) {
+                    $.alert(ERR_WAN6_ADDR_INVAD);
+                    $("#dyn_dns6_2").focus().select();
+                    return false;
+                }
+            }
+
+            temp_dnsaddr = (temp_dnsaddr) ? temp_dnsaddr : "::";
+            temp_secdnsaddr = (temp_secdnsaddr) ? temp_secdnsaddr : "::";
+
+            if ($("#dyn_ip6_elem_enable").prop("data-checked") == 1 && (temp_dnsaddr + "," + temp_secdnsaddr) == "::,::") {
+                $.alert(ERR_WAN6_DNS_INVAD);
+                $("#dyn_dns6_1").focus().select();
+                return false;
+            }
+            wan_iplistarg_dyn.X_TP_IPv6DNSServers = temp_dnsaddr + "," + temp_secdnsaddr;
+        } else {
+            wan_iplistarg_dyn.X_TP_IPv6DNSOverrideAllowed = 0;
+        }
+
+        if (INCLUDE_IPV6_MLD) {
+            wan_iplistarg_dyn.X_TP_MLDProxyEnabled = $("#dyn_ip_mld_en").prop("data-checked") ? 1 : 0;
+        }
+    }
+    if (false == addMacCloneAttrs(wan_iplistarg_dyn)) {
+        return false;
+    }
+    return true;
+}
+
+function addSecondaryConnAttrs() {
+    if ($("#secConnType_dyn").prop("checked")) {
+        wan_pppoelistarg.X_TP_SecondConnection = "DHCP";
+    } else if ($("#secConnType_sta").prop("checked")) {
+        var temp_ip = $("#secondStaIpAddress").val();
+        var temp_mask = $("#secondStaIpMask").val();
+
+		if ($.ifip(temp_ip, true)){
+			$("#secondStaIpAddress").focus().select();
+			$.alert(ERR_IP_FORMAT);
+			return false;
+		}	
+
+        if ((!$.mask(temp_mask)) && (!$.ipmask(temp_ip, temp_mask))) {
+            wan_pppoelistarg.X_TP_SecondConnection = "StaticIP";
+            wan_pppoelistarg.X_TP_SecondConnectionIPAddress = $.ip2ip(temp_ip);
+            wan_pppoelistarg.X_TP_SecondConnectionSubnetMask = $.ip2ip(temp_mask);
+        } else {
+            return false;
+        }
+    } else {
+        wan_pppoelistarg.X_TP_SecondConnection = "None";
+        wan_pppoelistarg.X_TP_SecondConnectionIPAddress = wan_pppoelist.X_TP_SecondConnectionIPAddress;
+        wan_pppoelistarg.X_TP_SecondConnectionSubnetMask = wan_pppoelist.X_TP_SecondConnectionSubnetMask;
+    }
+    return true;
+}
+
+
+function addPPPoEAttrs() {
+    if ($("#username").val() == "") {
+        $.alert(ERR_USERNAME_INVAD);
+        $("#username").focus().select();
+        return false;
+    }
+    wan_pppoelistarg.username = $("#username").val();
+    if ($("#pwd").val() != $("#pwd2").val()) {
+        $("#pwd").val() = "";
+        $("#pwd2").val() = "";
+        $.alert(ERR_PWD_INVAD);
+        $("#pwd").focus().select();
+        return false;
+    }
+    wan_pppoelistarg.password = $("#pwd").val();
+    if (INCLUDE_SPECIAL_DIAL_MODE) wan_pppoelistarg.X_TP_SpecialDail = $("#speDail").val();
+
+    if ($("#connAlwaysOn").prop("checked") == 1) {
+        wan_pppoelistarg.connectionTrigger = "AlwaysOn";
+    } else {
+        if (($("#idleTime").val()) && ($.isnum($("#idleTime").val()))) {
+            wan_pppoelistarg.idleDisconnectTime = parseInt($("#idleTime").val(), 10);
+        } else {
+            $.alert(ERR_IDLETIME_INVAD);
+            $("#idleTime").focus().select();
+            return false;
+        }
+
+        if ($("#connOnDemand").prop("checked") == 1)
+            wan_pppoelistarg.connectionTrigger = "OnDemand";
+        else if ($("#connManual").prop("checked") == 1)
+            wan_pppoelistarg.connectionTrigger = "Manual";
+    }
+    wan_pppoelistarg.PPPAuthenticationProtocol = $("#ppp_authpro").data("value");
+
+    wan_pppoelistarg.PPPoEACName = $("#acName").val();
+    wan_pppoelistarg.PPPoEServiceName = $("#serviceName").val();
+    if (($("#pppmtu").val() >= 576) && ($("#pppmtu").val() <= 1492)) {
+        wan_pppoelistarg.maxMRUSize = parseInt($("#pppmtu").val(), 10);
+    } else {
+        $.alert(ERR_WAN_PPPOE_MTU_INVAD);
+        $("#pppmtu").focus().select();
+        return false;
+    }
+    wan_pppoelistarg.NATEnabled = 1;
+	/*delete in ac3200
+    wan_pppoelistarg.X_TP_FullconeNATEnabled = ($("#ppp_fullnat_en").prop("data-checked") == 1) ? 1 : 0;
+    wan_pppoelistarg.X_TP_FirewallEnabled = ($("#ppp_spi_en").prop("data-checked") == 1) ? 1 : 0;
+*/
+    wan_pppoelistarg.X_TP_IGMPProxyEnabled = ($("#ppp_igmp_en").prop("data-checked") == 1) ? 1 : 0;
+    if ($("#externIp_en").prop("data-checked") == 1) {
+        if (($("#externIpAddr").val() != "") && ($("#externIpAddr").val() != "0.0.0.0") && ($.ifip($("#externIpAddr").val(), true)) && (!INCLUDE_IPV6 || $("#ppp_ip4_elem_enable").prop("data-checked") == 1)) {
+            $.alert(ERR_IP_FORMAT);
+            $("#externIpAddr").focus().select();
+            return false;
+        }
+        wan_pppoelistarg.externalIPAddress = ($("#externIpAddr").val()) ? $.ip2ip($("#externIpAddr").val()) : "0.0.0.0";
+        wan_pppoelistarg.X_TP_UseStaticIP = 1;
+    } else if ($("#externIp_en").prop("data-checked") == 0) {
+        wan_pppoelistarg.X_TP_UseStaticIP = 0;
+    }
+    if ((parseInt($("#ppp_echotime").val(), 10) >= 0) && (parseInt($("#ppp_echotime").val(), 10) <= 120)) {
+        wan_pppoelistarg.PPPLCPEcho = parseInt($("#ppp_echotime").val(), 10);
+    } else {
+        $.alert(ERR_WAN_ECHOTIME_INVAD);
+        $("#ppp_echotime").focus().select();
+        return false;
+    }
+    if ($("#dns_en").prop("data-checked") == 1 && (!INCLUDE_IPV6 || $("#ppp_ip4_elem_enable").prop("data-checked") == 1)) {
+        if (($("#dns1").val() != "") && ($("#dns1").val() != "0.0.0.0") && ($.ifip($("#dns1").val(), true))) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#dns1").focus().select();
+            return false;
+        }
+        if (($("#dns2").val() != "") && ($("#dns2").val() != "0.0.0.0") && ($.ifip($("#dns2").val(), true))) {
+            $.alert(ERR_WAN_SECDNS_INVAD);
+            $("#dns2").focus().select();
+            return false;
+        }
+        var tmpDns1 = ($("#dns1").val()) ? $.ip2ip($("#dns1").val()) : "0.0.0.0";
+        var tmpDns2 = ($("#dns2").val()) ? $.ip2ip($("#dns2").val()) : "0.0.0.0";
+        wan_pppoelistarg.DNSOverrideAllowed = 1;
+        wan_pppoelistarg.DNSServers = tmpDns1 + "," + tmpDns2;
+    } else {
+        wan_pppoelistarg.DNSOverrideAllowed = 0;
+    }
+
+    if (INCLUDE_IPV6) {
+        wan_pppoelistarg.X_TP_IPv4Enabled = ($("#ppp_ip4_elem_enable").prop("data-checked") == 1) ? 1 : 0;
+        wan_pppoelistarg.X_TP_IPv6Enabled = ($("#ppp_ip6_elem_enable").prop("data-checked") == 1) ? 1 : 0;
+
+        if (wan_pppoelistarg.X_TP_IPv4Enabled == 0 && wan_pppoelistarg.X_TP_IPv6Enabled == 0) {
+            $.alert(ERR_WAN6_IP_STACK_NONE);
+            return false;
+        }
+
+        if ($("#ppp_ip6_elem_enable").prop("data-checked") == 1 && $("#externIp6_en").prop("data-checked") == 1) {
+            if (!isValidGLUIP6AddrStrict($("#externIp6Addr").val())) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#externIp6Addr").focus().select();
+                return false;
+            }
+
+            var tmp_ip6Gateway = $("#externIp6Gateway").val();
+            if (tmp_ip6Gateway != "" && tmp_ip6Gateway != "::" && !isValidGLUIP6AddrStrict(tmp_ip6Gateway)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#externIp6Gateway").focus().select();
+                return false;
+            }
+
+            wan_pppoelistarg.X_TP_IPv6AddressingType = "Static";
+            wan_pppoelistarg.X_TP_ExternalIPv6Address = $("#externIp6Addr").val();
+            wan_pppoelistarg.X_TP_PrefixLength = 64;
+            wan_pppoelistarg.X_TP_DefaultIPv6Gateway = (tmp_ip6Gateway) ? tmp_ip6Gateway : "::";
+            if (wan_pppoelistarg.X_TP_DefaultIPv6Gateway != "::") {
+                wan_pppoelistarg.X_TP_DefaultIPv6GatewayOverride = 1;
+            }
+        } else {
+            wan_pppoelistarg.X_TP_IPv6AddressingType = "DHCPv6";
+            if (INCLUDE_IPV6_SLAAC) {
+                if ($("#ppp_ip6addr_type").data("value") == "autoip") {
+                    wan_pppoelistarg.X_TP_IPv6AddressingType = "SLAAC";
+                }
+            }
+            wan_pppoelistarg.X_TP_ExternalIPv6Address = "::";
+            wan_pppoelistarg.X_TP_PrefixLength = 0;
+            wan_pppoelistarg.X_TP_DefaultIPv6Gateway = "::";
+        }
+
+        if ($("#ppp_ip6_elem_enable").prop("data-checked") && $("#dns6_en").prop("data-checked")) {
+            var tmpDns1 = $("#dns6_1").val();
+            var tmpDns2 = $("#dns6_2").val();
+
+            if (tmpDns1 != "" && tmpDns1 != "::" && !isValidGLUIP6AddrStrict(tmpDns1)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#dns6_1").focus().select();
+                return false;
+            }
+
+            if (tmpDns2 != "" && tmpDns2 != "::" && !isValidGLUIP6AddrStrict(tmpDns2)) {
+                $.alert(ERR_WAN6_ADDR_INVAD);
+                $("#dns6_2").focus().select();
+                return false;
+            }
+
+            tmpDns1 = (tmpDns1) ? tmpDns1 : "::";
+            tmpDns2 = (tmpDns2) ? tmpDns2 : "::";
+
+            if ((tmpDns1 + "," + tmpDns2) == "::,::") {
+                $.alert(ERR_WAN6_DNS_INVAD);
+                $("#dns6_1").focus().select();
+                return false;
+            }
+
+            wan_pppoelistarg.X_TP_IPv6DNSOverrideAllowed = 1;
+            wan_pppoelistarg.X_TP_IPv6DNSServers = tmpDns1 + "," + tmpDns2;
+        } else {
+            wan_pppoelistarg.X_TP_IPv6DNSOverrideAllowed = 0;
+            wan_pppoelistarg.X_TP_IPv6DNSServers = "::,::";
+        }
+
+        if (INCLUDE_IPV6_MLD) {
+            wan_pppoelistarg.X_TP_MLDProxyEnabled = $("#ppp_mld_en").prop("data-checked") ? 1 : 0;
+        }
+    }
+    if (false == addMacCloneAttrs(wan_pppoelistarg)) {
+        return false;
+    }
+
+    if (INCLUDE_DUAL_ACCESS) {
+        if (addSecondaryConnAttrs() == false)
+            return false;
+    }
+
+    return true;
+}
+
+function addL2tpAttrs() {
+    if ($("#ppp_username").val() == "") {
+        $.alert(ERR_USERNAME_INVAD);
+        $("#ppp_username").focus().select();
+        return false;
+    }
+    wan_l2tp_listarg.username = $("#ppp_username").val();
+	/*
+    if ($("#ppp_pwd").val() == "") {
+        $.alert(ERR_WAN_PWD_INVAD);
+        $("#ppp_pwd").focus().select();
+        return false;
+    }
+	*/
+    wan_l2tp_listarg.password = $("#ppp_pwd").val();
+
+    if ($("#srvAddrName").val() == "") {
+        $.alert(ERR_WAN_DA_SERVER_NAME_EMPTY);
+        $("#srvAddrName").focus().select();
+        return false;
+    }
+    wan_l2tp_listarg.serverIpOrName = $("#srvAddrName").val();
+
+    if ($("#ipType_stc").prop("checked")) {
+        var temp_ip = $("#isp_ip_stc").val();
+        var temp_mask = $("#isp_net_mask_stc").val();
+        var temp_gateway = $("#isp_gw_stc").val();
+
+        wan_l2tp_listarg.addressingType = "Static";
+
+		if ($.ifip(temp_ip, true)){
+			$.alert(ERR_IP_FORMAT);
+        	$("#isp_ip_stc").focus().select();
+        	 return false;
+		}
+
+        if ((!$.mask(temp_mask)) && (!$.ipmask(temp_ip, temp_mask))) {
+            wan_l2tp_listarg.externalIPAddressIP = $.ip2ip(temp_ip);
+            wan_l2tp_listarg.subnetMaskIP = $.ip2ip(temp_mask);
+        } else {
+            return false;
+        }
+        if ((temp_gateway == "") || (temp_gateway != "0.0.0.0" && $.ifip(temp_gateway, true))) {
+            $.alert(ERR_IP_FORMAT);
+            $("#isp_gw_stc").focus().select();
+            return false;
+        }
+        if ((temp_gateway == "0.0.0.0") || (!$.isSameLan(temp_gateway, temp_mask, temp_ip, temp_mask))) {
+            $.alert(ERR_GATEWAY_INVAD);
+            $("#isp_gw_stc").focus().select();
+            return false;
+        }
+
+        wan_l2tp_listarg.defaultGatewayIP = $.ip2ip(temp_gateway);
+
+        var temp_dnsaddr = $("#isp_dns_1_stc").val();
+        var temp_secdnsaddr = $("#isp_dns_2_stc").val();
+        var temp_dnsServers = "";
+
+        /*if ($.ifip(temp_dnsaddr, true)) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#isp_dns_1_stc").focus().select();
+            return false;
+        }*/
+
+        if ((temp_dnsaddr != "") && (temp_dnsaddr != "0.0.0.0") && ($.ifip(temp_dnsaddr, true))) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#isp_dns_1_stc").focus().select();
+            return false;
+        }
+        if ((temp_secdnsaddr != "") && (temp_secdnsaddr != "0.0.0.0") && ($.ifip(temp_secdnsaddr, true))) {
+            $.alert(ERR_WAN_SECDNS_INVAD);
+            $("#isp_dns_2_stc").focus().select();
+            return false;
+        }
+
+        temp_dnsaddr = (temp_dnsaddr) ? $.ip2ip(temp_dnsaddr) : "0.0.0.0";
+        temp_secdnsaddr = (temp_secdnsaddr) ? $.ip2ip(temp_secdnsaddr) : "0.0.0.0";
+        temp_dnsServers = temp_dnsaddr + "," + temp_secdnsaddr;
+        wan_l2tp_listarg.DNSServersIP = temp_dnsServers;
+
+        if ($.ifip(wan_l2tp_listarg.serverIpOrName, true) && temp_dnsaddr == "0.0.0.0" && temp_secdnsaddr == "0.0.0.0") {
+            $.alert(ERR_WAN_DA_DNS_EMPTY);
+            $("#isp_dns_1_stc").focus().select();
+            return false;
+        }
+    } else {
+        wan_l2tp_listarg.addressingType = "DHCP";
+    }
+
+    if (($("#l2tp_mtu").val() >= 576) && ($("#l2tp_mtu").val() <= 1500)) {
+        wan_l2tp_listarg.maxMRUSize = parseInt($("#l2tp_mtu").val(), 10);
+    } else {
+        $.alert(ERR_WAN_MTU_INVAD);
+        $("#l2tp_mtu").focus().select();
+        return false;
+    }
+
+    if ($("#da_connAlwaysOn").prop("checked")) {
+        wan_l2tp_listarg.connectionTrigger = "AlwaysOn";
+    } else {
+        if (($("#da_idleTime").val()) && ($.isnum($("#da_idleTime").val()))) {
+            wan_l2tp_listarg.idleDisconnectTime = parseInt($("#da_idleTime").val(), 10);
+        } else {
+            $.alert(ERR_IDLETIME_INVAD);
+            $("#da_idleTime").focus().select();
+            return false;
+        }
+
+        if ($("#da_connOnDemand").prop("checked") == 1)
+            wan_l2tp_listarg.connectionTrigger = "OnDemand";
+        else if ($("#da_connManual").prop("checked") == 1)
+            wan_l2tp_listarg.connectionTrigger = "Manual";
+    }
+    if (false == addMacCloneAttrs(wan_l2tp_listarg)) {
+        return false;
+    }
+    return true;
+}
+
+function addPptpAttrs() {
+    if ($("#ppp_username").val() == "") {
+        $.alert(ERR_USERNAME_INVAD);
+        $("#ppp_username").focus().select();
+        return false;
+    }
+    wan_pptp_listarg.username = $("#ppp_username").val();
+	/*
+    if ($("#ppp_pwd").val() == "") {
+        $.alert(ERR_WAN_PWD_INVAD);
+        $("#ppp_pwd").focus().select();
+        return false;
+    }*/
+    wan_pptp_listarg.password = $("#ppp_pwd").val();
+
+    if ($("#srvAddrName").val() == "") {
+        $.alert(ERR_WAN_DA_SERVER_NAME_EMPTY);
+        $("#srvAddrName").focus().select();
+        return false;
+    }
+    wan_pptp_listarg.serverIpOrName = $("#srvAddrName").val();
+
+    if ($("#ipType_stc").prop("checked") == 1) {
+        var temp_ip = $("#isp_ip_stc").val();
+        var temp_mask = $("#isp_net_mask_stc").val();
+        var temp_gateway = $("#isp_gw_stc").val();
+
+        wan_pptp_listarg.addressingType = "Static";
+
+		if ($.ifip(temp_ip, true)){
+			$.alert(ERR_IP_FORMAT);
+        	$("#isp_ip_stc").focus().select();
+        	 return false;
+		}
+
+        if ((!$.mask(temp_mask)) && (!$.ipmask(temp_ip, temp_mask))) {
+            wan_pptp_listarg.externalIPAddressIP = $.ip2ip(temp_ip);
+            wan_pptp_listarg.subnetMaskIP = $.ip2ip(temp_mask);
+        } else {
+            return false;
+        }
+        if ((temp_gateway == "") || (temp_gateway != "0.0.0.0" && $.ifip(temp_gateway, true))) {
+            $.alert(ERR_IP_FORMAT);
+            $("#isp_gw_stc").focus().select();
+            return false;
+        }
+        if ((temp_gateway == "0.0.0.0") || (!$.isSameLan(temp_gateway, temp_mask, temp_ip, temp_mask))) {
+            $.alert(ERR_GATEWAY_INVAD);
+            $("#isp_gw_stc").focus().select();
+            return false;
+        }
+
+        wan_pptp_listarg.defaultGatewayIP = $.ip2ip(temp_gateway);
+
+        var temp_dnsaddr = $("#isp_dns_1_stc").val();
+        var temp_secdnsaddr = $("#isp_dns_2_stc").val();
+        var temp_dnsServers = "";
+
+		/*
+        if ($.ifip(temp_dnsaddr, true)) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#isp_dns_1_stc").focus().select();
+            return false;
+        }*/
+
+        if ((temp_dnsaddr != "") && (temp_dnsaddr != "0.0.0.0") && ($.ifip(temp_dnsaddr, true))) {
+            $.alert(ERR_WAN_DNSADDR_INVAD);
+            $("#isp_dns_1_stc").focus().select();
+            return false;
+        }
+        if ((temp_secdnsaddr != "") && (temp_secdnsaddr != "0.0.0.0") && ($.ifip(temp_secdnsaddr, true))) {
+            $.alert(ERR_WAN_SECDNS_INVAD);
+            $("#isp_dns_2_stc").focus().select();
+            return false;
+        }
+
+        temp_dnsaddr = (temp_dnsaddr) ? $.ip2ip(temp_dnsaddr) : "0.0.0.0";
+        temp_secdnsaddr = (temp_secdnsaddr) ? $.ip2ip(temp_secdnsaddr) : "0.0.0.0";
+        temp_dnsServers = temp_dnsaddr + "," + temp_secdnsaddr;
+        wan_pptp_listarg.DNSServersIP = temp_dnsServers;
+
+        if ($.ifip(wan_pptp_listarg.serverIpOrName, true) && temp_dnsaddr == "0.0.0.0" && temp_secdnsaddr == "0.0.0.0") {
+            $.alert(ERR_WAN_DA_DNS_EMPTY);
+            $("#isp_dns_1_stc").focus().select();
+            return false;
+        }
+    } else {
+        wan_pptp_listarg.addressingType = "DHCP";
+    }
+
+    if (($("#pptp_mtu").val() >= 576) && ($("#pptp_mtu").val() <= 1500)) {
+        wan_pptp_listarg.maxMRUSize = parseInt($("#pptp_mtu").val(), 10);
+    } else {
+        $.alert(ERR_WAN_MTU_INVAD);
+        $("#pptp_mtu").focus().select();
+        return false;
+    }
+
+    if ($("#da_connAlwaysOn").prop("checked") == 1) {
+        wan_pptp_listarg.connectionTrigger = "AlwaysOn";
+    } else {
+        if (($("#da_idleTime").val()) && ($.isnum($("#da_idleTime").val()))) {
+            wan_pptp_listarg.idleDisconnectTime = parseInt($("#da_idleTime").val(), 10);
+        } else {
+            $.alert(ERR_IDLETIME_INVAD);
+            $("#da_idleTime").focus().select();
+            return false;
+        }
+
+        if ($("#da_connOnDemand").prop("checked") == 1)
+            wan_pptp_listarg.connectionTrigger = "OnDemand";
+        else if ($("#da_connManual").prop("checked") == 1)
+            wan_pptp_listarg.connectionTrigger = "Manual";
+    }
+    if (false == addMacCloneAttrs(wan_pptp_listarg)) {
+        return false;
+    }
+    return true;
+}
+
+function doSave(val) {
+    var ret;
+    var type = $("#link_type").data("value");
+    if (type == "staticIp") {
+        if (!(ret = addStaticIpAttrs())) return;
+    } else if (type == "dynamicIp") {
+        if (!(ret = addDynIpAttrs())) return;
+    } else if (type == "pppoe") {
+        if (!(ret = addPPPoEAttrs())) return;
+    } else if (type == "l2tp") {
+        if (!(ret = addL2tpAttrs())) return;
+    } else if (type == "pptp") {
+        if (!(ret = addPptpAttrs())) return;
+    }
+
+    var ethEnable = $("#ethWan_en").prop("data-checked") ? 1 : 0;
+    $.addLoading($("#saveBtn"));
+    if (ethEnable == 0)
+        $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["enable=0"]);
+    else if (ethEnable == 1)
+        $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["enable=1"]);
+
+    if (type == "staticIp") {
+        if (dynEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, ["enable=0"]);
+        if (PPPoEEnable == 1)
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, ["enable=0"]);
+        if (l2tpEnable == 1)
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, ["enable=0"]);
+        if (pptpEnable == 1)
+            $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, ["enable=0"]);
+        if ((ethEnable == 0) && (staticEnable == 1))
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0"]);
+        if (!$.exe()) {
+            wan_iplistarg_sta.enable = 1;
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, wan_iplistarg_sta);
+            $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=ipoe_eth3_s"]);
+        } else
+            return;
+
+    } else if (type == "dynamicIp") {
+        if (staticEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0"]);
+        if (PPPoEEnable == 1)
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, ["enable=0"]);
+        if (l2tpEnable == 1)
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, ["enable=0"]);
+        if (pptpEnable == 1)
+            $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, ["enable=0"]);
+        if ((ethEnable == 0) && (dynEnable == 1))
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, ["enable=0"]);
+        if (!$.exe()) {
+            wan_iplistarg_dyn.enable = 1;
+
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, wan_iplistarg_dyn);
+            $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=ipoe_eth3_d"]);
+        } else
+            return;
+    } else if (type == "pppoe") {
+        if (staticEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0"]);
+        if (dynEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, ["enable=0"]);
+        if (l2tpEnable == 1)
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, ["enable=0"]);
+        if (pptpEnable == 1)
+            $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, ["enable=0"]);
+        if ((ethEnable == 0) && (PPPoEEnable == 1))
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, ["enable=0"]);
+        if (!$.exe()) {
+            wan_pppoelistarg.enable = 1;
+
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, wan_pppoelistarg);
+            $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=pppoe_eth3_d"]);
+        } else
+            return;
+    } else if (type == "l2tp") {
+        if (staticEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0"]);
+        if (dynEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, ["enable=0"]);
+        if (PPPoEEnable == 1)
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, ["enable=0"]);
+        if (pptpEnable == 1)
+            $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, ["enable=0"]);
+        if ((ethEnable == 0) && (l2tpEnable == 1))
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, ["enable=0"]);
+        if (!$.exe()) {
+            wan_l2tp_listarg.enable = 1;
+
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, wan_l2tp_listarg);
+            $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=l2tp_eth3_d"]);
+        } else {
+            return;
+        }
+    } else if (type == "pptp") {
+        if (staticEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0"]);
+        if (dynEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, ["enable=0"]);
+        if (PPPoEEnable == 1)
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, ["enable=0"]);
+        if (l2tpEnable == 1)
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, ["enable=0"]);
+        if ((ethEnable == 0) && (pptpEnable == 1))
+            $.act(ACT_SET, WAN_L2TP_CONN, pptpStk, null, ["enable=0"]);
+        if (!$.exe()) {
+            wan_pptp_listarg.enable = 1;
+
+            $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, wan_pptp_listarg);
+            $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=pptp_eth3_d"]);
+        } else {
+            return;
+        }
+    }
+
+    $.exe(function(err) {
+        if (!err) {
+            $.removeLoading();
+            if (val == 0) {
+                if (type == "staticIp") {
+                    var ipConn = $.act(ACT_GET, WAN_IP_CONN, staticStk, null, ["name"]);
+                    if (!$.exe()) {
+                        l3ForwardingObj.__ifAliasName = ipConn.name;
+                    } else
+                        return;
+                } else if (type == "dynamicIp") {
+                    var ipConn = $.act(ACT_GET, WAN_IP_CONN, dynStk, null, ["name"]);
+                    if (!$.exe()) {
+                        l3ForwardingObj.__ifAliasName = ipConn.name;
+                    } else
+                        return;
+                } else if (type == "pppoe") {
+                    var pppConn = $.act(ACT_GET, WAN_PPP_CONN, PPPoEStk, null, ["name"]);
+                    if (!$.exe()) {
+                        l3ForwardingObj.__ifAliasName = pppConn.name;
+                    } else
+                        return;
+                } else if (type == "l2tp") {
+                    var l2tpConn = $.act(ACT_GET, WAN_L2TP_CONN, l2tpStk, null, ["name"]);
+                    if (!$.exe()) {
+                        l3ForwardingObj.__ifAliasName = l2tpConn.name;
+                    } else
+                        return;
+                } else if (type == "pptp") {
+                    var pptpConn = $.act(ACT_GET, WAN_PPTP_CONN, pptpStk, null, ["name"]);
+                    if (!$.exe()) {
+                        l3ForwardingObj.__ifAliasName = pptpConn.name;
+                    } else
+                        return;
+                }
+
+                l3ForwardingObj.__ifName = "";
+                l3ForwardingObj.defaultConnectionService = "";
+
+                if (INCLUDE_IPV6) {
+                    l3Ip6ForwardingObj.__ifAliasName = l3ForwardingObj.__ifAliasName;
+                    l3Ip6ForwardingObj.__ifName = "";
+                    l3Ip6ForwardingObj.defaultConnectionService = "";
+
+                    ip4Enable = (wan_iplistarg_sta.X_TP_IPv4Enabled == 1 || wan_iplistarg_dyn.X_TP_IPv4Enabled == 1 || wan_pppoelistarg.X_TP_IPv4Enabled == 1 || wan_l2tp_listarg.enable == 1 || wan_pptp_listarg.enable == 1) ? 1 : 0;
+                    ip6Enable = (wan_iplistarg_sta.X_TP_IPv6Enabled == 1 || wan_iplistarg_dyn.X_TP_IPv6Enabled == 1 || wan_pppoelistarg.X_TP_IPv6Enabled == 1) ? 1 : 0;
+                }
+
+                if (!INCLUDE_IPV6 || INCLUDE_IPV6 && ip4Enable == 1)
+                    $.act(ACT_SET, L3_FORWARDING, null, null, l3ForwardingObj);
+
+                if (INCLUDE_IPV6 && ip6Enable == 1)
+                    $.act(ACT_SET, L3_IP6_FORWARDING, null, null, l3Ip6ForwardingObj);
+
+                if (!$.exe()) $.reload();
+            }
+        }
+    });
+}
+
+function doDhcp6Renew() {}
+
+function doDhcp6Release() {}
+
+function doDhcpRenew() {
+    $("#renew").prop("disabled", true);
+    $.act(ACT_OP, ACT_OP_DHCP_RENEW, wan_iplist_dyn.__stack);
+    $("#DynIpConnecting").removeClass("nd");
+    if (!$.exe())
+        $.timeout(function() {
+            $.reload();
+        }, 1500);
+}
+
+function doDhcpRelease() {
+    $("#release").prop("disabled", true);
+    $.act(ACT_OP, ACT_OP_DHCP_RELEASE, wan_iplist_dyn.__stack);
+    if (!$.exe())
+        $.timeout(function() {
+            $.reload();
+        }, 1500);
+}
+
+function doConn() {
+    doSave(1);
+    $("#conn").prop("disabled", true);
+    $.act(ACT_OP, ACT_OP_PPP_CONN, wan_pppoelist.__stack);
+    $("#PPPoEConnecting").removeClass("nd");
+    if (!$.exe())
+        $.timeout(function() {
+            $.reload();
+        }, 1500);
+}
+
+function doDisConn() {
+    $("#disConn").prop("disabled", true);
+    $.act(ACT_OP, ACT_OP_PPP_DISCONN, wan_pppoelist.__stack);
+    if (!$.exe()) {
+        doSave(1);
+        $.timeout(function() {
+            $.reload();
+        }, 3000);
+    }
+}
+
+function doConn2() {
+    doSave(1);
+    $("#conn2").prop("disabled", true);
+    if ($("#link_type").data("value") == "l2tp") {
+        $.act(ACT_OP, ACT_OP_L2TP_CONN, wan_l2tp_list.__stack);
+    } else if ($("#link_type").data("value") == "pptp") {
+        $.act(ACT_OP, ACT_OP_PPTP_CONN, wan_pptp_list.__stack);
+    }
+    $("#L2tpPptpConnecting").removeClass("nd");
+    if (!$.exe())
+        $.timeout(function() {
+            $.reload();
+        }, 3000);
+}
+
+function doDisConn2() {
+    $("#disConn2").prop("disabled", true);
+    if ($("#link_type").data("value") == "l2tp") {
+        $.act(ACT_OP, ACT_OP_L2TP_DISCONN, wan_l2tp_list.__stack);
+    } else if ($("#link_type").data("value") == "pptp") {
+        $.act(ACT_OP, ACT_OP_PPTP_DISCONN, wan_pptp_list.__stack);
+    }
+    if (!$.exe()) {
+        doSave(1);
+        $.timeout(function() {
+            $.reload();
+        }, 1500);
+    }
+}
+
+function checkPwd() {
+    if ($("#pwd2").val() != $("#pwd").val()) {
+        $.alert(ERR_PWD_INVAD);
+        $("#pwd").focus().select();
+        return false;
+    }
+}
+
+function showDyn() {
+    $("#l2tp_pptp_dyn_ip_elem").removeClass("nd");
+    $("#l2tp_pptp_stc_ip_elem").addClass("nd");
+}
+
+function showStc() {
+    $("#l2tp_pptp_stc_ip_elem").removeClass("nd");
+    $("#l2tp_pptp_dyn_ip_elem").addClass("nd");
+}
+
+
+function showSecondConnect(type) {
+    if (type == "disable") {
+        $("#secondStaIp").hide('fast');
+        $("#secondDynIp").hide('fast');
+    } else if (type == "dynamic") {
+        $("#secondStaIp").hide('fast');
+        $("#secondDynIp").show('fast');
+    } else if (type == "static") {
+        $("#secondStaIp").show('fast');
+        $("#secondDynIp").hide('fast');
+        $("#secondStaIpAddress").val(wan_pppoelist.X_TP_SecondConnectionIPAddress);
+        $("#secondStaIpMask").val(wan_pppoelist.X_TP_SecondConnectionSubnetMask);
+    }
+}
+
+function doDualAccessRenew() {
+    $("#secondDynIpRenew").prop("disabled", true);
+    $.act(ACT_OP, ACT_OP_DUAL_ACCESS_RENEW, wan_pppoelist.__stack);
+    $("#secondDynIpConnecting").removeClass("nd");
+    /*$.addLoading($("#secondDynIpRelease"));*/
+    if (!$.exe()) {
+        $.timeout(function() {
+            $.reload();
+        }, 1500);
+    }
+}
+
+function doDualAccessRelease() {
+    $("#secondDynIpRelease").prop("disabled", true);
+    $.act(ACT_OP, ACT_OP_DUAL_ACCESS_RELEASE, wan_pppoelist.__stack);
+    /*$.addLoading($("#secondDynIpRelease"));*/
+    if (!$.exe()) {
+        $.timeout(function() {
+            $.reload();
+        }, 1500);
+    }
+}
+$("#link_type").click(function() {
+    clearTimeout(connStatusTimeout);
+    showLnkType($("#link_type").data("value"));
+});
+$("#externIp_en").click(function() {
+    PPPoEShowDiv(2);
+});
+$("#dns_en").click(function() {
+    PPPoEShowDiv(3);
+});
+
+var pcMacAddr;
+
+function addMacCloneAttrs(wanArg) {
+    var type = $("#link_type").data("value");
+    var macAddr;
+    if ($("#dftMac").prop("checked")) {
+        wanArg.MACAddressOverride = 0;
+        return true;
+    } else if ($("#pcMac").prop("checked")) {
+        macAddr = pcMacAddr;
+    } else if ($("#customMac").prop("checked")) {
+        if ($.mac($("#customMacAddr").val())) {
+            $("#customMacAddr").focus().select();
+            return false;
+        }
+        macAddr = $("#customMacAddr").val();
+    }
+    wanArg.MACAddressOverride = 1;
+    if (type == "l2tp" || type == "pptp") {
+        wanArg.clonedMACAddress = macAddr;
+    } else {
+    wanArg.X_TP_ClonedMACAddress = macAddr;
+    }
+    return true;
+}
+
+function initMacClone(wanConn) {
+    $.act(ACT_CGI, "/cgi/info");
+    if ($.exe()) return false;
+    pcMacAddr = clientMac;
+
+    var type = $("#link_type").data("value");
+    if (wanConn.MACAddressOverride == 1) {
+        if (wanConn.X_TP_ClonedMACAddress == pcMacAddr || wanConn.clonedMACAddress == pcMacAddr) {
+            $("#pcMac").prop("checked", true).data("tpRadio").refresh();
+            $("#customMac").prop("checked", false).data("tpRadio").refresh();
+            $("#dftMac").prop("checked", false).data("tpRadio").refresh();
+            $("#customMacAddr").val("");
+        } else {
+            $("#customMac").prop("checked", true).data("tpRadio").refresh();
+            if (type == "l2tp" || type == "pptp") {
+                $("#customMacAddr").val(wanConn.clonedMACAddress);
+            } else {
+            $("#customMacAddr").val(wanConn.X_TP_ClonedMACAddress);
+            }
+
+            $("#pcMac").prop("checked", false).data("tpRadio").refresh();
+            $("#dftMac").prop("checked", false).data("tpRadio").refresh();
+        }
+    } else {
+        $("#dftMac").prop("checked", true).data("tpRadio").refresh();
+        $("#pcMac").prop("checked", false).data("tpRadio").refresh();
+        $("#customMac").prop("checked", false).data("tpRadio").refresh();
+        $("#customMacAddr").val("");
+    }
+
+}
+</script>
+<h3 id="et">WAN Interface</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div id="ethEnable"><b></b>
+            <input type="checkbox" id="ethWan_en" checked="checked" />
+            <label id="t_en">Enable EWAN connection</label>
+        </div>
+        <b class="T_conntype">Connetion Type:</b>
+        <select id="link_type" class="xl">
+            <option class="T_dynip" id="dynamicIp" value="dynamicIp">Dynamic IP</option>
+            <option class="T_staip" id="staticIp" value="staticIp">Static IP</option>
+            <option id="pppoe" value="pppoe">PPPoE</option>
+        </select>
+
+        <div id="dyn_ip_elem_basic" class="nd">
+            <div class="IPv6 nd"><b>IPv4:</b>
+                <input type="checkbox" id="dyn_ip4_elem_enable" />
+                <label class="T_enable"></label>
+            </div>
+            <div id="dyn_ip4_elem_basic">
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_ipaddr">IP Address:</label>
+                    <span class="text" id="dyn_ip">0.0.0.0</span>
+                </div>
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_netmask">Subnet Mask:</label>
+                    <span class="text" id="dyn_mask">0.0.0.0</span>
+                </div>
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_defgw">Default Gateway:</label>
+                    <span class="text" id="dyn_gw">0.0.0.0</span>
+                </div>
+                <div class="part-separate-m">
+                <div class="inline" style="margin-right:10px">
+                    <button type="submit" class="blue T_renew" id="renew" value="Renew" disabled="disabled" onclick="doDhcpRenew()">Renew</button>
+                </div>
+                <div class="inline">
+                    <button type="submit" class="blue T_release" id="release" value="Release" disabled="disabled" onclick="doDhcpRelease()">Release</button>
+                </div>
+                    <span id="DynIpConnecting" class="nd">
+                    <span class="T_connecting">Connecting</span>
+                </span>
+            </div>
+            </div>
+            <div class="IPv6 nd part-separate-m">
+                <b>IPv6:</b>
+                <input type="checkbox" id="dyn_ip6_elem_enable" />
+                <label class="T_enable"></label>
+            </div>
+
+            <div id="dyn_ip6_elem_basic" class="nd">
+                <div class="IPv6 nd pure-control-group cfg-line">
+                    <label class="label-title T_ip6addr">IPv6 Address:</label>
+                    <span class="text" id="dyn_ip6_addr">::</span>
+                </div>
+                <div class="IPv6 nd pure-control-group cfg-line">
+                    <label class="label-title T_plen">Prefix Length:</label>
+                    <span class="text" id="dyn_prefix_len">0</span>
+                </div>
+                <div class="IPv6 nd pure-control-group cfg-line">
+                    <label class="label-title T_ip6gw">IPv6 Default Gateway:</label>
+                    <span class="text" id="dyn_ip6_gw">::</span>
+                </div>
+                <div id="ipv6_cfg_dynamic_slaac" class="IPv6 nd">
+                    <b class="T_ip6addrconf">IPv6 Autoconfiguration Type</b>
+                    <select id="dyn_ip6addr_type" class="l">
+                        <option value="dhcp" selected="selected">DHCPv6</option>
+                        <option value="autoip">SLAAC</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="ip_elem_basic" class="nd">
+            <div class="IPv6 nd"><b>IPv4:</b>
+                <input type="checkbox" id="stc_ip4_elem_enable" />
+                <label class="T_enable"></label>
+            </div>
+            <div id="stc_ip4_elem_basic">
+                <div><b class="T_ipaddr">IP Address:</b>
+                    <input type="text" id="ip_address" value="0.0.0.0" size="15" maxlength="15" class="xl" />
+                </div>
+                <div><b class="T_netmask">Subnet Mask:</b>
+                    <input type="text" id="netmask" value="0.0.0.0" size="15" maxlength="15" class="xl" />
+                </div>
+                <div><b class="T_defgw">Default Gateway:</b>
+                    <input type="text" id="ip_gateway" value="0.0.0.0" size="15" maxlength="15" class="xl" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+                <div><b class="T_dns">DNS Server:</b>
+                    <input type="text" id="dns_address" value="0.0.0.0" size="15" maxlength="15" class="xl" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+                <div><b class="T_secdns">Secondary DNS server:</b>
+                    <input type="text" id="second_dns" value="0.0.0.0" size="15" maxlength="15" class="xl" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+            </div>
+            <div class="IPv6 nd"><b>IPv6:</b>
+                <input type="checkbox" id="stc_ip6_elem_enable" />
+                <label class="T_enable"></label>
+            </div>
+            <div id="stc_ip6_elem_basic" class="nd">
+                <div class="IPv6 nd"><b class="T_ip6addr">IPv6 Address:</b>
+                    <input type="text" id="stc_ip6_addr" value="::" size="15" maxlength="40" class="xl" />
+                </div>
+                <div class="IPv6 nd"><b class="T_plen">Prefix Length:</b>
+                    <input type="text" id="stc_prefix_len" value="64" size="15" maxlength="15" class="xl" />
+                </div>
+                <div class="IPv6 nd"><b class="T_ip6gw">IPv6 Default Gateway:</b>
+                    <input type="text" id="stc_ip6_gateway" value="::" size="15" maxlength="40" class="xl" />
+                </div>
+                <div class="IPv6 nd"><b class="T_ip6dns">Primary IPv6 DNS:</b>
+                    <input type="text" id="dns6_address" value="::" size="15" maxlength="40" class="xl" />
+                </div>
+                <div class="IPv6 nd"><b class="T_ip6secdns">Secondary IPv6 DNS:</b>
+                    <input type="text" id="second_dns6" value="::" size="15" maxlength="40" class="xl" />
+                    <span class="T_optional">(Optional)</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="pppoe_elem_basic" class="nd">
+            <div><b class="T_pppusr">PPP Username:</b>
+                <input type="text" size="15" id="username" maxlength="255" class="xl" />
+            </div>
+            <div><b class="T_ppppwd">PPP Password:</b>
+                <input type="password" size="15" id="pwd" maxlength="255" class="xl" />
+            </div>
+            <div><b class="T_cfmpwd">Confirm Password:</b>
+                <input type="password" size="15" id="pwd2" maxlength="255" onchange="checkPwd();" class="xl" />
+            </div>
+            <div class="nd"><b id="t_speDial">Special Dial:</b>
+                <select id="speDail" onchange="">
+                    <option id="dail0" value=0 selected="selected">Normal dial mode</option>
+                    <option id="dail1" value=1>Special dial mode 1</option>
+                    <option id="dail2" value=2>Special dial mode 2</option>
+                    <option id="dail3" value=3>Special dial mode 3</option>
+                    <option id="dail4" value=4>Special dial mode 4</option>
+                    <option id="dail5" value=5>Special dial mode 5</option>
+                    <option id="dail6" value=6>Special dial mode 6</option>
+                    <option id="dail7" value=7>Special dial mode 7</option>
+                </select>
+            </div>
+            <div id="div_secConn" class="nd">
+                <div><b id="t_secondConn">Secondary Connection:</b>
+                    <input type="radio" name="secondConnType" id="secConnType_disable" OnClick="showSecondConnect('disable')" checked />
+                    <label>Disabled</label>
+                </div>
+                <div><b>&nbsp;</b>
+                    <input type="radio" name="secondConnType" id="secConnType_dyn" OnClick="showSecondConnect('dynamic')" />
+                    <label>Dynamic IP</label>
+                </div>
+                <div><b>&nbsp;</b>
+                    <input type="radio" name="secondConnType" id="secConnType_sta" OnClick="showSecondConnect('static')" />
+                    <label>Static IP</label>
+                </div>
+                <div id="secondDynIp" class="nd">
+                    <div class="pure-control-group cfg-line">
+                        <label class="label-title T_ipaddr">IP Address:</label>
+                        <span class="text" id="secondDynIpAddress">0.0.0.0</span>
+                    </div>
+                    <div class="pure-control-group cfg-line">
+                        <label class="label-title T_netmask">Subnet Mask:</label>
+                        <span class="text" id="secondDynIpMask">0.0.0.0</span>
+                    </div>
+                    <div class="inline" style="margin-right:10px">
+                        <button type="submit" class="blue T_renew" id="secondDynIpRenew" value="Renew" disabled="disabled" onclick="doDualAccessRenew()">Renew</button>
+                    </div>
+                    <div class="inline">
+                        <button type="submit" class="blue T_release" id="secondDynIpRelease" value="Release" disabled="disabled" onclick="doDualAccessRelease()">Release</button>
+                    </div>
+                    <span id="secondDynIpConnecting" class="nd">&nbsp;&nbsp;
+                        <span class="T_connecting">Connecting</span>
+                    </span>
+                </div>
+                <div id="secondStaIp" class="nd">
+                    <div><b class="T_ipaddr">IP Address:</b>
+                        <input type="text" id="secondStaIpAddress" value="0.0.0.0" size="15" maxlength="15" />
+                    </div>
+                    <div><b class="T_netmask">Subnet Mask:</b>
+                        <input type="text" id="secondStaIpMask" value="0.0.0.0" size="15" maxlength="15" />
+                    </div>
+                </div>
+            </div>
+            <div><b class="T_connmode">Connection Mode:</b>
+                <input type="radio" name="linkMode" id="connAlwaysOn" />
+                <label class="T_typeauto">Always on</label>
+            </div>
+            <div><b>&nbsp;</b>
+                <input type="radio" name="linkMode" id="connOnDemand" />
+                <label class="T_typedemand">Connect on demand</label>
+            </div>
+            <div><b>&nbsp;</b>
+                <input type="radio" name="linkMode" id="connManual" />
+                <label class="T_typemanual">Connect manually</label>
+            </div>
+            <div><b>&nbsp;</b>
+                <span class="T_midle">Max Idle Time:</span>
+                <input type="text" id="idleTime" size="3" maxlength="2" value="15" class="s" />
+                <div class="textbox-tips">
+                <span class="T_minutes">minutes.</span>
+                <span class="T_zmean">(0 means always active.)</span>
+            </div>
+            </div>
+            <b class="T_authtype">Authentication Method:</b>
+            <select id="ppp_authpro" class="l">
+                <option id="auto_auth" value="AUTO_AUTH" selected="selected">AUTO_AUTH</option>
+                <option id="pap" value="PAP">PAP</option>
+                <option id="chap" value="CHAP">CHAP</option>
+                <option id="ms-chap" value="MS-CHAP">MS-CHAP</option>
+            </select>
+            <div class="part-separate-m">
+                <div class="inline" style="margin-right:10px">
+                    <button type="submit" class="blue T_conn" id="conn" value="Connect" disabled="disabled" onclick="doConn()">Connect</button>
+                </div>
+                <div class="inline">
+                    <button type="submit" class="blue T_disconn" id="disConn" value="Disconnect" disabled="disabled" onclick="doDisConn()">Disconnect</button>
+                </div>
+                <span id="PPPoEConnecting" class="nd">
+                    <span class="T_connecting">Connecting</span>
+                </span>
+            </div>
+            <div class="IPv6 nd part-separate-m"><b>IPv4:</b>
+                <input type="checkbox" id="ppp_ip4_elem_enable" />
+                <label class="T_enable"></label>
+            </div>
+            <div class="IPv6 nd"><b>IPv6:</b>
+                <input type="checkbox" id="ppp_ip6_elem_enable" />
+                <label class="T_enable"></label>
+            </div>
+            <div id="ipv6_cfg_ppp_slaac">
+                <div class="IPv6 nd"><b class="T_ip6addrconf">IPv6 Autoconfiguration Type:</b>
+                    <select id="ppp_ip6addr_type">
+                        <option value="dhcp">DHCPv6</option>
+                        <option value="autoip">SLAAC</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="l2tp_pptp_elem_basic" class="nd">
+            <div><b class="T_username">Username:</b>
+                <input type="text" size="15" id="ppp_username" maxlength="255" class="xl" />
+            </div>
+            <div><b class="T_passwd">Password:</b>
+                <input type="password" size="15" id="ppp_pwd" maxlength="255" class="xl" />
+            </div>
+
+            <div style="margin-top:15px">
+                <div class="inline">
+                    <button type="submit" class="blue T_conn" id="conn2" value="Connect" disabled="disabled" onclick="doConn2()">Connect</button>
+                </div>
+                <div class="inline">
+                    <button type="submit" class="blue T_disconn" id="disConn2" value="Disconnect" disabled="disabled" onclick="doDisConn2()">Disconnect</button>
+                </div>
+                <span id="L2tpPptpConnecting" class="nd">&nbsp;&nbsp;
+                    <span class="T_connecting">Connecting</span>
+                </span>
+            </div>
+
+            <p class="br"></p>
+
+            <div><b id="t_secondConn">Secondary Connection:</b>
+                <input type="radio" name="ipType" id="ipType_dyn" onclick="showDyn()" checked="checked" />
+                <label class="T_dynip">Dynamic IP</label>
+                <input type="radio" name="ipType" id="ipType_stc" onclick="showStc()" />
+                <label class="T_staip">Static IP</label>
+            </div>
+
+            <div><b class="T_srvIpName">VPN Server IP/Domain Name:</b>
+                <input type="text" size="15" id="srvAddrName" maxlength="80" />
+            </div>
+            <div id="l2tp_pptp_dyn_ip_elem">
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_ipaddr" id="isp_ip_addr">IP Address:</label>
+                    <span class="text" id="isp_ip_dyn">0.0.0.0</span>
+                </div>
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_netmask" id="isp_subnet_mask">Subnet Mask:</label>
+                    <span class="text" id="isp_net_mask_dyn">0.0.0.0</span>
+                </div>
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_gateway" id="isp_gateway">Gateway:</label>
+                    <span class="text" id="isp_gw_dyn">0.0.0.0</span>
+                </div>
+                <div class="pure-control-group cfg-line">
+                    <label class="label-title T_dns" id="isp_dns">DNS:</label>
+                    <span class="text" id="isp_dns_1_dyn">0.0.0.0</span>
+                    <span class="text" id="isp_dns_2_dyn">0.0.0.0</span>
+                </div>
+            </div>
+            <div id="l2tp_pptp_stc_ip_elem" class="nd">
+                <div><b class="T_ipaddr">IP Address:</b>
+                    <input type="text" id="isp_ip_stc" value="0.0.0.0" size="15" maxlength="15" />
+                </div>
+                <div><b class="T_netmask">Subnet Mask:</b>
+                    <input type="text" id="isp_net_mask_stc" value="0.0.0.0" size="15" maxlength="15" />
+                </div>
+                <div><b class="T_gateway">Gateway:</b>
+                    <input type="text" id="isp_gw_stc" value="0.0.0.0" size="15" maxlength="15" />
+                </div>
+                <div><b class="T_dns">DNS Server:</b>
+                    <input type="text" id="isp_dns_1_stc" value="0.0.0.0" size="15" maxlength="15" />
+                </div>
+                <div><b class="T_secdns">Secondary DNS:</b>
+                    <input type="text" id="isp_dns_2_stc" value="0.0.0.0" size="15" maxlength="15" />
+                    <span class="T_optional">(optional)</span>
+                </div>
+            </div>
+            <p class="br"></p>
+            <div class="pure-control-group cfg-line">
+                <label class="label-title T_ipaddr" id="internet_ip_addr">Internet IP Address:</label>
+                <span class="text" id="internet_ip">0.0.0.0</span>
+            </div>
+            <div class="pure-control-group cfg-line">
+                <label class="label-title T_dns" id="internet_dns">Internet DNS:</label>
+                <span class="text" id="internet_dns_1">0.0.0.0</span>
+                <span class="text" id="internet_dns_2">0.0.0.0</span>
+            </div>
+            <p class="br"></p>
+            <div>
+                <div id="l2tp_mtu_msg">
+                    <b class="T_mtuSize">MTU Size:</b>
+                    <input type="text" id="l2tp_mtu" size="5" maxlength="4" value="1460" />
+                    <div class="textbox-tips">
+                        (
+                    <span class="T_mtu1460">1460 as default</span>,
+                    <span class="T_nochg">do not change unless necessary</span>)</div>
+                </div>
+                <div id="pptp_mtu_msg">
+                    <b class="T_mtuSize">MTU Size:</b>
+                    <input type="text" id="pptp_mtu" size="5" maxlength="4" value="1420" />
+                    <div class="textbox-tips">
+                        (
+                    <span class="T_mtu1420">1420 as default</span>,
+                    <span class="T_nochg">do not change unless necessary</span>)</div>
+            </div>
+            </div>
+
+            <div><b class="T_connmode">Connection Mode:</b>
+                <input type="radio" name="linkMode" id="da_connAlwaysOn" />
+                <label class="T_typeauto">Always on</label>
+            </div>
+            <div><b>&nbsp;</b>
+                <input type="radio" name="linkMode" id="da_connOnDemand" />
+                <label class="T_typedemand">Connect on demand</label>
+            </div>
+            <div><b>&nbsp;</b>
+                <input type="radio" name="linkMode" id="da_connManual" />
+                <label class="T_typemanual">Connect manually</label>
+            </div>
+            <div><b>&nbsp;</b>
+                <span class="T_midle">Max Idle Time:</span>
+                <input type="text" id="da_idleTime" size="3" maxlength="2" value="15" class="s" />
+                <span class="T_minutes">minutes.</span>
+                <span class="T_zmean">(0 means always active.)</span>
+            </div>
+        </div>
+
+        <div class="advanced-block nd" type="button" id="dynipClick" onclick="DynIPClick(this)">
+            <span class="advanced-icon advanced-hide-icon"></span>
+            <span class="T_adv">Advanced</span>
+        </div>
+
+        <div id="dyn_ip_elem_adv" class="nd">
+            <div><b class="T_mtuSize">MTU Size:</b>
+                <input type="text" id="dyn_mtu" size="5" maxlength="4" value="1500" />
+                <div class="textbox-tips">
+                    (<span class="T_mtu1500">1500 as default</span>,
+                <span class="T_nochg">do not change unless necessary</span>)</div>
+            </div>
+
+            <div id="dyn_ip4_elem_adv">
+                <div class="nd"><b class="T_ennat">NAT:</b>
+                    <input type="checkbox" id="dyn_enable_nat" onclick="natClick('dynamic');" />
+                    <label class="T_enable"></label>
+                </div>
+                <div class="nd"><b class="T_enfullcone">Enable Fullcone NAT</b>
+                    <input type="checkbox" id="dyn_enable_fullnat" />
+                    <label class="T_enable"></label>
+                </div>
+                <div class="nd"><b class="T_enspi">Enable SPI Firewall</b>
+                    <input type="checkbox" id="dyn_ip_spi_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div><b class="T_enigmp">Enable IGMP Proxy</b>
+                    <input type="checkbox" id="dyn_ip_igmp_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div><b class="T_unicast">Get IP with Unicast</b>
+                    <input type="checkbox" id="unicast" />
+                    <label class="T_enable"></label>
+                    <span class="T_noreq">(It is usually not required)</span>
+                </div>
+                <div><b class="T_dnsmanual">Set DNS server manually</b>
+                    <input type="checkbox" id="dynamic_manual_dns" onclick="doManualDns();" />
+                    <label class="T_enable"></label>
+                </div>
+                <div id="dyn_ip_dns_tbl" class="nd">
+                    <div><b class="T_dns">DNS server:</b>
+                        <input type="text" size="15" value="0.0.0.0" id="dyn_dns1" />
+                    </div>
+                    <div><b class="T_secdns">Secondary DNS Server:</b>
+                        <input type="text" size="15" value="0.0.0.0" id="dyn_dns2" />
+                    </div>
+                </div>
+            </div>
+            <div id="dyn_ip6_elem_adv" class="nd">
+                <div id="dyn_ip_mld" class="nd">
+                    <b class="T_enmld">MLD Proxy:</b>
+                    <input type="checkbox" id="dyn_ip_mld_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div><b class="T_ip6dnsmanual">Set IPv6 DNS Server manually</b>
+                    <input type="checkbox" id="dynamic_manual_dns6" onclick="doManualDns6();" />
+                    <label class="T_enable"></label>
+                </div>
+                <div id="dyn_ip_dns6_tbl" class="nd">
+                    <div><b class="T_ip6dns">Primary IPv6 DNS:</b>
+                        <input type="text" size="15" value="::" id="dyn_dns6_1" />
+                    </div>
+                    <div><b class="T_ip6secdns">Secondary IPv6 DNS:</b>
+                        <input type="text" size="15" value="::" id="dyn_dns6_2" />
+                    </div>
+                </div>
+            </div>
+            <div><b class="T_host">Host Name:</b>
+                <input type="text" size="15" id="hostname" maxlength="62" />
+            </div>
+        </div>
+
+        <div class="advanced-block nd" type="button" id="ipoeClick" onclick="IPClick(this)">
+            <span class="advanced-icon advanced-hide-icon"></span>
+            <span class="T_adv">Advanced</span>
+        </div>
+
+        <div id="ip_elem_adv" class="nd">
+            <div><b class="T_mtuSize">MTU Size:</b>
+                <input type="text" id="mtu" size="5" maxlength="4" value="1500" />
+                <div class="textbox-tips">
+                    (<span class="T_mtu1500">1500 as default</span>,
+                <span class="T_nochg">do not change unless necessary</span>)</div>
+            </div>
+            <div id="stc_ip4_elem_adv">
+                <div class="nd"><b class="T_ennat">NAT:</b>
+                    <input type="checkbox" id="enable_nat" onclick="natClick('static');" />
+                    <label class="T_enable"></label>
+                </div>
+                <div class="nd"><b class="T_enfullcone">Full-cone NAT:</b>
+                    <input type="checkbox" id="enable_fullnat" />
+                    <label class="T_enable"></label>
+                </div>
+                <div class="nd"><b class="T_enspi">SPI Firewall:</b>
+                    <input type="checkbox" id="enable_spi" />
+                    <label class="T_enable"></label>
+                </div>
+                <div><b class="T_enigmp">IGMP Proxy:</b>
+                    <input type="checkbox" id="ip_igmp_en" />
+                    <label class="T_enable"></label>
+                </div>
+            </div>
+            <div id="stc_ip6_elem_adv">
+                <div id="ip_mld" class="IPv6 nd">
+                    <b class="T_enmld">MLD Proxy:</b>
+                    <input type="checkbox" id="ip_mld_en" />
+                    <label class="T_enable"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="advanced-block nd" type="button" id="pppoeClick" onclick="PPPoEClick(this)">
+            <span class="advanced-icon advanced-hide-icon"></span>
+            <span class="T_adv">Advanced</span>
+        </div>
+
+        <div id="pppoe_elem_adv" class="nd">
+            <div><b class="T_srvname">Service Name:</b>
+                <input type="text" size="15" id="serviceName" maxlength="31" />
+                <div class="textbox-tips">(<span class="T_nochg2">do not change unless necessary</span>)</div>
+            </div>
+            <div><b class="T_acname">Server Name:</b>
+                <input type="text" size="15" id="acName" maxlength="31" />
+                <div class="textbox-tips">(<span class="T_nochg2">do not change unless necessary</span>)</div>
+            </div>
+            <div><b class="T_mtuSize">MTU Size:</b>
+                <input type="text" id="pppmtu" size="5" maxlength="4" value="1480" />
+                <div class="textbox-tips">
+                    (<span class="T_mtu1480">1480 as default</span>,
+                <span class="T_nochg">do not change unless necessary</span>)</div>
+            </div>
+            <div id="ppp_ip4_elem_adv">
+                <div class="nd"><b class="T_enfullcone">Enable Fullcone NAT</b>
+                    <input type="checkbox" id="ppp_fullnat_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div class="nd"><b class="T_enspi">Enable SPI Firewall</b>
+                    <input type="checkbox" id="ppp_spi_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div><b class="T_enigmp">Enable IGMP Proxy</b>
+                    <input type="checkbox" id="ppp_igmp_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div><b class="T_useispaddr">Use IP address specified by ISP</b>
+                    <input type="checkbox" id="externIp_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div id="exIp_tbl" class="nd"><b class="T_ispaddr">ISP specified IP Address:</b>
+                    <input type="text" size="15" value="0.0.0.0" id="externIpAddr" />
+                </div>
+                <div><b class="item L T_echo">Echo request interval:</b>
+                    <input type="text" size="5" id="ppp_echotime" maxlength="3" value="30" />
+                    <div class="textbox-tips">
+                    <span class="T_echoinfo">(0~120 seconds, 0 means no request)</span>
+                </div>
+                </div>
+                <div><b class="T_dnsmanual">Set DNS server manually</b>
+                    <input type="checkbox" id="dns_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div id="dns_tbl" class="nd">
+                    <div><b class="T_dns">Primary DNS:</b>
+                        <input type="text" size="15" value="0.0.0.0" id="dns1" />
+                    </div>
+                    <div><b class="T_secdns">Secondary DNS:</b>
+                        <input type="text" size="15" value="0.0.0.0" id="dns2" />
+                    </div>
+                </div>
+            </div>
+            <div id="ppp_ip6_elem_adv" class="nd">
+                <div id="ppp_mld" class="IPv6 nd">
+                    <b class="T_enmld">MLD Proxy:</b>
+                    <input type="checkbox" id="ppp_mld_en" />
+                    <label class="T_enable"></label>
+                </div>
+                <div class="IPv6 nd"><b class="T_ip6useispaddr">IPv6 address</b>
+                    <input type="checkbox" id="externIp6_en" onclick="ShowDiv($(this));" />
+                    <label class="T_enable"></label>
+                </div>
+                <div id="exIp6_tbl" class="nd">
+                    <div class="IPv6 nd"><b class="T_ip6ispaddr">ISP specified IPv6 Address:</b>
+                        <input type="text" size="15" value="::" id="externIp6Addr" />
+                    </div>
+                    <div class="IPv6 nd"><b class="T_ip6ispgw">ISP specified IPv6 Gateway:</b>
+                        <input type="text" size="15" value="::" id="externIp6Gateway" />
+                    </div>
+                </div>
+                <div class="IPv6 nd"><b class="T_ip6dnsmanual">Set IPv6 DNS manually</b>
+                    <input type="checkbox" id="dns6_en" onclick="ShowDiv($(this));" />
+                    <label class="T_enable"></label>
+                </div>
+                <div id="dns6_tbl" class="nd">
+                    <div class="IPv6 nd"><b class="T_ip6dns">Primary IPv6 DNS:</b>
+                        <input type="text" size="15" value="::" id="dns6_1" />
+                    </div>
+                    <div class="IPv6 nd"><b class="T_ip6secdns">Secondary IPv6 DNS:</b>
+                        <input type="text" size="15" value="::" id="dns6_2" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="divMacClone part-separate">
+            <h3 id="et2">MAC Clone</h3>
+            <div>
+                <input type="radio" name="macClone" id="dftMac" checked="checked" />
+                <label id="t_defMac">Use Default MAC Address</label>
+            </div>
+            <div>
+                <input type="radio" name="macClone" id="pcMac" />
+                <label id="t_computerMac">Use Current Computer MAC Address</label>
+            </div>
+            <div>
+                <input type="radio" name="macClone" id="customMac" />
+                <label id="t_customMac">Use Custom MAC Address</label>
+                <input type="text" id="customMacAddr" />
+            </div>
+        </div>
+
+        <button type="submit" class="green T_save" id="saveBtn" value="Save" onclick="doSave(0);">Save</button>
+    </form>
+</div>
+<script language="javascript" type="text/javascript">
+var wan_iplist_sta = {};
+var wan_iplist_dyn = {};
+var wan_pppoelist = {};
+var wan_l2tp_list = {};
+var wan_pptp_list = {};
+var wan_iplistarg_sta = {};
+var wan_iplistarg_dyn = {};
+var wan_pppoelistarg = {};
+var wan_l2tp_listarg = {};
+var wan_pptp_listarg = {};
+var l3Forwarding;
+var dft_gtw;
+var ipConnList;
+var pppConnList;
+var l2tpConnList;
+var pptpConnList;
+var l3ForwardingObj = {};
+var staticStk;
+var staticEnable;
+var dynStk;
+var dynEnable;
+var PPPoEStk;
+var PPPoEEnable;
+var l2tpStk;
+var l2tpEnable;
+var pptpStk;
+var pptpEnable;
+var pStk;
+var loadType;
+var ethWan;
+
+var ip4Enable;
+var ip6Enable;
+var l3Ip6ForwardingObj = {};
+
+var connStatusTimeout;
+
+$.tpInit(init);
+
+$("input[type='checkbox'][id$='_elem_enable']").click(function() {
+    ShowDiv($(this));
+});
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

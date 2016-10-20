@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Сохранить/Восстановить настройки</title>
+    <script>
+        var uploadClick = 0;
+
+        function resetClick() {
+            if (!confirm('Вы действительно хотите сбросить текущие настройки в настройки по-умолчанию (заводские)?')) {
+                return false;
+            }
+            else
+                return true;
+        }
+
+        function sendClicked() {
+            if (!confirm('Вы действительно хотите обновить настройки?'))
+                return false;
+            else {
+                if (uploadClick == 0) {
+                    uploadClick = 1;
+                }
+                else {
+                    alert("Запрос обрабатываетя! Пожалуйста, подождите несколько секунд.");
+                    return false;
+                }
+                return true;
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Сохранение/Восстановление настроек</p>
+
+        <p class="intro_content">Когда роутер сконфигурирован можно сохранить настройки в виде файла. Также, настройки могут быть загружены в роутер из ранее сохраненного файла. </p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Сохранить настройки в файл:</th>
+                        <td><input class="inner_btn" name="submit.htm?saveconf.htm" value="Сохранить..." type="submit"></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Загрузить настройки из файла:</th>
+                        <td>
+
+                            <input size="30" name="download image file" type="file">
+
+                            <input class="inner_btn" onclick="return sendClicked()" name="send" value="Загрузить" type="submit">
+                            <input name="submit" value="Send" type="hidden">
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+    </div>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

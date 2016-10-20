@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+
+    <title>Привязка NAT IP</title>
+    <script>
+        var curTblNum = 0;
+        curTblNum = 0;
+
+
+        function checkIpRangeValid(lowipstr, highipstr) {
+
+            if ((getDigit(lowipstr, 1) > getDigit(highipstr, 1))) return -2;
+            if ((getDigit(lowipstr, 2) > getDigit(highipstr, 2))) return -2;
+            if ((getDigit(lowipstr, 3) > getDigit(highipstr, 3))) return -2;
+            if ((getDigit(lowipstr, 4) > getDigit(highipstr, 4))) return -2;
+            return true;
+        }
+
+        function addClick() {
+
+            if (curTblNum >= 20) {
+                alert("Таблица полная. Максимум 20 записей!");
+                return false;
+            }
+
+            with(document.formNatmappingSetting) {
+                if (lowip.value == "") return false;
+                if (!checkIP(lowip)) return false;
+                if (highip.value != "") {
+                    if (!checkIP(highip)) return false;
+                    var checkre = checkIpRangeValid(lowip.value, highip.value);
+                    if (checkre == -2) {
+                        alert("Конечный IP адрес должен быть больше начального!");
+                        return false;
+                    }
+                }
+                if (mappinglowip.value == "") return false;
+                if (!checkIP(mappinglowip)) return false;
+                if (mappinghighip.value != "") {
+                    if (!checkIP(mappinghighip)) return false;
+                    var checkre = checkIpRangeValid(mappinglowip.value, mappinghighip.value);
+                    if (checkre == -2) {
+                        alert("Конечный IP адрес должен быть больше начального!");
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        function checkState() {
+            if (document.formNatmappingSetting.addressMapType.selectedIndex == 0) {
+
+                enableTextField(document.formNatmappingSetting.lowip);
+                disableTextField(document.formNatmappingSetting.highip);
+                enableTextField(document.formNatmappingSetting.mappinglowip);
+                disableTextField(document.formNatmappingSetting.mappinghighip);
+            }
+            else if (document.formNatmappingSetting.addressMapType.selectedIndex == 1) {
+
+                enableTextField(document.formNatmappingSetting.lowip);
+                enableTextField(document.formNatmappingSetting.highip);
+                enableTextField(document.formNatmappingSetting.mappinglowip);
+                disableTextField(document.formNatmappingSetting.mappinghighip);
+            }
+            else if (document.formNatmappingSetting.addressMapType.selectedIndex == 2) {
+
+                enableTextField(document.formNatmappingSetting.lowip);
+                enableTextField(document.formNatmappingSetting.highip);
+                enableTextField(document.formNatmappingSetting.mappinglowip);
+                enableTextField(document.formNatmappingSetting.mappinghighip);
+            }
+            else if (document.formNatmappingSetting.addressMapType.selectedIndex == 3) {
+
+                enableTextField(document.formNatmappingSetting.lowip);
+                disableTextField(document.formNatmappingSetting.highip);
+                enableTextField(document.formNatmappingSetting.mappinglowip);
+                enableTextField(document.formNatmappingSetting.mappinghighip);
+            }
+
+        }
+    </script>
+
+</head>
+
+<body onload="checkState();">
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">Привязка NAT IP</p>
+            <p class="intro_content">Записи в таблице позволяют настроить диапазон адресов WAN для выбранного диапазона адресов LAN, то есть каждый IP- адрес в LAN может транслироваться в отдельный адрес WAN для NAT.
+            </p>
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th colspan="2">Тип:
+                            <select onchange="checkState()" name="addressMapType" size="1">
+
+                   <option selected="selected" value="1">Один-к-одному</option>
+                   <option value="2">Много-к-одному</option>
+                   <option value="3">Много-ко-многим</option>
+                   <option value="4">Один-ко-многим</option>
+                   </select>
+
+                        </th>
+
+                    </tr>
+
+                    <tr>
+
+                        <th width="30%">Начальный IP-адрес LAN:</th>
+                        <td><input maxlength="15" size="20" name="lowip" type="TEXT"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Конечный IP-адрес LAN:</th>
+                        <td><input disabled="disabled" maxlength="15" size="20" name="highip" type="TEXT"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Начальный IP-адрес WAN:</th>
+                        <td><input maxlength="15" size="20" name="mappinglowip" type="TEXT"></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Конечный IP-адрес WAN:</th>
+                        <td><input disabled="disabled" maxlength="15" size="20" name="mappinghighip" type="TEXT"></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="adsl clearfix">
+
+            <div class="btn_ctls">
+
+                <input class="link_bg" onclick="return addClick()" value="Применить" type="submit">
+                <input class="link_bg" name="reset" value="Сбросить" type="reset">
+            </div>
+
+            <input name="submit.htm?fw-natmapping.htm" value="Send" type="hidden">
+
+        </div>
+
+
+
+        <input name="actiontype" value="" type="HIDDEN">
+
+        <input name="state" value="" type="HIDDEN">
+
+        <div class="column">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Таблица привязки NAT IP:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th>Начальный LAN IP </th>
+                            <th>Конечный LAN IP</th>
+                            <th>Начальный WAN IP</th>
+                            <th>Конечный WAN IP</th>
+                            <th>Действие</th>
+                        </tr>
+
+                        <tr>
+
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="adsl clearfix">
+
+            <div class="btn_ctls">
+
+                <input class="link_bg" onclick="deleteSelectClick()" value="Удалить выбранные" type="submit">
+                <input class="link_bg" onclick="return deleteAllClick()" name="deleteAllAddressMap" value="Удалить все" type="submit">
+            </div>
+
+            <input name="deleteindex" value="" type="HIDDEN">
+
+            <input name="submit.htm?fw-natmapping.htm" value="Send" type="HIDDEN">
+
+        </div>
+
+
+    <script language="JavaScript">
+        <!--
+
+        function deleteSelectClick() {
+            with(document) {
+                var deleteindexobj = form2natmappingdel.deleteindex;
+                var i = 0;
+                while (1) {
+                    var objname = 'select' + i;
+                    if (!getElementById(objname))
+                        break;
+                    if (getElementById(objname).checked) {
+                        if (deleteindexobj.value.length)
+                            deleteindexobj.value = deleteindexobj.value + ',' + i;
+                        else
+                            deleteindexobj.value = i;
+                    }
+                    i++;
+                }
+            }
+        }
+
+        function natActionFunc(form, actiontype, natcmd, state) {
+            form.elements[0].value = actiontype;
+            form.elements[1].value = natcmd;
+            form.elements[2].value = state;
+            form.submit();
+        }
+    </script>
+
+
+
+
+
+
+
+</body>
+
+
+</html>

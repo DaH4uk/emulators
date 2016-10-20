@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -267,4 +268,275 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/UPNP_upnp.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "UPNP_upnp";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+// UPNP
+var G_UpnpEnable = "1"; // Enable
+var G_AdvertisementPeriod="30";//Period
+var G_AdvertisementTTL="4";//TTL
+var G_IPList = new Array();
+var m = 0;
+var G_Wanconns = [];
+var n = 0;
+//WAN Device
+G_Wanconns[n] = [];
+G_Wanconns[n][0] = "1_INTERNET_R";
+G_Wanconns[n][1] = "InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1"
+n++;
+//LAN Device
+G_Wanconns[n] = [];
+G_Wanconns[n][0] = "br0";
+G_Wanconns[n][1] = "InternetGatewayDevice.LANDevice.1";
+n++;
+function uiOnload()
+{
+$('AdverTime').value=G_AdvertisementPeriod;
+$('TimeToLive').value=G_AdvertisementTTL;
+Form.Checkbox('UPnP',G_UpnpEnable);
+UpnpEnableChange();
+createTable();
+settablecolor("idUPnPTableList");
+}
+function uiSubmit(){
+var tmpPeriod=$('AdverTime').value;
+var tmpTTL=$('TimeToLive').value;
+if((tmpPeriod<1)||(tmpPeriod>1440))
+{
+alertError('InvUPnPPeriod');
+return;
+}
+if((tmpTTL<1)||(tmpTTL>255))
+{
+alertError('InvUPnPTTL');
+return;
+}
+$H({
+':InternetGatewayDevice.X_TWSZ-COM_UPNP.Enable' : Form.Checkbox('UPnP'),
+':InternetGatewayDevice.X_TWSZ-COM_UPNP.AdvertisementPeriod' : tmpPeriod,
+':InternetGatewayDevice.X_TWSZ-COM_UPNP.AdvertisementTTL' : tmpTTL,
+':InternetGatewayDevice.X_TWSZ-COM_UPNP.WANPathName' : G_Wanconns[0][1],
+':InternetGatewayDevice.X_TWSZ-COM_UPNP.LANPathName' : G_Wanconns[1][1],
+'var:menu' : G_Menu,
+'var:page' : G_Page,
+'var:subpage' : G_SubPage,
+'var:errorpage': G_SubPage,
+'obj-action':'set',
+'getpage' :'html/page.htm',
+'errorpage' :'html/page.htm',
+'var:CacheLastData': ViewState.Save()
+});
+$('uiPostForm').submit();
+}
+function UpnpEnableChange()
+{
+if($('UPnP').checked)
+{
+$('AdverTime').disabled=false;
+$('TimeToLive').disabled=false;
+}
+else
+{
+$('AdverTime').disabled=true;
+$('TimeToLive').disabled=true;
+}
+}
+function createTable()
+{
+Table.Clear('idUPnPTableList');
+//存储生成表格需要的数据
+var array_value = [];
+for(var i = 0; i < G_IPList.length; i++)
+{
+array_value[i] = [G_IPList[i][5],//Active
+G_IPList[i][2],//Protocol
+G_IPList[i][3],//IntPort
+G_IPList[i][1],//ExtPort
+G_IPList[i][4],//IP
+G_IPList[i][6] //Name
+];
+}
+$T('idUPnPTableList',array_value);
+}
+function dealWithError()
+{
+if(G_Error != 1)
+{
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="UPNP_upnp.htm"></form>
+<!-- config -->
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style>
+<div class="page_title" id="lang_config">UPnP</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap align=center>
+<input class="common_bt" type="button" name="Refresh" id="Refresh" value="Refresh" />
+<input class="cancel_bt" type="button" name="Cancel" id="Cancel" value="Cancel" />
+<input class="apply_bt" type="submit" name="Apply" id="Apply" value="Apply" onClick="uiSubmit();"/>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="3">
+<tr>
+<td colspan="2">
+<div><input type="checkbox" name="UPnP" id="UPnP" value="UPnP" onClick="UpnpEnableChange();" /> &nbsp;<a tabindex=-1 href="javascript:loadhelp('turnon')"><b><label for="INPUT_EnableUPnP" id="lang_enable">Turn UPnP On</label></b></a></div>
+</td>
+</tr>
+<tr>
+<td nowrap=""><a tabindex=-1 href="javascript:loadhelp('adv')"><b id="idUPnPPeriod">Advertisement Period</b></a>&nbsp;<span id="lang_inMimutes">(in minutes)</span></td>
+<td nowrap="" align="right"><input type="text" id="AdverTime" name="AdverTime" value="30" onKeyUp="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" onKeyPress="return getkey('num',event);"/></td>
+</tr>
+<tr>
+<td nowrap=""><a tabindex=-1 href="javascript:loadhelp('live')"><b id="idUPnPTTL">Advertisement Time To Live</b></a>&nbsp;<span id="lang_inHops">(in hops)</span></td>
+<td nowrap="" align="right"><input type="text" id="TimeToLive" name="TimeToLive" value="4" onKeyUp="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" onKeyPress="return getkey('num',event);"/></td>
+</tr>
+<tr>
+<td colspan="2">
+<p class="do bk_black3_black" ></p>
+<a tabindex=-1 href="javascript:loadhelp('table')"><div id="idUPnPTable" style="font-weight:bold">UPnP Portable Table</div></a>
+<table id="idUPnPTableList" width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="td_table_s3" style="margin-bottom:7px;">
+<tr align="center"class="table_header">
+<td id="idUPnPTable1" nowrap="nowrap">Active</th>
+<td id="idUPnPTable2" nowrap="nowrap">Protocol</th>
+<td id="idUPnPTable3" nowrap="nowrap">Int. Port</th>
+<td id="idUPnPTable4" nowrap="nowrap">Ext. Port</th>
+<td id="idUPnPTable5" nowrap="nowrap">IP Address</th>
+<td id="idUPnPTable6" nowrap="nowrap">Description</th>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black" >&nbsp;</td>
+</tr>
+</table>
+<!--
+<div class="div_left" id="idUPnPPeriod"><b>Advertisement Period</b>(in minutes)</div><div class="div_right_2">&nbsp;<input type="text" id="idUPnPPeriodInput" value="30" /></div>
+<div class="div_left" id="idUPnPTTL"><b>Advertisement Time To Live</b>(in hops)</div><div class="div_right_2">&nbsp;<input type="text" id="idUPnPTTLInput" value="4" /></div>
+-->
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("UPNP_upnp")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

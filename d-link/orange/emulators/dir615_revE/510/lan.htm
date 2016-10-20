@@ -1,4 +1,5 @@
 <html><head>
+<<<<<<< HEAD
 <link rel="shortcut icon" href="./icon/icon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script language="JavaScript" src="lingual_EN.js"></script>
@@ -1165,4 +1166,1172 @@ src="wireless_tail.gif" height="35" width="114"></td>
 disable_items_by_username(get_current_user);
 //-->
 </script>
+=======
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script language="JavaScript">
+var submit_button_flag = 0;	
+var rule_max_num = 25;
+var resert_rule = rule_max_num;
+var DataArray = new Array();
+var DHCPL_DataArray = new Array();
+//var DHCPList_word = "";
+//1/dddd/192.168.55.55/112255448877
+function ch_radix(original, or_radix, rs_radix)
+{
+	var result = parseInt(original, or_radix);
+	return result.toString(rs_radix);
+}
+
+function DectoBinIP(ip){ 
+	var i=0; 
+	var octect = ip.split(".");
+	var binIP="";
+	
+	for(i=0;i<octect.length;i++){
+		var binOctect = ch_radix(octect[i],10,2);
+		while(binOctect.length<8){
+			binOctect = "0" + binOctect;
+		}
+		binIP = binIP + binOctect;
+	}  
+	return binIP;
+} 
+
+function BintoDecIP (binIP){
+	var i=0;
+	var octect="";
+	var ip="";
+	for(i=0;i<binIP.length;i+=8){
+		octect=ch_radix(binIP.substring(i,i+8),2,10);			
+		ip = (i==0) ? octect: ip+"."+octect;
+	} 
+	return ip;
+}
+	
+function adopt_network(adopt_ip, mask, ch_ip){
+var i=0;
+var bin_adopt_ip = DectoBinIP (adopt_ip);
+var bin_mask = DectoBinIP (mask);
+var bin_ch_ip = DectoBinIP (ch_ip);
+var bin_result_ip="";
+
+bin_result_ip = bin_adopt_ip.substring(0,bin_mask.indexOf("0"));
+bin_result_ip += bin_ch_ip.substring(bin_mask.indexOf("0") , bin_ch_ip.length);
+
+result_ip = BintoDecIP(bin_result_ip);
+return result_ip;
+}
+
+function Data(enable, name, ip, mac, onList){
+	this.Enable = enable;
+	this.Name = name;
+	this.IP = ip;
+	this.MAC = mac;
+	this.OnList = onList;
+}
+
+function DHCP_Data(name, ip, mac, Exp_time, onList){
+	this.Name = name;
+	this.IP = ip;
+	this.MAC = mac;
+	this.EXP_T = Exp_time;
+	this.OnList = onList;
+}
+
+function check_box_enabled(num){
+	var array_num = num;
+	get_by_id("r_enable"+num).checked = false;		
+	if(parseInt(DataArray[array_num].Enable,10)==1){
+		get_by_id("r_enable"+num).checked = true;
+	}
+}
+
+function set_reservation(){
+	var index = 1;
+	for (var i = 0; i < rule_max_num; i++){
+		var temp_dhcp;
+		var k = i;
+		if(parseInt(i) < 10){
+			k = "0" + i;
+		}
+		temp_dhcp = (get_by_id("dhcpd_reserve_" + k).value).split("/");
+		if (temp_dhcp.length > 1){
+			if(temp_dhcp[1].length > 0){
+				DataArray[index] = new Data(temp_dhcp[0],temp_dhcp[1], temp_dhcp[2], temp_dhcp[3], index);
+				index++;
+			}
+		}
+	}
+	get_by_id("max_row").value = index - 1;
+}
+function set_lan_dhcp_list(){
+	var index = 0;
+	var temp_dhcp_list = get_by_id("dhcp_list").value.split(",");
+	var dhcpd_reserve_XX;
+	for (var i = 0; i < temp_dhcp_list.length; i++){	
+		var temp_data = temp_dhcp_list[i].split("/");
+		if(temp_data.length > 1){
+			for(var j=0;j<rule_max_num;j++){
+				dhcpd_reserve_XX = (j>9) ? get_by_id("dhcpd_reserve_"+j).value.split("/") : get_by_id("dhcpd_reserve_0"+j).value.split("/");
+				if(parseInt(dhcpd_reserve_XX[0],10)==0)
+					continue;
+				/*IP and MAC both match in reserved list and dhcp client list.*/
+				if(dhcpd_reserve_XX[2] == temp_data[1] && dhcpd_reserve_XX[3] == temp_data[2]){
+					temp_data[3]="Never";
+					break;
+				}
+			}
+			DHCPL_DataArray[DHCPL_DataArray.length++] = new DHCP_Data(temp_data[0], temp_data[1], temp_data[2], temp_data[3], index);
+			//DHCPList_word = DHCPList_word+ "<option value=\""+ index +"\">" + temp_data[0] + "</option>";
+			index++;
+		}
+	}
+	get_by_id("dhcp_num").innerHTML = DHCPL_DataArray.length;
+}
+function onPageLoad(){
+	set_checked("1", get_by_id("dhcpsvr"));
+	set_checked("1", get_by_id("DNSrelay"));
+	set_checked("1", get_by_id("always_broadcast"));
+	set_checked("0", get_by_id("netbios_announcement"));
+	set_checked("0", get_by_id("netbios_learn"));
+	set_checked("", get_by_name("netbios_node"));
+		
+	var dhcpd_static_wins_server = "0.0.0.0/0.0.0.0";
+	var wins_server = dhcpd_static_wins_server.split("/");
+	if(wins_server.length != "")
+		get_by_id("wins_ip1").value = wins_server[0];
+	if(wins_server.length > 1)
+		get_by_id("wins_ip2").value = wins_server[1];
+	
+	get_by_id("DNSrelay").disabled = (get_by_id("opendns_enable").value==1)	? true: false;
+	//get_by_id("show_resert").innerHTML = "<font color=\"red\">"+ resert_rule +"</font>";
+	disable_ip();
+	disable_netbios();
+
+}
+
+function clone_mac_action(){
+	get_by_id("reserved_mac").value = get_by_id("mac_clone_addr").value;
+}
+function set_reserved(val){
+	if(val=="1"){
+		reserved_name.value="End User";
+		reserved_ip.value="192.168.0.100";
+		reserved_mac.value="00:04:23:2C:44:9f";
+	}
+	else{
+	
+	}
+}
+
+function set_reserved_enable(idx){
+	if(get_by_id("r_enable" + idx).checked){
+		if(confirm(YM92 + DataArray[idx].IP)){
+			DataArray[idx].Enable = 1;
+			get_by_id("table1").rows[idx].cells[0].innerHTML = "<center><input type=checkbox id=r_enable" + idx + " name=r_enable" + idx + " onClick='set_reserved_enable(" + idx + ")' checked></center>"
+		}else{
+			get_by_id("table1").rows[idx].cells[0].innerHTML = "<center><input type=checkbox id=r_enable" + idx + " name=r_enable" + idx + " onClick='set_reserved_enable(" + idx + ")'></center>"
+		}
+	}else{
+		if(confirm(YM93 + DataArray[idx].IP)){
+			DataArray[idx].Enable = 0;
+			get_by_id("table1").rows[idx].cells[0].innerHTML = "<center><input type=checkbox id=r_enable" + idx + " name=r_enable" + idx + " onClick='set_reserved_enable(" + idx + ")'></center>"
+		}else{
+			get_by_id("table1").rows[idx].cells[0].innerHTML = "<center><input type=checkbox id=r_enable" + idx + " name=r_enable" + idx + " onClick='set_reserved_enable(" + idx + ")' checked></center>"
+		}
+	}
+}
+function edit_dhcp_client(idx){
+	get_by_id("reserved_enable").checked = true;
+	get_by_id("reserved_name").value = DHCPL_DataArray[idx].Name;
+	get_by_id("reserved_ip").value = DHCPL_DataArray[idx].IP;
+	get_by_id("reserved_mac").value = DHCPL_DataArray[idx].MAC;
+}
+function edit_row(idx){
+	if(DataArray[idx].Enable == 1)
+		get_by_id("reserved_enable").checked = true;
+	else
+		get_by_id("reserved_enable").checked = false;
+		
+	get_by_id("reserved_name").value = DataArray[idx].Name;
+	get_by_id("reserved_ip").value = DataArray[idx].IP;
+	get_by_id("reserved_mac").value = DataArray[idx].MAC;
+	get_by_id("edit").value = idx;
+}
+function delete_data(){
+	var num = parseInt(get_by_id("del").value);
+	var DataArray_length = parseInt(DataArray.length) - 1;
+	for(var i = num ; i < DataArray_length; i++){
+		DataArray[i].Enable = DataArray[i+1].Enable;
+		DataArray[i].Name = DataArray[i+1].Name;
+		DataArray[i].IP = DataArray[i+1].IP;
+		DataArray[i].MAC = DataArray[i+1].MAC;
+		DataArray[i].OnList = DataArray[i+1].OnList;
+	}
+	
+	DataArray[DataArray_length].Name = "";
+	DataArray.splice(DataArray_length,1);
+	--DataArray_length;
+	get_by_id("max_row").value = parseInt(DataArray_length);
+	clear_reserved();
+}
+function delete_row(){
+	var del_index = parseInt(get_by_id("del").value);
+	var tb1 = get_by_id("table1");
+	var DataArray_length = parseInt(DataArray.length) - 1;
+	if (del_index >= DataArray_length){
+		var oTr = tb1.deleteRow(del_index);
+	}else{
+		for(var i = del_index; i < DataArray_length; i++){
+			var is_enable = "";
+			if(parseInt(DataArray[i+1].Enable)){
+				is_enable = " checked";
+			}
+			var edit = i + 1;
+			get_by_id("table1").rows[i].cells[0].innerHTML = "<center><input type=checkbox id=r_enable" + i + " name=r_enable" + i + " onClick='set_reserved_enable(" + edit + ")' " + is_enable + "></center>"
+			get_by_id("table1").rows[i].cells[1].innerHTML = "<center>" + DataArray[edit].Name +"</center>"
+			get_by_id("table1").rows[i].cells[2].innerHTML = "<center>" + DataArray[edit].MAC +"</center>"
+			get_by_id("table1").rows[i].cells[3].innerHTML = "<center>" + DataArray[edit].IP +"</center>"
+			get_by_id("table1").rows[i].cells[4].innerHTML = "<center><a href="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;javascript:edit_row(&quot;+" i +")\"><img src="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;edit.jpg\&quot;" border=\"0\" alt=\"edit\"></a></center>";
+			get_by_id("table1").rows[i].cells[5].innerHTML = "<center><a href="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;javascript:del_row(&quot;+" i +")\"><img src="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;delete.jpg\&quot;"  border=\"0\" alt=\"delete\"></a></center>";
+		}
+		var oTr = tb1.deleteRow(DataArray_length);
+	}
+	delete_data();
+}
+function del_row(idx){
+	edit_row(idx);
+	if(confirm(YM25 + DataArray[idx].IP)){
+		get_by_id("del").value = idx;
+		delete_row();
+	}
+}
+function update_DataArray(){
+	var index = parseInt(get_by_id("edit").value);
+	var insert = false;
+	var is_enable = "0";
+	if(index == "-1"){      //save
+		if(get_by_id("max_row").value == rule_max_num){
+			alert(TEXT015);
+		}else{
+			index = parseInt(get_by_id("max_row").value) + 1;
+			get_by_id("max_row").value = index;
+			insert = true;
+		}
+	}
+	if(get_by_id("reserved_enable").checked){
+		is_enable = "1";
+	}else{
+		is_enable = "0";
+	}
+	
+	if(insert){
+		DataArray[index] = new Data(is_enable, get_by_id("reserved_name").value, get_by_id("reserved_ip").value, get_by_id("reserved_mac").value, index, index+1);			
+	}else if (index != -1){
+		DataArray[index].Enable = is_enable;
+		DataArray[index].Name = get_by_id("reserved_name").value;
+		DataArray[index].IP = get_by_id("reserved_ip").value;
+		DataArray[index].MAC = get_by_id("reserved_mac").value;
+		DataArray[index].OnList = index;
+	}
+}
+
+function check_dhcp_duplicate_reservation(r_name,r_ip,r_mac, idx){
+	for(m = 1; m < DataArray.length; m++){
+		if(m==idx) continue;
+		if(r_name.length > 0){
+			if((r_name == DataArray[m].Name)){
+				alert(bd_alert_7.replace("+ae.thearray[-1].comp_name+",r_name));
+				return false;
+			}
+		}
+		if(r_ip.length > 0){
+			if((r_ip == DataArray[m].IP)){
+				alert(lingual_replace(GW_DHCP_SERVER_RESERVED_IP_UNIQUENESS_INVALID,r_ip));
+				return false;
+			}
+		}
+		if(r_mac.length > 0){
+			if((r_mac.toLowerCase() == DataArray[m].MAC.toLowerCase())){
+				alert(lingual_replace(GW_DHCP_SERVER_RESERVED_MAC_UNIQUENESS_INVALID,r_mac));
+				return false;
+			}
+		}				
+	}
+	return true;
+}
+
+function verify_reserved(row,resName,resIP,resMAC){
+	var index = 0;
+    var ip = get_by_id("lan_ipaddr").value;
+	var mask = get_by_id("lan_netmask").value;
+	var start_ip = get_by_id("dhcpd_start").value;
+	var end_ip = get_by_id("dhcpd_end").value;
+	var ip_addr_msg = replace_msg(all_ip_addr_msg, _ripaddr);
+	var Res_ip_addr_msg = replace_msg(all_ip_addr_msg, TEXT033);
+	var start_ip_addr_msg = replace_msg(all_ip_addr_msg, TEXT035);
+	var end_ip_addr_msg = replace_msg(all_ip_addr_msg, TEXT036);
+	var temp_ip_obj = new addr_obj(ip.split("."), ip_addr_msg, false, false);
+	var temp_mask_obj = new addr_obj(mask.split("."), subnet_mask_msg, false, false);
+	var temp_res_ip_obj = new addr_obj(resIP.split("."), Res_ip_addr_msg, false, false);
+	var start_obj = new addr_obj(start_ip.split("."), start_ip_addr_msg, false, false);
+	var end_obj = new addr_obj(end_ip.split("."), end_ip_addr_msg, false, false);
+	if(resName == ""){
+		alert(GW_INET_ACL_NAME_INVALID);
+		return false;
+	}else if(!check_LAN_ip(temp_ip_obj.addr, temp_res_ip_obj.addr, TEXT033)){
+		return false;
+	}else if(!check_address(temp_res_ip_obj, temp_mask_obj, temp_ip_obj)){
+		return false;
+	}else if (!check_domain(temp_res_ip_obj, temp_mask_obj, temp_ip_obj)){
+		alert(lingual_replace(GW_DHCP_SERVER_RESERVED_IP_IN_POOL_INVALID,reserved_ip));
+		return false;
+	}else if (!check_mac(resMAC)){
+		alert(KR3);
+		return false;
+	}
+	
+	if (check_resip_order(temp_res_ip_obj,start_obj, end_obj)){
+			alert(lingual_replace(GW_DHCP_SERVER_RESERVED_IP_IN_POOL_INVALID,reserved_ip));
+			return false;
+		}
+	if(!check_dhcp_duplicate_reservation(resName,resIP,resMAC,row))
+		return false;
+	return true;
+}
+
+function save_reserved(){
+	if(!verify_reserved(get_by_id("edit").value,get_by_id("reserved_name").value,get_by_id("reserved_ip").value,get_by_id("reserved_mac").value))
+		return false;
+
+	var is_enable = "";
+	if(get_by_id("edit").value == "-1"){     //add
+	    update_DataArray(); 
+		var i = get_by_id("max_row").value;
+		var tb1 = get_by_id("table1"); 
+		var oTr = tb1.insertRow(-1);
+		var oTd1 = oTr.insertCell(-1);
+		var oTd2 = oTr.insertCell(-1);
+		var oTd3 = oTr.insertCell(-1);
+		var oTd4 = oTr.insertCell(-1);
+		var oTd5 = oTr.insertCell(-1);
+		var oTd6 = oTr.insertCell(-1);
+		if(parseInt(DataArray[i].Enable)){
+			is_enable = "checked";
+		}else{
+			is_enable = "";
+		}
+		oTd1.innerHTML = "<center><input type=checkbox id=r_enable" + i + " name=r_enable" + i + " onClick='set_reserved_enable(" + i + ")' " + is_enable + "></center>"
+		oTd2.innerHTML = "<center>" + DataArray[i].Name +"</center>"
+		oTd3.innerHTML = "<center>" + DataArray[i].MAC +"</center>"
+		oTd4.innerHTML = "<center>" + DataArray[i].IP +"</center>"
+		oTd5.innerHTML = "<center><a href="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;javascript:edit_row(&quot;+" i +")\"><img src="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;edit.jpg\&quot;" border=\"0\" alt=\"edit\"></a></center>";
+		oTd6.innerHTML = "<center><a href="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;javascript:del_row(&quot;+" i +")\"><img src="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;delete.jpg\&quot;"  border=\"0\" alt=\"delete\"></a></center>";
+	}else{                                      //update		
+		update_DataArray();	
+		var i = parseInt(get_by_id("edit").value);
+		if(parseInt(DataArray[i].Enable)){
+			is_enable = "checked";
+		}else{
+			is_enable = "";
+		}
+		get_by_id("table1").rows[i].cells[0].innerHTML = "<center><input type=checkbox id=r_enable" + i + " name=r_enable" + i + " onClick='set_reserved_enable(" + i + ")' " + is_enable + "></center>"
+		get_by_id("table1").rows[i].cells[1].innerHTML = "<center>" + DataArray[i].Name +"</center>"
+		get_by_id("table1").rows[i].cells[2].innerHTML = "<center>" + DataArray[i].MAC +"</center>"
+		get_by_id("table1").rows[i].cells[3].innerHTML = "<center>" + DataArray[i].IP +"</center>"
+		get_by_id("table1").rows[i].cells[4].innerHTML = "<center><a href="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;javascript:edit_row(&quot;+" i +")\"><img src="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;edit.jpg\&quot;" border=\"0\" alt=\"edit\"></a></center>";
+		get_by_id("table1").rows[i].cells[5].innerHTML = "<center><a href="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;javascript:del_row(&quot;+" i +")\"><img src="http://www.support.dlink.com/emulators/dir615_revE/510/\&quot;delete.jpg\&quot;"  border=\"0\" alt=\"delete\"></a></center>";
+	}
+	clear_reserved();
+}
+function clear_reserved(){
+	get_by_id("reserved_enable").checked = false;
+	get_by_id("reserved_name").value = "";
+	get_by_id("reserved_ip").value = "";
+	get_by_id("reserved_mac").value = "";
+	get_by_id("edit").value = -1;
+}
+function disable_ip(){
+	var dhcpsvr = get_by_id("dhcpsvr");
+	var is_hidden = "";
+	
+	if(dhcpsvr.checked)
+		is_hidden = "";
+	else
+		is_hidden = "none";
+	
+	get_by_id("dhcpd_start").disabled = !dhcpsvr.checked;
+	get_by_id("dhcpd_end").disabled = !dhcpsvr.checked;
+	get_by_id("dhcpd_lease_time").disabled = !dhcpsvr.checked;
+	get_by_id("always_broadcast").disabled = !dhcpsvr.checked;
+	get_by_id("netbios_announcement").disabled = !dhcpsvr.checked;
+	get_by_id("add_reserved").style.display = is_hidden;
+	get_by_id("reservation_list").style.display = is_hidden;
+	get_by_id("dhcpd_list").style.display = is_hidden;
+}
+function disable_netbios(){
+	if(get_by_id("dhcpsvr").checked){
+		get_by_id("netbios_learn").disabled = !get_by_id("netbios_announcement").checked;
+		disable_netbios_option(get_by_id("netbios_learn").disabled);
+		if(get_by_id("netbios_announcement").checked){
+			disable_netbios_option(get_by_id("netbios_learn").checked);
+		}
+	}else{
+		get_by_id("netbios_learn").disabled = true;
+		disable_netbios_option(get_by_id("netbios_learn").disabled);
+	}
+}
+function disable_netbios_option(flag){
+	get_by_id("dhcpd_static_scope").disabled = flag;
+	for(var i = 0; i < 4; i++){
+		get_by_name("netbios_node")[i].disabled = flag;
+	}
+	disable_wins_server(flag);
+	if(get_by_name("netbios_node")[0].checked)
+		disable_wins_server(true);
+}
+
+function disable_wins_server(flag){		
+	get_by_id("wins_ip1").disabled = flag;
+	get_by_id("wins_ip2").disabled = flag;
+}
+
+function update_data(){
+	var max_row = parseInt(get_by_id("max_row").value) + 1;
+	for(var ii = 0; ii < rule_max_num; ii++){
+		if (ii < 10){
+			get_by_id("dhcpd_reserve_0" + ii).value = "";
+		}else{
+			get_by_id("dhcpd_reserve_" + ii).value = "";
+		}
+	}
+	
+	for(var ii = 1; ii < max_row; ii++){
+		if(DataArray[ii].Name != ""){
+			var dat = DataArray[ii].Enable +"/"+ DataArray[ii].Name +"/"+ DataArray[ii].IP +"/"+ DataArray[ii].MAC;
+			if ((ii-1) < 10){
+				get_by_id("dhcpd_reserve_0" + (ii-1)).value = dat;
+			}else{
+				get_by_id("dhcpd_reserve_" + (ii-1)).value = dat;
+			}
+		}
+	}
+}
+function send_request(){
+	if (!is_form_modified("form1") && !confirm(_ask_nochange)) {
+		return false;
+	}
+	var dhcpsvr = get_by_id("dhcpsvr");
+	//var start_ip4 = get_by_id("start_ip4").value;
+	//var end_ip4 = get_by_id("end_ip4").value;
+	var start_obj, end_obj;
+	var temp_mac = "";
+    var ip = get_by_id("lan_ipaddr").value;
+	var mask = get_by_id("lan_netmask").value;
+	var winsip1 = get_by_id("wins_ip1").value;
+	var winsip2 = get_by_id("wins_ip2").value;
+	
+    var ip_addr_msg = replace_msg(all_ip_addr_msg,"IP address");
+	var wan_ip_addr_msg = replace_msg(all_ip_addr_msg,"IP address");	
+	
+	var temp_ip_obj = new addr_obj(ip.split("."), ip_addr_msg, false, false);
+	var temp_mask_obj = new addr_obj(mask.split("."), subnet_mask_msg, false, false);
+	var dhcp_les = get_by_id("dhcpd_lease_time").value;		
+	var dhcpd_domain_name = get_by_id("dhcpd_domain_name").value;
+	var lan_device_name = get_by_id("lan_device_name").value;
+    var wan_proto = "dhcpc";
+    var wan_port_status = "connect";
+	
+    var wan_ip_addr_msg = replace_msg(all_ip_addr_msg,"IP address");
+	var wan_proto = "dhcpc";
+	var wan_ip_addr;
+	
+	var temp_wins_ip1_obj = new addr_obj(winsip1.split("."), all_ip_addr_msg, false, false);
+	var temp_wins_ip2_obj = new addr_obj(winsip2.split("."), all_ip_addr_msg, false, false);
+	
+  
+	if (!check_address(temp_ip_obj, temp_mask_obj) || !check_mask(temp_mask_obj)){		
+		return false;
+	}
+	
+	//check lan and wan is same subnet    	  
+	
+	//get from nvram
+	if(wan_proto == "static"){
+		wan_ip_addr= "0.0.0.0";
+	}else if(wan_proto == "pppoe"){
+		wan_ip_addr= "0.0.0.0";
+	}else if(wan_proto == "pptp"){
+		wan_ip_addr= "0.0.0.0";
+	}else if(wan_proto == "l2tp"){
+		wan_ip_addr= "0.0.0.0";
+	}else{
+		var wan_ip_addr1 = get_by_id("wan_current_ipaddr").value.split("/");
+		wan_ip_addr = wan_ip_addr1[0];
+	}	        
+	var wan_ip_addr_obj = new addr_obj(wan_ip_addr.split("."), wan_ip_addr_msg, false, false); 
+	     
+   if(wan_proto == "static" && wan_ip_addr != "0.0.0.0"){ // when wan static ip doesn't empty
+		if (check_domain(temp_ip_obj, temp_mask_obj, wan_ip_addr_obj)){
+			alert(bln_alert_3);
+			return false;
+		}
+		
+	}else if(wan_proto != "static" & get_by_id("wan_current_ipaddr").value != "0.0.0.0/0.0.0.0/0.0.0.0/0.0.0.0/0.0.0.0"){ // /PPTP/L2TP/PPPoE plug in WAN port
+		if (check_domain(temp_ip_obj, temp_mask_obj, wan_ip_addr_obj)){
+			alert(bln_alert_3);
+			return false;
+		}
+    }else if(wan_proto == "pppoe" && wan_ip_addr != "0.0.0.0"){ // when wan pppoe ip doesn't empty
+		if (check_domain(temp_ip_obj, temp_mask_obj, wan_ip_addr_obj)){
+			alert(bln_alert_3);
+			return false;
+		}
+    }else if(wan_proto == "pptp" && wan_ip_addr != "0.0.0.0"){ // when wan pptp ip doesn't empty
+    	if (check_domain(temp_ip_obj, temp_mask_obj, wan_ip_addr_obj)){
+			alert(bln_alert_3);
+			return false;
+		}
+    }else if(wan_proto == "l2tp" && wan_ip_addr != "0.0.0.0"){ // when wan l2tp ip doesn't empty
+    	if (check_domain(temp_ip_obj, temp_mask_obj, wan_ip_addr_obj)){
+			alert(bln_alert_3);
+			return false;
+		}
+    } 
+    
+	//Check Device Name / Domain Name cannot entry  ~!@#$%^&*()_+}{[]\|"?></ (allow A-Za-z0-9-. only)
+	var re = /[^A-Za-z0-9-.]/;	
+	if(re.test(dhcpd_domain_name)){
+		alert(GW_LAN_DOMAIN_NAME_INVALID);
+		return false;
+	}
+	re = /\W/;
+	if(re.test(lan_device_name)){
+		alert(GW_LAN_DEVICE_NAME_INVALID);
+		return false;
+	}
+	
+	if (dhcpsvr.checked){
+		var start_ip = get_by_id("dhcpd_start").value;
+		var end_ip = get_by_id("dhcpd_end").value;
+		
+		var start_ip_addr_msg = replace_msg(all_ip_addr_msg,TEXT035);
+		var end_ip_addr_msg = replace_msg(all_ip_addr_msg,TEXT036);
+		
+/* If dhcp_range not be changed, adopt lan ip network address.*/
+		if( (start_ip == "192.168.0.100") && end_ip == "192.168.0.199"){
+			start_ip = adopt_network(get_by_id("lan_ipaddr").value, get_by_id("lan_netmask").value, start_ip);
+            end_ip = adopt_network(get_by_id("lan_ipaddr").value, get_by_id("lan_netmask").value, end_ip);
+            get_by_id("dhcpd_start").value = start_ip;
+            get_by_id("dhcpd_end").value = end_ip; 
+ 		}
+	
+/* If dhcp_range changed, verify dhcp reservation list in dhcp range or not.*/
+		for(i=1;i<DataArray.length;i++){
+			if(!verify_reserved(i,DataArray[i].Name,DataArray[i].IP,DataArray[i].MAC))
+				return false;
+		}
+	
+		var start_obj = new addr_obj(start_ip.split("."), start_ip_addr_msg, false, false);
+		var end_obj = new addr_obj(end_ip.split("."), end_ip_addr_msg, false, false);
+
+		//check dhcp ip range equal to lan-ip or not?
+		if(!check_LAN_ip(temp_ip_obj.addr, start_obj.addr, TEXT035)){
+			return false;
+		}
+		
+		if(!check_LAN_ip(temp_ip_obj.addr, end_obj.addr, TEXT036)){
+			return false;
+		}
+		
+		if(!check_LAN_ip(temp_ip_obj.addr, temp_wins_ip1_obj.addr, bd_NETBIOS_PRI_WINS)){
+			return false;
+		}
+		
+		if(!check_LAN_ip(temp_ip_obj.addr, temp_wins_ip2_obj.addr, bd_NETBIOS_SEC_WINS)){
+			return false;
+		}
+		
+		//check dhcp ip range and lan ip the same mask or not?
+		if (!check_address(start_obj, temp_mask_obj, temp_ip_obj) || !check_address(end_obj, temp_mask_obj, temp_ip_obj)){
+			return false;
+		}
+		
+		if (!check_domain(temp_ip_obj, temp_mask_obj, start_obj)){
+			alert(TEXT037);
+			return false;
+		}
+			
+		if (!check_domain(temp_ip_obj, temp_mask_obj, end_obj)){
+			alert(TEXT038);
+			return false;
+		}
+			
+		if (!check_ip_order(start_obj, end_obj)){
+			alert(TEXT039);
+			return false;
+		}
+		
+		if (check_lanip_order(temp_ip_obj,start_obj, end_obj)){
+			alert(network_dhcp_ip_in_server);
+			return false;
+		}
+		
+		var less_msg = replace_msg(check_num_msg, bd_DLT, 1, 999999);
+		var temp_less = new varible_obj(dhcp_les, less_msg, 1, 999999, false);
+		if (!check_varible(temp_less)){
+    		return false;
+    	}
+		if(get_by_id("netbios_announcement").checked && !get_by_id("netbios_learn").checked){
+			var wins_ip1 = get_by_id("wins_ip1").value;
+			var wins_ip2 = get_by_id("wins_ip2").value;
+			var wins_ip1_addr_msg = replace_msg(all_ip_addr_msg,bd_NETBIOS_PRI_WINS);
+			var wins_ip2_addr_msg = replace_msg(all_ip_addr_msg,bd_NETBIOS_SEC_WINS);
+			var wins_ip1_obj = new addr_obj(wins_ip1.split("."), wins_ip1_addr_msg, false, false);
+			var wins_ip2_obj = new addr_obj(wins_ip2.split("."), wins_ip2_addr_msg, false, false);
+
+			if(wins_ip1 =="") wins_ip1="0.0.0.0";
+			if(wins_ip2 =="") wins_ip2="0.0.0.0";
+
+			if(!get_by_name("netbios_node")[0].checked){
+				if(!check_address(wins_ip1_obj))
+						return false;
+				if(!check_address(wins_ip2_obj))
+						return false;
+			}else if(get_by_name("netbios_node")[0].checked){
+				wins_ip1="0.0.0.0";
+				wins_ip2="0.0.0.0";
+					}
+		}else{
+			wins_ip1="0.0.0.0";
+			wins_ip2="0.0.0.0";
+		}
+	}
+/*	
+	//decide reboot type
+	if((get_by_id("dhcpd_netbios_enable").value == 1) && (get_by_id("dhcpd_netbios_learn").value == 1))//It enables learn NETBIOS from WAN originally.
+	{
+		if( !(get_checked_value(get_by_id("netbios_announcement")) && get_checked_value(get_by_id("netbios_learn")))) //But, it disables learn NETBIOS from WAN now.
+		{	
+			//alert("enable->disable");
+			get_by_id("reboot_type").value = "all";
+		}
+	}
+	else	//It disables learn NETBIOS from WAN originally.
+	{
+		if( get_checked_value(get_by_id("netbios_announcement")) && get_checked_value(get_by_id("netbios_learn")) ) //But, it enables learn NETBIOS from WAN now.
+		{	
+			//alert("disable->enable");
+			get_by_id("reboot_type").value = "all";
+		}
+	}*/
+	/* tmp solution: reboot to make sure client will send the dhcp-request to 
+	                 maintain dhcp-client list */
+	/* fixed nslookup keeps former dns server when change dns_relay setting*/
+	get_by_id("reboot_type").value = "reboot";
+	
+    if (check_address(temp_ip_obj, temp_mask_obj) && check_mask(temp_mask_obj)){
+		update_data();
+		
+		get_by_id("dhcpd_enable").value = get_checked_value(get_by_id("dhcpsvr"));
+		get_by_id("dns_relay").value = get_checked_value(get_by_id("DNSrelay"));
+		get_by_id("dhcpd_always_bcast").value = get_checked_value(get_by_id("always_broadcast"));
+		get_by_id("dhcpd_netbios_enable").value = get_checked_value(get_by_id("netbios_announcement"));
+		get_by_id("dns_relay").value = get_checked_value(get_by_id("DNSrelay"));
+		get_by_id("dhcpd_netbios_learn").value = get_checked_value(get_by_id("netbios_learn"));
+		get_by_id("dhcpd_static_node_type").value = get_checked_value(get_by_name("netbios_node"));
+		
+		get_by_id("dhcpd_static_wins_server").value = wins_ip1 + "/" + wins_ip2;
+				
+		if(submit_button_flag == 0){
+			submit_button_flag = 1;
+			return true;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}			
+}
+function revoke(idx){
+	get_by_id("revoke_ip").value = DHCPL_DataArray[idx].IP;
+	get_by_id("revoke_mac").value = DHCPL_DataArray[idx].MAC;
+	send_submit("form2");
+}
+</script>
+<link rel="STYLESHEET" type="text/css" href="css_router.css">
+<style type="text/css">
+<!--
+.style1 {font-size: 11px}
+-->
+</style>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+<form id="form2" name="form2" method="post" action="http://www.support.dlink.com/emulators/dir615_revE/510/dhcp_revoke.cgi">
+<input id="html_response_page" name="html_response_page" value="lan.htm"
+ type="hidden">
+<input id="html_response_return_page" name="html_response_return_page" 
+value="lan.htm" type="hidden">
+<input id="revoke_ip" name="revoke_ip" type="hidden">
+<input id="revoke_mac" name="revoke_mac" type="hidden">
+</form>
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td 
+id="topnavon" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavoff" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavoff" 
+height="29"><a href="st_device.htm" onClick="return 
+jump_if();">Status</a></td><td id="topnavoff" height="29"><a 
+href="support_men.htm" onClick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td id="sidenav_container">
+							<div id="sidenav"><ul><li><div><a 
+href="index.htm" onClick="return jump_if();">Internet</a></div></li><li><div><a
+ href="wizard_wireless.htm" onClick="return 
+jump_if();">Wireless Settings</a></div></li><li><div id="sidenavoff">Network
+ Settings</div></li></ul></div>
+							<div id="m17n_div" align="center"></div>
+						</td>			
+					</tr>
+				</tbody></table>			
+			</td>
+       <form saved="true" id="form1" name="form1" method="post" 
+action="http://www.support.dlink.com/emulators/dir615_revE/510/apply.cgi"></form>
+	   <input default="back.htm" id="html_response_page" 
+name="html_response_page" value="back.htm" type="hidden">
+	   <input default="The setting is saved." id="html_response_message" 
+name="html_response_message" value="The setting is saved." type="hidden">
+	   <input default="lan.htm" id="html_response_return_page" 
+name="html_response_return_page" value="lan.htm" type="hidden">
+       <input default="reboot" id="reboot_type" name="reboot_type" 
+value="reboot" type="hidden">
+	   <input default="0" id="opendns_enable" name="opendns_enable" 
+value="0" type="hidden">
+       <input default="-1" id="del" name="del" value="-1" type="hidden">
+	   <input default="-1" id="edit" name="edit" value="-1" type="hidden">
+	   <input default="0" id="max_row" name="max_row" value="0" 
+type="hidden">
+	   <input default="00:04:23:2C:44:9F" id="mac_clone_addr" 
+name="mac_clone_addr" value="00:04:23:2C:44:9F" type="hidden">
+		<input default="" id="dhcpd_reserve_00" name="dhcpd_reserve_00" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_01" name="dhcpd_reserve_01" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_02" name="dhcpd_reserve_02" 
+value="" type="hidden">		
+		<input default="" id="dhcpd_reserve_03" name="dhcpd_reserve_03" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_04" name="dhcpd_reserve_04" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_05" name="dhcpd_reserve_05" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_06" name="dhcpd_reserve_06" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_07" name="dhcpd_reserve_07" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_08" name="dhcpd_reserve_08" 
+value="" type="hidden">	
+		<input default="" id="dhcpd_reserve_09" name="dhcpd_reserve_09" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_10" name="dhcpd_reserve_10" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_11" name="dhcpd_reserve_11" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_12" name="dhcpd_reserve_12" 
+value="" type="hidden">		
+		<input default="" id="dhcpd_reserve_13" name="dhcpd_reserve_13" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_14" name="dhcpd_reserve_14" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_15" name="dhcpd_reserve_15" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_16" name="dhcpd_reserve_16" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_17" name="dhcpd_reserve_17" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_18" name="dhcpd_reserve_18" 
+value="" type="hidden">	
+		<input default="" id="dhcpd_reserve_19" name="dhcpd_reserve_19" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_20" name="dhcpd_reserve_20" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_21" name="dhcpd_reserve_21" 
+value="" type="hidden">				
+		<input default="" id="dhcpd_reserve_22" name="dhcpd_reserve_22" 
+value="" type="hidden">
+		<input default="" id="dhcpd_reserve_23" name="dhcpd_reserve_23" 
+value="" type="hidden">	
+		<input default="" id="dhcpd_reserve_24" name="dhcpd_reserve_24" 
+value="" type="hidden">	
+		<input 
+default="192.168.1.125/255.255.255.0/192.168.1.1/68.94.156.1/68.94.157.1"
+ id="wan_current_ipaddr" name="wan_current_ipaddr" 
+value="192.168.1.125/255.255.255.0/192.168.1.1/68.94.156.1/68.94.157.1" 
+type="hidden">
+		<input default="admin-941afa219/192.168.0.100/00:04:23:2c:44:9f/Tue 
+Dec 22 16:12:22 2009," id="dhcp_list" name="dhcp_list" 
+value="admin-941afa219/192.168.0.100/00:04:23:2c:44:9f/Tue Dec 22 
+16:12:22 2009," type="hidden">
+			<td id="maincontent_container" valign="top">			  
+				<div id="maincontent">
+				  <div id="box_header"> 
+						<h1>Network Settings</h1>
+				   		Use this section to 
+configure the internal network settings of your router and also to 
+configure the built-in DHCP Server to assign IP addresses to the 
+computers on your network. The IP Address that is configured here is the
+ IP Address that you use to access the Web-based management interface. 
+If you change the IP Address here, you may need to adjust your PC's 
+network settings to access the network again.
+						<br><br>
+                        <input name="button" id="button" 
+class="button_submit" value="Save Settings" onClick=" emulator()" type="submit">
+                        <input id="button2" name="button2" 
+class="button_submit" value="Don't Save Settings" onclick="dont_save()" type="button">
+                         
+		          </div>
+
+				  <div class="box"> 
+						<h2>Router Settings</h2>
+							<p>Use this section to 
+configure the internal network settings of your router. The IP Address 
+that is configured here is the IP Address that you use to access the 
+Web-based management interface. If you change the IP Address here, you 
+may need to adjust your PC's network settings to access the network 
+again.</p>
+                            <table border="0" cellpadding="1" 
+cellspacing="1" width="525">
+								<tbody><tr>
+									<td class="duple">Router 
+IP Address :</td>
+								  	<td width="340">&nbsp;&nbsp;&nbsp;<input autocomplete="off" 
+default="192.168.0.1" name="lan_ipaddr" id="lan_ipaddr" size="20" 
+maxlength="15" value="192.168.0.1" type="text"></td>
+								</tr>
+								<tr>
+									<td class="duple">Subnet 
+Mask :</td>
+									<td width="340">&nbsp;&nbsp;&nbsp;<input autocomplete="off" 
+default="255.255.255.0" name="lan_netmask" id="lan_netmask" size="20" 
+maxlength="15" value="255.255.255.0" type="text"></td>
+								</tr>
+								<tr>
+									<td class="duple">Device Name :</td>
+									<td width="340">&nbsp;&nbsp;&nbsp;<input autocomplete="off" 
+default="dlinkrouter" name="lan_device_name" id="lan_device_name" 
+size="20" maxlength="15" value="dlinkrouter" type="text"></td>
+								</tr>
+								<tr id="fLocalDomainName">
+                                  <td class="duple">Local
+ Domain Name :</td>
+                                  <td width="340">&nbsp;&nbsp;
+                                  <input autocomplete="off" default="" 
+name="dhcpd_domain_name" id="dhcpd_domain_name" size="40" maxlength="30"
+ type="text">
+								(optional)
+								</td>
+							  	</tr>
+								<tr id="fDnsRelay">
+									<td class="duple">Enable
+ DNS Relay :</td>
+									<td width="340">&nbsp;
+									<input checked="checked" default="true" name="DNSrelay" 
+id="DNSrelay" value="1" type="checkbox">
+									<input default="1" id="dns_relay" name="dns_relay" value="1" 
+type="hidden">
+									</td>
+								</tr>														
+					  </tbody></table>
+				  </div>
+				  <div class="box" id="dhcp_server"> 
+						<h2>DHCP Server 
+Settings</h2>
+							<p>Use this section to 
+configure the built-in DHCP Server to assign IP addresses to the 
+computers on your network.</p>
+                          <table class="formarea" summary="" border="0" 
+cellpadding="1" cellspacing="1" width="525">
+                                <tbody><tr>
+                                  <td class="duple">Enable
+ DHCP Server :</td>
+								  <input default="1" id="dhcpd_enable" name="dhcpd_enable" 
+value="1" type="hidden">
+                                  <td width="340">&nbsp;<input 
+checked="checked" default="true" name="dhcpsvr" id="dhcpsvr" 
+onclick="disable_ip()" value="1" type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">DHCP
+ IP Address Range :</td>
+                                  <td width="340">&nbsp;
+									<input autocomplete="off" default="192.168.0.100" 
+id="dhcpd_start" name="dhcpd_start" value="192.168.0.100" size="20" 
+maxlength="15" type="text">
+								    &nbsp;to
+									<input autocomplete="off" default="192.168.0.199" 
+id="dhcpd_end" name="dhcpd_end" value="192.168.0.199" size="20" 
+maxlength="15" type="text">
+       						      </td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">DHCP
+ Lease Time :</td>
+                                  <td width="340">&nbsp;&nbsp;<input 
+autocomplete="off" default="10080" id="dhcpd_lease_time" 
+name="dhcpd_lease_time" size="6" maxlength="6" value="10080" type="text">&nbsp;&nbsp;(minutes)</td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">Always
+ Broadcast :</td>
+								  <input default="1" id="dhcpd_always_bcast" 
+name="dhcpd_always_bcast" value="1" type="hidden">
+                                  <td width="340">&nbsp;<input 
+checked="checked" default="true" name="always_broadcast" 
+id="always_broadcast" value="1" type="checkbox"> (compatibility
+ for some DHCP Clients)</td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">NetBIOS
+ announcement :</td>
+								  <input default="0" id="dhcpd_netbios_enable" 
+name="dhcpd_netbios_enable" value="0" type="hidden">
+                                  <td width="340">&nbsp;<input 
+default="false" id="netbios_announcement" name="netbios_announcement" 
+value="1" onClick="disable_netbios();" type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">Learn
+ NetBIOS from WAN :</td>
+								  <input default="0" id="dhcpd_netbios_learn" 
+name="dhcpd_netbios_learn" value="0" type="hidden">
+                                  <td width="340">&nbsp;<input 
+default="false" disabled="disabled" id="netbios_learn" 
+name="netbios_learn" value="1" onClick="disable_netbios();" 
+type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">NetBIOS
+ Scope :</td>
+                                  <td width="340">&nbsp;&nbsp;<input 
+autocomplete="off" default="" disabled="disabled" 
+id="dhcpd_static_scope" name="dhcpd_static_scope" maxlength="30" 
+type="text"> (optional)</td>
+                                </tr>
+                                <tr>
+                                  <td class="duple" valign="top">NetBIOS
+ node type :</td>
+								  <input default="" id="dhcpd_static_node_type" 
+name="dhcpd_static_node_type" value="" type="hidden">
+                                  <td width="340">
+								  &nbsp;<input checked="checked" default="true" 
+disabled="disabled" id="netbios_node" name="netbios_node" value="1" 
+onclick="disable_wins_server(true);" type="radio">Broadcast
+ only (use when no WINS servers configured)<br>
+								  &nbsp;<input default="false" disabled="disabled" 
+id="netbios_node" name="netbios_node" value="2" 
+onclick="disable_wins_server(false);" type="radio">Point-to-Point
+ (no broadcast)<br>
+								  &nbsp;<input default="false" disabled="disabled" 
+id="netbios_node" name="netbios_node" value="4" 
+onclick="disable_wins_server(false);" type="radio">Mixed-mode
+ (Broadcast then Point-to-Point)<br>
+								  &nbsp;<input default="false" disabled="disabled" 
+id="netbios_node" name="netbios_node" value="8" 
+onclick="disable_wins_server(false);" type="radio">Hybrid
+ (Point-to-Point then Broadcast)
+								  </td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">Primary
+ WINS IP Address :</td>
+                                  <td width="340">&nbsp;&nbsp;<input 
+value="0.0.0.0" autocomplete="off" default="0.0.0.0" disabled="disabled"
+ id="wins_ip1" name="wins_ip1" size="20" maxlength="15" type="text"></td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">Secondary
+ WINS IP Address :</td>
+                                  <td width="340">&nbsp;&nbsp;<input 
+value="0.0.0.0" autocomplete="off" default="0.0.0.0" disabled="disabled"
+ id="wins_ip2" name="wins_ip2" size="20" maxlength="15" type="text">
+								  <input default="0.0.0.0/0.0.0.0" id="dhcpd_static_wins_server"
+ name="dhcpd_static_wins_server" value="0.0.0.0/0.0.0.0" type="hidden">
+								  </td>
+                                </tr>
+                    </tbody></table>
+				  </div>
+				  <div class="box" id="add_reserved"> 
+						<h2>Add/Edit DHCP Reservation</h2>
+                          <table class="formarea" summary="" border="0" 
+cellpadding="1" cellspacing="1" width="525">
+                                <tbody><tr>
+                                  <td class="duple">Enable
+ :</td>
+                                  <td width="340">&nbsp;<input 
+default="false" id="reserved_enable" name="reserved_enable" 
+type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">Computer
+ Name :</td>
+                                  <td width="340">&nbsp;
+								  	<input autocomplete="off" default="" id="reserved_name" 
+name="reserved_name" size="20" type="text">
+									&lt;&lt;
+									<select id="reserved_list" name="reserved_list" 
+onchange="set_reserved(this.value)">
+										<option selected="selected" default="true" value="0">Computer
+ Name</option>
+										<option default="false" value="1" mac="00:04:23:2c:44:9f">admin-941afa219</option>
+									</select>
+								  </td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">IP
+ Address :</td>
+                                  <td width="340">&nbsp;&nbsp;<input 
+autocomplete="off" default="" id="reserved_ip" name="reserved_ip" 
+size="20" maxlength="15" type="text"></td>
+                                </tr>
+                                <tr>
+                                  <td class="duple">MAC
+ Address :</td>
+                                  <td width="340">&nbsp;&nbsp;<input 
+autocomplete="off" default="" id="reserved_mac" name="reserved_mac" 
+size="20" maxlength="17" type="text"></td>
+                                </tr>
+								<tr>
+									<td class="duple">&nbsp;</td>
+									<td width="340">&nbsp;
+									<input size="20" id="clone" name="clone" value="Copy Your PC's MAC Address" onClick="clone_mac_action()" type="button">
+									
+									</td>
+								</tr>
+								<tr>
+									<td class="duple">&nbsp;</td>
+									<td width="340">&nbsp;
+									<input id="save" name="save" value="Save" onclick="emulator();" type="button">&nbsp;&nbsp;
+									<input id="clear" name="clear" value="Clear" 
+onclick="clear_reserved();" type="button">
+									
+									</td>
+								</tr>
+                          </tbody></table>
+				  </div>
+				  <div class="box" id="reservation_list">
+	                  <h2>DHCP 
+Reservations List : </h2>
+	                  <table id="table1" bgcolor="#dfdfdf" border="1" 
+bordercolor="#ffffff" cellpadding="1" cellspacing="1" width="525">
+	                      <tbody><tr>
+	                        <td>Enable</td>
+	                        <td>Host
+ Name</td>
+	                        <td>MAC 
+Address</td>
+	                        <td>IP 
+Address</td>
+	                        <td></td>
+	                        <td></td>
+	                      </tr>
+	                    
+	                  </tbody></table>
+				  </div>
+				  <div class="box" id="dhcpd_list">
+	                  <h2>Number
+ of Dynamic DHCP Clients : <span id="dhcp_num">1</span></h2>
+	                  <table id="table1" bgcolor="#dfdfdf" border="1" 
+bordercolor="#ffffff" cellpadding="1" cellspacing="1" width="525">
+	                      <tbody><tr>
+	                        <td>Hardware
+ Address</td>
+	                        <td>Assigned
+ IP</td>
+	                        <td>Hostname</td>
+	                        <td>Expires</td>
+	                        <td>&nbsp;</td>
+	                        <td>&nbsp;</td>
+	                      </tr>
+	                    <tr><td><center>00:04:23:2c:44:9f</center></td><td><center>192.168.0.100</center></td><td><center>admin-941afa219</center></td><td><center>Tue
+ Dec 22 16:12:22 2009</center></td><td><center><a 
+href="javascript:emulator()">Revoke</a></center></td><td><center><a 
+href="javascript:emulator()">Reserve</a></center></td></tr>
+	                  </tbody></table>
+				  </div>
+			</div>
+			</td>
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bgcolor="#ffffff" border="0" cellpadding="2" cellspacing="0">
+                    <tbody><tr>
+                      <td id="help_text"><strong>Helpful
+ Hints…</strong>
+                         <p>If you 
+already have a DHCP server on your network or are using static IP 
+addresses on all the devices on your network, uncheck <strong>Enable 
+DHCP Server </strong> to disable this feature.</p>
+                         <p>If you have
+ devices on your network that should always have fixed IP addresses, add
+ a <strong>DHCP Reservation </strong> for each such device.</p>
+						 <p><a href="support_internet.htm#Network" 
+onclick="return jump_if();">More…</a></p>
+					  </td>
+                    </tr>
+			  </tbody></table></td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+ 
+
+
+
+<script type="text/javascript">
+<!--
+disable_items_by_username(get_current_user);
+//-->
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body></html>

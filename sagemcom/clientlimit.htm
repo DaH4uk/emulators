@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <title>Настройка маршрутизации </title>
+ <script>
+  function applyClick() {
+   if (!validateDecimalDigit(document.clientlimit.numtextwindow.value)) {
+    if (document.clientlimit.limitcap[0].checked == true) {
+     document.clientlimit.numtextwindow.value = "";
+     return true;
+    }
+    alert("Введите десятичное число!");
+    document.clientlimit.numtextwindow.focus();
+    return false;
+   }
+   d1 = getDigit(document.clientlimit.numtextwindow.value, 1);
+   if (d1 > 32) {
+    alert("Должно быть меньше 33!");
+    document.clientlimit.numtextwindow.focus();
+    return false;
+   }
+   return true;
+  }
+
+  function disableLimit() {
+   if (document.getElementById) {
+    document.getElementById('numtext').style.display = 'none';
+   }
+   else {
+    if (document.layers == false) {
+     document.all.numtext.style.display = 'none';
+    }
+   }
+  }
+
+  function enableLimit() {
+   if (document.getElementById) {
+    document.getElementById('numtext').style.display = 'block';
+   }
+   else {
+    if (document.layers == false) {
+     document.all.numtext.style.display = 'block';
+    }
+   }
+  }
+ </script>
+
+</head>
+
+
+<body>
+
+
+  <div class="intro_main ">
+
+   <p class="intro_title">Настройка ограничения клиентов</p>
+   <p class="intro_content">Эта страница используется для задания количества клиентов, имеющих доступ к Интернет </p>
+  </div>
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Ограничение количества клиентов:</th>
+      <td>
+
+       <input checked="checked" value="0" name="limitcap" onclick="return disableLimit()" type="radio">Откл.&nbsp;&nbsp;
+       <input value="1" name="limitcap" onclick="return enableLimit()" type="radio">Вкл.
+      </td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div id="numtext" style="display:none" class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Максимальное количество устройств: &nbsp; &nbsp;&nbsp; &nbsp;</th>
+      <td><input value="4" maxlength="2" size="2" name="numtextwindow" type="text"></td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="btn_ctl">
+
+   <input class="link_bg" value="Применить" onclick="return applyClick()" type="submit">
+   <input name="submit.htm?clientlimit.htm" value="Send" type="hidden">
+
+  </div>
+
+  <script>
+   document.clientlimit.limitcap[0].checked = true
+   disableLimit();
+   document.clientlimit.numtextwindow.value = "4";
+  </script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

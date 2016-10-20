@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -68,3 +69,75 @@ document.write(hd_center+each_route_name+'</td>'+hd_center+each_info[3]+'</td>'+
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../str_router.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+<body onLoad="loadhelp('_STR_routes');" bgcolor=#ffffff>
+<form method="post" action="#" >
+<input type=hidden name=submit_flag value="">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(static_router_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+</script>
+<input type="hidden" name="select_edit">
+<input type="hidden" name="select_del">
+ <tr>
+ <script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+ <tr>
+ <script>document.write(hd_center);</script> &nbsp;</td>
+ <script>document.write(hd_center);</script><span class="subhead"> # </span></td>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(sta_routes_act);</script></span></td>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(sta_routes_name);</script></span></td>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(sta_routes_dest);</script></span></td>
+ <script>document.write(hd_center);</script><span class="subhead"><script>document.write(sta_routes_gateway);</script></span></td>
+ </tr>
+<script>
+var totalnum=" 0";
+if( totalnum!=0 )
+{
+for(i=0,j=1;i<totalnum;i++,j++)
+{
+var str = eval ( 'routerArray' + j );
+var each_info=str.split(' ');
+each_route_name=each_info[0].replace(/&harr;/g," ");
+each_route_name=each_route_name.replace(/ /g,"&nbsp;");
+document.write(hd+'<input type="radio" name="select_route" value="'+i+'"></td>'+hd_center+'<span class="subhead">'+eval(i+1)+'</span></td>');
+if(each_info[2]=="1")
+document.write(hd_center+' Yes</td>');
+else
+document.write(hd_center+' No</td>');
+document.write(hd_center+each_route_name+'</td>'+hd_center+each_info[3]+'</td>'+hd_center+each_info[5]+'</td></tr>');
+}
+}
+</script>
+</table>
+ </td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+ <script>document.write(hd_center)
+ document.write('<input type="button" name="add" value="'+add_mark+'" />') 
+ document.write('<input type="submit" name="edit" value="'+edit_mark+'" />')  
+ document.write('<input type="submit" name="delete" value="'+delete_mark+'" />');</script>
+ </td>
+ </tr>
+</table>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

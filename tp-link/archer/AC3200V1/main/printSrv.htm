@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script language="javascript" type="text/javascript">
 function refresh() {
     var curStatus = $.act(ACT_GET, XTP_PRINT_SERVICE, null, null, null);
@@ -88,3 +89,95 @@ $.auto(function() {
     refresh();
 }, 5000);
 </script>
+=======
+<script language="javascript" type="text/javascript">
+function refresh() {
+    var curStatus = $.act(ACT_GET, XTP_PRINT_SERVICE, null, null, null);
+
+    if ($.exe()) {
+        return;
+    }
+
+    if (curStatus.serverName == 'No Printer') {
+        $("#printerName").text(n_str.printSrv.t_noprint);
+    } else {
+        $("#printerName").text(curStatus.serverName);
+    }
+
+    if (curStatus.enable == 1) {
+        $("#serverOn").addClass("selected");
+    } else {
+        $("#serverOff").addClass("selected");
+    }
+}
+
+function init() {
+    refresh();
+}
+
+$("#serverOn").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, XTP_PRINT_SERVICE, null, null, ["enable=1"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        $.reload();
+    }
+});
+
+$("#serverOff").click(function() {
+    $.addLoading($(this));
+    $.act(ACT_SET, XTP_PRINT_SERVICE, null, null, ["enable=0"]);
+
+    if (!$.exe()) {
+        $.removeLoading();
+        $.reload();
+    }
+});
+</script>
+
+<h3 id="t_ps">Print Server</h3>
+
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div class="button-group-container">
+            <b id="t_sest">Enable Print Server</b>
+            <ul>
+                <li>
+                    <button id="serverOn" class="fst" value="on">On</button>
+                </li>
+                <li>
+                    <button id="serverOff" class="lst" value="off">Off</button>
+                </li>
+            </ul>
+        </div>
+        <div class="pure-control-group">
+            <label id="t_pn" class="label-title">Printer Name:</label>
+            <span class="text" id="printerName"></span>
+        </div>
+
+        <div id="note" class="steps">
+            <h5 class="T_notes" id="noteTitle">Note</h5>
+            <p class="cfg-line">
+                <span id="t_step1">Step1:</span>
+                <span id="t_note1">Connect the USB printer to the USB port of the router with a USB printer cable.</span>
+            </p>
+            <p class="cfg-line">
+                <span id="t_step2">Step2:</span>
+                <span id="t_note2">Install the printer's driver on your computer.</span>
+            </p>
+            <p class="cfg-line">
+                <span id="t_step3">Step3:</span>
+                <span id="t_note3">Install the TP-LINK USB Printer Controller on your computer. Please run the resource CD or download the TP-LINK USB Printer Controller utility from our website: www.tp-link.com.</span>
+            </p>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+$.tpInit(init);
+$.auto(function() {
+    refresh();
+}, 5000);
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

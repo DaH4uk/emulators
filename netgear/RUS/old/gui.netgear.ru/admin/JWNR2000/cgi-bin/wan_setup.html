@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -137,3 +138,144 @@ var ppp_login_type="0"
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../wan.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_WAN_wan');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#wan_setup.html" target=formframe>
+<input type=hidden name=submit_flag value="wan">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(wan_setup_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var lan_ip="192.168.1.1";
+function loadvalue()
+{
+var cf = document.forms[0];
+var dmzIpAddr=' ';
+var lanIpAddr='192.168.1.1';
+var lanIp = lanIpAddr.split(".");
+var dmzIp = dmzIpAddr.split(".");
+cf.dmzip1.value = lanIp[0];
+cf.dmzip2.value = lanIp[1];
+cf.dmzip3.value = lanIp[2];
+/*
+if ('' == '1')
+ cf.dod.checked = true;
+else
+cf.dod.checked = false;
+*/
+if ('1' == '1')
+cf.disable_spi.checked = false;
+else
+cf.disable_spi.checked = true;
+if ('0' == '1')
+{
+cf.dmz_enable.checked = true;
+cf.dmzip4.disabled = false;
+cf.dmzip4.value = dmzIp[3];
+
+}
+else
+{
+cf.dmz_enable.checked = false;
+cf.dmzip4.disabled = true;
+cf.dmzip4.value = "";
+}
+if ('0' == '1')
+cf.rspToPing.checked = true;
+else
+cf.rspToPing.checked = false;
+ if ('1' == '1')
+cf.igmp.checked = false;
+else
+cf.igmp.checked = true;
+cf.wan_mtu1.value = '1492';
+if( '0' == '0' )
+cf.nat_fitering[0].checked = true;
+else
+cf.nat_fitering[1].checked = true;
+if ('0' == '1')
+cf.disable_sipalg.checked = true;
+else
+cf.disable_sipalg.checked = false;
+if ('0' == '1')
+cf.enable_ipv6_passthru.checked = true;
+else
+cf.enable_ipv6_passthru.checked = false;
+
+}
+var basic_type="0"
+var ppp_login_type="0"
+</script>
+<input type="hidden" name="dod_value">
+<input type="hidden" name="spi_value">
+<input type="hidden" name="dmz_value">
+<input type="hidden" name="rspToPing_value">
+<input type="hidden" name="igmp_enable">
+<input type="hidden" name="dmz_ip">
+<input type="hidden" name="sipalg_value">
+<input type="hidden" name="ipv6_passthru_value">
+<!--
+<tr><script>document.write(hd2);</script><input type="checkbox" name="dod" value="dod"><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','dod')"><b><script>document.write(adva_wansetup_connect_auto);</script> <script>document.write(ba);</script></td></tr>
+<script>document.write(bluebar);</script>
+-->
+<tr><script>document.write(hd2);</script><input type="checkbox" name="disable_spi" value="disable_spi"><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','spi')"><b><script>document.write(adva_wansetup_spi);</script> <script>document.write(ba);</script></td></tr> 
+<script>document.write(bluebar);</script>
+<tr>
+ <script>document.write(hd);</script> 
+<input type="checkbox" name="dmz_enable" value="dmz_enable" onclick="checkdmzip();">
+<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','dmz')"><b><script>document.write(adva_wansetup_dmz);</script> <script>document.write(ba);</script> 
+</td>
+<script>document.write(hd);</script> 
+<input type="text" name="dmzip1" disabled size="4" maxlength="3" onKeyPress="return getkey('num',event)" onFocus="this.blur()">.
+ <input type="text" name="dmzip2" disabled size="4" maxlength="3" onKeyPress="return getkey('num',event)" onFocus="this.blur()">.
+ <input type="text" name="dmzip3" disabled size="4" maxlength="3" onKeyPress="return getkey('num',event)" onFocus="this.blur()">.
+ <input type="text" name="dmzip4" size="4" maxlength="3" onKeyPress="return getkey('num',event)">
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="rspToPing" value="rspToPing"><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','ping')"><b><script>document.write(adva_wansetup_rspToPing);</script><script>document.write(ba);</script></td></tr> 
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="igmp" value="igmp"><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','igmp')"><b><script>document.write(adva_wansetup_igmp);</script></b></td></tr>
+<script>document.write(bluebar);</script>
+<tr>
+<tr>
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','mtu')"><b><script>document.write(adva_wansetup_mtu);</script><script>document.write(ba);</script><script>document.write(adva_wansetup_byte);</script></td> 
+<script>document.write(hd);</script><input type="text" name="wan_mtu1" size="8" maxlength="4" onKeyPress="return getkey('num',event)"></td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr>
+ <script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','nat')"><b><script>document.write(adva_wansetup_nat);</script><script>document.write(ba);</script></td> 
+ <script>document.write(hd);</script> 
+ <input type="radio" name="nat_fitering" value="0" ><script>document.write(adva_wansetup_nat_secured);</script>&nbsp;
+ <input type="radio" name="nat_fitering" value="1" ><script>document.write(adva_wansetup_nat_open);</script>
+ </td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="disable_sipalg" value="disable_sipalg"><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','sip')"><b><script>document.write(adva_wansetup_sipalg);</script> </b></td></tr>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="enable_ipv6_passthru" value="enable_ipv6_passthru"><a tabindex=-1 href="javascript:loadhelp('_WAN_wan','ipv6')"><b><script>document.write(adva_wansetup_ipv6passthrough);</script> </b></td></tr>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd2_center+'<input type="submit" name="cmd" value="'+apply_mark+'" onClick="return checkwan(document.forms[0]);">');</script>
+<script>document.write("<input type='reset' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"wan_setup.html\";'>");</script>
+</td>
+ </tr>
+</table>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

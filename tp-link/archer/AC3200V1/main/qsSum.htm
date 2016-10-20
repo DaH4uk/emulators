@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script type="text/javascript" language="javascript">
 var newConn = {};
 var pStk;
@@ -824,3 +825,831 @@ function showWlanNote()
     }
 }
 </script>
+=======
+<script type="text/javascript" language="javascript">
+var newConn = {};
+var pStk;
+var staticStk;
+var staticEnable;
+var staticName;
+var dynStk;
+var dynEnable;
+var dynName;
+var PPPoEStk;
+var PPPoEEnable;
+var PPPoEName;
+var l2tpStk;
+var l2tpEnable;
+var l2tpName;
+var pptpStk;
+var pptpEnable;
+var pptpName;
+var defaultHostname = "";
+var loadingImageData = "data:image/gif;base64,R0lGODlhFAAUAMQWAHBwcMPDw/b29r6+vuPj49HR0dLS0uTk5Nvb2/r6+ouLi6ampu3t7YKCgsnJyezs7PHx8ZSUlOjo6LW1tcjIyP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ1dWlkOjY1RTYzOTA2ODZDRjExREJBNkUyRDg4N0NFQUNCNDA3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkY3OEFBREY2QjNCQzExRTNCRDYyRTkxMThGNDY0QzI2IiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkY3OEFBREY1QjNCQzExRTNCRDYyRTkxMThGNDY0QzI2IiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIElsbHVzdHJhdG9yIENTNSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ1dWlkOjMwOGJjMmNhLTAzOTQtNDA0NS1hZDU4LTZmMmZlZDMwZDI4YiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0RjU5MTBBMTFDQjNFMzExQkQ5OTk5MUYzQkMyOTY4MCIvPiA8ZGM6dGl0bGU+IDxyZGY6QWx0PiA8cmRmOmxpIHhtbDpsYW5nPSJ4LWRlZmF1bHQiPndhaXRpbmctMDk8L3JkZjpsaT4gPC9yZGY6QWx0PiA8L2RjOnRpdGxlPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAUKABYALAAAAAAUABQAAAWkYCWOYxSRKCkFgmiKjGKkIjFR7llFgEOLgcljdzIAdCqC6DEZECsNAELkmFWClGFhAjEYDoBFBaE4igSUyaSQgJAOggXgyCA9BtwUuDGluWkHKBSDgxI/EoSJhIY0iIkofymRKHd5kE2MZ2lrbSQQCVs3LRVpAVpcEhIQaxUPpSISSq1NpDh4QxUEmSNphoOzAT+5NyK/pBOyKSujxgIBu8LGNCEAIfkEBQoAFgAsAwAAABEACwAABSCgJY4UNZ4oaaasVbbsC6PyPEqSrd9774uGiFBoCw4jIQAh+QQFCgAWACwLAAEACAAPAAAFLaBlCYEkntREnJY0Uaw1TA8LTUVsQXrv/0DLQXcANAyxBQAQYbAQEYBC5zCEAAAh+QQFCgAWACwLAAQACAAPAAAFLaAljoQ0Wk8wUWJSTKsgQtPwnBaE73zviwfZ6QBY7BoABA4BUOwiAAeOoTCMQgAh+QQFCgAWACwJAAkACwALAAAFGKAlihJlmiN5omnrvrBoGHEU1Tds4zwcAgAh+QQFCgAWACwEAAsADwAIAAAFK6AljiREnuU0SOeBFtNECeICuOdDTYGFAA3UiMCKAAxCkgMQSZIMCoZzFAIAIfkEBQoAFgAsAQALAA8ACAAABS2gJVrHaJ5IA5TnyEQAsAgnlIiwgrTQVIgGR2s0mDyGp8ckgDxRJoTmSBCQhAAAIfkEBQoAFgAsAAAJAAsACwAABRdgJIqGZZojea5s674wK0kwRdX3a+N4CAAh+QQFCgAWACwBAAQACAAPAAAFLKDhWGSpABFSWkwEAMtqGQ1wyNaN73zvQ7jCBFh6TAYyykSyIkwoMklAQAoBACH5BAUKABYALAEAAQAIAA8AAAUtoCUaCiOeDhCdpwIgrIUATWwtwBELuu3/QBsk9hhMhhYBZTIpJETLwIMlIdhCADs=";
+
+var diagStack;
+var completed = false;
+var saving = false;
+var check_router_time = 0;
+var check_router_success = 0;
+var accessType = "wired";
+
+function showParams() {
+	var localizationObj = n_str["quicksetup"];
+	var types = {"ppp": localizationObj.c_qsPPPoE, "pppoa": localizationObj.c_qsPPPoA, "dhcp": localizationObj.c_qsDynIp, "staip": localizationObj.c_qsStaIp, "ipoa": localizationObj.c_qsIPoA, "br": s_str.bridge, "pptp": "PPTP", "l2tp": "L2TP"};
+	$("#connType").text(types[$.qd.type]);
+	 $("#region").text($.qd.country);
+        $("#timezone").text($.qd.timezoneName);
+	
+
+    if ($.qd.wl && $.qd.wl.smartConn){
+    	$("#wlSmartConnEn > span").text(m_str.enabled);
+    	if ($.qd.wl.en == true) 
+		{
+		     $("#wlSmartConnEnable > span").text(m_str.enabled);
+	            $("#wlSmartConnSSID > input").prop("value", $.qd.wl.ssid);
+	            $("#wlSmartConnPwd > input").prop("value", $.qd.wl.pwd);
+		}
+		else 
+		{
+			$("#wlSmartConnEnable > span").text(m_str.disabled);
+			$("#wlSmartConnSSID").addClass("nd");
+			$("#wlSmartConnPwd").addClass("nd");
+		}
+		$("#wirelessParams").addClass("nd");
+		$("#wirelessSmartConnParams").removeClass("nd");
+    }else{
+    	$("#wlSmartConnEn > span").text(m_str.disabled);
+    }
+
+	if ($.qd.wl) {
+		if ($.qd.wl.en == true) 
+		{
+		     $("#wl24gEnable > span").text(m_str.enabled);
+	            $("#wl24gSSID > input").prop("value", $.qd.wl.ssid);
+	            $("#wl24gPwd > input").prop("value", $.qd.wl.pwd);
+		}
+		else 
+		{
+			$("#wl24gEnable > span").text(m_str.disabled);
+			$("#wl24gSSID").addClass("nd");
+			$("#wl24gPwd").addClass("nd");
+		}
+	}
+	if (INCLUDE_LAN_WLAN_DUALBAND && $.qd.wl5g) {
+		$("#wl5g").removeClass("nd");
+		if ($.qd.wl5g.en == true) {
+			$("#wl5gEnable > span").text(m_str.enabled);
+	            $("#wl5gSSID > input").prop("value", $.qd.wl5g.ssid);
+	            $("#wl5gPwd > input").prop("value", $.qd.wl5g.pwd);
+		}
+		else {
+			$("#wl5gEnable > span").text(m_str.disabled);
+			$("#wl5gSSID").addClass("nd");
+			$("#wl5gPwd").addClass("nd");
+		}
+	}
+	if (INCLUDE_LAN_WLAN_DUALBAND && $.qd.wl5g_2) {
+		$("#wl5g_2").removeClass("nd");
+		if ($.qd.wl5g_2.en == true) {
+			$("#wl5gEnable_2 > span").text(m_str.enabled);
+			$("#wl5gSSID_2 > input").prop("value", $.qd.wl5g_2.ssid);
+	            $("#wl5gPwd_2 > input").prop("value", $.qd.wl5g_2.pwd);
+		}
+		else {
+			$("#wl5gEnable_2 > span").text(m_str.disabled);
+			$("#wl5gSSID_2").addClass("nd");
+			$("#wl5gPwd_2").addClass("nd");
+		}
+	}
+
+}
+
+
+function getEwanStackInfo() 
+{
+    var wanTypes = $.act(ACT_GL, WAN_COMMON_INTF_CFG, null, null, ["WANAccessType"]);
+    var wanIPList = $.act(ACT_GL, WAN_IP_CONN, null, null, ["enable", "name", "addressingType", "X_TP_IPv4Enabled"]);
+    var wanPPPList = $.act(ACT_GL, WAN_PPP_CONN, null, null, ["enable", "name","transportType", "X_TP_IPv4Enabled"]);
+
+    if (INCLUDE_L2TP) {
+        var wanL2tpList = $.act(ACT_GL, WAN_L2TP_CONN, null, null, ["enable", "name","addressingType", "transportType"]);
+    }
+    if (INCLUDE_PPTP) {
+        var wanPptpList = $.act(ACT_GL, WAN_PPTP_CONN, null, null, ["enable", "name","addressingType", "transportType"]);
+    }
+    if (!$.exe()) 
+   {
+        $.each(wanTypes, function() 
+	{
+            if (this.WANAccessType == "Ethernet")
+                pStk = this.__stack;
+        });
+      //  var ethWan = $.act(ACT_GET, WAN_ETH_INTF, pStk, null, ["enable", "X_TP_lastUsedIntf"]);
+        $.each(wanIPList, function() 
+		{
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (pStk == tmpStk && this.X_TP_IPv4Enabled == 1) 
+			{
+	                if (this.addressingType == "Static")
+			   {
+	                    staticStk = this.__stack;
+	                    staticEnable = this.enable;
+				staticName = this.name;
+	                }
+	                if (this.addressingType == "DHCP") 
+			 {
+	                    dynStk = this.__stack;
+	                    dynEnable = this.enable;
+				dynName = this.name;
+	                }
+            }
+         });
+        $.each(wanPPPList, function() {
+            var tmpStk = $.stkPop(this.__stack, 2);
+            if (pStk == tmpStk && this.X_TP_IPv4Enabled == 1) {
+                if (this.transportType == "PPPoE") {
+                    PPPoEStk = this.__stack;
+                    PPPoEEnable = this.enable;
+			PPPoEName = this.name;
+                }
+            }
+        });
+        if (INCLUDE_L2TP) {
+            $.each(wanL2tpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (pStk == tmpStk) {
+                    l2tpStk = this.__stack;
+                    l2tpEnable = this.enable;
+			l2tpName = this.name;
+                }
+            });
+        }
+        if (INCLUDE_PPTP) {
+            $.each(wanPptpList, function() {
+                var tmpStk = $.stkPop(this.__stack, 1);
+                if (pStk == tmpStk) {
+                    pptpStk = this.__stack;
+                    pptpEnable = this.enable;
+			pptpName = this.name;
+                }
+            });
+        }
+        if ($.exe())
+        {
+		return;
+	  }
+    }
+}
+
+function setDefaultHostname() {
+    var c;
+    var ch = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.";
+    var i = 0;
+    var hostname = "";
+    var hostnameLen = 0;
+
+    for (i = 0; i < $.model.length; i++) {
+        c = $.model.charAt(i);
+        if (ch.indexOf(c) == -1) {
+            if (hostnameLen == 0 || (hostnameLen > 0 && hostname.charAt(hostnameLen - 1) == "_"))
+                continue;
+            else {
+                hostname += "_";
+                hostnameLen++;
+            }
+        } else {
+            hostname += c;
+            hostnameLen++;
+        }
+    }
+
+    defaultHostname = (hostnameLen > 0 && hostname.charAt(hostnameLen - 1) == "_") ? hostname.substr(0, hostnameLen - 1) : hostname;
+}
+
+function saveQsEwanSetting()
+{
+	var wan_iplistarg_sta = {};
+	var wan_iplistarg_dyn = {};
+	var wan_pppoelistarg = {};
+	var wan_l2tp_listarg = {};
+	var wan_pptp_listarg = {};
+	var l3ForwardingObj = {__ifAliasName: dynName,__ifName: "",defaultConnectionService: ""};
+	var type = $.qd.type;
+	
+	getEwanStackInfo(); 
+	setDefaultHostname();
+	
+	$.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["enable=1"]);
+	
+	 if (staticEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, staticStk, null, ["enable=0"]);
+	if (dynEnable == 1)
+            $.act(ACT_SET, WAN_IP_CONN, dynStk, null, ["enable=0"]);
+        if (PPPoEEnable == 1)
+            $.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, ["enable=0"]);
+        if (INCLUDE_L2TP && l2tpEnable == 1)
+            $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, ["enable=0"]);
+        if (INCLUDE_PPTP && pptpEnable == 1)
+            $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, ["enable=0"]);
+
+	 switch(type)
+	 {
+	  	case  "staip":
+			l3ForwardingObj.__ifAliasName = staticName;
+			wan_iplistarg_sta.enable = 1;
+			wan_iplistarg_sta.connectionType = "IP_Routed";
+			wan_iplistarg_sta.addressingType = "Static";
+			wan_iplistarg_sta.NATEnabled = 1;
+			wan_iplistarg_sta.externalIPAddress = $.ip2ip($.qd.staip.ip);
+			wan_iplistarg_sta.subnetMask = $.ip2ip($.qd.staip.mask);
+			wan_iplistarg_sta.defaultGateway = ($.qd.staip.gw) ? $.ip2ip($.qd.staip.gw) : "0.0.0.0";
+			wan_iplistarg_sta.DNSOverrideAllowed = ($.qd.staip.dnsServers == "0.0.0.0,0.0.0.0") ? 0 : 1;
+			wan_iplistarg_sta.DNSServers = $.qd.staip.dnsServers;				
+	             $.act(ACT_SET, WAN_IP_CONN, staticStk, null, wan_iplistarg_sta);
+	             $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=ipoe_eth3_s"]);	
+			break;
+			
+		case  "dhcp":
+			l3ForwardingObj.__ifAliasName = dynName;
+			wan_iplistarg_dyn.enable = 1;
+			wan_iplistarg_dyn.MACAddressOverride = $.qd.dhcp.MACAddressOverride;	
+			if ($.qd.dhcp.MACAddressOverride)
+			    wan_iplistarg_dyn.X_TP_ClonedMACAddress = $.qd.dhcp.ClonedMACAddress;
+	             $.act(ACT_SET, WAN_IP_CONN, dynStk, null, wan_iplistarg_dyn);
+	             $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=ipoe_eth3_d"]);
+			break;
+
+		case "ppp":
+			l3ForwardingObj.__ifAliasName = PPPoEName;
+			wan_pppoelistarg.enable = 1;
+		     	wan_pppoelistarg.username = $.qd.ppp.usr;
+		     	wan_pppoelistarg.password = $.qd.ppp.pwd;
+	            	$.act(ACT_SET, WAN_PPP_CONN, PPPoEStk, null, wan_pppoelistarg);
+	            	$.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=pppoe_eth3_d"]);
+			break;
+
+		case "l2tp":
+			l3ForwardingObj.__ifAliasName = l2tpName;
+			wan_l2tp_listarg.enable = 1;
+			wan_l2tp_listarg.connectionTypeIP = "IP_Routed";
+			wan_l2tp_listarg.NATEnabled = 1;
+			wan_l2tp_listarg.username = $.qd.l2tp.usr;
+			wan_l2tp_listarg.password = $.qd.l2tp.pwd;
+			if ($.qd.l2tp.dnsMode !== "dnsModeStaL2tp")
+			{
+				wan_l2tp_listarg.serverIpOrName = $.qd.l2tp.serverIpOrNameDynL2tp;
+				wan_l2tp_listarg.addressingType = "DHCP";
+				wan_l2tp_listarg.Hostname = defaultHostname;
+			}
+			else
+			{
+				wan_l2tp_listarg.serverIpOrName = $.qd.l2tp.serverIpOrNameStaL2tp
+				wan_l2tp_listarg.addressingType = "Static";
+				wan_l2tp_listarg.externalIPAddressIP = $.ip2ip($.qd.l2tp.ipL2tp);
+				wan_l2tp_listarg.subnetMaskIP = $.ip2ip($.qd.l2tp.maskL2tp);
+				wan_l2tp_listarg.defaultGatewayIP = $.ip2ip($.qd.l2tp.gwL2tp);
+				wan_l2tp_listarg.DNSServersIP = $.qd.l2tp.priDnsL2tp + "," + $.qd.l2tp.secDnsL2tp;
+			}	
+	             $.act(ACT_SET, WAN_L2TP_CONN, l2tpStk, null, wan_l2tp_listarg);
+	             $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=l2tp_eth3_d"]);
+			break;
+
+		case "pptp":
+			l3ForwardingObj.__ifAliasName = pptpName;
+			wan_pptp_listarg.enable = 1;
+			wan_pptp_listarg.connectionTypeIP = "IP_Routed";
+			wan_pptp_listarg.NATEnabled = 1;
+			wan_pptp_listarg.username = $.qd.pptp.usr;
+			wan_pptp_listarg.password = $.qd.pptp.pwd;
+			if ($.qd.pptp.dnsMode !== "dnsModeStaPptp")
+			{
+				wan_pptp_listarg.serverIpOrName = $.qd.pptp.serverIpOrNameDynPptp;
+				wan_pptp_listarg.addressingType = "DHCP";
+				wan_pptp_listarg.Hostname = defaultHostname;
+			}
+			else
+			{
+				wan_pptp_listarg.serverIpOrName = $.qd.pptp.serverIpOrNameStaPptp
+				wan_pptp_listarg.addressingType = "Static";
+				wan_pptp_listarg.externalIPAddressIP = $.ip2ip($.qd.pptp.ipPptp);
+				wan_pptp_listarg.subnetMaskIP = $.ip2ip($.qd.pptp.maskPptp);
+				wan_pptp_listarg.defaultGatewayIP = $.ip2ip($.qd.pptp.gwPptp);
+				wan_pptp_listarg.DNSServersIP = $.qd.pptp.priDnsPptp + "," + $.qd.pptp.secDnsPptp;
+			}
+	             $.act(ACT_SET, WAN_PPTP_CONN, pptpStk, null, wan_pptp_listarg);
+	             $.act(ACT_SET, WAN_ETH_INTF, pStk, null, ["X_TP_lastUsedIntf=pptp_eth3_d"]);
+			break;
+
+		default:
+			//alert("error!!, can not find connType: "+ type);
+			break;
+	 }
+
+	 $.act(ACT_SET, L3_FORWARDING, null, null, l3ForwardingObj);
+
+	   if (!$.exe())
+		 return true;
+	   else
+		return false
+}
+
+function saveQsTimeZoneAndWlSetting()
+{
+	var arg24g = {};
+	var arg5g = {};
+	var arg5g_2 = {};
+
+	if ($.qd.dmTimezone != $.qd.timezone)
+	{
+    		$.act(ACT_SET, TIME, null, null, ["localTimeZone=" + $.qd.timezone]);
+		$.exe(function(err) {
+        		$.removeLoading();
+       		 if (err) {
+            		$.alert(err)
+            		return false;
+       		 }
+   		 });
+	}
+	
+	if ($.qd.dmRegion == $.qd.region && $.qd.wl.wlParamsChanged == false)
+		return true;
+		
+	arg24g.RegulatoryDomain = $.qd.region;
+	arg24g.enable = ($.qd.wl.en == true) ? 1 : 0;
+	arg24g.smartConnect = ($.qd.wl.smartConn == true) ? 1 : 0;//added by jy
+	arg5g_2.smartConnect = arg5g.smartConnect = arg24g.smartConnect;//
+
+	/* wlSettingsTmp.WPAEncryptionModes = wlSettingsTmp.IEEE11iEncryptionModes = 'AESEncryption';
+            wlSettingsTmp.WPAAuthenticationMode = wlSettingsTmp.IEEE11iAuthenticationMode = "PSKAuthentication";
+            wlSettingsTmp.beaconType = '11i';*/
+
+	if (INCLUDE_LAN_WLAN_DUALBAND && (arg24g.smartConnect == 1)){
+		arg5g_2.SSID = arg5g.SSID = arg24g.SSID = $.qd.wl.ssid;
+		arg5g_2.X_TP_PreSharedKey = arg5g.X_TP_PreSharedKey = arg24g.X_TP_PreSharedKey =$.qd.wl.pwd;
+		arg5g_2.WPAEncryptionModes = arg5g.WPAEncryptionModes = arg24g.WPAEncryptionModes = 'AESEncryption';
+		arg5g_2.IEEE11iEncryptionModes = arg5g.IEEE11iEncryptionModes = arg24g.IEEE11iEncryptionModes = 'AESEncryption';
+		arg5g_2.WPAAuthenticationMode = arg5g.WPAAuthenticationMode = arg24g.WPAAuthenticationMode = "PSKAuthentication";
+		arg5g_2.IEEE11iAuthenticationMode = arg5g.IEEE11iAuthenticationMode = arg24g.IEEE11iAuthenticationMode = "PSKAuthentication";
+		arg5g_2.beaconType = arg5g.beaconType = arg24g.beaconType = '11i';
+
+		$.act(ACT_SET, LAN_WLAN, $.qd.wl.stack, null, arg24g);
+		$.act(ACT_SET, LAN_WLAN, $.qd.wl5g.stack, null, arg5g);
+		$.act(ACT_SET, LAN_WLAN, $.qd.wl5g_2.stack, null, arg5g_2);
+	}else{
+	if (arg24g.enable == 1) 
+	{
+		arg24g.SSID = $.qd.wl.ssid;
+		arg24g.X_TP_PreSharedKey = $.qd.wl.pwd;	
+	}
+	$.act(ACT_SET, LAN_WLAN, $.qd.wl.stack, null, arg24g);
+	
+	if (INCLUDE_LAN_WLAN_DUALBAND) 
+	{
+		arg5g.enable = ($.qd.wl5g.en == true) ? 1 : 0;
+		arg5g.RegulatoryDomain = $.qd.region;
+		if (arg5g.enable == 1)
+		{
+			arg5g.SSID = $.qd.wl5g.ssid;
+			arg5g.X_TP_PreSharedKey = $.qd.wl5g.pwd;
+		}
+		$.act(ACT_SET, LAN_WLAN, $.qd.wl5g.stack, null, arg5g);
+
+		arg5g_2.enable = ($.qd.wl5g_2.en == true) ? 1 : 0;
+		arg5g_2.RegulatoryDomain = $.qd.region;
+		if (arg5g_2.enable == 1)
+		{
+			arg5g_2.SSID = $.qd.wl5g_2.ssid;
+			arg5g_2.X_TP_PreSharedKey = $.qd.wl5g_2.pwd;
+		}
+		$.act(ACT_SET, LAN_WLAN, $.qd.wl5g_2.stack, null, arg5g_2);
+	}
+	}
+	
+	
+	 $.exe(function(err) {
+        $.removeLoading();
+        if (err) {
+            $.alert(err)
+            return false;
+        }
+    });
+	return true;
+}
+
+
+function goPrev()
+{
+    if (flowSteps[currIndex].file != "qsSum.htm"){
+        return;
+    }
+	/*add by wuzeyu for 3200
+    if (saving == true){
+        return;
+    }
+	*/
+    $.qf.prev();
+}
+
+function goNext() 
+{
+    if (flowSteps[currIndex].file != "qsSum.htm"){
+        return;
+    }
+
+    $("#next").prop("disabled", true);
+    $("#reconnect_failed").addClass("nd");
+    qs_addLoading($("#next"));
+
+    //$.qd.eth.diagStack = diagStack;
+
+    /* check router connecting */
+    check_router_time = 0;
+    check_router_success = 0;
+    check_router();
+}
+function goSave() 
+{
+	if (flowSteps[currIndex].file != "qsSum.htm")
+        return;
+
+	$("#save").prop("disabled", true);
+	$("#back").prop("disabled", true);
+
+	//saving = true;
+	completed = false;
+	 accessType = getCurrentUserAccessType();
+	
+	if (false == saveQsEwanSetting())
+	{
+		//$.qd.status = "fail"
+		$("#back").prop("disabled", false);
+		$("#save").prop("disabled", false);
+		return;
+	}
+
+	if (false == saveQsTimeZoneAndWlSetting())
+	{
+		//$.qd.status = "fail"
+		$("#back").prop("disabled", false);
+		$("#save").prop("disabled", false);
+		return;
+	}
+	
+	doProgress(saveComplete);
+	$.qd.status = "success";
+
+	  // exe 
+	    $.exe(function(err) {
+	        if (!err) {
+	            $.qd.status = "success";
+	        } else {
+	            $.qd.status = "fail";
+	        }
+	        completed = true;
+	    }, true);	
+	//$.qf.next();
+}
+
+function doProgress(hook) {
+    $("#progressBar").removeClass("nd");
+    var interval = 250;
+    var step = 100;
+
+    $.auto(function(args) {
+        if (!completed) {
+ 
+        } else {
+            $.auto_interval = 10000 / step;
+        }
+
+        var percent = Math.floor(args[2] * 100 / args[3]);
+        $(args[0]).html(percent + "%");
+        args[1].style.width = (7 * percent + "px");
+        if (args[2] >= args[3])
+            return false;
+        args[2]++;
+    }, interval, true, [$.id("qs_gitem"), $.id("qs_gbar"), 0, step, step], hook);
+}
+
+function saveComplete() 
+{
+    // accessType = "wireless";
+    if (accessType == "wireless") {
+        showWlanNote();
+    } else {
+        $.qf.next();
+    }
+}
+
+function check_router(){
+    $.ajax({
+        type: "GET",
+        url: "/main/status.htm",
+        dataType: "html",
+        timeout : 1000,
+        cache: false,
+        complete: check_router_callback
+    });
+}
+
+function check_router_callback (request, errno) {
+    check_router_time++;
+    if (errno == "success"){
+        check_router_success++;
+    } else if (check_router_time <= 5){
+        check_router();
+    }
+
+    if (check_router_time >= 5 || check_router_success >= 1){
+        $("#next").prop("disabled", false);
+        qs_removeLoading();
+
+        if (check_router_success == 0){
+            $("#reconnect_failed").removeClass("nd");
+        } else {
+            $.qf.next();
+        }
+    }
+}
+
+function getCurrentUserAccessType(){
+    var lanHostList = $.act(ACT_GS, LAN_HOST_ENTRY, null, null, ["IPAddress", "MACAddress", "HostName", "X_TP_ConnType"]);
+    $.act(ACT_CGI, "/cgi/info");
+    if ($.exe()) return false;
+
+    var pcMacAddr = clientMac;
+    var getaccessType = "wired";
+
+    $.each(lanHostList, function (){
+        if (this.MACAddress == pcMacAddr){
+            if (this.X_TP_ConnType == 1 || this.X_TP_ConnType == 2 || this.X_TP_ConnType == 3 || this.X_TP_ConnType == 4){
+                getaccessType = "wireless";
+            } 
+        }
+    });
+    return getaccessType;
+}
+
+function qs_addLoading(object){
+    $.lock();
+
+    var obj = $(object);
+    var imageLoading = new Image;
+    imageLoading.src = loadingImageData;
+    $(imageLoading).addClass("image-load");
+    var loadingContanier = $("<div style='display: inline-block; vertical-align: text-top;'></div>");
+    $(imageLoading).appendTo(loadingContanier);
+    loadingContanier.insertAfter(obj);
+
+    $.showCover();
+}
+
+function qs_removeLoading(){
+    $("img.image-load").closest('div').remove();
+    $.unlock();
+    $.hideCover();
+}
+
+</script>
+<div id="quicksetup_sum_container" >
+   <form class="pure-form pure-form-aligned">
+   
+<div id="summery_container">
+	 
+	   <div class="pure-control-group group-spec" style="margin-top: 40px;">
+            <label class="label-title T_region l">Region:</label>
+            <span class="text" id="region"></span>
+          </div>
+             
+        <div class="pure-control-group group-spec">
+            <label class="label-title T_timezone l">Time Zone:</label>
+            <span class="text" id="timezone"></span>
+        </div>
+        
+	<div class="pure-control-group group-spec">
+		<label class="label-title T_conntype l">Connection Type:</label>
+		<span class="text" id="connType"></span>
+	</div>
+	
+	<div class="pure-control-group group-spec nd" id="wlSmartConnEn" style="margin-top: 40px;">
+		<label class="label-title l">Smart Connect:</label>
+        <span class="text"></span>
+	</div>
+
+	<div id="wirelessSmartConnParams" style="margin-top: 40px;" class="nd">
+        <div id="wlSmartConnEnable" class="pure-control-group group-spec">
+            <label class="label-title l">Wireless Network:</label>
+            <span class="text"></span>
+        </div>
+        <div id="wlSmartConnSSID" class="pure-control-group group-spec">
+            <label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+            <input type="text" readonly="ture" class="tp-input-text xl" />
+        </div>
+        <div id="wlSmartConnPwd" class="pure-control-group group-spec">
+            <label class="label-title T_c_wlPwd l">Password:</label>
+            <input type="text" readonly="ture" class="tp-input-text xl" />
+        </div>
+    </div>
+
+	<div id="wirelessParams" style="margin-top: 40px;">
+		<div id="wl24g">
+			<div id="wl24gEnable" class="pure-control-group group-spec">
+				<label class="label-title T_c_wl24g l">Wireless Network (2.4GHz):</label>
+				<span class="text"></span>
+			</div>
+			<div id="wl24gSSID" class="pure-control-group group-spec">
+				<label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+			<div id="wl24gPwd" class="pure-control-group group-spec">
+				<label class="label-title T_c_wlPwd l">Password:</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+		</div>
+		
+		<div id="wl5g" class="nd" style="margin-top: 40px;">
+			<div id="wl5gEnable" class="pure-control-group group-spec">
+				<label class="label-title T_c_wl5g l">Wireless Network (5GHz-1):</label>
+				<span class="text"></span>
+			</div>
+			<div id="wl5gSSID" class="pure-control-group group-spec">
+				<label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+			<div id="wl5gPwd" class="pure-control-group group-spec">
+				<label class="label-title T_c_wlPwd l">Password:</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+		</div>
+			
+		<div id="wl5g_2" class="nd" style="margin-top: 40px;">
+			<div id="wl5gEnable_2" class="pure-control-group group-spec">
+				<label class="label-title T_c_wl5g_2 l">Wireless Network (5GHz-2):</label>
+				<span class="text"></span>
+			</div>
+			<div id="wl5gSSID_2" class="pure-control-group group-spec">
+				<label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+			<div id="wl5gPwd_2" class="pure-control-group group-spec">
+				<label class="label-title T_c_wlPwd l">Password:</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+		</div>
+		
+	 </div>
+	 
+	 <div style="margin-top: 20px;" id="progressBar" class="nd">
+                <span id="qs_bar_container">
+                    <div class='gbar' id='qs_gbar'></div>
+                </span>
+                <span class='gitem' id='qs_gitem'></span>
+        </div>
+  </div>
+
+<div id="div_wlanNote" class="nd" style="margin-top: 40px;">
+      
+            <div id="reconnect_failed" class="nd">
+                <span style="font-size: 25px;color:#ff0000;" class="T" id="t_test_fail">Failed</span>
+                <p class="cfg-line" style="font-size: 18px;color:#000000;" id="t_not_reconnected">
+                    Sorry!We detect that you have not reconnected your wireless device to the new wireless network.
+                </p>
+            </div>
+            
+            <div class="pure-control-group" style="height:auto;margin-top: 20px;">
+                <p class="cfg-line" style="font-size: 15px;color:#101010;" id="t_noteRejoin">
+                    You need to reconnect your wireless devices to the new wireless network and click the Next button.
+                </p>
+                <p class="cfg-line" id="t_noteConfig" style="font-size: 15px;margin-top: 20px;color:#101010;">
+                    Please use the following SSID and password for wireless connection:
+                </p>
+            </div>
+            
+            <div id="note_wl24g">
+                <div id="note_wl24gEn" class="pure-control-group group-spec">
+                    <label class="label-title T_c_wl24g l">Wireless Network (2.4GHz):</label>
+                    <span class="text"></span>
+                </div>
+                <div id="note_wl24gSSID" class="pure-control-group group-spec">
+                    <label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+                    <input type="text" readonly="ture" class="tp-input-text xl" />
+                </div>
+                <div id="note_wl24gPwd" class="pure-control-group group-spec">
+                    <label class="label-title T_c_wlPwd l">Password:</label>
+                    <input type="text" readonly="ture" class="tp-input-text xl" />
+                </div>
+            </div>
+            
+            <div id="note_wl5g" class="nd" style="margin-top: 20px;">
+                <div id="note_wl5gEn" class="pure-control-group group-spec">
+                    <label class="label-title T_c_wl5g l">Wireless Network (5GHz-1):</label>
+                    <span class="text"></span>
+                </div>
+                <div id="note_wl5gSSID" class="pure-control-group group-spec">
+                    <label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+                    <input type="text" readonly="ture" class="tp-input-text xl" />
+                </div>
+                <div id="note_wl5gPwd" class="pure-control-group group-spec">
+                    <label class="label-title T_c_wlPwd l">Password:</label>
+                    <input type="text" readonly="ture" class="tp-input-text xl" />
+                </div>
+            </div>
+
+            	<div id="note_wl5g_2" class="nd" style="margin-top: 20px;">
+			<div id="note_wl5gEn_2" class="pure-control-group group-spec">
+				<label class="label-title T_c_wl5g_2 l">Wireless Network (5GHz-2):</label>
+				<span class="text"></span>
+			</div>
+			<div id="note_wl5gSSID_2" class="pure-control-group group-spec">
+				<label class="label-title T_c_ssid l">Wireless Network Name (SSID):</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+			<div id="note_wl5gPwd_2" class="pure-control-group group-spec">
+				<label class="label-title T_c_wlPwd l">Password:</label>
+				<input type="text" readonly="ture" class="tp-input-text xl" />
+			</div>
+		</div>
+            
+            <p class="cfg-line" id="t_noteSure" style="margin-top: 15px; font-size: 15px;color:#101010;">Make sure you have connected to the new wireless network.</p>
+  </div>
+      
+  </form>
+</div>
+
+<div class="inline-btn-right quicksetup-button-container">
+
+    <div id="div_save">
+	    <div class="inline">
+	        <button type="submit" class="green T_back" id="back" onclick="goPrev()">Back</button>
+	    </div>
+	    <div class="inline">
+	        <button type="submit" class="green T_save" id="save" onclick="goSave()">Save</button>
+	    </div>
+   </div>
+   
+    <div id="div_next" class="nd">
+        <div class="inline">
+            <button type="submit" class="green T_next" id="next" onclick="goNext()">Next</button>
+        </div>
+    </div>
+    
+</div>
+
+<script type="text/javascript" language="javascript">
+function init() {
+	$("#div_save").removeClass("nd");
+    	$("#div_next").addClass("nd");
+    	$("#div_wlanNote").addClass("nd");
+    	$("#summery_container").removeClass("nd");
+	showParams();
+}
+
+$.tpInit(init);
+
+function showWlanNote() 
+{
+    $("#summery_container").addClass("nd");
+    $("#div_save").addClass("nd");
+    $("#div_next").removeClass("nd");
+    $("#div_wlanNote").removeClass("nd");
+  
+    if ($.qd.wl.en == true) {
+	$("#note_wl24gEn > span").text(m_str.enabled);
+	$("#note_wl24gSSID > input").prop("value", $.qd.wl.ssid);
+	$("#note_wl24gPwd > input").prop("value", $.qd.wl.pwd);
+    } else {
+       $("#note_wl24gEn > span").text(m_str.disabled);
+        $("#note_wl24gSSID").addClass("nd");
+        $("#note_wl24gPwd").addClass("nd");
+    }
+
+    if (INCLUDE_LAN_WLAN_DUALBAND && $.qd.wl5g)
+	{
+	        $("#note_wl5g").removeClass("nd");
+	        if ($.qd.wl5g.en == true) {
+		    $("#note_wl5gEn > span").text(m_str.enabled);
+	            $("#note_wl5gSSID > input").prop("value", $.qd.wl5g.ssid);
+	            $("#note_wl5gPwd > input").prop("value", $.qd.wl5g.pwd);
+	        } else {
+	           $("#note_wl5gEn > span").text(m_str.disabled);
+	            $("#note_wl5gSSID").addClass("nd");
+	            $("#note_wl5gPwd").addClass("nd");
+	        }
+    	}
+	if (INCLUDE_LAN_WLAN_DUALBAND && $.qd.wl5g_2) 
+	{
+		 $("#note_wl5g_2").removeClass("nd");
+		 if ($.qd.wl5g_2.en == true) {
+	            $("#note_wl5gEn_2 > span").text(m_str.enabled);
+	            $("#note_wl5gSSID_2 > input").prop("value", $.qd.wl5g_2.ssid);
+	            $("#note_wl5gPwd_2 > input").prop("value", $.qd.wl5g_2.pwd);
+	        } else {
+	            $("#note_wl5gEn_2 > span").text(m_str.disabled);
+	            $("#note_wl5gSSID_2").addClass("nd");
+	            $("#note_wl5gPwd_2").addClass("nd");
+	        }
+    }
+}
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

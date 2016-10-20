@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Pragma" content="No-cache" />
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="-1" />
+<title>Wireless AP</title>
+<link type="text/css" rel="stylesheet" href="./css/common.css" media="screen" />
+<script type="text/javascript" src="./js/error.js"></script>
+<script type="text/javascript" src="./js/menu.js"></script>
+<script type="text/javascript" src="./js/system_management.js"></script>
+<script type="text/javascript" src="./js/boot.js"></script>
+<script type="text/javascript" src="./js/SecBoot.js"></script>
+<script type="text/javascript" src="./js/comBasicFun.js"></script>
+<script type="text/javascript" src="./js/ajax.js"></script>
+<script type="text/javascript" src="./js/wiz_ajax.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+/*---- Global variable define -----*/
+var G_Error	    = "0"; 
+var G_Status	= "0"; 
+var G_Error_Msg	= "";
+var G_ViewState	= "-";
+var userLevel   = "1";
+var G_Menu      = "management";
+var G_Page      = "system_management";
+var G_SubPage   = "-";
+var G_ErrorPage = "-";
+
+
+/* Get Current Page Url */
+function uiGetPageUrl()
+{
+	IsLanOrWan_russia();
+    var strUrl = ''
+        + '&var:menu=' + G_Menu 
+        + '&var:page=' + G_Page;
+    if(G_SubPage != '0')
+        strUrl += '&var:subpage=' + G_SubPage;
+    if(G_ErrorPage != '0')
+        strUrl += '&var:errorpage=' + G_ErrorPage;
+    
+    return strUrl;
+}
+
+/* Refresh Current Page */
+function uiPageRefresh(){
+    document.location.href = uiGetPageUrl();
+}
+
+
+var G_IsLanOrWan="";
+function IsLanOrWan_russia()
+{
+	if ('0' == '0')
+	{
+		G_IsLanOrWan="wan";
+		return false;
+	}
+	else
+	{
+		G_IsLanOrWan="lan";
+		return true;
+	}
+}
+
+
+var G_SessionTimeout = "5";
+var G_IPInterfaceIPAddress = "192.168.0.1";
+
+function uiOnload(){
+    setJSONValue({
+		'INPUT_SessionTimeOut'   : G_SessionTimeout
+	});
+	
+	dealWithError();
+}
+
+function uiSubmit(){
+
+	$H({
+		":InternetGatewayDevice.X_TWSZ-COM_Authentication.SessionTimeout" : $('INPUT_SessionTimeOut').value,
+		'obj-action'   	:'set',
+		'var:menu'     	:'management',
+		'var:page'     	:'system_management',
+		'var:errorpage'	:'system_management',
+		'getpage'   	:'./index.html',
+		'var:CacheLastData': ViewState.Save()
+	});
+	$('uiPostForm').submit();
+}
+
+function uiSaveConfig(){
+	$H({
+		'obj-action'	:'save',
+		'var:menu'     	:'management',
+		'var:page'     	:'system_management',
+		'var:errorpage'	:'system_management',
+		'getpage'   	:'/index.html'
+	},true);
+	$("uiPostForm").submit();
+}
+
+//this operation will restart system
+function uiSaveRecover(){
+	$H({
+		'obj-action'	:'recover',
+		'var:menu'		:'management',
+		'var:page'		:'system_management',
+		'var:errorpage'	:'system_management',
+		'var:noredirect':'1',
+		'getpage'   	:'html/page/restarting.html'
+	},true);
+	$("uiPostForm").submit();
+}
+
+//this operation will restart system
+function uiReboot(){
+	Cookie.Set('LinkIpForReboot_Flag', '1');
+	Cookie.Set("LinkIpForReboot",G_IPInterfaceIPAddress);
+	
+	$H({
+		'obj-action'	:'reboot',
+		'var:menu'		:'management',
+		'var:page'		:'system_management',
+		'var:errorpage'	:'system_management',
+		'var:noredirect':'1',
+		'getpage'   	:'html/page/restarting.html'
+	},true);
+	$("uiPostForm").submit();
+}
+
+function dealWithError(){
+	if (G_Error != 1){
+		return false;
+	}
+	
+	var arrayHint = [];
+	arrayHint['SessionTimeout']  = 'INPUT_SessionTimeOut';
+	
+	dealErrorMsg(arrayHint, G_Error_Msg);
+}
+
+addListeners(uiOnload,Form.Action);
+//]]>
+//���������Ҽ�
+document.oncontextmenu=function(e){return false;}
+</script>
+</head>
+
+<body style="visibility:hidden;">
+<!--  header -->
+<div id="Header">
+	<div id="Logo">
+		<p id="Pic"></p>
+		<p id="Logout"><a href="#" onclick="uiLogout" id="lang_logout" class="LogoutText">Logout</a></p>
+	</div>
+	<div id="Navigation"><!-- important -->
+		<ul class="M0">
+			<li class=""><a href="./index.html"><span id="lang_status"></span></a></li>
+			<!-- <li class=""><a href="/cgi-bin/webproc?getpage=html/index.html&var:menu=wizard&var:page=wizard"><span id="lang_wizard"></span></a></li> -->
+			<li class="HidMark"><a href="./lang_setup.html"><span id="lang_setup"></span></a></li>
+			<li class="HidMark"><a href="./lang_advanced.html"><span id="lang_advanced"></span></a></li>
+			<li class="HidMark"><a href="./lang_wireless.html"><span id="lang_wireless"></span></a></li>
+		
+			<li class="on"><a href="./lang_management.html"><span id="lang_management"></span></a></li>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+//zp add 20120419
+function uiLogout(session){
+	var form_name = 'uiPostForm';
+	IsLanOrWan_russia();
+	if(G_IsLanOrWan=="wan" || ('0' == '1' && '-' == '1'))
+	{
+		if(document.forms[0]){
+			document.forms[0].action = "";
+		} else {
+			form_name = 'uiLogoutForm';
+			$('Loading').innerHTML = '<form id="uiLogoutForm" method="post" action=""></form>';
+		}
+		
+		$H({
+			'getpage'   :'html/main.html',
+			//'var:login' :'true',
+			':sessionid':session,
+			'obj-action':'auth',
+			':action'   :'logout'
+		},true);
+		$(form_name).submit();
+	}
+	else
+	{
+	  location.href="";
+	}
+}
+//end
+</script>
+<!--  main content -->
+<div id="Main">
+	<!-- left menu -->
+		<div id="Menu">
+		<div class="rbottom">
+			<div class="r1"></div><div class="r2"></div><div class="r3"></div><div class="r4"></div>
+		</div>
+		<div id="MenuTitle">
+			<div id="Word_management" class="Word"></div>
+			<a id="ShrinkMark" href=""><!--<img src="/html/skin/ShrinkMark.gif" alt="shrink"/>--></a>
+		</div>
+<!-- status -->
+	
+
+<!-- setup -->
+	
+
+<!-- advanced -->
+	
+
+
+		<!-- IGMP -->
+		
+<!--  wireless  -->
+	
+<!-- management -->
+		<div class="M1">
+			<p id="up"><a href="./lang_management.html" id="lang_system_management">系统管理</a></p>
+
+			<p id=""><a href="./lang_user_management.html" id="lang_user_management">用户管理</a></p>
+		
+
+			<p class="SubMenuSwitch dGn"><a href="./lang_dgn.html"><img src="./img/closed.gif"> <b id="lang_dgn">诊断</b></a></p>
+			<ul class="ThreeMenu">
+
+				<li id="" class="dGn"><a href="./lang_ping.html" id="lang_ping">Ping诊断</a></li>
+			
+
+				<li id="" class="dGn"><a href="./lang_dgn_tracert.html" id="lang_dgn_tracert">Tracert诊断</a></li>
+			
+			</ul>
+
+				<p id=""><a href="./lang_tr069.html" id="lang_tr069">TR069配置</a></p>
+			
+		
+			<p id=""><a href="./lang_config_update.html" id="lang_config_update">配置升级</a></p>
+		
+			<p id=""><a href="./lang_img_update.html" id="lang_img_update">固件升级</a></p>
+			<p id=""><a href="./lang_log.html" id="lang_log">日志配置</a></p>
+			<p id=""><a href="./lang_logview.html" id="lang_logview">日志显示</a></p>
+		
+		</div>
+	
+	</div>
+
+	<!--  content -->
+		<div id="Content">
+		<div class="MainTittle">
+			<a href="#" onclick="Help.Go"><img id="pointTo" src="./img/helpBook.gif" alt="Help"/></a>
+			<span id="lang_title">System Management</span>
+		</div>
+		<div class="Embody">
+			<p class="SmallTittle">
+				<span id="lang_sysOperation">System Operation</span>
+			</p>
+
+			<div class="div_button do" style="margin-left:50px;">
+				<input type="button" id="recover" name="recover" value="Restore" onClick="uiSaveRecover()">&nbsp;&nbsp;
+				<input type="button" id="reboot" name="reboot" value="Reboot" onclick="uiReboot();">
+			</div>
+			<br />
+
+			<p class="SmallTittle">
+				<span id="lang_sysOptions">System Configuration</span>
+			</p>
+
+			<div style="margin-left:36px;">
+			<div class="div_left" id="lang_SessionTimeOut">Session Timeout</div>
+			<div class="div_middle">
+				<input type="text" maxlength=10 name="INPUT_SessionTimeOut" id="INPUT_SessionTimeOut" value=""/>
+				<span id="lang_minute">(min)</span>
+			</div>
+			<div class="div_right">&nbsp;</div>
+			</div>
+
+			<div class="div_button do" style="margin-left:50px;">
+				<input type="submit" name="submit" id="submit" onClick="uiSubmit();" value="Submit" />
+			</div>
+		</div>
+		<form name="uiPostForm" id="uiPostForm" method="post" action="webproc"></form>
+	</div>
+
+	<!-- if loading and content will not display-->
+	<div id="Loading">
+	</div>
+</div>
+</body>
+</html>

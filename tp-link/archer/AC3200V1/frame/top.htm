@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div id="top-con">
     <a id="top-product" href="http://www.tp-link.com" target="_blank">
         <span id="top-product-name"></span>
@@ -69,3 +70,76 @@ $(document).ready(function() {
     $('#top-product-name').html($.model);
 });
 </script>
+=======
+<div id="top-con">
+    <a id="top-product" href="http://www.tp-link.com" target="_blank">
+        <span id="top-product-name"></span>
+    </a>
+    <div id="top-nav" class="top-nav">
+        <ul id="ul-nav">
+            <li id="qs">
+                <span class="T_qs">Quick Setup</span>
+            </li>
+            <li id="basic">
+                <span class="T_basic">Basic</span>
+            </li>
+            <li id="advanced">
+                <span class="T_adv">Advanced</span>
+            </li>
+        </ul>
+    </div>
+    <div class="top-control">
+        <!-- <div class="top-lang"></div> -->
+        <a id="topLogout" class="top-btn" href="javascript:void(0);">
+            <span class="icon"></span>
+            <span class="text T_logout">Logout</span>
+        </a>
+        <a id="topReboot" class="top-btn" href="javascript:void(0);">
+            <span class="icon"></span>
+            <span class="text T_reboot">Reboot</span>
+        </a>
+    </div>
+    <div class="clr"></div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#ul-nav li').click(function() {
+        $(this).siblings().removeClass('selected');
+        $(this).addClass('selected');
+        $('#scroll').scrollTop(0);
+        $.loadMenu('./frame/menu.htm');
+    });
+    $('#ul-nav li span').hover(function() {
+        $(this).siblings().removeClass('hover');
+        $(this).addClass('hover');
+    });
+    $('#topLogout').click(function() {
+        $.confirm(c_str.logout, function() {
+            // $.act(ACT_CGI, '/cgi/logout');
+            // $.exe();
+            $.deleteCookie('Authorization');
+            $.refresh();
+        });
+        return false;
+    });
+    $('#topReboot').click(function() {
+        $.confirm(c_str.creboot, function() {
+            var mainCon = $('#con');
+            if (mainCon !== undefined && mainCon.css('display') == 'none') {
+                mainCon.css('display', 'block');
+                $('#menu').css('display', 'none');
+            }
+            $.clearAsync();
+
+            $.guage(["<span class='T T_rebooting'>" + s_str.rebooting + "</span>", "<span class='T T_wait_reboot'>" + s_str.wait_reboot + "</span>", ], 100, $.guageInterval, function() {
+                $.refresh();
+            });
+            $.act(ACT_OP, ACT_OP_REBOOT);
+            $.exe(true);
+        });
+        return false;
+    });
+    $('#top-product-name').html($.model);
+});
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Настройка FTP ALG</title>
+    <script>
+        function ftpalgportCheckClick() {
+            var dport;
+
+
+            dport = getDigit(document.ftpalg.ftpdport.value, 1);
+            if (validateKey(document.ftpalg.ftpdport.value) == 0 ||
+                (dport > 65535 || dport < 1)) {
+                alert("Неверное значение порта! Должно быть в пределах 1-65535.");
+                document.ftpalg.ftpdport.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">Настройка FTP ALG</p>
+            <p class="intro_content">Страница используется для настройки ALG портов FTP-сервера и FTP-клиента. </p>
+        </div>
+
+        <div class="data_common data_common_notitle" id="security_data">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">Порт FTP ALG: <input maxlength="125" size="20" name="ftpdport" type="text"></th>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="btn_ctl">
+
+            <input class="link_bg" name="adddport" onclick="return ftpalgportCheckClick()" value="Добавить порт назначения" type="submit">
+            <input class="link_bg" name="deldport" value="Удалить выбранный порт назначения" type="submit">
+        </div>
+
+        <div class="column">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Таблица портов FTP ALG:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <font size="1"></font>
+                <table>
+
+                    <tbody>
+                        <tr>
+                            <td align="center" bgcolor="#808080" width="5%">Выбрать</td>
+                            <td align="center" bgcolor="#808080" width="35%">Порты</td>
+                        </tr>
+                        <tr>
+                            <td align="center" bgcolor="#C0C0C0" width="5%"><input name="select" value="s0" type="radio"></td>
+                            <td align="center" bgcolor="#C0C0C0" width="35%">21</td>
+                        </tr>
+                        <input value="1" name="dportlistnumber" type="hidden">
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <input name="submit.htm?nat_ftpalg.htm" value="Send" type="hidden">
+
+
+
+
+
+
+
+
+</body>
+
+</html>

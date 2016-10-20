@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>WPS</title>
+    <style>
+        .on {
+            display: on
+        }
+        
+        .off {
+            display: none
+        }
+    </style>
+
+    <script>
+        var isClient;
+        var isConfig;
+        var encrypt = 6;
+        var enable1x = 0;
+        var wpa_auth = 2;
+        var mode = 0;
+        var is_adhoc = 0;
+        var is_WPSLock = 0;
+        var isWPSLimit = 0;
+
+
+        var warn_msg1 = 'WPS был отключен автоматически так как текущий режим Wi-Fi не поддерживается. ' +
+            'Для включения WPS нужно перейти на страницу основных настроек Wi-Fi.';
+        var warn_msg2 = 'WPS был отключен автоматически так как аутентификация RADIUS не поддерживается. ' +
+            'Для включения WPS нужно перейти на страницу настройки безопасности Wi-Fi.';
+        var warn_msg3 = "PIN код сгенерирован. Нужно нажать \'Применить\' для активации изменений.";
+        var warn_msg4 = 'WPS был отключен автоматически так как WPS2.0 имеет некоторые ограничения на использование WPS:<BR>' +
+            '1. Вещание SSID должно быть включено.(Дополнительные настройки Wi-Fi)<br>' +
+            '2. Тип шифрования не должен быть WEP или WPA-TKIP/WPA2-TKIP.(Настройки безопасности Wi-Fi)<br>' +
+            '3. Если установлен режим контроля доступа "Разрешить указанным", то список доступа не должен быть пустым (Управление доступом к беспроводным сетям)';
+        var disable_all = 0;
+
+        function triggerPBCClicked() {
+            return true;
+        }
+
+        function triggerPINClicked() {
+            return (saveChangesWPS(document.formWsc));
+        }
+
+        function compute_pin_checksum(val) {
+            var accum = 0;
+            var code = parseInt(val) * 10;
+
+            accum += 3 * (parseInt(code / 10000000) % 10);
+            accum += 1 * (parseInt(code / 1000000) % 10);
+            accum += 3 * (parseInt(code / 100000) % 10);
+            accum += 1 * (parseInt(code / 10000) % 10);
+            accum += 3 * (parseInt(code / 1000) % 10);
+            accum += 1 * (parseInt(code / 100) % 10);
+            accum += 3 * (parseInt(code / 10) % 10);
+            accum += 1 * (parseInt(code / 1) % 10);
+            var digit = (parseInt(accum) % 10);
+            return ((10 - digit) % 10);
+        }
+
+        function genPinClicked() {
+            var num_str = "1";
+            var rand_no;
+            var num;
+
+            while (num_str.length != 7) {
+                rand_no = Math.random() * 1000000000;
+                num = parseInt(rand_no, 10);
+                num = num % 10000000;
+                num_str = num.toString();
+            }
+
+            num = num * 10 + compute_pin_checksum(num);
+            num = parseInt(num, 10);
+            document.formWsc.elements["localPin"].value = num;
+            alert(warn_msg3);
+        }
+
+        function validate_pin_code(code) {
+            var accum = 0;
+
+            accum += 3 * (parseInt(code / 10000000) % 10);
+            accum += 1 * (parseInt(code / 1000000) % 10);
+            accum += 3 * (parseInt(code / 100000) % 10);
+            accum += 1 * (parseInt(code / 10000) % 10);
+            accum += 3 * (parseInt(code / 1000) % 10);
+            accum += 1 * (parseInt(code / 100) % 10);
+            accum += 3 * (parseInt(code / 10) % 10);
+            accum += 1 * (parseInt(code / 1) % 10);
+            return (0 == (accum % 10));
+        }
+
+        function IgnoreChar(str1, ch) {
+            var ResultStr = "";
+            var Temp = str1.split(ch);
+            for (i = 0; i < Temp.length; i++) {
+                ResultStr += Temp[i];
+            }
+            return ResultStr;
+        }
+
+        function check_pin_code(str) {
+            var i;
+            var code_len;
+            var ch;
+
+            code_len = str.length;
+
+            if (code_len != 8 && code_len != 4 && code_len != 9)
+                return 1;
+
+            if (code_len == 8 || code_len == 4) {
+                for (i = 0; i < code_len; i++) {
+                    if ((str.charAt(i) < '0') || (str.charAt(i) > '9'))
+                        return 2;
+                }
+            }
+            else {
+                for (i = 0; i < 4; i++) {
+                    if ((str.charAt(i) < '0') || (str.charAt(i) > '9'))
+                        return 2;
+                }
+
+                ch = str.charAt(4);
+                if (ch != ' ' && ch != '-') {
+                    return 2;
+                }
+                for (i = 5; i < code_len; i++) {
+                    if ((str.charAt(i) < '0') || (str.charAt(i) > '9'))
+                        return 2;
+                }
+                document.formWsc.elements["peerPin"].value = IgnoreChar(str, ch);
+                str = document.formWsc.elements["peerPin"].value;
+                code_len = str.length;
+            }
+
+            if (code_len == 8) {
+                var code = parseInt(str, 10);
+                if (!validate_pin_code(code))
+                    return 3;
+                else
+                    return 0;
+            }
+            else
+                return 0;
+        }
+
+        function setPinClicked(form) {
+            var ret;
+
+            ret = check_pin_code(form.elements["peerPin"].value);
+            if (ret == 1) {
+                alert('Неверная длина PIN! Может быть использовано 4 или 8 символов');
+                form.peerPin.focus();
+                return false;
+            }
+            else if (ret == 2) {
+                alert('Неверный PIN! PIN должен состоять только из цифр. Например:\n1. 1234\n2. 12345670\n3. 1234 5670\n4. 1234-5670');
+                form.peerPin.focus();
+                return false;
+            }
+            else if (ret == 3) {
+                if (!confirm('Checksum failed! Use PIN anyway? ')) {
+                    form.peerPin.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+        function checkWPSstate(form) {
+            if (disable_all) {
+                disableCheckBox(form.elements["disableWPS"]);
+                disableButton(form.elements["save"]);
+                disableButton(form.elements["reset"]);
+            }
+            if (disable_all || form.elements["disableWPS"].checked) {
+                disableTextField(form.elements["localPin"]);
+                disableTextField(form.elements["peerPin"]);
+                disableButton(form.elements["setPIN"]);
+                disableButton(form.elements["triggerPIN"]);
+                disableButton(form.elements["triggerPBC"]);
+                disableButton(form.elements["genPIN"]);
+            }
+            else {
+                enableTextField(form.elements["localPin"]);
+                enableTextField(form.elements["peerPin"]);
+                enableButton(form.elements["setPIN"]);
+                enableButton(form.elements["genPIN"]);
+                enableButton(form.elements["triggerPIN"]);
+                enableButton(form.elements["triggerPBC"]);
+            }
+
+
+
+            return true;
+        }
+
+        function saveChangesWPS(form) {
+            ret = check_pin_code(form.elements["localPin"].value);
+            if (ret == 1) {
+                alert('Неверная длина PIN! Может быть использовано 4 или 8 символов');
+                form.localPin.focus();
+                return false;
+            }
+            else if (ret == 2) {
+                alert('Неверный PIN! PIN должен состоять только из цифр.');
+                form.localPin.focus();
+                return false;
+            }
+            else if (ret == 3) {
+                alert('Неверный PIN! Ошибка контрольной суммы.');
+                form.localPin.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function updateState() {
+            if (document.formWsc.wlanDisabled.value == "ON") {
+                disableTextField(document.formWsc.disableWPS);
+                disableTextField(document.formWsc.localPin);
+                disableButton(document.formWsc.genPIN);
+                disableButton(document.formWsc.triggerPBC);
+                disableButton(document.formWsc.save);
+                disableButton(document.formWsc.reset);
+                disableTextField(document.formWsc.peerPin);
+                disableButton(document.formWsc.setPIN);
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">WPS</p>
+            <p class="intro_content">Страница дает возможность изменить настройки WPS (Wi-Fi Protected Setup). Использование эту функции может помочь синхронизировать настройки клиента и точки доступа, делая подключение беспроводных клиентов Wi-Fi очень легким. </p>
+        </div>
+
+        <div class="data_common data_common_notitle">
+
+            <table>
+
+                <script>
+                    isClient = 0;
+
+                    if (mode == 0 || mode == 3) {
+                        disable_all = check_wps_enc(encrypt, enable1x, wpa_auth);
+                        if (disable_all == 0 && isWPSLimit == 1) {
+                            disable_all = 4;
+                        }
+                    }
+                    else {
+                        disable_all = check_wps_wlanmode(mode, is_adhoc);
+                    }
+                </script>
+
+                <tbody>
+                    <tr id="wps_int">
+
+                        <th width="30%"><label><input value="ON" name="disableWPS" checked="checked" onclick="checkWPSstate(document.formWsc)" type="checkbox">
+                &nbsp;&nbsp;Отключить WPS </label></th>
+                        <td>
+
+                        </td>
+
+                    </tr>
+
+                    <input name="wlanDisabled" value="OFF" type="hidden">
+                    <script>
+                        if (isClient) {
+                            document.write("</table>\n");
+                            document.write("<span id = \"hide_div\" class = \"off\">\n");
+                            document.write("<table border=\"0\" width=500>\n");
+                        }
+                    </script>
+
+                    <tr class="hide_gui">
+
+                        <th>Статус WPS:</th>
+
+                        <td class="wps_sss">
+
+                            Configured
+                        </td>
+
+                    </tr>
+
+                    <script>
+                        if (isClient) {
+                            document.write("</table>\n");
+                            document.write("</span>\n");
+                            document.write("<table border=\"0\" width=500>\n");
+                        }
+                    </script>
+
+                    <tr class="hide_gui">
+
+                        <th>Свой-PIN Номер:</th>
+                        <td class="wps_sss">
+
+                            <input disabled="disabled" maxlength="10" size="12" name="localPin" value="40555010" type="text">
+                            <input disabled="disabled" class="inner_btn" onclick="return genPinClicked()" name="genPIN" value="Сгенерировать PIN" type="button">
+                        </td>
+
+                    </tr>
+
+                    <script>
+                        if (!isClient) {
+                            document.write("</table>\n");
+                            document.write("<span id = \"hide_div\" class = \"off\">\n");
+                            document.write("<table border=\"0\" width=500>\n");
+                        }
+                    </script>
+                </tbody>
+            </table>
+            <span id="hide_div" class="off">
+<table border="0" width="500">
+
+
+             <tbody><tr class="hide_gui">
+
+                <th>Настройка PIN:</th>
+                <td class="wps_sss">
+
+     <input disabled="disabled" class="inner_btn" value="Запустить PIN" name="triggerPIN" onclick="return triggerPINClicked()" type="submit">
+                </td>
+
+            </tr>
+
+            <script>
+
+                if (!isClient) {
+                    document.write("</table>\n");
+                    document.write("</span>\n"); document.write("
+            <table border=\ "0\" width=500>\n"); }
+                </script>
+                </tbody>
+            </table>
+            </span>
+            <table border="0" width="500">
+
+
+                <tbody>
+                    <tr class="hide_gui">
+
+                        <th>Настройка кнопки WPS:</th>
+                        <td class="wps_sss">
+
+                            <input disabled="disabled" class="inner_btn" onclick="return triggerPBCClicked()" name="triggerPBC" value="Запустить PBC" type="submit">
+                        </td>
+
+                    </tr>
+
+                    <script>
+                        if (disable_all) {
+                            document.write("<tr><td colspan=\"2\" height=\"55\"><font size=2><em>");
+                            if (disable_all == 1)
+                                document.write(warn_msg1);
+                            else if (disable_all == 2)
+                                document.write(warn_msg2);
+                            else if (disable_all == 4)
+                                document.write(warn_msg4);
+                            document.write("</td></tr>");
+                        }
+                    </script>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="adsl clearfix">
+
+            <div class="btn_ctl">
+
+                <input class="link_bg" name="save" onclick="return saveChangesWPS(document.formWsc)" value="Применить" type="submit">
+                <input class="link_bg" name="reset" value="Сбросить" type="reset">
+            </div>
+
+        </div>
+
+        <script>
+            isConfig = 1;
+
+            if (isClient || !isConfig)
+                document.write("<span id = \"hide_div\" class = \"off\">\n");
+        </script>
+
+        <div class="column hide_gui">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Информация о ключе:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Аутентификация</th>
+                            <th width="30%">Шифрование</th>
+                            <th width="40%">Ключ</th>
+                        </tr>
+
+                        <tr>
+
+                            <td>
+
+                                WPA2-Mixed PSK
+                            </td>
+
+                            <td>
+
+                                TKIP+AES
+                            </td>
+
+                            <td>
+
+                                **********
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <script>
+            if (isClient || !isConfig) {
+                document.write("</span>\n");
+                document.write("<tr>\n");
+            }
+            if (isClient)
+                document.write("<span id = \"hide_div\" class = \"off\">\n");
+        </script>
+
+        <div class="data_common data_common_notitle hide_gui">
+
+            <table>
+
+                <tbody>
+                    <tr id="Tr1">
+
+                        <td width="30%"><input disabled="disabled" name="peerPin" size="12" maxlength="10" type="text">
+
+                        </td>
+                        <td>
+
+                            <input disabled="disabled" class="inner_btn" value="Запустить PIN" name="setPIN" onclick="return setPinClicked(document.formWsc)" type="submit">
+                        </td>
+
+                    </tr>
+
+                    <input name="submit.htm?wlwps.htm" value="Send" type="hidden">
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <script>
+            if (isClient)
+                document.write("</span>\n");
+            checkWPSstate(document.formWsc);
+            updateState();
+        </script>
+
+        <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+        <script src="files/jquip.js" type="text/javascript"></script>
+        <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

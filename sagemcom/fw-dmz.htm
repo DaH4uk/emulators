@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>DMZ-хост</title>
+    <script>
+        function saveClick() {
+
+
+
+
+
+            if (document.formDMZ.ip.value == "") {
+                alert("IP адрес DMZ-хоста не может быть пустым! Задайте IP адрес по маске xxx.xxx.xxx.xxx.");
+                document.formDMZ.ip.value = document.formDMZ.ip.defaultValue;
+                document.formDMZ.ip.focus();
+                return false;
+            }
+
+            if (validateKey(document.formDMZ.ip.value) == 0) {
+                alert("Invalid IP address value. It should be the decimal number (0-9).");
+                document.formDMZ.ip.focus();
+                return false;
+            }
+            var str = document.formDMZ.ip.value;
+            var count = 0;
+            for (var i = 0; i < str.length; i++) {
+                if (str.charAt(i) == '.') {
+                    count++;
+                }
+            }
+            if (count != 3) {
+                alert("Неверный IP адрес. IP адрес должен соответствовать маске xxx.xxx.xxx.xxx.");
+                document.formDMZ.ip.focus();
+                return false;
+            }
+
+            if (!checkDigitRange(document.formDMZ.ip.value, 1, 1, 223)) {
+                alert('Неправильный диапазон IP адреса в первом октете. Должен быть 1-223.');
+                document.formDMZ.ip.focus();
+                return false;
+            }
+            if (IsLoopBackIP(document.formDMZ.ip.value)) {
+                alert('Неправильный IP адрес');
+                document.formDMZ.ip.focus();
+                return false;
+            }
+            if (!checkDigitRange(document.formDMZ.ip.value, 2, 0, 255)) {
+                alert('Неправильный диапазон IP адреса во втором октете. Должен быть 1-254.');
+                document.formDMZ.ip.focus();
+                return false;
+            }
+            if (!checkDigitRange(document.formDMZ.ip.value, 3, 0, 255)) {
+                alert('Неправильный диапазон IP адреса в третьем октете. Должен быть 1-254.');
+                document.formDMZ.ip.focus();
+                return false;
+            }
+            if (!checkDigitRange(document.formDMZ.ip.value, 4, 1, 254)) {
+                alert('Неправильный диапазон IP адреса в четвертом октете. Должен быть 1-254.');
+                document.formDMZ.ip.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function updateState() {
+            if (document.formDMZ.enabled.checked) {
+                enableTextField(document.formDMZ.ip);
+            }
+            else {
+                disableTextField(document.formDMZ.ip);
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+        <div class="intro_main ">
+
+            <p class="intro_title">DMZ</p>
+
+            <p class="intro_content">DMZ (демилитаризованная зона) - технология обеспечения защиты, при которой серверы, отвечающие на запросы из внешней сети, находятся в особом сегменте сети и ограничены в доступе к основным сегментам сети с помощью межсетевого экрана. Обычно,
+                в DMZ располагают Web-, FTP-, DNS-, SMTP-серверы и т.д. </p>
+        </div>
+
+        <div class="data_common data_common_notitle hide_gui">
+
+            <table>
+
+
+                <tbody>
+                    <tr id="wanitfselectid">
+
+                        <th>Интерфейс WAN:</th>
+                        <td>
+
+                            <select style="width:200" size="1" name="fromwanitf">
+
+
+
+
+<option value="pppoe1" selected="selected"> pppoe1</option>
+
+
+                        <option value="any">Любой</option>
+                    </select>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>IP адрес DMZ-хоста: </th>
+                        <td>
+
+                            <input maxlength="15" size="15" name="ip" type="text">
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="adsl clearfix hide_gui">
+
+            <div class="btn_ctls">
+
+                <input class="link_bg" name="save" onclick="return saveClick()" value="Применить" type="submit">
+                <input class="link_bg" name="reset" value="Сбросить" type="reset">
+            </div>
+
+        </div>
+
+        <input name="submit.htm?fw-dmz.htm" value="Send" type="hidden">
+
+
+
+        <div class="column">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Текущая таблица DMZ:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th>Выбрать</th>
+                            <th>Интерфейс WAN</th>
+                            <th>DMZ IP</th>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <input name="submit.htm?fw-dmz.htm" value="Send" type="hidden">
+
+        </div>
+
+        <div class="adsl clearfix hide_gui">
+
+            <div class="btn_ctls">
+
+                <input class="link_bg" name="delete" value="Удалить выбранные" type="submit">
+            </div>
+
+        </div>
+
+
+    <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+    <script src="files/jquip.js" type="text/javascript"></script>
+    <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+</body>
+
+</html>

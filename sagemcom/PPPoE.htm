@@ -1,0 +1,210 @@
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="./files/reset.css">
+    <link rel="stylesheet" href="./files/base.css">
+    <link rel="stylesheet" href="./files/style.css">
+    <script type="text/javascript" src="./files/share.js"></script>
+    <script>
+        function pppTypeSelection() {
+            if (document.ppp.pppConnectType.selectedIndex == 2) {
+                document.ppp.pppIdleTime.value = "";
+                document.ppp.pppIdleTime.disabled = true;
+            }
+            else {
+                if (document.ppp.pppConnectType.selectedIndex == 1) {
+                    document.ppp.pppIdleTime.value = 0;
+                    document.ppp.pppIdleTime.disabled = false;
+                }
+                else {
+                    document.ppp.pppIdleTime.value = "";
+                    document.ppp.pppIdleTime.disabled = true;
+                }
+            }
+        }
+
+        function postcheck() {
+            if (validateKey(document.ppp.maxusernums.value) == 0) {
+                alert("Неверное максимальное число пользователей!");
+                document.ppp.maxusernums.focus();
+                return false;
+            }
+            d1 = getDigit(document.ppp.maxusernums.value, 1);
+            if (d1 > 255 || d1 < 1) {
+                alert("Неверное максимальное число пользователей!");
+                document.ppp.maxusernums.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+    <div class="intro_main">
+        <p class="intro_title">PPP Интерфейс - Изменить</p>
+        <p class="intro_content"></p>
+    </div>
+    <div class="data_common data_common_notitle">
+        <table>
+            <tbody>
+                <tr>
+                    <th width="30%">Протокол:</th>
+                    <td>PPPoE</td>
+                </tr>
+                <tr>
+                    <th width="30%">Логин:</th>
+                    <td><input name="name" maxlength="30" value="v41234567" type="text"></td>
+                </tr>
+                <tr>
+                    <th>Пароль:</th>
+                    <td><input name="passwd" maxlength="30" value="12345678" type="password"></td>
+                </tr>
+                <tr>
+                    <th>Метод аутентификации:</th>
+                    <td><select size="1" name="auth">
+<option selected="" value="0">AUTO</option>
+<option value="1">PAP</option>
+<option value="2">CHAP</option></select></td>
+                </tr>
+                <tr>
+                    <th width="30%">Тип подключения:</th>
+                    <td><select size="1" name="pppConnectType" onchange="pppTypeSelection()">
+<option selected="" value="0">Постоянное</option>
+<option value="1">Подключение по требованию</option>
+<option value="2">Вручную</option></select></td>
+                </tr>
+                <tr>
+                    <th>Время простоя (мин):</th>
+                    <td><input name="pppIdleTime" maxlength="3" value="0" disabled="" type="text"></td>
+                </tr>
+                <tr>
+                    <th>Время между попытками PPP (сек):</th>
+                    <td><input name="pppRetriesTime" maxlength="4" value="4" type="text"></td>
+                </tr>
+                <tr>
+                    <th width="30%">AC-имя:</th>
+                    <td><input name="acName" maxlength="30" value="DOM.RU" type="text"></td>
+                </tr>
+                <tr>
+                    <th width="30%">Имя Сервиса:</th>
+                    <td><input name="serviceName" maxlength="30" value="" type="text"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function click1q() {
+            if (document.ppp.vlan[0].checked)
+                document.ppp.vid.disabled = true;
+            else
+                document.ppp.vid.disabled = false;
+        }
+
+        function saveChanges() {
+            var vid = document.ppp.vid;
+            var str = vid.value;
+            if (!vid.disabled) {
+                if (str == "") {
+                    alert("vlan ID не может быть пустым! ");
+                    str = vid.defaultValue;
+                    vid.focus();
+                    return false;
+                }
+                for (var i = 0; i < str.length; i++) {
+                    if ((str.charAt(i) >= '0' && str.charAt(i) <= '9'))
+                        continue;
+                    alert("Неправильное значение vlan ID. Укажите десятичное число (0-9).");
+                    str = vid.defaultValue;
+                    vid.focus();
+                    return false;
+                }
+                if (!checkDigitRange(str, 1, 1, 4095)) {
+                    alert("Неверное значение VLAN ID. Значение должно лежать в пределах 1-4095.");
+                    str = vid.defaultValue;
+                    vid.focus();
+                    return false;
+                }
+            }
+            if ("ppp" == "ppp") {
+                if (!checkSpecialChar(document.ppp.name.value, 1) || !checkSpecialChar(document.ppp.passwd.value, 0) || !checkSpecialChar(document.ppp.acName.value, 0) || !checkSpecialChar(document.ppp.serviceName.value, 0)) {
+                    alert('Недопустимые символы');
+                    return false;
+                }
+                if (document.ppp.pppConnectType.selectedIndex == 1) {
+                    str = document.ppp.pppIdleTime.value;
+                    for (i = 0; i < str.length; i++) {
+                        if ((str.charAt(i) >= '0' && str.charAt(i) <= '9'))
+                            continue;
+                        alert("Неверное значение времени простоя. Должно быть детсятичное число. (0-9).");
+                        str = document.ppp.pppIdleTime.defaultValue;
+                        document.ppp.pppIdleTime.focus();
+                        return false;
+                    }
+                }
+                str = document.ppp.pppRetriesTime.value;
+                for (i = 0; i < str.length; i++) {
+                    if ((str.charAt(i) >= '0' && str.charAt(i) <= '9'))
+                        continue;
+                    alert("valid characters: 0-9.");
+                    document.ppp.pppRetriesTime.focus();
+                    return false;
+                }
+                var digit = getDigit(document.ppp.mtu.value, 1);
+                if (validateKey(document.ppp.mtu.value) == 0 || (digit > 1500 || digit < 40)) {
+                    alert("Неправильное значение MTU! Возможный диапазон 40-1500.");
+                    document.ppp.mtu.focus();
+                    return false;
+                }
+                if (!checkNotEmptyIP(document.ppp.pppstaticip)) {
+                    document.ppp.pppstaticip.focus();
+                    return false;
+                }
+                if (!checkMac(document.ppp.pppmacaddress, 0)) {
+                    document.ppp.pppmacaddress.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+    <div class="data_common data_common_notitle">
+        <table>
+            <tbody>
+                <tr>
+                    <th width="30%">VLAN:</th>
+                    <td><input value="0" name="vlan" checked="" onclick="click1q()" type="radio">Выкл.&nbsp;&nbsp;<input value="1" name="vlan" onclick="click1q()" type="radio">Вкл.</td>
+                </tr>
+                <tr>
+                    <th>VLAN ID(1-4095):</th>
+                    <td><input name="vid" size="6" maxlength="4" value="0" disabled="" type="text"></td>
+                </tr>
+                <tr>
+                    <th width="30%">MTU (40-1500):</th>
+                    <td><input name="mtu" maxlength="4" value="1492" type="text"></td>
+                </tr>
+                <tr>
+                    <th width="30%">Статичный:</th>
+                    <td><input name="pppstaticip" maxlength="32" value="" type="text"></td>
+                </tr>
+                <tr>
+                    <th width="30%">MAC адрес источника:</th>
+                    <td><input name="pppmacaddress" maxlength="32" value="24:7F:20:6A:68:87" type="text">(ex:00:E0:86:71:05:02)&nbsp;&nbsp;
+                        <input class="inner_btn" value="MACCLONE" name="pppmacclone" type="submit"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="btn_ctl"><input class="link_bg" value="Применить изменения" name="save" onclick="window.location.replace('./wan.htm')" type="submit">
+        <input class="link_bg" value="Вернуться" name="return" type="submit" onclick="window.location.replace('./wan.htm')">
+        <input class="link_bg" value="Отменить" name="reset" type="reset" onclick="window.location.replace('./wan.htm')">
+        <input value="0" name="item" type="hidden">
+        <input value="14" name="pppconnid" type="hidden">
+        <input value="Send" name="submit.htm?wan.htm" type="hidden">
+    </div>
+</body>
+
+</html>

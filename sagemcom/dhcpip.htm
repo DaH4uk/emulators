@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>LAN </title>
+    <script>
+        function resetClick() {
+            document.dhcpip.reset;
+        }
+
+        function dhcpIptable(ip1, ip2, ip3, ip4, mac) {
+            this.ip1 = ip1;
+            this.ip2 = ip2;
+            this.ip3 = ip3;
+            this.ip4 = ip4;
+
+            this.mac = mac.replace(/:/g, "");
+        }
+
+        function checkPoolIP(ipaddr, macaddr) {
+            var DhcpIpTables = new Array();
+            lanip1 = 192;
+            lanip2 = 168;
+            lanip3 = 0;
+            lanip4 = 1;
+            startip = 2;
+            endip = 254;
+
+
+            var poolstartip = getDigit(document.dhcpip.lan_dhcpRangeStart.value, 4);
+            var poolendip = getDigit(document.dhcpip.lan_dhcpRangeEnd.value, 4);
+
+            if (getDigit(ipaddr.value, 1) != getDigit(document.dhcpip.lan_dhcpRangeStart.value, 1)) {
+                alert("IP-адрес должен быть в диапазоне адресов DHCP!");
+                ipaddr.focus();
+                return false;
+            }
+
+            if (getDigit(ipaddr.value, 2) != getDigit(document.dhcpip.lan_dhcpRangeStart.value, 2)) {
+                alert("IP-адрес должен быть в диапазоне адресов DHCP!");
+                ipaddr.focus();
+                return false;
+            }
+            if (getDigit(ipaddr.value, 3) != getDigit(document.dhcpip.lan_dhcpRangeStart.value, 3)) {
+                alert("IP-адрес должен быть в диапазоне адресов DHCP!");
+                ipaddr.focus();
+                return false;
+            }
+
+            if (!checkDigitRange(ipaddr.value, 4, poolstartip, poolendip)) {
+                alert("IP-адрес должен быть в диапазоне адресов DHCP!");
+                ipaddr.focus();
+                return false;
+            }
+
+            for (var i = 0; i < DhcpIpTables.length; i++) {
+                if (DhcpIpTables[i].ip4 == getDigit(ipaddr.value, 4)) {
+                    alert("IP-адрес уже используется!");
+                    ipaddr.focus();
+                    return false;
+                }
+                if (DhcpIpTables[i].mac == macaddr.value) {
+                    alert("MAC-адрес привязан к другому IP-адресу!");
+                    macaddr.focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function saveChanges() {
+            if (!checkIP(document.dhcpip.ipaddr)) {
+                return false;
+            }
+            if (!checkMacWithoutColon(document.dhcpip.macaddr, 1)) {
+                alert("Неверный MAC-адрес!");
+                return false;
+            }
+            if (!checkPoolIP(document.dhcpip.ipaddr, document.dhcpip.macaddr)) {
+                return false;
+            }
+            return true;
+        }
+
+        function postDhcpIp(ipaddr, macaddr) {
+            document.dhcpip.ipaddr.value = ipaddr;
+            document.dhcpip.macaddr.value = macaddr.replace(/:/g, "");
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Настройка статических IP-адресов DHCP</p>
+        <p class="intro_content">
+
+            На этой странице отображаются статические записи IP/MAC в локальной сети.
+        </p>
+
+    </div>
+
+
+
+        <input name="lan_dhcpRangeStart" value="
+192.168.0.2
+    " type="hidden">
+        <input name="lan_dhcpRangeEnd" value="
+192.168.0.254
+    " type="hidden">
+        <div class="data_common data_common_notitle hide_gui">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th width="30%">IP-адрес:</th>
+                        <td>
+
+                            <input value="0.0.0.0" maxlength="19" size="22" name="ipaddr" type="text">
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>MAC-адрес:</th>
+                        <td>
+
+                            <input value="000000000000" maxlength="19" size="22" name="macaddr" type="text"><span>(например, 00E086710502)</span>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="adsl clearfix hide_gui">
+
+            <div class="btn_ctls">
+
+                <input class="link_bg" onclick="return saveChanges()" value="Добавить" type="submit">
+                <input class="link_bg" name="delete" value="Удалить выбранные" type="submit">
+                <input class="link_bg" name="reset" onclick="resetClick()" value="Отменить" type="reset">
+            </div>
+
+        </div>
+
+        <div class="column clearfix">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Таблица статических записей DHCP:</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common data_vertical">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="45">Выбрать</th>
+                            <th>IP-адрес</th>
+                            <th>MAC-адрес</th>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+                <input name="submit.htm?dhcpip.htm" value="Send" type="hidden">
+
+            </div>
+
+        </div>
+
+
+    <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+    <script src="files/jquip.js" type="text/javascript"></script>
+    <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+</body>
+
+</html>

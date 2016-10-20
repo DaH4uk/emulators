@@ -1,4 +1,5 @@
 <html><head>
+<<<<<<< HEAD
 <link rel="shortcut icon" href="./icon/icon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">		
 <link rel="STYLESHEET" type="text/css" 
@@ -590,4 +591,597 @@ src="wireless_tail.gif" height="35" width="114"></td>
 <div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
 <br>
 
+=======
+<link rel="shortcut icon" href="./icon/icon.ico">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">		
+<link rel="STYLESHEET" type="text/css" 
+href="css_router.css">
+<script language="JavaScript" src="lingual_EN.js"></script>
+<title>D-LINK SYSTEMS, INC | WIRELESS ROUTER | HOME</title>
+<script language="JavaScript" src="public.js"></script>
+<script language="JavaScript" src="public_msg.js"></script>
+<script language="JavaScript">
+var get_current_user = "admin";
+is_disable_all_items (false);
+</script>
+<script>
+	var submit_button_flag = 0;
+
+function opendns_enable_selector(value){
+	if(value==true){
+		get_by_id("wan_specify_dns").value ="1";
+		get_by_id("wan_primary_dns").value ="204.194.232.200";
+		get_by_id("wan_secondary_dns").value="204.194.234.200";
+		get_by_id("wan_primary_dns").disabled = true;
+		get_by_id("wan_secondary_dns").disabled = true;		
+	}else{
+		get_by_id("wan_specify_dns").value ="0";
+		get_by_id("wan_primary_dns").disabled = false;
+		get_by_id("wan_secondary_dns").disabled = false;
+		get_by_id("wan_primary_dns").value = "0.0.0.0";
+		get_by_id("wan_secondary_dns").value =	"0.0.0.0";
+	}
+}
+
+	function onPageLoad(){
+
+	set_checked(get_by_id("opendns_enable").value, get_by_id("opendns_enable_sel"));
+	if(get_by_id("opendns_enable_sel").checked)
+		opendns_enable_selector(get_by_id("opendns_enable_sel").checked);
+
+		set_checked("1", get_by_name("wan_pptp_dynamic"));
+		set_checked("on_demand", get_by_name("wan_pptp_connect_mode"));	
+		check_connectmode();
+		clickPPTP();
+		set_form_default_values("form1");
+	}
+	
+	function clone_mac_action(){
+		get_by_id("wan_mac").value = get_by_id("mac_clone_addr").value;
+	}
+
+	function change_wan(){
+	    var html_file;
+	    
+	    switch(get_by_id("wan_proto").selectedIndex){
+			case 0 :
+		    	html_file = "wan_static.htm";
+		    	break;	   	
+			case 1 :
+		    	html_file = "wan_dhcp.htm";
+		    	break;
+			case 2 :
+		    	html_file = "wan_poe.htm";
+		    	break;
+		    case 3 :
+		    	html_file = "wan_pptp.htm";
+		    	break;
+			case 4 :
+				html_file = "wan_l2tp.htm";
+		    	break;
+			case 5 :
+				html_file = "wan_bigpond.htm";
+		    	break;
+		}
+		location.href = html_file;
+	}
+
+	function check_connectmode(){
+		var conn_mode = get_by_name("wan_pptp_connect_mode");
+		var idle_time = get_by_id("wan_pptp_max_idle_time");
+		idle_time.disabled = !conn_mode[1].checked;
+	}
+
+	function clickPPTP(){
+	  var fixIP = get_by_name("wan_pptp_dynamic");
+	  var is_disabled;
+	  
+	  if (fixIP[0].checked) {
+	     is_disabled = true
+	  }
+	  get_by_id("wan_pptp_ipaddr").disabled = is_disabled;
+	  get_by_id("wan_pptp_netmask").disabled = is_disabled;
+	  get_by_id("wan_pptp_gateway").disabled = is_disabled;
+	  //get_by_id("wan_primary_dns").disabled = is_disabled;
+	  //get_by_id("wan_secondary_dns").disabled = is_disabled;
+	}
+ 
+	function send_pptp_request(){
+		var ipv6_wan_proto = "link_local";
+		if (ipv6_wan_proto == "ipv6_pppoe"){
+			alert(IPV6_TEXT1);
+			return false;
+		}
+		get_by_id("asp_temp_52").value = get_by_id("wan_proto").value;
+		var is_modify = is_form_modified("form1");
+    	if (!is_modify && !confirm(_ask_nochange)) {
+			return false;
+		}
+		var fix_ip = get_by_name("wan_pptp_dynamic");
+		var ip = get_by_id("wan_pptp_ipaddr").value;
+		var mask = get_by_id("wan_pptp_netmask").value;  
+		var gateway = get_by_id("wan_pptp_gateway").value;  
+		var dns1 = get_by_id("wan_primary_dns").value;
+		var dns2 = get_by_id("wan_secondary_dns").value;
+		var server_ip = get_by_id("wan_pptp_server_ip").value;
+		var user_name = get_by_id("wan_pptp_username").value;
+		var idle = get_by_id("wan_pptp_max_idle_time").value;	    	
+		var mtu = get_by_id("wan_pptp_mtu").value;
+		
+		var ip_addr_msg = replace_msg(all_ip_addr_msg,_ipaddr);
+		var gateway_msg = replace_msg(all_ip_addr_msg,wwa_gw);
+		var primary_dns_msg = replace_msg(all_ip_addr_msg,wwa_pdns);
+		var second_dns_msg = replace_msg(all_ip_addr_msg,wwa_sdns);
+		var server_ip_addr_msg = replace_msg(all_ip_addr_msg,bwn_PPTPSIPA);
+	
+		var max_idle_msg = replace_msg(check_num_msg, bwn_MIT, 0, 9999);
+        var mtu_msg = replace_msg(check_num_msg, bwn_MTU, 200, 1400);
+		
+		var temp_ip_obj = new addr_obj(ip.split("."), ip_addr_msg, false, false);
+		var temp_mask_obj = new addr_obj(mask.split("."), subnet_mask_msg, false, false);
+		var temp_gateway_obj = new addr_obj(gateway.split("."), gateway_msg, false, false);
+		var temp_dns1 = new addr_obj(dns1.split("."), primary_dns_msg, true, false);
+	    var temp_dns2 = new addr_obj(dns2.split("."), second_dns_msg, true, false);
+		var temp_idle = new varible_obj(idle, max_idle_msg, 0, 9999, false);
+        var temp_mtu = new varible_obj(mtu, mtu_msg, 200, 1400, false);
+		var temp_server_ip_obj = new addr_obj(server_ip.split("."), server_ip_addr_msg, false, false);
+        
+        if (fix_ip[1].checked){
+        	if (!check_wan_setting(temp_ip_obj, temp_mask_obj, temp_gateway_obj, _PPTP)){
+        		return false;
+        	}
+        }
+		
+    	if(server_ip == ""){
+			alert(YM108);
+    		return false;
+	    }
+	    
+		if (!check_address(temp_server_ip_obj)){
+   			return false;
+   		}
+   		
+	    if(user_name == ""){
+    		alert(GW_WAN_PPTP_USERNAME_INVALID);
+    		return false;
+	    }
+	     	
+	    if (get_by_id("pptppwd1").value == "" || get_by_id("pptppwd2").value == ""){
+		 	alert(GW_WAN_PPTP_PASSWORD_INVALID);
+			return false;
+		}	
+       	if (!check_pwd("pptppwd1", "pptppwd2")){
+       		return false;
+       	}
+       	
+       	if (!check_varible(temp_idle)){
+    		return false;
+    	}
+    	
+    	if (dns1 != "" && dns1 != "0.0.0.0"){
+    		if (!check_address(temp_dns1)){
+    			return false;
+    		}
+    	}
+    	
+    	if (dns2 != "" && dns2 != "0.0.0.0"){
+    		if (!check_address(temp_dns2)){
+    			return false;
+    		}
+    	}
+    	
+    	if (!check_varible(temp_mtu)){
+    		return false;
+    	}
+
+		get_by_id("opendns_enable").value = get_checked_value(get_by_id("opendns_enable_sel"));
+		if(get_by_id("opendns_enable").value=="1"){
+			get_by_id("dns_relay").value = "1";
+			get_by_id("wan_primary_dns").disabled = false;
+			get_by_id("wan_secondary_dns").disabled = false;
+		}
+		
+		/*
+		 * Validate MAC and activate cloning if necessary
+		 */		
+		var clonemac = get_by_id("wan_mac").value; 
+		if (!check_mac(clonemac)){
+			alert(KR3);
+			return false;
+		} 
+		 	
+		var mac = trim_string(get_by_id("wan_mac").value);
+		if(!is_mac_valid(mac, true)) {
+			alert (KR3+":" + mac + ".");
+			return false;
+		}else{
+			get_by_id("wan_mac").value = mac;
+		}
+				
+        if (dns1 != "" && dns1 != "0.0.0.0"){
+    		if (!check_address(temp_dns1)){
+    			return false;
+    		}
+    	}
+    	
+		if((get_by_id("wan_primary_dns").value =="" || get_by_id("wan_primary_dns").value =="0.0.0.0")&& ( get_by_id("wan_secondary_dns").value =="" || get_by_id("wan_secondary_dns").value =="0.0.0.0")){
+			get_by_id("wan_specify_dns").value = 0;
+		}else{
+			get_by_id("wan_specify_dns").value = 1;
+		}
+		
+		if(submit_button_flag == 0){
+			if(get_by_id("pptppwd1").value !="WDB8WvbXdH"){
+				get_by_id("wan_pptp_password").value = get_by_id("pptppwd1").value;
+			}
+			/*
+			if(is_modify || get_by_id("asp_temp_51").value.length > 0){
+				get_by_id("asp_temp_51").value = "wan";
+				get_by_id("html_response_page").value = "wan_reboot_need.htm";
+			}else{
+				window.location.href = get_by_id("html_response_page").value;
+			}
+			*/
+			submit_button_flag = 1;
+			return true;
+		}else{
+			return false;
+		}
+    }
+</script>
+<style type="text/css">
+<!--
+.style1 {font-size: 11px}
+-->
+</style>
+</head><body topmargin="1" leftmargin="0" rightmargin="0" 
+bgcolor="#757575">
+	<table id="header_container" align="center" border="0" cellpadding="5" 
+cellspacing="0" width="838">
+    <tbody><tr><td width="100%"><div>&nbsp;&nbsp;Product Page:&nbsp;<a 
+href="http://support.dlink.com.tw/" onClick="return jump_if();">DIR-615</a></div></td><td
+ style="white-space: nowrap;" align="right">Hardware 
+Version:&nbsp;E3&nbsp;&nbsp;</td><td style="white-space: nowrap;" 
+align="right">Firmware Version: 5.10</td><td> </td></tr></tbody></table>
+	<table id="topnav_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" valign="middle"><img 
+src="wlan_masthead.gif" height="92" width="836"></td>
+		</tr>
+	</tbody></table>
+	<table align="center" bgcolor="#ffffff" border="0" cellpadding="2" 
+cellspacing="1" width="838">
+		<tbody><tr id="topnav"><td height="29" width="125"><img 
+src="short_modnum.gif" height="25" width="125"></td><td 
+id="topnavon" height="29"><a href="index.htm" 
+onclick="return jump_if();">Setup</a></td><td id="topnavoff" height="29"><a
+ href="adv_virtual.htm" onClick="return jump_if();">Advanced</a></td><td
+ id="topnavoff" height="29"><a href="tools_admin.htm"
+ onclick="return jump_if();">Tools</a></td><td id="topnavoff" 
+height="29"><a href="st_device.htm" onClick="return 
+jump_if();">Status</a></td><td id="topnavoff" height="29"><a 
+href="support_men.htm" onClick="return jump_if();">Support</a></td></tr>
+	</tbody></table>
+	<table bordercolordark="#FFFFFF" align="center" bgcolor="#ffffff" 
+border="1" cellpadding="2" cellspacing="0" height="100%" width="838">
+		<tbody><tr>
+			<td id="sidenav_container" align="right" valign="top" width="125">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td id="sidenav_container">
+							<div id="sidenav"><ul><li><div><a 
+href="index.htm" onClick="return jump_if();">Internet</a></div></li><li><div><a
+ href="wizard_wireless.htm" onClick="return 
+jump_if();">Wireless Settings</a></div></li><li><div><a 
+href="lan.htm" onClick="return jump_if();">Network 
+Settings</a></div></li></ul></div> 
+							<div id="m17n_div" align="center"></div>
+						</td>			
+					</tr>
+				</tbody></table>			
+			</td>
+			<td id="maincontent_container" valign="top">	
+			<form saved="true" id="form1" name="form1" method="post" 
+action="http://www.support.dlink.com/emulators/dir615_revE/510/apply.cgi">
+				<input default="back.htm" id="html_response_page" 
+name="html_response_page" value="back.htm" type="hidden">
+				<input default="The setting is saved." id="html_response_message" 
+name="html_response_message" value="The setting is saved." type="hidden">
+				<input default="wan_pptp.htm" id="html_response_return_page" 
+name="html_response_return_page" value="wan_pptp.htm" type="hidden">
+				<input default="00:04:23:2C:44:9F" id="mac_clone_addr" 
+name="mac_clone_addr" value="00:04:23:2C:44:9F" type="hidden">
+				<input default="0" id="wan_specify_dns" name="wan_specify_dns" 
+value="0" type="hidden">
+				<input default="WDB8WvbXdHtZyM8Ms2RENgHlacJghQyG" 
+id="wan_pptp_password" name="wan_pptp_password" 
+value="WDB8WvbXdHtZyM8Ms2RENgHlacJghQyG" type="hidden">
+				<input default="" id="asp_temp_51" name="asp_temp_51" value="" 
+type="hidden">
+				<input default="dhcpc" id="asp_temp_52" name="asp_temp_52" 
+value="dhcpc" type="hidden">
+				<input default="reboot" id="reboot_type" name="reboot_type" 
+value="reboot" type="hidden">
+			<div id="maincontent">			  
+              <div id="box_header">
+                <h1>WAN</h1>
+                <p>Use this 
+section to configure your Internet Connection type. There are several 
+connection types to choose from: Static IP, DHCP, PPPoE, PPTP and L2TP. 
+If you are unsure of your connection method, please contact your 
+Internet Service Provider.</p>
+                <p><strong>Note:&nbsp;</strong>If
+ using the PPPoE option, you will need to remove or disable any PPPoE 
+client software on your computers.</p>
+                <input id="button" name="button" class="button_submit" 
+value="Save Settings" onClick="emulator()" type="button">
+                <input id="button2" name="button2" class="button_submit"
+ value="Don't Save Settings" onClick="window.location.href='wan_pptp.htm'" type="button">
+                
+              </div>
+              <div class="box">
+                <h2>Internet 
+Connection Type</h2>
+                <p class="box_msg">Choose
+ the mode to be used by the router to connect to the Internet.</p>
+                <table border="0" cellpadding="1" cellspacing="1" 
+width="525">
+                    <tbody><tr>
+                      <td class="duple" align="right" width="185">My
+ Internet Connection is :</td>
+                      <td width="331">&nbsp; <select name="wan_proto" 
+id="wan_proto" onChange="change_wan()">
+                        <option default="false" value="static">Static
+ IP</option>
+                        <option default="false" value="dhcpc">Dynamic
+ IP (DHCP)</option>
+                        <option default="false" value="pppoe">PPPoE
+ (Username / Password)</option>
+                        <option default="true" value="pptp" 
+selected="selected">PPTP 
+(Username / Password)</option>
+                        <option default="false" value="l2tp">L2TP
+ (Username / Password)</option>
+                         <!--option value="bigpond"><script>show_words(bwn_Mode_BigPond);</script></option-->
+                      </select></td>
+                    </tr>
+                </tbody></table>
+              </div>
+
+			<input default="0" id="opendns_enable" name="opendns_enable" 
+value="0" type="hidden">
+			<input default="1" id="dns_relay" name="dns_relay" value="1" 
+type="hidden">
+			<div class="box">
+			 <h2>Advanced DNS Service</h2>
+			 <p class="box_msg">Advanced
+ DNS is a free security option that provides Anti-Phishing to protect 
+your Internet connection from fraud and navigation improvements such as 
+auto-correction of common URL typos.</p>
+			<table border="0" cellpadding="1" cellspacing="1" width="525">
+				<tbody><tr>
+				   <td style="width: 190px;" class="duple" align="right" width="185">Enable
+ Advanced DNS Service :</td>
+					<td width="331">&nbsp;<input default="false" 
+id="opendns_enable_sel" name="opendns_enable_sel" value="1" 
+onclick="opendns_enable_selector(this.checked);" type="checkbox"></td>
+				</tr>
+			</tbody></table>
+			</div>
+
+              <div class="box" id="show_pptp">
+                <h2>PPTP 
+Internet Connection Type : </h2>
+                <p class="box_msg">Enter
+ the information provided by your Internet Service Provider (ISP). </p>
+                <table border="0" cellpadding="1" cellspacing="1" 
+width="525">
+                    <tbody><tr>
+                      <td class="duple" align="right" width="185">Address
+ Mode :</td>
+                      <td width="331">&nbsp;
+                      <input default="true" value="1" 
+name="wan_pptp_dynamic" onClick="clickPPTP()" checked="checked" 
+type="radio">
+                      	Dynamic
+ IP
+                      <input default="false" value="0" 
+name="wan_pptp_dynamic" onClick="clickPPTP()" type="radio">
+                      	Static
+ IP
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">PPTP
+ IP Address :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="0.0.0.0" 
+disabled="disabled" id="wan_pptp_ipaddr" name="wan_pptp_ipaddr" 
+size="20" maxlength="15" value="0.0.0.0" type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">PPTP
+ Subnet Mask :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="0.0.0.0" 
+disabled="disabled" id="wan_pptp_netmask" name="wan_pptp_netmask" 
+size="20" maxlength="15" value="0.0.0.0" type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">PPTP
+ Gateway IP Address :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="0.0.0.0" 
+disabled="disabled" name="wan_pptp_gateway" id="wan_pptp_gateway" 
+size="20" maxlength="15" value="0.0.0.0" type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">PPTP
+ Server IP Address :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="" 
+id="wan_pptp_server_ip" name="wan_pptp_server_ip" size="20" 
+maxlength="15" type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Username
+ :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="" 
+id="wan_pptp_username" name="wan_pptp_username" size="20" maxlength="63"
+ type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Password
+ :</td>
+                      <td>&nbsp;
+                      	<input default="WDB8WvbXdH" id="pptppwd1" 
+name="pptppwd1" size="20" maxlength="63" value="WDB8WvbXdH" 
+type="password">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Verify
+ Password :</td>
+                      <td>&nbsp;
+                      	<input default="WDB8WvbXdH" id="pptppwd2" 
+name="pptppwd2" size="20" maxlength="63" value="WDB8WvbXdH" 
+type="password">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Reconnect
+ Mode :</td>
+                      <td>&nbsp;
+                      <input default="false" 
+name="wan_pptp_connect_mode" value="always_on" 
+onclick="check_connectmode()" type="radio">
+					    Always on
+					  <input checked="checked" default="true" 
+name="wan_pptp_connect_mode" value="on_demand" 
+onclick="check_connectmode()" type="radio">
+					    On demand
+					  <input default="false" name="wan_pptp_connect_mode" 
+value="manual" onClick="check_connectmode()" type="radio">
+					    Manual
+    				  </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Maximum
+ Idle Time :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="5" 
+id="wan_pptp_max_idle_time" name="wan_pptp_max_idle_time" maxlength="5" 
+size="10" value="5" type="text">
+                      	(minutes, 
+0=infinite)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Primary
+ DNS Address :</td>
+                      <td>&nbsp;
+	                      <input autocomplete="off" default="0.0.0.0" 
+id="wan_primary_dns" name="wan_primary_dns" size="20" maxlength="15" 
+value="0.0.0.0" type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">Secondary
+ DNS Address :</td>
+                      <td>&nbsp;
+	                      <input autocomplete="off" default="0.0.0.0" 
+id="wan_secondary_dns" name="wan_secondary_dns" size="20" maxlength="15"
+ value="0.0.0.0" type="text">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" align="right">MTU
+ :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" default="1400" 
+id="wan_pptp_mtu" name="wan_pptp_mtu" size="10" maxlength="5" 
+value="1400" type="text">
+                      	(bytes)MTU
+ default = 1400
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="duple" valign="top" width="150">MAC
+ Address :</td>
+                      <td>&nbsp;
+                      	<input autocomplete="off" 
+default="00:26:5a:f3:7e:de" id="wan_mac" name="wan_mac" size="20" 
+maxlength="17" value="00:26:5a:f3:7e:de" type="text"><br>
+                      	&nbsp;<input id="clone" name="clone" value="Clone
+ Your PC's MAC Address" onClick="clone_mac_action()" type="button">
+                      	
+					  </td>
+                    </tr>
+          </tbody></table>
+        </div>
+
+		    </div>
+</form>
+           </td>
+			
+			
+			<td id="sidehelp_container" align="left" valign="top" width="150">
+				<table bgcolor="#ffffff" border="0" cellpadding="2" cellspacing="0">
+                    <tbody><tr>
+                      <td id="help_text"><strong>Helpful
+ Hints…</strong>
+                          <p>When 
+configuring the router to access the Internet, be sure to choose the 
+correct <strong>Internet Connection Type</strong> from the drop down 
+menu. If you are unsure of which option to choose, contact your <strong>Internet
+ Service Provider (ISP)</strong>.</p>
+                          <p>If you 
+are having trouble accessing the Internet through the router, double 
+check any settings you have entered on this page and verify them with 
+your ISP if needed.</p>
+
+                          <p>Note:</p>
+                          <p>When
+ DNS Relay is enabled along with Advanced DNS feature,your workstations 
+on the network that are obtaining an IP address from router's DHCP 
+server will obtain 192.168.0.1 (router's IP address). However, traffic 
+will still be protected.</p>
+                          <p>Although
+ Advanced DNS feature is enabled, DNS IP address of your workstation can
+ still be modified to the DNS server IP you desire. Please note that the
+ router does not dictate the DNS name resolution when DNS IP address is 
+configured on the workstation.</p>
+                          <p>If
+ you selected this option and have VPN or Intranet setup in your 
+network, you can disable Advanced DNS service if you experience 
+connection difficulties.</p>
+
+                          <p class="more"><a 
+href="support_internet.htm#WAN" onClick="return 
+jump_if();">More…</a></p>
+					  </td>
+                    </tr>
+			  </tbody></table></td>
+		</tr>
+	</tbody></table>
+	<table id="footer_container" align="center" border="0" cellpadding="0" 
+cellspacing="0" width="838">
+		<tbody><tr>
+			<td align="center" width="125">&nbsp;&nbsp;<img 
+src="wireless_tail.gif" height="35" width="114"></td>
+			<td width="10">&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody></table>
+<br>
+<div id="copyright">Copyright © 2004-2009 DLink, Inc.</div>
+<br>
+
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body></html>

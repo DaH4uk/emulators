@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -104,3 +105,111 @@ document.write('<input type="button" value="'+add_mark+'" onClick="check_maxNumA
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../triggering.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_FW_forward');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="http://gui.netgear.ru/cgi-bin/setobject.cgi?/cgi-bin/triggering.html" target=formframe>
+<input type=hidden name=submit_flag value="triggering">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(port_forward_trigger_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+</script>
+<script>
+function loadvalue(endis,cf)
+{
+var cf=document.forms[0];
+if('0' == '1')
+cf.fwpt_disabled.checked =true;
+else
+cf.fwpt_disabled.checked =false;
+}
+</script>
+<input type="hidden" name="select_edit">
+<input type="hidden" name="select_del">
+<input type="hidden" name="disable_trigger_on">
+<input type="hidden" name="endis_trigger_value" value="">
+ <TR>
+ <script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_FW_forward','select')"> <B><script>document.write(select_service_type);</script></B></TD>
+ </TR>
+ <TR>
+  <script>document.write(hd);</script> <INPUT type=radio name=loginreq value=0 onclick=doPortChange(0)><script>document.write(port_forward);</script></TD>
+ </TR>
+ <TR>
+ <script>document.write(hd);</script> <INPUT type=radio name=loginreq checked value=1 ><script>document.write(port_trigger);</script></TD>
+ </TR>
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd2);</script><input type="checkbox" name="fwpt_disabled"><b><script>document.write(trigger_turn_on);</script></b></td>
+ </tr>
+ <tr>
+<script>document.write(hd);</script> <B><script>document.write(trigger_timeout);</script></B> <script>document.write(adva_upnp_min);</script></td>
+<script>document.write(hd);</script> <input type="text" name="fwpt_timeout" size="5" maxlength="4" value="20" onKeyPress="return getkey('num', event)" onFocus="this.select();" ></td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <tr>
+<script>document.write(hd);</script> <b><script>document.write(trigger_portmap_table);</script></b></td>
+ </tr> 
+ <tr>
+<script>document.write(hd2);</script>
+<script>document.write(table_bolder);</script>
+<tr>
+<script>document.write(hd_center);</script> &nbsp; </td>
+<script>document.write(hd_center);</script> <span class="subhead"># </span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(r_enable);</script></span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(forward_server_name);</script></span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(block_ser_service_type);</script></span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(trigger_in_connect);</script></span></td>
+<script>document.write(hd_center);</script> <span class="subhead"><script>document.write(trigger_ser_user);</script></span></td>
+</tr> 
+<script>
+var array_num=0;
+if( array_num > 0 )
+{
+for(i=1;i<=array_num;i++)
+{
+var str = eval ( 'triggeringArray' + i );
+var each_info=str.split(' ');
+document.write(hd_center+'<input type="radio" name="select_triggering" value="'+i+'"></td>'+hd_center+'<span class="subhead">'+i+'</span></td>');
+if( each_info[8] == "1")
+document.write(hd_center+'<input type="checkbox" name="enable_triggering" value="1" checked></td>');
+else
+document.write(hd_center+'<input type="checkbox" name="enable_triggering" value="1"></td>');
+each_service_name=each_info[0].replace(/&harr;/g," ");
+each_service_name=each_service_name.replace(/ /g,"&nbsp;");
+document.write(hd_center+each_service_name+'</td>'+hd_center+each_info[3]+':'+each_info[4]+hd_center+each_info[5]+':'+each_info[6]+'..'+each_info[7]+hd_center+each_info[2]+'</td></tr>');
+}
+}
+</script>
+</table>
+</td>
+ </tr>
+<script>document.write(bluebar);</script>
+ <TR>
+<script>document.write(hd2_center)
+document.write('<input type="button" value="'+add_mark+'" onClick="check_maxNumAdd(document.forms[0],array_num,20,trigger_length_20,\'triggering_add.html\');">&nbsp;&nbsp;<input type="submit" value="'+edit_mark+'" onClick="return check_triggering_edit(document.forms[0]);">&nbsp;&nbsp;<input type="submit" value="'+delete_mark+'" onClick="return check_triggering_del(document.forms[0]);">&nbsp;&nbsp; </TD>');</script>
+ </TR>
+<script>document.write(bluebar);</script>
+ <TR>
+ <script>document.write(hd2_center+'<input type="submit" value="'+apply_mark+'" onClick="return check_triggering_apply(document.forms[0])">&nbsp;&nbsp;');</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"triggering.html\";'></TD>");</script>
+ </TR> 
+</TABLE>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

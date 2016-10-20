@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -195,3 +196,202 @@ document.write('<option value="3">www.oray.cn</option>');
 </FORM>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../ddns.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_DNS_ddns');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#ddns.html" target=formframe>
+<input type=hidden name=submit_flag value="ddns">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(ddns_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var str_none="";
+var str_oray="";
+function check_oray()
+{
+var cf = document.forms[0];
+if(cf.sysDNSProviderlist.value == 3)
+{
+setDisabled(true,cf.sysDNSHost);
+document.getElementById("view").innerHTML=str_oray;
+}
+else
+{
+setDisabled(false,cf.sysDNSHost);
+document.getElementById("view").innerHTML=str_none;
+}
+}
+function loadvalue()
+{
+var cf = document.forms[0];
+cf.sysDNSHost.value="";
+cf.sysDNSUser.value="";
+cf.sysDNSPassword.value="";
+str_none=document.getElementById("none").innerHTML;
+str_oray=document.getElementById("oray").innerHTML;
+document.getElementById("none").innerHTML='';
+document.getElementById("oray").innerHTML='';
+
+if('0' == "1")
+cf.sysDNSActive.checked =true;
+else
+cf.sysDNSActive.checked=false;
+/*if('0' == "1")
+cf.sysDNSWildCard.checked =true;
+else
+cf.sysDNSWildCard.checked = false;
+*/
+if('0' == '0')
+cf.sysDNSProviderlist[0].selected = true;
+else if ('0' == '1')
+cf.sysDNSProviderlist[1].selected = true;
+else if ('0' == '2')
+cf.sysDNSProviderlist[2].selected = true;
+else if ('0' == '3')
+cf.sysDNSProviderlist[3].selected = true;
+else
+cf.sysDNSProviderlist[4].selected = true;
+check_oray();
+}
+function oray_connect_status()
+{
+if('0' == "1" && '0' == '3')
+{
+if('' == '0')
+document.write(oray_link4);
+else if('' == '1')
+document.write(oray_link1);
+else if(''== '2')
+document.write(oray_link3);
+else if('' == '3')
+document.write(oray_link2);
+else if('' == '4')
+document.write(oray_link2);
+else if('' == '')
+document.write(oray_link3);
+else
+document.write(oray_link3);
+}else
+document.write(oray_link4);
+}
+function oray_serv_type()
+{
+if('0' == "1")
+{
+if('' == "0")
+document.write(oray_type1);
+else if('' == "1")
+document.write(oray_type2);
+else if('' == "2")
+document.write(oray_type3);
+else
+document.write("---");
+}else
+document.write("---");
+}
+function oray_host_info()
+{
+var host_info_list="";
+var host_array=host_info_list.split(' ');
+if('0' == "1")
+{
+if(host_info_list != "")
+{
+for(i=0;i<host_array.length-1;i++)
+{
+if(i==0)
+document.write(eval(i+1)+':'+host_array[i]);
+else
+document.write('<TR><TD></TD><TD>'+eval(i+1)+':'+host_array[i]);
+}
+}else
+document.write(oray_host_none);
+}else
+document.write(oray_host_none);
+document.write('</TD></TR>');
+}
+var old_endis_ddns="0";
+var old_sysDNSHost="";
+var old_sysDNSUser="";
+var old_sysDNSPassword="";
+var old_endis_wildcards="0";
+</script>
+<input type="hidden" name="ddns_enabled" value="">
+<input type="hidden" name="wildcards_enabled" value="">
+<input type="hidden" name="change_wan_type">
+<tr><script>document.write(hd2);</script><input type="checkbox" name="sysDNSActive"><a tabindex=-1 href="javascript:loadhelp('_DNS_ddns','setup')"><b><script>document.write(ddns_use_dnsser);</script><script>document.write(ba);</script> </td></tr>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd);</script><a tabindex=-1 href="javascript:loadhelp('_DNS_ddns','provider')"><b><script>document.write(ddns_serpro);</script><script>document.write(ba);</script></td>
+<script>document.write(hd_r);</script>
+<select name="sysDNSProviderlist" onchange="check_oray();">
+<option value="0">www.DynDNS.org</option>
+<option value="1">www.3322.org</option>
+<option value="2">www.DtDNS.com</option>
+<script>
+if('RU'=='PR')
+document.write('<option value="3">www.oray.cn</option>');
+</script>
+<option value="4">DDNS.Honeywell-smarthome.com</option>
+</select>
+</td>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(ddns_hostname);</script></td>
+<script>document.write(hd_r);</script><input type="text" name="sysDNSHost" size="32" maxlength="255" value="" onKeyPress="return getkey('ddns_hostname',event)"></td>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(ddns_username);</script></td>
+<script>document.write(hd_r);</script><input type="text" name="sysDNSUser" size="32" maxlength="60" value="" onKeyPress="return getkey('ascii', event)"></td>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(ddns_passwd);</script></td>
+<script>document.write(hd_r);</script><input type="password" name="sysDNSPassword" onfocus="this.select();" size="32" maxlength="60" value="" onKeyPress="return getkey('ascii',event)"></td>
+</tr>
+<!--script>document.write(bluebar);</script>
+<tr>'+hd2+'<input type="checkbox" name="sysDNSWildCard" value="1"><a tabindex=-1 href="javascript:loadhelp('_DNS_ddns','wildcards')"><b><script>document.write(ddns_use_wildcards);</script></b></td></tr-->
+</table>
+<div id=view></div>
+<div align="center" ID="none" style="position:absolute;top:0;left:0;visibility:hidden">
+<table width=100%> 
+</table>
+</div>
+<div align="center" ID="oray" style="position:absolute;top:0;left:0;visibility:hidden">
+<table width=100%> 
+<script>document.write(bluebar);</script>
+<TR><TD><script>document.write(oray_str1);</script></TD><TD><a class='linktype' href='http://gui.netgear.ru/admin/www.oray.cn/passport/register.php' target='_blank'><script>document.write(oray_ddns_link1);</script></a></TD></TR>
+<TR><TD></TD><TD><a class='linktype' href='http://gui.netgear.ru/admin/www.oray.cn/peanuthull/service.php' target='_blank'><script>document.write(oray_ddns_link2);</script></a></TD></TR>
+<TR><TD></TD><TD><a class='linktype' href='http://gui.netgear.ru/admin/www.oray.cn/ask/default.htm' target='_blank'><script>document.write(oray_ddns_link3);</script></a></TD></TR>
+<TR><TD><script>document.write(oray_link_status);</script></TD><TD><script>oray_connect_status();</script></TD></TR>
+<TR><TD><script>document.write(oray_service_type);</script></TD><TD><script>oray_serv_type();</script></TD></TR>
+<TR><TD><script>document.write(oray_hostname_info);</script></TD><TD><script>oray_host_info();</script>
+</table>
+</div>
+<table width=100%>
+<script>document.write(bluebar);</script>
+<tr>
+<script>document.write(hd2_center);</script>
+<script>document.write('<input type="submit" name="cmd" value="'+apply_mark+'" onClick="return click_ddns(document.forms[0]);">');</script>
+<script>document.write("<input type='reset' name='cancel' value='"+cancel_mark+"' onClick='location.href=\"ddns.html\";'>");</script>
+<script>document.write("<input type='button' name='show' value='"+show_status_mark+"' onClick=\"window.open('show_ddns_status.html','show_ddns','width=600,height=400,top=200,left=200,status=yes');\">");</script>
+</td>
+</tr>
+</table>
+</FORM>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

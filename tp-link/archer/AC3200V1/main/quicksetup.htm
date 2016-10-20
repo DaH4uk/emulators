@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <style type="text/css">
 #quicksetup {
 	width: 980px;
@@ -527,4 +528,535 @@ function utf8_encode (string)
 		$.qd.internetDiag = 0;
 	});
 })();
+=======
+<style type="text/css">
+#quicksetup {
+	width: 980px;
+	margin: 0 auto;
+	text-align: center;
+    min-height: 800px;
+    background: #fff;
+    /* url("../img/mark_copy.gif");*/
+    padding: 20px 50px;
+}
+div.quicksetup-wrap {
+	width: 980px;
+}
+div.process-flow-step {
+	height: 24px;
+	width: 24px;
+	display: inline-block;
+}
+div.process-flow-step span.icon {
+	height: 24px;
+	width: 24px;
+	background: url(http://www.tp-linkru.com/resources/simulator/AC3200V1_Simulator/img/widgets.png) no-repeat center -176px;	
+	display: inline-block;
+	position: relative;
+	color: #B3B3B3;
+}
+div.process-flow-step.current span.icon {
+	background-position: center -224px;
+}
+div.process-flow-step.processed span.icon {
+	background-position: center -200px;
+}
+div.process-flow-step.end.current span.icon {
+	background-position: center -248px;
+}
+div.process-flow-bar {
+	height: 3px;
+	width: 140px;
+	margin-left: -12px;
+	margin-right: -12px;
+	margin-bottom: 2px;
+	background-color: #C9CACB;
+	display: inline-block;
+}
+div.process-flow-bar span.bar-inner {
+	height: 100%;
+	width: 0;
+	display: inline-block;
+}
+div.process-flow-bar.processed  span.bar-inner {
+	background-color: #96CC42;
+}
+div.process-flow-step span.text {
+	font-size: 12px;
+	position: absolute;
+	white-space: nowrap;
+	width: 160px;
+	text-align: center;
+	margin-left: -80px;
+	color: #B2B2B2;
+}
+div.process-flow-step.current span.text,
+div.process-flow-step.processed span.text {
+	color: #599e00;
+}
+div.content-box {
+	width: 100%;
+}
+div.quicksetup-process-content {
+	text-align: left;
+	margin-top: 70px;
+	min-width: 500px;
+}
+div.process-flow-step span.text.up {
+	margin-top: -20px;
+}
+div.process-flow-step span.text.down {
+	margin-top: 32px;
+}
+div.quicksetup-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #8c8c8c;
+	opacity: 0.3;
+	z-index: 998;
+	display: none;
+}
+div.quicksetup-loading {
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	background: url(http://www.tp-linkru.com/resources/simulator/AC3200V1_Simulator/img/waiting.gif) no-repeat;
+	border-radius: 5px;
+	z-index: 1000;
+	display: none;
+}
+
+div.quicksetup-region {
+	width: 900px;
+	height: 200px;
+}
+
+div.quicksetup-region div.regionNext {
+	width: 100%;
+	height: 35px;
+	text-align: right;
+	padding-top: 40px;
+}
+div.quicksetup-region div.regionNext span.regionNextBtn {
+	width: 90px;
+	height: 35px;
+	line-height: 35px;
+	font-size: 12px;
+	text-align: center;
+	margin-right: 65px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #fff;
+	background-color: #96CC56;
+	display: inline-block;
+}
+span.region-note {
+	color: red;
+}
+div.quicksetup-newUserMsgBox {
+	width: 520px;
+	height: auto;
+	position: absolute;
+	background-color: #fff;
+	border-radius: 5px;
+	text-align: center;
+	z-index: 999;
+	display: none;
+}
+div.quicksetup-userBoxClosetag {
+	background: url(http://www.tp-linkru.com/resources/simulator/AC3200V1_Simulator/img/widgets.png);
+	background-position: -1px -482px;
+	margin: 10px 10px;
+	width: 22px;
+	height: 22px;
+	float: right;
+	display: block;
+	cursor: pointer;
+}
+p.newUserTip {
+	color: #10ABE1;
+	font-size: 18px;
+	font-weight: 400;
+}
+div.quicksetup-userContainer {
+	text-align: left;
+	padding-top: 30px;
+	padding-left: 90px;
+}
+div.quicksetup-userConfirm {
+	width: 401px;
+	height: 35px;
+	text-align: right;
+	padding-top: 15px;
+}
+div.quicksetup-userConfirm span.quicksetup-cfmBtn {
+	width: 90px;
+	height: 35px;
+	line-height: 35px;
+	font-size: 12px;
+	text-align: center;
+	margin-right: 30px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #fff;
+	background-color: #96CC56;
+	display: inline-block;
+}
+div.quicksetup-autoDetectBox {
+	width: 120px;
+	height: 109px;
+	border-radius: 5px;
+	position: absolute;
+	background-color: #fff;
+	z-index: 999;
+	display: none;
+}
+div.quicksetup-button-container {
+	margin-top: 30px;
+	/*margin-right: 144px;*/
+}
+div.quicksetup-button-container span.quicksetup-button {
+	width: 90px;
+	height: 35px;
+	line-height: 35px;
+	font-size: 12px;
+	text-align: center;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #fff;
+	background-color: #96CC56;
+	display: inline-block;
+}
+#quicksetup-icon-diag-failed {
+	width: 53px;
+	height: 50px;
+	background: url('http://www.tp-linkru.com/resources/simulator/AC3200V1_Simulator/img/icons-03.png') no-repeat scroll -521px -153px transparent;
+	display: inline-block;
+}
+
+#quicksetup-icon-diag-seccessed {
+    width: 53px;
+    height: 55px;
+    background: url('http://www.tp-linkru.com/resources/simulator/AC3200V1_Simulator/img/icons-03.png') no-repeat scroll -521px -97px transparent;
+    display: inline-block;
+}
+
+div.diag-loading {	
+	position: absolute;
+	z-index: 999;
+	display: none;
+	text-align: center;
+	width: 560px;
+	height: 91px;
+}
+span.diag-loading-icon {	
+	width: 41px;
+	height: 41px;
+	border-radius: 5px;
+	background: url('http://www.tp-linkru.com/resources/simulator/AC3200V1_Simulator/img/waiting.gif') no-repeat;
+	display: block;
+	margin-left: 180px;
+}
+div.quicksetup-container {
+	margin: 0 auto;
+}
+div.pure-control-group.group-spec {
+	height: 24px;
+	line-height: 24px;
+}
+div.pure-control-group.group-spec > input.tp-input-text {
+	padding: 0;
+}
+
+p.note strong {
+	color:#0094bc;
+	font-style: normal;
+    font-weight: normal;
+}
+
+p.note span.note_title
+{
+	color:#191919;
+	font-size:14px;
+}
+
+#reconnect_failed p.qs_status {
+	font-size: 21px;
+	color:rgb(25,25,25);
+	font-weight:400;
+}
+
+</style>
+<script type="text/javascript" language="javascript">
+var currIndex = 0;
+
+
+/* need localization? */
+var flowSteps = new Array(
+	{text: n_str["quicksetup"].t_setRegion,		file: "qsRegion.htm", 	__enable: true},
+	{text: n_str["quicksetup"].t_selectWanType, 	file: "qsType.htm", 	__enable: true},
+	{text: n_str["quicksetup"].t_setWanType, 		file: "qsEwan.htm", 	__enable: true}, 
+	{text: n_str["quicksetup"].t_wlSet, 			file: "qsWl.htm", 		__enable: true},
+	{text: n_str["quicksetup"].t_summary, 		file: "qsSum.htm", 		__enable: true},
+	{text: n_str["quicksetup"].t_connTest, 		file: "qsDiag.htm", 		__enable: true}
+);
+
+function genFlowContainer() {
+	var flowStepHtml = "";
+	var upDown = "down";
+	var flowContainer = $("#process-flow-container");
+	var qsConWidth = $("#quicksetup").width();
+	var qsWrap = $("#quicksetup-wrap");
+	if (flowSteps.length == 0)
+		return;	
+	qsWrap.css("margin-left", (qsConWidth - qsWrap.width()) / 2 + "px");
+	for (var i = 0; i < flowSteps.length; i++) {
+		if (flowSteps[i].__enable == true) {
+				if ((i & 1) == 0)
+					upDown = "down";
+				else
+					upDown = "up";
+			flowStepHtml += "<div class='process-flow-step'><span class='icon'><span class='text " + upDown + "'>" + flowSteps[i].text + "</span></span></div>";
+			if (i < flowSteps.length - 1)
+				flowStepHtml += "<div class='process-flow-bar'><span class='bar-inner'></span></div>";
+		}
+	}
+	flowContainer.append(flowStepHtml);
+	flowContainer.css("width", "750px");
+	flowContainer.css("padding-left", (qsWrap.width() - flowContainer.width()) / 2 + "px");
+	$("div.process-flow-step").first().addClass("current");
+	$("div.process-flow-step").last().addClass("end");
+	
+}
+
+function loadSubPage(path) {
+	var id="quicksetup-process-content";
+	$.loadPage(
+		id,
+		path,
+		function() {
+			$("#" + id).css("display", "none");
+			$.unlock();
+		},
+		function(){
+			$("#" + id).fadeIn(200);
+			subCon = $("#quicksetup-process-content").children().first();
+			conWidth = $("#quicksetup-wrap").width();
+			subCon.css("width", "750px");
+			subCon.css("margin-left",  "140px");
+			$("span.quicksetup-button").hover(
+				function() {
+					$(this).css("background-color", "#7EB73D");
+				},
+				function() {
+					$(this).css("background-color", "#96CC56");
+				}
+			);
+		}
+	);
+}
+
+function doFinish() {
+	$("#qs").removeClass("click");
+	$("#basic").addClass("click");
+	$("#menu").load("./frame/menu.htm");
+}
+
+function doExit() {
+	$("#qs").removeClass("click");
+	$("#basic").addClass("click");
+	$("#menu").load("./frame/menu.htm");
+}
+
+function qsShowOverlay() {
+	var overLay = $(".quicksetup-overlay").length == 0 ? $("<div class=\"quicksetup-overlay\"></div>").appendTo($("body")) : $(".quicksetup-overlay");
+	overLay.fadeIn(200, function() {
+		$(this).css("display", "block");
+		$.opacity(overLay[0], 0.3);
+	});
+}
+
+function qsHideOverlay() {
+	var overLay = $(".quicksetup-overlay").length == 0 ? $("<div class=\"quicksetup-overlay\"></div>").appendTo($("body")) : $(".quicksetup-overlay");
+	overLay.fadeOut(200, function() {
+		$(this).css("display", "none");
+	});
+}
+
+function qsAddLoading() {
+	qsShowOverlay();
+	$.setCentralPosition($(".quicksetup-loading"));
+	$(".quicksetup-loading").css("display", "block");
+}
+
+function qsRemoveLoading() {
+	$(".quicksetup-loading").css("display", "none");
+	qsHideOverlay();
+}
+
+function Base64Encoding(input) 
+{
+	var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	var output = "";
+	var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+	var i = 0;
+	input = utf8_encode(input);
+	while (i < input.length) 
+	{
+		chr1 = input.charCodeAt(i++);
+		chr2 = input.charCodeAt(i++);
+		chr3 = input.charCodeAt(i++);
+		enc1 = chr1 >> 2;
+		enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+		enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+		enc4 = chr3 & 63;
+		
+		if (isNaN(chr2)) 
+		{
+			enc3 = enc4 = 64;
+		} 
+		else if (isNaN(chr3)) 
+		{
+			enc4 = 64;
+		}
+		output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4);
+	}
+	return output;
+}
+
+function utf8_encode (string) 
+{
+	string = string.replace(/\r\n/g,"\n");
+	var utftext = "";
+	
+	for (var n = 0; n < string.length; n++) 
+	{
+		var c = string.charCodeAt(n);
+		if (c < 128) 
+		{
+			utftext += String.fromCharCode(c);
+		}
+		else if((c > 127) && (c < 2048)) 
+		{
+			utftext += String.fromCharCode((c >> 6) | 192);
+			utftext += String.fromCharCode((c & 63) | 128);
+		}
+		else
+		{
+			utftext += String.fromCharCode((c >> 12) | 224);
+			utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+			utftext += String.fromCharCode((c & 63) | 128);
+		}
+	}	
+	return utftext;
+}
+
+</script>
+<div id="quicksetup-container" class="quicksetup-container">
+	<div id="quicksetup-wrap" class="quicksetup-wrap">
+		<div id="process-flow-container" class="part-separate"></div>
+		<div id="quicksetup-process-content" class="quicksetup-process-content"></div>
+	</div>
+</div>
+
+<script language="javascript" type="text/javascript">
+(function() {
+	$.tpInit(function() {
+		genFlowContainer();
+		//$.isFD = 3;
+		$.qd = {};
+		$.qf = {
+			next: function() {
+				var currentStep = $("div.process-flow-step.current");
+				var nextBar = currentStep.next("div.process-flow-bar");
+				var nextBarInner = nextBar.children("span.bar-inner");
+				var nextStep = nextBar.next("div.process-flow-step");	
+	
+				flowSteps[currIndex].__v = true;
+				currIndex++;
+				while (currIndex < flowSteps.length) {
+					if (flowSteps[currIndex].__enable == true)
+						break;
+					currIndex++;
+				}
+				if (currIndex >= flowSteps.length) {
+					$.alert("No more next page, sth wrong?");
+					return ;
+				}
+				currentStep.removeClass("current").addClass("processed");
+				nextBarInner.width(0);
+				nextBar.addClass("processed");
+				nextBarInner.animate({width: "+100%"}, 200, function() {
+					nextBarInner.css("width", "100%");
+					nextStep.addClass("current");				
+					loadSubPage(flowSteps[currIndex].file);
+				});
+			},
+			prev: function() {
+				var currentStep = $("div.process-flow-step.current");
+				var prevBar = currentStep.prev("div.process-flow-bar");
+				var prevBarInner = prevBar.children("span.bar-inner");
+				var prevStep = prevBar.prev("div.process-flow-step");
+					
+				flowSteps[currIndex].__v = true;
+				currIndex--;
+				while (currIndex >= 0) {
+					if (flowSteps[currIndex].__enable == true)
+						break;
+					currIndex--;
+				}
+				if (currIndex < 0) {
+					$.alert("No previous page, sth wrong?");
+					return ;
+				}
+				currentStep.removeClass("current processed");
+				prevBarInner.css("width", "100%");
+				prevBar.addClass("processed");	
+				prevBarInner.animate({width: "-=100%"}, 200, function() {
+					prevBar.removeClass("processed");
+					prevStep.removeClass("processed").addClass("current");
+					currentStep.removeClass("current processed");	
+					loadSubPage(flowSteps[currIndex].file);
+				});
+			},
+			exit: function() {
+				$("#basic").click();
+			}
+		};
+
+		if (INCLUDE_WAN_MODE)
+			realSysMode = $.act(ACT_GET, SYS_MODE, null, null); 
+
+		//alert("is FD == " + $.isFD);
+		
+		//$.isFD = 3;
+		if ($.exe())
+			return ;
+		
+		if (INCLUDE_WAN_MODE) {
+			if (realSysMode.mode == "DSL")                       
+				$.qd.realMode = "DSL";
+			else if (realSysMode.mode == "USB_3G")
+				$.qd.realMode = "USB_3G";
+			else
+				$.qd.realMode = "ETH";
+			
+			$.qd.sysMode = $.qd.realMode;
+		}
+
+		loadSubPage(flowSteps[0].file);
+		/*
+		if ($.isFD != 3)
+		{
+			$.isFD = 3;
+			$.act(ACT_SET, IGD_DEV_INFO, null, null, ["X_TP_IsFD=3"]);
+		}
+		*/
+		$.qd.internetDiag = 0;
+	});
+})();
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </script>

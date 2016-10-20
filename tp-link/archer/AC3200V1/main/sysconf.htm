@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<script type="text/javascript">
 var wlanObj_2g,
     wlanObj_5g,
@@ -1427,3 +1428,1434 @@ function initDDos() {
 <script type="text/javascript">
 $.tpInit(init);
 </script>
+=======
+﻿<script type="text/javascript">
+var wlanObj_2g,
+    wlanObj_5g,
+    wlanObj_5g_2,
+    wdsObj_2g,
+    wdsObj_5g,
+    wdsObj_5g_2,
+    wpsObj_2g,
+    wpsObj_5g,
+    wpsObj_5g_2;
+var localObj;
+
+function isHex(str) {
+    str = str.toLowerCase();
+    for (var i = 0; i < str.length; i++) {
+        if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) >= 'a' && str.charAt(i) <= 'f'))
+            continue;
+        else {
+            $.alert(ERR_WLAN_WDS_HEX_KEY_INVALID);
+            return false;
+        }
+    }
+    if (parseInt(str, 16) == 0) {
+        $.alert(ERR_WLAN_WDS_HEX_KEY_OUTRANGE);
+        return false;
+    }
+    return true;
+}
+
+function checkValue(band) {
+    var bInt = $('#beaconInterval' + band);
+    var rtsInt = $('#rts' + band);
+    var fragTh = $('#frag' + band);
+    var dtimTh = $('#dtim' + band);
+    var ret;
+    if (ret = $.num(bInt.prop('value'), [25, 1000], true)) {
+        if (ret == ERR_NUM_INVAD) {
+            $.alert(ERR_WLAN_BEACONINTERVAL_INVAD);
+        } else if (ret == ERR_NUM_OUTRANGE) {
+            $.alert(ERR_WLAN_BEACONINTERVAL_OUTRANGE);
+        }
+        bInt.focus();
+        bInt.select();
+        return false;
+    }
+    if (ret = $.num(rtsInt.prop('value'), [1, 2346], true)) {
+        if (ret == ERR_NUM_INVAD) {
+            $.alert(ERR_WLAN_RTSINTERVAL_INVAD);
+        } else if (ret == ERR_NUM_OUTRANGE) {
+            $.alert(ERR_WLAN_RTSINTERVAL_OUTRANGE);
+        }
+        rtsInt.focus();
+        rtsInt.select();
+        return false;
+    }
+    if (ret = $.num(dtimTh.prop('value'), [1, 255], true)) {
+        if (ret == ERR_NUM_INVAD) {
+            $.alert(ERR_WLAN_DTIMTH_INVAD);
+        } else if (ret == ERR_NUM_OUTRANGE) {
+            $.alert(ERR_WLAN_DTIMTH_OUTRANGE);
+        }
+        dtimTh.focus();
+        dtimTh.select();
+        return false;
+    }
+    return true;
+}
+
+function init(argument) {
+    initDDos();
+	/* add for led*/
+	initLedNM();
+	/*end add*/
+    var basicList = $.act(ACT_GL, LAN_WLAN, null, null, ["name", "X_TP_Band", "subBand","X_TP_Configuration_Modified", "TransmitPowerSupported", "TransmitPower", "Standard", "X_TP_BeaconInterval", "X_TP_RTSThreshold", "X_TP_FragmentThreshold", "X_TP_DTIMFrequency", "X_TP_ShortGIEnable", "X_TP_IsolateClients", "WMMEnable", "X_TP_GroupKeyUpdateInterval", "SSID", "Channel", "AutoChannelEnable", "SSIDAdvertisementEnabled", "Enable", "X_TP_Bandwidth"]);
+
+    localObj = $.act(ACT_GET, LOCAL, null, null, ["WirelessPhyBtn"]);
+
+    if (!$.exe()) {
+        $.each(basicList, function() {
+            if ("2.4GHz" == this.X_TP_Band) {
+                wlanObj_2g = this;
+            } else if (INCLUDE_LAN_WLAN_DUALBAND && "5GHz" == this.X_TP_Band) {
+                if (1 == this.subBand)
+                    wlanObj_5g = this;
+                else
+                    wlanObj_5g_2 = this;
+            }
+        });
+
+        wdsObj_2g = $.act(ACT_GET, LAN_WLAN_WDSBRIDGE, wlanObj_2g.__stack, null, ["BridgeEnable", "BridgeAddrMode", "BridgeBSSID", "BridgeSSID", "BridgeAuthMode", "BridgeEncryptMode", "BridgeKey", "BridgeWepKeyIndex"]);
+        wdsObj_5g = $.act(ACT_GET, LAN_WLAN_WDSBRIDGE, wlanObj_5g.__stack, null, ["BridgeEnable", "BridgeAddrMode", "BridgeBSSID", "BridgeSSID", "BridgeAuthMode", "BridgeEncryptMode", "BridgeKey", "BridgeWepKeyIndex"]);
+        wdsObj_5g_2 = $.act(ACT_GET, LAN_WLAN_WDSBRIDGE, wlanObj_5g_2.__stack, null, ["BridgeEnable", "BridgeAddrMode", "BridgeBSSID", "BridgeSSID", "BridgeAuthMode", "BridgeEncryptMode", "BridgeKey", "BridgeWepKeyIndex"]);
+
+        wpsObj_2g = $.act(ACT_GET, LAN_WLAN_WPS, wlanObj_2g.__stack, null, ["Enable"]);
+        wpsObj_5g = $.act(ACT_GET, LAN_WLAN_WPS, wlanObj_5g.__stack, null, ["Enable"]);
+        wpsObj_5g_2 = $.act(ACT_GET, LAN_WLAN_WPS, wlanObj_5g_2.__stack, null, ["Enable"]);
+    }
+
+    if (!$.exe()) {
+        initParam(wlanObj_2g, '_2g');
+        initParam(wlanObj_5g, '_5g');
+        initParam(wlanObj_5g_2, '_5g_2');
+        initWDS(wlanObj_2g, wdsObj_2g, '_2g');
+        initWDS(wlanObj_5g, wdsObj_5g, '_5g');
+        initWDS(wlanObj_5g_2, wdsObj_5g_2, '_5g_2');
+        intiWPS();
+    }
+
+    if ($.mainParam !== undefined) {
+        var param = new Object();
+        param = $.mainParam;
+        $('#scroll').scrollTop(param.scrollTop);
+        if (param.band == "_5g") {
+            $('#wds_mode').find('span.second-mode').trigger('click');
+            $('#wds_mode').find('span').first().removeClass('mode-select').next().addClass('mode-select');
+        }
+        if (param.band == "_5g_2"){
+            $('#wds_mode').find('span.second-mode').trigger('click');
+            $('#wds_mode').find('span').first().removeClass('mode-select').next().next().addClass('mode-select');
+        }
+
+        if (param.wdsExist == 1) {
+            $('#wdsSsid' + param.band).prop('value', param.SSID);
+            $('#wdsMac' + param.band).prop('value', param.BSSID);
+
+            if (param.channel != eval('wlanObj' + param.band).channel) {
+                $.confirm(n_str.wirelessAdv.t_confirm,
+                    function() {
+                        $.act(ACT_SET, LAN_WLAN, eval('wlanObj' + param.band).__stack, null, ['Channel=' + param.channel]);
+                        $.showCover();
+                        $.exe(function(ret) {
+                            $.hideCover();
+                            if (!ret) {
+                                eval('wlanObj' + param.band).channel = param.channel;
+                            }
+                        });
+                    },
+                    null, param.channel);
+            }
+        }
+
+        if (param.wdsEn == 1) {
+            $('#wds' + param.band).prop('checked', true);
+            $('#wdsInfo' + param.band).show();
+        } else {
+            $('#wds' + param.band).prop('checked', false);
+            $('#wdsInfo' + param.band).hide();
+        }
+    }
+
+    if (localObj.wirelessPhyBtn == false)
+        disableCfgByWifiBtn();
+}
+
+function initParam(wlanObj, band) {
+    $('#beaconInterval' + band).prop('value', wlanObj.X_TP_BeaconInterval);
+    $('#rts' + band).prop('value', wlanObj.X_TP_RTSThreshold);
+    $('#frag' + band).prop('value', wlanObj.X_TP_FragmentThreshold);
+    $('#dtim' + band).prop('value', wlanObj.X_TP_DTIMFrequency);
+    $('#keyUpdate' + band).prop('value', wlanObj.X_TP_GroupKeyUpdateInterval);
+
+    $('#wmm' + band).prop('checked', wlanObj.WMMEnable == 1 ? true : false);
+    if ('n' == wlanObj.standard || 'n-only' == wlanObj.standard || 'ac' == wlanObj.standard || 'an' == wlanObj.standard) {
+        $('#wmm' + band).prop('disabled', true);
+    }
+    $('#gi' + band).prop('checked', wlanObj.X_TP_ShortGIEnable == 1 ? true : false);
+    $('#apIso' + band).prop('checked', wlanObj.X_TP_IsolateClients == 1 ? true : false);
+}
+function disableCfgByWifiBtn () {
+    if(localObj.wirelessPhyBtn == false){
+        $('label').each(function() {
+            $(this).prop('disabled', true);
+            $(this).addClass('disabled');
+        });
+        $("input").each(function() {
+            //if (this.id == "")
+            if ((this.id.indexOf("_2g") >= 0) || (this.id.indexOf("_5g") >= 0))
+                $(this).prop('disabled', true);
+        });
+
+        
+        $("#wlAdvSave_2g").prop('disabled', true);
+        $("#wlAdvSave_5g").prop('disabled', true);
+        $("#wlAdvSave_5g_2").prop('disabled', true);
+        $("#wdsSave_2g").prop('disabled', true);
+        $("#wdsSave_5g").prop('disabled', true);
+        $("#wdsSave_5g_2").prop('disabled', true);
+        $("#wifiBtnOffNote_2g").removeClass('nd');
+        $("#wifiBtnOffNote_5g").removeClass('nd');
+        $("#wifiBtnOffNote_5g_2").removeClass('nd');
+    }
+}
+function initWDS(wlanObj, wdsObj, band) {
+    if (wlanObj.enable == 0) {
+        $('#wds' + band).prop('disabled', true);
+        $('#wds' + band).prop('checked', false);
+        $('#wdsInfo' + band).hide();
+        $('#wdsSave' + band).prop('disabled', true);
+        $.errorTip('wds' + band, ERR_WLAN_DISABLED);
+        return;
+    }
+    if (wdsObj.bridgeEnable == 1) {
+        $('#wdsInfo' + band).show();
+        $('#wds' + band).prop('checked', true);
+        $('#wdsSsid' + band).prop('value', wdsObj.bridgeSSID);
+        $('#wdsMac' + band).prop('value', wdsObj.bridgeBSSID);
+
+        if (wdsObj.bridgeAuthMode == "Open" && wdsObj.bridgeEncryptMode == "None") {
+            $('#noSec' + band).prop('checked', true);
+        } else if (wdsObj.bridgeEncryptMode == "WEPEncryption") {
+
+            $('#wepSec' + band).prop('checked', true);
+
+            if (wdsObj.bridgeAuthMode == "SharedAuthentication") {
+                $('#typeSharedKey' + band).prop('checked', true);
+            } else if (wdsObj.bridgeAuthMode = "Open") {
+                $('#typeOpenSys' + band).prop('checked', true);
+            }
+
+            $('#wepKeyValue' + band).prop('value', wdsObj.bridgeKey);
+
+            if (wdsObj.bridgeKey.length == 5 || wdsObj.bridgeKey.length == 13 || wdsObj.bridgeKey.length == 16) {
+                $('#keyFormatAscii' + band).prop('checked', true);
+            } else if (wdsObj.bridgeKey.length == 10 || wdsObj.bridgeKey.length == 26 || wdsObj.bridgeKey.length == 32) {
+                $('#keyFormatHex' + band).prop('checked', true);
+            }
+
+            $('#key' + wdsObj.bridgeWepKeyIndex + band).prop('selected', true);
+        } else {
+            $('#wpaSec' + band).prop('checked', true);
+
+            if (wdsObj.bridgeAuthMode == "PSKAuthentication")
+                $('#wpaVersion' + band).prop('checked', true);
+            else
+                $('#wpa2Version' + band).prop('checked', true);
+
+            if (wdsObj.bridgeEncryptMode == "TKIPEncryption")
+                $('#tkipEncryption' + band).prop('checked', true);
+            else
+                $('#aesEncryption' + band).prop('checked', true);
+
+            $('#passwd' + band).prop('value', wdsObj.bridgeKey)
+        }
+
+    } else {
+        $('#wds' + band).prop('checked', false);
+        $('#wdsInfo' + band).hide();
+    }
+}
+
+function intiWPS() {
+    if (wpsObj_2g.enable == true && wpsObj_5g.enable == true && wpsObj_5g_2.enable == true)
+        $('#wlwps').prop('checked', true);
+}
+function wlAdvSave(wlanObj, band) {
+    var param = {};
+
+    if (checkValue(band) == false) {
+        return;
+    }
+
+    param.X_TP_BeaconInterval = $('#beaconInterval' + band).prop('value');
+    param.X_TP_RTSThreshold = $('#rts' + band).prop('value');
+    param.X_TP_FragmentThreshold = $('#frag' + band).prop('value');
+    param.X_TP_DTIMFrequency = $('#dtim' + band).prop('value');
+    param.X_TP_GroupKeyUpdateInterval = $('#keyUpdate' + band).prop('value');
+    param.WMMEnable = $('#wmm' + band).prop('data-checked') ? 1 : 0;
+    param.X_TP_ShortGIEnable = $('#gi' + band).prop('data-checked') ? 1 : 0;
+    param.X_TP_IsolateClients = $('#apIso' + band).prop('data-checked') ? 1 : 0;
+
+    $.act(ACT_SET, LAN_WLAN, wlanObj.__stack, null, param);
+
+    if (INCLUDE_LAN_WLAN_MSSID) {
+        var vapList = $.act(ACT_GS, LAN_WLAN_MSSIDENTRY, null, wlanObj.__stack, ["IsolateClients", "name"]);
+        if (INCLUDE_LAN_WLAN_GUESTNETWORK) {
+            var guestObj = $.act(ACT_GET, LAN_WLAN_GUESTNET, wlanObj.__stack, null, ["name"]);
+        }
+        $.exe(function(ret) {
+            if (!ret) {
+                $.each(vapList, function(arg, index) {
+                    if (INCLUDE_LAN_WLAN_GUESTNETWORK && (guestObj.name == this.name)) {;
+                    } else {
+                        $.act(ACT_SET, LAN_WLAN_MSSIDENTRY, this.__stack, null, ["IsolateClients=" + param.X_TP_IsolateClients]);
+                    }
+                });
+                $.exe(function(ret) {
+                    $.removeLoading();
+                });
+            }
+        });
+    } else {
+        $.exe(function(ret) {
+            $.removeLoading();
+        });
+    }
+}
+
+function checkWds(wdsObj, band) {
+    var ssidLen = $.realLen($('#wdsSsid' + band).prop('value'));
+    if (ssidLen <= 0) {
+        $.alert(ERR_WLAN_WDS_SSID_IS_EMPTY);
+        return false;
+    } else if (ssidLen > 32) {
+        $.alert(ERR_WLAN_WDS_SSID_LEN_OUTRANGE);
+        return false;
+    }
+    var bssid = $("#wdsMac" + band).prop('value');
+    if (bssid.length == 0) {
+        $.alert(ERR_WLAN_WDS_BSSID_IS_EMPTY);
+        return false;
+    } else if ($.mac(bssid, true)) {
+        $.alert(ERR_WLAN_WDS_BSSID_INVALID);
+        return false;
+    }
+    if ($('#wepSec' + band).prop('checked') == true) {
+        var wepKey = $('#wepKeyValue' + band).prop('value');
+        if ($('#keyFormatAscii' + band).prop('checked') == true) {
+            if (wepKey.length != 5 && wepKey.length != 13 && wepKey.length != 16) {
+                $.alert(ERR_WLAN_WDS_ASCII_KEY_OUTRANGE);
+                return false;
+            } else if ($.asc(wepKey, true)) {
+                $.alert(ERR_WLAN_WDS_ASCII_KEY_INVALID);
+                return false;
+            }
+        } else if ($('#keyFormatHex' + band).prop('checked') == true) {
+            if (wepKey.length != 10 && wepKey.length != 26 && wepKey.length != 32) {
+                $.alert(ERR_WLAN_WDS_HEX_KEY_OUTRANGE);
+                return false;
+            } else if (!isHex(wepKey)) {
+                return false;
+            }
+        }
+    } else if ($('#wpaSec' + band).prop('checked') == true) {
+        var wpaKey = $('#passwd' + band).prop('value');
+        if (wpaKey.length > 64 || wpaKey.length < 8) {
+            $.alert(ERR_WLAN_WDS_PSK_OUTRANGE);
+            return false;
+        } else if (wpaKey.length == 64) {
+            if (!isHex(wpaKey)) {
+                return false;
+            }
+        } else {
+            if ($.asc(wpaKey, true)) {
+                $.alert(ERR_WLAN_WDS_ASCII_KEY_INVALID);
+                return false;
+            }
+        }
+    }
+
+    if ($.mainParam != null && $.mainParam.wdsExist == 1 && $.mainParam.channel != eval('wlanObj' + band).channel) {
+        $.alert(ERR_WLAN_WDS_CHANNEL, $.mainParam.channel);
+        return false;
+    }
+
+    return true
+}
+
+function wdsSave(wdsObj, band) {
+    if ($('#wds' + band).prop('data-checked') == true && checkWds(wdsObj, band) == false) {
+        return false;
+    }
+    var wdsEn, authMode, encryptMode, pwd;
+    wdsEn = $('#wds' + band).prop('data-checked') ? 1 : 0;
+    if ($('#noSec' + band).prop('checked') == true) {
+        authMode = 'Open';
+        encryptMode = 'None'
+        pwd = '';
+    } else if ($('#wepSec' + band).prop('checked') == true) {
+        encryptMode = 'WEPEncryption';
+        if ($('#typeOpenSys' + band).prop('checked') == true)
+            authMode = 'Open';
+        else if ($('#typeSharedKey' + band).prop('checked') == true)
+            authMode = 'SharedAuthentication';
+        pwd = $('#wepKeyValue' + band).prop('value');
+    } else if ($('#wpaSec' + band).prop('checked') == true) {
+        if ($('#wpaVersion' + band).prop('checked') == true) {
+            authMode = 'PSKAuthentication';
+        } else if ($('#wpa2Version' + band).prop('checked') == true) {
+            authMode = 'PSK2Authentication';
+        }
+        if ($('#tkipEncryption' + band).prop('checked') == true)
+            encryptMode = 'TKIPEncryption';
+        else if ($('#aesEncryption' + band).prop('checked') == true)
+            encryptMode = 'AESEncryption';
+        pwd = $('#passwd' + band).prop('value');
+    }
+    if (wdsEn == 1) {
+        $.act(ACT_SET, LAN_WLAN_WDSBRIDGE, wdsObj.__stack, null, ["BridgeEnable=" + wdsEn,
+            "BridgeBSSID=" + $('#wdsMac' + band).prop('value'),
+            "BridgeSSID=" + $('#wdsSsid' + band).prop('value'),
+            "BridgeAuthMode=" + authMode,
+            "BridgeEncryptMode=" + encryptMode,
+            "BridgeKey=" + pwd,
+            "BridgeWepKeyIndex=" + $("#wepShareKey" + band).data('value')
+        ]);
+    } else {
+        $.act(ACT_SET, LAN_WLAN_WDSBRIDGE, wdsObj.__stack, null, ["BridgeEnable=" + wdsEn]);
+    }
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+function wpsSave() {
+    var wpsEn;
+
+    if ($('#wlwps').prop('data-checked') == true)
+        wpsEn = 1;
+    else
+        wpsEn = 0;
+
+    $.act(ACT_SET, LAN_WLAN_WPS, wpsObj_2g.__stack, null, ["Enable=" + wpsEn]);
+    $.act(ACT_SET, LAN_WLAN_WPS, wpsObj_5g.__stack, null, ["Enable=" + wpsEn]);
+    $.act(ACT_SET, LAN_WLAN_WPS, wpsObj_5g_2.__stack, null, ["Enable=" + wpsEn]);
+    
+    $.exe(function() {
+        $.removeLoading();
+    });
+}
+function surveyAp(wlanObj, band) {
+    $.act(ACT_OP, ACT_OP_WLAN_SCAN, wlanObj.__stack);
+    var param = {};
+    param.wdsEn = $('#wds' + band).prop('data-checked') ? 1 : 0;
+    param.scrollTop = $('#scroll').scrollTop();
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            if (band == '_2g') {
+                $.loadMain("wlScan_2G.htm", param);
+            } else {
+                if (1 == wlanObj.subBand)
+                    $.loadMain("wlScan_5G.htm", param);
+                else
+                    $.loadMain("wlScan_5G_2.htm", param);
+            }
+        }
+    });
+}
+
+
+$('#wds_2g').on('click.wlAdv', function(e) {
+    if ($('#wds_2g').prop('data-checked')) {
+        $('#wdsInfo_2g').show('fast');
+    } else {
+        $('#wdsInfo_2g').hide('fast');
+    }
+});
+$('#wds_5g').on('click.wlAdv', function(e) {
+    if ($('#wds_5g').prop('data-checked')) {
+        $('#wdsInfo_5g').show('fast');
+    } else {
+        $('#wdsInfo_5g').hide('fast');
+    }
+});
+$('#wds_5g_2').on('click.wlAdv', function(e) {
+    if ($('#wds_5g_2').prop('data-checked')) {
+        $('#wdsInfo_5g_2').show('fast');
+    } else {
+        $('#wdsInfo_5g_2').hide('fast');
+    }
+});
+$('#wlAdvSave_2g').on('click.wlAdv', function(e) {
+    $.addLoading($(this));
+    wlAdvSave(wlanObj_2g, '_2g');
+});
+$('#wlAdvSave_5g').on('click.wlAdv', function(e) {
+    $.addLoading($(this));
+    wlAdvSave(wlanObj_5g, '_5g');
+});
+$('#wlAdvSave_5g_2').on('click.wlAdv', function(e) {
+    $.addLoading($(this));
+    wlAdvSave(wlanObj_5g_2, '_5g_2');
+});
+$('#noSec_2g').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_2g').hide('fast');
+    $('#hideWep_2g').hide('fast');
+});
+$('#noSec_5g').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_5g').hide('fast');
+    $('#hideWep_5g').hide('fast');
+});
+$('#noSec_5g_2').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_5g_2').hide('fast');
+    $('#hideWep_5g_2').hide('fast');
+});
+$('#wpaSec_2g').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_2g').show('fast');
+    $('#hideWep_2g').hide('fast');
+});
+$('#wpaSec_5g').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_5g').show('fast');
+    $('#hideWep_5g').hide('fast');
+});
+$('#wpaSec_5g_2').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_5g_2').show('fast');
+    $('#hideWep_5g_2').hide('fast');
+});
+$('#wepSec_2g').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_2g').hide('fast');
+    $('#hideWep_2g').show('fast');
+});
+$('#wepSec_5g').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_5g').hide('fast');
+    $('#hideWep_5g').show('fast');
+});
+$('#wepSec_5g_2').on('click.wlAdv', function(e) {
+    $('#hideWpaSec_5g_2').hide('fast');
+    $('#hideWep_5g_2').show('fast');
+});
+$('#survey_2g').on('click.wlAdv', function(e) {
+	$.addLoading($(this));
+    surveyAp(wlanObj_2g, '_2g');
+});
+$('#survey_5g').on('click.wlAdv', function(e) {
+    $.addLoading($(this));
+    surveyAp(wlanObj_5g, '_5g');
+});
+$('#survey_5g_2').on('click.wlAdv', function(e) {
+    $.addLoading($(this));
+    surveyAp(wlanObj_5g_2, '_5g_2');
+});
+$('#wdsSave_2g').on('click.wlAdv', function() {
+    $.addLoading($(this));
+    wdsSave(wdsObj_2g, '_2g');
+});
+$('#wdsSave_5g').on('click.wlAdv', function() {
+    $.addLoading($(this));
+    wdsSave(wdsObj_5g, '_5g');
+});
+$('#wdsSave_5g_2').on('click.wlAdv', function() {
+    $.addLoading($(this));
+    wdsSave(wdsObj_5g_2, '_5g_2');
+});
+$('#wpsSave').on('click.wlAdv', function() {
+    $.addLoading($(this));
+    wpsSave();
+});
+
+/* Dos Level */
+$("#ddosSave").click(function() {
+    $.addLoading($(this));
+    doSaveDosProtectionLevelSettings();
+});
+
+function doSaveDosProtectionLevelSettings() {
+    var ddosArg = {};
+
+    ddosArg.icmpLevelLow = $("#icmpLow").children("input").val();
+    ddosArg.icmpLevelMiddle = $("#icmpMiddle").children("input").val();
+    ddosArg.icmpLevelHigh = $("#icmpHigh").children("input").val();
+
+    ddosArg.udpLevelLow = $("#udpLow").children("input").val();
+    ddosArg.udpLevelMiddle = $("#udpMiddle").children("input").val();
+    ddosArg.udpLevelHigh = $("#udpHigh").children("input").val();
+
+    ddosArg.synLevelLow = $("#tcpLow").children("input").val();
+    ddosArg.synLevelMiddle = $("#tcpMiddle").children("input").val();
+    ddosArg.synLevelHigh = $("#tcpHigh").children("input").val();
+
+    $.act(ACT_SET, DDOS_CFG, null, null, ddosArg);
+
+    $.exe(function(ret) {
+        $.removeLoading();
+        if (!ret) {
+            $.reload();
+        }
+    });
+}
+
+/*add by wuzeyu for led*/
+function initLedNM()
+{
+	var startH = 0;
+	var startM = 0;
+	var endH = 0;
+	var endM = 0;
+	var nightModeObj = $.act(ACT_GET, LED_NIGHTMODE, null,  null, null);
+		//["nightModeEnable", "startHour", "startMin", "endHour", "endMin", "ctrlState","ledSwitch"]);
+	if (!$.exe())
+	{
+		startH = nightModeObj.startHour? nightModeObj.startHour:0;
+		startM = nightModeObj.startMin?nightModeObj.startMin:0;
+		endH = nightModeObj.endHour?nightModeObj.endHour:0;
+		endM = nightModeObj.endMin?nightModeObj.endMin:0;
+		//alert("ledSwitch ledCloseByHS "+nightModeObj.ledSwitch +" "+ nightModeObj.ledCloseByHS);
+		$("#enableNightMode").prop('checked', false);
+		
+		if (nightModeObj.ledSwitch == 0 && nightModeObj.ledCloseByHS == 1)
+		{
+			$("#enableNightMode").prop('disabled', true);
+			$("#EnableNote").removeClass("nd");
+		}
+		else if (nightModeObj.nightModeEnable == 1)
+		{
+			$("#enableNightMode").prop('checked', true);
+		}		
+		$('#startHour option[value="' + startH + '"]').prop('selected', 'selected');
+		$('#startMinute option[value="' + startM + '"]').prop('selected', 'selected');
+		$('#endHour option[value="' + endH + '"]').prop('selected', 'selected');
+		$('#endMinute option[value="' + endM + '"]').prop('selected', 'selected');
+	}
+	else
+	{
+		alert("get LED_NIGHTMODE error");
+		return;
+	}
+}
+
+function doSaveLedNM()
+{
+	var nightModeObj ={};
+
+	nightModeObj.ctrlState = 0;
+	nightModeObj.ledSwitch = 0;
+	if ($("#enableNightMode").prop('checked') == true)
+	 	nightModeObj.nightModeEnable = 1;
+	else
+	 	nightModeObj.nightModeEnable = 0;
+	 	
+	nightModeObj.startHour  = parseInt($("#startHour").data('value'), 10);
+    nightModeObj.startMin = parseInt($("#startMinute").data('value'), 10);
+	nightModeObj.endHour  = parseInt($("#endHour").data('value'), 10);
+    nightModeObj.endMin = parseInt($("#endMinute").data('value'), 10);
+
+	if ((nightModeObj.startHour == nightModeObj.endHour) && (nightModeObj.startMin > nightModeObj.endMin))
+	{
+		$.alert(ERR_LED_NIGHT_TIME);
+		return;
+	}
+	//alert("Enable:"+nightModeObj.nightModeEnable+" set time: "+nightModeObj.startHour+" : "+ nightModeObj.startMin+" to " + 
+	//	nightModeObj.endHour+" : "+ nightModeObj.endMin);	
+	$.act(ACT_SET, LED_NIGHTMODE, null, null, nightModeObj);
+
+	$.exe(function() {
+        $.removeLoading();
+    	});
+}
+
+$("#t_saveLed").click(function() {
+	 $.addLoading($(this));
+	 doSaveLedNM();
+});
+/*end add led*/
+function initDDos() {
+
+    hostStack = [];
+
+    var icmpMin = 5;
+    var icmpLow = $("#icmpLow").children("input").val();
+    var icmpMiddle = $("#icmpMiddle").children("input").val();
+    var icmpHigh = $("#icmpHigh").children("input").val();
+    var icmpMax = 3600;
+
+    var udpMin = 5;
+    var udpLow = $("#udpLow").children("input").val();
+    var udpMiddle = $("#udpMiddle").children("input").val();
+    var udpHigh = $("#udpHigh").children("input").val();
+    var udpMax = 3600;
+
+    var tcpMin = 5;
+    var tcpLow = $("#tcpLow").children("input").val();
+    var tcpMiddle = $("#tcpMiddle").children("input").val();
+    var tcpHigh = $("#tcpHigh").children("input").val();
+    var tcpMax = 3600;
+
+    var ddosCfg = $.act(ACT_GET, DDOS_CFG, null, null);
+
+    if (!$.exe()) {
+        icmpLow = ddosCfg.icmpLevelLow;
+        icmpMiddle = ddosCfg.icmpLevelMiddle;
+        icmpHigh = ddosCfg.icmpLevelHigh;
+
+        udpLow = ddosCfg.udpLevelLow;
+        udpMiddle = ddosCfg.udpLevelMiddle;
+        udpHigh = ddosCfg.udpLevelHigh;
+
+        tcpLow = ddosCfg.synLevelLow;
+        tcpMiddle = ddosCfg.synLevelMiddle;
+        tcpHigh = ddosCfg.synLevelHigh;
+
+        $("#icmpLow").children("input").val(icmpLow);
+        $("#icmpMiddle").children("input").val(icmpMiddle);
+        $("#icmpHigh").children("input").val(icmpHigh);
+
+        $("#udpLow").children("input").val(udpLow);
+        $("#udpMiddle").children("input").val(udpMiddle);
+        $("#udpHigh").children("input").val(udpHigh);
+
+        $("#tcpLow").children("input").val(tcpLow);
+        $("#tcpMiddle").children("input").val(tcpMiddle);
+        $("#tcpHigh").children("input").val(tcpHigh);
+    }
+}
+
+</script>
+<html>
+<head>
+    <style type="text/css">
+    td.notice {
+        vertical-align:top;
+        width:230px;
+        margin:0px;
+        text-align: left;
+        padding-top:15px
+    }
+    label.notice_lbl {
+        padding-top:5px;
+    }
+    td.value {
+        text-align: left;
+    }
+    </style>
+</head>
+
+<h3 id="et">Wireless Advanced Settings</h3>
+
+<div class="content-container">
+    <div class="mode-change mode-3">
+        <span class="mode-select">2.4GHz</span>
+        <span>5GHz-1</span>
+        <span>5GHz-2</span>
+    </div>
+    <form class="pure-form pure-form-aligned">
+        <div class="pure-control-group">
+            <b class="xxl" id="t_beacon_2g">Beacon Interval:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="beaconInterval_2g" />
+            <span class="textbox-tips">(25-1000)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_rts_2g">RTS Threshold:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="rts_2g" />
+            <span class="textbox-tips">(1-2346)</span>
+        </div>
+        <div class="pure-control-group nd">
+            <b class="xxl" id="t_frag_2g">Fragmentation Threshold:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="frag_2g" />
+            <span class="textbox-tips">(256-2346)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_dtim_2g">DTIM Interval:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="dtim_2g" />
+            <span class="textbox-tips">(1-255)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_time_2g">Group Key Update Period:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="keyUpdate_2g" />
+            <span class="textbox-tips T_seconds">seconds</span>
+        </div>
+        <div class="part-separate">
+            <b class="xxl" id="t_wmm_2g">WMM Feature:</b>
+            <input type="checkbox" id="wmm_2g" />
+            <label id="t_enwmm_2g">Enable WMM</label>
+        </div>
+        <div>
+            <b class="xxl" id="t_sgi_2g">Short GI Feature:</b>
+            <input type="checkbox" id="gi_2g" />
+            <label id="t_ensgi_2g">Enable Short GI</label>
+        </div>
+        <div>
+            <b class="xxl" id="t_iso_2g">AP Isolation Feature:</b>
+            <input type="checkbox" id="apIso_2g" />
+            <label id="t_eniso_2g">Enable AP Isolation</label>
+        </div>
+        <div id="wifiBtnOffNote_2g" class="part-separate nd">
+            <span style="color: #0094bc">Note:</span><span> Your wireless function is turned off. If you want to use this function, please turn on the Wifi button.</span>
+        </div> 
+        <div class="part-separate">
+        <button type="submit" class="green T_save" id="wlAdvSave_2g">Save</button>
+        </div>
+    </form>
+    <form class="pure-form pure-form-aligned">
+        <div class="pure-control-group">
+            <b class="xxl" id="t_beacon_5g">Beacon Interval:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="beaconInterval_5g" />
+            <span class="textbox-tips">(25-1000)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_rts_5g">RTS Threshold:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="rts_5g" />
+            <span class="textbox-tips">(1-2346)</span>
+        </div>
+        <div class="pure-control-group nd">
+            <b class="xxl" id="t_frag_5g">Fragmentation Threshold:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="frag_5g" />
+            <span class="textbox-tips">(256-2346)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_dtim_5g">DTIM Interval:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="dtim_5g" />
+            <span class="textbox-tips">(1-255)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_time_5g">Group Key Update Period:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="keyUpdate_5g" />
+            <span class="textbox-tips T_seconds">seconds</span>
+        </div>
+        <div class="part-separate">
+            <b class="xxl" id="t_wmm_5g">WMM Feature:</b>
+            <input type="checkbox" id="wmm_5g" />
+            <label id="t_enwmm_5g">Enable WMM</label>
+        </div>
+        <div>
+            <b class="xxl" id="t_sgi_5g">Short GI Feature:</b>
+            <input type="checkbox" id="gi_5g" />
+            <label id="t_ensgi_5g">Enable Short GI</label>
+        </div>
+        <div>
+            <b class="xxl" id="t_iso_5g">AP Isolation Feature:</b>
+            <input type="checkbox" id="apIso_5g" />
+            <label id="t_eniso_5g">Enable AP Isolation</label>
+        </div>
+        <div id="wifiBtnOffNote_5g" class="part-separate nd">
+            <span style="color: #0094bc">Note:</span><span> Your wireless function is turned off. If you want to use this function, please turn on the Wifi button.</span>
+        </div> 
+        <div class="part-separate">
+        <button type="submit" class="green T_save" id="wlAdvSave_5g">Save</button>
+        </div>
+    </form>
+    <form class="pure-form pure-form-aligned">
+        <div class="pure-control-group">
+            <b class="xxl" id="t_beacon_5g_2">Beacon Interval:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="beaconInterval_5g_2" />
+            <span class="textbox-tips">(25-1000)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_rts_5g_2">RTS Threshold:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="rts_5g_2" />
+            <span class="textbox-tips">(1-2346)</span>
+        </div>
+        <div class="pure-control-group nd">
+            <b class="xxl" id="t_frag_5g_2">Fragmentation Threshold:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="frag_5g_2" />
+            <span class="textbox-tips">(256-2346)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_dtim_5g_2">DTIM Interval:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="dtim_5g_2" />
+            <span class="textbox-tips">(1-255)</span>
+        </div>
+        <div class="pure-control-group">
+            <b class="xxl" id="t_time_5g_2">Group Key Update Period:</b>
+            <input type="text" maxlength="4" class="tp-input-text" id="keyUpdate_5g_2" />
+            <span class="textbox-tips T_seconds">seconds</span>
+        </div>
+        <div class="part-separate">
+            <b class="xxl" id="t_wmm_5g_2">WMM Feature:</b>
+            <input type="checkbox" id="wmm_5g_2" />
+            <label id="t_enwmm_5g_2">Enable WMM</label>
+        </div>
+        <div>
+            <b class="xxl" id="t_sgi_5g_2">Short GI Feature:</b>
+            <input type="checkbox" id="gi_5g_2" />
+            <label id="t_ensgi_5g_2">Enable Short GI</label>
+        </div>
+        <div>
+            <b class="xxl" id="t_iso_5g_2">AP Isolation Feature:</b>
+            <input type="checkbox" id="apIso_5g_2" />
+            <label id="t_eniso_5g_2">Enable AP Isolation</label>
+        </div>
+        <div id="wifiBtnOffNote_5g_2" class="part-separate nd">
+            <span style="color: #0094bc">Note:</span><span> Your wireless function is turned off. If you want to use this function, please turn on the Wifi button.</span>
+        </div> 
+        <div class="part-separate">
+        <button type="submit" class="green T_save" id="wlAdvSave_5g_2">Save</button>
+        </div>
+    </form>
+</div>
+<div class="nd">
+<h3>WDS</h3>
+
+<div class="content-container">
+    <div id="wds_mode" class="mode-change mode-3">
+        <span class="mode-select">2.4GHz</span>
+        <span>5GHz-1</span>
+        <span>5GHz-2</span>
+    </div>
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b id="t_wds_2g">WDS Bridging:</b>
+            <input type="checkbox" id="wds_2g" />
+            <label id="t_enwds_2g">Enable WDS Bridging</label>
+        </div>
+        <div id="wdsInfo_2g">
+            <div class="pure-control-group inline">
+                <b class="T_wlname">Name(SSID):</b>
+                <input type="text" maxlength="32" class="tp-input-text" id="wdsSsid_2g" />
+            </div>
+            <button type="submit" class="blue inline T_survey" id="survey_2g">Survey</button>
+            <div class="pure-control-group">
+                <b id="t_mac_2g">MAC Address(to be bridged):</b>
+                <input type="text" maxlength="17" class="tp-input-text" id="wdsMac_2g" />
+            </div>
+            <div>
+                <b class="T_wlsec">Security:</b>
+                <input type="radio" name="security_2g" id="noSec_2g" checked="checked" />
+                <label class="T_wldissec">No Security</label>
+                <input type="radio" name="security_2g" id="wpaSec_2g" />
+                <label class="T_wlsecpersonal">WPA/WPA2 Personal</label>
+                <input type="radio" name="security_2g" id="wepSec_2g" />
+                <label>WEP</label>
+            </div>
+            <div id="hideWpaSec_2g" class="nd">
+                <div>
+                    <b class="T_version">Version:</b>
+                    <input type="radio" name="version_2g" id="wpaVersion_2g" checked="checked" />
+                    <label>WPA-PSK</label>
+                    <input type="radio" name="version_2g" id="wpa2Version_2g" />
+                    <label>WPA2-PSK</label>
+                </div>
+
+                <div>
+                    <b class="T_encryption">Encryption:</b>
+                    <input type="radio" name="encryption_2g" id="tkipEncryption_2g" checked="checked" />
+                    <label>TKIP</label>
+                    <input type="radio" name="encryption_2g" id="aesEncryption_2g" />
+                    <label>AES</label>
+                </div>
+                <div class="pure-control-group">
+                    <label class="label_title"><b class="T_wlpwd">Wireless Password:</b>
+                    </label>
+                    <input type="text" class="tp-input-text" id="passwd_2g" />
+                </div>
+            </div>
+            <div id="hideWep_2g" class="">
+                <div>
+                    <b class="T_type">Type:</b>
+                    <input type="radio" name="wepType_2g" id="typeOpenSys_2g" checked="checked" />
+                    <label class="T_opensys">Open System</label>
+                    <input type="radio" name="wepType_2g" id="typeSharedKey_2g" />
+                    <label class="T_sharekey">Shared Key</label>
+                </div>
+                <div>
+                    <b class="T_weptype">Key Format:</b>
+                    <input type="radio" name="keyFormat_2g" id="keyFormatAscii_2g" checked="checked" />
+                    <label>ASCII</label>
+                    <input type="radio" name="keyFormat_2g" id="keyFormatHex_2g" />
+                    <label class="T_hex">Hexadecimal</label>
+                </div>
+                <b class="T_wepkeyindex">Key Index:</b>
+                <select id="wepShareKey_2g" class="xl">
+                    <option value="1" id="key1_2g">Key 1</option>
+                    <option value="2" id="key2_2g">Key 2</option>
+                    <option value="3" id="key3_2g">key 3</option>
+                    <option value="4" id="key4_2g">Key 4</option>
+                </select>
+                <div>
+                    <b class="T_keyvalue">Key Value:</b>
+                    <input type="text" class="tp-input-text xl" name="wepKeyValue_2g" id="wepKeyValue_2g" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="green T_save" id="wdsSave_2g">Save</button>
+    </form>
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b id="t_wds_5g">WDS Bridging:</b>
+            <input type="checkbox" id="wds_5g" />
+            <label id="t_enwds_5g">Enable WDS Bridging</label>
+        </div>
+        <div id="wdsInfo_5g">
+            <div class="pure-control-group inline">
+                <b class="T_wlname">Name(SSID):</b>
+                <input type="text" maxlength="32" class="tp-input-text" id="wdsSsid_5g" />
+            </div>
+            <button type="submit" class="blue inline T_survey" id="survey_5g">Survey</button>
+            <div class="pure-control-group">
+                <b id="t_mac_5g">MAC Address(to be bridged):</b>
+                <input type="text" maxlength="17" class="tp-input-text" id="wdsMac_5g" />
+            </div>
+            <div>
+                <b class="T_wlsec">Security:</b>
+                <input type="radio" name="security_5g" id="noSec_5g" checked="checked" />
+                <label class="T_wldissec">No Security</label>
+                <input type="radio" name="security_5g" id="wpaSec_5g" />
+                <label class="T_wlsecpersonal">WPA/WPA2 Personal</label>
+                <input type="radio" name="security_5g" id="wepSec_5g" />
+                <label>WEP</label>
+            </div>
+            <div id="hideWpaSec_5g" class="nd">
+                <div>
+                    <b class="T_version">Version:</b>
+                    <input type="radio" name="version_5g" id="wpaVersion_5g" checked="checked" />
+                    <label>WPA-PSK</label>
+                    <input type="radio" name="version_5g" id="wpa2Version_5g" />
+                    <label>WPA2-PSK</label>
+                </div>
+
+                <div>
+                    <b class="T_encryption">Encryption:</b>
+                    <input type="radio" name="encryption_5g" id="tkipEncryption_5g" checked="checked" />
+                    <label>TKIP</label>
+                    <input type="radio" name="encryption_5g" id="aesEncryption_5g" />
+                    <label>AES</label>
+                </div>
+                <div class="pure-control-group">
+                    <label class="label_title"><b class="T_wlpwd">Wireless Password:</b>
+                    </label>
+                    <input type="text" class="tp-input-text" id="passwd_5g" />
+                </div>
+            </div>
+            <div id="hideWep_5g" class="">
+                <div>
+                    <b class="T_type">Type:</b>
+                    <input type="radio" name="wepType_5g" id="typeOpenSys_5g" checked="checked" />
+                    <label class="T_opensys">Open System</label>
+                    <input type="radio" name="wepType_5g" id="typeSharedKey_5g" />
+                    <label class="T_sharekey">Shared Key</label>
+                </div>
+                <div>
+                    <b class="T_weptype">Key Format:</b>
+                    <input type="radio" name="keyFormat_5g" id="keyFormatAscii_5g" checked="checked" />
+                    <label>ASCII</label>
+                    <input type="radio" name="keyFormat_5g" id="keyFormatHex_5g" />
+                    <label class="T_hex">Hexadecimal</label>
+                </div>
+                <b class="T_wepkeyindex">Key Index:</b>
+                <select id="wepShareKey_5g" class="xl">
+                    <option value="1" id="key1_5g">Key 1</option>
+                    <option value="2" id="key2_5g">Key 2</option>
+                    <option value="3" id="key3_5g">key 3</option>
+                    <option value="4" id="key4_5g">Key 4</option>
+                </select>
+                <div>
+                    <b class="T_keyvalue">Key Value:</b>
+                    <input type="text" class="tp-input-text xl" name="wepKeyValue_5g" id="wepKeyValue_5g" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="green T_save" id="wdsSave_5g">Save</button>
+    </form>
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b id="t_wds_5g_2">WDS Bridging:</b>
+            <input type="checkbox" id="wds_5g_2" />
+            <label id="t_enwds_5g_2">Enable WDS Bridging</label>
+        </div>
+        <div id="wdsInfo_5g_2">
+            <div class="pure-control-group inline">
+                <b class="T_wlname">Name(SSID):</b>
+                <input type="text" maxlength="32" class="tp-input-text" id="wdsSsid_5g_2" />
+            </div>
+            <button type="submit" class="blue inline T_survey" id="survey_5g_2">Survey</button>
+            <div class="pure-control-group">
+                <b id="t_mac_5g_2">MAC Address(to be bridged):</b>
+                <input type="text" maxlength="17" class="tp-input-text" id="wdsMac_5g_2" />
+            </div>
+            <div>
+                <b class="T_wlsec">Security:</b>
+                <input type="radio" name="security_5g_2" id="noSec_5g_2" checked="checked" />
+                <label class="T_wldissec">No Security</label>
+                <input type="radio" name="security_5g_2" id="wpaSec_5g_2" />
+                <label class="T_wlsecpersonal">WPA/WPA2 Personal</label>
+                <input type="radio" name="security_5g_2" id="wepSec_5g_2" />
+                <label>WEP</label>
+            </div>
+            <div id="hideWpaSec_5g_2" class="nd">
+                <div>
+                    <b class="T_version">Version:</b>
+                    <input type="radio" name="version_5g_2" id="wpaVersion_5g_2" checked="checked" />
+                    <label>WPA-PSK</label>
+                    <input type="radio" name="version_5g_2" id="wpa2Version_5g_2" />
+                    <label>WPA2-PSK</label>
+                </div>
+
+                <div>
+                    <b class="T_encryption">Encryption:</b>
+                    <input type="radio" name="encryption_5g_2" id="tkipEncryption_5g_2" checked="checked" />
+                    <label>TKIP</label>
+                    <input type="radio" name="encryption_5g_2" id="aesEncryption_5g_2" />
+                    <label>AES</label>
+                </div>
+                <div class="pure-control-group">
+                    <label class="label_title"><b class="T_wlpwd">Wireless Password:</b>
+                    </label>
+                    <input type="text" class="tp-input-text" id="passwd_5g_2" />
+                </div>
+            </div>
+            <div id="hideWep_5g_2" class="">
+                <div>
+                    <b class="T_type">Type:</b>
+                    <input type="radio" name="wepType_5g_2" id="typeOpenSys_5g_2" checked="checked" />
+                    <label class="T_opensys">Open System</label>
+                    <input type="radio" name="wepType_5g_2" id="typeSharedKey_5g_2" />
+                    <label class="T_sharekey">Shared Key</label>
+                </div>
+                <div>
+                    <b class="T_weptype">Key Format:</b>
+                    <input type="radio" name="keyFormat_5g_2" id="keyFormatAscii_5g_2" checked="checked" />
+                    <label>ASCII</label>
+                    <input type="radio" name="keyFormat_5g_2" id="keyFormatHex_5g_2" />
+                    <label class="T_hex">Hexadecimal</label>
+                </div>
+                <b class="T_wepkeyindex">Key Index:</b>
+                <select id="wepShareKey_5g_2" class="xl">
+                    <option value="1" id="key1_5g_2">Key 1</option>
+                    <option value="2" id="key2_5g_2">Key 2</option>
+                    <option value="3" id="key3_5g_2">key 3</option>
+                    <option value="4" id="key4_5g_2">Key 4</option>
+                </select>
+                <div>
+                    <b class="T_keyvalue">Key Value:</b>
+                    <input type="text" class="tp-input-text xl" name="wepKeyValue_5g_2" id="wepKeyValue_5g_2" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="green T_save" id="wdsSave_5g_2">Save</button>
+    </form>
+</div>
+</div>
+<h3>WPS</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div>
+            <b id="t_wps">WPS:</b>
+            <input type="checkbox" id="wlwps" />
+            <label id="t_enwps">Enable WPS</label>
+        </div>
+        <button type="submit" class="green T_save" id="wpsSave">Save</button>
+    </form>
+</div>
+<!--  add by wuzeyu for led -->
+<h3 id="et_led">Led</h3>
+<div class="content-container">
+    <form class="pure-form pure-form-aligned">
+        <div id="LedNightModeEnable">
+            <b class="T_nightMode" style="width:170px">Night Mode:</b>
+            <input type="checkbox" id="enableNightMode" />
+            <label class="T_enable">Enable</label>
+        </div>
+         <div id="EnableNote" class="nd">
+            <p class="T_enableLedNMTip">(Notes: To enable the led night mode, please turn on the led swith first)</p>
+        </div>
+        <div id="PeriodOfNight" style="margin-top: 15px;">
+        	<b class="T_nightTime" style="width:170px">Period of Night Time:</b>
+        	<select id="startHour" class="xs inline">
+	            <option value="0" id="t_hour0">00</option>
+	            <option value="1" id="t_hour1">01</option>
+	            <option value="2" id="t_hour2">02</option>
+	            <option value="3" id="t_hour3">03</option>
+	            <option value="4" id="t_hour4">04</option>
+	            <option value="5" id="t_hour5">05</option>
+	            <option value="6" id="t_hour6">06</option>
+	            <option value="7" id="t_hour7">07</option>
+	            <option value="8" id="t_hour8">08</option>
+	            <option value="9" id="t_hour9">09</option>
+	            <option value="10" id="t_hour10">10</option>
+	            <option value="11" id="t_hour11">11</option>
+	            <option value="12" id="t_hour12">12</option>
+	            <option value="13" id="t_hour13">13</option>
+	            <option value="14" id="t_hour14">14</option>
+	            <option value="15" id="t_hour15">15</option>
+	            <option value="16" id="t_hour16">16</option>
+	            <option value="17" id="t_hour17">17</option>
+	            <option value="18" id="t_hour18">18</option>
+	            <option value="19" id="t_hour19">19</option>
+	            <option value="20" id="t_hour20">20</option>
+	            <option value="21" id="t_hour21">21</option>
+	            <option value="22" id="t_hour22">22</option>
+	            <option value="23" id="t_hour23">23</option>
+        	</select>
+       	 	<b class="time-separater">:</b>
+        	<select id="startMinute" class="xs inline">
+	            <option value="0" id="t_min0">00</option>
+	            <option value="1" id="t_min1">01</option>
+	            <option value="2" id="t_min2">02</option>
+	            <option value="3" id="t_min3">03</option>
+	            <option value="4" id="t_min4">04</option>
+	            <option value="5" id="t_min5">05</option>
+	            <option value="6" id="t_min6">06</option>
+	            <option value="7" id="t_min7">07</option>
+	            <option value="8" id="t_min8">08</option>
+	            <option value="9" id="t_min9">09</option>
+	            <option value="10" id="t_min10">10</option>
+	            <option value="11" id="t_min11">11</option>
+	            <option value="12" id="t_min12">12</option>
+	            <option value="13" id="t_min13">13</option>
+	            <option value="14" id="t_min14">14</option>
+	            <option value="15" id="t_min15">15</option>
+	            <option value="16" id="t_min16">16</option>
+	            <option value="17" id="t_min17">17</option>
+	            <option value="18" id="t_min18">18</option>
+	            <option value="19" id="t_min19">19</option>
+	            <option value="20" id="t_min20">20</option>
+	            <option value="21" id="t_min21">21</option>
+	            <option value="22" id="t_min22">22</option>
+	            <option value="23" id="t_min23">23</option>
+	            <option value="24" id="t_min24">24</option>
+	            <option value="25" id="t_min25">25</option>
+	            <option value="26" id="t_min26">26</option>
+	            <option value="27" id="t_min27">27</option>
+	            <option value="28" id="t_min28">28</option>
+	            <option value="29" id="t_min29">29</option>
+	            <option value="30" id="t_min30">30</option>
+	            <option value="31" id="t_min31">31</option>
+	            <option value="32" id="t_min32">32</option>
+	            <option value="33" id="t_min33">33</option>
+	            <option value="34" id="t_min34">34</option>
+	            <option value="35" id="t_min35">35</option>
+	            <option value="36" id="t_min36">36</option>
+	            <option value="37" id="t_min37">37</option>
+	            <option value="38" id="t_min38">38</option>
+	            <option value="39" id="t_min39">39</option>
+	            <option value="40" id="t_min40">40</option>
+	            <option value="41" id="t_min41">41</option>
+	            <option value="42" id="t_min42">42</option>
+	            <option value="43" id="t_min43">43</option>
+	            <option value="44" id="t_min44">44</option>
+	            <option value="45" id="t_min45">45</option>
+	            <option value="46" id="t_min46">46</option>
+	            <option value="47" id="t_min47">47</option>
+	            <option value="48" id="t_min48">48</option>
+	            <option value="49" id="t_min49">49</option>
+	            <option value="50" id="t_min50">50</option>
+	            <option value="51" id="t_min51">51</option>
+	            <option value="52" id="t_min52">52</option>
+	            <option value="53" id="t_min53">53</option>
+	            <option value="54" id="t_min54">54</option>
+	            <option value="55" id="t_min55">55</option>
+	            <option value="56" id="t_min56">56</option>
+	            <option value="57" id="t_min57">57</option>
+	            <option value="58" id="t_min58">58</option>
+	            <option value="59" id="t_min59">59</option>
+       		</select>
+	   		<b class="to-separater">to</b>
+	    	<select id="endHour" class="xs inline">
+	            <option value="0" id="t_hour0">00</option>
+	            <option value="1" id="t_hour1">01</option>
+	            <option value="2" id="t_hour2">02</option>
+	            <option value="3" id="t_hour3">03</option>
+	            <option value="4" id="t_hour4">04</option>
+	            <option value="5" id="t_hour5">05</option>
+	            <option value="6" id="t_hour6">06</option>
+	            <option value="7" id="t_hour7">07</option>
+	            <option value="8" id="t_hour8">08</option>
+	            <option value="9" id="t_hour9">09</option>
+	            <option value="10" id="t_hour10">10</option>
+	            <option value="11" id="t_hour11">11</option>
+	            <option value="12" id="t_hour12">12</option>
+	            <option value="13" id="t_hour13">13</option>
+	            <option value="14" id="t_hour14">14</option>
+	            <option value="15" id="t_hour15">15</option>
+	            <option value="16" id="t_hour16">16</option>
+	            <option value="17" id="t_hour17">17</option>
+	            <option value="18" id="t_hour18">18</option>
+	            <option value="19" id="t_hour19">19</option>
+	            <option value="20" id="t_hour20">20</option>
+	            <option value="21" id="t_hour21">21</option>
+	            <option value="22" id="t_hour22">22</option>
+	            <option value="23" id="t_hour23">23</option>
+        	</select>
+        	<b class="time-separater">:</b>
+        	<select id="endMinute" class="xs inline">
+	            <option value="0" id="t_min0">00</option>
+	            <option value="1" id="t_min1">01</option>
+	            <option value="2" id="t_min2">02</option>
+	            <option value="3" id="t_min3">03</option>
+	            <option value="4" id="t_min4">04</option>
+	            <option value="5" id="t_min5">05</option>
+	            <option value="6" id="t_min6">06</option>
+	            <option value="7" id="t_min7">07</option>
+	            <option value="8" id="t_min8">08</option>
+	            <option value="9" id="t_min9">09</option>
+	            <option value="10" id="t_min10">10</option>
+	            <option value="11" id="t_min11">11</option>
+	            <option value="12" id="t_min12">12</option>
+	            <option value="13" id="t_min13">13</option>
+	            <option value="14" id="t_min14">14</option>
+	            <option value="15" id="t_min15">15</option>
+	            <option value="16" id="t_min16">16</option>
+	            <option value="17" id="t_min17">17</option>
+	            <option value="18" id="t_min18">18</option>
+	            <option value="19" id="t_min19">19</option>
+	            <option value="20" id="t_min20">20</option>
+	            <option value="21" id="t_min21">21</option>
+	            <option value="22" id="t_min22">22</option>
+	            <option value="23" id="t_min23">23</option>
+	            <option value="24" id="t_min24">24</option>
+	            <option value="25" id="t_min25">25</option>
+	            <option value="26" id="t_min26">26</option>
+	            <option value="27" id="t_min27">27</option>
+	            <option value="28" id="t_min28">28</option>
+	            <option value="29" id="t_min29">29</option>
+	            <option value="30" id="t_min30">30</option>
+	            <option value="31" id="t_min31">31</option>
+	            <option value="32" id="t_min32">32</option>
+	            <option value="33" id="t_min33">33</option>
+	            <option value="34" id="t_min34">34</option>
+	            <option value="35" id="t_min35">35</option>
+	            <option value="36" id="t_min36">36</option>
+	            <option value="37" id="t_min37">37</option>
+	            <option value="38" id="t_min38">38</option>
+	            <option value="39" id="t_min39">39</option>
+	            <option value="40" id="t_min40">40</option>
+	            <option value="41" id="t_min41">41</option>
+	            <option value="42" id="t_min42">42</option>
+	            <option value="43" id="t_min43">43</option>
+	            <option value="44" id="t_min44">44</option>
+	            <option value="45" id="t_min45">45</option>
+	            <option value="46" id="t_min46">46</option>
+	            <option value="47" id="t_min47">47</option>
+	            <option value="48" id="t_min48">48</option>
+	            <option value="49" id="t_min49">49</option>
+	            <option value="50" id="t_min50">50</option>
+	            <option value="51" id="t_min51">51</option>
+	            <option value="52" id="t_min52">52</option>
+	            <option value="53" id="t_min53">53</option>
+	            <option value="54" id="t_min54">54</option>
+	            <option value="55" id="t_min55">55</option>
+	            <option value="56" id="t_min56">56</option>
+	            <option value="57" id="t_min57">57</option>
+	            <option value="58" id="t_min58">58</option>
+	            <option value="59" id="t_min59">59</option>
+        	</select>
+        	<label style="margin-left: 20px;">(HH:MM)</label>  <!-- class="note-separater" -->
+        	<p class="T_nightTimeTip" style="margin-top: 10px;">Notes: The time is based on the time of the Router which can be set in "System Tools -> Time Settings"</p>
+        	<button type="submit" class="green T_save" id="t_saveLed" style="margin-top: 20px;">Save</button>
+        </div>
+    </form>
+</div>
+<!--  end add led-->
+
+<h3 id="et_ddos">Dos Protection Level Settings</h3>
+        <form class="pure-form pure-form-aligned">
+            <table id="tblDos">
+                <tbody>
+                    <tr>
+                        <td class="notice">
+                            <label id="t_icmplevel" class="notice_lbl">ICMP-FLOOD Protection Level:</label>
+                        </td>
+                        <td class="value">
+
+                            <div id="icmpLow" class="inline">
+                                <b class="T_c_lowth">Low Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                            <div id="icmpMiddle" class="inline">
+                                <b class="T_c_midth">Middle Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                            <div id="icmpHigh" class="inline">
+                                <b class="T_c_higth">High Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="notice">
+                            <label id="t_udplevel" class="notice_lbl">UDP-FLOOD Protection Level:</label>
+                        </td>
+                        <td class="value">
+
+                            <div id="udpLow" class="inline">
+                                <b class="T_c_lowth">Low Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                            <div id="udpMiddle" class="inline">
+                                <b class="T_c_midth">Middle Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                            <div id="udpHigh" class="inline">
+                                <b class="T_c_higth">High Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="notice">
+                            <label id="t_tcplevel" class="notice_lbl">TCP-SYN-FLOOD Protection Level:</label>
+                        </td>
+                        <td class="value">
+
+                            <div id="tcpLow" class="inline">
+                                <b class="T_c_lowth">Low Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                            <div id="tcpMiddle" class="inline">
+                                <b class="T_c_midth">Middle Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                            <div id="tcpHigh" class="inline">
+                                <b class="T_c_higth">High Thresholds:</b> 
+                                <input type="text" class="s" value="" maxlength="4" required />
+                            </div>
+                            <div class="inline">
+                                <p class="T_c_unit">(5~3600) Packets/Secs</p>
+                            </div>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="green T_save" id="ddosSave">Save</button>
+        </form>
+
+</html>
+<script type="text/javascript">
+$.tpInit(init);
+</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

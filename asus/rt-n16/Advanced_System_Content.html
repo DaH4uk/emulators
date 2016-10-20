@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <html xmlns:v>
@@ -328,3 +329,335 @@ function corrected_timezone(){
 <div id="footer"></div>
 </body>
 </html>
+=======
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:v>
+<head>
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<link rel="shortcut icon" href="https://www.asus.com/media/img/favicon.ico">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Expires" CONTENT="-1">
+<title>ASUS Wireless Router RT-N16 - System</title>
+<link rel="stylesheet" type="text/css" href="index_style.css"> 
+<link rel="stylesheet" type="text/css" href="form_style.css">
+
+<script type="text/javascript" src="state.js"></script>
+<script type="text/javascript" src="general.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="detect.js"></script>
+<script>
+wan_route_x = 'IP_Routed';
+wan_nat_x = '0';
+wan_proto = 'dhcp';
+
+function is_logined() { return 1; }
+function login_ip_dec() { return '33663168'; }
+function login_ip_str() { return '192.168.1.2'; }
+function login_ip_str_now() { return '192.168.1.2'; }
+function login_mac_str() { return '00:1A:92:47:00:02'; }
+
+var wireless = [];	// [[MAC, associated, authorized], ...]
+
+function initial(){
+	show_banner(1);
+	show_menu(5,6,2);
+	show_footer();
+	
+	enable_auto_hint(11, 3);
+
+	load_body();
+	corrected_timezone();
+}
+
+function applyRule(){
+	if(validForm()){
+		showLoading();  location.href = "as.html";
+		
+		if(document.form.http_passwd2.value.length > 0)
+			document.form.http_passwd.value = document.form.http_passwd2.value;
+		document.form.action_mode.value = " Apply ";
+		document.form.next_page.value = "";
+		
+		document.form.submit();
+	}
+}
+
+function validForm(){
+	if(!validate_string(document.form.http_passwd2) || !validate_string(document.form.v_password2))
+		return false;
+	
+	if(document.form.http_passwd2.value != document.form.v_password2.value){
+		showtext($("alert_msg"),"*Passwords should match!.");
+		
+		document.form.http_passwd2.focus();
+		document.form.http_passwd2.select();
+		
+		return false;
+	}
+	
+	if(!validate_ipaddr(document.form.log_ipaddr, 'log_ipaddr')
+			|| !validate_string(document.form.ntp_server0)
+			)
+		return false;
+	
+	if(document.form.http_passwd2.value.length > 0)
+		alert("The new password takes effect after rebooting or the next time you log into the system.");
+	
+	return true;
+}
+
+function done_validating(action){
+	refreshpage();
+}
+
+function corrected_timezone(){
+	var today = new Date();
+	var StrIndex;	
+	
+	if(today.toString().lastIndexOf("-") > 0)
+		StrIndex = today.toString().lastIndexOf("-");
+	else if(today.toString().lastIndexOf("+") > 0)
+		StrIndex = today.toString().lastIndexOf("+");
+	
+	if(StrIndex > 0){		
+		if(timezone != today.toString().substring(StrIndex, StrIndex+5)){
+			$("timezone_hint").style.display = "block";
+			$("timezone_hint").innerHTML = "Remind: The System time zone is different from your locale setting.";
+		}
+		else
+			return;			
+	}
+	else
+		return;	
+}
+</script>
+</head>
+
+<body onload="initial();" onunLoad="disable_auto_hint(11, 3);return unload_body();">
+<div id="TopBanner"></div>
+
+<div id="Loading" class="popup_bg"></div>
+
+<iframe name="hidden_frame" id="hidden_frame" src="" width="0" height="0" frameborder="0"></iframe>
+<form method="post" name="form" id="ruleForm" action="/start_apply.htm" target="hidden_frame">
+<input type="hidden" name="productid" value="RT-N16">
+
+<input type="hidden" name="current_page" value="Advanced_System_Content.html">
+<input type="hidden" name="next_page" value="">
+<input type="hidden" name="next_host" value="">
+<input type="hidden" name="sid_list" value="LANHostConfig;General;">
+<input type="hidden" name="group_id" value="">
+<input type="hidden" name="modified" value="0">
+<input type="hidden" name="action_mode" value="">
+<input type="hidden" name="first_time" value="">
+<input type="hidden" name="action_script" value="">
+<input type="hidden" name="preferred_lang" id="preferred_lang" value="EN">
+<input type="hidden" name="ssid_acsii" value="ASUS">
+<input type="hidden" name="firmver" value="9.9.3.7">
+
+<input type="hidden" name="http_passwd" value="admin">
+
+<table class="content" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td width="23">&nbsp;</td>
+	
+	<!--=====Beginning of Main Menu=====-->
+	<td valign="top" width="202">
+	  <div id="mainMenu"></div>
+	  <div id="subMenu"></div>
+	</td>
+		
+    <td valign="top">
+	<div id="tabMenu" class="submenuBlock"></div><br />
+		<!--===================================Beginning of Main Content===========================================-->
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td valign="top" >
+<table width="98%" border="0" align="center" cellpadding="5" cellspacing="0" class="FormTitle" table>
+	<thead>
+	<tr>
+		<td>Administration - System</td>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td bgcolor="#FFFFFF"></td>
+	</tr>
+	</tbody>	
+	<tr>
+	  <td bgcolor="#FFFFFF">
+	  <table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+	  	<thead>
+	  	<tr>
+          <td colspan="2">Change System's Password</td>
+        </tr>
+    	</thead>
+        <tr>
+          <th width="40%">New Password:</th>
+          <td>
+            <input type="password" name="http_passwd2" onKeyPress="return is_string(this);" class="input" size="16" maxlength="16" />
+          </td>
+        </tr>
+        <tr>
+          <th valign="top">Retype New Password:</th>
+          <td>
+            <input type="password" name="v_password2" onKeyPress="return is_string(this);" class="input" size="16" maxlength="16" /><br/><span id="alert_msg"></span>
+          </td>
+        </tr>
+      </table>
+	</td>
+  </tr>
+  <tr>
+	  <td bgcolor="#FFFFFF">
+      <table width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3"  class="FormTable">
+      	<thead>
+	  	<tr>
+          <td colspan="2">Miscellaneous</td>
+        </tr>
+    	</thead>
+        <tr>
+          <th width="40%"><a class="hintstyle"  href="javascript:void(0);" onClick="openHint(11,1)">Remote Log Server:</a></th>
+          <td><input type="text" maxlength="15" class="input" size="15" name="log_ipaddr" value="" onKeyPress="return is_ipaddr(this)" onKeyUp="change_ipaddr(this)"></td>
+        </tr>
+        <tr>
+          <th><a class="hintstyle"  href="javascript:void(0);" onClick="openHint(11,2)">Time Zone:</a></th>
+          <td>
+            <select name="time_zone" class="input" onchange="return change_common(this, 'LANHostConfig', 'time_zone')">						
+							<option value="UCT12" 			>(GMT-12:00) Eniwetok, Kwajalein</option>
+							<option value="UCT11" 			>(GMT-11:00) Midway Island, Samoa</option>
+							<option value="UCT10" 			>(GMT-10:00) Hawaii</option>
+							<option value="NAST9NADT" 		>(GMT-09:00) Alaska</option>
+							<option value="PST8PDT" 		>(GMT-08:00) Pacific Time (US, Canada)</option>
+							<option value="MST7MDT" 		>(GMT-07:00) Mountain Time (US, Canada)</option>
+							<option value="MST7" 			>(GMT-07:00) Arizona</option>
+							<option value="MST7_1" 		>(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+							<option value="CST6CDT_1" 		>(GMT-06:00) Central Time (US, Canada)</option>
+							<option value="CST6CDT_2" 		>(GMT-06:00) Saskatchewan</option>
+							<option value="CST6CDT_3" 		>(GMT-06:00) Guadalajara, Mexico City</option>
+							<option value="CST6CDT_3_1" 	>(GMT-06:00) Monterrey</option>
+							<option value="UCT6" 			>(GMT-06:00) Central America</option>
+							<option value="EST5EDT" 		>(GMT-05:00) Eastern Time (US, Canada)</option>
+							<option value="UCT5_1" 			>(GMT-05:00) Indiana (East)</option>
+							<option value="UCT5_2" 			>(GMT-05:00) Bogota, Lima, Quito</option>
+							<option value="AST4ADT" 		>(GMT-04:00) Atlantic Time (Canada)</option>
+							<option value="UCT4_1" 			>(GMT-04:00) Caracas, La Paz</option>
+							<option value="UCT4_2" 			>(GMT-04:00) Santiago</option>
+							<option value="NST3.30" 		>(GMT-03:30) Newfoundland</option>
+							<option value="EBST3EBDT_1" 	>(GMT-03:00) Brasilia</option>
+							<option value="UCT3" 			>(GMT-03:00) Buenos Aires, Georgetown</option>
+							<option value="EBST3EBDT_2" 	>(GMT-03:00) Greenland</option>
+							<option value="NORO2" 			>(GMT-02:00) Mid-Atlantic</option>
+							<option value="EUT1EUTDST" 		>(GMT-01:00) Azores</option>
+							<option value="UCT1" 			>(GMT-01:00) Cape Verde Is.</option>
+							<option value="GMT0BST_1" 		>(GMT) Greenwich Mean Time</option>
+							<option value="GMT0BST_2" 		>(GMT) Casablanca, Monrovia</option>
+							<option value="UCT-1_1" 		>(GMT+01:00) Belgrade, Bratislava, Budapest</option>
+							<option value="UCT-1_1_1" 		>(GMT+01:00) Ljubljana, Prague</option>
+							<option value="UCT-1_2" 		>(GMT+01:00) Sarajevo, Skopje, Sofija</option>
+							<option value="UCT-1_2_1" 		>(GMT+01:00) Vilnius, Warsaw, Zagreb</option>
+							<option value="MET-1METDST" 	>(GMT+01:00) Brussels, Copenhagen</option>
+							<option value="MET-1METDST_1" 	>(GMT+01:00) Madrid, Paris</option>
+							<option value="MEZ-1MESZ" 		>(GMT+01:00) Amsterdam, Berlin, Bern</option>
+							<option value="MEZ-1MESZ_1" 	>(GMT+01:00) Rome, Stockholm, Vienna</option>
+							<option value="UCT-1_3" 		>(GMT+01:00) West Central Africa</option>
+							<option value="UCT-2" 		>(GMT+02:00) Bucharest</option>
+							<option value="EST-2EDT" 		>(GMT+02:00) Cairo</option>
+							<option value="UCT-2_1" 		>(GMT+02:00) Helsinki, Riga, Tallinn</option>
+							<option value="UCT-2_2" 		>(GMT+02:00) Athens, Istanbul, Minsk</option>
+							<option value="IST-2IDT" 		>(GMT+02:00) Jerusalem</option>
+							<option value="SAST-2" 			>(GMT+02:00) Harare, Pretoria</option>
+							<option value="EET-2EETDST" 		>(GMT+02:00) Ukraine</option>
+							<option value="MST-3MDT" 		>(GMT+03:00) Moscow, St. Petersburg</option>
+							<option value="MST-3MDT_1" 		>(GMT+03:00) Volgograd</option>
+							<option value="UCT-3_1" 		>(GMT+03:00) Kuwait, Riyadh</option>
+							<option value="UCT-3_2" 		>(GMT+03:00) Nairobi</option>
+							<option value="IST-3IDT" 		>(GMT+03:00) Baghdad</option>
+							<option value="UCT-3.30" 		>(GMT+03:30) Tehran</option>
+							<option value="UCT-4_1" 		>(GMT+04:00) Abu Dhabi, Muscat</option>
+							<option value="UCT-4_2" 		>(GMT+04:00) Baku, Tbilisi, Yerevan</option>
+							<option value="UCT-4.30" 		>(GMT+04:30) Kabul</option>
+							<option value="RFT-5RFTDST" 	>(GMT+05:00) Ekaterinburg</option>
+							<option value="UCT-5" 			>(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+							<option value="UCT-5.30" 		>(GMT+05:30) Calcutta, Chennai</option>
+							<option value="UCT-5.30_1" 		>(GMT+05:30) Mumbai, New Delhi</option>
+							<option value="UCT-5.30_2" 		>(GMT+05:30) Sri Jayawardenepura</option>
+							<option value="UCT-5.45" 		>(GMT+05:45) Kathmandu</option>
+							<option value="UCT-6" 			>(GMT+06:00) Astana, Dhaka</option>
+							<option value="RFT-6RFTDST" 	>(GMT+06:00) Almaty, Novosibirsk</option>
+							<option value="UCT-6.30" 		>(GMT+06:30) Rangoon</option>
+							<option value="UCT-7" 			>(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+							<option value="RFT-7RFTDST" 	>(GMT+07:00) Krasnoyarsk</option>
+							<option value="CST-8" 			>(GMT+08:00) Beijing, Hong Kong</option>
+							<option value="CST-8_1" 		>(GMT+08:00) Chongqing, Urumqi</option>
+							<option value="SST-8" 			>(GMT+08:00) Kuala Lumpur, Singapore</option>
+							<option value="CCT-8" 			>(GMT+08:00) Taipei</option>
+							<option value="WAS-8WAD" 		>(GMT+08:00) Perth</option>
+							<option value="UCT-8" 			>(GMT+08:00) Irkutsk, Ulaan Bataar</option>
+							<option value="UCT-9_1" 		>(GMT+09:00) Seoul</option>
+							<option value="JST" 			>(GMT+09:00) Osaka, Sapporo, Tokyo</option>
+							<option value="UCT-9_2" 		>(GMT+09:00) Yakutsk</option>
+							<option value="CST-9.30CDT" 	>(GMT+09:30) Darwin</option>
+							<option value="UCT-9.30" 		>(GMT+09:30) Adelaide</option>
+							<option value="UCT-10_1" 		>(GMT+10:00) Canberra, Melbourne, Sydney</option>
+							<option value="UCT-10_2" 		>(GMT+10:00) Brisbane</option>
+							<option value="TST-10TDT" 		>(GMT+10:00) Hobart</option>
+							<option value="RFT-10RFTDST" 	>(GMT+10:00) Vladivostok</option>
+							<option value="UCT-10_5" 		>(GMT+10:00) Guam, Port Moresby</option>
+							<option value="UCT-11" 			>(GMT+11:00) Magadan, Solomon Is.</option>
+							<option value="UCT-11_1" 		>(GMT+11:00) New Caledonia</option>
+							<option value="UCT-12" 			>(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+							<option value="NZST-12NZDT" 	>(GMT+12:00) Auckland, Wellington</option>
+							<option value="UCT-13" 			>(GMT+13:00) Nuku'alofa</option>
+            </select>
+            <span id="timezone_hint" style="display:none;"></span>
+            </td>
+        </tr>
+        <tr>
+          <th><a class="hintstyle"  href="javascript:void(0);" onClick="openHint(11,3)">NTP Server:</a></th>
+          <td><input type="text" maxlength="256" class="input" size="32" name="ntp_server0" value="time.nist.gov" onKeyPress="return is_string(this);">
+          <a href="javascript:openLink('x_NTPServer1')" class="content_input_link" name="x_NTPServer1_link">
+		  NTP Link</td>
+        </tr>
+          <tr>
+            <td colspan="2" align="right"><input name="button" type="button" class="button" onclick="applyRule();" value="Apply"/></td>
+          </tr>		
+      </table></td></tr>
+</table></td>
+</form>
+
+          <td id="help_td" style="width:15px;" valign="top">
+<form name="hint_form"></form>
+            <div id="helpicon" onClick="openHint(0,0);" title="Click to open Help."><img src="images/help.gif" /></div>
+            <div id="hintofPM" style="display:none;">
+              <table width="100%" cellpadding="0" cellspacing="1" class="Help" bgcolor="#999999">
+			  	<thead>
+                <tr>
+                  <td><div id="helpname" class="AiHintTitle"></div><a href="javascript:void(0);" onclick="closeHint()" ><img src="images/button-close.gif" class="closebutton" /></a></td>
+                </tr>
+				</thead>
+                <tr>				
+                  <td valign="top" >
+  				    <div class="hint_body2" id="hint_body"></div>
+  				    <iframe id="statusframe" name="statusframe" class="statusframe" src="" frameborder="0"></iframe>
+				</td>
+                </tr>
+              </table>
+          </div>
+		  </td>
+        </tr>
+      </table>				
+		<!--===================================Ending of Main Content===========================================-->		
+	</td>
+		
+    <td width="10" align="center" valign="top">&nbsp;</td>
+	</tr>
+</table>
+
+<div id="footer"></div>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+
+ <script src="files/jquip.js" type="text/javascript"></script>
+
+ <title>Дополнительные настройки Wi-Fi</title>
+
+ <script language="JavaScript">
+  var skipItem = '0';
+ </script>
+
+ <script>
+  var band;
+
+
+
+
+  var superprivilege = 0;
+  var superprivilege = 1;
+
+
+  function validateNum(str) {
+   for (var i = 0; i < str.length; i++) {
+    if (!(str.charAt(i) >= '0' && str.charAt(i) <= '9')) {
+     alert("Неверное значение. Должно состоять из цифр (0-9).");
+     return false;
+    }
+   }
+   return true;
+  }
+
+  function saveChanges() {
+   if (validateNum(document.advanceSetup.fragThreshold.value) == 0) {
+    document.advanceSetup.fragThreshold.focus();
+    return false;
+   }
+   num = parseInt(document.advanceSetup.fragThreshold.value);
+
+   if (document.advanceSetup.fragThreshold.value == "" || num < 1500 || num > 2346) {
+
+
+
+    alert('Неверное значение Порог Фрагментации. Значение может лежать в пределах 256-2346.');
+    document.advanceSetup.fragThreshold.focus();
+    return false;
+   }
+
+   if (validateNum(document.advanceSetup.rtsThreshold.value) == 0) {
+    document.advanceSetup.rtsThreshold.focus();
+    return false;
+   }
+   num = parseInt(document.advanceSetup.rtsThreshold.value);
+
+   if (document.advanceSetup.rtsThreshold.value == "" || num < 256 || num > 2346) {
+
+
+
+    alert('Неверное значение Порог  RTS. Вводимое значение может лежать в пределах 0-2347.');
+    document.advanceSetup.rtsThreshold.focus();
+    return false;
+   }
+
+   if (validateNum(document.advanceSetup.beaconInterval.value) == 0) {
+    document.advanceSetup.beaconInterval.focus();
+    return false;
+   }
+   num = parseInt(document.advanceSetup.beaconInterval.value);
+
+   if (document.advanceSetup.beaconInterval.value == "" || num < 20 || num > 1000) {
+
+
+
+    alert('Неверное значение интервала Идентификатора сети. Вводимое значение может лежать в пределах 20-1024.');
+    document.advanceSetup.beaconInterval.focus();
+    return false;
+
+   }
+   num = parseInt(document.advanceSetup.dtimInterval.value);
+   if (document.advanceSetup.dtimInterval.value == "" || num < 1 || num > 255) {
+    alert('Неверное значение DTIM. Вводимое значение может лежать в пределах 1-255.');
+    document.advanceSetup.dtimInterval.focus();
+    return false;
+
+   }
+
+   if (document.advanceSetup.checkWPS2.value == 1) {
+    if (document.advanceSetup.hiddenSSID[1].checked == 1) {
+     if (confirm("Если 'Вещание SSID' отключено, WPS должно быть отключено.\nВы уверены?") == 0) {
+      return false;
+     }
+    }
+   }
+
+   return true;
+  }
+
+  function disableRadioGroup(radioArrOrButton) {
+   if (radioArrOrButton.type && radioArrOrButton.type == "radio") {
+    var radioButton = radioArrOrButton;
+    var radioArray = radioButton.form[radioButton.name];
+   }
+   else
+    var radioArray = radioArrOrButton;
+   radioArray.disabled = true;
+   for (var b = 0; b < radioArray.length; b++) {
+    if (radioArray[b].checked) {
+     radioArray.checkedElement = radioArray[b];
+     break;
+    }
+   }
+   for (var b = 0; b < radioArray.length; b++) {
+    radioArray[b].disabled = true;
+    radioArray[b].checkedElement = radioArray.checkedElement;
+   }
+  }
+
+  function enableRadioGroup(radioArrOrButton) {
+   if (radioArrOrButton.type && radioArrOrButton.type == "radio") {
+    var radioButton = radioArrOrButton;
+    var radioArray = radioButton.form[radioButton.name];
+   }
+   else
+    var radioArray = radioArrOrButton;
+
+   radioArray.disabled = false;
+   radioArray.checkedElement = null;
+   for (var b = 0; b < radioArray.length; b++) {
+    radioArray[b].disabled = false;
+    radioArray[b].checkedElement = null;
+   }
+  }
+
+  function updateState() {
+   if (document.advanceSetup.wlanDisabled.value == "ON") {
+    disableRadioGroup(document.advanceSetup.authType);
+    disableTextField(document.advanceSetup.fragThreshold);
+    disableTextField(document.advanceSetup.rtsThreshold);
+    disableTextField(document.advanceSetup.beaconInterval);
+    disableTextField(document.advanceSetup.dtimInterval);
+    disableTextField(document.advanceSetup.txRate);
+    disableRadioGroup(document.advanceSetup.preamble);
+    disableRadioGroup(document.advanceSetup.hiddenSSID);
+    disableRadioGroup(document.advanceSetup.block);
+    disableRadioGroup(document.advanceSetup.BlockEth2Wir);
+    disableRadioGroup(document.advanceSetup.mc2uc);
+
+    disableRadioGroup(document.advanceSetup.blockmcast);
+
+    disableRadioGroup(document.advanceSetup.aggregation);
+    disableRadioGroup(document.advanceSetup.shortGI);
+
+    disableRadioGroup(document.advanceSetup.wmm);
+
+    disableButton(document.advanceSetup.save);
+   }
+
+   if (band & 8) {
+    if (skipItem == '0')
+     document.getElementById("advSetup").rows[11].style.display = "";
+    document.getElementById("advSetup").rows[12].style.display = "";
+   }
+   else {
+    if (skipItem == '0')
+     document.getElementById("advSetup").rows[11].style.display = "none";
+    document.getElementById("advSetup").rows[12].style.display = "none";
+   }
+
+   if (superprivilege == 0) {
+    $(":input").attr("disabled", "true");
+    $(":selected").attr("disabled", "true");
+    $(".hide_gui").hide();
+   }
+
+
+  }
+ </script>
+
+</head>
+
+<body>
+
+ <div class="intro_main ">
+
+  <p class="intro_title">Дополнительные настройки WLAN</p>
+  <p class="intro_content">Эти настройки не рекомендуется изменять если вы не обладаете достаточными знаниями в области настройки беспроводных сетей. </p>
+ </div>
+
+
+  <input name="wlanDisabled" value="OFF" type="hidden">
+  <div class="data_common data_common_notitle">
+
+   <table id="advSetup">
+
+    <tbody>
+     <tr class="hide_gui">
+
+      <th width="30%">Тип аутентификации:</th>
+      <td>
+
+       <input value="0" name="authType" type="radio"> Открытая&nbsp;&nbsp;
+       <input value="1" name="authType" type="radio"> Общий ключ&nbsp;&nbsp;
+       <input checked="checked" value="2" name="authType" type="radio"> Авто
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Порог фрагментации:</th>
+      <td><input maxlength="4" size="10" name="fragThreshold" value="2346" type="text">(1500-2346)
+
+
+
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Порог RTS:</th>
+      <td><input maxlength="4" size="10" name="rtsThreshold" value="2346" type="text">(256-2346)
+
+
+
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Интервал идентификатора сети:</th>
+      <td><input maxlength="4" size="10" name="beaconInterval" value="100" type="text">(20-1000 ms)
+
+
+
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>DTIM-интервал:</th>
+      <td><input maxlength="3" size="10" name="dtimInterval" value="1" type="text">(1-255)
+      </td>
+
+     </tr>
+
+     <tr class="hide_gui" style="
+
+display: ;
+   ">
+      <th>Скорость передачи данных:</th>
+      <td><select name="txRate" size="1">
+
+                  <script>
+
+band=10;
+txrate=1;
+auto=1;
+rf_num=2;
+
+                  rate_mask = [15,1,1,1,1,2,2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,8,8,8,8,8,8,8,8];
+                  rate_name =["Авто","1M","2M","5.5M","11M","6M","9M","12M","18M","24M","36M","48M","54M", "MCS0", "MCS1",
+                  "MCS2", "MCS3", "MCS4", "MCS5", "MCS6", "MCS7", "MCS8", "MCS9", "MCS10", "MCS11", "MCS12", "MCS13", "MCS14", "MCS15"];
+                  mask=0;
+                  if (auto)
+                      txrate=0;
+               if (band & 1)
+                mask |= 1;
+               if ((band&2) || (band&4))
+                mask |= 2;
+               if (band & 8) {
+                if (rf_num == 2)
+                 mask |= 12;
+                else
+                 mask |= 4;
+               }
+               defidx=0;
+               for (idx=0, i=0; i<=28; i++) {
+                if (rate_mask[i] & mask) {
+                 if (i == 0)
+                  rate = 0;
+                 else
+                  rate = (1 << (i-1));
+                 if (txrate == rate)
+                  defidx = idx;
+                 document.write('<option value="' + i + '">' + rate_name[i] + '\n');
+                 idx++;
+                }
+               }
+               document.advanceSetup.txRate.selectedIndex=defidx;
+                  </script><option selected="selected" value="0">Авто
+</option><option value="5">6M
+</option><option value="6">9M
+</option><option value="7">12M
+</option><option value="8">18M
+</option><option value="9">24M
+</option><option value="10">36M
+</option><option value="11">48M
+</option><option value="12">54M
+</option><option value="13">MCS0
+</option><option value="14">MCS1
+</option><option value="15">MCS2
+</option><option value="16">MCS3
+</option><option value="17">MCS4
+</option><option value="18">MCS5
+</option><option value="19">MCS6
+</option><option value="20">MCS7
+</option><option value="21">MCS8
+</option><option value="22">MCS9
+</option><option value="23">MCS10
+</option><option value="24">MCS11
+</option><option value="25">MCS12
+</option><option value="26">MCS13
+</option><option value="27">MCS14
+</option><option value="28">MCS15
+
+
+                  </option></select>
+
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Тип преамбулы:</th>
+      <td><input value="0" name="preamble" type="radio"> Длинная преамбула&nbsp;&nbsp;
+       <input checked="checked" value="1" name="preamble" type="radio"> Короткая преамбула
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Вещание SSID:</th>
+      <td><input checked="checked" value="0" name="hiddenSSID" type="radio"> Включено&nbsp;&nbsp;
+       <input value="1" name="hiddenSSID" type="radio"> Отключено
+      </td>
+
+     </tr>
+
+     <tr class="hide_gui" style="
+
+display: ;
+   ">
+      <th>Изоляция клиентов:</th>
+      <td><input value="1" name="block" type="radio"> Включено&nbsp;&nbsp;
+       <input checked="checked" value="0" name="block" type="radio"> Отключено
+      </td>
+
+     </tr>
+
+     <tr class="hide_gui" style="
+
+display: ;
+   ">
+      <th>Изоляция Ethernet и беспроводной сети:</th>
+      <td>
+
+       <input value="1" name="BlockEth2Wir" type="radio"> Включено&nbsp;&nbsp;
+       <input checked="checked" value="0" name="BlockEth2Wir" type="radio"> Отключено
+      </td>
+
+     </tr>
+
+     <tr class="hide_gui" style="
+
+display: ;
+   ">
+      <th>Транслировать Multicast как Unicast:</th>
+      <td><input checked="checked" value="1" name="mc2uc" type="radio"> Включено&nbsp;&nbsp;
+       <input value="0" name="mc2uc" type="radio"> Отключено
+      </td>
+
+     </tr>
+
+
+     <tr class="hide_gui">
+
+      <th>Wi-Fi Multicast Blocking:</th>
+      <td>
+
+       <input name="blockmcast" value="1" type="radio">Включено&nbsp;&nbsp;
+       <input checked="checked" name="blockmcast" value="0" type="radio">Отключено
+      </td>
+
+     </tr>
+
+
+     <tr class="hide_gui" style="">
+      <th>Агрегация:</th>
+      <td><input checked="checked" value="1" name="aggregation" type="radio"> Включено&nbsp;&nbsp;
+       <input value="0" name="aggregation" type="radio"> Отключено
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Короткий защитный интервал:</th>
+      <td><input checked="checked" value="1" name="shortGI" type="radio"> Включено&nbsp;&nbsp;
+       <input value="0" name="shortGI" type="radio"> Отключено
+      </td>
+
+     </tr>
+
+
+     <tr>
+
+      <th>WMM:</th>
+
+      <td>
+
+       <input checked="checked" name="wmm" value="1" type="radio">Включено&nbsp;&nbsp;
+       <input name="wmm" value="0" type="radio">Отключено
+      </td>
+
+     </tr>
+
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="adsl clearfix">
+
+   <input name="checkWPS2" value="1" type="HIDDEN">
+   <div class="btn_ctls">
+
+    <input class="link_bg" value="Применить" name="save" onclick="return saveChanges()" type="submit">
+    <input name="submit.htm?wladvanced.htm" value="Send" type="hidden">
+
+   </div>
+
+  </div>
+
+  <script>
+   document.advanceSetup.authType[2].checked = true;
+   document.advanceSetup.preamble[1].checked = true;
+   document.advanceSetup.hiddenSSID[0].checked = true;
+   document.advanceSetup.block[1].checked = true;
+   document.advanceSetup.BlockEth2Wir[1].checked = true;
+   document.advanceSetup.mc2uc[0].checked = true;
+   document.advanceSetup.blockmcast[1].checked = true;
+   document.advanceSetup.wmm[0].checked = true;
+   document.advanceSetup.aggregation[0].checked = true;
+   document.advanceSetup.shortGI[0].checked = true;
+
+   updateState();
+  </script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

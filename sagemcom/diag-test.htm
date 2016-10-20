@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="files/reset.css" rel="stylesheet" type="text/css">
+<link href="files/base.css" rel="stylesheet" type="text/css">
+<link href="files/style.css" rel="stylesheet" type="text/css">
+<script src="files/share.js" type="text/javascript">
+</script>
+
+ <title>Диагностические тесты</title>
+    <script>
+
+        var initInf;
+
+        function itfSelected() {
+            initInf = document.diagtest.wan_if.value;
+        }
+        function submitonce(theform) {
+            if (document.all || document.getElementById) {
+                for (i = 0; i < theform.length; i++) {
+                    var tempobj = theform.elements[i]
+                    if (tempobj.type.toLowerCase() == "submit" || tempobj.type.toLowerCase() == "reset")
+                        tempobj.disabled = true;
+                }
+            }
+
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Диагностический тест</p>
+        <p class="intro_content">Роутер может протестировать 
+WAN-соединение. Отдельные тесты перечислены ниже. Если тест показывает 
+ошибку, то нажмите кнопку "Запустить диагностический тест" снова, чтобы 
+убедиться, что проблема действительно существует. </p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody><tr>
+
+                <th width="50%">Выберите подключение к Интернет:
+                    <select onchange="itfSelected()" name="wan_if">
+
+<option selected="selected" value="14"> pppoe1</option>
+
+                    </select>
+
+                </th>
+
+                <td>
+
+                    <input class="inner_btn" onsubmit="javascript:submitonce(this)" name="start" value="Запустить диагностический тест" type="submit">
+                </td>
+
+            </tr>
+
+        </tbody></table>
+
+    </div>
+
+
+
+
+
+
+
+
+
+    <input name="submit.htm?diag-test.htm" value="Send" type="hidden">
+
+
+
+
+
+</body></html>

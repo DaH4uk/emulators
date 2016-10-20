@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+
+    <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+
+    <script src="files/jquip.js" type="text/javascript"></script>
+
+
+    <title>DHCP-сервер </title>
+
+    <script>
+        var initDhcpDisable;
+
+        var initDnsMode;
+
+        function openWindow(url, windowName) {
+            var wide = 600;
+            var high = 400;
+            if (document.all)
+                var xMax = screen.width,
+                    yMax = screen.height;
+            else if (document.layers)
+                var xMax = window.outerWidth,
+                    yMax = window.outerHeight;
+            else
+                var xMax = 640,
+                    yMax = 480;
+            var xOffset = (xMax - wide) / 2;
+            var yOffset = (yMax - high) / 3;
+
+            var settings = 'width=' + wide + ',height=' + high + ',screenX=' + xOffset + ',screenY=' + yOffset + ',top=' + yOffset + ',left=' + xOffset + ', resizable=yes, toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes';
+
+            window.open(url, windowName, settings);
+        }
+
+        function dhcpdEnabled() {
+            document.getElementById('dhcpserver_block').style.display = 'block';
+            if (document.dhcpd.setVendor)
+                enableButton(document.dhcpd.setVendor);
+            if (document.dhcpd.setOpt60)
+                enableButton(document.dhcpd.setOpt60);
+
+            if (initDnsMode == 1) {
+                dnsModeChange(1);
+            }
+            else
+                dnsModeChange(0);
+
+        }
+
+        function dhcpdDisabled() {
+            document.getElementById('dhcpserver_block').style.display = 'none';
+
+            if (document.dhcpd.setVendor) {
+
+                disableButton(document.dhcpd.setVendor);
+            }
+            if (document.dhcpd.setOpt60) {
+
+                disableButton(document.dhcpd.setOpt60);
+            }
+        }
+
+        function dhcpdRelayEnabled() {
+            document.getElementById('dhcprelay_block').style.display = 'block';
+            if (document.dhcpd.setVendor)
+                disableButton(document.dhcpd.setVendor);
+            if (document.dhcpd.setOpt60)
+                disableButton(document.dhcpd.setOpt60);
+        }
+
+        function dhcpdRelayDisabled() {
+            document.getElementById('dhcprelay_block').style.display = 'none';
+        }
+
+
+        function resetClick() {
+            if (initDhcpDisable == 0) {
+
+                dhcpdDisabled();
+                dhcpdRelayDisabled();
+            }
+            else if (initDhcpDisable == 1) {
+
+                dhcpdRelayEnabled();
+                dhcpdDisabled();
+            }
+            else {
+                dhcpdEnabled();
+                dhcpdRelayDisabled();
+            }
+        }
+
+
+        function checkSubnet(ip, mask, client) {
+            for (var i = 1; i <= 4; i++) {
+                ip_d = getDigit(ip, i);
+                mask_d = getDigit(mask, i);
+                client_d = getDigit(client, i);
+                if ((ip_d & mask_d) != (client_d & mask_d))
+                    return false;
+            }
+
+            return true;
+        }
+
+        function checkpoolsize(start, end) {
+            for (var i = 1; i < 4; i++) {
+                if (getDigit(start, i) != getDigit(end, i))
+                    return false;
+            }
+
+            return true;
+        }
+
+        function saveChanges() {
+            if (document.dhcpd.dhcpmode.value == 2) {
+                if (document.dhcpd.dhcpRangeStart.value == "") {
+                    alert("Введите диапазон IP-адресов DHCP.");
+                    document.dhcpd.dhcpRangeStart.value = document.dhcpd.dhcpRangeStart.defaultValue;
+                    document.dhcpd.dhcpRangeStart.focus();
+                    return false;
+                }
+                if (!checkIP(document.dhcpd.dhcpRangeStart)) {
+                    document.dhcpd.dhcpRangeStart.focus();
+                    return false;
+                }
+
+                if (document.dhcpd.dhcpRangeEnd.value == "") {
+                    alert("Введите диапазон IP-адресов DHCP.");
+                    document.dhcpd.dhcpRangeEnd.value = document.dhcpd.dhcpRangeEnd.defaultValue;
+                    document.dhcpd.dhcpRangeEnd.focus();
+                    return false;
+                }
+                if (!checkIP(document.dhcpd.dhcpRangeEnd)) {
+                    document.dhcpd.dhcpRangeEnd.focus();
+                    return false;
+                }
+
+
+                if (!checkSubnet(document.dhcpd.lan_ip.value, document.dhcpd.lan_mask.value, document.dhcpd.dhcpRangeStart.value)) {
+                    alert('Неверный начальный IP-адрес диапазона DHCP!\nОн должен лежать в одной подсети с текущим IP-адресом.');
+                    document.dhcpd.dhcpRangeStart.focus();
+                    return false;
+                }
+                if (!checkSubnet(document.dhcpd.lan_ip.value, document.dhcpd.lan_mask.value, document.dhcpd.dhcpRangeEnd.value)) {
+                    alert('Неверный конечный IP-адрес диапазона DHCP!\nОн должен лежать в одной подсети с текущим IP-адресом.');
+                    document.dhcpd.dhcpRangeEnd.focus();
+                    return false;
+                }
+
+
+                if (!checkNetwork(document.dhcpd.dhcpRangeStart.value, document.dhcpd.dhcpRangeEnd.value)) {
+                    alert("Начальный адрес должен быть в той же сети, что и конечный.");
+                    document.dhcpd.dhcpRangeStart.focus();
+                    return false;
+                }
+
+                if (!checkpoolsize(document.dhcpd.dhcpRangeStart.value, document.dhcpd.dhcpRangeEnd.value)) {
+                    alert("Диапазон IP-адресов больше чем 254 адреса!");
+                    document.dhcpd.dhcpRangeStart.focus();
+                    return false;
+                }
+
+                if (!checkMaskSpecial(document.dhcpd.dhcpSubnetMask))
+                    return false;
+
+                if (document.dhcpd.dfgw.value == "") {
+                    alert("Введите IP-адрес маршрута по умолчанию.");
+                    document.dhcpd.dfgw.focus();
+                    return false;
+                }
+                if (!checkIP(document.dhcpd.dfgw)) {
+                    document.dhcpd.dfgw.focus();
+                    return false;
+                }
+                if (document.dhcpd.ltime.value == 0) {
+                    alert('Неверное время лицензии DHCP. Оно не может быть равно нулю.');
+                    document.dhcpd.ltime.focus();
+                    return false;
+                }
+                if (validateKey(document.dhcpd.ltime.value) == 0) {
+                    alert('Неверное время лицензии DHCP. Оно должно состоять из десятичный цифр (0-9).');
+                    document.dhcpd.ltime.focus();
+                    return false;
+                }
+
+                var maxleasetime = 365 * 24 * 60;
+                if (!checkDigitRange(document.dhcpd.ltime.value, 1, 1, maxleasetime)) {
+                    alert('Invalid DHCP lease time. It should be 1-' + maxleasetime + '.');
+                    document.dhcpd.ltime.value = document.dhcpd.ltime.defaultValue;
+                    document.dhcpd.ltime.focus();
+                    return false;
+                }
+
+                if (document.dhcpd.dname.value != "" && !checkSpecialChar(document.dhcpd.dname.value, 1)) {
+                    alert("Неверные символы!");
+                    document.dhcpd.dname.focus();
+                    return false;
+                }
+
+
+                if (document.dhcpd.dhcps_dnsmode.value == 1)
+
+                {
+                    if (checkIP(document.dhcpd.dns1) == false) {
+                        document.dhcpd.dns1.focus();
+                        return false;
+                    }
+
+                    if ((document.dhcpd.dns2.value != '') && checkIP(document.dhcpd.dns2) == false) {
+                        document.dhcpd.dns2.focus();
+                        return false;
+                    }
+                    if ((document.dhcpd.dns3.value != '') && checkIP(document.dhcpd.dns3) == false) {
+                        document.dhcpd.dns3.focus();
+                        return false;
+                    }
+                }
+            }
+
+            if (document.dhcpd.dhcpmode.value == 1) {
+                if (!checkIP(document.dhcpd.relayaddr)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        function dhcpTblClick(url) {
+            if (document.dhcpd.dhcpmode.value == 2) {
+                openWindow(url, 'DHCPTbl');
+            }
+        }
+
+        function dhcpRtTblClick(url) {
+            if (document.dhcpd.dhcpmode.value == 2) {
+                openWindow(url, 'DHCPRtTbl');
+            }
+        }
+
+        function dhcpVendorTblClick(url) {
+            if (document.dhcpd.dhcpmode.value == 2) {
+                openWindow(url, 'DHCPVendorClassTbl');
+            }
+        }
+
+        function dhcpInterfaceTblClick(url) {
+            if (document.dhcpd.dhcpmode.value == 2) {
+                openWindow(url, 'DHCPInterfaceTbl');
+            }
+        }
+
+        function dhcpCUCOpt60TblClick(url) {
+            if (document.dhcpd.dhcpmode.value == 2) {
+                openWindow(url, 'DHCPCUCOpt60Tbl');
+            }
+        }
+
+        function ShowIP(ipVal) {
+            document.write(getDigit(ipVal, 1));
+            document.write('.');
+            document.write(getDigit(ipVal, 2));
+            document.write('.');
+            document.write(getDigit(ipVal, 3));
+            document.write('.');
+        }
+
+        function dhcpmodechang() {
+            if (document.dhcpd.dhcpmode.value == 0) {
+                dhcpdDisabled();
+                dhcpdRelayDisabled();
+            }
+            else if (document.dhcpd.dhcpmode.value == 1) {
+                dhcpdRelayEnabled();
+                dhcpdDisabled();
+            }
+            else {
+                dhcpdRelayDisabled();
+                dhcpdEnabled();
+            }
+        }
+
+        function dnsModeChange(autoflag) {
+            if (autoflag == 0) {
+                document.getElementById('manual_dns1').style.display = 'none';
+                document.getElementById('manual_dns2').style.display = 'none';
+                document.getElementById('manual_dns3').style.display = 'none';
+            }
+            else {
+                document.getElementById('manual_dns1').style.display = '';
+                document.getElementById('manual_dns2').style.display = '';
+                document.getElementById('manual_dns3').style.display = '';
+            }
+
+        }
+
+        function dns_mode_change() {
+            if (document.dhcpd.dhcps_dnsmode.value == 1) {
+                dnsModeChange(1);
+            }
+            else {
+                dnsModeChange(0);
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+    <input name="lan_ip" value="192.168.0.1" type="hidden">
+    <input name="lan_mask" value="255.255.255.0" type="hidden">
+    <div class="intro_main ">
+
+        <p class="intro_title">Режим DHCP</p>
+        <p class="intro_content">
+
+            Эта страница используется для настройки режима работы DHCP: Отключен, DHCP Relay или DHCP-сервер.<br> (1) Включите режим DHCP-сервер если вы используете роутер в качестве DHCP-сервера. На этой странице отображен диапазон IP-адресов, доступных
+            для назначения хостам в локальной сети.<br> (2) Включите режим DHCP Relay если для назначения IP-адресов клиентам в локальной сети используется внешний DHCP-сервер. В этом случае нужно задать IP-адрес этого DHCP-сервера.<br> (3) Если выбрать
+            режим "Отключен", то роутер будет игнорировать запросы на получение IP-адресов со стороны хостов локальной сети.
+        </p>
+
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody>
+                <tr>
+
+                    <th width="30%">IP-адрес LAN: </th>
+                    <td>
+                        <script>
+                            document.write(document.dhcpd.lan_ip.value);
+                        </script>192.168.0.1</td>
+
+                </tr>
+
+                <tr>
+
+                    <th width="30%">Маска подсети: </th>
+                    <td>
+                        <script>
+                            document.write(document.dhcpd.lan_mask.value);
+                        </script>255.255.255.0</td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Режим DHCP</th>
+                    <td>
+
+                        <select onchange="dhcpmodechang()" name="dhcpmode" size="1">
+
+<option value="0"> Нет</option>
+<option value="1"> DHCP Relay</option>
+<option value="2" selected="selected"> DHCP Server</option>
+
+                    </select>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="data_common data_common_notitle" id="dhcpserver_block" style="display: block;">
+
+        <table>
+
+            <tbody>
+                <tr class="hide_gui">
+                    <th width="30%">Интерфейс:</th>
+                    <td width="70%"> <input value="lan1" name="lan1" checked="checked" type="checkbox">LAN1 &nbsp; <input value="lan2" name="lan2" checked="checked" type="checkbox">LAN2 &nbsp; <input value="lan3" name="lan3" checked="checked" type="checkbox">LAN3 &nbsp;
+                        <input value="lan4" name="lan4" checked="checked" type="checkbox">LAN4 &nbsp; <input value="wlan" name="wlan" checked="checked" type="checkbox">WLAN &nbsp; <input value="vap0" name="vap0" checked="checked" type="checkbox">VAP0
+                        &nbsp; <input value="vap1" name="vap1" checked="checked" type="checkbox">VAP1 &nbsp; <input value="vap2" name="vap2" checked="checked" type="checkbox">VAP2 &nbsp; </td>
+                </tr>
+                <tr>
+
+                    <th>Диапазон IP-адресов</th>
+                    <td>
+
+                        <input name="dhcpRangeStart" size="20" maxlength="15" value="192.168.0.2" type="text">-
+                        <input name="dhcpRangeEnd" size="20" maxlength="15" value="192.168.0.254" type="text">
+                        <input class="inner_btn" value="Показать клиентов" name="dhcpClientTbl" onclick="dhcpTblClick('/dhcptbl.htm')" type="button">
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <th width="30%">Маска подсети:</th>
+                    <td width="70%"><input name="dhcpSubnetMask" size="22" maxlength="19" value="255.255.255.0" type="text"></td>
+                </tr>
+
+                <tr>
+                    <th width="30%">Шлюз по умолчанию:</th>
+                    <td width="70%"><input name="dfgw" size="22" maxlength="19" value="192.168.0.1" type="text"></td>
+                </tr>
+
+                <tr class="odd">
+
+                    <th>Время аренды IP адреса:</th>
+                    <td>
+
+                        <input maxlength="9" size="10" name="ltime" value="1440" type="text">
+                        <b> минут</b>
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Доменное имя:</th>
+                    <td><input maxlength="19" size="22" name="dname" type="text"></td>
+                </tr>
+
+
+                <tr class="odd">
+
+                    <th>Режим DNS:</th>
+                    <td>
+
+                        <select size="1" name="dhcps_dnsmode" onchange="dns_mode_change()">
+
+<option value="0" selected="selected"> Авто</option>
+<option value="1"> Вручную</option>
+<option value="2"> Relay</option>
+
+    </select>
+
+                    </td>
+
+                </tr>
+
+
+                <tr style="display: none;" class="odd" id="manual_dns1">
+
+                    <th rowspan="3">Серверы DNS:</th>
+                    <td>
+
+                        <input maxlength="19" size="22" name="dns1" type="text">
+                    </td>
+
+                </tr>
+
+                <tr style="display: none;" class="odd" id="manual_dns2">
+
+                    <td><input maxlength="19" size="22" name="dns2" type="text"></td>
+                </tr>
+
+                <tr style="display: none;" class="odd" id="manual_dns3">
+
+                    <td><input maxlength="19" size="22" name="dns3" type="text"></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="data_common data_common_notitle" id="dhcprelay_block" style="display: none;">
+
+        <table>
+
+            <tbody>
+                <tr>
+
+                    <th>
+                        <font size="2">Relay-сервер:</font>
+                    </th>
+                    <td>
+
+                        <input name="relayaddr" size="15" maxlength="15" value="192.168.2.242" type="text">
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="adsl clearfix">
+
+        <input name="submit.htm?dhcpd.htm" value="Send" type="hidden">
+
+        <div class="btn_ctls">
+
+            <input class="link_bg" name="save" onclick="return saveChanges()" value="Применить" type="submit">
+            <input class="link_bg" name="reset" onclick="resetClick()" value="Отменить" type="reset">
+
+            <br><br><input class="link_bg" value="Адреса по типу устройств" name="setVendor" onclick="dhcpVendorTblClick('/dhcpvendortbl.htm')" type="button"> &nbsp;&nbsp;
+            <input class="link_bg hide_gui" value="Установить группу диапазаона IP-адресов" name="setGroup" onclick="dhcpVendorTblClick('/dhcpgrouptbl.htm')" type="button">
+
+        </div>
+
+    </div>
+
+    <script>
+        initDhcpDisable = document.dhcpd.dhcpmode.value;
+
+        initDnsMode = document.dhcpd.dhcps_dnsmode.value;
+
+        resetClick();
+
+        var superprivilege = 1;
+
+        $(document).ready(function() {
+            if (superprivilege == 0) {
+                $("input").attr("disabled", "true");
+                $("select").attr("disabled", "true");
+                $("input[name='dhcpClientTbl']").removeAttr("disabled");
+                $(".hide_gui").hide();
+            }
+        });
+    </script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

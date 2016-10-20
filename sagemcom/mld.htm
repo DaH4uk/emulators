@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="files/reset.css" rel="stylesheet" type="text/css">
+<link href="files/base.css" rel="stylesheet" type="text/css">
+<link href="files/style.css" rel="stylesheet" type="text/css">
+<script src="files/share.js" type="text/javascript">
+</script>
+
+ <title>Настройка MLD </title>
+    <script>
+
+        function disableRadioGroup(radioArrOrButton) {
+            if (!radioArrOrButton)
+                return;
+
+            if (radioArrOrButton.type && radioArrOrButton.type == "radio") {
+                var radioButton = radioArrOrButton;
+                var radioArray = radioButton.form[radioButton.name];
+            }
+            else
+                var radioArray = radioArrOrButton;
+            radioArray.disabled = true;
+            for (var b = 0; b < radioArray.length; b++) {
+                if (radioArray[b].checked) {
+                    radioArray.checkedElement = radioArray[b];
+                    break;
+                }
+            }
+            for (var b = 0; b < radioArray.length; b++) {
+                radioArray[b].disabled = true;
+                radioArray[b].checkedElement = radioArray.checkedElement;
+            }
+        }
+
+        function enableRadioGroup(radioArrOrButton) {
+            if (!radioArrOrButton)
+                return;
+
+            if (radioArrOrButton.type && radioArrOrButton.type == "radio") {
+                var radioButton = radioArrOrButton;
+                var radioArray = radioButton.form[radioButton.name];
+            }
+            else
+                var radioArray = radioArrOrButton;
+
+            radioArray.disabled = false;
+            radioArray.checkedElement = null;
+            for (var b = 0; b < radioArray.length; b++) {
+                radioArray[b].disabled = false;
+                radioArray[b].checkedElement = null;
+            }
+        }
+
+        function disableTextField(field) {
+            if (!field)
+                return;
+            if (document.all || document.getElementById)
+                field.disabled = true;
+            else {
+                field.oldOnFocus = field.onfocus;
+                field.onfocus = skip;
+            }
+        }
+        function enableTextField(field) {
+            if (!field)
+                return;
+            if (document.all || document.getElementById)
+                field.disabled = false;
+            else {
+                field.onfocus = field.oldOnFocus;
+            }
+        }
+
+        function resetClick() {
+            if (initIgmpDisable) {
+                disableTextField(document.mld.robustCount);
+                disableTextField(document.mld.queryIntvl);
+                disableTextField(document.mld.queryRespIntvl);
+                disableTextField(document.mld.LastQueryInt);
+            }
+            else {
+                enableTextField(document.mld.robustCount);
+                enableTextField(document.mld.queryIntvl);
+                enableTextField(document.mld.queryRespIntvl);
+                enableTextField(document.mld.LastQueryInt);
+            }
+        }
+
+        function proxySelection() {
+            if (document.mld.proxy[0].checked) {
+
+                disableTextField(document.mld.robustCount);
+                disableTextField(document.mld.queryIntvl);
+                disableTextField(document.mld.queryRespIntvl);
+                disableTextField(document.mld.LastQueryInt);
+            }
+            else {
+                enableTextField(document.mld.robustCount);
+                enableTextField(document.mld.queryIntvl);
+                enableTextField(document.mld.queryRespIntvl);
+                enableTextField(document.mld.LastQueryInt);
+            }
+        }
+
+        function validateKey(str) {
+            for (var i = 0; i < str.length; i++) {
+                if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.'))
+                    continue;
+                return 0;
+            }
+            return 1;
+        }
+
+        function checkPS(num) {
+            if (num.value == "") {
+                alert("Пустое значение!");
+                num.value = num.defaultValue;
+                num.focus();
+                return 0;
+            }
+            if (validateKey(num.value) == 0) {
+                alert("Invalid Characters，should be digit (0-9).");
+                num.value = num.defaultValue;
+                num.focus();
+                return 0;
+            }
+            return 1;
+        }
+
+        function saveChanges() {
+            if (!checkPS(document.mld.robustCount)) {
+                return false;
+            }
+
+            if (!checkPS(document.mld.queryIntvl)) {
+                return false;
+            }
+
+            if (!checkPS(document.mld.queryRespIntvl)) {
+                return false;
+            }
+
+            if (!checkPS(document.mld.LastQueryInt)) {
+                return false;
+            }
+
+            d1 = getDigit(document.mld.queryIntvl.value, 1);
+            d2 = getDigit(document.mld.queryRespIntvl.value, 1);
+            if ((d1 * 1000) < d2) {
+                alert("Интервал опроса должен быть больше чем Интервал Ответа!");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Настройка MLD</p>
+        <p class="intro_content">Здесь можно настроить MLD Proxy и Snooping. </p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody><tr>
+
+                <th width="30%">MLD proxy:</th>
+                <td>
+
+                    <input name="proxy" value="0" checked="checked" onclick="proxySelection()" type="radio">Отключена&nbsp;&nbsp;
+                    <input name="proxy" value="1" onclick="proxySelection()" type="radio">Включена
+                </td>
+
+            </tr>
+
+ <tr> 
+	<td width="30%"><b>MLD snooping:</b></td> 
+	<td width="35%"> 
+	   	<input value="0" name="mldSnoop" checked="checked" type="radio">Выкл.&nbsp;&nbsp; 
+	   	<input value="1" name="mldSnoop" type="radio">Вкл. 
+	</td> 
+ </tr> 
+
+<tr> 
+  <td width="30%"><b>Robust Счетчик:</b></td> 
+  <td width="35%"><input disabled="disabled" name="robustCount" size="6" maxlength="6" value="2" type="text"> </td> 
+</tr> 
+
+<tr> 
+    <td width="30%"><b>Интервал опроса:</b></td> 
+    <td width="35%"><input disabled="disabled" name="queryIntvl" size="6" maxlength="6" value="125" type="text"> (Секунда)</td> 
+</tr> 
+
+<tr> 
+    <td width="30%"><b>Интервал ответа на запрос:</b></td> 
+    <td width="35%"><input disabled="disabled" name="queryRespIntvl" size="6" maxlength="6" value="10000" type="text"> (мсек.)</td> 
+</tr> 
+
+<tr> 
+   <td width="30%"><b>Интервал ответа Last Group Member:</b></td> 
+   <td width="35%"><input disabled="disabled" name="LastQueryInt" size="6" maxlength="6" value="1" type="text"> (Секунда) </td> 
+</tr> 
+
+        </tbody></table>
+
+    </div>
+
+    <div class="btn_ctl clearfix">
+
+        <input class="link_bg" name="save" value="Применить" onclick="return saveChanges()" type="submit">
+        <input class="link_bg" name="reset" onclick="resetClick()" value="Отмена" type="reset">
+        <input name="submit.htm?mld.htm" value="Send" type="hidden">
+
+    </div>
+
+    <script>
+
+        initIgmpDisable = document.mld.proxy[0].checked;
+        proxySelection();
+    </script>
+
+
+
+
+
+
+
+
+</body></html>

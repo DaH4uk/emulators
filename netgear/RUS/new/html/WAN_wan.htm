@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -742,4 +743,750 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/WAN_wan.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "advanced";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "advanced";
+var G_Page = "WAN_wan";
+var G_SubPage = "-";
+var G_ErrorPage = "-";
+//DMZ模块
+var G_Dmz = [];
+var m = 0;
+G_Dmz[0] = "0";
+G_Dmz[1] = "";
+G_Dmz[2]=":InternetGatewayDevice.X_TWSZ-COM_Nat.";
+//DOS Module
+var G_DosEnable = "0";
+//Remote Ping
+var G_RemotePingEnable = "0";
+var G_IPv6Enable = "0";
+var G_NAType="RestrictedConeNat";
+//IGMP
+var G_IGMPEnable = "1"; // Enable
+var G_LANPathName = "InternetGatewayDevice.LANDevice.1"; // LANPathName
+var G_Wanconns = [];
+var n = 0;
+//WAN Device
+G_Wanconns[n] = [];
+G_Wanconns[n][0] = "1_INTERNET_R";
+G_Wanconns[n][1] = "InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1"
+n++;
+//LAN Device
+G_Wanconns[n] = [];
+G_Wanconns[n][0] = "Lan1";
+G_Wanconns[n][1] = "InternetGatewayDevice.LANDevice.1";
+n++;
+//IGMP SNOOPING
+var G_DNSRelayEnable = "1";
+//IGMP END
+//MTU
+var G_WanConnsMTU = [];
+G_WanConnsMTU['Path'] = ":InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1.";//Path
+G_WanConnsMTU['ExternalIPAddress'] = "";
+G_WanConnsMTU['SubnetMask'] = "";
+G_WanConnsMTU['DefaultGateway'] = "";
+G_WanConnsMTU['DNSOverrideAllowed'] = "0";
+G_WanConnsMTU['DNSServers'] = "";
+G_WanConnsMTU['X_TWSZ-COM_UsrDNSServers'] = "";
+G_WanConnsMTU['AddressingType'] = "DHCP";
+G_WanConnsMTU['MaxMTUSize'] = "1500";
+G_WanConnsMTU['X_TWSZ-COM_VendorId'] = "";
+G_WanConnsMTU['X_TWSZ-COM_Hostname'] = "WNR612v3";
+G_WanConnsMTU['RouteProtocolRx'] = "";
+//SIP
+var G_SIPEnabled = "1";
+//Lan IP
+var G_lan = [];
+var G_lan_ip_addr = "192.168.1.1";
+var G_lan_mask = "255.255.255.0";
+/*use for russia, begin*/
+var m=0;
+var W_Enable=[];
+var W_SSID=[];
+var W_RadioEnable="1";
+W_Enable[m]="1";//Enable
+W_SSID[m]="NETGEAR95";//ssid
+m++;
+W_Enable[m]="0";//Enable
+W_SSID[m]="NETGEAR-Guest";//ssid
+m++;
+W_Enable[m]="0";//Enable
+W_SSID[m]="NetGear-003";//ssid
+m++;
+W_Enable[m]="0";//Enable
+W_SSID[m]="NetGear-004";//ssid
+m++;
+W_Enable[m]="0";//Enable
+W_SSID[m]="NetGear-005";//ssid
+m++;
+var DeviceLanPortNum ="4";
+var G_IptvEnable = "0";
+var G_IptvBindDeviceName = "none";
+var G_Region = 'RU';
+var G_ApplyRegion = 'RU';
+/*use for russia, end*/
+//用来记录当前的Wan连接
+var wanConIndex = '-';
+/*use for russia, begin*/
+function hide_idBlockIptv()
+{
+var _tmpFlag;
+if(G_Region != G_ApplyRegion)
+{
+hideChForWep('idBlockWirePort',4,'none');
+hideChForWep('idBlockWirelessPort',2,'none');
+}
+else
+{
+if('2' == DeviceLanPortNum)
+{
+$('idBlockWirePort4').style.display='';
+}
+else
+{
+$('idBlockWirePort3').style.display='';
+}
+/*only two*/
+for(var i=0; i < 2; i++)
+{
+if((W_RadioEnable == '1') && (W_Enable[i] == '1'))
+{
+_tmpFlag = 'idBlockWirelessPort'+(i+1);
+_tmpFlag = document.getElementById(_tmpFlag);
+_tmpFlag.style.display='';
+_tmpFlag ='iptv_wireless_ssid'+(i+1);
+supplyValue(_tmpFlag, W_SSID[i]);
+}
+else
+{
+_tmpFlag = 'idBlockWirelessPort'+(i+1);
+_tmpFlag = document.getElementById(_tmpFlag);
+_tmpFlag.style.display='none';
+}
+}
+}
+}
+/*use for russia, end*/
+function uiOnload(){
+//给DMZ的Enable和Host赋值
+setDmzValue();
+setDOSValue();
+setRemotePingValue();
+setIGMPValue();
+setMTUValue();
+setSIPValue();
+Form.Checkbox('idEnableIPv6',G_IPv6Enable);
+var NAType;
+if(G_NAType == "RestrictedConeNat")
+{NAType = "Secured";}
+else
+{NAType = "Open";}
+Form.Radio('NatInboundFiltering', NAType);
+/*use for russia, begin*/
+var portName=G_IptvBindDeviceName;
+if(portName.indexOf('eth0')!=-1){
+var porEth1=1;
+}else{
+var porEth1=0;
+}
+if(portName.indexOf('eth2')!=-1)
+var porEth2=1;
+else
+var porEth2=0;
+if('4' == DeviceLanPortNum)
+{
+if(portName.indexOf('eth3')!=-1)
+var porEth3=1;
+else
+var porEth3=0;
+if(portName.indexOf('eth4')!=-1)
+var porEth4=1;
+else
+var porEth4=0;
+}
+if(portName.indexOf('wlan0')!=-1)
+var porWlan1=1;
+else
+var porWlan1=0;
+if(portName.indexOf('wlan0-va0')!=-1)
+var porWlan2=1;
+else
+var porWlan2=0;
+if('2' == DeviceLanPortNum)
+{
+setJSONValue({
+enable_iptv_port5 : porEth1,
+enable_iptv_port6 : porEth2,
+enable_iptv_wlan: porWlan1,
+enable_iptv_guest1: porWlan2
+});
+}
+else
+{
+setJSONValue({
+enable_iptv_port1 : porEth1,
+enable_iptv_port2 : porEth2,
+enable_iptv_port3 : porEth3,
+enable_iptv_port4: porEth4,
+enable_iptv_wlan: porWlan1,
+enable_iptv_guest1: porWlan2
+});
+}
+hide_idBlockIptv();
+/*use for russia, end*/
+}
+function setSIPValue()
+{
+var tmpSIPEnable;
+if(G_SIPEnabled=='1')
+tmpSIPEnable='0';
+else
+tmpSIPEnable='1';
+Form.Checkbox('idDisableSIPALG',tmpSIPEnable);
+}
+function setMTUValue()
+{
+$('wan_mtu').value=G_WanConnsMTU['MaxMTUSize'];
+}
+function setIGMPValue()
+{
+var tmpIGMPEnable;
+if(G_IGMPEnable=='1')
+tmpIGMPEnable='0';
+else
+tmpIGMPEnable='1';
+Form.Checkbox('disableIGMPProxy',tmpIGMPEnable);
+Form.Checkbox('INPUT_IGMPSnoopingEnable',G_DNSRelayEnable);
+wanAndLanPath();
+$('SELECT_WanInterface').selectedIndex = 0;
+if(G_LANPathName != '')
+{
+$('SELECT_LanInterface').value = G_LANPathName;
+} else {
+$('SELECT_LanInterface').selectedIndex = 0;
+}
+}
+function wanAndLanPath(){
+var text_wan = [],value_wan = [];
+var text_lan = [],value_lan = [];
+for(var i = 0; i < G_Wanconns.length; i++){
+if(G_Wanconns[i][1].indexOf('WANDevice') > 0){
+text_wan.push(G_Wanconns[i][0]);
+value_wan.push(G_Wanconns[i][1]);
+} else if (G_Wanconns[i][1].indexOf('LANDevice') > 0){
+text_lan.push(G_Wanconns[i][0]);
+value_lan.push(G_Wanconns[i][1]);
+}
+}
+$S('SELECT_WanInterface',text_wan,value_wan);
+$S('SELECT_LanInterface',text_lan,value_lan);
+}
+function setRemotePingValue()
+{
+Form.Checkbox('rspToPing',G_RemotePingEnable);
+}
+function setDOSValue()
+{
+var tmpDOSDisable;
+if(G_DosEnable=='1')
+tmpDOSDisable='0';
+else
+tmpDOSDisable='1';
+Form.Checkbox('idDisableDOS',tmpDOSDisable);
+}
+function displayDizip()
+{
+if(Form.Checkbox('dmz_enable')==0)
+{
+$('dmzip1').disabled = true;
+$('dmzip2').disabled = true;
+$('dmzip3').disabled = true;
+$('dmzip4').disabled = true;
+}else{
+$('dmzip1').disabled = false;
+$('dmzip2').disabled = false;
+$('dmzip3').disabled = false;
+$('dmzip4').disabled = false;
+}
+}
+function setDmzValue(){
+//根据wan连接来寻找对应的值
+var tmpDMZServer;
+var tmpLanIP;
+var tmpLanMask;
+var tmpIP=new Array(4);
+Form.Checkbox('dmz_enable',G_Dmz[0]);
+if(G_Dmz[1]=='')
+{
+tmpLanIP=G_lan_ip_addr.split(".");
+tmpLanMask=G_lan_mask.split(".");
+for(var j=0; j<4; j++)
+{
+tmpIP[j]=tmpLanIP[j]&tmpLanMask[j];
+if(tmpIP[j]==0)
+tmpIP[j]='';
+}
+tmpDMZServer=tmpIP[0]+'.'+tmpIP[1]+'.'+tmpIP[2]+'.'+tmpIP[3];
+}
+else
+{
+tmpDMZServer=G_Dmz[1];
+}
+OnloadIP4hops(tmpDMZServer,'dmzip1','dmzip2','dmzip3','dmzip4');
+displayDizip();
+}
+function uiSubmit(){
+var wanConn = G_Dmz[2];
+var tmpDOSDisable;
+var tmpIGMPEnable;
+var _protocol = getProtocol();
+if(wanConn == ''){
+DealWith.Wrong('SELECT_WanConnection',SEcode[1002]);
+return false;
+}
+var wanMtu = $('wan_mtu').value;
+if(wanMtu.length != 0 && wanMtu.charAt(0) == 0)
+{
+$('wan_mtu').value = parseInt($('wan_mtu').value, 10);
+}
+wanMtu=Number(wanMtu);
+if((_protocol[0]=='DHCP')||(_protocol[0]=='Static')||_protocol[0]=='DHCPPlus')
+{
+if(wanMtu<616||wanMtu>1500)
+{
+alertError('WAN_MtuDhcpValid');
+return false;
+}
+}
+else if(_protocol[0]=='PPPoE'||_protocol[0]=='PPPoE_Plus'||_protocol[0]=='PPPoE_Dynamic'||_protocol[0]=='PPPoE_Other1'||_protocol[0]=='PPPoE_Other2')
+{
+if(wanMtu<616||wanMtu>1492)
+{
+alertError('WAN_MtuPPPoEValid');
+return false;
+}
+}
+else if(_protocol[0]=='PPTP')
+{
+if(wanMtu<616||wanMtu>1436)
+{
+alertError('WAN_MtuPPTPValid');
+return false;
+}
+}
+else if(_protocol[0]=='L2TP')
+{
+if(wanMtu<616||wanMtu>1428)
+{
+alertError('WAN_MtuL2TPValid');
+return false;
+}
+}
+var tmpDMZServer=$('dmzip1').value+'.'+ $('dmzip2').value+'.'+ $('dmzip3').value+'.'+ $('dmzip4').value;
+$H({
+'obj-action': 'set',
+'var:menu' : G_Menu,
+'var:page' : G_Page,
+'var:subpage': G_SubPage,
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:wanConIndex' : wanConn,
+'var:errorpage' : G_SubPage,
+'var:CacheLastData': ViewState.Save()
+},true);
+$F(wanConn + 'DMZEnabled',Form.Checkbox('dmz_enable'));
+if($('dmz_enable').checked)
+{
+if(!checkIpAddr(tmpDMZServer))
+{
+return false;
+}
+if(tmpDMZServer==G_lan_ip_addr)
+{
+alertError('DmzpfCheckIp',1);
+return false;
+}
+if(isSameSubNet(tmpDMZServer,G_lan_mask,G_lan_ip_addr,G_lan_mask) == false)
+{
+alertError('DmzIPfalse',1);
+return false;
+}
+$F(wanConn + 'DMZHost',tmpDMZServer);
+}
+if($('idDisableDOS').checked)
+tmpDOSDisable='0';
+else
+tmpDOSDisable='1';
+if($('disableIGMPProxy').checked)
+tmpIGMPEnable='0';
+else
+tmpIGMPEnable='1';
+$F(':InternetGatewayDevice.X_TWSZ-COM_DOS.DosEnable',tmpDOSDisable);
+$F(':InternetGatewayDevice.X_TWSZ-COM_ACL.RACL.1.Service.1.Enable',Form.Checkbox('rspToPing'));
+var _node = $('SELECT_WanInterface','SELECT_LanInterface');
+//防止下拉选框为空
+if (_node[0].value == ''){
+DealWith.Wrong('SELECT_WanInterface',SEcode[1002]);
+return false;
+} else if (_node[1].value == ''){
+DealWith.Wrong('SELECT_LanInterface',SEcode[1002]);
+return false;
+}
+$F(':InternetGatewayDevice.X_TWSZ-COM_IGMP.Proxy.Enable',tmpIGMPEnable);
+$F(':InternetGatewayDevice.X_TWSZ-COM_IGMP.Proxy.WANPathName',_node[0].value);
+$F(':InternetGatewayDevice.X_TWSZ-COM_IGMP.Proxy.LANPathName',_node[1].value);
+var _path = G_WanConnsMTU['Path'];
+var _protocol = getProtocol();
+if(_path.indexOf(_protocol[1]) < 0)
+{ // -> webproxy
+_path = G_WanConns['Path'].replace(_protocol[1] == 'IP' ? 'PPP' : 'IP', _protocol[1]);
+//为配合模块检查，将IP/PPP的前的实例号改为0.
+_path = _path.substr(0, _path.length - 2) + '0.'; // -> InternetGatewayDevice.WANDevice.1.WANConnectionDevice.0.WANIPConnection.0.
+}
+else
+{ // -> cmm
+}
+$F(_path +'MaxMTUSize',$('wan_mtu').value);
+var tmpSIPEnable;
+if($('idDisableSIPALG').checked)
+{
+tmpSIPEnable='0';
+}
+else
+{
+tmpSIPEnable='1';
+}
+$F(':InternetGatewayDevice.Services.X_TWSZ-COM_ALGAbility.SIPEnabled',tmpSIPEnable);
+$F(':InternetGatewayDevice.X_TWSZ-COM_Nat.IPv6PassThroughEnabled',Form.Checkbox('idEnableIPv6'));
+$F(':InternetGatewayDevice.X_TWSZ-COM_Nat.NATType',Form.Radio('NatInboundFiltering')== "Secured" ? "RestrictedConeNat" : "ConeNat");
+/*use for russia, begin*/
+if(G_Region == G_ApplyRegion)
+{
+var iptv_port='';
+if('2' == DeviceLanPortNum)
+{
+if(Form.Checkbox('enable_iptv_port5')=='1')
+iptv_port='eth0,';
+if(Form.Checkbox('enable_iptv_port6')=='1')
+iptv_port+='eth2,';
+}
+else
+{
+if(Form.Checkbox('enable_iptv_port1')=='1')
+iptv_port='eth0,';
+if(Form.Checkbox('enable_iptv_port2')=='1')
+iptv_port+='eth2,';
+if(Form.Checkbox('enable_iptv_port3')=='1')
+iptv_port+='eth3,';
+if(Form.Checkbox('enable_iptv_port4')=='1')
+iptv_port+='eth4,';
+}
+if(Form.Checkbox('enable_iptv_wlan')=='1')
+iptv_port+='wlan0,';
+if(Form.Checkbox('enable_iptv_guest1')=='1')
+iptv_port+='wlan0-va0,';
+$F(':InternetGatewayDevice.X_TWSZ-COM_IGMP.Iptv.Enable', (iptv_port!='') ? '1' : '0');
+$F(':InternetGatewayDevice.X_TWSZ-COM_IGMP.Iptv.BindDeviceName', (iptv_port=='') ? 'none' : iptv_port);
+}
+/*use for russia, begin*/
+$('uiPostForm').submit();
+}
+function getProtocol()
+{
+if(G_WanConnsMTU['Path'].indexOf('IP') > 0)
+{
+value_protocol=G_WanConnsMTU['AddressingType'];
+}
+else
+{
+value_protocol=G_WanConnsMTU['ConnectionType'] == 'L2TP_Relay' ? 'L2TP' :
+G_WanConnsMTU['ConnectionType'] == 'PPTP_Relay' ? 'PPTP' :
+G_WanConnsMTU['ConnectionType'] == 'PPPoU' ? 'PPPoU': 'PPPoE';
+}
+switch(value_protocol){
+case 'DHCP' : {
+return ['DHCP','IP'];
+}
+case 'Static' : {
+return ['Static','IP'];
+}
+case 'PPPoE' : {
+return ['PPPoE','PPP'];
+}
+case 'PPTP' : {
+return ['PPTP','PPP'];
+}
+case 'L2TP' : {
+return ['L2TP','PPP'];
+}
+case 'PPPoU' : {
+return ['PPPoU','PPP'];
+}
+}
+}
+function dealWithError(){
+if (G_Error != 1){ return false;}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload, dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="WAN_wan.htm"></form>
+<style type="text/css"><!--
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+--></style>
+<!-- config -->
+<div class="page_title" id="langWANSetup">WAN Setup</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input type="button" class="cancel_bt" name="cancel" value="Cancel" id="cancel" />
+<input type="button" class="apply_bt" name="apply" id="apply" value="Apply" onClick="uiSubmit();"/>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr><td colSpan="2"><h1></h1></td></tr>
+<tr>
+<td class="mainFramWidth">
+<div class="config3">
+<table width="100%" border="0" cellpadding="0" cellspacing="2">
+<tbody>
+<tr>
+<td nowrap="" colspan="2" >
+<div style="display:none ">
+<input type="checkbox" id="disable_spi" value="disable_spi">&nbsp;<b>Disable SPI Firewall</b>
+</div>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<input type="checkbox" id="idDisableDOS" name="disable_spi" onClick=""/>&nbsp;<a tabindex=-1 href="javascript:loadhelp('spi')"><b id="idDisableDOSContext">Disable Port Scan and DOS Protection</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" width="40%" ><input type="checkbox" id="dmz_enable" name="dmz_enable" value="dmz_enable" onClick="displayDizip();"/>&nbsp;<a tabindex=-1 href="javascript:loadhelp('dmz')"><b id="idDefaultDMZServerContext">Default DMZ Server</b></a></td>
+<td nowrap="" ><div id="DMZ_Eb">
+<input type='text' id="dmzip1" name="dmzip1" size="4" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />.
+<input type='text' id="dmzip2" name="dmzip2" size="4" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />.
+<input type='text' id="dmzip3" name="dmzip3" size="4" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" />.
+<input type='text' id="dmzip4" name="dmzip4" size="4" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event);" onKeyUp="IPKeyUp(event,this);" onKeyDown="return IPKeyDown(event, this)" /></div></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<input type="checkbox" name="rspToPing" value="rspToPing" id="rspToPing" onClick="" />&nbsp;<a tabindex=-1 href="javascript:loadhelp('ping')"><b id="idRespondPingContext">Respond to Ping on Internet Port</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<input type="checkbox" id="disableIGMPProxy" name="disable_gproxy" value="disableIGMPProxy" onClick="" />&nbsp; <a tabindex=-1 href="javascript:loadhelp('igmp')"><b id="idDisableIGMPContext">Disable IGMP Proxying</b></a>
+</td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" width="40%"><a tabindex=-1 href="javascript:loadhelp('mtu')"><span id="idMTUContext"><b>MTU Size</b>(in bytes)</span></a></td>
+<td nowrap=""><input type="text" id="wan_mtu" name="wan_mtu" size="5" maxlength="4" value="1500" onKeyPress="return getkey('num',event)"/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr id="idNATFilterNotYes">
+<td nowrap="" width="40%"><a tabindex=-1 href="javascript:loadhelp('nat')"><b id="idNATFilterContext">NAT Filtering</b></a></td>
+<td nowrap=""><input type="radio" name="NatInboundFiltering" id="idNATFilterSecured" value="Secured" checked="checked" /><span id="idNATSecuredContext">Secured</span>&nbsp;&nbsp;<input type="radio" name="NatInboundFiltering" id="idNATFilterOpen" value="Open" /><span id="idNATOpenContext">Open</span></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div><input type="checkbox" id="idDisableSIPALG" onClick="" name="disable_sip"/><a tabindex=-1 href="javascript:loadhelp('sip')"><b id="idDisableSIPALGContext">Disable SIP ALG</b></a></div>
+<div id="idIPv6NotYet" style="display:none">
+<div><input type="checkbox" id="idEnableIPv6" /><b id="idEnableIPv6Context">Enable IPv6 Pass-Through</b></div>
+</div>
+</td>
+</tr>
+<!--use for russia, begin-->
+<tr id="idBlockWirePort1">
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr id="idBlockWirePort2">
+<td nowrap="" width="40%"><a tabindex=-1 href="javascript:loadhelp('nat')"><b id="idBridgeIptv">Bridge IPTV Streaming to</b></a></td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr id="idBlockWirePort3" style="display:none">
+<td nowrap="" width="">
+<input type="checkbox" id="enable_iptv_port1" onClick="" name="enable_iptv_port1" />&nbsp;&nbsp;<b id="">Lan-1</b>&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" id="enable_iptv_port2" onClick="" name="enable_iptv_port2" />&nbsp;&nbsp;<b id="">Lan-2</b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr id="idBlockWirePort4" style="display:none">
+<td nowrap="" width="">
+<input type="checkbox" id="enable_iptv_port5" onClick="" name="enable_iptv_port5" />&nbsp;&nbsp;<b id="">Lan-1</b>&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" id="enable_iptv_port6" onClick="" name="enable_iptv_port6" />&nbsp;&nbsp;<b id="">Lan-2</b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr id="idBlockWirelessPort1">
+<td nowrap="" width="">
+<input type="checkbox" id="enable_iptv_wlan" onClick="" name="enable_iptv_wlan" />&nbsp;&nbsp;<b><span id="idEnableIptvWlan">Wireless Network:&nbsp;&nbsp;</span>&nbsp;<span id="iptv_wireless_ssid1">&nbsp;</span></b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<tr id="idBlockWirelessPort2">
+<td nowrap="" width="">
+<input type="checkbox" id="enable_iptv_guest1" onClick="" name="enable_iptv_guest1" />&nbsp;&nbsp;<b><span id="idEnableIptvGuest1">Wireless Network:&nbsp;&nbsp;</span>&nbsp;<span id="iptv_wireless_ssid2">&nbsp;</span></b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td nowrap="">&nbsp;</td>
+</tr>
+<!--use for russia, end-->
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2">
+<div style="display:none">
+<div class="div_left">WAN Connection :</div>
+<div class="div_right">
+<select id="SELECT_WanInterface" name="SELECT_WanInterface"></select>
+</div>
+<div class="div_left">LAN Connection :</div>
+<div class="div_right">
+<select id="SELECT_LanInterface" name="SELECT_LanInterface"></select>
+</div>
+</div>
+<div style="display:none; ">
+<p class="bk_orange" id="lang_snoop">IGMP Snooping</p>
+<div class="div_orange">
+<p id="lang_dsc2">Transmission of identical content, such as multimedia, from a source to a number of recipients.</p></div>
+<div class="div_black">
+<div class="div_left koo">
+<input type="checkbox" id="INPUT_IGMPSnoopingEnable" name="INPUT_IGMPSnoopingEnable" checked="checked"/> &nbsp;
+<label for="INPUT_IGMPSnoopingEnable" id="lang_snoop_enable">Enable IGMP Snooping</label>
+</div>
+<div class="div_right">
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("WAN_wan")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>

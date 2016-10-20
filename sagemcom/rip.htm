@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <title>Маршрутизация </title>
+    <script>
+        function postRip(ifname, recvVer, sendVer) {
+            document.rip.rip_if.value = ifname;
+            document.rip.recv_ver.selectedIndex = recvVer;
+            document.rip.send_ver.selectedIndex = sendVer;
+        }
+
+        function delRuleCheck() {
+            if (document.rip.select.length) {
+                for (i = 0; i < document.rip.select.length; i++) {
+                    if (document.rip.select[i].checked)
+                        return deleteClick();
+                }
+            }
+            else {
+                if (document.rip.select.checked)
+                    return deleteClick();
+            }
+
+            alert("Укажите запись, которую нужно удалить!");
+            return false;
+        }
+    </script>
+
+
+</head>
+
+<body>
+
+
+    <div class="intro_main ">
+
+        <p class="intro_title">Настройка RIP</p>
+        <p class="intro_content">Включите RIP, если вы используете данный роутер в качестве RIP-роутера.</p>
+    </div>
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody>
+                <tr>
+
+                    <th width="30%">RIP:</th>
+                    <td>
+
+                        <input checked="checked" name="rip_on" value="0" type="radio"> Выкл.&nbsp;&nbsp;
+                        <input name="rip_on" value="1" type="radio"> Вкл.
+                    </td>
+
+                    <td>
+
+                        <input class="inner_btn" name="ripApp" value="Применить" type="submit">
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <div class="data_common data_common_notitle">
+
+        <table>
+
+            <tbody>
+                <tr>
+
+                    <th width="30%">Интерфейс:</th>
+                    <td>
+
+
+                        <select id="rip_if" name="rip_if" width="30">
+<option value="br0" selected="selected"> LAN</option>
+<option value="pppoe 1"> pppoe1</option>
+</select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Принимаемя версия:</th>
+                    <td>
+
+                        <select style="width:60" name="recv_ver">
+
+                    <option selected="selected" value="1">RIP1</option>
+                    <option value="2">RIP2</option>
+                    <option value="3">Оба</option>
+                    </select>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>Отправляемая версия:</th>
+                    <td>
+
+                        <select style="width:60" name="send_ver">
+
+                    <option selected="selected" value="1">RIP1</option>
+                    <option value="2">RIP2</option>
+                    </select>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="btn_ctl">
+
+        <input class="link_bg" name="ripAdd" value="Добавить" type="submit">
+        <input class="link_bg" name="ripDel" onclick="return delRuleCheck()" value="Удалить" type="submit">
+    </div>
+
+    <div class="column">
+
+        <div class="column_title">
+
+            <div class="column_title_left"></div>
+
+            <p>Конфигурация RIP:</p>
+            <div class="column_title_right"></div>
+
+        </div>
+
+        <div class="data_common data_vertical">
+
+            <table>
+
+                <tbody>
+                    <tr>
+
+                        <th>Выбрать</th>
+                        <th>интерфейс</th>
+                        <th>Принимаемя версия</th>
+                        <th>Отправляемая версия</th>
+                    </tr>
+
+                    <tr>
+
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <input value="Send" name="submit.htm?rip.htm" type="hidden">
+
+
+
+
+
+
+
+
+</body>
+
+</html>

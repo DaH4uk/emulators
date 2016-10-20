@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -97,3 +98,104 @@ filter: alpha(opacity=0); /* for IE */
 </form>
 </body>
 </html>
+=======
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="skin/basic.css">
+<script language="javascript" type="text/javascript" src="js/basic.js"></script>
+<script language="javascript" type="text/javascript" src="js/boot.js"></script>
+<script language="javascript" type="text/javascript" src="js/secboot.js"></script>
+<title></title>
+<meta http-equiv=content-type content='text/html; charset=UTF-8'>
+<script type="text/javascript">
+var G_RouterName = 'WNR612v3';
+document.title = 'NETGEAR Router '+G_RouterName;
+</script>
+</head>
+<body onload="loadvalue();" onResize="change_size();" style="visibility:hidden ">
+<form name="uiPostForm" id="uiPostForm" method="post" action="index_basic.htm">
+</form>
+<script>
+var WDS_Enable="0";
+var WDS_WDSMode="";
+if('1'==WDS_Enable&&'Repeater'==WDS_WDSMode)
+{
+var enabled_wds=1;
+}else{
+var enabled_wds=0;
+}
+if(top!=self)top.location.href = self.location.href;
+var W_RadioEnable="1";
+var parental_ctrl_flag = "0";
+var enable_action=1;
+var menu_Type="basic";
+var gui_region="Russian";
+function loadvalue()
+{
+setFooterClass();
+change_size();
+click_action("home");
+}
+</script>
+<style>
+.black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 1024px;
+background-color: black;
+-moz-opacity: 0.0;
+opacity:.0; /* for mozilla */
+filter: alpha(opacity=0); /* for IE */
+}
+.white_content {
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 0%;
+height: 0px;
+background-color: white;
+-moz-opacity: 0.0;
+opacity:.0; /* for mozilla */
+filter: alpha(opacity=0); /* for IE */
+}
+</style>
+<div id="top">
+<iframe name="topframe" id="topframe" src="top.htm" scrolling="no" allowtransparency="true" height="100%" width="100%" frameborder="0"></iframe>
+</div>
+<div id="container" class="container_center">
+<div id="middle">
+<div id="menu">
+<div id="home" class="basic_button_purple" onclick="click_action('home');"><b><span id="lang_basic_home">Home</span></b></div>
+<div id="internet" class="basic_button" onclick="click_action('internet');"><b><span id="lang_basic_wansetup">Internet</span></b></div>
+<div id="wireless" class="basic_button" onclick="click_action('wireless');"><b><span id="lang_basic_wirelesssetup">Wireless</span></b></div>
+<div id="attached" class="basic_button" onclick="click_action('attached');"><b><span id="lang_basic_attacheddevices">Attached Devices</span></b></div>
+<div id="parental" class="basic_button" onclick="click_action('parental');"><b><span id="lang_basic_parental">Parental Controls</span></b></div>
+<div id="guest" class="basic_button" onclick="click_action('guest');"><b><span id="lang_basic_wirelessguest">Guest Network</span></b></div>
+<div id="turbo" class="basic_button" onclick="click_action('turbo');"><b><span id="lang_basic_turbovideo">FastLane</span></b></div>
+</div>
+<div id="formframe_div">
+<iframe name="formframe" id="formframe" src="page.htm" allowtransparency="true" height="100%" width="100%" scrolling="no" frameborder="0" ></iframe>
+</div>
+<div id="footer" class="footer"> <img class="footer_img" src="skin/image/footer/footer.gif">
+<div id="support"> <b><span id="lang_help_support"> HELP & SUPPORT</span></b> &nbsp; <a target="_blank" href="http://downloadcenter.netgear.com/default.htm"><span id="lang_basic_doc">Documentation</span></a> | <a target="_blank" href="http://support.netgear.com/default.htm"><span id="lang_basic_support">Online Support</span></a> | <a target="_blank" href="http://kb.netgear.com/app/answers/detail/a_id/12923"><span id="lang_basic_faq">Router FAQ</span></a> </div>
+<div id="search" align=right> <b><span id="lang_basic_search">SEARCH HELP </span></b>
+<input type="text" id="searchText" name="search" value="Enter Search Item" onkeypress="detectEnter('num',event);" onFocus="this.select();" >
+<input id="searchButton" class="search_button" type="button" name="dosearch" value="GO" onClick="do_search();">
+</div>
+</div>
+</div>
+</div>
+<div id="light" class="white_content"></div>
+<div id="fade" class="black_overlay"></div>
+<form name="uiPostForm_basic" id="uiPostForm" method="post" action="index_basic.htm">
+</form>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

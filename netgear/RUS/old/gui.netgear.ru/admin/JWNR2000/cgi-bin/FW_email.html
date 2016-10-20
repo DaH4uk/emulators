@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
  <html><head>
 <link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
@@ -228,3 +229,235 @@ cf.adjust.checked =false;
 </body>
 </body>
 </html>
+=======
+
+ <html><head>
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="http://www.netgear.ru/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="../form.css">
+<Meta http-equiv="Pragma" Content="no-cache">
+<META HTTP-equiv="Cache-Control" content="no-cache">
+<Meta http-equiv="Expires" Content="0">
+<META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<script language=javascript type=text/javascript src="../languages.js"></script>
+<script language=javascript type=text/javascript src="../funcs.js"></script>
+<script language=javascript type=text/javascript src="../email.js"></script>
+<script>window.document.title=device_title</script>
+ <title>NETGEAR Router</title>
+ </head>
+ <body onLoad="loadhelp('_FW_email');loadvalue();" bgcolor=#ffffff>
+<form method="post" action="#FW_email.html" target=formframe>
+<input type=hidden name=submit_flag value="email">
+ <table width=100% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2><H1><script>document.write(email_head);</script></H1></TD></TR>
+<TR><TD colSpan=2></TD></TR><TR><td colspan=2><img src="../liteblue.gif" width=100% height=12></td></TR>
+<script>
+var lan_ipaddr="192.168.1.1"
+function loadvalue()
+{
+var cf=document.forms[0];
+cf.email_addr.value="";
+cf.email_smtp.value="";
+cf.email_username.value="";
+cf.email_password.value="";
+if('0' == '1')
+cf.email_notify.checked =true;
+else
+cf.email_notify.checked =false;
+if("0" == "1")
+cf.enable_auth.checked = true;
+else
+cf.enable_auth.checked =false;
+if("0" == "1")
+cf.enable_ssl.checked = true;
+else
+cf.enable_ssl.checked =false;
+if('1' == 1)
+cf.block_site.checked = true;
+else
+cf.block_site.checked =false;
+time=parseInt('0');
+if(time >11 )
+{
+time = time-12;
+cf.cfAlert_am[1].checked = true;
+}
+else
+cf.cfAlert_am[0].checked =true;
+cf.cfAlert_Select.selectedIndex=0;
+cf.cfAlert_Day.selectedIndex=0;
+cf.cfAlert_Hour.selectedIndex=time;
+OnAlertChange(cf);
+setAuth(cf);
+setGray(cf);
+
+var hidden_ntpserver='GMT-0';
+var select_ntp='25';
+cf.ntp_server.options[eval(select_ntp)].selected =true;
+if('0,' == "1")
+cf.adjust.checked =true;
+else
+cf.adjust.checked =false;
+}
+</script>
+<input type="hidden" name="email_notify_enabled">
+<input type="hidden" name="send_alert_immediately">
+<input type="hidden" name="schedule_hour">
+<input type="hidden" name="ntpadjust">
+<input type="hidden" name="email_endis_auth">
+<input type="hidden" name="email_support_ssl">
+<input type="hidden" name="ntpserver1">
+<input type="hidden" name="ntpserver2">
+<input type="hidden" name="hidden_ntpserver">
+<input type="hidden" name="hidden_select">
+<input type="hidden" name="endis_ntp">
+<tr><script>document.write(hd);</script><input type="checkbox" name="email_notify" value="1" onclick="setGray(document.forms[0]);"><a tabindex=-1 href="javascript:loadhelp('_FW_email','receive')"><b><script>document.write(email_turn_on);</script><script>document.write(ba);</script></td></tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_FW_email','receive')"><b><script>document.write(email_sent_logs);</script><script>document.write(ba);</script></td></tr>
+<tr>
+ <script>document.write(hd);</script><script>document.write(email_server);</script></td>
+ <script>document.write(hd_r);</script>
+ <input type="text" name="email_smtp" value="" size="24" maxlength="50" onKeyPress="return getkey('ssid', event)">
+ </td>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(email_address);</script></td>
+<script>document.write(hd_r);</script>
+ <input type="text" name="email_addr" value="" size="24" maxlength="50" onKeyPress="return getkey('ssid', event)">
+</td>
+</tr>
+<tr>
+<script>document.write(hd2);</script>
+<input type=checkbox name="enable_ssl" value=1><script>document.write(email_ssl_support);</script>
+</td>
+</tr>
+<tr>
+<script>document.write(hd2);</script>
+<input type=checkbox name="enable_auth" value=1 onclick="setAuth(document.forms[0]);"><b><script>document.write(email_authen);</script></b>
+</td>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(ddns_username);</script></td>
+<script>document.write(hd_r);</script>
+ <input type="text" name="email_username" value="" size="24" maxlength="50" onKeyPress="return getkey('ssid', event)">
+</td>
+</tr>
+<tr>
+<script>document.write(hd);</script><script>document.write(ddns_passwd);</script></td>
+<script>document.write(hd_r);</script>
+<input type="password" name="email_password" value="" size="24" maxlength="50" onKeyPress="return getkey('ssid', event)">
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="block_site" value="1"><a tabindex=-1 href="javascript:loadhelp('_FW_email','alert')"><b><script>document.write(email_sent_immediately);</script><script>document.write(ba);</script></td></tr>
+<tr><script>document.write(hd2);</script><script>document.write(email_visit_block);</script></td></tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_FW_email','schedule')"><b><script>document.write(email_schedule);</script><script>document.write(ba);</script></td></tr>
+<tr>
+<script>document.write(hd2);</script>
+ <select name="cfAlert_Select" size="1"onChange="OnAlertChange(document.forms[0]);" disabled>
+ <option value=0 selected><script>document.write(email_full);</script></option>
+ <option value=1 ><script>document.write(email_hourly);</script></option>
+ <option value=2 ><script>document.write(email_daily);</script></option>
+ <option value=3 ><script>document.write(email_weekly);</script></option>
+ <option value=4 ><script>document.write(email_none);</script></option>
+</select>
+</td>
+</tr>
+<tr>
+<script>document.write(hd2);</script><script>document.write(email_day);</script> &nbsp;
+ <select name="cfAlert_Day" size="1" tabindex="8" onFocus="if (AlertTimeDisabled) this.blur()" disabled>
+ <option value=0 selected><script>document.write(schedule_sun);</script></option>
+ <option value=1 ><script>document.write(schedule_mon);</script></option>
+ <option value=2 ><script>document.write(schedule_tue);</script></option>
+ <option value=3 ><script>document.write(schedule_wed);</script></option>
+ <option value=4 ><script>document.write(schedule_thu);</script></option>
+ <option value=5 ><script>document.write(schedule_fri);</script></option>
+ <option value=6 ><script>document.write(schedule_sat);</script></option>
+</select>
+</td>
+</tr>
+<tr>
+<script>document.write(hd2);</script><script>document.write(email_time);</script>
+<select name="cfAlert_Hour" size="1" tabindex="9" onFocus="if (AlertHourDisabled) this.blur()" disabled>
+ <option value=0 selected>0:00</option>
+ <option value=1>1:00</option>
+ <option value=2>2:00</option>
+ <option value=3>3:00</option>
+ <option value=4>4:00</option>
+ <option value=5>5:00</option>
+ <option value=6>6:00</option>
+ <option value=7>7:00</option>
+ <option value=8>8:00</option>
+ <option value=9>9:00</option>
+ <option value=10>10:00</option>
+ <option value=11>11:00</option>
+</select>
+ <input type="radio" checked name="cfAlert_am" value="am" disabled>a.m.
+ <input type="radio" name="cfAlert_am" value="pm" disabled>p.m.
+</td>
+</tr>
+<script>document.write(bluebar);</script>
+<tr><script>document.write(hd2);</script><a tabindex=-1 href="javascript:loadhelp('_FW_email','timezone')"><b><script>document.write(email_timezone);</script></b> </td></tr>
+<tr>
+<script>document.write(hd2);</script>
+<select name="ntp_server">
+ <OPTION value="GMT+12" selected><script>document.write(gmt_12);</script></OPTION>
+ <OPTION value="GMT+11" ><script>document.write(gmt_11);</script></OPTION>
+ <OPTION value="GMT+10" ><script>document.write(gmt_10);</script></OPTION>
+ <OPTION value="GMT+9" ><script>document.write(gmt_9);</script></OPTION>
+ <OPTION value="GMT+8"><script>document.write(gmt_8);</script></OPTION>
+ <OPTION value="GMT+7" ><script>document.write(gmt_7_1);</script></OPTION>
+<OPTION value="GMT+7" ><script>document.write(gmt_7_2);</script></OPTION>
+ <OPTION value="GMT+6" ><script>document.write(gmt_6_1);</script></OPTION>
+<OPTION value="GMT+6" ><script>document.write(gmt_6_2);</script></OPTION>
+ <OPTION value="GMT+5" ><script>document.write(gmt_5_1);</script></OPTION>
+<OPTION value="GMT+5" ><script>document.write(gmt_5_2);</script></OPTION>
+ <OPTION value="GMT+4" ><script>document.write(gmt_4);</script></OPTION>
+ <OPTION value="GMT+3" ><script>document.write(gmt_3);</script></OPTION>
+ <OPTION value="GMT+2" ><script>document.write(gmt_2);</script></OPTION>
+ <OPTION value="GMT+1" ><script>document.write(gmt_1);</script></OPTION>
+ <OPTION value="GMT-0" ><script>document.write(gmt_0_1);</script></OPTION>
+<OPTION value="GMT-0" ><script>document.write(gmt_0_2);</script></OPTION>
+ <OPTION value="GMT-1" ><script>document.write(gmt1_1);</script></OPTION>
+<OPTION value="GMT-1" ><script>document.write(gmt1_2);</script></OPTION>
+<OPTION value="GMT-1" ><script>document.write(gmt1_3);</script></OPTION>
+<OPTION value="GMT-1" ><script>document.write(gmt1_4);</script></OPTION>
+ <OPTION value="GMT-2" ><script>document.write(gmt2_1);</script></OPTION>
+<OPTION value="GMT-2" ><script>document.write(gmt2_2);</script></OPTION>
+<OPTION value="GMT-2" ><script>document.write(gmt2_3);</script></OPTION>
+ <OPTION value="GMT-3" ><script>document.write(gmt3_1);</script></OPTION>
+<OPTION value="GMT-3" ><script>document.write(gmt3_2);</script></OPTION>
+ <OPTION value="GMT-4" ><script>document.write(gmt4);</script></OPTION>
+ <OPTION value="GMT-5" ><script>document.write(gmt5_1);</script></OPTION>
+<OPTION value="GMT-5" ><script>document.write(gmt5_2);</script></OPTION>
+ <OPTION value="GMT-6" ><script>document.write(gmt6);</script></OPTION>
+ <OPTION value="GMT-7" ><script>document.write(gmt7);</script></OPTION>
+ <OPTION value="GMT-8" ><script>document.write(gmt8_1);</script></OPTION>
+<OPTION value="GMT-8" ><script>document.write(gmt8_2);</script></OPTION>
+ <OPTION value="GMT-9" ><script>document.write(gmt9);</script></OPTION>
+ <OPTION value="GMT-10" ><script>document.write(gmt10_1);</script></OPTION>
+<OPTION value="GMT-10" ><script>document.write(gmt10_2);</script></OPTION>
+ <OPTION value="GMT-11" ><script>document.write(gmt11);</script></OPTION>
+ <OPTION value="GMT-12" ><script>document.write(gmt12);</script></OPTION>
+</select>
+</td>
+</tr>
+<tr><script>document.write(hd2);</script><input type="checkbox" name="adjust" value="1"><b><script>document.write(email_auto_adjust);</script></b></td></tr>
+<tr>
+ <script>document.write(hd2_center);</script>
+ <b> <script>document.write(ntp_curtime);</script> <script>document.write(schedule_wed);</script> , Jan 01 , 2003 00:16:55 </b>
+ </td>
+</tr>
+<script>document.write(bluebar);</script>
+<TR>
+ <TD align=middle colSpan=2>
+<script>document.write('<input type="submit" value="'+apply_mark+'" onClick="return check_email(document.forms[0])">&nbsp;&nbsp;');</script>
+<script>document.write("<input type='button' value='"+cancel_mark+"' onClick='location.href=\"FW_email.html\";'></TD>");</script>
+ </TR>
+</TABLE>
+</FORM>
+</body>
+</body>
+</html>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

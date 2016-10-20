@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <title>Качество обслуживания IP QoS</title>
+ <script>
+  function disableRules() {
+   if (document.getElementById) {
+    document.getElementById('qosPly').style.display = 'none';
+    document.getElementById('qosRulestbl').style.display = 'none';
+    document.getElementById('qosAddRule').style.display = 'none';
+   }
+   else {
+    if (document.layers == false) {
+     document.all.qosPly.style.display = 'none';
+     document.all.qosRulestbl.style.display = 'none';
+     document.all.qosAddRule.style.display = 'none';
+    }
+   }
+  }
+
+  function enableRules() {
+   if (document.getElementById) {
+    document.getElementById('qosPly').style.display = 'block';
+    document.getElementById('qosRulestbl').style.display = 'block';
+    document.getElementById('qosAddRule').style.display = 'none';
+   }
+   else {
+    if (document.layers == false) {
+     document.all.qosPly.style.display = 'block';
+     document.all.qosRulestbl.style.display = 'block';
+     document.all.qosAddRule.style.display = 'none';
+    }
+   }
+  }
+
+  function qosClick(url) {
+   var wide = 620;
+   var high = 400;
+   if (document.all)
+    var xMax = screen.width,
+     yMax = screen.height;
+   else if (document.layers)
+    var xMax = window.outerWidth,
+     yMax = window.outerHeight;
+   else
+    var xMax = 640,
+     yMax = 480;
+   var xOffset = (xMax - wide) / 2;
+   var yOffset = (yMax - high) / 3;
+
+   var settings = 'width=' + wide + ',height=' + high + ',screenX=' + xOffset + ',screenY=' + yOffset + ',top=' + yOffset + ',left=' + xOffset + ', resizable=yes, toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes';
+   window.open(url, 'qosTbl', settings);
+  }
+
+  function delRuleCheck() {
+   if (document.qostbl.selRule.length) {
+    for (i = 0; i < document.qostbl.selRule.length; i++) {
+     if (document.qostbl.selRule[i].checked)
+      return deleteClick();
+    }
+   }
+   else {
+    if (document.qostbl.selRule.checked)
+     return deleteClick();
+   }
+
+   alert("Выберите запись, чтобы удалить!");
+   return false;
+  }
+
+  function addRule() {
+   with(document.forms[1]) {
+    document.getElementById("qosAddRule").style.display = 'block';
+    document.getElementById("qostagid").style.display = 'none';
+    smac.value = "";
+    dmac.value = "";
+    sip.value = "";
+    dip.value = "";
+    smask.value = "";
+    dmask.value = "";
+    sport.value = "";
+    dport.value = "";
+    sport.disabled = true;
+    dport.disabled = true;
+    prot.value = 0;
+    phyport.value = 0;
+    prio.value = 3;
+    sipp.value = 0;
+    sippend.value = 0;
+    stos.value = 255;
+    sdscp.value = "";
+    sdscpend.value = "";
+    stc.value = "";
+    stcend.value = "";
+    s1p.value = 0;
+    s1pend.value = 0;
+    ipp_ds_choose[1].checked = true;
+    qostag.checked = false;
+    mipp_ds_choose[1].checked = true;
+    mipp.value = 0;
+    mtos.value = 255;
+    mdscp.value = "";
+    mtc.value = "";
+    m1p.value = 0;
+    ipp_ds_change();
+    mipp_ds_change();
+   }
+   if (document.qostbl.selRule) {
+    if (document.qostbl.selRule.length) {
+     for (i = 0; i < document.qostbl.selRule.length; i++) {
+      document.qostbl.selRule[i].checked = false;
+     }
+    }
+    else
+     document.qostbl.selRule.checked = false;
+   }
+  }
+
+  function postVC(smac, dmac, sip, smask, dip, dmask, sport, sportend, dport, dportend, proto, phyport, s_ipp, s_ippend, s_tos, s_tosend, s_dscp, s_dscpend, s_1p, s_1pend, s_tc, s_tcend,
+   prior, m_ipp, m_tos, m_dscp, m_1p, m_tc
+  ) {
+   var nfmark = 0;
+   with(document.forms[1]) {
+    document.getElementById("qosAddRule").style.display = 'block';
+    document.getElementById("qostagid").style.display = 'none';
+   }
+   document.qostbl.smac.value = smac;
+   document.qostbl.dmac.value = dmac;
+   document.qostbl.sip.value = sip;
+   document.qostbl.smask.value = smask;
+   document.qostbl.dip.value = dip;
+   document.qostbl.dmask.value = dmask;
+   document.qostbl.prot.value = proto;
+   if (proto == 1 || proto == 2 || proto == 4) {
+    document.qostbl.sport.disabled = false;
+    document.qostbl.dport.disabled = false;
+    if (sport)
+     document.qostbl.sport.value = sport;
+    else
+     document.qostbl.sport.value = "";
+    if (dport)
+     document.qostbl.dport.value = dport;
+    else
+     document.qostbl.dport.value = "";
+   }
+   else {
+    document.qostbl.sport.disabled = true;
+    document.qostbl.dport.disabled = true;
+   }
+   document.qostbl.phyport.value = phyport;
+   document.qostbl.prio.value = prior;
+   document.qostbl.sipp.value = s_ipp + 1;
+   document.qostbl.sippend.value = s_ippend + 1;
+   if (s_tos == -1) {
+    document.qostbl.stos.value = 255;
+   }
+   else {
+    document.qostbl.stos.value = s_tos;
+   }
+   if (s_dscp == -1) {
+    document.qostbl.sdscp.value = "";
+   }
+   else {
+    document.qostbl.sdscp.value = s_dscp.toString(16);
+   }
+   if (s_dscpend == -1) {
+    document.qostbl.sdscpend.value = "";
+   }
+   else {
+    document.qostbl.sdscpend.value = s_dscpend.toString(16);
+   }
+   if (s_tc == -1) {
+    document.qostbl.stc.value = "";
+   }
+   else {
+    document.qostbl.stc.value = s_tc.toString(16);
+   }
+   if (s_tcend == -1) {
+    document.qostbl.stcend.value = "";
+   }
+   else {
+    document.qostbl.stcend.value = s_tcend.toString(16);
+   }
+   document.qostbl.s1p.value = s_1p + 1;
+   document.qostbl.s1pend.value = s_1pend + 1;
+   if (s_dscp >= 0) {
+    document.qostbl.ipp_ds_choose[1].checked = true;
+   }
+   else if (s_ipp >= 0 || s_tos >= 0) {
+    document.qostbl.ipp_ds_choose[0].checked = true;
+   }
+   else
+    document.qostbl.ipp_ds_choose[1].checked = true;
+   ipp_ds_change();
+   if (m_ipp != -1 || m_tos != -1 || m_dscp != -1 ||
+    m_tc != -1 ||
+    m_1p != -1
+   )
+    nfmark = 1;
+   if (nfmark) {
+    document.qostbl.qostag.checked = true;
+    document.getElementById('qostagid').style.display = 'block';
+    document.qostbl.mipp.value = m_ipp + 1;
+    if (m_tos == -1)
+     document.qostbl.mtos.value = 255;
+    else
+     document.qostbl.mtos.value = m_tos;
+    if (m_dscp == -1)
+     document.qostbl.mdscp.value = "";
+    else
+     document.qostbl.mdscp.value = m_dscp.toString(16);
+    if (m_tc == -1)
+     document.qostbl.mtc.value = "";
+    else
+     document.qostbl.mtc.value = m_tc.toString(16);
+    document.qostbl.m1p.value = m_1p + 1;
+    if (m_dscp >= 0) {
+     document.qostbl.mipp_ds_choose[1].checked = true;
+    }
+    else if (m_ipp >= 0 || m_tos >= 0) {
+     document.qostbl.mipp_ds_choose[0].checked = true;
+    }
+    else
+     document.qostbl.mipp_ds_choose[1].checked = true;
+    mipp_ds_change();
+   }
+   else {
+    document.qostbl.qostag.checked = false;
+    document.getElementById('qostagid').style.display = 'none';
+   }
+  }
+
+  function adminClick() {
+   if ((document.qostbl.prot.selectedIndex == 1) ||
+    (document.qostbl.prot.selectedIndex == 2) ||
+    (document.qostbl.prot.selectedIndex == 4)) {
+    document.qostbl.sport.disabled = false;
+    document.qostbl.dport.disabled = false;
+   }
+   else {
+    document.qostbl.sport.disabled = true;
+    document.qostbl.dport.disabled = true;
+   }
+  }
+
+  function qostaglist(cb, id) {
+   if (cb.checked == true) {
+    if (document.getElementById)
+     document.getElementById(id).style.display = 'block';
+    else {
+     if (document.layers == false)
+      document.all.id.style.display = 'block';
+    }
+   }
+   else {
+    if (document.getElementById) {
+     document.getElementById(id).style.display = 'none';
+    }
+    else {
+     if (document.layers == false)
+      document.all.id.style.display = 'none';
+    }
+    document.qostbl.mipp.value = 0;
+    document.qostbl.mtos.value = 255;
+    document.qostbl.mdscp.value = "";
+    document.qostbl.mtc.value = "";
+    document.qostbl.m1p.value = 0;
+   }
+  }
+
+  function addClick() {
+   if (document.qostbl.smac.value != "") {
+    if (checkMac(document.qostbl.smac) == 0) {
+     alert("Неверный MAC источника!");
+     document.qostbl.smac.focus();
+     return false;
+    }
+   }
+   if (document.qostbl.dmac.value != "") {
+    if (checkMac(document.qostbl.dmac) == 0) {
+     alert("Неверный MAC назначения!");
+     document.qostbl.dmac.focus();
+     return false;
+    }
+   }
+   var ipv6flag = -1,
+    dipv6flag = -1;
+   if (document.qostbl.sip.value != "") {
+    if (isIpv6Address(document.qostbl.sip.value)) {
+     if (isGlobalIpv6Address(document.qostbl.sip.value) == 0 || isUnicastIpv6Address(document.qostbl.sip.value) == 0) {
+      alert("Неверный IPv6 адрес источника!");
+      document.qostbl.sip.focus();
+      return false;
+     }
+     ipv6flag = 1;
+    }
+    else {
+     if (checkIP(document.qostbl.sip) == 0) {
+      alert("Неверный IP адрес источника!");
+      document.qostbl.sip.focus();
+      return false;
+     }
+     if (!checkMask(document.qostbl.smask)) {
+      return false;
+     }
+     ipv6flag = 0;
+    }
+   }
+   if (document.qostbl.dip.value != "") {
+    if (isIpv6Address(document.qostbl.dip.value)) {
+     if (isGlobalIpv6Address(document.qostbl.dip.value) == 0 || isUnicastIpv6Address(document.qostbl.dip.value) == 0) {
+      alert("Неверный IPv6 адрес назначения!");
+      document.qostbl.dip.focus();
+      return false;
+     }
+     dipv6flag = 1;
+    }
+    else {
+     if (checkIP(document.qostbl.dip) == 0) {
+      alert("Неверный IP адрес назначения!");
+      document.qostbl.dip.focus();
+      return false;
+     }
+     if (!checkMask(document.qostbl.dmask)) {
+      return false;
+     }
+     dipv6flag = 0;
+    }
+   }
+   if (ipv6flag >= 0 && dipv6flag >= 0) {
+    if (ipv6flag != dipv6flag) {
+     alert("IP адрес источника и назначения должны быть одного типа!");
+     document.qostbl.sip.focus();
+     return false;
+    }
+   }
+   if ((document.qostbl.prot.value == "1") || (document.qostbl.prot.value == "2") || (document.qostbl.prot.value == "4")) {
+    if (document.qostbl.sport.value != "") {
+     if (validateDecimalDigit(document.qostbl.sport.value) == 0) {
+      alert("Неверный порт источника!");
+      document.qostbl.sport.focus();
+      return false;
+     }
+     d1 = getDigit(document.qostbl.sport.value, 1);
+     if (d1 > 65535 || d1 < 1) {
+      alert("Диапазон портов источника: 1-65535!");
+      document.qostbl.sport.focus();
+      return false;
+     }
+    }
+    if (document.qostbl.dport.value != "") {
+     if (validateDecimalDigit(document.qostbl.dport.value) == 0) {
+      alert("Неверный порт назначения!");
+      document.qostbl.dport.focus();
+      return false;
+     }
+     d1 = getDigit(document.qostbl.dport.value, 1);
+     if (d1 > 65535 || d1 < 1) {
+      alert("Диапазон портов назначения: 1-65535");
+      document.qostbl.dport.focus();
+      return false;
+     }
+    }
+   }
+   if ((document.qostbl.sipp.value != 0 || document.qostbl.stos.value != 255) && document.qostbl.sdscp.value != "") {
+    alert("Укажите только или TOS, или DSCP!");
+    return false;
+   }
+   if (ipv6flag == 1 || dipv6flag == 1) {
+    if (document.qostbl.sipp.value != 0 || document.qostbl.stos.value != 255 ||
+     document.qostbl.mipp.value != 0 || document.qostbl.mtos.value != 255) {
+     alert("При выборе IPv6 адреса, нельзя установить IP приоритет или TOS!");
+     return false;
+    }
+   }
+   if (ipv6flag == 0 || dipv6flag == 0) {
+    if (document.qostbl.stc.value != "" || document.qostbl.mtc.value != "") {
+     alert("При выборе IPv4 адреса, нельзя установить Класс Трафика!");
+     return false;
+    }
+   }
+   if ((document.qostbl.sipp.value != 0 || document.qostbl.stos.value != 255 || document.qostbl.sdscp.value != "") && document.qostbl.stc.value != "") {
+    alert("Выберите или TOS/DSCP, или TC!");
+    return false;
+   }
+   if (document.qostbl.sipp.value == 0) {
+    if (document.qostbl.sippend.value != 0) {
+     alert("Укажите начальное значение IP-приоритета!");
+     document.qostbl.sipp.focus();
+     return false;
+    }
+   }
+   else {
+    d1 = getDigit(document.qostbl.sipp.value, 1);
+    if (document.qostbl.sippend.value != 0) {
+     d2 = getDigit(document.qostbl.sippend.value, 1);
+     if (d1 > d2) {
+      alert("Конечное значение IP-приоритета должно быть больше чем начальное значение!");
+      document.qostbl.sipp.focus();
+      return false;
+     }
+    }
+   }
+   if (document.qostbl.s1p.value == 0) {
+    if (document.qostbl.s1pend.value != 0) {
+     alert("Пожалуйста, укажите начальное значение 802.1p!");
+     document.qostbl.s1p.focus();
+     return false;
+    }
+   }
+   else {
+    d1 = getDigit(document.qostbl.s1p.value, 1);
+    if (document.qostbl.s1pend.value != 0) {
+     d2 = getDigit(document.qostbl.s1pend.value, 1);
+     if (d1 > d2) {
+      alert("Конечное значение 802.1p должно быть больше чем начальное значение!");
+      document.qostbl.s1p.focus();
+      return false;
+     }
+    }
+   }
+   if (document.qostbl.sdscp.value == "") {
+    if (document.qostbl.sdscpend.value != "") {
+     alert("Укажите начальное значение DSCP!");
+     document.qostbl.sdscp.focus();
+     return false;
+    }
+   }
+   else {
+    var tmpstr;
+    tmpstr = "0x" + document.qostbl.sdscp.value;
+    if (validateDigit(tmpstr) == 0) {
+     alert("Неверное значение DSCP!");
+     document.qostbl.sdscp.focus();
+     return false;
+    }
+    d1 = getDigitFromString(tmpstr);
+    if (d1 < 0 || d1 > 63) {
+     alert("Invalid DSCP value,should between 0~3f.");
+     document.qostbl.sdscp.focus();
+     return false;
+    }
+    if (document.qostbl.sdscpend.value != "") {
+     tmpstr = "0x" + document.qostbl.sdscpend.value;
+     if (validateDigit(tmpstr) == 0) {
+      alert("Неверное значение DSCP!");
+      document.qostbl.sdscpend.focus();
+      return false;
+     }
+     d2 = getDigitFromString(tmpstr);
+     if (d2 < 0 || d2 > 63) {
+      alert("Invalid DSCP value,should between 0~3f.");
+      document.qostbl.sdscpend.focus();
+      return false;
+     }
+     if (d1 > d2) {
+      alert("Конечное значение DSCP должно быть больше чем начальное значение!");
+      document.qostbl.sdscp.focus();
+      return false;
+     }
+     document.qostbl.sdscpend.value = d2;
+    }
+    document.qostbl.sdscp.value = d1;
+   }
+   if (document.qostbl.stc.value == "") {
+    if (document.qostbl.stcend.value != "") {
+     alert("Задайте начальное значение Трафик Класса!");
+     document.qostbl.stc.focus();
+     return false;
+    }
+   }
+   else {
+    var tmpstr;
+    tmpstr = "0x" + document.qostbl.stc.value;
+    if (validateDigit(tmpstr) == 0) {
+     alert("Неверное значение Трафик Класса!");
+     document.qostbl.stc.focus();
+     return false;
+    }
+    d1 = getDigitFromString(tmpstr);
+    if (d1 < 0 || d1 > 255) {
+     alert("Invalid traffic class value,should between 0~ff.");
+     document.qostbl.stc.focus();
+     return false;
+    }
+    if (document.qostbl.stcend.value != "") {
+     tmpstr = "0x" + document.qostbl.stcend.value;
+     if (validateDigit(tmpstr) == 0) {
+      alert("Неверное значение Трафик Класса!");
+      document.qostbl.stcend.focus();
+      return false;
+     }
+     d2 = getDigitFromString(tmpstr);
+     if (d2 < 0 || d2 > 255) {
+      alert("Invalid traffic class value,should between 0~ff.");
+      document.qostbl.stcend.focus();
+      return false;
+     }
+     if (d1 > d2) {
+      alert("Конечное значениеТрафик Класса должно быть больше чем начальное значение!");
+      document.qostbl.stc.focus();
+      return false;
+     }
+     document.qostbl.stcend.value = d2;
+    }
+    document.qostbl.stc.value = d1;
+   }
+   if (document.qostbl.qostag.checked) {
+    if (document.qostbl.mtos.value == 255 &&
+     document.qostbl.mipp.value == 0 &&
+     document.qostbl.mdscp.value == "" &&
+     document.qostbl.mtc.value == "" &&
+     document.qostbl.m1p.value == 0) {
+     alert("Пожалуйста, укажите метку!");
+     return false;
+    }
+   }
+   if ((document.qostbl.mtos.value != 255 || document.qostbl.mipp.value != 0) && document.qostbl.mdscp.value != "") {
+    alert("Выберите тип для перемаркировки, TOS или DSCP!");
+    return false;
+   }
+   if ((document.qostbl.mtos.value != 255 || document.qostbl.mipp.value != 0 || document.qostbl.mdscp.value != "") && document.qostbl.mtc.value != "") {
+    alert("Используйте только один тип перемаркоровки TOS/DSCP или TC!");
+    return false;
+   }
+   if (document.qostbl.mdscp.value != "") {
+    var tmpstr;
+    tmpstr = "0x" + document.qostbl.mdscp.value;
+    if (validateDigit(tmpstr) == 0) {
+     alert("Invaldi DSCP value!");
+     document.qostbl.mdscp.focus();
+     return false;
+    }
+    d1 = getDigitFromString(tmpstr);
+    if (d1 > 63 || d1 < 0) {
+     alert("Invaldi DSCP value, should between 0 and 3f.");
+     document.qostbl.mdscp.focus();
+     return false;
+    }
+    document.qostbl.mdscp.value = d1;
+   }
+   if (document.qostbl.mtc.value != "") {
+    var tmpstr;
+    tmpstr = "0x" + document.qostbl.mtc.value;
+    if (validateDigit(tmpstr) == 0) {
+     alert("Неверное значение TC");
+     document.qostbl.mtc.focus();
+     return false;
+    }
+    d1 = getDigitFromString(tmpstr);
+    if (d1 > 255 || d1 < 0) {
+     alert("Invaldi TC value, should between 0 and ff.");
+     document.qostbl.mtc.focus();
+     return false;
+    }
+    document.qostbl.mtc.value = d1;
+   }
+   if (document.qostbl.m1p.value != 0) {
+    if (!confirm('Вы выбрали перемаркировку 802.1p. Пожалуйста, убедитесь, что оператор использует приоритезацию 802.1q на выбранном WAN интерфейсе, иначе метка 802.1p работать не будет!'))
+     return false;
+   }
+   if (document.qostbl.smac.value == "" &&
+    document.qostbl.dmac.value == "" &&
+    document.qostbl.sip.value == "" &&
+    document.qostbl.dip.value == "" &&
+    document.qostbl.prot.value == 0 &&
+    document.qostbl.phyport.value == "0" &&
+    document.qostbl.sipp.value == 0 &&
+    document.qostbl.stos.value == 255 &&
+    document.qostbl.sdscp.value == "" &&
+    document.qostbl.stc.value == "" &&
+    document.qostbl.s1p.value == 0
+   ) {
+    alert("Ни одно из условий не задано!");
+    document.qostbl.sip.focus();
+    return false;
+   }
+   if (document.getElementById)
+    document.getElementById('qosAddRule').style.display = 'none';
+   else {
+    if (document.layers == false)
+     document.all.qosAddRule.style.display = 'none';
+   }
+   return true;
+  }
+
+  function ipp_ds_change() {
+   if (document.qostbl.ipp_ds_choose[0].checked == true) {
+    document.qostbl.sdscp.value = "";
+    document.qostbl.sdscpend.value = "";
+    document.qostbl.sipp.disabled = false;
+    document.qostbl.sippend.disabled = false;
+    document.qostbl.stos.disabled = false;
+    document.qostbl.sdscp.disabled = true;
+    document.qostbl.sdscpend.disabled = true;
+   }
+   else {
+    document.qostbl.sipp.value = 0;
+    document.qostbl.sippend.value = 0;
+    document.qostbl.stos.value = 255;
+    document.qostbl.sipp.disabled = true;
+    document.qostbl.sippend.disabled = true;
+    document.qostbl.stos.disabled = true;
+    document.qostbl.sdscp.disabled = false;
+    document.qostbl.sdscpend.disabled = false;
+   }
+  }
+
+  function mipp_ds_change() {
+   if (document.qostbl.mipp_ds_choose[0].checked == true) {
+    document.qostbl.mdscp.value = "";
+    document.qostbl.mipp.disabled = false;
+    document.qostbl.mtos.disabled = false;
+    document.qostbl.mdscp.disabled = true;
+   }
+   else {
+    document.qostbl.mipp.value = 0;
+    document.qostbl.mtos.value = 255;
+    document.qostbl.mipp.disabled = true;
+    document.qostbl.mtos.disabled = true;
+    document.qostbl.mdscp.disabled = false;
+   }
+  }
+ </script>
+
+</head>
+
+<body class="mainbody" topmargin="5">
+
+ <table class="pagetitle_table">
+
+  <tbody>
+   <tr>
+
+    <td class="intro_title">Качество обслуживания IP QoS</td>
+   </tr>
+
+  </tbody>
+ </table>
+
+
+  <div class="data_common data_common_notitle">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Качество обслуживания IP QoS:</th>
+      <td>
+
+       <input value="0" onclick="return disableRules()" name="qosen" checked="checked" type="radio"> Отключить&nbsp;
+       <input value="1" onclick="return enableRules()" name="qosen" type="radio"> Включить
+      </td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div id="qosPly" class="data_common data_common_notitle hide_gui" style="display:none">
+
+   <table>
+
+    <tbody>
+     <tr>
+
+      <th width="30%">Режим::</th>
+      <td>
+
+       <select name="qossch">
+
+ <option selected="selected" value="0">Strict priority</option>
+ <option value="1">WFQ(4:3:2:1)</option>
+ </select>
+
+      </td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="btn_ctl hide_gui">
+
+   <input class="link_bg" name="admin" value="Применить" type="submit">
+  </div>
+
+  <script>
+   document.qos.qossch.selectedIndex = 0;
+  </script>
+
+  <input value="Send" name="submit.htm?ipqos.htm" type="hidden">
+
+
+  <div id="qosRulestbl" class="column hide_gui" style="display:none">
+
+   <div class="column_title">
+
+    <div class="column_title_left"></div>
+
+    <p>Правила QoS</p>
+    <div class="column_title_right"></div>
+
+   </div>
+
+   <div class="data_common data_vertical">
+
+
+    <table>
+
+     <tbody>
+      <tr>
+
+       <td class="tablecolheader" width="15%"><b>MAC источника</b></td>
+       <td class="tablecolheader" width="15%"><b>MAC назначения</b></td>
+       <td class="tablecolheader" width="15%"><b>IP-адрес источника</b></td>
+       <td class="tablecolheader" width="10%"><b>Порт источника</b></td>
+       <td class="tablecolheader" width="15%"><b>IP-адрес получателя</b></td>
+       <td class="tablecolheader" width="10%"><b>Порт получателя</b></td>
+       <td class="tablecolheader" width="10%"><b>Протокол</b></td>
+       <td class="tablecolheader" width="10%"><b>Физ.порт</b></td>
+      </tr>
+
+
+     </tbody>
+    </table>
+
+   </div>
+
+   <div class="column_title">
+
+    <div class="column_title_left"></div>
+
+    <p>Правила QoS (продолжение)</p>
+    <div class="column_title_right"></div>
+
+   </div>
+
+
+   <div class="data_common data_vertical">
+
+    <table>
+
+     <tbody>
+      <tr>
+
+       <td class="tablecolheader" width="10%"><b>IPP</b></td>
+       <td class="tablecolheader" width="10%"><b>TOS</b></td>
+       <td class="tablecolheader" width="10%"><b>DSCP</b></td>
+       <td class="tablecolheader" width="10%"><b>TC</b></td>
+       <td class="tablecolheader" width="10%"><b>802.1p</b></td>
+       <td class="tablecolheader"><b>Приор.</b></td>
+       <td class="tablecolheader"><b>IPP метка</b></td>
+       <td class="tablecolheader"><b>TOS метка</b></td>
+       <td class="tablecolheader"><b>DSCP метка</b></td>
+       <td class="tablecolheader"><b>TC метка</b></td>
+       <td class="tablecolheader"><b>802.1p метка</b></td>
+       <td class="tablecolheader" style="border-right-style:none"><b>Выбрать</b></td>
+      </tr>
+
+
+     </tbody>
+    </table>
+
+   </div>
+
+   <div class="btn_ctl">
+
+    <input class="link_bg" value="Удалить" name="delSel" onclick="return delRuleCheck()" disabled="disabled" type="submit">&nbsp;&nbsp;
+    <input class="link_bg" value="Добавить правило" name="add" onclick="addRule()" type="button">
+   </div>
+
+  </div>
+
+  <div id="qosAddRule" style="display:none" class="column">
+
+   <div class="column_title">
+
+    <div class="column_title_left"></div>
+
+    <p>Добавить или изменить правило QoS</p>
+    <div class="column_title_right"></div>
+
+   </div>
+
+   <div class="data_common data_common_notitle hide_gui" align="left">
+
+    <table>
+
+     <tbody>
+      <tr>
+
+       <th align="left" width="30%">MAC источника: </th>
+       <td><input name="smac" size="20" maxlength="18" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>MAC получателя: </th>
+       <td><input name="dmac" size="20" maxlength="18" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>IP-адрес источника: </th>
+       <td><input name="sip" size="20" maxlength="46" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>Маска источника: </th>
+       <td><input name="smask" size="20" maxlength="46" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>IP-адрес получателя: </th>
+       <td><input name="dip" size="20" maxlength="46" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>Маска получателя: </th>
+       <td><input name="dmask" size="20" maxlength="46" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>Порт источника: </th>
+       <td><input name="sport" size="6" maxlength="5" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>Порт назначения: </th>
+       <td><input name="dport" size="6" maxlength="5" type="text"></td>
+
+      </tr>
+
+      <tr>
+
+       <th>Протокол: </th>
+       <td>
+
+        <select name="prot" onclick="return adminClick()">
+
+  <option selected="selected" value="0"></option>
+
+  <option value="1">TCP</option>
+
+  <option value="2">UDP</option>
+
+  <option value="3">ICMP</option>
+
+  <option value="4">TCP/UDP</option>
+
+     </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Физ.порт: </th>
+       <td>
+
+        <select name="phyport">
+
+<option selected="selected" value="0">&nbsp;&nbsp;</option>
+<option value="1">LAN1</option>
+<option value="2">LAN2</option>
+<option value="3">LAN3</option>
+<option value="4">LAN4</option>
+<option value="6">WLAN</option>
+<option value="7">WLAN-VAP0</option>
+<option value="8">WLAN-VAP1</option>
+<option value="9">WLAN-VAP2</option>
+
+     </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>IPP/DS поле: </th>
+       <td>
+
+        <input name="ipp_ds_choose" value="0" onclick="return ipp_ds_change()" type="radio">IPP/TOS&nbsp;
+        <input name="ipp_ds_choose" value="1" onclick="return ipp_ds_change()" checked="checked" type="radio">DSCP
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Диапазон приоритетов IP: </th>
+       <td>
+
+        <select disabled="disabled" name="sipp">
+
+        <option selected="selected" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="1">0</option>
+
+  <option value="2">1</option>
+
+  <option value="3">2</option>
+
+  <option value="4">3</option>
+
+  <option value="5">4</option>
+
+  <option value="6">5</option>
+
+  <option value="7">6</option>
+
+  <option value="8">7</option>
+
+      </select> ~
+        <select disabled="disabled" name="sippend">
+
+   <option selected="selected" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="1">0</option>
+
+  <option value="2">1</option>
+
+  <option value="3">2</option>
+
+  <option value="4">3</option>
+
+  <option value="5">4</option>
+
+  <option value="6">5</option>
+
+  <option value="7">6</option>
+
+  <option value="8">7</option>
+
+      </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Тип сервиса: </th>
+       <td>
+
+        <select disabled="disabled" name="stos">
+
+   <option selected="selected" value="255">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="0">Normal Service(0x0)</option>
+  <option value="2">Minimize Cost(0x2)</option>
+  <option value="4">Maximize Reliability(0x4)</option>
+  <option value="8">Maximize Throughput(0x8)</option>
+  <option value="16">Minimize Dela(0x10)</option>
+
+      </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>DSCP Range(Hex):</th>
+       <td>
+
+        <input name="sdscp" size="10" maxlength="2" type="text">~<input name="sdscpend" size="10" maxlength="2" type="text">(Value Range:0~3f)
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Traffic Class Range(Hex): </th>
+
+       <td>
+
+        <input name="stc" size="10" maxlength="2" type="text">~<input name="stcend" size="10" maxlength="2" type="text">(Value Range:0~ff)
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>802.1p: </th>
+       <td>
+
+        <select name="s1p">
+
+   <option selected="selected" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="1">0</option>
+
+  <option value="2">1</option>
+
+  <option value="3">2</option>
+
+  <option value="4">3</option>
+
+  <option value="5">4</option>
+
+  <option value="6">5</option>
+
+  <option value="7">6</option>
+
+  <option value="8">7</option>
+
+      </select> ~
+        <select name="s1pend">
+
+   <option selected="selected" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="1">0</option>
+
+  <option value="2">1</option>
+
+  <option value="3">2</option>
+
+  <option value="4">3</option>
+
+  <option value="5">4</option>
+
+  <option value="6">5</option>
+
+  <option value="7">6</option>
+
+  <option value="8">7</option>
+
+      </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Приоритет: </th>
+       <td>
+
+        <select name="prio">
+
+   <option selected="selected" value="3">p3(Низший)</option>
+      <option value="2">p2</option>
+    <option value="1">p1</option>
+    <option value="0">p0(Наивысший)</option>
+      </select>
+
+       </td>
+
+      </tr>
+
+
+
+      <tr>
+
+       <th><input name="qostag" onclick="qostaglist(this, 'qostagid')" ;="" type="checkbox"> Вставить или изменить метки QoS</th>
+       <td></td>
+
+      </tr>
+
+     </tbody>
+    </table>
+
+   </div>
+
+   <div id="qostagid" style="display:none" class="data_common data_common_notitle">
+
+    <table>
+
+     <tbody>
+      <tr>
+
+       <th width="30%">IPP/DS поле: </th>
+       <td>
+
+        <input name="mipp_ds_choose" value="0" onclick="return mipp_ds_change()" type="radio">IPP/TOS&nbsp;
+        <input name="mipp_ds_choose" value="1" onclick="return mipp_ds_change()" checked="checked" type="radio">DSCP
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Приоритет IP: </th>
+       <td>
+
+        <select disabled="disabled" name="mipp">
+
+  <option selected="selected" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="1">0</option>
+
+  <option value="2">1</option>
+
+  <option value="3">2</option>
+
+  <option value="4">3</option>
+
+  <option value="5">4</option>
+
+  <option value="6">5</option>
+
+  <option value="7">6</option>
+
+  <option value="8">7</option>
+
+ </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>IP ToS: </th>
+       <td>
+
+        <select disabled="disabled" name="mtos">
+
+  <option selected="selected" value="255">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="0">Normal Service(0x0)</option>
+  <option value="2">Minimize Cost(0x2)</option>
+  <option value="4">Maximize Reliability(0x4)</option>
+  <option value="8">Maximize Throughput(0x8)</option>
+  <option value="16">Minimize Delay(0x10)</option>
+   </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>DSCP(Hex): </th>
+       <td>
+
+        <input name="mdscp" size="10" maxlength="2" type="text">(Value Range:0-3f)
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Traffic Class(Hex): </th>
+
+       <td>
+
+        <input name="mtc" size="10" maxlength="2" type="text">(Value Range:0~ff)
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>802.1p: </th>
+       <td>
+
+        <select name="m1p">
+
+  <option selected="selected" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+
+  <option value="1">0</option>
+
+  <option value="2">1</option>
+
+  <option value="3">2</option>
+
+  <option value="4">3</option>
+
+  <option value="5">4</option>
+
+  <option value="6">5</option>
+
+  <option value="7">6</option>
+
+  <option value="8">7</option>
+
+   </select>
+
+       </td>
+
+      </tr>
+
+     </tbody>
+    </table>
+
+   </div>
+
+   <div class="btn_ctl">
+
+    <input class="link_bg" name="addqos" value="Применить" onclick="return addClick()" type="submit">
+   </div>
+
+  </div>
+
+  <script>
+   if (document.qos.qosen[1].checked == true)
+    enableRules();
+   else
+    disableRules();
+   ipp_ds_change();
+   mipp_ds_change();
+  </script>
+
+  <input value="Send" name="submit.htm?ipqos.htm" type="hidden">
+
+
+ <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+ <script src="files/jquip.js" type="text/javascript"></script>
+ <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+</body>
+
+</html>

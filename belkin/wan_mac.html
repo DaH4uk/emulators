@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <html>
 <head>
 <meta name="description" content="Belkin 2307">
@@ -154,3 +155,161 @@ showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
 </td>
 </form>
 <script language="javascript" type="text/javascript">showTail()</script>
+=======
+<html>
+<head>
+<meta name="description" content="Belkin 2307">
+
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<link rel="stylesheet" href="styles.css" type="text/css"><script language="Javascript" src='language_en.js'></script><script language="JavaScript" src="validate.js"></script>
+<script language="JavaScript" src="showmenu.js"></script>
+<script language="javascript" type="text/javascript">
+strHtml='<title>'+wmc1+'</title>';
+dw(strHtml);
+<!--
+var wanStatus	='Down';
+var helpItem 	='MAC Address';
+var menuSection	='WAN';
+var menuItem	='MAC Address';
+var isRouter	='1' ? '1' : '0';
+var	isPS		='' ? '' : '0';
+var isAPmode
+if('vlan1' =='' || '1'=='0')
+	isAPmode='1';
+else
+	isAPmode='0';
+
+var x=new Array(
+"aa",
+"bb",
+"cc",
+"dd",
+"ee",
+"11"
+);
+
+function initData()
+{
+   var oldmac='00:22:75:52:31:07';
+   var newmac='00:08:74:b2:e4:92';
+   x[0]=newmac.substring(0,2);
+   x[1]=newmac.substring(3,5);
+   x[2]=newmac.substring(6,8);
+   x[3]=newmac.substring(9,11);
+   x[4]=newmac.substring(12,14);
+   x[5]=newmac.substring(15,17);
+   document.wan_form.clone_mac1.value=oldmac.substring(0,2);
+   document.wan_form.clone_mac2.value=oldmac.substring(3,5);
+   document.wan_form.clone_mac3.value=oldmac.substring(6,8);
+   document.wan_form.clone_mac4.value=oldmac.substring(9,11);
+   document.wan_form.clone_mac5.value=oldmac.substring(12,14);
+   document.wan_form.clone_mac6.value=oldmac.substring(15,17);
+}
+
+var lanMac='00:22:75:52:31:06';
+function storeData()
+{
+   
+    document.wan_form.et1macaddr.value=document.wan_form.clone_mac1.value+':'+document.wan_form.clone_mac2.value+':'+document.wan_form.clone_mac3.value+':'+document.wan_form.clone_mac4.value+':'+document.wan_form.clone_mac5.value+':'+document.wan_form.clone_mac6.value;
+    if(document.wan_form.et1macaddr.value == lanMac)
+    {
+        alert(wmc6);
+        return false;
+    }
+    
+    if(!validateMac(document.wan_form.et1macaddr.value)){
+        alert(msg_invalid_mac);
+        return false;
+    }
+    
+    document.wan_form.et1macaddr_copy.value=document.wan_form.et1macaddr.value;
+    return true;
+}
+
+function evaltF() {
+	 if(!(isBlank(document.wan_form.clone_mac1.value))||!(isBlank(document.wan_form.clone_mac2.value))||!(isBlank(document.wan_form.clone_mac3.value))||
+	    !(isBlank(document.wan_form.clone_mac4.value))||!(isBlank(document.wan_form.clone_mac5.value))||!(isBlank(document.wan_form.clone_mac6.value)))
+	 {
+	 	if (isNValid(document.wan_form.clone_mac1.value)||isNValid(document.wan_form.clone_mac2.value)||isNValid(document.wan_form.clone_mac3.value)
+	 		||isNValid(document.wan_form.clone_mac4.value) ||isNValid(document.wan_form.clone_mac5.value)||isNValid(document.wan_form.clone_mac6.value))
+	 		{alert(fmcipm); return false;} 
+	   
+	 }
+	
+	if(storeData()==false)return false;
+	alert(ur5);
+    return true;
+  }
+  function submitF() {
+   return evaltF();
+  }
+function copyto() {
+   document.wan_form.clone_mac1.value = x[0];
+   document.wan_form.clone_mac2.value = x[1];
+   document.wan_form.clone_mac3.value = x[2];
+   document.wan_form.clone_mac4.value = x[3];
+   document.wan_form.clone_mac5.value = x[4];
+   document.wan_form.clone_mac6.value = x[5];
+  }
+function logoutF()
+{
+	document.wan_form.logout.value=1;
+	document.wan_form.submit();
+	return true;
+} 
+//-->
+</script>  
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="initData();">
+<form id="wan_form" name="wan_form" method=post action="http://www.belkin.com/PYRAMID/AdvancedInfo/F5D8236-4ver3000/Interfaces/3.00.02/En/apply_40.html" >
+<input type=hidden name=webpage value=wan_mac.html>
+<input type=hidden name="action" value="">
+<input type=hidden name="wan_access" value="">
+<input type=hidden name="wan_proto" value="">
+<input type=hidden name="et1macaddr" value="">
+<input type=hidden name="et1macaddr_copy" value="">
+<script language="javascript" type="text/javascript">
+showHead(wanStatus,helpItem,isRouter,isPS);
+showmenu(menuSection,menuItem,isRouter,isPS,isAPmode)
+</script>
+<td valign="top" width="99%" height="100%" class="head_bold"><br>&nbsp;&nbsp;<script language="javascript" type="text/javascript">dw(wmc1);</script><br><br>
+<table border=0 class="copy_1">
+<tr><td width=5>&nbsp;</td><td>
+<table width=600 border="0" cellspacing="0" cellpadding="0" align=left class="copy_1"><tr>
+<td colspan=3 class="body"><script language="javascript" type="text/javascript">dw(wmc2);</script> 
+<a class="more" href="javascript:void(0);" onClick="window.open('glossary.html#mac','help','toolbar=0,status=0,menubar=0,scrollbars=1,resizable=1,width=530,height=400,left=150,top=150');"><script language="javascript" type="text/javascript">dw(sm1);</script></a><br><br></td></tr>
+<tr>
+<td width="30">&nbsp;</td>
+<td width="300" class="bold_body"><script language="javascript" type="text/javascript">dw(wmc3);</script> &gt;<br><br></td>
+<td nowrap=1 align=left> 
+	<input type="text" name="clone_mac1" size="2" maxlength="2" value="">-
+	<input type="text" name="clone_mac2" size="2" maxlength="2" value="">-
+	<input type="text" name="clone_mac3" size="2" maxlength="2" value="">-
+	<input type="text" name="clone_mac4" size="2" maxlength="2" value="">-
+	<input type="text" name="clone_mac5" size="2" maxlength="2" value="">-
+	<input type="text" name="clone_mac6" size="2" maxlength="2" value="">
+	<br><br></td>
+	</tr>
+<tr>
+ <td width="30">&nbsp;</td>
+ <td width="300" class="bold_body"><script language="javascript" type="text/javascript">dw(wmc4);</script> &gt;
+ <br><br></td>
+ <td nowrap align=left>
+	<script language="javascript" type="text/javascript">dw('<input type="button" style="{width:80px;}" class="submitBtn" name="Clone" value="');dw(wmc5);dw('" onClick="copyto();">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');</script>
+</tr>
+<tr>
+	<td width="3">&nbsp;</td>
+	<td colspan="2" align=center>
+	<br><br>
+	<script language="javascript" type="text/javascript">dw('<input type="button" name="cancel" value="');dw(btn1);dw('" style="{width:160px;}" class="submitBtn" onclick="initData();" onMouseOver="window.status=\'Clear\'; return true;" onMouseOut="window.status=\'\'; return true;">&nbsp;&nbsp;');
+	dw('<input type="submit" name="itsbutton1" style="{width:160px;}" value="');dw(btn2);dw('" onClick="return submitF();" class="submitBtn">');</script>
+	</td>
+</tr>
+</table>
+</td></tr>
+</table>
+</td>
+</form>
+<script language="javascript" type="text/javascript">showTail()</script>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746

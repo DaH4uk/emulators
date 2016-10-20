@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link href="files/reset.css" rel="stylesheet" type="text/css">
+    <link href="files/base.css" rel="stylesheet" type="text/css">
+    <link href="files/style.css" rel="stylesheet" type="text/css">
+    <script src="files/share.js" type="text/javascript">
+    </script>
+
+    <script type="text/javascript" src="files/jquip_sizzle.js"></script>
+
+    <script type="text/javascript" src="files/jquip.js"></script>
+
+    <title>LAN IPv6</title>
+    <script>
+        function ramodechange(obj) {
+            with(document.forms[0]) {
+                if (obj.value == "0") {
+                    document.getElementById('raSetup').style.display = "none";
+                }
+                else {
+                    document.getElementById('raSetup').style.display = "";
+                }
+            }
+        }
+
+        function dhcp6modechang() {
+            var idx = $('#dhcp6mode').get(0).selectedIndex;
+            if (idx == 1) {
+                $('#dhcp6server_block').css('display', "block");
+                $('#dhcp6Autoserver_block').css('display', "none");
+                $('#lan_dhcp_dns').css('display', "block");
+                dhcp6manualmodechang();
+                dns_mode_selection();
+            }
+            else if (idx == 2) {
+                $('#dhcp6server_block').css('display', "none");
+                $('#dhcp6Autoserver_block').css('display', "block");
+                $('#lan_dhcp_dns').css('display', "block");
+                dns_mode_selection();
+            }
+            else {
+                $('#dhcp6server_block').css('display', "none");
+                $('#dhcp6Autoserver_block').css('display', "none");
+                $('#lan_dhcp_dns').css('display', "none");
+            }
+        }
+
+        function dhcp6manualmodechang() {
+            var idx = $('#manualmode').get(0).selectedIndex;
+            if (idx == 1)
+                $('#dhcp6manual_block').css('display', 'inline')
+            else
+                $('#dhcp6manual_block').css('display', "none");
+        }
+
+        function dns_mode_selection() {
+            if (document.dhcp6d.dhcp_dns_mode.value == 0) {
+                document.getElementById('lan_dhcp_dns_setting').style.display = 'none';
+            }
+            else {
+                document.getElementById('lan_dhcp_dns_setting').style.display = '';
+            }
+        }
+
+        function dhcpv6saveChanges() {
+            var idx = $('#dhcp6mode').get(0).selectedIndex;
+            if (idx == 1) {
+                var ipv6s = new Array;
+                ipv6s = [
+                    ['dhcp6dPoolS', 'Начало диапазона адресов DHCPv6', 1],
+                    ['dhcp6dPoolE', 'Конец диапазона адресов DHCPv6', 0],
+                    ['dns1', 'DNS-сервер 1', 0],
+                    ['dns2', 'DNS-сервер 2', 0],
+                    ['dns3', 'DNS-сервер 3', 0]
+                ];
+                for (var i = 0; i < ipv6s.length; i++) {
+                    if ($('#' + ipv6s[i][0]).val() == '' && ipv6s[i][2]) {
+                        alert(ipv6s[i][1] + ' поле не может быть пустым!');
+                        return false;
+                    }
+                    if ($('#' + ipv6s[i][0]).val() != '' && !isIpv6Address($('#' + ipv6s[i][0]).val())) {
+                        alert(ipv6s[i][1] + ' неверно!');
+                        $('#' + ipv6s[i][0]).focus();
+                        return false;
+                    }
+                }
+                var nums = new Array;
+                nums = [
+                    ['pltime', 'Предпоч. Время ', 1],
+                    ['vltime', 'Valid Time', 1],
+                    ['prefixlength', 'Длина префикса', 1]
+                ];
+                for (var i = 0; i < nums.length; i++) {
+                    if (!isNumber($('#' + nums[i][0]).val())) {
+                        alert('Укажите правильное значение для ' + nums[i][1]);
+                        $('#' + nums[i][0]).focus();
+                        return false;
+                    }
+                }
+                if (parseInt($('#vltime').val()) < parseInt($('#pltime').val())) {
+                    alert("Valid Time должно быть больше чем Preferred Time!");
+                    return false;
+                }
+                if (parseInt($('#prefixlength').val()) < 16 || parseInt($('#prefixlength').val()) > 64) {
+                    alert("Длина префикса может быть в пределах 16~64!");
+                    return false;
+                }
+                return true;
+            }
+            else if (idx == 2) {
+                var ipv6a = new Array;
+                ipv6a = [
+                    ['dhcp6dSuffixPoolS', 'Начальный адрес для диапазона DHCPv6 Auto Suffix', 1],
+                    ['dhcp6dSuffixPoolE', 'Конечный адрес для диапазона DHCPv6 Auto Suffix', 1]
+                ];
+                for (var i = 0; i < ipv6a.length; i++) {
+                    if ($('#' + ipv6a[i][0]).val() == '' && ipv6a[i][2]) {
+                        alert(ipv6a[i][1] + ' поле не может быть пустым!');
+                        return false;
+                    }
+                    if ($('#' + ipv6a[i][0]).val() != '' && !isIpv6Address('2001:FFFF:FFFF:FFFF' + $('#' + ipv6a[i][0]).val())) {
+                        alert(ipv6a[i][1] + ' неверно!');
+                        $('#' + ipv6a[i][0]).focus();
+                        return false;
+                    }
+                }
+                var ipv6s = new Array;
+                ipv6s = [
+                    ['dns1', 'DNS-сервер 1', 0],
+                    ['dns2', 'DNS-сервер 2', 0],
+                    ['dns3', 'DNS-сервер 3', 0]
+                ];
+                for (var i = 0; i < ipv6s.length; i++) {
+                    if ($('#' + ipv6s[i][0]).val() == '' && ipv6s[i][2]) {
+                        alert(ipv6s[i][1] + ' поле не может быть пустым!');
+                        return false;
+                    }
+                    if ($('#' + ipv6s[i][0]).val() != '' && !isIpv6Address($('#' + ipv6s[i][0]).val())) {
+                        alert(ipv6s[i][1] + ' неверно!');
+                        $('#' + ipv6s[i][0]).focus();
+                        return false;
+                    }
+                }
+            }
+            else
+                return true;
+        }
+
+        function lansaveChangesv6() {
+            if (document.tcpip6.ip6.value == "") {
+                alert("Задайте адрес!");
+                document.tcpip6.ip6.focus();
+                return false;
+            }
+            if (!isIpv6Address(document.tcpip6.ip6.value)) {
+                alert("Неверный Адрес.");
+                document.tcpip6.ip6.focus();
+                return false;
+            }
+            if (!isLinkLocalIpv6Address(document.tcpip6.ip6.value)) {
+                alert("Укажите link-local адрес!");
+                document.tcpip6.ip6.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function RATypeClick() {
+            var $ele = $("#raEnable");
+            var $Basic02 = $("#Basic02");
+            var $raParameter = $("#raParameter");
+            var $raMode = $("#raMode");
+            var $raSetup = $("#raSetup");
+            if ($ele.prop("checked")) {
+                $raParameter.css('display', "block");
+                $raMode.css('display', "block");
+                $raSetup.css('display', "block");
+                if ($("#prefixmode").get(0).selectedIndex == 0)
+                    $raSetup.css('display', "none");
+                else
+                    $raSetup.css('display', "block");
+                $("#ULA").css('display', "block");
+                $("#RADNS").css('display', "block");
+            }
+            else {
+                $raParameter.css('display', "none");
+                $raMode.css('display', "none");
+                $raSetup.css('display', "none");
+                $("#ULA").css('display', "none");
+                $("#RADNS").css('display', "none");
+            }
+        }
+
+        function ULARATypeClick() {
+            var $ele = $("#ULAEnable");
+            var $content = $("#ulaSetup");
+            if ($ele.prop("checked")) {
+                $content.css('display', "block");
+            }
+            else {
+                $content.css('display', "none");
+            }
+        }
+
+        function rasaveChangesv6() {
+            if (document.ra.raEnable.checked == true) {
+                var max = getDigit(document.ra.radvdMaxInter.value, 1);
+                var min = getDigit(document.ra.radvdMinInter.value, 1);
+                if (max < 4 || max > 1800) {
+                    alert("Максимальный интервал может быть между 4 и 1800!");
+                    document.ra.radvdMaxInter.focus();
+                    return false;
+                }
+                if (min < 3 || min > (max * 3 / 4)) {
+                    alert("Минимальный интервал долже быть между 3 и 3/4*(Максимальный интервал)!");
+                    document.ra.radvdMinInter.focus();
+                    return false;
+                }
+                var radvdlifetime = getDigit(document.ra.lifetime.value, 1);
+                if (radvdlifetime < 0 || radvdlifetime > 9000) {
+                    alert("Lifetime должно быть в пределах от 0 до 9000!");
+                    document.ra.lifetime.focus();
+                    return false;
+                }
+                if (document.ra.prefixmode.value == "1") {
+                    if (document.ra.radvdPrefix.value == "") {
+                        alert("Задайте адрес Префикса!");
+                        document.ra.radvdPrefix.focus();
+                        return false;
+                    }
+                    if (!isIpv6Address(document.ra.radvdPrefix.value)) {
+                        alert("Неверный адрес Префикса");
+                        document.ra.radvdPrefix.focus();
+                        return false;
+                    }
+                    if (!isGlobalIpv6Address(document.ra.radvdPrefix.value)) {
+                        alert("Неверный адрес Префикса");
+                        document.ra.radvdPrefix.focus();
+                        return false;
+                    }
+                    var prefixlen = getDigit(document.ra.RAPrefixLen.value, 1);
+                    if (prefixlen > 64 || prefixlen < 16) {
+                        alert("Неверная длина Префикса!");
+                        document.ra.RAPrefixLen.focus();
+                        return false;
+                    }
+                    var rat1 = getDigit(document.ra.RAt1.value, 1);
+                    if (rat1 > 2147483647 || rat1 < 600) {
+                        if (rat1 != -1) {
+                            alert("Неверное значение Preferred Time!");
+                            document.ra.RAt1.focus();
+                            return false;
+                        }
+                    }
+                    var rat2 = getDigit(document.ra.RAt2.value, 1);
+                    if (rat2 > 2147483647 || rat2 < 600) {
+                        if (rat2 != -1) {
+                            alert("Неверное значение Valid Time!");
+                            document.ra.RAt2.focus();
+                            return false;
+                        }
+                    }
+                    if (rat1 == -1) {
+                        rat1 = 4294967295;
+                    }
+                    if (rat2 == -1) {
+                        rat2 = 4294967295;
+                    }
+                    if (rat2 < rat1) {
+                        alert("Valid Time должно быть больше чем Preferred Time!");
+                        document.ra.RAt2.focus();
+                        return false;
+                    }
+                }
+                if (document.ra.RADNSEnable.checked == true) {
+                    if (document.ra.ra_dns_mode.value == "1") {
+                        var ipv6s = new Array;
+                        ipv6s = [
+                            ['ra_dns1', 'DNS-сервер 1', 0],
+                            ['ra_dns2', 'DNS-сервер 2', 0],
+                            ['ra_dns3', 'DNS-сервер 3', 0]
+                        ];
+                        for (var i = 0; i < ipv6s.length; i++) {
+                            if ($('#' + ipv6s[i][0]).val() == '' && ipv6s[i][2]) {
+                                alert(ipv6s[i][1] + ' поле не может быть пустым!');
+                                return false;
+                            }
+                            if ($('#' + ipv6s[i][0]).val() != '' && !isIpv6Address($('#' + ipv6s[i][0]).val())) {
+                                alert(ipv6s[i][1] + ' неверно!');
+                                $('#' + ipv6s[i][0]).focus();
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            if ($("#ULAEnable").attr("checked")) {
+                if ($('#ula_radvdPrefix').val() == "") {
+                    alert("Задайте адрес Префикса!");
+                    $('#ula_radvdPrefix').focus();
+                    return false;
+                }
+                if (!isIpv6Address($('#ula_radvdPrefix').val())) {
+                    alert("Неверный адрес Префикса");
+                    $('#ula_radvdPrefix').focus();
+                    return false;
+                }
+                var prefixlen = getDigit($('#ula_RAPrefixLen').val(), 1);
+                if (prefixlen > 64 || prefixlen < 16) {
+                    alert("Неверная длина Префикса!");
+                    $('#ula_RAPrefixLen').focus();
+                    return false;
+                }
+                var rat1 = getDigit($('#ula_RAt1').val(), 1);
+                if (rat1 > 2147483647 || rat1 < 600) {
+                    if (rat1 != -1) {
+                        alert("Неверное значение Preferred Time!");
+                        $('#ula_RAt1').focus();
+                        return false;
+                    }
+                }
+                var rat2 = getDigit($('#ula_RAt2').val(), 1);
+                if (rat2 > 2147483647 || rat2 < 600) {
+                    if (rat2 != -1) {
+                        alert("Неверное значение Valid Time!");
+                        $('#ula_RAt2').focus();
+                        return false;
+                    }
+                }
+                if (rat1 == -1) {
+                    rat1 = 4294967295;
+                }
+                if (rat2 == -1) {
+                    rat2 = 4294967295;
+                }
+                if (rat2 < rat1) {
+                    alert("Valid Time должно быть больше чем Preferred Time!");
+                    $('#ula_RAt2').focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function lansaveChangesv6() {
+            if (document.lanv6addr.ipaddr.value != "") {
+                if (!isIpv6Address(document.lanv6addr.ipaddr.value)) {
+                    alert("Неверный Адрес.");
+                    document.lanv6addr.ipaddr.focus();
+                    return false;
+                }
+                if (isLinkLocalIpv6Address(document.lanv6addr.ipaddr.value)) {
+                    alert("Задайте Глабальный IPv6 адрес!");
+                    document.lanv6addr.ipaddr.focus();
+                    return false;
+                }
+                if (document.lanv6addr.prefixlen.value == "") {
+                    alert("Поле длины префикса на может быть пустым!");
+                    document.lanv6addr.prefixlen.focus();
+                    return false;
+                }
+                var rat1 = getDigit(document.lanv6addr.prefixlen.value, 1);
+                if (rat1 >= 128 || rat1 <= 0) {
+                    alert("Неверная длина Префикса!");
+                    document.lanv6addr.prefixlen.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function radns_enable() {
+            if (document.ra.RADNSEnable.checked == true) {
+                document.getElementById('ramode_setting').style.display = "";
+                radns_mode_selection();
+            }
+            else {
+                document.getElementById('ramode_setting').style.display = "none";
+                document.getElementById('ra_dns_setting').style.display = "none";
+            }
+        }
+
+        function radns_mode_selection() {
+            if (document.ra.ra_dns_mode.value == "0") {
+                document.getElementById('ra_dns_setting').style.display = "none";
+            }
+            else {
+                document.getElementById('ra_dns_setting').style.display = "";
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="intro_main ">
+
+        <p class="intro_title">LAN IPv6</p>
+        <p class="intro_content">Страница используется для настройки IPv6 на LAN. Можно задать режим работы серверов RA и DHCPv6.</p>
+    </div>
+
+
+        <div class="column clearfix hide_gui">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Настройка глобального адреса LAN</p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Глобальный адрес:</th>
+                            <td><input maxlength="64" size="32" name="ipaddr" type="TEXT"> / <input name="prefixlen" size="5" type="text"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="btn_ctl" id="Basic01">
+
+                <input class="link_bg" onclick="return lansaveChangesv6()" value="Применить" type="submit">
+            </div>
+
+            <input value="Send" name="submit.htm?lan_ipv6.htm" type="hidden">
+
+        </div>
+
+
+
+        <div id="Basic10">
+
+            <div class="column clearfix">
+
+                <div class="column_title">
+
+                    <div class="column_title_left"></div>
+
+                    <p>Настройка RA</p>
+                    <div class="column_title_right"></div>
+
+                </div>
+
+            </div>
+
+            <div class="data_common">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Вкл.:</th>
+                            <td><input id="raEnable" onclick="RATypeClick()" name="raEnable" checked="checked" type="checkbox"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <div id="Basic02">
+
+            <div class="data_common data_common_notitle" id="raParameter" style="display: block;">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">M флаг:</th>
+                            <td><input name="MEnable" type="checkbox">
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>O флаг:</th>
+                            <td><input name="OEnable" checked="checked" type="checkbox">
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Макс. Интервал:</th>
+                            <td>
+
+                                <input maxlength="39" name="radvdMaxInter" value="600" type="text"> Сек.
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Мин. Интервал:</th>
+                            <td><input maxlength="39" name="radvdMinInter" value="200" type="text"> Сек.
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>Lifetime:</th>
+
+                            <td><input maxlength="5" name="lifetime" value="1440" type="text"> Сек.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="data_common data_common_notitle" id="raMode" style="display: block;">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Режим префикса:</th>
+                            <td>
+
+                                <select onchange="ramodechange(this)" id="prefixmode" name="prefixmode" size="1">
+
+<option value="0" selected="selected"> Авто</option>
+<option value="1"> Вручную</option>
+
+              </select>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="data_common data_common_notitle" id="raSetup" style="display: none;">
+
+                <table>
+
+                    <tbody>
+                        <tr id="NamePrefix">
+
+                            <th width="30%">Префикс:</th>
+                            <td>
+
+                                <input name="radvdPrefix" maxlength="39" type="text">
+                            </td>
+
+                        </tr>
+
+                        <tr id="NamePrefixLen">
+
+                            <th>Длина префикса:</th>
+                            <td>
+
+                                <input name="RAPrefixLen" maxlength="2" value="64" type="text"> [16 - 64]
+                            </td>
+
+                        </tr>
+
+                        <tr id="NameRAt1">
+
+                            <th>Предпоч. Время:</th>
+                            <td>
+
+                                <input name="RAt1" maxlength="10" value="-1" type="text"> [600 - 2147483647 с] или [-1 с]
+                            </td>
+
+                        </tr>
+
+                        <tr id="NameRAt2">
+
+                            <th>Valid Time:</th>
+                            <td>
+
+                                <input name="RAt2" maxlength="10" value="-1" type="text"> [600 - 2147483647 с] или [-1 с]
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div style="display: block;" id="ULA" class="hide_gui">
+
+                <div class="data_common">
+
+                    <table>
+
+                        <tbody>
+                            <tr>
+
+                                <th width="30%">Включить ULA:</th>
+                                <td><input onclick="ULARATypeClick()" id="ULAEnable" name="ULAEnable" type="checkbox"></td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div style="display: none;" class="data_common data_common_notitle" id="ulaSetup">
+
+                    <table>
+
+                        <tbody>
+                            <tr id="ula_NamePrefix">
+
+                                <th width="30%">Префикс:</th>
+                                <td>
+
+                                    <input name="ula_radvdPrefix" id="ula_radvdPrefix" maxlength="39" type="text">
+
+                                </td>
+
+                            </tr>
+
+                            <tr id="ula_NamePrefixLen">
+
+                                <th>Длина префикса:</th>
+                                <td>
+
+                                    <input name="ula_RAPrefixLen" id="ula_RAPrefixLen" maxlength="2" type="text"> [16 - 64]
+                                </td>
+
+                            </tr>
+
+                            <tr id="ula_NameRAt1">
+
+                                <th>Предпоч. Время:</th>
+                                <td>
+
+                                    <input name="ula_RAt1" id="ula_RAt1" maxlength="10" type="text"> [600 - 2147483647 с] или [-1 с]
+                                </td>
+
+                            </tr>
+
+                            <tr id="ula_NameRAt2">
+
+                                <th>Valid Time:</th>
+                                <td>
+
+                                    <input name="ula_RAt2" id="ula_RAt2" maxlength="10" type="text"> [600 - 2147483647 с] или [-1 с]
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+            <div style="display: block;" id="RADNS" class="data_common data_common_notitle hide_gui">
+
+                <div id="ra_setting">
+
+                </div>
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Включить RA DNS:</th>
+                            <td>
+
+                                <input id="RADNSEnable" name="RADNSEnable" onclick="radns_enable()" type="checkbox">
+                            </td>
+
+                        </tr>
+
+                        <tr style="display: none;" id="ramode_setting">
+
+                            <th width="30%">Режим RA DNS:</th>
+                            <td>
+
+                                <select id="ra_dns_mode" name="ra_dns_mode" size="1" onchange="radns_mode_selection()">
+
+<option value="0" selected="selected"> Авто</option>
+<option value="1"> Вручную</option>
+
+                  </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr style="display: none;" id="ra_dns_setting">
+
+                            <th>Серверы DNS:</th>
+                            <td>
+
+                                <input name="ra_dns1" id="ra_dns1" size="22" maxlength="64" type="text">
+                                <input name="ra_dns2" id="ra_dns2" size="22" maxlength="64" type="text">
+                                <input name="ra_dns3" id="ra_dns3" size="22" maxlength="64" type="text">
+                            </td>
+
+                        </tr>
+
+
+
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="btn_ctl">
+
+                <input class="link_bg" onclick="return rasaveChangesv6()" value="Применить" type="submit">
+                <input value="Send" name="submit.htm?lan_ipv6.htm" type="hidden">
+
+            </div>
+
+        </div>
+
+
+        <div class="column clearfix">
+
+            <div class="column_title">
+
+                <div class="column_title_left"></div>
+
+                <p>Настройка DHCPv6 </p>
+                <div class="column_title_right"></div>
+
+            </div>
+
+            <div class="data_common">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Режим DHCPv6:</th>
+                            <td>
+
+                                <select onchange="dhcp6modechang()" id="dhcp6mode" name="dhcp6mode" size="1">
+
+<option value="0"> Нет</option>
+<option value="1"> Ручной режим</option>
+<option value="2" selected="selected"> Режим Авто</option>
+
+                        </select>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div id="dhcp6server_block" style="display: none;" class="data_common data_common_notitle">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Режим адресации:</th>
+                            <td>
+
+                                <select size="1" name="manualmode" id="manualmode" onchange="dhcp6manualmodechang()">
+<option value="0" selected="selected"> Режим префикса</option>
+<option value="1"> Pool Mode</option>
+
+      </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th width="30%">Диапазон адресов IPv6:</th>
+                            <td>
+
+                                <input name="dhcp6dPoolS" id="dhcp6dPoolS" type="text">
+                                <div id="dhcp6manual_block" style="display:inline;">
+
+                                    -
+                                    <input name="dhcp6dPoolE" id="dhcp6dPoolE" type="text">&nbsp;
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <tr id="Basic14">
+
+                            <th>Длина префикса:</th>
+                            <td>
+
+                                <input name="prefixlength" id="prefixlength" size="10" maxlength="3" value="64" type="text">
+                            </td>
+
+                        </tr>
+
+                        <tr id="Basic12">
+
+                            <th>Предпоч. Время:</th>
+                            <td>
+
+                                <input name="pltime" id="pltime" size="10" maxlength="9" value="120" type="text"> Сек.
+                            </td>
+
+                        </tr>
+
+                        <tr id="Basic13">
+
+                            <th>Valid Time:</th>
+                            <td>
+
+                                <input name="vltime" id="vltime" size="10" maxlength="9" value="120" type="text"> Сек.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div id="dhcp6Autoserver_block" style="display:block" class="data_common data_common_notitle">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Диапазон суффиксов адресов IPv6:</th>
+                            <td>
+
+                                <input name="dhcp6dSuffixPoolS" id="dhcp6dSuffixPoolS" value="::1" type="text"> -
+                                <input name="dhcp6dSuffixPoolE" id="dhcp6dSuffixPoolE" value="::ffff" type="text">&nbsp; (например, :1:1:1:1или::1)
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div id="lan_dhcp_dns" style="display:block" class="data_common data_common_notitle hide_gui">
+
+                <table>
+
+                    <tbody>
+                        <tr>
+
+                            <th width="30%">Режим IPv6 DNS:</th>
+                            <td>
+
+                                <select size="1" name="dhcp_dns_mode" onchange="dns_mode_selection()">
+
+      <option selected="selected" value="0"> Авто</option>
+      <option value="1"> Ручной</option>
+      </select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr style="display: none;" id="lan_dhcp_dns_setting">
+
+                            <th>Серверы DNS:</th>
+                            <td>
+
+                                <input name="dns1" id="dns1" size="22" maxlength="64" type="text">
+                                <input name="dns2" id="dns2" size="22" maxlength="64" type="text">
+                                <input name="dns3" id="dns3" size="22" maxlength="64" type="text">
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="btn_ctl">
+
+                <input class="link_bg" name="save" onclick="return dhcpv6saveChanges()" value="Применить" type="submit">
+            </div>
+
+            <input name="submit.htm?lan_ipv6.htm" value="Send" type="hidden">
+
+        </div>
+
+
+
+
+    <script>
+        document.dhcp6d.dhcp_dns_mode.value = 0;
+        dhcp6modechang();
+        RATypeClick();
+        $("#ULAEnable").prop("checked", false);
+
+        ULARATypeClick();
+        radns_enable();
+        radns_mode_selection();
+        if (document.ra.RAPrefixLen.value == '0')
+            document.ra.RAPrefixLen.value = '';
+        if (document.ra.RAt1.value == '0')
+            document.ra.RAt1.value = '';
+        if (document.ra.RAt2.value == '0')
+            document.ra.RAt2.value = '';
+    </script>
+
+    <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+    <script src="files/jquip.js" type="text/javascript"></script>
+    <script src="files/readonly.js" type="text/javascript"></script>
+
+
+
+
+
+</body>
+
+</html>

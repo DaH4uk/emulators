@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Refresh" content="480;url=http://192.168.0.1">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+ <link href="files/reset.css" rel="stylesheet" type="text/css">
+ <link href="files/base.css" rel="stylesheet" type="text/css">
+ <link href="files/style.css" rel="stylesheet" type="text/css">
+ <script src="files/share.js" type="text/javascript">
+ </script>
+
+ <script src="files/jquip_sizzle.js" type="text/javascript"></script>
+
+ <script src="files/jquip.js" type="text/javascript"></script>
+
+ <title>Настройка безопасности Wi-Fi</title>
+ <script>
+  var superprivilege = 0;
+  var superprivilege = 1;
+
+
+  var defPskLen, defPskFormat;
+
+  function isValidWPAPasswd(str) {
+
+   var patrn = /^[a-zA-Z0-9!#$%&\'()*+,-./:;=?@[\\^_`{|}~]{1}[a-zA-Z0-9!#$%&\'()*+,-./:;=?@[\\^_`{|}~\x20]{6,61}[a-zA-Z0-9!#$%&\'()*+,-./:;=?@[\\^_`{|}~]{1}$/;
+   if (!patrn.exec(str)) return false;
+
+   if (str.indexOf("  ") != -1)
+    return false;
+
+   if (document.formEncrypt.pskValue.value.indexOf("  ", 0) != -1)
+    return false;
+   return true;
+  }
+
+  function disableRadioGroup(radioArrOrButton) {
+   if (radioArrOrButton.type && radioArrOrButton.type == "radio") {
+    var radioButton = radioArrOrButton;
+    var radioArray = radioButton.form[radioButton.name];
+   }
+   else
+    var radioArray = radioArrOrButton;
+   radioArray.disabled = true;
+   for (var b = 0; b < radioArray.length; b++) {
+    if (radioArray[b].checked) {
+     radioArray.checkedElement = radioArray[b];
+     break;
+    }
+   }
+   for (var b = 0; b < radioArray.length; b++) {
+    radioArray[b].disabled = true;
+    radioArray[b].checkedElement = radioArray.checkedElement;
+   }
+  }
+
+  function enableRadioGroup(radioArrOrButton) {
+   if (radioArrOrButton.type && radioArrOrButton.type == "radio") {
+    var radioButton = radioArrOrButton;
+    var radioArray = radioButton.form[radioButton.name];
+   }
+   else
+    var radioArray = radioArrOrButton;
+
+   radioArray.disabled = false;
+   radioArray.checkedElement = null;
+   for (var b = 0; b < radioArray.length; b++) {
+    radioArray[b].disabled = false;
+    radioArray[b].checkedElement = null;
+   }
+  }
+
+  function skip() {
+   this.blur();
+  }
+
+  function preserve() {
+   this.checked = this.storeChecked;
+  }
+
+  function disableCheckBox(checkBox) {
+   if (!checkBox.disabled) {
+    checkBox.disabled = true;
+    if (!document.all && !document.getElementById) {
+     checkBox.storeChecked = checkBox.checked;
+     checkBox.oldOnClick = checkBox.onclick;
+     checkBox.onclick = preserve;
+    }
+   }
+  }
+
+  function enableCheckBox(checkBox) {
+   if (checkBox.disabled) {
+    checkBox.disabled = false;
+    if (!document.all && !document.getElementById)
+     checkBox.onclick = checkBox.oldOnClick;
+   }
+  }
+
+  function check_wepbutton_state() {
+   if (document.formEncrypt.method.selectedIndex == 1)
+    document.getElementById('wepKeySetting').style.display = "";
+   else
+    document.getElementById('wepKeySetting').style.display = "none";
+  }
+
+  function check_radius_state() {
+   form = document.formEncrypt;
+   use1x = form.use1x;
+   wpaAuth = form.wpaAuth;
+   if ((form.method.selectedIndex < 2 && use1x.checked)) {
+    enableTextField(form.radiusPort);
+    enableTextField(form.radiusIP);
+    enableTextField(form.radiusPass);
+   }
+   else if (form.method.selectedIndex < 2) {
+    disableTextField(form.radiusPort);
+    disableTextField(form.radiusIP);
+    disableTextField(form.radiusPass);
+   }
+
+   if ((form.method.selectedIndex >= 2 && wpaAuth[0].checked)) {
+    enableTextField(form.radiusPort);
+    enableTextField(form.radiusIP);
+    enableTextField(form.radiusPass);
+
+    disableTextField(document.formEncrypt.pskFormat);
+    disableTextField(document.formEncrypt.pskValue);
+
+    disableButton(document.formEncrypt.showwpa);
+
+   }
+   else if ((form.method.selectedIndex >= 2 && wpaAuth[1].checked)) {
+    disableTextField(form.radiusPort);
+    disableTextField(form.radiusIP);
+    disableTextField(form.radiusPass);
+
+    enableTextField(document.formEncrypt.pskFormat);
+    enableTextField(document.formEncrypt.pskValue);
+
+    enableButton(document.formEncrypt.showwpa);
+
+   }
+  }
+
+
+  function check_nonWpaSupp_state() {
+   check_radius_state();
+   check_wepbutton_state();
+   check_wepKeyLen_state();
+  }
+
+  function check_wepKeyLen_state() {
+   form = document.formEncrypt;
+   use1x = form.use1x;
+   if ((form.method.selectedIndex == 1 && use1x.checked))
+    enableRadioGroup(form.wepKeyLen);
+   else
+    disableRadioGroup(form.wepKeyLen);
+  }
+
+  function disable_wpa() {
+   disableTextField(document.formEncrypt.pskFormat);
+   disableTextField(document.formEncrypt.pskValue);
+
+   disableButton(document.formEncrypt.showwpa);
+
+
+
+   enableCheckBox(document.formEncrypt.elements.use1x);
+   disableRadioGroup(document.formEncrypt.elements.wpaAuth);
+   check_nonWpaSupp_state();
+  }
+
+  function enable_wpa() {
+   enableTextField(document.formEncrypt.pskFormat);
+   enableTextField(document.formEncrypt.pskValue);
+
+   enableButton(document.formEncrypt.showwpa);
+
+
+   disableCheckBox(document.formEncrypt.elements.use1x);
+
+   enableRadioGroup(document.formEncrypt.elements.wpaAuth);
+   check_nonWpaSupp_state();
+  }
+
+  function checkState() {
+   if (document.formEncrypt.wlanDisabled.value == "ON") {
+    disableRadioGroup(document.formEncrypt.wpaSSID);
+    disableTextField(document.formEncrypt.method);
+
+    disableButton(document.formEncrypt.showwep);
+
+    disableTextField(document.formEncrypt.use1x);
+    disableRadioGroup(document.formEncrypt.wepKeyLen);
+    disableRadioGroup(document.formEncrypt.elements.wpaAuth);
+    disableTextField(document.formEncrypt.pskFormat);
+    disableTextField(document.formEncrypt.pskValue);
+
+    disableButton(document.formEncrypt.showwpa);
+
+    disableTextField(document.formEncrypt.radiusPort);
+    disableTextField(document.formEncrypt.radiusIP);
+    disableTextField(document.formEncrypt.radiusPass);
+    disableButton(document.formEncrypt.save);
+   }
+   else {
+    if (document.formEncrypt.method.selectedIndex >= 2)
+     enable_wpa();
+    else
+     disable_wpa();
+   }
+
+   if (superprivilege == 0) {
+    $(":input").attr("disabled", "true");
+    $(":selected").attr("disabled", "true");
+    $(".hide_gui").hide();
+    $("input[name='pskValue']").removeAttr("disabled");
+    $("input[name='showwpa']").removeAttr("disabled");
+    $("input[name='save']").removeAttr("disabled");
+    $("input[type='hidden']").removeAttr("disabled");
+   }
+
+  }
+
+  function validateKey(idx, str, len) {
+   if (document.formEncrypt.defaultTxKeyId.selectedIndex == idx && str.length == 0) {
+    alert('Ключ шифрования, который вы выбрали \'Tx Default Key\' не может быть пустым.');
+    return 0;
+   }
+   if (str.length == 0)
+    return 1;
+   if (str.length != len) {
+    idx++;
+    alert('Неверная длина ключа ' + idx + '. Должно быть ' + len + ' символов');
+    return 0;
+   }
+
+   if (str == "*****" ||
+    str == "**********" ||
+    str == "*************" ||
+    str == "**************************")
+    return 1;
+
+   if (document.formEncrypt.format.selectedIndex == 0) {
+
+    var patrn = /^[a-zA-Z0-9!#$%&\'()*+,-./:;=?@[\\^_`{|}~]{1}[a-zA-Z0-9!#$%&\'()*+,-./:;=?@[\\^_`{|}~\x20]*[a-zA-Z0-9!#$%&\'()*+,-./:;=?@[\\^_`{|}~]{1}$/;
+    if (!patrn.exec(str)) {
+     alert("недопустимые символы! Пожалуйста, проверьте вводимое значение. ");
+     return 0;
+    }
+    if (str.indexOf("  ", 0) != -1) {
+     alert("Использование пробела недопустимо!");
+     return 0;
+    }
+    return 1;
+   }
+
+   for (var i = 0; i < str.length; i++) {
+    if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+     (str.charAt(i) >= 'a' && str.charAt(i) <= 'f') ||
+     (str.charAt(i) >= 'A' && str.charAt(i) <= 'F'))
+     continue;
+
+    alert("Неверное значение ключа. Он должен быть в формате HEX (0-9 или a-f).");
+    return 0;
+   }
+   return 1;
+  }
+
+  function lengthClick() {
+   updateFormat();
+  }
+
+  function setDefaultKeyValue() {
+   if (document.formEncrypt.length.selectedIndex == 0) {
+    if (document.formEncrypt.format.selectedIndex == 0) {
+     document.formEncrypt.key1.maxLength = 5;
+     document.formEncrypt.key2.maxLength = 5;
+     document.formEncrypt.key3.maxLength = 5;
+     document.formEncrypt.key4.maxLength = 5;
+     document.formEncrypt.key1.value = "*****";
+     document.formEncrypt.key2.value = "*****";
+     document.formEncrypt.key3.value = "*****";
+     document.formEncrypt.key4.value = "*****";
+    }
+    else {
+     document.formEncrypt.key1.maxLength = 10;
+     document.formEncrypt.key2.maxLength = 10;
+     document.formEncrypt.key3.maxLength = 10;
+     document.formEncrypt.key4.maxLength = 10;
+     document.formEncrypt.key1.value = "**********";
+     document.formEncrypt.key2.value = "**********";
+     document.formEncrypt.key3.value = "**********";
+     document.formEncrypt.key4.value = "**********";
+    }
+   }
+   else {
+    if (document.formEncrypt.format.selectedIndex == 0) {
+     document.formEncrypt.key1.maxLength = 13;
+     document.formEncrypt.key2.maxLength = 13;
+     document.formEncrypt.key3.maxLength = 13;
+     document.formEncrypt.key4.maxLength = 13;
+     document.formEncrypt.key1.value = "*************";
+     document.formEncrypt.key2.value = "*************";
+     document.formEncrypt.key3.value = "*************";
+     document.formEncrypt.key4.value = "*************";
+    }
+    else {
+     document.formEncrypt.key1.maxLength = 26;
+     document.formEncrypt.key2.maxLength = 26;
+     document.formEncrypt.key3.maxLength = 26;
+     document.formEncrypt.key4.maxLength = 26;
+     document.formEncrypt.key1.value = "**************************";
+     document.formEncrypt.key2.value = "**************************";
+     document.formEncrypt.key3.value = "**************************";
+     document.formEncrypt.key4.value = "**************************";
+    }
+   }
+  }
+
+  function updateFormat() {
+   if (document.formEncrypt.length.selectedIndex == 0) {
+    document.formEncrypt.format.options[0].text = 'ASCII (5 символов)';
+    document.formEncrypt.format.options[1].text = 'Hex (10 символов)';
+   }
+   else {
+    document.formEncrypt.format.options[0].text = 'ASCII (13 символов)';
+    document.formEncrypt.format.options[1].text = 'Hex (26 символов)';
+   }
+   setDefaultKeyValue();
+  }
+
+
+  function checkPSKChar(str, type) {
+   var patrn;
+   if (type)
+    patrn = /^[a-zA-Z0-9~`!@#$%^&*()_+|\\{}[\]:;<>?,-./='" ]+$/;
+
+   else
+    patrn = /^[a-zA-Z0-9~`!@#$%^&*()_+|\\{}[\]:;<>?,-./='" ]*$/;
+
+   if (!patrn.exec(str)) return false;
+   return true;
+  }
+
+
+  function saveChanges() {
+   if (document.formEncrypt.method.selectedIndex >= 2) {
+    var str = document.formEncrypt.pskValue.value;
+    if (document.formEncrypt.pskFormat.selectedIndex == 1) {
+     if (str.length != 64) {
+      alert('Общий ключ должен состоять из 64 символов');
+      document.formEncrypt.pskValue.focus();
+      return false;
+     }
+     takedef = 0;
+     if (defPskFormat == 1 && defPskLen == 64) {
+      for (var i = 0; i < 64; i++) {
+       if (str.charAt(i) != '*')
+        break;
+      }
+      if (i == 64)
+       takedef = 1;
+     }
+     if (takedef == 0) {
+      for (var i = 0; i < str.length; i++) {
+       if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+        (str.charAt(i) >= 'a' && str.charAt(i) <= 'f') ||
+        (str.charAt(i) >= 'A' && str.charAt(i) <= 'F'))
+        continue;
+       alert("Неверное значение Общего ключа. Ключ должен быть в формате HEX (0-9 или a-f).");
+       document.formEncrypt.pskValue.focus();
+       return false;
+      }
+     }
+    }
+    else {
+     if ((document.formEncrypt.method.selectedIndex >= 2 && wpaAuth[1].checked)) {
+      if (str.length < 8) {
+       alert('Общий ключ должен содеражть минимум 8 символов.');
+       document.formEncrypt.pskValue.focus();
+       return false;
+      }
+      if (str.length > 64) {
+       alert('Общий ключ должен быть меньше 64 символов.');
+       document.formEncrypt.pskValue.focus();
+       return false;
+      }
+
+
+
+      if (!checkPSKChar(str))
+
+
+
+      {
+       alert('Общий ключ содержит недопустимые символы');
+       return false;
+      }
+     }
+    }
+   }
+
+   if (document.formEncrypt.checkWPS2.value == 1) {
+    if (document.formEncrypt.method.selectedIndex == 1) {
+     var keyLen;
+     if (document.formEncrypt.length.selectedIndex == 0) {
+      if (document.formEncrypt.format.selectedIndex == 0)
+       keyLen = 5;
+      else
+       keyLen = 10;
+     }
+     else {
+      if (document.formEncrypt.format.selectedIndex == 0)
+       keyLen = 13;
+      else
+       keyLen = 26;
+     }
+
+     if (validateKey(0, document.formEncrypt.key1.value, keyLen) == 0) {
+      document.formEncrypt.key1.focus();
+      return false;
+     }
+     if (validateKey(1, document.formEncrypt.key2.value, keyLen) == 0) {
+      document.formEncrypt.key2.focus();
+      return false;
+     }
+     if (validateKey(2, document.formEncrypt.key3.value, keyLen) == 0) {
+      document.formEncrypt.key3.focus();
+      return false;
+     }
+     if (validateKey(3, document.formEncrypt.key4.value, keyLen) == 0) {
+      document.formEncrypt.key4.focus();
+      return false;
+     }
+     if (confirm("Если тип безопасности выбран WEP, WPS будет отключен.\nПродолжить?") == 0) {
+      return false;
+     }
+    }
+    else if (document.formEncrypt.method.selectedIndex == 2 || document.formEncrypt.method.selectedIndex == 5) {
+     if (confirm("Если тип безопасности выбран WPA-TKIP/WPA2-TKIP, то WPS будет отключен.\nПродолжить?") == 0) {
+      return false;
+     }
+    }
+   }
+
+   return true;
+  }
+
+  function postSecurity(encrypt, enable1X, wep, wpaAuth, wpaPSKFormat, wpaPSK, rsPort, rsIpAddr, rsPassword, isWep64, wepKeyType, wepDefaultKey) {
+   document.formEncrypt.method.value = encrypt;
+   document.formEncrypt.pskFormat.value = wpaPSKFormat;
+   document.formEncrypt.pskValue.value = wpaPSK;
+   document.formEncrypt.radiusIP.value = rsIpAddr;
+   document.formEncrypt.radiusPort.value = rsPort;
+   document.formEncrypt.radiusPass.value = rsPassword;
+   document.formEncrypt.length.value = isWep64;
+   document.formEncrypt.format.value = wepKeyType;
+   document.formEncrypt.defaultTxKeyId.value = wepDefaultKey;
+
+   if (wep != 0)
+    document.formEncrypt.wepKeyLen[wep - 1].checked = true;
+
+   if (enable1X == 1)
+    document.formEncrypt.use1x.checked = true;
+   else
+    document.formEncrypt.use1x.checked = false;
+   document.formEncrypt.wpaAuth[wpaAuth - 1].checked = true;
+
+   checkState();
+   defPskLen = document.formEncrypt.pskValue.value.length;
+   defPskFormat = document.formEncrypt.pskFormat.selectedIndex;
+   updateFormat();
+  }
+
+
+  function openWindow(url, windowName) {
+   var wide = 620;
+   var high = 420;
+   if (document.all)
+    var xMax = screen.width,
+     yMax = screen.height;
+   else if (document.layers)
+    var xMax = window.outerWidth,
+     yMax = window.outerHeight;
+   else
+    var xMax = 640,
+     yMax = 500;
+   var xOffset = (xMax - wide) / 2;
+   var yOffset = (yMax - high) / 3;
+
+   var settings = 'width=' + wide + ',height=' + high + ',screenX=' + xOffset + ',screenY=' + yOffset + ',top=' + yOffset + ',left=' + xOffset + ', resizable=yes, toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes';
+
+   window.open(url, windowName, settings);
+  }
+
+  function showWpaKey(url) {
+   openWindow(url, 'showWpaKey');
+  }
+ </script>
+
+</head>
+
+
+<body>
+
+
+  <div class="intro_main ">
+
+   <p class="intro_title">Настройка безопасности Wi-Fi</p>
+   <p class="intro_content">Страница предназначена для настройки параметров безопасности Wi-Fi. Установка ключа шифрования WEP или WPA может предотвратить несанкционированный доступ к вашей беспроводной сети. </p>
+   <input name="wlanDisabled" value="OFF" type="hidden">
+  </div>
+
+  <div class="data_common data_common_notitle" id="security_data">
+
+   <table>
+
+
+    <tbody>
+     <tr class="hide_gui">
+
+      <th width="30%">Тип SSID:</th>
+      <td>
+
+       <label><input checked="checked" value="0" id="wpaSSID" name="wpaSSID" onclick="postSecurity(6, 0, 0, 2, 0, '**********', 1812, '', '', 1, 2, 1)" type="radio">Основная &nbsp;</label>
+       <label><input value="1" id="wpaSSID1" name="wpaSSID" onclick="postSecurity(0, 0, 0, 2, 0, '', 1812, '', '', 1, 1, 1)" type="radio">SSID0 &nbsp;</label>
+
+
+       <label><input value="2" id="wpaSSID2" name="wpaSSID" onclick="postSecurity(0, 0, 0, 2, 0, '', 1812, '', '', 1, 1, 1)" type="radio">SSID1 &nbsp;</label>
+
+
+
+       <label><input value="3" id="wpaSSID3" name="wpaSSID" onclick="postSecurity(0, 0, 0, 2, 0, '', 1812, '', '', 1, 1, 1)" type="radio">SSID2 &nbsp;</label>
+
+
+
+
+
+
+
+      </td>
+
+     </tr>
+
+
+     <tr>
+
+      <th>Шифрование:</th>
+      <td>
+
+       <select name="method" size="1" onchange="checkState()">
+
+                    <option value="0">Нет</option>
+                    <option value="1">WEP</option>
+                    <option value="2">WPA (TKIP)</option>
+                    <option value="3">WPA (AES)</option>
+                    <option value="4">WPA2(AES)</option>
+                    <option value="5">WPA2(TKIP)</option>
+                    <option selected="selected" value="6">WPA2 Mixed</option>
+                    </select>
+
+      </td>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+   <div id="wepKeySetting" style="display:none;">
+
+    <table>
+
+     <tbody>
+      <tr>
+
+       <th width="30%">Длина ключа:</th>
+       <td>
+
+        <select size="1" name="length" onchange="lengthClick()">
+
+       <option selected="selected" value="1">64 бит</option>
+       <option value="2">128 бит</option>
+      </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Формат ключа:</th>
+       <td>
+
+        <select size="1" name="format" onchange="setDefaultKeyValue()">
+
+       <option selected="selected" value="1">ASCII (5 символов)</option>
+       <option value="2">Hex (10 символов)</option>
+      </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Ключ по умолчанию Tx:</th>
+       <td>
+
+        <select size="1" name="defaultTxKeyId">
+
+        <option selected="selected" value="1">Ключ 1</option>
+        <option value="2">Ключ 2</option>
+        <option value="3">Ключ 3</option>
+        <option value="4">Ключ 4</option>
+      </select>
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Ключ шифрования 1:</th>
+       <td>
+
+        <input value="*****" name="key1" size="26" maxlength="5" type="text">
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Ключ шифрования 2:</th>
+       <td>
+
+        <input value="*****" name="key2" size="26" maxlength="5" type="text">
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Ключ шифрования 3:</th>
+       <td>
+
+        <input value="*****" name="key3" size="26" maxlength="5" type="text">
+
+       </td>
+
+      </tr>
+
+      <tr>
+
+       <th>Ключ шифрования 4:</th>
+       <td>
+
+        <input value="*****" name="key4" size="26" maxlength="5" type="text"> &nbsp;&nbsp;
+
+
+        <input name="showwep" onclick="showWpaKey('/wlwepkey.htm')" value="Показать ключ" type="button">
+
+       </td>
+
+      </tr>
+
+     </tbody>
+    </table>
+
+   </div>
+
+   <table>
+
+
+    <tbody>
+     <tr class="hide_gui">
+
+
+
+
+      <th><label><input disabled="disabled" value="ON" name="use1x" onclick="checkState()" type="checkbox">Использовать аутентификацию 802.1x</label></th>
+      <td>
+
+       <label><input disabled="disabled" value="1" name="wepKeyLen" type="radio">
+
+                    WEP 64 бит&nbsp;</label>
+       <label><input disabled="disabled" value="2" name="wepKeyLen" type="radio">
+
+                    WEP 128бит</label>
+      </td>
+
+     </tr>
+
+
+
+     <tr class="hide_gui">
+
+
+
+
+
+      <th>Режим WPA:</th>
+      <td>
+
+       <label><input value="1" name="wpaAuth" onclick="checkState()" type="radio">
+
+                    Предприятие (RADIUS)&nbsp;</label>
+       <label><input checked="checked" value="2" name="wpaAuth" onclick="checkState()" type="radio">
+
+                    Персональный (Общий ключ)</label>
+      </td>
+
+     </tr>
+
+     <tr class="hide_gui">
+
+      <th>Формат общего ключа:</th>
+      <td>
+
+       <select id="pskFormat" name="pskFormat" size="1">
+
+                    <option selected="selected" value="0">Ключевая фраза</option>
+                    <option value="1">Hex (64 символа)</option>
+                    </select>
+
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th>Общий ключ:</th>
+      <td>
+
+       <input maxlength="64" size="32" name="pskValue" value="**********" type="text"> &nbsp;&nbsp;
+
+       <input name="showwpa" onclick="showWpaKey('/wlwpakey.htm')" value="Показать ключ" type="button">
+
+      </td>
+
+     </tr>
+
+
+     <tr class="hide_gui">
+
+
+
+
+      <th>RADIUS-сервер:</th>
+      <td>
+
+       Порт
+       <input disabled="disabled" maxlength="5" size="4" name="radiusPort" value="1812" type="text"> &nbsp;&nbsp; IP-адрес
+       <input disabled="disabled" size="10" name="radiusIP" value="0.0.0.0" type="text"> &nbsp;&nbsp; Пароль
+       <input disabled="disabled" maxlength="64" size="8" name="radiusPass" value="" type="password">
+      </td>
+
+     </tr>
+
+     <tr>
+
+      <th colspan="2">
+
+       <em>Внимание: если установлен тип шифрования WEP, то WEP-ключ должен быть обязательно задан.</em>
+      </th>
+
+     </tr>
+
+    </tbody>
+   </table>
+
+  </div>
+
+  <div class="btn_ctl">
+
+   <input name="checkWPS2" value="1" type="HIDDEN">
+   <input class="link_bg" name="save" onclick="return saveChanges()" value="Применить" type="submit">
+   <input name="submit.htm?wlwpa.htm" value="Send" type="hidden">
+
+   <script>
+    document.formEncrypt.method.value = 6;
+    document.formEncrypt.pskFormat.value = 0;
+    document.formEncrypt.wpaAuth[1].checked = true;
+
+    checkState();
+    updateFormat();
+    defPskLen = document.formEncrypt.pskValue.value.length;
+    defPskFormat = document.formEncrypt.pskFormat.selectedIndex;
+   </script>
+
+  </div>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

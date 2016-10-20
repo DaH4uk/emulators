@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- include page -->
@@ -438,4 +439,446 @@ break;
 <div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
 <div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
 </div>
+=======
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- include page -->
+<link type="text/css" rel="stylesheet" href="skin/basic_home.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/common.css" media="screen" />
+<link type="text/css" rel="stylesheet" href="skin/form.css">
+<script type="text/javascript" src="js/boot.js"></script>
+<script type="text/javascript" src="js/secboot.js"></script>
+<script type="text/javascript" src="js/ip4hops.js"></script>
+<script type="text/javascript" src="js/comBasicFun.js"></script>
+<script type="text/javascript" src="languages/Russian/error.js"></script>
+<script type="text/javascript" src="languages/Russian/alert_error.js"></script>
+<script type="text/javascript" src="languages/Russian/menu.js"></script>
+<script type="text/javascript" src="languages/Russian/page/LAN_reserv_add.js"></script>
+<script type="text/javascript">
+<!--
+var menu_Type = "status";
+/*---- Global variable define -----*/
+var G_Error = "0";
+var G_Status= "0";
+var G_Error_Msg= "";
+var G_ViewState= "-";
+var userLevel = "1";
+var G_Menu = "status";
+var G_Page = "LAN_reserv_add";
+var G_SubPage = "-";
+var G_ErrorPage = "LAN_reserv_add";
+//lan clients --
+var LanHosts = [];
+var LanSelect = [];
+var LanActive = [];
+var m = 0;
+LanHosts[m] = [];
+LanHosts[m][0] = '<input type="radio" value="0" onclick="data_select('+m+');" name="MacSelect">';
+LanHosts[m][1] = m+1;
+LanHosts[m][2] = "192.168.1.2";
+LanHosts[m][3] = ("NoName");
+LanHosts[m][4] = "00:00:00:00:00:00";
+LanSelect[m] = "InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1.";
+LanActive[m] = "1";
+++m;
+var G_DomainName = "";
+var G_DHCPServerEnable = "1";
+var G_MinAddress = "192.168.1.2";
+var G_MaxAddress = "192.168.1.254";
+var G_DHCPLeaseTime = "86400";
+//RELAY
+var G_DHCPRelayEnable = "0";
+var G_DHCPRelayIP = "192.168.1.200";
+//DNS
+var G_DNSRelayEnable = "1";
+var G_DNSServers = "";
+var G_lan_BakupIP = "192.168.1.1";
+var IPaddress="192.168.1.1";
+var G_DHCP_WhiteList = [];
+var m = 0;
+var G_DHCPFilterEnabled="1";
+var G_Flag = -1;
+function IsIPinscope(_ip,_ipMin,_ipMax)
+{
+var M_num=_ip.split('.');
+var M_MinAddress=_ipMin.split('.');
+var M_MaxAddress=_ipMax.split('.');
+var C_MinAddress=M_MinAddress[0]*1000000000+M_MinAddress[1]*1000000+M_MinAddress[2]*1000+M_MinAddress[3]*1;
+var C_MaxAddress=M_MaxAddress[0]*1000000000+M_MaxAddress[1]*1000000+M_MaxAddress[2]*1000+M_MaxAddress[3]*1;
+var C_num=M_num[0]*1000000000+M_num[1]*1000000+M_num[2]*1000+M_num[3]*1;
+if((C_num < C_MinAddress)||(C_num > C_MaxAddress))
+{
+return 0;
+}
+return 1;
+}
+function editreseverdisp(){
+if(G_DHCP_WhiteList.length=='0')
+{
+alertError('lanEditBlankWarn',1);
+return;
+}
+for (var i = 0; i < G_DHCP_WhiteList.length; i++) {
+var tmpid = "choose" + i;
+if (Form.Checkbox(tmpid) == 1) {
+$("Page_Change1").style.display ='none';
+$("Page_Change2").style.display ='';
+$("editresever_show").style.display ='none';
+$("editresever_table").style.display ='none';
+$("editresever_buttonhide").style.display ='none';
+$("editresever_buttonshow").style.display ='';
+return;
+}
+}
+alertError("pleasechooseanitemedit");
+}
+function refresh_resever(){
+$G('../html/LAN_lan.htm',{
+'var:page' : 'LAN_lan',
+'var:errorpage' : 'LAN_lan',
+'getpage' : '../html/LAN_lan.htm',
+'errorpage' : '../html/LAN_lan.htm'
+});
+}
+function chTableTdstyle(){
+for(var i = 0,j = 1; i < LanHosts.length; i++,j++){
+supplyValue('td_reseverlist_show_'+i+'1','<span style="color:#000000" align="center font-weight:bold;"><strong>'+j+'</strong><span>');
+}
+}
+function reseverlist_show(){
+$T('td_reseverlist_show',LanHosts);
+chTableTdstyle();
+}
+function data_select(data){
+$('rsv_mac').value = LanHosts[data][4];
+$('dv_name').value = LanHosts[data][3];
+OnloadIP4hops(LanHosts[data][2] || '','rsv_ip1','rsv_ip2','rsv_ip3','rsv_ip4');
+}
+function checkMacStr(mac) {
+var _mac = mac.value.replace(/:/g,"");
+_mac = _mac.replace(/-/g,"");
+var temp=mac.value;
+if(_mac.length != 12) {
+if (mac.focus)
+mac.focus();
+return true;
+}
+for(i=0; i<_mac.length;i++) {
+var c = _mac.substring(i, i+1);
+if(("0" <= c && c <= "9") || ("a" <= c && c <= "f") || ("A" <= c && c <= "F")) {
+continue;
+}
+if (mac.focus)
+mac.focus();
+return true;
+}
+if(checkMulticastMAC(mac) || MacStrallf(mac))
+{
+if (mac.focus)
+mac.focus();
+return true;
+}
+mac.value = temp.toUpperCase();
+return false;
+}
+function checkData()
+{
+var i, conflict, reply;
+if(checkIP($('rsv_ip1'),$('rsv_ip2'),$('rsv_ip3'),$('rsv_ip4'),254)|| (parseInt($('rsv_ip4').value, 10) == 0))
+{
+alertError('Lan_lanInvalidIP',1);
+return false;
+}
+if(checkMacStr($('rsv_mac')))
+{
+alertError('Lan_lanInvalidMAC',1);
+return false;
+}
+var temValue = Base64.Encode(strUnicode2Ansi($('dv_name').value));
+if (temValue.match( /[^\x20-\x7E]/ ))
+{
+alertError('Lan_lanInvalidName',1);
+return false;
+}
+if((temValue == "UNKNOWN")||(temValue == "UNKNOWN NAME")||(""==temValue))
+{
+alertError('Lan_lanInvalidNameNull',1);
+return false;
+}
+var _rsv_ip = parseInt($('rsv_ip1').value, 10)+'.'+ parseInt($('rsv_ip2').value, 10)+'.'
++ parseInt($('rsv_ip3').value, 10)+'.'+ parseInt($('rsv_ip4').value, 10);
+var _rsv_mac = $('rsv_mac').value.replace(/:/g,"");
+_rsv_mac = _rsv_mac.replace(/-/g,"");
+for(var m = 0; m < G_DHCP_WhiteList.length; m++){
+G_DHCP_WhiteList[m][1] = G_DHCP_WhiteList[m][1].replace(/:/g,"");
+if ((G_DHCP_WhiteList[m][0] == _rsv_ip) || (G_DHCP_WhiteList[m][1] == _rsv_mac)||(G_DHCP_WhiteList[m][4]==$('dv_name').value)) {
+conflict = true;
+G_Flag = m;
+break;
+}
+else
+{
+G_Flag = -1;
+}
+}
+if($('rsv_mac').value.length == 12)
+{
+var i=0;
+var j=0;
+for(i=0; i<6; i++){
+rsv_mac[i] = $('rsv_mac').value.substring(j,j+2);
+j = j+2;}
+$('rsv_mac').value = rsv_mac[0]+':'+rsv_mac[1]+':'+rsv_mac[2]+':'+rsv_mac[3]+':'+rsv_mac[4]+':'+rsv_mac[5];
+}
+if($('rsv_mac').value.length == 17)
+{$('rsv_mac').value = $('rsv_mac').value.replace(/-/g,":");}
+if (conflict){
+reply = alertError('Lan_lanAlertOverwrite',2);
+if (!reply)
+return false;
+}
+if(!IsIPinscope($('rsv_ip1').value+'.'+ $('rsv_ip2').value +'.'+ $('rsv_ip3').value +'.'+ $('rsv_ip4').value,G_MinAddress,G_MaxAddress))
+{
+$G('../html/LAN_reserv_within_pool.htm',{
+'var:page' : 'LAN_reserv_add',
+'var:subpage' : 'LAN_reserv_within_pool',
+'getpage' : '../html/LAN_reserv_within_pool.htm',
+'errorpage' : '../html/LAN_reserv_within_pool.htm'
+});
+return false;
+}
+return true;
+}
+function DuplicateRule(flag)
+{
+var temValue = Base64.Encode(strUnicode2Ansi($('dv_name').value));
+var Path = ':' + G_DHCP_WhiteList[flag][3];
+$F(Path + 'FilterIP', $('rsv_ip1').value+'.'+ $('rsv_ip2').value +'.'+ $('rsv_ip3').value +'.'+ $('rsv_ip4').value);
+$F(Path + 'FilterMAC', $('rsv_mac').value);
+$F(Path + 'FilterPCName', temValue);
+}
+function readdsubmint(){
+if(IPaddress==$('rsv_ip1').value+'.'+ $('rsv_ip2').value +'.'+ $('rsv_ip3').value +'.'+ $('rsv_ip4').value)
+{
+$G('../html/LAN_reserv_edit_error.htm',{
+'var:page' : 'LAN_reserv_add',
+'var:subpage' : 'LAN_reserv_edit_error',
+'getpage' : '../html/LAN_reserv_edit_error.htm',
+'errorpage' : '../html/LAN_reserv_edit_error.htm'
+});
+return;
+}
+var temValue = Base64.Encode(strUnicode2Ansi($('dv_name').value));
+if(checkData()==false)
+return false;
+if(G_Flag == -1)
+{
+$H({
+'add-obj' : 'InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_TWSZ-COM_DHCPFilter.WhiteList.',
+':FilterIP' : $('rsv_ip1').value+'.'+ $('rsv_ip2').value +'.'+ $('rsv_ip3').value +'.'+ $('rsv_ip4').value,
+':FilterMAC' : $('rsv_mac').value,
+':FilterPCName' : temValue,
+'obj-action' : 'add-set',
+'var:page' : 'LAN_lan',
+'var:errorpage' : 'LAN_lan',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData' : ViewState.Save()
+},true);
+}
+else
+{
+G_Flag == -1;
+$H({
+'obj-action' : 'set',
+'var:page' : 'LAN_lan',
+'var:errorpage' : 'LAN_lan',
+'getpage' : 'html/page.htm',
+'errorpage' : 'html/page.htm',
+'var:CacheLastData' : ViewState.Save()
+},true);
+DuplicateRule(G_Flag);
+}
+$('uiPostForm').submit();
+}
+function SelectAdd(){
+readdsubmint();
+}
+function uiOnload(){
+reseverlist_show();
+}
+function dealWithError(){
+if (G_Error != 1){
+return false;
+}
+var arrayHint = [];
+dealErrorMsg(arrayHint, G_Error_Msg);
+}
+addListeners(uiOnload,dealWithError);
+-->
+</script>
+<body id="real_page" >
+<!-- config -->
+<form id="uiPostForm" method="post" action="LAN_reserv_add.htm"></form>
+<script type="text/javascript" src="js/ajax.js"></script>
+<style type="text/css">
+<!--
+.table_header{
+color: #ffffff;
+font-weight: Bold;
+background-color: #767676;
+}
+.div_left{ width: 233px;}
+.doo { padding-top:0px;}
+td {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+select {
+font-family:Arial,Helvetica,Geneva,Swiss,SunSans-Regular,sans-serif;
+font-size:12px;
+}
+BODY {
+FONT-SIZE: 12px; MARGIN: 8px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif
+}
+-->
+</style>
+<div class="page_title" id="lang_AddressReservation2">Address Reservation</div>
+<div class="fix_button">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+<td nowrap colspan=2 align=center>
+<input class="common_bt" type="button" id="Refresh" name="Refresh" value="Refresh"/>
+<input class="cancel_bt" type="button" id="Cancel" name="Cancel" onClick="refresh_resever();" value="Cancel"/>
+<input class="apply_bt" type="button" id="Add" name="Add" onClick="SelectAdd();" value="Add"/>
+</td>
+</tr>
+</table>
+</div>
+<div id="main" class="main_top_button">
+<table style="background:white; width:100%;">
+<tr>
+<td>
+<tr>
+<td nowrap="" colspan="2"><a href="LAN_reserv_add.htm"><b class="do bk_black3_black" id="editresever_show">Address Reservation Table</b></a></td>
+</tr>
+<tr>
+<td nowrap="" colspan="2"><div id="editresever_table">
+<table border="0" id="td_reseverlist_show" cellspacing="0" cellpadding="2" width="100%" align="center" class="td_table_s3">
+<tr align='center' class="table_header">
+<td id="td_addr_reser_head0" nowrap="">&nbsp;&nbsp;</td>
+<td id="td_addr_reser_head1" nowrap="">&nbsp;#&nbsp;</td>
+<td id="td_addr_reser_head2" nowrap="">IP Address</td>
+<td id="td_addr_reser_head3" nowrap="">Device Name</td>
+<td id="td_addr_reser_head4" nowrap="">MAC Address</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<table width="100%">
+<tr>
+<td nowrap="" colspan="2"><hr width="100%" size="2" color=#9966ff></td>
+</tr>
+<tr>
+<td nowrap="" id="lang_edit_ip">IP Address</td>
+<td nowrap="" align="left"><input type='text' name="rsv_ip1" id="rsv_ip1" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);">.
+<input type='text' name="rsv_ip2" id="rsv_ip2" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);">.
+<input type='text' name="rsv_ip3" id="rsv_ip3" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);">.
+<input type='text' name="rsv_ip4" id="rsv_ip4" maxlength=3 style="width:30px" onFocus="this.select();" onKeyUp="IPKeyUp(event,this)" onKeyDown="return IPKeyDown(event,this)" onKeyPress="return getkey('num',event);">
+</td>
+</tr>
+<tr>
+<td nowrap="" id="Dv_mac_addr_show">MAC Address</td>
+<td nowrap="" align="left"><input type="text" id="rsv_mac" name="rsv_mac" maxlength="17" size="20"/></td>
+</tr>
+<tr>
+<td nowrap="" id="Dv_name_show">Device Name</td>
+<td nowrap="" align="left"><input type="text" id="dv_name" name="dv_name" maxlength="20" size="16"/></td>
+</tr>
+<tr>
+<td nowrap="" colspan="3" class="do bk_black3_black">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</td>
+</tr>
+</table>
+</div>
+<div id="help" style="display: none; left:0px;">
+<iframe name="helpframe" id="helpframe" src="help.htm" allowtransparency="true" width="100%" frameborder="0" >
+</iframe>
+</div>
+<div id="help_switch" class="close_help" style="">
+<img class="help_switch_img" src="skin/image/help/help-bar.gif">
+<script>
+var help_flag=0;
+function help_brower()
+{
+if(isIE()){
+show_hidden_help_top_button(1);
+var frame_div = top.document.getElementById("formframe_div");
+frame_div.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+if(get_browser() == "Opera"){
+window.onresize = function(){
+if( help_flag == 0 )
+show_hidden_help_top_button(1);
+else{
+show_hidden_help_top_button(--help_flag);
+help_flag++;
+}
+};
+}
+}
+var wl_erase = "-"
+switch("LAN_reserv_add")
+{
+case "RST_status":
+case "basic_home":self.document.getElementById("real_page").style.backgroundColor = '#e5e5e5';
+case "BAK_cfm":
+case "WIZ_cfm":
+/****************************************************************/
+/*升级模块*/
+case "AUTO_search":
+case "AUTO_upgrade_no_internet":
+case "AUTO_upgrade_noversion":
+case "AUTO_upgrade_process":
+case "UpdateCheck":
+case "UPG_check_version":
+/****************************************************************/
+case "Reboot":
+case "BRS_checkNet":
+case "BRS_success":
+case "BRS_genieHelp":
+case "BRS_haveBackupFile":
+case "WIZ_fix":
+case "WIZ_wait":
+case "AUTO_download_image":
+case "updataGui":
+case "traffic_alert":
+self.document.getElementById("help_switch").style.display="none";
+break;
+default:
+self.document.getElementById("help_switch").style.display="";
+help_brower();
+break;
+}
+</script>
+<div id="help_space" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_center"><span id="lang_help_center">Help Center</span></div>
+<div id="help_button" onClick="show_hidden_help_top_button(help_flag); help_flag++;"></div>
+<div id="help_show_hidden"><a href="javascript:void(0)" onClick="show_hidden_help_top_button(help_flag); help_flag++;"><span id="lang_show_or_hide">Show/Hide Help Center</span></a></div>
+</div>
+>>>>>>> 59bffef8551d69606b594c223f73f1df7ea23746
 </body>
